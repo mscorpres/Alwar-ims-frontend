@@ -61,10 +61,10 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    if (!recaptchaValue) {
-      toast.error("Please verify the reCAPTCHA");
-      // return;
-    }
+    // if (!recaptchaValue) {
+    //   toast.error("Please verify the reCAPTCHA");
+    //   // return;
+    // }
     // if (!recaptchaValue) {
     //   toast.error("Please verify the reCAPTCHA");
     //   // return;
@@ -575,7 +575,7 @@ const Login = () => {
                     autoComplete="off"
                     form={signUp}
                   >
-                    <Form.Item label="Company Branch" name="company_branch">
+                    {/* <Form.Item label="Company Branch" name="company_branch">
                       <Select
                         value={inpVal.company_branch}
                         onChange={(v) => inputHandler("company_branch", v)}
@@ -587,7 +587,7 @@ const Login = () => {
                         ]}
                         size="medium"
                       />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item
                       label="Username / Mobile / CRN Number"
                       name="username"
@@ -649,13 +649,13 @@ const Login = () => {
                         {/* <Link onClick={() => setForgotPassword("1")}>
                           Forgot Password
                         </Link> */}
-                        <div className="flex justify-center">
+                        {/*<div className="flex justify-center">
                           <ReCAPTCHA
                             sitekey="6LdmVcArAAAAAOb1vljqG4DTEEi2zP1TIjDd_0wR"
                             onChange={handleRecaptchaChange}
                             key={recaptchaKey}
                           />
-                        </div>
+                        </div>*/}
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
                           <Button
                             loading={loading("submit")}
