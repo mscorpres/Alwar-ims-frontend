@@ -26,7 +26,12 @@ import { imsAxios } from "../../axiosInterceptor";
 import useApi from "../../hooks/useApi.ts";
 import { setSettings, setUser } from "../../Features/loginSlice/loginSlice";
 import ReCAPTCHA from "react-google-recaptcha";
-import { ArrowLeftOutlined, SafetyOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  SafetyOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import SelectEndPoint from "../SelectEndPoint";
 
 const Login = () => {
   document.title = "IMS Login";
@@ -40,6 +45,7 @@ const Login = () => {
   const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
   const [otpTimer, setOtpTimer] = useState(600); // 10 minutes in seconds
   const [userCredentials, setUserCredentials] = useState(null);
+  const [showCustomUrlModal, setShowCustomUrlModal] = useState(false);
   const { executeFun, loading } = useApi();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -444,8 +450,21 @@ const Login = () => {
                     height: 500,
                     borderRadius: 12,
                     boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+                    position: "relative",
                   }}
                 >
+                  <Button
+                    type="text"
+                    icon={<EditOutlined />}
+                    onClick={() => setShowCustomUrlModal(true)}
+                    style={{
+                      position: "absolute",
+                      top: 16,
+                      right: 16,
+                      zIndex: 10,
+                    }}
+                    title="Add Custom URL"
+                  />
                   <Title
                     style={{
                       color: "#04b0a8",
@@ -557,7 +576,19 @@ const Login = () => {
                   />
                 </Card>
               ) : signUpPage === "1" ? (
-                <Card style={{ height: 350 }}>
+                <Card style={{ height: 350, position: "relative" }}>
+                  <Button
+                    type="text"
+                    icon={<EditOutlined />}
+                    onClick={() => setShowCustomUrlModal(true)}
+                    style={{
+                      position: "absolute",
+                      top: 16,
+                      right: 16,
+                      zIndex: 10,
+                    }}
+                    title="Add Custom URL"
+                  />
                   <Title
                     style={{
                       color: "gray",
@@ -734,7 +765,19 @@ const Login = () => {
                   </Form>
                 </Card>
               ) : (
-                <Card style={{ height: 490 }}>
+                <Card style={{ height: 490, position: "relative" }}>
+                  <Button
+                    type="text"
+                    icon={<EditOutlined />}
+                    onClick={() => setShowCustomUrlModal(true)}
+                    style={{
+                      position: "absolute",
+                      top: 16,
+                      right: 16,
+                      zIndex: 10,
+                    }}
+                    title="Add Custom URL"
+                  />
                   <Title
                     style={{
                       color: "gray",
@@ -864,6 +907,15 @@ const Login = () => {
           </Row>
         </Col>
       </Row>
+      <Modal
+        title="Add Custom URL"
+        open={showCustomUrlModal}
+        onCancel={() => setShowCustomUrlModal(false)}
+        footer={null}
+        width={600}
+      >
+        <SelectEndPoint />
+      </Modal>
     </div>
   );
 };
