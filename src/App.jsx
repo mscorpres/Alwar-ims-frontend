@@ -80,7 +80,7 @@ const App = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
-  const [enabledModules, setEnabledModules] = useState([]); // Added state for enabled modules
+
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -526,53 +526,6 @@ const App = () => {
       });
     }
   }, [user?.token]);
-  // Added useEffect to fetch enabled modules
-  useEffect(() => {
-    if (user && user.token && user.company_branch) {
-      const fetchEnabledModules = async () => {
-        try {
-          console.log("Fetching modules for branch:", user.company_branch); // Debug branch
-          const { data } = await imsAxios.get("/branchdata/getEnabledModules", {
-            headers: {
-              "x-csrf-token": user.token,
-              "Company-Branch": user.company_branch,
-              Session: user.session,
-            },
-          });
-          console.log("Enabled Modules Response:", data); // Debug API response
-          if (data.code === 200) {
-            setEnabledModules(data.data || []); // Ensure empty array if undefined
-          } else {
-            toast.error(data.message?.msg || "Failed to fetch enabled modules");
-            setEnabledModules([]);
-          }
-        } catch (error) {
-          console.error("Error fetching enabled modules:", error);
-          toast.error("Error fetching module permissions");
-          setEnabledModules([]);
-          if (error.response?.status === 403) {
-            dispatch(logout());
-            navigate("/login");
-          }
-        }
-      };
-      fetchEnabledModules();
-    } else {
-      console.log("Missing user data:", {
-        user,
-        token: user?.token,
-        branch: user?.company_branch,
-      });
-      setEnabledModules([]);
-    }
-  }, [
-    user,
-    user?.token,
-    user?.company_branch,
-    user?.session,
-    dispatch,
-    navigate,
-  ]);
 
   useEffect(() => {
     setShowSideBar(false);
@@ -703,63 +656,6 @@ const App = () => {
     socket.open();
   };
 
-  const filteredItems = items(user)
-    .map((item) => {
-      const isItemEnabled = enabledModules.some(
-        (mod) =>
-          String(mod.module_key) === String(item.module_key) &&
-          mod.enabled === 1
-      );
-      const isParentEnabled = enabledModules.some(
-        (mod) =>
-          String(mod.parent_module_key) === String(item.module_key) &&
-          mod.enabled === 1
-      );
-
-      if (item.module_key) {
-        if (item.children) {
-          const enabledChildren = item.children.filter((child) => {
-            const isChildEnabled = child.module_key
-              ? enabledModules.some(
-                  (mod) =>
-                    String(mod.module_key) === String(child.module_key) &&
-                    mod.enabled === 1
-                )
-              : isItemEnabled || isParentEnabled;
-
-            return isChildEnabled;
-          });
-          if (isItemEnabled || isParentEnabled || enabledChildren.length > 0) {
-            return { ...item, children: enabledChildren };
-          }
-
-          return null;
-        }
-        if (isItemEnabled || isParentEnabled) {
-          return item;
-        }
-
-        return null;
-      }
-
-      return null;
-    })
-    .filter((item) => item !== null);
-
-  const filteredItems1 = items1(user, setShowTickets)
-    .map((item) => {
-      if (!item.module_key) {
-        return item;
-      }
-      const isEnabled = enabledModules.some(
-        (mod) =>
-          String(mod.module_key) === String(item.module_key) &&
-          mod.enabled === 1
-      );
-
-      return isEnabled ? item : null;
-    })
-    .filter((item) => item !== null);
   return (
     <div style={{ height: "100vh" }}>
       <ToastContainer
@@ -1042,8 +938,8 @@ const App = () => {
           />
           {user && user.passwordChanged === "C" && (
             <Sidebar
-              items={filteredItems}
-              items1={filteredItems1}
+               items={items(user)}
+            items1={items1(user, setShowTickets)}
               className="site-layout-background"
               key={1}
               setShowSideBar={setShowSideBar}
