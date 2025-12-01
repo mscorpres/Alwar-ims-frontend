@@ -101,7 +101,6 @@ import {
   ViewandEditClient,
   PartCodeConversion,
   ProductMIN,
-  Dashboard,
   JWUpdateRate,
   CreateBranchTransferChallan,
   ViewBranchTransfer,
@@ -264,6 +263,7 @@ import ApprovalList from "@/Pages/R&D/products/approvalList.js";
 import BOMCreate from "@/Pages/R&D/bom/create/index.js";
 import BOMList from "@/Pages/R&D/bom/list/index.js";
 import VersionDownload from "@/Pages/Version/VersionDownload.jsx";
+import Dashboard from "@/screens/Dashboard.js";
 // import CreateAsset from "../Pages/fixeassetmodule/CreateAsset/CreateAsset";
 // import ViewAsset from "../Pages/fixeassetmodule/ViewAsset";
 // import Depreciation from "../Pages/fixeassetmodule/Depreciation";
@@ -864,7 +864,7 @@ const Routes = [
     path: "/create-jw",
     main: () => <CreateJW />,
   },
-    {
+  {
     path: "/approval-jw",
     main: () => <JobworkApproval />,
   },

@@ -1,6 +1,8 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+
+const App = React.lazy(() => import("./App"));
+import FallbackComponent from "./Components/fallback/FallBackComponent";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { Store } from "./Features/Store";
@@ -69,7 +71,9 @@ root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
       <BrowserRouter>
-        <App />
+        <Suspense fallback={<FallbackComponent />}>
+          <App />
+        </Suspense>
       </BrowserRouter>
     </Provider>
   </ConfigProvider>

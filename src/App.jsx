@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Route,
   Routes,
@@ -33,10 +33,7 @@ import { Badge, Row, Select, Space, Switch, Typography } from "antd";
 import {
   CustomerServiceOutlined,
   BellFilled,
-  StarFilled,
-  StarOutlined,
   MenuOutlined,
-  LoadingOutlined,
   SearchOutlined,
   ControlOutlined,
 } from "@ant-design/icons";
@@ -55,7 +52,6 @@ const App = () => {
   const { user, notifications, testPages } = useSelector(
     (state) => state.login
   );
-
   const filteredRoutes = Rout.filter((route) => {
     // Include the route if it doesn't have a "dept" property or if showlegal is true
     return !route.dept || user?.showlegal;
@@ -532,40 +528,51 @@ const App = () => {
   }, [user?.token]);
   // Added useEffect to fetch enabled modules
   useEffect(() => {
-  if (user && user.token && user.company_branch) {
-    const fetchEnabledModules = async () => {
-      try {
-        console.log("Fetching modules for branch:", user.company_branch); // Debug branch
-        const { data } = await imsAxios.get("/branchdata/getEnabledModules", {
-          headers: {
-            "x-csrf-token": user.token,
-            "Company-Branch": user.company_branch,
-            Session: user.session,
-          },
-        });
-        console.log("Enabled Modules Response:", data); // Debug API response
-        if (data.code === 200) {
-          setEnabledModules(data.data || []); // Ensure empty array if undefined
-        } else {
-          toast.error(data.message?.msg || "Failed to fetch enabled modules");
+    if (user && user.token && user.company_branch) {
+      const fetchEnabledModules = async () => {
+        try {
+          console.log("Fetching modules for branch:", user.company_branch); // Debug branch
+          const { data } = await imsAxios.get("/branchdata/getEnabledModules", {
+            headers: {
+              "x-csrf-token": user.token,
+              "Company-Branch": user.company_branch,
+              Session: user.session,
+            },
+          });
+          console.log("Enabled Modules Response:", data); // Debug API response
+          if (data.code === 200) {
+            setEnabledModules(data.data || []); // Ensure empty array if undefined
+          } else {
+            toast.error(data.message?.msg || "Failed to fetch enabled modules");
+            setEnabledModules([]);
+          }
+        } catch (error) {
+          console.error("Error fetching enabled modules:", error);
+          toast.error("Error fetching module permissions");
           setEnabledModules([]);
+          if (error.response?.status === 403) {
+            dispatch(logout());
+            navigate("/login");
+          }
         }
-      } catch (error) {
-        console.error("Error fetching enabled modules:", error);
-        toast.error("Error fetching module permissions");
-        setEnabledModules([]);
-        if (error.response?.status === 403) {
-          dispatch(logout());
-          navigate("/login");
-        }
-      }
-    };
-    fetchEnabledModules();
-  } else {
-    console.log("Missing user data:", { user, token: user?.token, branch: user?.company_branch });
-    setEnabledModules([]);
-  }
-}, [user, user?.token, user?.company_branch, user?.session, dispatch, navigate]);
+      };
+      fetchEnabledModules();
+    } else {
+      console.log("Missing user data:", {
+        user,
+        token: user?.token,
+        branch: user?.company_branch,
+      });
+      setEnabledModules([]);
+    }
+  }, [
+    user,
+    user?.token,
+    user?.company_branch,
+    user?.session,
+    dispatch,
+    navigate,
+  ]);
 
   useEffect(() => {
     setShowSideBar(false);
@@ -635,7 +642,6 @@ const App = () => {
   }, [navigate, user]);
   useEffect(() => {
     window.addEventListener("offline", (e) => {
-      console.log("offline", e);
       toast(
         "You are no longer connected to the Internet, please check your connection and try again."
       );
@@ -651,19 +657,13 @@ const App = () => {
   useEffect(() => {
     setModulesOptions([]);
     if (searchModule.length > 2) {
-      // console.log("Search module is here", searchModule);
-      // console.log("Search msearchHis", searchHis);
       let searching = searchHis.filter((i) => i.value === searchModule);
-      // setHisList([...hisList,searching]);
       let a = hisList.push(...hisList, ...searching);
       const ids = hisList.map(({ text }) => text);
       const filtered = hisList.filter(
         ({ text }, index) => !ids.includes(text, index + 1)
       );
-      // console.log("Search module Array after filtering in here", a);
-      // console.log("Search module Array after filtering in here", filtered);
-      // setHisList(filtered);
-      // localStorage.setItem("searchHistory", hisList);
+
       localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
 
       navigate(searchModule);
@@ -703,59 +703,63 @@ const App = () => {
     socket.open();
   };
 
-const filteredItems = items(user).map((item) => {
-  const isItemEnabled = enabledModules.some(
-    (mod) => String(mod.module_key) === String(item.module_key) && mod.enabled === 1
-  );
-  const isParentEnabled = enabledModules.some(
-    (mod) => String(mod.parent_module_key) === String(item.module_key) && mod.enabled === 1
-  );
+  const filteredItems = items(user)
+    .map((item) => {
+      const isItemEnabled = enabledModules.some(
+        (mod) =>
+          String(mod.module_key) === String(item.module_key) &&
+          mod.enabled === 1
+      );
+      const isParentEnabled = enabledModules.some(
+        (mod) =>
+          String(mod.parent_module_key) === String(item.module_key) &&
+          mod.enabled === 1
+      );
 
-  if (item.module_key) {
-    if (item.children) {
-      const enabledChildren = item.children.filter((child) => {
-        const isChildEnabled = child.module_key
-          ? enabledModules.some(
-              (mod) => String(mod.module_key) === String(child.module_key) && mod.enabled === 1
-            )
-          : isItemEnabled || isParentEnabled;
-        console.log(`Checking child ${child.label} (module_key: ${child.module_key || 'none'}):`, isChildEnabled);
-        return isChildEnabled;
-      });
-      if (isItemEnabled || isParentEnabled || enabledChildren.length > 0) {
-        console.log(`Showing ${item.label} (module_key: ${item.module_key}):`, {
-          isItemEnabled,
-          isParentEnabled,
-          hasEnabledChildren: enabledChildren.length > 0,
-        });
-        return { ...item, children: enabledChildren };
+      if (item.module_key) {
+        if (item.children) {
+          const enabledChildren = item.children.filter((child) => {
+            const isChildEnabled = child.module_key
+              ? enabledModules.some(
+                  (mod) =>
+                    String(mod.module_key) === String(child.module_key) &&
+                    mod.enabled === 1
+                )
+              : isItemEnabled || isParentEnabled;
+
+            return isChildEnabled;
+          });
+          if (isItemEnabled || isParentEnabled || enabledChildren.length > 0) {
+            return { ...item, children: enabledChildren };
+          }
+
+          return null;
+        }
+        if (isItemEnabled || isParentEnabled) {
+          return item;
+        }
+
+        return null;
       }
-      console.log(`Hiding ${item.label} (module_key: ${item.module_key}): no enabled children or not enabled`);
+
       return null;
-    }
-    if (isItemEnabled || isParentEnabled) {
-      console.log(`Showing ${item.label} (module_key: ${item.module_key}):`, { isItemEnabled, isParentEnabled });
-      return item;
-    }
-    console.log(`Hiding ${item.label} (module_key: ${item.module_key}): not enabled`);
-    return null;
-  }
+    })
+    .filter((item) => item !== null);
 
-  console.log("No module_key, hiding item:", item.label);
-  return null;
-}).filter((item) => item !== null);
+  const filteredItems1 = items1(user, setShowTickets)
+    .map((item) => {
+      if (!item.module_key) {
+        return item;
+      }
+      const isEnabled = enabledModules.some(
+        (mod) =>
+          String(mod.module_key) === String(item.module_key) &&
+          mod.enabled === 1
+      );
 
-const filteredItems1 = items1(user, setShowTickets).map((item) => {
-  if (!item.module_key) {
-    console.log("No module_key, showing item1:", item.label);
-    return item;
-  }
-  const isEnabled = enabledModules.some(
-    (mod) => String(mod.module_key) === String(item.module_key) && mod.enabled === 1
-  );
-  console.log(`Checking ${item.label} (module_key: ${item.module_key}):`, isEnabled);
-  return isEnabled ? item : null;
-}).filter((item) => item !== null);
+      return isEnabled ? item : null;
+    })
+    .filter((item) => item !== null);
   return (
     <div style={{ height: "100vh" }}>
       <ToastContainer
@@ -770,14 +774,13 @@ const filteredItems1 = items1(user, setShowTickets).map((item) => {
         pauseOnHover
       />
       {/* <TopBanner /> */}
+
       <Layout
         style={{
           width: "100%",
           top: 0,
         }}
       >
-        {/* header start */}
-
         {(path.includes("dev.mscorpres") || path.includes("localhost")) && (
           <div
             style={{
@@ -1008,8 +1011,17 @@ const filteredItems1 = items1(user, setShowTickets).map((item) => {
                       />
                     </Badge>
                   </div>
-                  <UserMenu user={user} logoutHandler={logoutHandler} setShowSettings={setShowSetting}/>
-                  {showSetting && <SettingDrawer open={showSetting} hide={() => setShowSetting(false)} />}
+                  <UserMenu
+                    user={user}
+                    logoutHandler={logoutHandler}
+                    setShowSettings={setShowSetting}
+                  />
+                  {showSetting && (
+                    <SettingDrawer
+                      open={showSetting}
+                      hide={() => setShowSetting(false)}
+                    />
+                  )}
                 </Space>
               </Row>
             </Header>
