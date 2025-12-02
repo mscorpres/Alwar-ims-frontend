@@ -25,7 +25,6 @@ import UserMenu from "./Components/UserMenu";
 import Logo from "./Components/Logo";
 import socket from "./Components/socket.js";
 import Notifications from "./Components/Notifications";
-import MessageModal from "./Components/MessageModal/MessageModal";
 // antd imports
 import Layout, { Content, Header } from "antd/lib/layout/layout";
 import { Badge, Row, Select, Space, Switch, Typography } from "antd";
@@ -233,10 +232,6 @@ const App = () => {
       socket.on("all-notifications", (data) => {
         let arr = data.data;
         arr = arr.map((row) => {
-          console.log(
-            "this one in norification",
-            JSON.parse(row.other_data)?.message
-          );
           return {
             ...row,
             type: row.msg_type,
@@ -288,7 +283,6 @@ const App = () => {
 
       // event for starting detail
       socket.on("download_start_detail", (data) => {
-        console.log("start details arrived");
         toast.success("Your report has been started generating");
         if (data.title || data.details) {
           let arr = notificationsRef.current;
@@ -447,7 +441,6 @@ const App = () => {
       // getting all notifications
       socket.on("all-notifications", (data) => {
         let arr = data.data;
-        // console.log("allnotifications", arr);
         arr = arr.map((row) => {
           return {
             ...row,
@@ -529,42 +522,6 @@ const App = () => {
       });
     }
   }, [user?.token]);
-//   // Added useEffect to fetch enabled modules
-//   useEffect(() => {
-//   if (user && user.token && user.company_branch) {
-//     const fetchEnabledModules = async () => {
-//       try {
-//         console.log("Fetching modules for branch:", user.company_branch); // Debug branch
-//         const response = await imsAxios.get("/branchdata/getEnabledModules", {
-//           headers: {
-//             "x-csrf-token": user.token,
-//             "Company-Branch": user.company_branch,
-//             Session: user.session,
-//           },
-//         });
-//         console.log("Enabled Modules Response:", data); // Debug API response
-//         if (response.success) {
-//           setEnabledModules(data.data || []); // Ensure empty array if undefined
-//         } else {
-//           toast.error(data.message?.msg || "Failed to fetch enabled modules");
-//           setEnabledModules([]);
-//         }
-//       } catch (error) {
-//         console.error("Error fetching enabled modules:", error);
-//         toast.error("Error fetching module permissions");
-//         setEnabledModules([]);
-//         if (error.response?.status === 403) {
-//           dispatch(logout());
-//           navigate("/login");
-//         }
-//       }
-//     };
-//     fetchEnabledModules();
-//   } else {
-//     console.log("Missing user data:", { user, token: user?.token, branch: user?.company_branch });
-//     setEnabledModules([]);
-//   }
-// }, [user, user?.token, user?.company_branch, user?.session, dispatch, navigate]);
 
   useEffect(() => {
     setShowSideBar(false);
@@ -650,8 +607,6 @@ const App = () => {
   useEffect(() => {
     setModulesOptions([]);
     if (searchModule.length > 2) {
-      // console.log("Search module is here", searchModule);
-      // console.log("Search msearchHis", searchHis);
       let searching = searchHis.filter((i) => i.value === searchModule);
       // setHisList([...hisList,searching]);
       let a = hisList.push(...hisList, ...searching);
@@ -659,10 +614,6 @@ const App = () => {
       const filtered = hisList.filter(
         ({ text }, index) => !ids.includes(text, index + 1)
       );
-      // console.log("Search module Array after filtering in here", a);
-      // console.log("Search module Array after filtering in here", filtered);
-      // setHisList(filtered);
-      // localStorage.setItem("searchHistory", hisList);
       localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
 
       navigate(searchModule);
@@ -670,15 +621,11 @@ const App = () => {
   }, [searchModule]);
 
   const showRecentSearch = () => {
-    console.log("obj in fnc");
     let obj = JSON.parse(localStorage.getItem("searchHistory"));
-    // localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
-
-    let arr = obj?.filtered?.map((row) => ({
+      let arr = obj?.filtered?.map((row) => ({
       text: row.text,
       value: row.value,
     }));
-    // console.log("obj arr", arr);
     setShowHisList(arr);
   };
 
@@ -795,18 +742,27 @@ const App = () => {
                 </Space>
                 <Space>
                   <div className="location-select">
-                    <Space>
+                    <Space style={
+                      {
+                        width: 250,
+                        color: "white",
+                        backgroundColor: "#4d636f",
+                        // padding:10,
+                        borderRadius: 10,
+                        border: "1px solid #4d636f",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        // gap: 10,
+                      }
+                    }>
                       <Typography.Text style={{ color: "white" }}>
                         <SearchOutlined />
                       </Typography.Text>
                       <div style={{ width: 250, color: "white" }}>
                         <MyAsyncSelect
                           style={{ color: "black" }}
-                          // placeholder={
-                          //   <span style={{ color: "#000000" }}>
-                          //     Search here...
-                          //   </span>
-                          // }
+                          
                           placeholder="Select users"
                           onBlur={() => setModulesOptions([])}
                           noBorder={true}
@@ -831,14 +787,6 @@ const App = () => {
                   }}
                 >
                   {user?.type && user?.type.toLowerCase() == "developer" && (
-                    <>
-                      <Switch
-                        loading={testToggleLoading}
-                        checked={testPage}
-                        onChange={(value) => handleChangePageStatus(value)}
-                        checkedChildren="Test"
-                        unCheckedChildren="Live"
-                      />
 
                       <ControlOutlined
                         style={{
@@ -848,7 +796,6 @@ const App = () => {
                         }}
                         onClick={() => navToControl()}
                       />
-                    </>
                   )}
                   <Tooltip
                     title={`Socket ${
@@ -871,35 +818,6 @@ const App = () => {
                       />
                     </IconButton>
                   </Tooltip>
-                  {/* {favLoading ? (
-                    <LoadingOutlined
-                      style={{
-                        fontSize: 18,
-                        color: "white",
-                        cursor: "pointer",
-                      }}
-                    />
-                  ) : user?.favPages?.filter(
-                      (fav) => fav.url == pathname
-                    )[0] ? (
-                    <StarFilled
-                      onClick={() => handleFavPages(true)}
-                      style={{
-                        fontSize: 18,
-                        color: "white",
-                        cursor: "pointer",
-                      }}
-                    />
-                  ) : (
-                    <StarOutlined
-                      onClick={() => handleFavPages(false)}
-                      style={{
-                        fontSize: 18,
-                        color: "white",
-                        cursor: "pointer",
-                      }}
-                    />
-                  )} */}
 
                   <div>
                     <Badge
@@ -1006,10 +924,6 @@ const App = () => {
                   overflowX: "hidden",
                 }}
               >
-                <MessageModal
-                  showMessageDrawer={showMessageDrawer}
-                  setShowMessageDrawer={setShowMessageDrawer}
-                />
                 <Routes>
                   {filteredRoutes.map((route, index) => (
                     <Route

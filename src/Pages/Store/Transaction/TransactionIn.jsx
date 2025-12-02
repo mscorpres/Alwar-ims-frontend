@@ -35,9 +35,7 @@ const TransactionIn = () => {
       min_types: wise,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.success) {
+      if (response.success) {
         let arr = response.data.map((row, index) => ({
           index: index + 1,
           id: v4(),
@@ -45,10 +43,9 @@ const TransactionIn = () => {
         }));
         setRows(arr);
       } else {
-        toast.error(data.message?.msg || data.message);
+        toast.error(response.message?.msg || response.message);
         setRows([]);
       }
-    }
   };
 
   const handleDownloadAttachement = async (transactionId) => {

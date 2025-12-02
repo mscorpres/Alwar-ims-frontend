@@ -45,12 +45,15 @@ function R8() {
       }
 
       const response = await imsAxios.post("/report8", payload);
-      if (data) {
+      if (response.success) {
         const arr = response.data.map((row, index) => ({
           ...row,
           id: index + 1,
         }));
         setRows(arr);
+      }
+      else{
+        toast.error(response.message);
       }
     } catch (error) {
       console.log("Some error occurred while fetching rows", error);

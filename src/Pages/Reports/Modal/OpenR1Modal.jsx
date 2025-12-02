@@ -1,26 +1,18 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-import moment from "moment";
-import { DatePicker, Select } from "antd";
+import { Select,Modal, Row, Col  } from "antd";
 import { toast } from "react-toastify";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { v4 } from "uuid";
-import { Button, Modal, Row, Col, Input } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 
-const { RangePicker } = DatePicker;
-
 const OpenR1Modal = ({
   viewModal,
   setViewModal,
   setAllResponseData,
-  // loading,
   setLoading,
-  setFilterData,
 }) => {
   const [seacrh, setSearch] = useState(null);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -32,7 +24,7 @@ const OpenR1Modal = ({
   });
 
   const { executeFun, loading1 } = useApi();
-  // console.log(dataa);
+
   const [bomName, setBomName] = useState([]);
   const opt = [{ label: "Bom Wise", value: "Bom Wise" }];
 
@@ -42,9 +34,7 @@ const OpenR1Modal = ({
         () => getProductsOptions(searchInput, true),
         "select"
       );
-      let { data } = response;
-
-      setAsyncOptions(data);
+      setAsyncOptions(response.data);
     }
   };
 
@@ -56,8 +46,6 @@ const OpenR1Modal = ({
       return { value: d.bomid, label: d.bomname };
     });
     setBomName(arr);
-
-    //  setBranch(arr);
   };
 
   useEffect(() => {
@@ -80,19 +68,16 @@ const OpenR1Modal = ({
         selectProduct: "",
         bom: "",
       });
-      let arr = data.response.data.map((row) => {
+      let arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
         };
       });
       setAllResponseData(arr);
-      // setShow(false);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(data.message);
-      // setViewModal(false);
-      // setShow(false);
+      toast.error(response.message);
       setLoading(false);
     }
   };

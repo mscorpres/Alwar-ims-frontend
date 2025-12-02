@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "./r.css";
-import axios from "axios";
-
-import { Button, Col, DatePicker, Input, Row, Skeleton } from "antd";
+import { Button, Col, Input, Row, Skeleton } from "antd";
 import { toast } from "react-toastify";
 import {
-  downloadCSV,
-  downloadCSVCustomColumns,
-} from "../../../Components/exportToCSV";
-import InternalNav from "../../../Components/InternalNav";
+  downloadCSV} from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
-
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import { imsAxios } from "../../../axiosInterceptor";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
-import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 import { Tooltip } from "@mui/material";
 const { TextArea } = Input;
@@ -37,45 +30,11 @@ function R9() {
     selectBom: "",
     selectLocation: "",
   });
-  // console.log(allData);
   const [resData, setResData] = useState([]);
   const [locationDetail, setLocationDetail] = useState("");
 
   const { executeFun, loading1 } = useApi();
   const handleDownloadingCSV = () => {
-    //   let arr = [];
-    //   let csvData = [];
-    //   arr = resData;
-    //   csvData = arr.map((row) => {
-    //     console.log(row);
-    //     return {
-    //       "Part No": row.partno,
-    //       // "S.No": row.serial_no,
-    //       Component: row.components,
-    //       Category: row.category,
-    //       Status: row.status,
-    //       // Status:
-    //       //   row.status ==
-    //       //   '<span style="color: #2db71c; font-weight: 600;">ACTIVE</span>'
-    //       //     ? "Active"
-    //       //     : row.status ==
-    //       //       '<span style="color: #e53935; font-weight: 600;">INACTIVE</span>'
-    //       //     ? "Inactive"
-    //       //     : row.status ==
-    //       //       '<span style="color: #ff9800; font-weight: 600;">ALTERNATIVE</span>'
-    //       //     ? "Alternative"
-    //       //     : "",
-    //       "Alt Of": row.bomalt_part,
-    //       "Bom Qty": row.bomqty,
-    //       // "PRD MFG": row.mfg_qty,
-    //       UOM: row.uom,
-    //       "OP Qty": row.openBal == 0 ? "0" : row.openBal,
-    //       "IN Qty": row.creditBal == 0 ? "0" : row.creditBal,
-    //       "OUT Qty": row.debitBal == 0 ? "0" : row.closicreditBalngBal,
-    //       "CL Qty": row.closingBal == 0 ? "0" : row.closingBal,
-    //     };
-    //   });
-    //   downloadCSVCustomColumns(csvData, "Location Wise BOM Report");
     downloadCSV(resData, columns, "Location Wise BOM Report");
   };
 
@@ -92,7 +51,7 @@ function R9() {
   const getDataByLocation = async (e) => {
     const response = await imsAxios.post("/backend/fetchLocation");
     let v = [];
-    data?.map((ad) => v.push({ text: ad.text, value: ad.id }));
+    response.data?.map((ad) => v.push({ text: ad.text, value: ad.id }));
     setloctionDataTo(v);
 
     if (e.length > 3) {
@@ -101,10 +60,10 @@ function R9() {
       });
 
       if (!response.success) {
-        toast.error(data.massage);
+        toast.error(response.message);
       } else {
         let arr = [];
-        arr = data.map((d) => {
+        arr = response.data.map((d) => {
           return { text: d.text, value: d.id };
         });
         setloctionDataTo(arr);
@@ -116,7 +75,6 @@ function R9() {
     const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData?.selectProduct,
     });
-    console.log(data.data);
     const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
@@ -141,9 +99,8 @@ function R9() {
         date: selectDate,
         action: "search_r9",
       });
-      // console.log(data);
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -161,7 +118,7 @@ function R9() {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(data.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }
@@ -171,10 +128,9 @@ function R9() {
     const response = await imsAxios.post("/backend/fetchLocation", {
       seacrhTerm: e,
     });
-    // console.log(data);
 
     let v = [];
-    data.map((ad) => v.push({ text: ad.text, value: ad.id }));
+    response.data.map((ad) => v.push({ text: ad.text, value: ad.id }));
     setloctionDataTo(v);
   };
 
@@ -182,7 +138,7 @@ function R9() {
     const response = await imsAxios.post("/report9/fetchLocationDetail", {
       location_key: allData?.selectLocation,
     });
-    setLocationDetail(data?.data);
+    setLocationDetail(response.data);
   };
 
   const columns = [
@@ -217,15 +173,6 @@ function R9() {
       width: 180,
     },
   ];
-
-  // const reset = () => {
-  //   setAllData({
-  //     selectProduct: "",
-  //     selectBom: "",
-  //     selectLocation: "",
-  //   });
-  //   setResData([]);
-  // };
 
   useEffect(() => {
     if (allData?.selectProduct) {

@@ -170,9 +170,9 @@ const WeeklyAudit = () => {
     });
     if (response.success) {
       getRows();
-      toast.success(response.data.message);
+      toast.success(response.message);
     } else {
-      toast.error(response.data.message.msg);
+      toast.error(response.message);
     }
   };
 

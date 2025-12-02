@@ -346,18 +346,11 @@ export const items = (user) => [
         "B33"
         // <AiOutlineMinus />
       ),
-      getItem("MIN Edit/Reverse", "warehouse/minedit", <MdDashboard />, [
         getItem(
           <Link to="/update-rm">Edit MIN</Link>,
           "warehouse/minedit/edit"
           // <AiOutlineMinus />
         ),
-        getItem(
-          <Link to="/reverse-min">Reverse MIN</Link>,
-          "warehouse/minedit/reverse"
-          // <AiOutlineMinus />
-        ),
-      ]),
 
       getItem("FG (s) Inwarding", "B43", <MdDashboard />, [
         getItem(
@@ -707,22 +700,22 @@ export const items = (user) => [
   //   //   getItem(<Link to='/report-qc'>QC Report</Link>,'G23'),
   //   // ]),
   // ]),
-  getItem("CPM", "E", <CalculatorFilled />, [
-    getItem(<Link to="/CPM/CPM-analysis">CPM Analysis</Link>, "E1"),
-    getItem(<Link to="/CPM/report">CPM Finance</Link>, "reports/cpm"),
-  ]),
-  getItem("Analysis", "F", <SiPaytm />, [
-    // getItem(
-    //   <Link to="/paytm-qc/upload">Paytm QC Upload updated to check</Link>,
-    //   "F1"
-    // ),
-    // getItem(<Link to="paytm-qc/update">Paytm QC Update</Link>, "F2"),
-    getItem(<Link to="/analysis/paytm-qc">Paytm QC Report</Link>, "F1"),
-    getItem(
-      <Link to="/analysis/paytm-refurbishment">Paytm Refurbishment</Link>,
-      "F2"
-    ),
-  ]),
+  // getItem("CPM", "E", <CalculatorFilled />, [
+  //   getItem(<Link to="/CPM/CPM-analysis">CPM Analysis</Link>, "E1"),
+  //   getItem(<Link to="/CPM/report">CPM Finance</Link>, "reports/cpm"),
+  // ]),
+  // getItem("Analysis", "F", <SiPaytm />, [
+  //   // getItem(
+  //   //   <Link to="/paytm-qc/upload">Paytm QC Upload updated to check</Link>,
+  //   //   "F1"
+  //   // ),
+  //   // getItem(<Link to="paytm-qc/update">Paytm QC Update</Link>, "F2"),
+  //   getItem(<Link to="/analysis/paytm-qc">Paytm QC Report</Link>, "F1"),
+  //   getItem(
+  //     <Link to="/analysis/paytm-refurbishment">Paytm Refurbishment</Link>,
+  //     "F2"
+  //   ),
+  // ]),
   // getItem(<Link to="/sop">SOP's</Link>, "/sop", <FormOutlined />),
   getItem(
     <Link to="/invoice/create">Sales & Distribution</Link>,
@@ -765,7 +758,6 @@ export const items1 = (user, setShowTickets) => [
   // ),
   getItem(<Link to="/version/files">Version</Link>, "V", <ContainerOutlined />),
   getItem(<Link to="/myprofile">Profile</Link>, "A", <UserOutlined />),
-  // getItem(<Link to="/messenger">Messenger</Link>, "C", <MessageOutlined />),
 ];
 function getItem(label, key, icon, children) {
   return {
