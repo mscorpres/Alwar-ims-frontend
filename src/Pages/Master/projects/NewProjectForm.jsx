@@ -1,8 +1,5 @@
 import {
-  Button,
-  Card,
   Col,
-  Descriptions,
   Divider,
   Form,
   Input,
@@ -26,15 +23,14 @@ export default function NewProjectForm() {
     const response = await imsAxios.post("/backend/projectSave", submitConfirm);
     setLoading(false);
     setSubmitConfirm(false);
-    const { data } = response;
-    if (data) {
+    
       if (response.success) {
         toast.success(response.message);
         resetHandler();
       } else {
         toast.error(response.message?.msg || response.message);
       }
-    }
+    
   };
   const resetHandler = () => {
     let obj = {

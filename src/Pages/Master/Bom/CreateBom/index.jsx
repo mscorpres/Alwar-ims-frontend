@@ -173,19 +173,20 @@ const CreateBom = () => {
 
   const fetchProjects = async () => {
     const response = await imsAxios.post("/ppr/allProjects");
-    const { data } = response?.data;
-    if (data) {
-      if (data.length) {
-        const arr = data.map((row) => ({
+    if (response.success) {
+      if (response.data.length) {
+        const arr = response.data.map((row) => ({
           value: row.project,
           text: row.description,
         }));
 
         setProjectData(arr);
       } else {
+        toast.error("No projects found");
         setProjectData([]);
       }
     } else {
+      toast.error(response.message?.msg || response.message);
       setProjectData([]);
     }
   };

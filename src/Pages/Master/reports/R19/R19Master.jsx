@@ -17,7 +17,6 @@ import { toast } from "react-toastify";
 import TableActions from "../../../../Components/TableActions.jsx/TableActions";
 import VerifiedFilePreview from "./VerifiedFilePreview";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import { downloadCSVCustomColumns } from "../../../../Components/exportToCSV";
 import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
@@ -134,11 +133,11 @@ function R19Master() {
       });
       setLoading(false);
       if (response.success) {
-        toast.success(response.data.message);
+        toast.success(response.message);
         getRows();
         addSingleComponentForm.resetFields();
       } else {
-        toast.error(response.data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

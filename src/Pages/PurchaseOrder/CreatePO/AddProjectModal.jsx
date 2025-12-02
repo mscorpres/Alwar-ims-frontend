@@ -12,7 +12,6 @@ export default function AddProjectModal({
   const [loading, setLoading] = useState(false);
   const [addProjectForm] = Form.useForm();
   const validateHandler = (values) => {
-    console.log("it is woerking");
     setAddProjectConfirm(values);
   };
   const submitHandler = async () => {
@@ -22,8 +21,6 @@ export default function AddProjectModal({
       project_description: addProjectConfirm.projectDescription,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
       if (response.success) {
         toast.success(response.message);
         setAddProjectConfirm(false);
@@ -32,7 +29,6 @@ export default function AddProjectModal({
       } else {
         toast.error(response.message?.msg || response.message);
       }
-    }
   };
   const resetHandler = () => {
     let obj = {
