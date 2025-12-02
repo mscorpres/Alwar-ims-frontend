@@ -55,8 +55,8 @@ export default function MessageModal({
     setGetConversationLoading(true);
     const response = await imsAxios.get("/chat/get-conversations");
     setGetConversationLoading(false);
-    if (data?.code == 200) {
-      setConversations(data.data);
+    if (response.success) {
+      setConversations(response?.data);
     }
   };
   const getAllConverationById = async (rec) => {

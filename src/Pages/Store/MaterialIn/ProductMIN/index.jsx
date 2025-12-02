@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter";
-import axios from "axios";
 import { toast } from "react-toastify";
 import {
   Button,
@@ -35,8 +34,6 @@ import UploadDocs from "../MaterialInWithPO/UploadDocs";
 import Loading from "../../../../Components/Loading";
 import { v4 } from "uuid";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
-import MySelect from "../../../../Components/MySelect";
-import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import CurrenceModal from "../../../../Components/CurrenceModal";
 import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
 import AddBranch from "../../../Master/Vendor/model/AddBranch";
@@ -115,12 +112,7 @@ export default function ProductMIN() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSuccessPage, setShowSuccessPage] = useState(false);
   const [form] = Form.useForm();
-  const navigate = useNavigate();
-  const vendorDetailsOptions = [
-    { text: "JWI (Job Work In)", value: "j01" },
-    { text: "Vendor", value: "v01" },
-    { text: "Production Return", value: "p01" },
-  ];
+
   const addRow = () => {
     let arr = materialInward;
     let newRow = {
@@ -248,20 +240,21 @@ export default function ProductMIN() {
     axiosResponseFunction(async () => {
       if (invoices?.length) {
         setSubmitLoading(true);
-        const { data: uploadedFile } = await imsAxios.post(
+        const response = await imsAxios.post(
           "/transaction/upload-invoice",
           values.formData
         );
-        fileData = uploadedFile;
+      
+        fileData = response?.data;
         // form.getFieldValue("vendorType")
-        if (fileData.code != 200) {
+        if (response?.success) {
           return toast.error(
             "Some error occured while uploading invoices, Please try again"
           );
         } else {
           let final = {
             companybranch: "BRMSC012",
-            attachment: fileData ? fileData.data : "",
+            attachment: fileData ? fileData : "",
           };
           let venDetails = {
             cust_name: values.vendorValues.customerName,
@@ -276,13 +269,14 @@ export default function ProductMIN() {
           };
           setSubmitLoading(true);
           let response = await executeFun(() => savefginward(final), "select");
-          const { data } = response
+            console.log(response, "======================res====================");
+          const data = response?.data;
           setSubmitLoading(false);
-          if (response.success) {
+          if (response?.success) {
             // setvalues(false);
             setActiveTab("1");
             setShowSuccessPage({
-              materialInId: data.data.txn,
+              materialInId: data?.txn,
               vendor: { vendorname: vendorDetails.vendor },
               components: materialInward.map((row, index) => {
                 return {
@@ -301,77 +295,10 @@ export default function ProductMIN() {
         }
       } else {
         return toast.error("Please add at least one file!!");
-
-        // let final = {
-        //   companybranch: "BRMSC012",
-        //   attachment: fileData ? fileData.data : "",
-        // };
-        // let venDetails = {
-        //   companybranch: vendorDetails.companybranch,
-        //   vendor: vendorDetails.vendorName,
-        //   vendorbranch: vendorDetails.vendorBranch,
-        //   address: vendorDetails.vendorAddress,
-        //   vendortype: vendorDetails.vendorType,
-        //   ewaybill: vendorDetails.ewaybill ?? "--",
-        // };
-        // final = { ...final, ...values.componentData, ...venDetails };
-        // setSubmitLoading(true);
-
-        // const response = await imsAxios.post("/fgMIN/savefginward", final);
-        // setSubmitLoading(false);
-        // if (response.success) {
-        //   setActiveTab("1");
-        //   setShowSuccessPage({
-        //     materialInId: data.data.txn,
-        //     vendor: { vendorname: vendorDetails.vendor },
-        //     components: materialInward.map((row, index) => {
-        //       return {
-        //         id: index,
-        //         componentName: row.component.label,
-        //         inQuantity: row.orderqty,
-        //         invoiceNumber: row.invoiceId,
-        //         invoiceDate: row.invoiceDate,
-        //         location: row.locationName,
-        //       };
-        //     }),
-        //   });
-        //   vendorResetFunction();
-        //   materialResetFunction();
-        // } else {
-        //   toast.error(response.message?.msg || response.message);
-        // }
       }
     });
   };
   const validateInvoices = async (values) => {
-    // try {
-    //   const vendorValues = await form.validateFields();
-    //   setSubmitLoading(true);
-    //   const response = await imsAxios.post("/backend/checkInvoice", {
-    //     invoice: [vendorValues.docId],
-    //   });
-    //   if (data) {
-    //     setSubmitLoading(false);
-    //     if (data.invoicesFound) {
-    //       return Modal.confirm({
-    //         title:
-    //           "Following invoices are already found in our records, Do you still wish to continue?",
-    //         // icon: <ExclamationCircleFilled />,
-    //         content: <Row>{data.invoicesFound.map((inv) => `${inv}, `)}</Row>,
-    //         onOk() {
-    //           submitMIN(values);
-    //         },
-    //       });
-    //     } else {
-    //       submitMIN(values);
-    //     }
-    //   } else {
-    //     console.log("some error occured");
-    //   }
-    // } catch (error) {
-    // } finally {
-    //   setSubmitLoading(false);
-    // }
     submitMIN(values);
   };
   const getProductOptions = async (e) => {
@@ -380,7 +307,7 @@ export default function ProductMIN() {
         search: e,
       });
       let arr = [];
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       // return arr;
@@ -417,7 +344,7 @@ export default function ProductMIN() {
   };
   const getAutoComnsumptionOptions = async () => {
     setPageLoading(true);
-    let { data } = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
+    let response = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
     setPageLoading(false);
     if (response.success) {
       let arr = response.data.map((row) => {
@@ -430,19 +357,7 @@ export default function ProductMIN() {
       setAutoConsumptionOption(arr);
     }
   };
-  const getVendors = async (search) => {
-    if (search?.length > 2) {
-      const response = await executeFun(
-        () => getVendorOptions(search),
-        "select"
-      );
-      let arr = [];
-      if (response.success) {
-        arr = convertSelectOptions(response.data);
-      }
-      setAsyncOptions(arr);
-    }
-  };
+
   const inputHandler = async (name, value, id) => {
     let arr = materialInward;
     if (name == "component") {
@@ -463,10 +378,10 @@ export default function ProductMIN() {
               obj = {
                 ...obj,
                 [name]: value,
-                gstrate: data.data.gstrate,
-                orderrate: data.data.rate,
-                unitsname: data.data.unit,
-                hsn: data.data.hsn,
+                gstrate: response?.data.gstrate,
+                orderrate: response?.data.rate,
+                unitsname: response?.data.unit,
+                hsn: response?.data.hsn,
               };
               return obj;
             } else {
@@ -694,37 +609,7 @@ export default function ProductMIN() {
   //     }
   //   }
   // };
-  const handleFetchCostCenterOptions = async (search) => {
-    const response = await executeFun(
-      () => getCostCentresOptions(search),
-      "select"
-    );
-    let arr = [];
-    if (response.success) arr = convertSelectOptions(response.data);
-    setAsyncOptions(arr);
-  };
-  const handleFetchProjectOptions = async (search) => {
-    const response = await executeFun(
-      () => getProjectOptions(search),
-      "select"
-    );
-    setAsyncOptions(response.data);
-  };
-  const handleProjectChange = async (value) => {
-    setPageLoading(true);
-    const response = await imsAxios.post("/backend/projectDescription", {
-      project_name: value,
-    });
-    setPageLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        form.setFieldValue("projectName", data.data.description);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
-    }
-  };
+
   const vendorResetFunction = () => {
     let obj = {
       vendorType: "v01",
@@ -1030,141 +915,12 @@ export default function ProductMIN() {
                       <Input />
                     </Form.Item>
                   </Col>
-                  {/* <Col span={24}>
-                    <Form.Item
-                      name="vendorType"
-                      label="Vendor Type"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Please Select a vendor Type!",
-                      //   },
-                      // ]}
-                    >
-                      <MySelect size="default" options={vendorDetailsOptions} />
-                    </Form.Item>
-                  </Col> */}
+
                   <Col span={24}>
-                    <Form.Item
-                      name="customerName"
-                      label="Customer Name"
-                      // label={
-                      //   <div
-                      //     style={{
-                      //       display: "flex",
-                      //       justifyContent: "space-between",
-                      //       width: 350,
-                      //     }}
-                      //   >
-                      //     Vendor Name
-                      //     <span
-                      //       onClick={() => setShowAddVendorModal(true)}
-                      //       style={{ color: "#1890FF", cursor: "pointer" }}
-                      //     >
-                      //       Add Vendor
-                      //     </span>
-                      //   </div>
-                      // }
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Please Select a vendor Name!",
-                      //   },
-                      // ]}
-                    >
+                    <Form.Item name="customerName" label="Customer Name">
                       <Input />
                     </Form.Item>
                   </Col>
-                  {/* <Col span={24}>
-                    <Form.Item
-                      name="vendorBranch"
-                      label={
-                        <div
-                          style={{
-                            fontSize: window.innerWidth < 1600 && "0.7rem",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            width: 350,
-                          }}
-                        >
-                          Vendor Branch
-                          <span
-                            onClick={() => {
-                              vendorDetails.vendorName
-                                ? setShowBranchModal({
-                                    vendor_code: vendorDetails.vendorName,
-                                  })
-                                : toast.error("Please Select a vendor first");
-                            }}
-                            style={{ color: "#1890FF" }}
-                          >
-                            Add Branch
-                          </span>
-                        </div>
-                      }
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Please Select a vendor Branch!",
-                      //   },
-                      // ]}
-                    >
-                      <MySelect
-                        disabled={form.getFieldValue("vendorType") == "p01"}
-                        options={vendorBranchOptions}
-                      />
-                    </Form.Item>
-                  </Col> */}
-                  {/* <Col span={24}>
-                    <Row gutter={4}> */}
-                  {/* <Col
-                        span={
-                          form.getFieldValue("vendorType") == "j01" ? 12 : 24
-                        }
-                      >
-                        <Form.Item name="gstin" label="GSTIN">
-                          <Input size="default" disabled />
-                        </Form.Item>
-                      </Col> */}
-                  {/* {form.getFieldValue("vendorType") == "j01" && (
-                        <Col span={12}>
-                          <Form.Item name="ewaybill" label="E-Way Bill Number">
-                            <Input size="default" />
-                          </Form.Item>
-                        </Col>
-                      )}*/}
-                  {/* </Row>
-                  </Col> */}
-                  {/* <Col span={24}>
-                    <Form.Item label="Cost Center" name="costCenter">
-                      <MyAsyncSelect
-                        selectLoading={selectLoading}
-                        onBlur={() => setAsyncOptions([])}
-                        optionsState={asyncOptions}
-                        loadOptions={getCostCenteres}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={24}>
-                    <Row gutter={6}>
-                      <Col span={12}>
-                        <Form.Item label="Project ID" name="projectID">
-                          <MyAsyncSelect
-                            selectLoading={selectLoading}
-                            onBlur={() => setAsyncOptions([])}
-                            optionsState={asyncOptions}
-                            loadOptions={getProjectOptions}
-                            onChange={handleProjectChange}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={12}>
-                        <Form.Item label="Project Name" name="projectName">
-                          <Input size="default" disabled />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Col> */}
 
                   <Col span={24}>
                     <Form.Item
@@ -1256,7 +1012,7 @@ export default function ProductMIN() {
           </Col>
           <Col style={{ height: "100%" }} span={18}>
             <div style={{ height: "98%", border: "1px solid #EEEEEE" }}>
-              {pageLoading ||loading1("select")&& <Loading />}
+              {pageLoading || (loading1("select") && <Loading />)}
               <FormTable columns={columns} data={materialInward} />
             </div>
           </Col>

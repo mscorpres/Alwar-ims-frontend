@@ -112,7 +112,6 @@ export default function MaterialInWithoutPO() {
   const [previewRows, setPreviewRows] = useState([]);
   const [form] = Form.useForm();
   const components = Form.useWatch("components", form);
-  const fileComponents = Form.useWatch("fileComponents", form);
   const { executeFun, loading } = useApi();
   const costCenter = Form.useWatch("costCenter", form);
   const vendor = Form.useWatch("vendorName", form);
@@ -150,14 +149,15 @@ export default function MaterialInWithoutPO() {
     const values = await form.validateFields();
 
     const response = await executeFun(() => validateInvoice(values), "submit");
-    console.log("success from validate invoice");
-    if (response.success) {
-      const { data } = response;
-      if (data.invoicesFound) {
+
+    if (response?.success) {
+      if (response?.data.invoicesFound) {
         return Modal.confirm({
           title:
             "Following invoices are already found in our records, Do you still wish to continue?",
-          content: <Row>{data.invoicesFound.map((inv) => `${inv}, `)}</Row>,
+          content: (
+            <Row>{response?.data.invoicesFound.map((inv) => `${inv}, `)}</Row>
+          ),
           onOk() {
             submitMIN(values);
           },
@@ -188,16 +188,16 @@ export default function MaterialInWithoutPO() {
         "submit"
       );
     }
-    console.log("fileResponse-------", fileResponse);
+  
 
     if (fileResponse?.success || vendorType == "p01") {
-      fileName = fileResponse?.data?.data;
+      fileName = fileResponse?.data;
 
       const response = await executeFun(
         () => materialInWithoutPo(values, fileName, vendorType),
         "submit"
       );
-      console.log("response-------", response);
+
       if (response.success) {
         // const { data } = response.data;
         setShowSuccessPage({
@@ -264,20 +264,20 @@ export default function MaterialInWithoutPO() {
       cost_center: costCenter,
     });
     setSelectLoading(false);
-    if (data.success) {
-      let arr = data.response.data.map((d) => {
+    if (response?.success) {
+      let arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const getAutoComnsumptionOptions = async () => {
     setPageLoading(true);
-    let { data } = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
+    let response = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
     setPageLoading(false);
-    if (data.success) {
+    if (response?.success) {
       let arr = response.data.map((row) => {
         return {
           value: row.id,
@@ -302,12 +302,12 @@ export default function MaterialInWithoutPO() {
       "fetch"
     );
     if (response.success) {
-      const { data } = response;
+      const data = response?.data;
       console.log("data,", data, rowId);
-      form.setFieldValue(["components", rowId, "gstRate"], data.data.gstrate);
-      form.setFieldValue(["components", rowId, "hsn"], data.data.hsn);
-      form.setFieldValue(["components", rowId, "rate"], data.data.rate);
-      form.setFieldValue(["components", rowId, "mfg"], data.data.mfgCode);
+      form.setFieldValue(["components", rowId, "gstRate"], data.gstrate);
+      form.setFieldValue(["components", rowId, "hsn"], data.hsn);
+      form.setFieldValue(["components", rowId, "rate"], data.rate);
+      form.setFieldValue(["components", rowId, "mfg"], data.mfgCode);
       // form.setFieldValue(["components", rowId, "value"], getInt(inrValue));
     }
   };
@@ -334,11 +334,9 @@ export default function MaterialInWithoutPO() {
       "previousRate",
     ]);
     if (previousRate !== value) {
-      console.log("rate difference", previousRate);
+      return;
     }
-    form
-      .validateFields()
-      .then((values) => console.log("these are the values", values));
+    form.validateFields();
   };
 
   const getVendorBracnch = async (vendorCode) => {
@@ -348,8 +346,8 @@ export default function MaterialInWithoutPO() {
     );
 
     let arr = [];
-    if (response.success) {
-      arr = convertSelectOptions(response.data.data);
+    if (response?.success) {
+      arr = convertSelectOptions(response?.data);
     }
     form.setFieldValue("vendorBranch", arr[0]?.value);
 
@@ -364,11 +362,10 @@ export default function MaterialInWithoutPO() {
       "fetch"
     );
 
-    if (response.success) {
-      // console.log("response =>", response?.data?.data.einvoice_status);
-      setIsApplicable(response.data?.data?.einvoice_status);
-      form.setFieldValue("gstin", response?.data?.data?.gstid);
-      form.setFieldValue("vendorAddress", response?.data?.data.address);
+    if (response?.success) {
+      setIsApplicable(response?.data?.einvoice_status);
+      form.setFieldValue("gstin", response?.data?.gstid);
+      form.setFieldValue("vendorAddress", response?.data?.address);
     }
   };
   const handleFetchCostCenterOptions = async (search) => {
@@ -377,7 +374,7 @@ export default function MaterialInWithoutPO() {
       "select"
     );
     let arr = [];
-    if (response.success) arr = convertSelectOptions(response.data);
+    if (response?.success) arr = convertSelectOptions(response?.data);
     setAsyncOptions(arr);
   };
   const handleFetchProjectOptions = async (search) => {
@@ -385,7 +382,7 @@ export default function MaterialInWithoutPO() {
       () => getProjectOptions(search),
       "select"
     );
-    setAsyncOptions(response.data);
+    setAsyncOptions(response?.data);
   };
 
   const handleProjectChange = async (value) => {
@@ -394,10 +391,10 @@ export default function MaterialInWithoutPO() {
       project_name: value,
     });
     setPageLoading(false);
-    if (response.success) {
-      form.setFieldValue("projectName", response.data.description);
+    if (response?.success) {
+      form.setFieldValue("projectName", response?.data.description);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response?.message?.msg || response.message);
     }
   };
   const vendorResetFunction = () => {
@@ -437,153 +434,7 @@ export default function MaterialInWithoutPO() {
       currency === "364907247" ? 0 : foreignValue
     );
   };
-  // const columns = [
-  //   {
-  //     headerName: <CommonIcons action="addRow" onClick={addRow} />,
-  //     width: 40,
-  //     field: "add",
-  //     sortable: false,
-  //     renderCell: ({ row }) =>
-  //       materialInward.indexOf(row) >= 1 && (
-  //         <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
-  //       ),
-  //     sortable: false,
-  //   },
-  //   {
-  //     headerName: "Part Component",
-  //     field: "c_partno",
-  //     sortable: false,
-  //     renderCell: (params) =>
-  //       componentCell(
-  //         params,
-  //         inputHandler,
-  //         setAsyncOptions,
-  //         getComponentDetail,
-  //         asyncOptions,
-  //         loading("select")
-  //       ),
-  //     width: 300,
-  //   },
-  //   {
-  //     headerName: "QTY",
-  //     field: "gstqty",
-  //     sortable: false,
-  //     renderCell: (params) => QuantityCell(params, inputHandler),
-  //     width: 120,
-  //   },
-  //   {
-  //     headerName: "Rate",
-  //     field: "orderrate",
-  //     sortable: false,
-  //     renderCell: (params) => rateCell(params, inputHandler, currencies),
-  //     width: 180,
-  //   },
-  //   // {
-  //   //   headerName: "Currency",
-  //   //   field: "currency",
-  //   //   sortable: false,
-  //   //   renderCell: (params) => currencyCell(params, inputHandler, currencies),
-  //   //   width: 80,
-  //   // },
-  //   {
-  //     headerName: "Taxable Value",
-  //     field: "inrValue",
-  //     sortable: false,
-  //     renderCell: taxableCell,
-  //     width: 120,
-  //   },
-  //   {
-  //     headerName: "Foreign Value",
-  //     field: "usdValue",
-  //     sortable: false,
-  //     renderCell: foreignCell,
-  //     width: 120,
-  //   },
-  //   {
-  //     headerName: "Invoice ID",
-  //     field: "invoiceId",
-  //     sortable: false,
-  //     renderCell: (params) => invoiceIdCell(params, inputHandler),
-  //     width: 200,
-  //   },
-  //   {
-  //     headerName: "Invoice Date",
-  //     field: "invoiceDate",
-  //     sortable: false,
-  //     renderCell: (params) => invoiceDateCell(params, inputHandler),
-  //     width: 120,
-  //   },
-  //   {
-  //     headerName: "HSN Code",
-  //     field: "hsncode",
-  //     sortable: false,
-  //     renderCell: (params) => HSNCell(params, inputHandler),
-  //     width: 150,
-  //   },
-  //   {
-  //     headerName: "GST Type",
-  //     field: "gsttype",
-  //     sortable: false,
-  //     renderCell: (params) => gstTypeCell(params, inputHandler),
-  //     // flex: 1,
-  //     width: 200,
-  //   },
-  //   {
-  //     headerName: "GST Rate",
-  //     field: "gstrate",
-  //     sortable: false,
-  //     renderCell: (params) => gstRate(params, inputHandler),
-  //     // flex: 1,
-  //     width: 100,
-  //   },
-  //   {
-  //     headerName: "CGST",
-  //     renderCell: (params) => CGSTCell(params, inputHandler),
-  //     // flex: 1,
-  //     field: "cgst",
-  //     sortable: false,
-  //     width: 120,
-  //   },
-  //   {
-  //     headerName: "SGST",
-  //     renderCell: (params) => SGSTCell(params, inputHandler),
-  //     // flex: 1,
-  //     field: "sgst",
-  //     sortable: false,
-  //     width: 120,
-  //   },
-  //   {
-  //     headerName: "IGST",
-  //     renderCell: (params) => IGSTCell(params, inputHandler),
-  //     // flex: 1,
-  //     field: "igst",
-  //     sortable: false,
-  //     width: 120,
-  //   },
-  //   {
-  //     headerName: "Location",
-  //     field: "location",
-  //     sortable: false,
-  //     renderCell: (params) =>
-  //       locationCell(params, inputHandler, locationOptions),
-  //     width: 150,
-  //   },
-  //   {
-  //     headerName: "Auto Consump",
-  //     field: "autoConsumption",
-  //     sortable: false,
-  //     renderCell: (params) =>
-  //       autoConsumptionCell(params, inputHandler, autoConsumptionOptions),
-  //     width: 150,
-  //   },
-  //   {
-  //     headerName: "Remarks",
-  //     field: "orderremark",
-  //     sortable: false,
-  //     renderCell: (params) => remarkCell(params, inputHandler),
-  //     width: 250,
-  //   },
-  // ];
+ 
   const successColumns = [
     {
       headerName: "Component",
@@ -975,9 +826,9 @@ export default function MaterialInWithoutPO() {
       () => uplaodFileInMINInward(formData),
       "fetch"
     );
-    if (response?.data?.status == "success") {
-      let { data } = response;
-      let rows = data.data;
+    if (response?.success) {
+    
+      let data = response?.data;
       // const formattedRows = data.data.rows.map((row) => {
       //   let rowObject = {};
       //   data.data.headers.forEach((header, index) => {
@@ -985,7 +836,7 @@ export default function MaterialInWithoutPO() {
       //   });
       //   return rowObject;
       // });
-      const formattedHeaders = data.data.headers.map((header) =>
+      const formattedHeaders = data.headers.map((header) =>
         header
           .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
             index === 0 ? match.toUpperCase() : match.toLowerCase()
@@ -994,7 +845,7 @@ export default function MaterialInWithoutPO() {
       );
 
       // Map the row values to headers
-      const formattedRows = data.data.rows.map((row) => {
+      const formattedRows = data?.rows.map((row) => {
         let rowObject = {};
         formattedHeaders.forEach((header, index) => {
           rowObject[header] = row[index];
@@ -1024,7 +875,7 @@ export default function MaterialInWithoutPO() {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response.message.msg);
+      toast.error(response.message);
       setPreview(false);
     }
   };

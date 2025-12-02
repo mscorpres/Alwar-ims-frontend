@@ -103,7 +103,6 @@ export default function CreatePo() {
   const [successData, setSuccessData] = useState(false);
   const [projectDesc, setProjectDesc] = useState("");
   const [form] = Form.useForm();
-  console.log("newPurchaseOrder", newPurchaseOrder);
   const { executeFun, loading: loading1 } = useApi();
   const validatePO = () => {
     let newPo = {};
@@ -276,20 +275,21 @@ export default function CreatePo() {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
-    const { data } = response;
-    if (data) {
+    const  data  = response?.data;
+  
       if (response.success) {
-        return data.data;
+        return data;
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
-    }
+ 
   };
   const selectInputHandler = async (name, value) => {
     if (value) {
       let obj = newPurchaseOrder;
       if (name == "vendorname") {
         let arr = await getVendorBracnch(value.value);
+     
         let { address, gstin } = await getVendorAddress({
           vendorCode: value,
           vendorBranch: arr[0].value,
@@ -300,10 +300,10 @@ export default function CreatePo() {
           ...obj,
           [name]: value,
           vendorbranch: arr[0].value,
-          vendoraddress: address.replaceAll("<br>", "\n"),
+          vendoraddress: address?.replaceAll("<br>", "\n"),
           gstin: gstin,
-          paymenttermsday: paymentTermsDay.paymentterms,
-          paymentterms: paymentTermsDay.po_payment_terms,
+          paymenttermsday: paymentTermsDay?.paymentterms,
+          paymentterms: paymentTermsDay?.po_payment_terms,
           msmeType: paymentTermsDay.msme_data.msme_type,
           msmeId: paymentTermsDay.msme_data.msme_id,
         };
@@ -345,11 +345,13 @@ export default function CreatePo() {
           [name]: value,
         };
       }
-      console.log(obj);
+  
       form.setFieldsValue(obj);
       setnewPurchaseOrder(obj);
     }
   };
+
+
   const POoption = [
     { text: "New", value: "N" },
     { text: "Supplementary", value: "S" },
@@ -380,14 +382,15 @@ export default function CreatePo() {
   //getting vendors in the vendor select list
   const getVendors = async (search) => {
     const response = await executeFun(() => getVendorOptions(search), "select");
+   
     let arr = [];
 
     if (response.success) {
       arr = convertSelectOptions(response.data);
     }
     setAsyncOptions(arr);
-    let { data } = response;
-    arr = data.data;
+    let  data  = response?.data;
+    arr = data;
     // //   if (!data.msg) {
     if (response.success) {
       arr = arr.map((d) => {
@@ -404,20 +407,29 @@ export default function CreatePo() {
     const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
     });
+    
     setPageLoading(false);
-    const arr = response.data.map((d) => {
+    if(response.success){
+      const arr = response.data.map((d) => {
       return { value: d.id, text: d.text };
     });
     setVendorBranches(arr);
     return arr;
+    }
+    if (!response?.success) {
+      return
+    }
   };
   // getting vendor address
   const getVendorAddress = async ({ vendorCode, vendorBranch }) => {
+  
+   
     const response = await imsAxios.post("/backend/vendorAddress", {
-      vendorcode: vendorCode.value,
+      vendorcode: vendorCode?.value,
       branchcode: vendorBranch,
     });
-    return { address: data?.data?.address, gstin: data?.data.gstid };
+   
+    return { address: response?.data?.address, gstin: response?.data.gstid };
   };
   const getBillTo = async () => {
     setSelectLoading(true);
@@ -426,7 +438,7 @@ export default function CreatePo() {
     });
     setSelectLoading(false);
     let arr = [];
-    arr = data.map((d) => {
+    arr = response?.data.map((d) => {
       return { text: d.text, value: d.id };
     });
     setBillTopOptions(arr);
@@ -438,7 +450,7 @@ export default function CreatePo() {
     });
     setSelectLoading(false);
     let arr = [];
-    arr = data.map((d) => {
+    arr = response?.data.map((d) => {
       return { text: d.text, value: d.id };
     });
     setShipToOptions(arr);
@@ -459,9 +471,9 @@ export default function CreatePo() {
     });
     setPageLoading(false);
     return {
-      gstin: data.data?.gstin,
-      pan: data.data?.pan,
-      address: data.data?.address,
+      gstin: response?.data?.gstin,
+      pan: response?.data?.pan,
+      address: response?.data?.address,
     };
 
     // selectInputHandler("billDetails", data.data.address);
@@ -472,12 +484,12 @@ export default function CreatePo() {
       shipping_code: shipaddressid,
     });
     setPageLoading(false);
-    setStateCode(data?.data?.statecode);
+    setStateCode(response?.data?.statecode);
     // console.log("stateCodeeeeeeeeeeeeee", data.data.statecode);
     return {
-      gstin: data.data?.gstin,
-      pan: data.data?.pan,
-      address: data.data?.address,
+      gstin: response.data?.gstin,
+      pan: response.data?.pan,
+      address: response.data?.address,
     };
   };
   const resetFunction = () => {
@@ -552,12 +564,12 @@ export default function CreatePo() {
       project_name: value,
     });
     setPageLoading(false);
-    const { data } = response;
+    const  data  = response?.data;
     if (data) {
       if (response.success) {
-        setProjectDesc(data.data.description);
+        setProjectDesc(data.description);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     }
   };
