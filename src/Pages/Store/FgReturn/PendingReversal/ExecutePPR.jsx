@@ -32,7 +32,6 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
   const [locationOptions, setLocationOptions] = useState([]);
 
   const locationOptionsRef = useRef(null);
-  console.log("here in open draer", editPPR);
   const onChange = (newActiveKey) => {
     setActiveKey(newActiveKey);
   };
@@ -71,9 +70,8 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
     });
     setPageLoading(false);
 
-    console.log("response", response);
     if (response.success) {
-      let { data } = response;
+      let  {data}  = response;
 
       let arr1 = {
         ...data.header_data,
@@ -83,7 +81,6 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
         fg_return_txn: editPPR.transactionId,
         product_id: editPPR.productKey,
       };
-      console.log("arr1----", arr1);
       setHeaderData(arr1);
       let arr = data.comp_data.map((row) => {
         return {
@@ -96,9 +93,9 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
       });
       setTableData(arr);
       if (response.success) {
-        // setHeaderData(arr1);
+     
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setEditPPR(null);
       }
     } else {
@@ -159,17 +156,7 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
         />
       ),
     },
-    // {
-    //   headerName: "Rejected",
-    //   flex: 1,
-    //   field: "rejected",
-    //   renderCell: ({ row }) => (
-    //     <Input
-    //       value={row.rej}
-    //       onChange={(e) => compInputHandler("rej", e.target.value, row.id)}
-    //     />
-    //   ),
-    // },
+   
     {
       headerName: "Remark",
       flex: 1,
@@ -192,6 +179,7 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
   };
   const getData = (response) => {
     const { data } = response;
+    console.log(data,"data==================")
     if (data) {
       if (data.length) {
         const arr = data.map((row) => ({

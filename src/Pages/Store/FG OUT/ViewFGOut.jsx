@@ -32,7 +32,7 @@ const ViewFGOut = () => {
         method: localVar.sel,
         date: selectDate,
       });
-      if (data.success) {
+      if (response?.success) {
         let arr = response.data.map((row) => {
           return {
             ...row,
@@ -42,7 +42,7 @@ const ViewFGOut = () => {
         setFetchDataFromDate(arr);
         setLoading(false);
       } else {
-        toast.error(data.message?.msg || data.message);
+        toast.error(response?.message);
         setLoading(false);
       }
     }
@@ -61,22 +61,7 @@ const ViewFGOut = () => {
     { field: "fg_type", headerName: "FG TYPE", width: 100 },
   ];
 
-  const handleDownloadingCSV = () => {
-    let arr = [];
-    let csvData = [];
-    arr = fetchDataFromDate;
-    csvData = arr.map((row) => {
-      return {
-        Date: row.approvedate,
-        SKU: row.sku,
-        Product: row.name,
-        "Out Qty": row.approveqty,
-        "Out By": row.approveby,
-        "FG TYPE": row.fg_type,
-      };
-    });
-    downloadCSV(csvData);
-  };
+
 
   return (
     <div style={{ height: "90%" }}>
