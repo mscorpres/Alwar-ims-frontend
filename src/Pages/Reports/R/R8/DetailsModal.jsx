@@ -21,12 +21,15 @@ const DetailsModal = ({ show, close }) => {
         }
       );
 
-      if (data) {
-        const arr = data.response.map((row, index) => ({
+      if (response.success) {
+        const arr = response.data.map((row, index) => ({
           ...row,
           id: index + 1,
         }));
         setRows(arr);
+      }
+      else{
+        toast.error(response.message);
       }
     } catch (error) {
       console.log("some error occurred while fetching the components", error);

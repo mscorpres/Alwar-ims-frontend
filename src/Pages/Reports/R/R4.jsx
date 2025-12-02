@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./r.css";
 import { toast } from "react-toastify";
-
 import { MdOutlineDownloadForOffline } from "react-icons/md";
-import { Button, Col, DatePicker, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
@@ -61,7 +59,6 @@ const R4 = () => {
 
   const fetch = async () => {
     setResponseData([]);
-    // console.log(selectDatep)
     if (!selectDate) {
       toast.error("Please Select Date First Then Proceed Next Step");
     } else {
@@ -72,9 +69,8 @@ const R4 = () => {
         action: "search_r4",
       });
 
-      // console.log(data);
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -84,7 +80,7 @@ const R4 = () => {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }

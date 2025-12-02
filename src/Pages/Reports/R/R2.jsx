@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Button, Col, Row, Space } from "antd";
+import { Col, Row, Space } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
@@ -227,7 +227,6 @@ const R2 = () => {
             i: index + 1,
           };
         });
-        // console.log("arr", arr);
         setRows(arr);
         toast.success(response.message);
         setLoading(false);
@@ -241,11 +240,10 @@ const R2 = () => {
         data: searchTerm,
         wise: wise,
       });
-      const { data } = response;
+    
       if (response.success) {
-        // setLoading(true);
         toast.success(response.message);
-        let arr = data.response.data.map((row, index) => {
+        let arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -253,10 +251,9 @@ const R2 = () => {
           };
         });
         setRows(arr);
-        // console.log("rows", rows);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(false);
       }
       setLoading(false);

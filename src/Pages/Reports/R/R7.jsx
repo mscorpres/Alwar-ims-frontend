@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./r.css";
 import { DownloadOutlined } from "@ant-design/icons";
-
-import { Button, Col, DatePicker, Row, Skeleton, Spin } from "antd";
+import { Button, Col, Row, Spin } from "antd";
 import { toast } from "react-toastify";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -10,7 +9,6 @@ import { v4 } from "uuid";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
-import { MdOutlineDownloadForOffline } from "react-icons/md";
 import { imsAxios } from "../../../axiosInterceptor";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
@@ -143,20 +141,18 @@ const R7 = () => {
         subject: allData.selectBom,
         action: "search_r7",
       });
-      // console.log(data);
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return { ...row, id: v4() };
         });
         setResData(arr);
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(data.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }
-    // {}
   };
 
   useEffect(() => {

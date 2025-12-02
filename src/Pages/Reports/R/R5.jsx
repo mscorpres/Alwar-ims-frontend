@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./r.css";
 import { toast } from "react-toastify";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
-
-import { Button, Col, DatePicker, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
-import InternalNav from "../../../Components/InternalNav";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -54,7 +52,6 @@ const R5 = () => {
   };
 
   const fetch = async () => {
-    // console.log(selectDatep)
     if (!selectDate) {
       toast.error("Please Select Date First Then Proceed Next Step");
     } else {
@@ -65,9 +62,8 @@ const R5 = () => {
         action: "search_r5",
       });
 
-      // console.log(data);
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -77,7 +73,7 @@ const R5 = () => {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(data.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }

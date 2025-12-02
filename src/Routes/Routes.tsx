@@ -56,7 +56,6 @@ import {
   MaterialInWithoutPO,
   MaterialInWithPO,
   ExportMaterialInWithPO,
-  Messenger,
   Profile,
   Page404,
   CPMAnalysis,
@@ -840,10 +839,6 @@ const Routes = [
   {
     path: "/master/reports/r19",
     main: () => <R19Master />,
-  },
-  {
-    path: "/messenger",
-    main: () => <Messenger />,
   },
   {
     path: "/myProfile",

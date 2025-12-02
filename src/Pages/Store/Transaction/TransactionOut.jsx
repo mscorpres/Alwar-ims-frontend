@@ -95,7 +95,7 @@ const TransactionOut = () => {
         data: datee,
       });
       // console.log("Response", data);
-      if (data.success) {
+      if (response.success) {
         let arr = response.data.map((row) => {
           return {
             ...row,
@@ -105,7 +105,7 @@ const TransactionOut = () => {
         setDateData(arr);
         setLoading(false);
       } else {
-        toast.error(data.message?.msg || data.message);
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

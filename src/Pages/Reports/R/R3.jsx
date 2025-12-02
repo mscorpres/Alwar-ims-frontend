@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./r.css";
 import { toast } from "react-toastify";
-
-import { Button, Col, DatePicker, Row } from "antd";
+import { Button, Col, Row } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -47,7 +46,7 @@ const R3 = () => {
       });
       if (response.success) {
         toast.success(response.message);
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -56,7 +55,7 @@ const R3 = () => {
         setResponseData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }
