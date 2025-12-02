@@ -44,7 +44,7 @@ function JWRMChallanEditMaterials({
       challan_no: editingJWMaterials,
     });
     setLoading("fetchingDetails", false);
-    if (response.data.code === 200) {
+    if (response.success) {
       let arr = response.data.material.map((row, index) => ({
         id: v4(),
         index: index + 1,
@@ -112,7 +112,7 @@ function JWRMChallanEditMaterials({
     );
     setLoading("submit", false);
     console.log(response);
-    if (response.data.code === 200) {
+    if (response.success) {
       toast.success(response.data.message);
       setEditingJWMaterials(false);
       getRows();
@@ -157,14 +157,14 @@ function JWRMChallanEditMaterials({
     // console.log("response->", response)
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row) => ({
+      if (response.success) {
+        let arr = response.data.map((row) => ({
           text: row.text,
           value: row.id,
         }));
         setVendorBranchOptions(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -179,7 +179,7 @@ function JWRMChallanEditMaterials({
     setLoading("values", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         let obj = {
           vendor_address: data.data.address?.replaceAll("<br>", "\n"),
           vendor_gst: data.data.gstid,
@@ -188,7 +188,7 @@ function JWRMChallanEditMaterials({
         createJobWorkChallanForm.setFieldsValue(obj);
         return obj;
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -233,7 +233,7 @@ function JWRMChallanEditMaterials({
     setLoading("values", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         obj1 = {
           ...obj1,
           dispatch_to__line1: data.data.address.replaceAll("<br>", "\n"),
@@ -243,7 +243,7 @@ function JWRMChallanEditMaterials({
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -256,7 +256,7 @@ function JWRMChallanEditMaterials({
     setLoading("values", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         obj1 = {
           ...obj1,
           billing_address: data.data.address.replaceAll("<br>", "\n"),
@@ -266,7 +266,7 @@ function JWRMChallanEditMaterials({
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

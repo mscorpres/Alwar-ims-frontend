@@ -18,7 +18,7 @@ export default function SuccessPage({
   const [downloadLoading, setDownloadLoading] = useState(false);
   const printFun = async () => {
     setPringLoading(true);
-    const { data } = await imsAxios.post("/gatepass/printGatePass", {
+    const response = await imsAxios.post("/gatepass/printGatePass", {
       transaction: successInfo.id,
     });
     setPringLoading(false);
@@ -26,7 +26,7 @@ export default function SuccessPage({
   };
   const handleDownload = async () => {
     setDownloadLoading(true);
-    const { data } = await imsAxios.post("/gatepass/printGatePass", {
+    const response = await imsAxios.post("/gatepass/printGatePass", {
       transaction: successInfo.id,
     });
     setDownloadLoading(false);

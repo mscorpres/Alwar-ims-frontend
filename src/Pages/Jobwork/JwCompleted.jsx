@@ -45,7 +45,7 @@ const JwCompleted = () => {
   const { executeFun, loading: loading1 } = useApi();
   const getOption = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/getProductByNameAndNo", {
+      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
       // console.log(data);
@@ -58,7 +58,7 @@ const JwCompleted = () => {
   };
   const handlePrint = async (d) => {
     setLoading("print");
-    const { data } = await imsAxios.post("/jobwork/print_jw_analysis", {
+    const response = await imsAxios.post("/jobwork/print_jw_analysis", {
       transaction: d,
     });
     setLoading(false);
@@ -66,7 +66,7 @@ const JwCompleted = () => {
   };
   const handleDownload = async (d) => {
     setLoading("print");
-    const { data } = await imsAxios.post("/jobwork/print_jw_analysis", {
+    const response = await imsAxios.post("/jobwork/print_jw_analysis", {
       transaction: d,
     });
     setLoading(false);
@@ -92,12 +92,12 @@ const JwCompleted = () => {
       toast.error("Please Select Option");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("jobwork/fetch_jw_completed_list", {
+      const response = await imsAxios.post("jobwork/fetch_jw_completed_list", {
         data: datee,
         wise: allData.setType,
       });
-      if (data.code == 200) {
-        let arr = data.data.map((row, index) => {
+      if (response.success) {
+        let arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -106,8 +106,8 @@ const JwCompleted = () => {
         });
         setDateData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }
@@ -115,12 +115,12 @@ const JwCompleted = () => {
 
   const fetchJWwise = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/jobwork/fetch_jw_completed_list", {
+    const response = await imsAxios.post("/jobwork/fetch_jw_completed_list", {
       data: allData.jw,
       wise: allData.setType,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -129,20 +129,20 @@ const JwCompleted = () => {
       });
       setDJWData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };
 
   const fetchSKUwise = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/jobwork/fetch_jw_completed_list", {
+    const response = await imsAxios.post("/jobwork/fetch_jw_completed_list", {
       data: allData.sku,
       wise: allData.setType,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -151,20 +151,20 @@ const JwCompleted = () => {
       });
       setSKUData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };
 
   const fetchVendorwise = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/jobwork/fetch_jw_completed_list", {
+    const response = await imsAxios.post("/jobwork/fetch_jw_completed_list", {
       data: allData.ven,
       wise: allData.setType,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -173,8 +173,8 @@ const JwCompleted = () => {
       });
       setVendorData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };

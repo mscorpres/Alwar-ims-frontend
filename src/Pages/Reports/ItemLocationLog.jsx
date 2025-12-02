@@ -130,7 +130,7 @@ export default function ItemLocationLog() {
       } = data.data;
       console.log("this is the header", header);
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const bomDetails = bom_details;
           const arr = body.map((row, index) => ({
             index: index + 1,

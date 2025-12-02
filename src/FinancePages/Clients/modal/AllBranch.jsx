@@ -20,13 +20,13 @@ function AllBranch({
   const [branchId, setBranchId] = useState(null);
 
   // const getDetailByCodeWise = async () => {
-  //   const { data } = await imsAxios.post(
+  //   const response = await imsAxios.post(
   //     "/client/branches",
   //     {
   //       clientCode: branchModal?.code,
   //     }
   //   );
-  //   // let arr = data.data.map((row) => {
+  //   // let arr = response.data.map((row) => {
   //   //   return {
   //   //     ...row,
   //   //     id: v4(),
@@ -40,10 +40,9 @@ function AllBranch({
     const response = await imsAxios.get(
       `client/branches?clientCode=${branchModal?.code}`
     );
-    // console.log(data);
-    const { data } = response;
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    // console.log(response);
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -52,7 +51,7 @@ function AllBranch({
       toast.success("Client Branched Fetched Successfully");
       setAllBranch(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     setShowAllBranch(false);
   };

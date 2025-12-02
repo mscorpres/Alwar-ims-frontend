@@ -39,7 +39,7 @@ function PprAnallysidModal({
 
   const getProjectName = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/pprProjectName", {
+      const response = await imsAxios.post("/backend/pprProjectName", {
         search: e,
       });
       let arr = [];
@@ -62,7 +62,7 @@ function PprAnallysidModal({
   };
 
   const getBomCall = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData.productName,
     });
     //  console.log(data.data);
@@ -75,13 +75,13 @@ function PprAnallysidModal({
 
   const generateFun = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/report15", {
+    const response = await imsAxios.post("/report15", {
       product: allData.productName,
       subject: allData.selectBom,
       project: allData.projectName,
       date: dateSelect,
     });
-    if (data.code == 200) {
+    if (response.success) {
       let arr = data.response.data0.map((row) => {
         return {
           ...row,
@@ -91,7 +91,7 @@ function PprAnallysidModal({
       setAllDataComesFromDatabase(arr);
       setPprModal(false);
       setLoading(false);
-    } else if (data.code == 500) {
+    } else if (!response.success) {
       toast.error(data.message);
       setLoading(false);
     }

@@ -55,69 +55,69 @@ export default function EditPO({ updatePoId, setUpdatePoId }) {
     if (value) {
       let obj = purchaseOrder;
       if (name == "addrbillid") {
-        const { data } = await imsAxios.post("/backend/billingAddress", {
+        const response = await imsAxios.post("/backend/billingAddress", {
           billing_code: value,
         });
         obj = {
           ...obj,
           [name]: value,
-          billgstid: data?.data?.gstin,
-          billpanno: data?.data?.pan,
-          billaddress: data.data?.address.replaceAll("<br>", "\n"),
+          billgstid: response?.data?.gstin,
+          billpanno: response?.data?.pan,
+          billaddress: response.data?.address.replaceAll("<br>", "\n"),
         };
       } else if (name == "addrshipid") {
-        const { data } = await imsAxios.post("/backend/shippingAddress", {
+        const response = await imsAxios.post("/backend/shippingAddress", {
           shipping_code: value,
         });
         obj = {
           ...obj,
           [name]: value,
-          shipgstid: data?.data.gstin,
-          shippanno: data?.data.pan,
+          shipgstid: response?.data.gstin,
+          shippanno: response?.data.pan,
 
-          shipaddress: data.data?.address.replaceAll("<br>", "\n"),
+          shipaddress: response.data?.address.replaceAll("<br>", "\n"),
         };
       } else if (name == "vendorcode") {
-        const { data } = await imsAxios.post("/backend/vendorBranchList", {
+        const response = await imsAxios.post("/backend/vendorBranchList", {
           vendorcode: value.value,
         });
-        if (data.code == 200) {
-          let arr = data.data.map((row) => {
+        if (response.success) {
+          let arr = response.data.map((row) => {
             return {
               text: row.text,
               value: row.id,
             };
           });
           setVendorBranches(arr);
-          const { data: data1 } = await imsAxios.post("backend/vendorAddress", {
+          const response1 = await imsAxios.post("backend/vendorAddress", {
             vendorcode: value.value,
             branchcode: arr[0].value,
           });
-          console.log(data);
+          console.log(response);
           obj = {
             ...obj,
             [name]: value,
             vendorname: value.label,
             vendorbranch: arr[0].value,
-            vendoraddress: data1.data.address.replaceAll("<br>", "\n"),
+            vendoraddress: response1.data.address.replaceAll("<br>", "\n"),
           };
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else if (name == "vendorbranch") {
-        const { data } = await imsAxios.post("backend/vendorAddress", {
+        const response = await imsAxios.post("backend/vendorAddress", {
           vendorcode: purchaseOrder.vendorcode.value,
           branchcode: value.value,
         });
-        if (data.code == 200) {
+        if (response.success) {
           obj = {
             ...obj,
             [name]: value,
             // vendorBranchName: value.label,
-            vendoraddress: data.data.address.replaceAll("<br>", "\n"),
+            vendoraddress: response.data.address.replaceAll("<br>", "\n"),
           };
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else if (name == "costcenter") {
         obj = {
@@ -149,13 +149,15 @@ export default function EditPO({ updatePoId, setUpdatePoId }) {
     setAsyncOptions(arr);
   };
   const getBillTo = async () => {
-    const { data } = await imsAxios.post("/backend/billingAddressList", {
+    const response = await imsAxios.post("/backend/billingAddressList", {
       search: "",
     });
     let arr = [];
-    arr = data.map((d) => {
-      return { text: d.text, value: d.id };
-    });
+    if (response.success) {
+      arr = response.data.map((d) => {
+        return { text: d.text, value: d.id };
+      });
+    }
     setBillingOptions(arr);
   };
   const getCostCenteres = async (search) => {
@@ -169,13 +171,15 @@ export default function EditPO({ updatePoId, setUpdatePoId }) {
   };
 
   const getShippingId = async () => {
-    const { data } = await imsAxios.post("/backend/shipingAddressList", {
+    const response = await imsAxios.post("/backend/shipingAddressList", {
       searchInput: "",
     });
     let arr = [];
-    arr = data.map((d) => {
-      return { text: d.text, value: d.id };
-    });
+    if (response.success) {
+      arr = response.data.map((d) => {
+        return { text: d.text, value: d.id };
+      });
+    }
     setShippingOptions(arr);
   };
 
@@ -188,11 +192,11 @@ export default function EditPO({ updatePoId, setUpdatePoId }) {
     setRowCount(resetRowsDetailsData);
   };
   const getVendorBranches = async (vendorCode) => {
-    const { data } = await imsAxios.post("/backend/vendorBranchList", {
+    const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           text: row.text,
           value: row.id,

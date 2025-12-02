@@ -113,13 +113,13 @@ export default function VBT2() {
   };
   const getVBTDetail = async (minId) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt02/fetch_minData", {
+    const response = await imsAxios.post("/tally/vbt02/fetch_minData", {
       min_id: minId,
     });
-    if (data.code === 200) {
+    if (response.success) {
       setEditingVBT(data.data);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setEditingVBT(null);
     }
     setLoading(false);
@@ -146,12 +146,12 @@ export default function VBT2() {
       }
     }
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt02/fetch_vbt02", {
+    const response = await imsAxios.post("/tally/vbt02/fetch_vbt02", {
       wise: wise,
       data: d,
     });
-    if (data.code === 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -159,7 +159,7 @@ export default function VBT2() {
       });
       setVBTData(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setVBTData([]);
     }
     setLoading(false);
@@ -179,7 +179,7 @@ export default function VBT2() {
   //     "/tally/vbt/checkInvoice?vbtInvoiceNo=checkInvoiceId"
   //   );
   //   console.log("data", data);
-  //   if (data.status === 200 || data.status === "200") {
+  //   if (data.status === 200 || response.success ) {
   //     let arr = data.data;
   //     if (arr.checkInvoice == true) {
   //       setConfirmModal(true);
@@ -190,7 +190,7 @@ export default function VBT2() {
   //       console.log("lets create");
   //     }
   //   } else {
-  //     toast.error(data.message.msg);
+  //     toast.error(response.message?.msg || response.message);
   //     setEditingVBT(null);
   //   }
   // };

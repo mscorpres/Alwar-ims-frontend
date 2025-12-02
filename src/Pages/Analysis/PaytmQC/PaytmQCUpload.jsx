@@ -32,14 +32,14 @@ export default function PaytmQCUpload({ showUploadDoc, setShowUploadDoc }) {
     formData.append("file", QCUploadFile[0]);
     formData.append("date", uploadDate);
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/paytmQc/uploadFile", formData);
+    const response = await imsAxios.post("/paytmQc/uploadFile", formData);
     setSubmitLoading(false);
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setShowSubmitConfirm(false);
       setShowUploadDoc(false);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   useEffect(() => {

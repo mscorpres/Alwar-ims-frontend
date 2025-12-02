@@ -211,7 +211,7 @@ const SingleComponent = ({
     let arr = data.data;
     setAllTdsOptions(arr[0].ven_tds);
 
-    if (data.code === 200) {
+    if (response.success) {
       let tdsC = arr[0].ven_tds.map((r) => {
         return {
           text: r.tds_name,
@@ -220,7 +220,7 @@ const SingleComponent = ({
       });
       setTdsArray(tdsC);
     } else {
-      // toast.error(data.message.msg);
+      // toast.error(response.message?.msg || response.message);
     }
   };
 
@@ -233,7 +233,7 @@ const SingleComponent = ({
       });
       const { data } = response;
       let arr = [];
-      if (data.code == 200) {
+      if (response.success) {
         arr = data.map((row) => ({
           value: row.id,
           text: row.text,

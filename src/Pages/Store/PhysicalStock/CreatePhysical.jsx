@@ -60,7 +60,7 @@ const Manual = () => {
 
   const getComponent = async (e) => {
     if (e?.length > 2) {
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: e,
       // });
       const response = await executeFun(() => getComponentOptions(e), "select");
@@ -89,7 +89,7 @@ const Manual = () => {
     // console.log(name, id, value);
 
     if (name == "comp") {
-      const { data } = await imsAxios.post("/audit/RMStock", {
+      const response = await imsAxios.post("/audit/RMStock", {
         component: value,
       });
       // console.log(data.data);
@@ -166,7 +166,7 @@ const Manual = () => {
     addrow.map((a) => phyisalStock.push(a.phyStock));
     addrow.map((a) => remarkArr.push(a.rem));
 
-    const { data } = await imsAxios.post("/audit/saveAudit", {
+    const response = await imsAxios.post("/audit/saveAudit", {
       branch: "BRMSC012",
       component: comName,
       closing: existStock,
@@ -175,7 +175,7 @@ const Manual = () => {
     });
 
     console.log(data);
-    if (data.code == 200) {
+    if (data.success) {
       setAddRom([
         {
           id: v4(),
@@ -188,8 +188,8 @@ const Manual = () => {
       ]);
       toast.success("Success");
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error("Something Went Wrong");
+    } else {
+      toast.error(data.message?.msg || data.message || "Something Went Wrong");
       setLoading(false);
     }
   };

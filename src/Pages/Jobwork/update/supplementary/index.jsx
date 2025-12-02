@@ -59,11 +59,11 @@ function UpdateJW() {
 
   const getComponent = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/JWSupplementary/fetchJwOption", {
+      const response = await imsAxios.post("/JWSupplementary/fetchJwOption", {
         searchTerm: e,
       });
       let arr = [];
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -94,13 +94,13 @@ function UpdateJW() {
 
   const getAllHeaderData = async () => {
     setLoadingUpdate(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/JWSupplementary/fetchSupplementaryData",
       {
         sup_jobwork_id: updateData?.poType,
       }
     );
-    if (data.code == 200) {
+    if (response.success) {
       setHeader(data?.data?.headers);
       let arr = data?.data?.components.map((row, index) => {
         // Map backend status to frontend status values
@@ -148,8 +148,8 @@ function UpdateJW() {
       });
       setComponent(arr);
       setLoadingUpdate(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoadingUpdate(false);
     }
   };
@@ -157,7 +157,7 @@ function UpdateJW() {
   const getComponentName = async (e) => {
     if (e?.length > 2) {
       // setSelectLoading(true);
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
 
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
@@ -195,7 +195,7 @@ function UpdateJW() {
 
   const inputHandler = async (name, id, value) => {
     if (name == "component_name") {
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/JWSupplementary/getComponentData",
         {
           component: value,
@@ -536,7 +536,7 @@ function UpdateJW() {
           };
         });
 
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/JWSupplementary/updateJobworkRecipe",
         {
           original_po: updateData?.poType,
@@ -549,7 +549,7 @@ function UpdateJW() {
         }
       );
 
-      if (data.code == 200) {
+      if (response.success) {
         setComponent([]);
         setUpdateData({
           selectType: "",
@@ -559,10 +559,10 @@ function UpdateJW() {
           comment: "",
         });
         setShowAltPartCode(false);
-        toast.success(data.message);
+        toast.success(response.message);
         setLoadingUpdate(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoadingUpdate(false);
       }
     }

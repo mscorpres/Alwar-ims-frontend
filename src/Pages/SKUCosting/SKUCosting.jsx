@@ -13,9 +13,9 @@ export default function SKUCosting() {
   const [loading, setLoading] = useState(false);
   const getRows = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/SKUCosting/fetchSKU_costing");
+    const response = await imsAxios.post("/SKUCosting/fetchSKU_costing");
     setLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       const arr = data.response.data.map((row, index) => {
         return { ...row, id: v4(), index: index + 1 };
       });

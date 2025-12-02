@@ -39,7 +39,7 @@ function PendingQC() {
 
   const getPartOptions = async (search) => {
     // setSelectLoading(false);
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: search,
     // });
     // setSelectLoading(true);
@@ -70,15 +70,15 @@ function PendingQC() {
     setSearchLoading(true);
     setTableLoading(true);
 
-    const { data } = await imsAxios.post("/qc/pendingSample", {
+    const response = await imsAxios.post("/qc/pendingSample", {
       data: searchInput,
       wise: wise,
     });
     setTableLoading(false);
     setSearchLoading(false);
 
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -89,14 +89,14 @@ function PendingQC() {
       });
       console.log(arr);
       setRows(arr);
-    } else if (data.code == 500) {
+    } else if (!response.success) {
       toast.error(data.message.data);
       setRows([]);
     }
   };
   const submitSample = async (row) => {
     setSubmitLoading(row.id);
-    const { data } = await imsAxios.post("/qc/updateSampling_stage2", {
+    const response = await imsAxios.post("/qc/updateSampling_stage2", {
       component: row.componentKey,
       sample_txn: row.transaction,
       min_txn: row.qc_transaction,
@@ -105,8 +105,8 @@ function PendingQC() {
       remark: row.remark,
     });
     setSubmitLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       let arr = rows;
       arr = arr.map((tableRow) => {
         if (tableRow.id === row.id) {
@@ -120,13 +120,13 @@ function PendingQC() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const rejectSample = async (row) => {
     setSubmitLoading(row.id);
 
-    const { data } = await imsAxios.post("/qc/updateSampling_stage2", {
+    const response = await imsAxios.post("/qc/updateSampling_stage2", {
       component: row.componentKey,
       sample_txn: row.transaction,
       min_txn: row.qc_transaction,
@@ -135,8 +135,8 @@ function PendingQC() {
       remark: row.remark,
     });
     setSubmitLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       let arr = rows;
       arr = arr.map((tableRow) => {
         if (tableRow.id === row.id) {
@@ -150,7 +150,7 @@ function PendingQC() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const columns = [

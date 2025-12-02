@@ -17,10 +17,10 @@ function AddAgreementType() {
   const [form] = Form.useForm();
   const addRows = async (values) => {
     console.log("values", values);
-    const data = await imsAxios.post("/qaProcessmaster/insert_Process", values);
+    const response = await imsAxios.post("/qaProcessmaster/insert_Process", values);
 
-    console.log("row Data", data);
-    if (data.status === "200" || data.status === 200) {
+    console.log("row Data", response);
+    if (response.success) {
       // getRows();
     }
   };
@@ -29,9 +29,9 @@ function AddAgreementType() {
     console.log(partysearch);
     setRows([]);
     const response = await imsAxios.get("/agreement/fetchagreementtypes");
-    console.log(response.data.data);
-    if (response.status === 200) {
-      const arr = response.data.data.map((row, index) => {
+    console.log(response.data);
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           index: index + 1,
           id: index,

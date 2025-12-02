@@ -25,7 +25,7 @@ export default function MaterialRequisitionRequest() {
   const [viewTransaction, setViewTransaction] = useState(false);
   const getUser = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/backend/fetchAllUser", { search });
+    const response = await imsAxios.post("/backend/fetchAllUser", { search });
     setSelectLoading(false);
     if (data) {
       let arr = data.map((row) => ({
@@ -37,7 +37,7 @@ export default function MaterialRequisitionRequest() {
   };
   const getRows = async () => {
     setSearchLoading(true);
-    const { data } = await imsAxios.post("/transaction/viewApprovalStatus", {
+    const response = await imsAxios.post("/transaction/viewApprovalStatus", {
       user: searchUser,
       date: searchDate,
     });

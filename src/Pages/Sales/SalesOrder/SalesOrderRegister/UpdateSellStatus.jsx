@@ -30,13 +30,13 @@ function UpdateSellStatus({ open, setOpen, setModalVals, modalVals }) {
     setLoading(true);
     console.log("respoomse", response);
     const { data } = response;
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
 
       setLoading(false);
       setOpen(false);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
 
       setLoading(false);
     }

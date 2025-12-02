@@ -38,8 +38,8 @@ const TaskLogs = ({ show, hide }) => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((task, index) => {
+        if (response.success) {
+          const arr = response.data.map((task, index) => {
             let label = "";
             let user = "";
             switch (task.status) {
@@ -115,12 +115,12 @@ const TaskLogs = ({ show, hide }) => {
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           getLogs(show);
           remarksForm.resetFields();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

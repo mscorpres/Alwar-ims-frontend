@@ -61,7 +61,7 @@ function CreditReport() {
   const getRows = async () => {
     setRows([]);
     setLoading("fetch");
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/cn/creditVoucherList",
       {
         wise: wise,
@@ -69,8 +69,8 @@ function CreditReport() {
       }
     );
     setLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -81,7 +81,7 @@ function CreditReport() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };
@@ -89,19 +89,19 @@ function CreditReport() {
   const deleteFun = async () => {
     setLoading(true);
     if (deleteConfirm) {
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/jv/jv_delete",
         {
           jv_code: deleteConfirm,
         }
       );
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setDeleteConfirm(null);
-        toast.success(data.message);
+        toast.success(response.message);
         getRows();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -227,7 +227,7 @@ function CreditReport() {
 
   const printFun = async (key) => {
     setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/cn/printCreditVoucher",
       {
         cn_key: key,
@@ -243,7 +243,7 @@ function CreditReport() {
     let link = "/tally/cn/printCreditVoucher";
     let filename = "Debit Voucher " + id;
 
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       cn_key: id,
     });
     downloadFunction(data.buffer.data, filename);
@@ -251,15 +251,15 @@ function CreditReport() {
   };
   const getLedgerName = async (e) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/ledger/ledger_options",
       {
         search: e,
       }
     );
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           text: row.text,
           value: row.id,

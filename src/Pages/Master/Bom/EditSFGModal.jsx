@@ -54,7 +54,7 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
   ];
 
   const editPerticularId = async () => {
-    const { data } = await imsAxios.post("/bom/fetchProductInBom", {
+    const response = await imsAxios.post("/bom/fetchProductInBom", {
       subject_id: sfgEditModal?.subject_id,
     });
     setFetchData(data.data);
@@ -73,11 +73,11 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
 
   const next = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/bom/fetchComponentsInBomForUpdate", {
+    const response = await imsAxios.post("/bom/fetchComponentsInBomForUpdate", {
       subject_id: sfgEditModal?.subject_id,
     });
     setPageLoading(false);
-    const arr = data.data.map((row) => {
+    const arr = response.data.map((row) => {
       return {
         ...row,
         id: v4(),
@@ -104,7 +104,7 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
   const loadData = async (e) => {
     if (e.length > 2) {
       setSelectLoading(true);
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: e,
       // });
       const response = await executeFun(() => getComponentOptions(e), "select");
@@ -144,7 +144,7 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
       );
     }
     setAddUpdateLoading(id);
-    const { data } = await imsAxios.post("/bom/updateBomComponent", {
+    const response = await imsAxios.post("/bom/updateBomComponent", {
       component_id: b.component.value,
       qty: b.requiredQty,
       category: b.category,
@@ -154,7 +154,7 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
     });
     setAddUpdateLoading(false);
 
-    if (data.code == 200) {
+    if (response.success) {
       let arr = secondData;
       arr = arr.map((row) => {
         if (row.id === id) {
@@ -169,7 +169,7 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
         }
       });
       setSecondData(arr);
-      toast.success(data.message);
+      toast.success(response.message);
     } else {
       toast.error(errorToast(data.message));
     }
@@ -187,7 +187,7 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
       );
     }
     setUpdateRowLoading(a.id);
-    const { data } = await imsAxios.post("/bom/updateBomComponent", {
+    const response = await imsAxios.post("/bom/updateBomComponent", {
       component_id: a.compKey,
       qty: a.requiredQty,
       category: a.category,
@@ -197,9 +197,9 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
       priority: a.priority ?? 1,
     });
     setUpdateRowLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       // next();
-      toast.success(data.message);
+      toast.success(response.message);
     } else {
       toast.error(errorToast(data.message));
     }

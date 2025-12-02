@@ -19,9 +19,9 @@ export const verifyToken = async (token) => {
 export const getDetails = async () => {
   const response = await imsAxios.get("/profile/userDetails");
   console.log("getDetails response", response);
-  if (response.data.code === 200) {
-    const values = response.data.data;
-    response.data = {
+  if (response.success) {
+    const values = response.data;
+    return {
       success: true,
       data: {
         email: values.email,
@@ -37,7 +37,6 @@ export const getDetails = async () => {
       message: null,
       error: false,
     };
-    return response.data;
   }
   return response;
 };

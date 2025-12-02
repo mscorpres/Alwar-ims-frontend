@@ -46,7 +46,7 @@ export default function SingleProduct({
   const getProduct = async (searchTerm) => {
     try {
       setLoading("select");
-      const { data } = await imsAxios.post("backend/getProductByNameAndNo", {
+      const response = await imsAxios.post("backend/getProductByNameAndNo", {
         search: searchTerm,
       });
 
@@ -64,7 +64,7 @@ export default function SingleProduct({
   const getProductDetails = async (product) => {
     try {
       setLoading(field.key);
-      const { data } = await imsAxios.post("products/getProductForUpdate", {
+      const response = await imsAxios.post("products/getProductForUpdate", {
         product_key: product.value,
       });
 

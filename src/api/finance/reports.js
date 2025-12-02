@@ -10,9 +10,9 @@ export const getLedgerReport = async (vendorCode, dateRange) => {
   let arr = [];
   let summary = {};
 
-  if (response.data.code === 200) {
+  if (response.success) {
     console.log(response);
-    arr = response.data.data.rows.map((row, index) => ({
+    arr = response.data.rows.map((row, index) => ({
       id: index + 1,
       creditAmount: row.credit,
       debitAmount: row.debit,
@@ -27,15 +27,14 @@ export const getLedgerReport = async (vendorCode, dateRange) => {
     }));
 
     summary = {
-      closing: response.data.data.summary.closing,
-      opening: response.data.data.summary.opening,
-      creditTotal: response.data.data.summary.total_credit,
-      debitTotal: response.data.data.summary.total_debit,
+      closing: response.data.summary.closing,
+      opening: response.data.summary.opening,
+      creditTotal: response.data.summary.total_credit,
+      debitTotal: response.data.summary.total_debit,
     };
   }
 
-  response.data.data.rows = arr;
-  response.data.data.summary = summary;
+  response.data = { rows: arr, summary: summary };
 
-  return response.data;
+  return response;
 };

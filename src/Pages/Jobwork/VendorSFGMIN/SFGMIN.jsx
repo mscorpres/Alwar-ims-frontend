@@ -25,7 +25,7 @@ function SFGMIN() {
 
   const getVendors = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("backend/vendorList", {
+    const response = await imsAxios.post("backend/vendorList", {
       search: search,
     });
     setSelectLoading(false);
@@ -45,9 +45,9 @@ function SFGMIN() {
       wise: values.wise,
       data: values.data.value,
     };
-    const { data } = await imsAxios.post("/jwvendor/fetchVendorSFG", values);
-    if (data.code === 200) {
-      let arr = data.data.map((row, index) => ({
+    const response = await imsAxios.post("/jwvendor/fetchVendorSFG", values);
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
         ...row,
         id: index,
         index: index + 1,
@@ -55,7 +55,7 @@ function SFGMIN() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     setFetchLoading(false);
   };

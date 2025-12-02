@@ -47,13 +47,13 @@ const UpdateJW = () => {
 
   const getOriginalPoOptions = async (search) => {
     setLoading("select", true);
-    const { data } = await imsAxios.post("/JWSupplementary/fetchJwOption", {
+    const response = await imsAxios.post("/JWSupplementary/fetchJwOption", {
       searchTerm: search?.trim(),
     });
     setLoading("select", false);
 
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return { text: d.text, value: d.id };
     });
     setAsyncOptions(arr);
@@ -72,7 +72,7 @@ const UpdateJW = () => {
       setLoading("fetchDetails", false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const finalObj = {
             jwId: data.data.headers.jobwork_id,
             orderedQty: data.data.headers.ordered_qty,
@@ -105,7 +105,7 @@ const UpdateJW = () => {
 
   const getComponentOption = async (search) => {
     setLoading("select", true);
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search,
     // });
     const response = await executeFun(
@@ -130,7 +130,7 @@ const UpdateJW = () => {
     // setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         return { partCode: data.data.part, unit: data.data.unit };
       }
     }
@@ -179,10 +179,10 @@ const UpdateJW = () => {
     setLoading("submit", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

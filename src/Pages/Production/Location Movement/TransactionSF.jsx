@@ -24,18 +24,18 @@
 //     let aa = date[0];
 //     let bb = date[1];
 //     let c = aa + ` ` + `-` + ` ` + bb;
-//     const { data } = await imsAxios.post("/godown/report_sf_rej", {
+//     const response = await imsAxios.post("/godown/report_sf_rej", {
 //       data: c,
 //       wise: allData.selType.value,
 //     });
 //     // setDat(data.data);
 //     // console.log(data.data);
-//     if (data.code == 200) {
+//     if (response.success) {
 //       setDat(data.data);
 //       toast.success(data.status);
 //       setLoading(false);
-//     } else if (data.code == 500) {
-//       toast.error(data.message.msg);
+//     } else if (!response.success) {
+//       toast.error(response.message?.msg || response.message);
 //       setLoading(false);
 //     }
 //   };

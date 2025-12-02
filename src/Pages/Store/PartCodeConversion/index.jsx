@@ -89,8 +89,8 @@ const PartCodeConversion = () => {
       const { data } = response;
       if (data) {
         let arr = [];
-        if (data.code === 200) {
-          arr = data.data.map((d) => {
+        if (data.success) {
+          arr = response.data.map((d) => {
             return { text: d.text, value: d.id };
           });
           setAsyncOptions(arr);
@@ -114,10 +114,10 @@ const PartCodeConversion = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (data.success) {
           setComponentStock(`${data.data.closingStock} ${data.data.uom ?? ""}`);
         } else {
-          toast.error(data.message.msg);
+          toast.error(data.message?.msg || data.message);
         }
       }
     } catch (error) {
@@ -344,8 +344,8 @@ const PartCodeConversion = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (data.success) {
+          toast.success(response.message);
           setAddedComponents({
             in: [],
             qty: {},
@@ -354,7 +354,7 @@ const PartCodeConversion = () => {
 
           setRemarks("");
         } else {
-          toast.error(data.message.msg);
+          toast.error(data.message?.msg || data.message);
         }
       }
     } catch (error) {

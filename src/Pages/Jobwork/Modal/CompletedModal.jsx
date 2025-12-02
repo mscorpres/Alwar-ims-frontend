@@ -16,11 +16,11 @@ const CompletedModal = ({ editModal, setEditModal }) => {
 
   const getFetchData = async () => {
     setModalLoad(true);
-    const { data } = await imsAxios.post("/jobwork/view_completed_jw_details", {
+    const response = await imsAxios.post("/jobwork/view_completed_jw_details", {
       jwcode: editModal?.transaction_id,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -29,9 +29,9 @@ const CompletedModal = ({ editModal, setEditModal }) => {
       });
       setMainData(arr);
       setModalLoad(false);
-    } else if (data.code == 500) {
+    } else if (!response.success) {
       setEditModal(false);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       // setModalLoad(false);
     }
   };
@@ -39,7 +39,7 @@ const CompletedModal = ({ editModal, setEditModal }) => {
   const printShow = async (d) => {
     setPrintLoading(true);
     //  console.log(d);
-    const { data } = await imsAxios.post("/jobwork/print_jw_complete_challan", {
+    const response = await imsAxios.post("/jobwork/print_jw_complete_challan", {
       refid: d?.refid,
       transaction: d?.transaction,
     });
@@ -50,7 +50,7 @@ const CompletedModal = ({ editModal, setEditModal }) => {
   //   const printShow = async (transactionId) => {
   //    const formData = new FormData();
   //    formData.append("transaction", transactionId);
-  //    const { data } = await imsAxios.post("/storeApproval/print_request", formData);
+  //    const response = await imsAxios.post("/storeApproval/print_request", formData);
   //    console.log(data);
   //    printFunction(data.data.buffer.data);
   //  };

@@ -34,7 +34,7 @@ export default function CreateGP() {
   const getComponentDetail = async (searchInputText) => {
     // setSelectLoading(true);
 
-    // const { data } = await imsAxios.post("backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("backend/getComponentByNameAndNo", {
     //   search: searchInputText,
     // });
     // setSelectLoading(false);
@@ -58,7 +58,7 @@ export default function CreateGP() {
     let arr = rows;
     if (name == "component") {
       setFetchDetailsLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/component/getComponentDetailsByCode",
         {
           component_code: value,
@@ -130,7 +130,7 @@ export default function CreateGP() {
     { text: "NRGP (Non-Returnable Gate Pass)", value: "NR" },
   ];
   const getComponents = async (searchInputText) => {
-    const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       search: searchInputText,
     });
     let arr = data;
@@ -253,21 +253,15 @@ export default function CreateGP() {
         material: mat,
       };
       setLoading(true);
-      const { data } = await imsAxios.post("/gatepass/createGP", {
+      const response = await imsAxios.post("/gatepass/createGP", {
         ...finalObj,
       });
       setLoading(false);
-      if (data.code == 200) {
-        toast.success(data.message);
+      if (data.success) {
+        toast.success(response.message);
         resetFunction();
       } else {
-        toast.error(
-          data.message.msg
-            ? data.message.msg
-            : data.message
-            ? data.message.msg
-            : "Some Error Occurred"
-        );
+        toast.error(data.message?.msg || data.message || "Some Error Occurred");
       }
     }
   };

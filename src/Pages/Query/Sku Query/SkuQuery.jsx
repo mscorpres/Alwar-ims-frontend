@@ -28,7 +28,7 @@ const Q3 = () => {
     try {
       let arr = [];
       setLoading("select");
-      const { data } = await imsAxios.post("/backend/getProductByNameAndNo", {
+      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search,
       });
       setLoading(false);
@@ -48,7 +48,7 @@ const Q3 = () => {
       setLoading("fetch");
       setDetails({});
       setRows([]);
-      const { data } = await imsAxios.post("/skuQueryA/fetchSKU_logs", {
+      const response = await imsAxios.post("/skuQueryA/fetchSKU_logs", {
         sku_code: searchInput,
       });
       if (data) {

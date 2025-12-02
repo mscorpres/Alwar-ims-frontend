@@ -27,12 +27,12 @@ function AddLedger({ getLedgerList, options, statusOptions }) {
 
   const getSubGroupSelect = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/getSubgroup", {
+    const response = await imsAxios.post("/tally/getSubgroup", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((d) => {
+    if (response.success) {
+      let arr = response.data.map((d) => {
         return { text: d.label, value: d.id };
       });
       setAsyncOptions(arr);
@@ -63,7 +63,7 @@ function AddLedger({ getLedgerList, options, statusOptions }) {
       return toast.error("Please Select TDS Apply");
     }
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/addLedger", {
+    const response = await imsAxios.post("/tally/ledger/addLedger", {
       ...newLedger,
       sub_group: sub_group,
       gst: gst,
@@ -72,28 +72,28 @@ function AddLedger({ getLedgerList, options, statusOptions }) {
       type: newLedger.ledger_type,
     });
     setLoading(false);
-    validateResponse(data);
-    if (data.code == 200) {
-      toast.success(data.message);
+    validateResponse(response);
+    if (response.success) {
+      toast.success(response.message);
       getLedgerList();
       reset();
     }
   };
   const confirmCode = async () => {
     setCodeConfirmLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/check_leadger_code", {
+    const response = await imsAxios.post("/tally/ledger/check_leadger_code", {
       code: newLedger.code,
     });
     setCodeConfirmLoading(false);
-    if (data.code === 200) {
-      if (data.data.exist) {
+    if (response.success) {
+      if (response.data.exist) {
         setCodeConfirmed("exist");
-      } else if (!data.data.exist) {
+      } else if (!response.data.exist) {
         setCodeConfirmed("not exist");
       }
     } else {
       setCodeConfirmed("exist");
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const reset = () => {

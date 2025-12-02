@@ -18,8 +18,8 @@ function ManageSfgBom() {
 
   const getFetchSFG = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/bom/semiFgBom");
-    let arr = data.data.map((row) => {
+    const response = await imsAxios.get("/bom/semiFgBom");
+    let arr = response.data.map((row) => {
       return {
         ...row,
         id: v4(),

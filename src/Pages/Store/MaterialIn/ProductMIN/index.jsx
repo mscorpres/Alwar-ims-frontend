@@ -278,7 +278,7 @@ export default function ProductMIN() {
           let response = await executeFun(() => savefginward(final), "select");
           const { data } = response
           setSubmitLoading(false);
-          if (data.code == "200") {
+          if (response.success) {
             // setvalues(false);
             setActiveTab("1");
             setShowSuccessPage({
@@ -296,7 +296,7 @@ export default function ProductMIN() {
             vendorResetFunction();
             materialResetFunction();
           } else {
-            toast.error(data.message.msg);
+            toast.error(response.message?.msg || response.message);
           }
         }
       } else {
@@ -317,9 +317,9 @@ export default function ProductMIN() {
         // final = { ...final, ...values.componentData, ...venDetails };
         // setSubmitLoading(true);
 
-        // const { data } = await imsAxios.post("/fgMIN/savefginward", final);
+        // const response = await imsAxios.post("/fgMIN/savefginward", final);
         // setSubmitLoading(false);
-        // if (data.code == "200") {
+        // if (response.success) {
         //   setActiveTab("1");
         //   setShowSuccessPage({
         //     materialInId: data.data.txn,
@@ -338,7 +338,7 @@ export default function ProductMIN() {
         //   vendorResetFunction();
         //   materialResetFunction();
         // } else {
-        //   toast.error(data.message.msg);
+        //   toast.error(response.message?.msg || response.message);
         // }
       }
     });
@@ -347,7 +347,7 @@ export default function ProductMIN() {
     // try {
     //   const vendorValues = await form.validateFields();
     //   setSubmitLoading(true);
-    //   const { data } = await imsAxios.post("/backend/checkInvoice", {
+    //   const response = await imsAxios.post("/backend/checkInvoice", {
     //     invoice: [vendorValues.docId],
     //   });
     //   if (data) {
@@ -376,7 +376,7 @@ export default function ProductMIN() {
   };
   const getProductOptions = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/getProductByNameAndNo", {
+      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
       let arr = [];
@@ -388,10 +388,10 @@ export default function ProductMIN() {
     }
   };
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -402,25 +402,25 @@ export default function ProductMIN() {
   };
   const getLocation = async () => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/fgMIN/fgin_locations", {
+    const response = await imsAxios.post("/fgMIN/fgin_locations", {
       search: "",
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((d) => {
+    if (response.success) {
+      let arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const getAutoComnsumptionOptions = async () => {
     setPageLoading(true);
     let { data } = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
     setPageLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -448,7 +448,7 @@ export default function ProductMIN() {
     if (name == "component") {
       if (value) {
         setPageLoading(true);
-        const { data } = await imsAxios.post(
+        const response = await imsAxios.post(
           "/jobwork/fetchProductData4Table",
           {
             product_name: value.value,
@@ -456,7 +456,7 @@ export default function ProductMIN() {
         );
         setPageLoading(false);
 
-        if (data.code == 200) {
+        if (response.success) {
           arr = arr.map((row) => {
             if (row.id == id) {
               let obj = row;
@@ -474,7 +474,7 @@ export default function ProductMIN() {
             }
           });
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else {
         arr = arr.map((row) => ({
@@ -609,12 +609,12 @@ export default function ProductMIN() {
       let obj = vendorDetails;
       if (name == "vendorName") {
         setVendorSectionLoading(true);
-        const { data } = await imsAxios.post("/backend/vendorBranchList", {
+        const response = await imsAxios.post("/backend/vendorBranchList", {
           vendorcode: value.value,
         });
         setVendorSectionLoading(false);
-        if (data.code == 200) {
-          const arr = data.data.map((row) => {
+        if (response.success) {
+          const arr = response.data.map((row) => {
             return {
               value: row.id,
               text: row.text,
@@ -639,16 +639,16 @@ export default function ProductMIN() {
             vendor: value.label,
           };
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else if (name == "vendorBranch") {
         setVendorSectionLoading(true);
-        const { data } = await imsAxios.post("/backend/vendorAddress", {
+        const response = await imsAxios.post("/backend/vendorAddress", {
           vendorcode: vendorDetails.vendorName,
           branchcode: value,
         });
         setVendorSectionLoading(false);
-        if (data.code == 200) {
+        if (response.success) {
           obj = {
             ...obj,
             [name]: value,
@@ -656,7 +656,7 @@ export default function ProductMIN() {
             vendorAddress: data.data.address.replaceAll("<br>", "\n"),
           };
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else {
         obj = { ...obj, [name]: value };
@@ -666,11 +666,11 @@ export default function ProductMIN() {
     }
   };
   const getVendorBracnch = async (vendorCode) => {
-    const { data } = await imsAxios.post("/backend/vendorBranchList", {
+    const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
     });
 
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.id, text: d.text };
     });
     setVendorBranchOptions(arr);
@@ -679,7 +679,7 @@ export default function ProductMIN() {
   // const getCostCenteres = async (searchInput) => {
   //   if (searchInput.length > 2) {
   //     setSelectLoading(true);
-  //     const { data } = await imsAxios.post("/backend/costCenter", {
+  //     const response = await imsAxios.post("/backend/costCenter", {
   //       search: searchInput,
   //     });
   //     setSelectLoading(false);
@@ -718,10 +718,10 @@ export default function ProductMIN() {
     setPageLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         form.setFieldValue("projectName", data.data.description);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

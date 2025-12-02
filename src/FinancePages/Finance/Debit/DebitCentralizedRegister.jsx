@@ -47,13 +47,13 @@ function DebitCentralizedRegister() {
   // created_date_wise, effective_date_wise, debit_key_wise, vendor_wise;
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
     let arr = [];
     if (!data.msg) {
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -70,7 +70,7 @@ function DebitCentralizedRegister() {
     const { data } = response;
     if (response.status === 200) {
       // console.log("arr-------------", arr);
-      let arr = data.data.map((row, index) => {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -87,7 +87,7 @@ function DebitCentralizedRegister() {
   //debit note WithOUT  vbt functions
   const printFunWithout = async (key) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/dv/printDebitVoucher", {
+    const response = await imsAxios.post("/tally/dv/printDebitVoucher", {
       dv_key: key,
     });
     setLoading(false);
@@ -100,7 +100,7 @@ function DebitCentralizedRegister() {
     let link = "/tally/dv/printDebitVoucher";
     let filename = "Debit Voucher " + id;
 
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       dv_key: id,
     });
     downloadFunction(data.buffer.data, filename);
@@ -109,7 +109,7 @@ function DebitCentralizedRegister() {
   //debit note with  vbt functions
   const handleSinblePrint = async (id) => {
     setLoading("tableLoading");
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/vbt_report/print_vbt_debit_report",
       {
         debit_code: id,
@@ -123,7 +123,7 @@ function DebitCentralizedRegister() {
     let link = "/tally/vbt_report/print_vbt_debit_report";
     let filename = id;
 
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       debit_code: id,
     });
 

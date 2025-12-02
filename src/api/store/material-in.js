@@ -112,8 +112,8 @@ export const getMINLabelRows = async (wise, value) => {
   });
 
   let arr = [];
-  if (response.data.code === 200) {
-    arr = response.data.data.data.map((row, index) => ({
+  if (response.success) {
+    arr = response.response.data.map((row, index) => ({
       id: index + 1,
       createdDate: row.datetime,
       invoice: row.invoice,
@@ -137,11 +137,11 @@ export const printMIN = async (minId, action) => {
     transaction: minId,
   });
 
-  if (response.data.code === 200) {
+  if (response.success) {
     if (!action) {
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
     } else if (action === "download") {
-      downloadFunction(response.data.data.buffer.data, minId);
+      downloadFunction(response.data.buffer.data, minId);
     }
   }
 

@@ -61,9 +61,9 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
     preserve: true,
   });
   const getLocation = async () => {
-    const { data } = await imsAxios.get("ppr/ppr_section_location");
+    const response = await imsAxios.get("ppr/ppr_section_location");
     const locArr = [];
-    data.data.map((a) =>
+    response.data.map((a) =>
       locArr.push({ text: `(${a.name}) ${a.address}`, value: a.location_key })
     );
     setLocationOptions(locArr);
@@ -75,7 +75,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
       const response = await imsAxios.post("/ppr/fetchData4Update", pprDetails);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const { product } = data.data;
           let obj = {
             type: data.data.type,
@@ -104,7 +104,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
           pprDetailsForm.setFieldsValue(obj);
         } else {
           setEditPPR(null);
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -165,13 +165,13 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         pprDetailsForm.setFieldValue(
           "projectDescription",
           data.data.description
         );
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -233,12 +233,12 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
 
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setShowSubmitConfirmModal(false);
           setEditPPR(false);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

@@ -116,10 +116,10 @@ const R7 = () => {
   };
 
   const getBom = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData?.selectProduct,
     });
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
     setBomName(arr);
@@ -137,20 +137,20 @@ const R7 = () => {
     } else {
       setResData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/report7", {
+      const response = await imsAxios.post("/report7", {
         date: selectDate,
         skucode: allData.selectProduct,
         subject: allData.selectBom,
         action: "search_r7",
       });
       // console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return { ...row, id: v4() };
         });
         setResData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         setLoading(true);
         toast.error(data.message);
         setLoading(false);

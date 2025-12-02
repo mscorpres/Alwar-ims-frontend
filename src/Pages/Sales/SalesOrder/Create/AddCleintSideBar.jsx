@@ -57,7 +57,7 @@ const AddCleintSideBar = ({ setOpen, open }) => {
   const getFetchState = async (e) => {
     if (e.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
@@ -97,15 +97,15 @@ const AddCleintSideBar = ({ setOpen, open }) => {
     formData.append("branch", JSON.stringify(obj.branch));
     formData.append("uploadfile", files[0]);
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/vendor/addVendor", formData);
+    const response = await imsAxios.post("/vendor/addVendor", formData);
     setSubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       // fetchVendor();
       reset();
       toast.success(data.message.toString().replaceAll("<br/>", " "));
       setOpen(null);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 

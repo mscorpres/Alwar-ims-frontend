@@ -46,11 +46,11 @@ function ChallanModal({ challanModal, setChallanModal }) {
 
   const getFetchChallan = async () => {
     setSpinLoading(true);
-    const { data } = await imsAxios.post("/jobwork/editJobworkChallan", {
+    const response = await imsAxios.post("/jobwork/editJobworkChallan", {
       challan_no: challanModal.challan_id,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -59,8 +59,8 @@ function ChallanModal({ challanModal, setChallanModal }) {
       });
       setData(arr);
       setSpinLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setSpinLoading(false);
     }
   };
@@ -199,7 +199,7 @@ function ChallanModal({ challanModal, setChallanModal }) {
 
   const updateFun = async () => {
     setSpinLoading(true);
-    const { data } = await imsAxios.post("/jobwork/updateJobworkChallan", {
+    const response = await imsAxios.post("/jobwork/updateJobworkChallan", {
       transaction_id: challanModal.challan_id,
       component: compArray,
       qty: qtyArray,
@@ -208,10 +208,10 @@ function ChallanModal({ challanModal, setChallanModal }) {
       remark: remarkArray,
     });
     //  console.log(data);
-    if (data.code == 200) {
+    if (response.success) {
       setSpinLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setSpinLoading(false);
     }
   };

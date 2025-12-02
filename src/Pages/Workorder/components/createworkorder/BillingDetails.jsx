@@ -20,7 +20,7 @@ const BillingDetails = ({ openBranch, setOpenBranch, id, clientcode,getclientDet
     const getFetchState = async (e) => {
         if (e.length > 1) {
             setSelectLoading(true);
-            const { data } = await imsAxios.post("/backend/stateList", {
+            const response = await imsAxios.post("/backend/stateList", {
                 search: e,
             });
             setSelectLoading(false);
@@ -57,15 +57,16 @@ const BillingDetails = ({ openBranch, setOpenBranch, id, clientcode,getclientDet
 
         try {
             setSubmitLoading(true);
-            const { data } = await imsAxios.post(addtype === "Billing" ? 'client/addbillingaddress' : 'client/addshippingaddress', submitdata)
-            console.log(data)
-            if(data.code === 200){
-            toast.success(data.message);
+            const response = await imsAxios.post(addtype === "Billing" ? 'client/addbillingaddress' : 'client/addshippingaddress', submitdata)
+            console.log(response)
+            if(response.success){
+            toast.success(response.message);
             setOpenBranch(false)
-            toast.error(data.message.msg)
             billingForm.resetFields()
             setOpenBranch(false)
-            getclientDetials(clientcode,data.message)
+            getclientDetials(clientcode,response.message)
+            } else {
+            toast.error(response.message?.msg || response.message)
             }
         } catch (error) {
             toast.error(error)

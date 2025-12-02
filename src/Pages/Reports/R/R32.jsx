@@ -16,7 +16,7 @@ function R32() {
     const { data } = response;
     if (data.status) {
       let arr = [];
-      arr = data.data.map((r, index) => {
+      arr = response.data.map((r, index) => {
         return {
           ...r,
           id: index + 1,

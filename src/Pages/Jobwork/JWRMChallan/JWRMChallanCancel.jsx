@@ -29,13 +29,13 @@ function JWRMChallanCancel({ showCancel, setShowCancel, getRows }) {
       setLoading("fetch", false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setShowSubmitConfirm(false);
           setShowCancel(false);
           getRows();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     }

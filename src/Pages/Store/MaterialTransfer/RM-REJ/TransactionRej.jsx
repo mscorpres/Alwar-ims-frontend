@@ -63,12 +63,12 @@ function TransactionRej() {
       toast.error("Please Select date ");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("/godown/report_rm_rej", {
+      const response = await imsAxios.post("/godown/report_rm_rej", {
         data: datee,
         wise: allData.selectdate,
       });
-      if (data.code == 200) {
-        let arr = data.data.map((row) => {
+      if (data.success) {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -77,9 +77,9 @@ function TransactionRej() {
         setDataComesFromDateWise(arr);
         // setFilterDate(data.data);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else {
         setDataComesFromDateWise([]);
-        toast.error(data.message.msg);
+        toast.error(data.message?.msg || data.message);
         setLoading(false);
       }
     }

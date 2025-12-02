@@ -29,7 +29,7 @@ function R15() {
 
   const getOption = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/searchPoByPoNo", {
+      const response = await imsAxios.post("/backend/searchPoByPoNo", {
         search: e,
       });
       let arr = [];
@@ -49,15 +49,15 @@ function R15() {
     } else {
       setResponseData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/transaction/transactionIn", {
+      const response = await imsAxios.post("/transaction/transactionIn", {
         data: datee,
         min_types: allData?.selType,
       });
       // console.log(data.data);
-      if (data.code == 200) {
+      if (response.success) {
         // setLoading(true);
-        toast.success(data.message);
-        let arr = data.data.map((row) => {
+        toast.success(response.message);
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -65,8 +65,8 @@ function R15() {
         });
         setResponseData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }
@@ -75,14 +75,14 @@ function R15() {
   const fetchPo = async () => {
     setResponsePoData([]);
     setLoading(true);
-    const { data } = await imsAxios.post("/transaction/transactionIn", {
+    const response = await imsAxios.post("/transaction/transactionIn", {
       data: allData.part,
       min_types: allData?.selType,
     });
     // console.log(data);
-    if (data.code == 200) {
-      // toast.success(data.message);
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      // toast.success(response.message);
+      let arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -90,8 +90,8 @@ function R15() {
       });
       setResponsePoData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };

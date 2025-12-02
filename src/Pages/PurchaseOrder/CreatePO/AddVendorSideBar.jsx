@@ -62,7 +62,7 @@ const AddVendorSideBar = ({ setOpen, open }) => {
   const getFetchState = async (e) => {
     if (e.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
@@ -112,9 +112,9 @@ const AddVendorSideBar = ({ setOpen, open }) => {
     formData.append("branch", JSON.stringify(obj.branch));
     formData.append("uploadfile", files[0]);
 
-    const { data } = await imsAxios.post("/vendor/addVendor", formData);
+    const response = await imsAxios.post("/vendor/addVendor", formData);
     setSubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       // fetchVendor();
       reset();
       toast.success(data.message.toString().replaceAll("<br/>", " "));
@@ -122,7 +122,7 @@ const AddVendorSideBar = ({ setOpen, open }) => {
       // setShowAddVendorModal(false);
     } else {
       console.log("data", data);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setSubmitLoading(false);
     }
     setSubmitLoading(false);

@@ -18,15 +18,15 @@ function ViewModal({ viewModal, setViewModal }) {
       toast.error("Please Add Quantity");
     } else {
       setPendingLoading(true);
-      const { data } = await imsAxios.post("/godown/ApproveTransfer", {
+      const response = await imsAxios.post("/godown/ApproveTransfer", {
         qty: allPenData.quantity,
         transaction: viewModal.transaction_id,
       });
-      if (data.code == 200) {
+      if (data.success) {
         setViewModal(false);
         setPendingLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else {
+        toast.error(data.message?.msg || data.message);
         setPendingLoading(false);
       }
     }

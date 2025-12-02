@@ -133,11 +133,11 @@ function R35() {
   };
   const getBom = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: prod.value,
     });
     console.log(data.data);
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
     setBomName(arr);

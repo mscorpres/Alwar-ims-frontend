@@ -45,8 +45,8 @@ function DebitNoteReport() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           id: v4(),
           index: index + 1,
           ...row,
@@ -54,7 +54,7 @@ function DebitNoteReport() {
 
         setRows(arr);
       } else {
-        // toast.error(data.message.msg);
+        // toast.error(response.message?.msg || response.message);
         toast.error(errorToast(data.message));
         setRows([]);
       }
@@ -77,7 +77,7 @@ function DebitNoteReport() {
     let link = "/tally/vbt_report/print_vbt_debit_report";
     let filename = id;
 
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       debit_code: id,
     });
 
@@ -86,7 +86,7 @@ function DebitNoteReport() {
   };
   const handleSinblePrint = async (id) => {
     setLoading("tableLoading");
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/vbt_report/print_vbt_debit_report",
       {
         debit_code: id,

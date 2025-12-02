@@ -22,8 +22,8 @@ const ViewModal = ({ show, close }) => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row, index) => ({
+        if (response.success) {
+          const arr = response.data.map((row, index) => ({
             id: index + 1,
             component: row.c_name,
             partCode: row.c_part_no,
@@ -34,7 +34,7 @@ const ViewModal = ({ show, close }) => {
           setRows(arr);
         }
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       console.log("error while fetching bom components", error);

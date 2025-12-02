@@ -32,14 +32,14 @@ export default function ComponentImages({
     const response = await executeFun(() => getImages(key), "fetch");
     setImages(response.data ?? []);
     // setSkeletonLoading(true);
-    // const { data } = await imsAxios.post("/products/fetchImageProduct", {
+    // const response = await imsAxios.post("/products/fetchImageProduct", {
     //   product: showImages.partNumber,
     // });
-    // if (data.code == 200) {
+    // if (response.success) {
     //   setImages(data.data);
     // } else {
     //   setImages([]);
-    //   toast.error(data.message.msg);
+    //   toast.error(response.message?.msg || response.message);
     // }
     // setSkeletonLoading(false);
   };
@@ -59,8 +59,8 @@ export default function ComponentImages({
     // });
     // const { data } = response;
     // if (data) {
-    //   if (data.code === 200) {
-    //     toast.success(data.message);
+    //   if (response.success) {
+    //     toast.success(response.message);
     //     let arr = images;
     //     arr = images.filter((row) => row.image_id !== image.image_id);
     //     setImages(arr);

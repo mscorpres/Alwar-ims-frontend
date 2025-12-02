@@ -22,10 +22,10 @@ export default function TicketsModal({ open, handleClose }) {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setTickets(data.data);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

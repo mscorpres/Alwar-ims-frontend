@@ -242,9 +242,9 @@ const R2 = () => {
         wise: wise,
       });
       const { data } = response;
-      if (data.code == 200) {
+      if (response.success) {
         // setLoading(true);
-        toast.success(data.message);
+        toast.success(response.message);
         let arr = data.response.data.map((row, index) => {
           return {
             ...row,
@@ -255,8 +255,8 @@ const R2 = () => {
         setRows(arr);
         // console.log("rows", rows);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
       setLoading(false);
@@ -272,7 +272,7 @@ const R2 = () => {
 
   const getUsers = async (search) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/backend/fetchAllUser", {
+    const response = await imsAxios.post("/backend/fetchAllUser", {
       search: search,
     });
     setLoading(false);

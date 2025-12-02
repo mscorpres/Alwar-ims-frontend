@@ -91,13 +91,13 @@ export default function NatureOfTDS() {
   ];
   const getGLCodes = async (searchInput) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/tds/tds_ledger_options", {
+    const response = await imsAxios.post("/tally/tds/tds_ledger_options", {
       search: searchInput,
     });
     setSelectLoading(false);
     let arr = [];
-    if (!data.msg) {
-      arr = data.data.map((d) => {
+    if (response.success) {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -119,17 +119,17 @@ export default function NatureOfTDS() {
       toast.error("Please enter all the fields");
     } else {
       setFormLoading(true);
-      const { data } = await imsAxios.post("/tally/tds/add_new_nature_of_tds", {
+      const response = await imsAxios.post("/tally/tds/add_new_nature_of_tds", {
         ...newTDS,
         ledger: newTDS.ledger,
       });
       setFormLoading(false);
       // console.log(data);
-      if (data.code == 200) {
-        toast.success(data.message.msg);
+      if (response.success) {
+        toast.success(response.message?.msg || response.message);
         reset();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -144,9 +144,9 @@ export default function NatureOfTDS() {
   };
   const getTDSList = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/tally/tds/nature_of_tds");
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    const response = await imsAxios.get("/tally/tds/nature_of_tds");
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -154,7 +154,7 @@ export default function NatureOfTDS() {
       });
       setTDSList(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
 
     setLoading(false);

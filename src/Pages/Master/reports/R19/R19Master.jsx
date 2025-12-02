@@ -46,23 +46,23 @@ function R19Master() {
   };
   const getRows = async () => {
     setFetchLoading(true);
-    const { data } = await imsAxios.post("/report19/getSelectedComponent");
+    const response = await imsAxios.post("/report19/getSelectedComponent");
     setFetchLoading(false);
-    if (data.code === 200) {
-      let arr = data.data.map((row, index) => ({
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
         ...row,
         id: index + 1,
       }));
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const deleteComponent = async (id) => {
     const response = await imsAxios.post("/report19/removeComponent", {
       component_key: id,
     });
-    if (response.data.code === 200) {
+    if (response.success) {
       getRows();
       toast.success(response.data.message);
     } else {
@@ -98,16 +98,16 @@ function R19Master() {
     const formData = new FormData();
     formData.append("uploadfile", uploadingFile);
     setLoading("1");
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/report19/uploadComponents?stage=1",
       formData
     );
     setLoading(false);
-    if (data.code === 200) {
-      let arr = data.data.data.map((row, index) => ({ ...row, id: index + 1 }));
+    if (response.success) {
+      let arr = data.response.data.map((row, index) => ({ ...row, id: index + 1 }));
       setVerifiedFile(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const submitHandler = async (type, value) => {
@@ -115,17 +115,17 @@ function R19Master() {
       const formData = new FormData();
       formData.append("uploadfile", uploadingFile);
       setLoading("2");
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/report19/uploadComponents?stage=2",
         formData
       );
       setLoading(false);
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setVerifiedFile(false);
         setUploadingFile(false);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else if (type === "single") {
       setLoading("single");
@@ -133,7 +133,7 @@ function R19Master() {
         component_key: value.component,
       });
       setLoading(false);
-      if (response.data.code === 200) {
+      if (response.success) {
         toast.success(response.data.message);
         getRows();
         addSingleComponentForm.resetFields();

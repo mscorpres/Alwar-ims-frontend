@@ -102,13 +102,13 @@ export default function VBT1() {
   };
   const getVBTDetail = async (minId) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt07/fetch_minData", {
+    const response = await imsAxios.post("/tally/vbt07/fetch_minData", {
       min_id: minId,
     });
-    if (data.code === 200) {
+    if (response.success) {
       setEditingVBT(data.data);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setEditingVBT(null);
     }
     setLoading(false);
@@ -117,11 +117,11 @@ export default function VBT1() {
     setLoading(true);
     let mins = selectedRows.map((row) => vbtData.filter((r) => r.id == row)[0]);
     // console.log(mins);
-    const { data } = await imsAxios.post("/tally/vbt07/fetch_multi_min_data", {
+    const response = await imsAxios.post("/tally/vbt07/fetch_multi_min_data", {
       mins: mins.map((row) => row.min_transaction),
     });
     setLoading(false);
-    if (data.code === 200) {
+    if (response.success) {
       console.log(data.data);
       let arr = data.data;
       arr = arr.map((row) => ({
@@ -130,7 +130,7 @@ export default function VBT1() {
       }));
       setEditingVBT(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setEditingVBT(null);
     }
     setLoading(false);
@@ -157,12 +157,12 @@ export default function VBT1() {
       }
     }
     setSearchLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt07/fetch_vbt07", {
+    const response = await imsAxios.post("/tally/vbt07/fetch_vbt07", {
       wise: wise,
       data: d,
     });
-    if (data.code === 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -170,7 +170,7 @@ export default function VBT1() {
       });
       setVBTData(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setVBTData([]);
     }
     setSearchLoading(false);

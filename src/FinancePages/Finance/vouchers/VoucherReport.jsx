@@ -59,7 +59,7 @@ export default function VoucherReport() {
     }
     setLoading(true);
     setSearchLoading(true);
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       wise: wise,
       data:
         wise === "date_wise" || wise === "eff_wise"
@@ -68,8 +68,8 @@ export default function VoucherReport() {
     });
     setLoading(false);
     setSearchLoading(false);
-    if (data.code === 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -80,7 +80,7 @@ export default function VoucherReport() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const showVoucherTable = [
@@ -249,16 +249,16 @@ export default function VoucherReport() {
   const deleteFun = async () => {
     setLoading(true);
     if (deleteConfirm) {
-      const { data } = await imsAxios.post("/tally/voucher/bank_delete", {
+      const response = await imsAxios.post("/tally/voucher/bank_delete", {
         b_code: deleteConfirm,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setDeleteConfirm(null);
-        toast.success(data.message);
+        toast.success(response.message);
         getRows();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -270,11 +270,11 @@ export default function VoucherReport() {
     } else if (voucherType === "bank-receipt") {
       link = "tally/voucher/br_print";
     }
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       v_code: id,
     });
     printFunction(data.buffer.data);
-    // if (data.code === 200) {
+    // if (response.success) {
     // }
     setLoading(false);
   };
@@ -291,7 +291,7 @@ export default function VoucherReport() {
       filename = "bank-payment-receipt" + id;
       // console.log("bank-payment-receipt" + id);
     }
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       v_code: id,
     });
 
@@ -301,12 +301,12 @@ export default function VoucherReport() {
   };
   const getLedgerOptions = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
-    if (data.code === 200) {
+    if (response.success) {
       setSelectLoading(false);
-      const arr = data.data.map((row) => {
+      const arr = response.data.map((row) => {
         return { value: row.id, text: row.text };
       });
       setAsyncOptions(arr);

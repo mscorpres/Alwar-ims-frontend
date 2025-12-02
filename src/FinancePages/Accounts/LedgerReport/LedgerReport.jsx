@@ -51,13 +51,13 @@ export default function LedgerReport() {
 
   const getLedgerOptions = async (searchInput) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: searchInput,
     });
     setSelectLoading(false);
-    if (data.code === 200) {
+    if (response.success) {
       let arr = [];
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return {
           text: d.text,
           value: d.id,
@@ -76,7 +76,7 @@ export default function LedgerReport() {
     handleFetchRecoReport();
     let { data } = response;
     if (response.success) {
-      if (data.code === 200) {
+      if (response.success) {
         if (data?.data.rows) {
           let arr = data?.data.rows.map((r, id) => {
             return {
@@ -108,7 +108,7 @@ export default function LedgerReport() {
     //   const { data } =
     //   setLoading(false);
     //   setSearchLoading(false);
-    //   if (data.code === 200) {
+    //   if (response.success) {
     //     const arr = data.data.rows.map((row, index) => {
     //       return {
     //         ...row,
@@ -119,7 +119,7 @@ export default function LedgerReport() {
     //     setLedgerData({ summary: data.data.summary, rows: arr });
     //   } else {
     //     setLedgerData({ rows: [] });
-    //     toast.error(data.message.msg);
+    //     toast.error(response.message?.msg || response.message);
     //   }
     // }
   };
@@ -240,17 +240,15 @@ export default function LedgerReport() {
     const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: code,
     });
-    if (response.data) {
-      if (response.data.code === 200) {
-        let obj = {
-          label: response.data.data[0].text,
-          value: response.data.data[0].id,
-        };
-        // setSearchLedger(obj);
-        filterForm.setFieldValue("vendor", obj);
-      } else {
-        toast.error(response.data.message.msg);
-      }
+    if (response.success) {
+      let obj = {
+        label: response.data[0].text,
+        value: response.data[0].id,
+      };
+      // setSearchLedger(obj);
+      filterForm.setFieldValue("vendor", obj);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   useEffect(() => {

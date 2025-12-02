@@ -30,7 +30,7 @@ function CashPayment() {
 
   const getCash = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/cash/fetch_cash", {
+    const response = await imsAxios.post("/tally/cash/fetch_cash", {
       search: search,
     });
     setSelectLoading(false);
@@ -159,12 +159,12 @@ function CashPayment() {
 
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return { text: row.text, value: row.id };
       });
       setAsyncOptions(arr);
@@ -224,7 +224,7 @@ function CashPayment() {
       toast.error(validating.message);
     } else if (validating.status == true) {
       setLoading(true);
-      const { data } = await imsAxios.post("/tally/cash/insert_cp", {
+      const response = await imsAxios.post("/tally/cash/insert_cp", {
         gls: gls,
         debit: cash,
         comment: comment,
@@ -232,9 +232,9 @@ function CashPayment() {
         effective_date: effectiveDate,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         resetFunction();
-        toast.success(data.message);
+        toast.success(response.message);
       }
     }
   };

@@ -37,8 +37,8 @@ function BomComponentModal({
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code == 200) {
-        let arr = data.data.map((row, index) => {
+      if (response.success) {
+        let arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -46,7 +46,7 @@ function BomComponentModal({
           };
         });
         setAllData(arr);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         toast.error(data.message.sku);
       }
     }
@@ -218,7 +218,7 @@ function BomComponentModal({
 
     const { data } = response;
     if (data) {
-      if (data.code == 200) {
+      if (response.success) {
         let arr = addRowData.map((row) => {
           if (row.id == dataModal.id) {
             return {
@@ -233,8 +233,8 @@ function BomComponentModal({
         setAddRowData(arr);
 
         setDataModal((dm) => ({ ...dm, showModal: false }));
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

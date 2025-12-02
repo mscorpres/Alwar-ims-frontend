@@ -143,17 +143,17 @@ function SFTransferDrawer({
   };
   const getLocation = async () => {
     // setSelectLoading(true);
-    const { data } = await imsAxios.post("/transaction/getLocationInMin", {
+    const response = await imsAxios.post("/transaction/getLocationInMin", {
       search: "",
     });
     // setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.data.map((d) => {
+    if (response.success) {
+      let arr = data.response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const getdrawerData = async (id) => {
@@ -162,8 +162,8 @@ function SFTransferDrawer({
       trans_id: id,
     });
     const { data } = response;
-    if (data.code === 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           ...row,
         };
@@ -211,12 +211,12 @@ function SFTransferDrawer({
     // return;
     let response = await imsAxios.post("/sfMin/sfMinInward", payload);
     let { data } = response;
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setLoading(true);
       setDrawerData([]);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     setLoading(false);
   };

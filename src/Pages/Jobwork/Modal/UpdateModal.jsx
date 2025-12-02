@@ -18,15 +18,15 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
   const getAllData = async () => {
     // console.log("this is the status", row.recipeStatus);
     setLoading(true);
-    const { data } = await imsAxios.post("/jobwork/fetchJwAnlyUpdate", {
+    const response = await imsAxios.post("/jobwork/fetchJwAnlyUpdate", {
       jw_transaction: row?.jwId,
       po_transaction: row?.jwId,
       skucode: row?.skuKey,
     });
     setView(data?.headers);
 
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -37,8 +37,8 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
       });
       setMainData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };
@@ -192,7 +192,7 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
     //  console.log(view);
     setSubmitLoading(true);
 
-    const { data } = await imsAxios.post("/jobwork/updateJwAnlyComp", {
+    const response = await imsAxios.post("/jobwork/updateJwAnlyComp", {
       component: allCompArray,
       qty: allQtyArray,
       sku_trans_id: view?.jobwork_sku_id,
@@ -212,11 +212,11 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
       }, {}),
     });
     setSubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       getRows();
       setUpdateModalInfo(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setUpdateModalInfo(false);
     }
     //  console.log(data)

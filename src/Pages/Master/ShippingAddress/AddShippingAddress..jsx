@@ -19,9 +19,9 @@ function AddShippingAddress({ handleCSVDownload, getRows }) {
     const response = await imsAxios.post("/backend/stateList", {
       search: searchTerm,
     });
-    const { data } = response;
-    if (data[0]) {
-      let arr = data.map((row) => ({
+    setLoading(false);
+    if (response.success && response.data) {
+      let arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
@@ -29,7 +29,6 @@ function AddShippingAddress({ handleCSVDownload, getRows }) {
     } else {
       setAsyncOptions([]);
     }
-    setLoading(false);
   };
   const validateHandler = (values) => {
     let obj = {
@@ -50,16 +49,13 @@ function AddShippingAddress({ handleCSVDownload, getRows }) {
         submitConfirmModal
       );
       setLoading(false);
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
-          resetHandler();
-          setSubmitConfirmModal(false);
-          getRows();
-        } else {
-          toast.error(data.message.msg);
-        }
+      if (response.success) {
+        toast.success(response.message);
+        resetHandler();
+        setSubmitConfirmModal(false);
+        getRows();
+      } else {
+        toast.error(response.message);
       }
     }
   };

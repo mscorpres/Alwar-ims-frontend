@@ -11,7 +11,7 @@ function DeleteModal({ viewModal, setViewModal, getProductDataFromType }) {
   }
 
   const deleteFun = async () => {
-    const { data } = await imsAxios.post("/ppr/closePPR", {
+    const response = await imsAxios.post("/ppr/closePPR", {
       sku: viewModal.prod_product_sku,
       pprid: viewModal.prod_transaction,
       accesstoken: viewModal.prod_randomcode,

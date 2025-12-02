@@ -27,7 +27,7 @@ export default function UploadDocs({
   //   setExistinFiles([]);
   //   if (showUploadDoc.poid && existingFiles) {
   //     // console.log(showUploadDoc.poid);
-  //     const { data } = await imsAxios.post(
+  //     const response = await imsAxios.post(
   //       "/purchaseOrder/fetchUploadedAttachment",
   //       {
   //         po_id: showUploadDoc.poid,

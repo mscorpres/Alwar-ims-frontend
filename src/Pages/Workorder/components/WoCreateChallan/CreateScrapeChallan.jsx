@@ -99,7 +99,7 @@ const CreateScrapeChallan = () => {
       });
       const { data } = response;
       if (data) {
-        let arr = data.data.map((row) => ({
+        let arr = response.data.map((row) => ({
           text: row.name,
           value: row.code,
         }));
@@ -135,15 +135,15 @@ const CreateScrapeChallan = () => {
   const getAddInfo = async (e) => {
     try {
       setLoading("fetch");
-      const { data } = await imsAxios.post("backend/fetchClientAddress", {
+      const response = await imsAxios.post("backend/fetchClientAddress", {
         addressID: e,
         code: clientcode,
       });
-      if (data.code === 200) {
+      if (response.success) {
         console.log("data---", data);
         // createWoForm.setFieldValue("gstin", data.data.gst);
         challanForm.setFieldValue("address", data.data.address);
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -171,7 +171,7 @@ const CreateScrapeChallan = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const arr = data.branchList.map((row) => ({
             text: row.text,
             value: row.id,
@@ -187,7 +187,7 @@ const CreateScrapeChallan = () => {
             challanForm.setFieldValue("address", "");
           }
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else {
         toast.error("Some error occured while getting Client branches ");
@@ -359,13 +359,13 @@ const CreateScrapeChallan = () => {
       );
       console.log("response of edit ", response);
       let { data } = response;
-      if (data.status === "success") {
-        toast.success(data.message);
+      if (response.success ) {
+        toast.success(response.message);
         challanForm.resetFields();
         setLoading(true);
         navigate("/woviewchallan");
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setLoading(true);
       }
     } else {
@@ -390,7 +390,7 @@ const CreateScrapeChallan = () => {
     console.log("response", response);
     setEditScrapeChallan("edit");
     const { data } = response;
-    if (data.status === "success") {
+    if (response.success ) {
       // console.log(" data.header.challan_remark", data.header.challan_remark);
       challanForm.setFieldValue("clientname", data.header.clientcode.label);
       challanForm.setFieldValue("clientnameCode", data.header.clientcode.value);

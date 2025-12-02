@@ -19,53 +19,55 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
   // console.log(allBom)
   const getFetcgData = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/production/FetchComponentWithBom", {
+    const response = await imsAxios.post("/production/FetchComponentWithBom", {
       bom: allBom.proBom,
       mfgQty: allBom.qty,
       pic_loc: allBom.locSecond,
       shiftLocation: allBom.locValue,
     });
     setPageLoading(false);
-    let dataArray = [...data?.data?.filter((a) => a?.type == "P")];
-    dataArray = dataArray.map((row) => {
-      return {
-        ...row,
-        reqQty: "",
-        remark: "",
-        id: v4(),
-      };
-    });
+    if (response.success) {
+      let dataArray = [...response?.data?.filter((a) => a?.type == "P")];
+      dataArray = dataArray.map((row) => {
+        return {
+          ...row,
+          reqQty: "",
+          remark: "",
+          id: v4(),
+        };
+      });
 
-    let dataArray1 = [...data?.data?.filter((aa) => aa?.type == "PCK")];
-    dataArray1 = dataArray1.map((row) => {
-      return {
-        ...row,
-        reqQty: "",
-        id: v4(),
-        remark: "",
-      };
-    });
-    let dataArray2 = [...data?.data?.filter((aaa) => aaa?.type == "O")];
-    dataArray2 = dataArray2.map((row) => {
-      return {
-        ...row,
-        reqQty: "",
-        remark: "",
-        id: v4(),
-      };
-    });
-    let dataArray3 = [...data?.data?.filter((aaa) => aaa?.type == "PCB")];
-    dataArray3 = dataArray3.map((row) => {
-      return {
-        ...row,
-        reqQty: "",
-        remark: "",
-        id: v4(),
-      };
-    });
-    let arr = tableData;
-    arr = [...dataArray, ...dataArray1, ...dataArray2, ...dataArray3];
-    setTableData(arr);
+      let dataArray1 = [...response?.data?.filter((aa) => aa?.type == "PCK")];
+      dataArray1 = dataArray1.map((row) => {
+        return {
+          ...row,
+          reqQty: "",
+          id: v4(),
+          remark: "",
+        };
+      });
+      let dataArray2 = [...response?.data?.filter((aaa) => aaa?.type == "O")];
+      dataArray2 = dataArray2.map((row) => {
+        return {
+          ...row,
+          reqQty: "",
+          remark: "",
+          id: v4(),
+        };
+      });
+      let dataArray3 = [...response?.data?.filter((aaa) => aaa?.type == "PCB")];
+      dataArray3 = dataArray3.map((row) => {
+        return {
+          ...row,
+          reqQty: "",
+          remark: "",
+          id: v4(),
+        };
+      });
+      let arr = tableData;
+      arr = [...dataArray, ...dataArray1, ...dataArray2, ...dataArray3];
+      setTableData(arr);
+    }
   };
 
   const columns = [
@@ -243,18 +245,18 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
     };
 
     setsubmitLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/production/CreateMatrialRequestWithBom",
       finalObj
     );
     setsubmitLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setTab(true);
       reset();
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };

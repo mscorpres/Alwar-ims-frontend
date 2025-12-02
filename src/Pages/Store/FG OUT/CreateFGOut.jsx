@@ -61,12 +61,12 @@ const CreateFGOut = () => {
   const getOption = async (productSearchInput) => {
     if (productSearchInput?.length > 2) {
       setSelLoading(true);
-      const { data } = await imsAxios.post("/fgOUT/fetchProduct", {
+      const response = await imsAxios.post("/fgOUT/fetchProduct", {
         searchTerm: productSearchInput,
       });
       setSelLoading(false);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -77,7 +77,7 @@ const CreateFGOut = () => {
   const compInputHandler = async (name, id, value) => {
     console.log(name, id, value);
     if (name == "product") {
-      const { data } = await imsAxios.post("/fgOUT/fetchProductData", {
+      const response = await imsAxios.post("/fgOUT/fetchProductData", {
         search: value,
       });
       const totalValue = data?.data?.total;
@@ -141,20 +141,20 @@ const CreateFGOut = () => {
       toast.error("Please Select Option");
     } else {
       setLoadingUpdate(true);
-      const { data } = await imsAxios.post("/fgout/createFgOut", {
+      const response = await imsAxios.post("/fgout/createFgOut", {
         fg_out_type: createFgOut.selectType,
         product: arrPro,
         qty: arrQty,
         remark: arrRemark,
         comment: createFgOut.comment,
       });
-      if (data.code == 200) {
+      if (data.success) {
         resetFunction();
 
-        toast.success(data.message);
+        toast.success(response.message);
         setLoadingUpdate(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else {
+        toast.error(data.message?.msg || data.message);
         setLoadingUpdate(false);
       }
     }

@@ -43,14 +43,14 @@ function CashReceiptEdit({
 
   const callFunction = async () => {
     setEffectiveDate("");
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/cash/cash_receipt_report",
       {
         v_code: edit?.module_used,
       }
     );
     // console.log(data);
-    if (data.code == 200) {
+    if (response.success) {
       // setHeader(data.header[0].account);
       setInsertDate(data.header[0].insert_date);
       setEffectiveDate(data.header[0].ref_date);
@@ -60,7 +60,7 @@ function CashReceiptEdit({
         value: data.header[0].account_code,
       };
       setCash(accountObj);
-      let arr = data.data.map((row, index) => {
+      let arr = response.data.map((row, index) => {
         let particularyObj = {
           label: row.particularLabel,
           value: row.particularID,
@@ -74,17 +74,17 @@ function CashReceiptEdit({
       });
       // console.log(arr);
       setAllData(arr);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
     }
 
-    // data.data.map((aa) => setCash(aa.particulars));
-    // if (data.code == 200) {
+    // response.data.map((aa) => setCash(aa.particulars));
+    // if (response.success) {
     //   setCash(data.header[0].account);
     //   setInsertDate(data.header[0].insert_date);
     //   setEffectiveDate(data.header[0].ref_date);
 
-    //   const arr = data.data.map((row) => {
+    //   const arr = response.data.map((row) => {
     //     return {
     //       ...row,
     //       id: v4(),
@@ -97,7 +97,7 @@ function CashReceiptEdit({
 
   const getAccount = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/cash/fetch_cash",
       {
         search: search,
@@ -112,15 +112,15 @@ function CashReceiptEdit({
 
   const getParticulars = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/ledger/ledger_options",
       {
         search: search,
       }
     );
     setSelectLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return { text: row.text, value: row.id };
       });
       // console.log(arr);
@@ -228,7 +228,7 @@ function CashReceiptEdit({
       allData.map((p) => ammount.push(p.ammount));
       allData.map((p) => comment.push(p.comment));
 
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/updateCashReceipt",
         {
           account: cash.value,
@@ -240,11 +240,11 @@ function CashReceiptEdit({
           module_used: edit?.module_used,
         }
       );
-      if (data.code == 200) {
+      if (response.success) {
         fetchData("date_wise");
         toast.success(data.code);
         setEdit(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         console.log(data.message.msg);
       }
     } else if (selectValueWhenFetch == "eff_wise") {
@@ -257,7 +257,7 @@ function CashReceiptEdit({
       allData.map((p) => ammount.push(p.ammount));
       allData.map((p) => comment.push(p.comment));
 
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/updateCashReceipt",
         {
           account: cash.value,
@@ -269,11 +269,11 @@ function CashReceiptEdit({
           module_used: edit?.module_used,
         }
       );
-      if (data.code == 200) {
+      if (response.success) {
         fetchData("eff_wise");
         toast.success(data.code);
         setEdit(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         console.log(data.message.msg);
       }
     } else if (selectValueWhenFetch == "key_wise") {
@@ -286,7 +286,7 @@ function CashReceiptEdit({
       allData.map((p) => ammount.push(p.ammount));
       allData.map((p) => comment.push(p.comment));
 
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/updateCashReceipt",
         {
           account: cash.value,
@@ -298,11 +298,11 @@ function CashReceiptEdit({
           module_used: edit?.module_used,
         }
       );
-      if (data.code == 200) {
+      if (response.success) {
         fetchData("key_wise");
         toast.success(data.code);
         setEdit(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         console.log(data.message.msg);
       }
     } else if (selectValueWhenFetch == "ledger_wise") {
@@ -315,7 +315,7 @@ function CashReceiptEdit({
       allData.map((p) => ammount.push(p.ammount));
       allData.map((p) => comment.push(p.comment));
 
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/updateCashReceipt",
         {
           account: cash.value,
@@ -327,11 +327,11 @@ function CashReceiptEdit({
           module_used: edit?.module_used,
         }
       );
-      if (data.code == 200) {
+      if (response.success) {
         fetchData("ledger_wise");
         toast.success(data.code);
         setEdit(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         console.log(data.message.msg);
       }
     }

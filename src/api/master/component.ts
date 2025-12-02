@@ -276,16 +276,16 @@ export const updateApprovalStatus = async (
 
 export const getCategoryTypeOptions = async () => {
   const response = await imsAxios.get("/mfgcategory/listCategories");
-  if (response.data.code === 200) {
+  if (response.success) {
     return {
       success: true,
-      data: response.data.data,
+      data: response.data,
       message: null,
     };
   } else {
     return {
       success: false,
-      message: response.data.message.msg,
+      message: response.message,
       data: [],
     };
   }

@@ -6,7 +6,9 @@ export const getDepartmentOptions = async (search: string) => {
     search,
   });
 
-  response.data = convertSelectOptions(response.data);
+  if (response.success) {
+    response.data = convertSelectOptions(response.data);
+  }
 
   return response;
 };

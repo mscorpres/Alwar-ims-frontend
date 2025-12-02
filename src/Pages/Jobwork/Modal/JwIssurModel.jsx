@@ -27,7 +27,7 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
     });
     setLoading("fetch", false);
     const { data } = response;
-    if (data.code == 200) {
+    if (response.success) {
       data.headers.map((a) => setView(a));
       let arr = data.components.map((row, index) => {
         return {
@@ -38,8 +38,8 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
         };
       });
       setMainData(arr);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setOpenModal(false);
     }
   };
@@ -152,11 +152,11 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
     const response = await executeFun(() => saveJwMAterialIssue(finalObj), "select");
     const { data } = response;
     setCloseLoading("fetch", false);
-    if (data.code == 200) {
+    if (response.success) {
       setOpenModal(false);
-      toast.success(data.message);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+      toast.success(response.message);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
     }
     console.log(data);
   };

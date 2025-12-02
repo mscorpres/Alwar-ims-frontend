@@ -276,59 +276,61 @@ export default function EditComponent({
       }
     });
     if (name == "component") {
-      const { data } = await imsAxios.post(
+      const componentResponse = await imsAxios.post(
         "/component/getComponentDetailsByCode",
         {
           component_code: value.value,
         }
       );
-      let arr1 = rowCount;
-      arr1 = arr1.map((row) => {
-        if (row.id == id) {
-          if (row.gsttype == "L") {
-            let percentage = data.data.gstrate / 2;
-            return {
-              ...row,
-              component: value,
-              rate: data.data.rate,
-              unit: data.data.unit,
-              inrValue: data.data.rate * row?.qty * parseInt(row?.exchange),
-              hsncode: data.data.hsn,
-              gstrate: data.data.gstrate,
-              cgst: (row?.inrValue * percentage) / 100,
-              sgst: (row?.inrValue * percentage) / 100,
-              igst: 0,
-            };
-          } else if (row.gsttype == "I") {
-            let percentage = data.data.gstrate;
-            return {
-              ...row,
-              cgst: 0,
-              component: value,
-              rate: data.data.rate,
-              unit: data.data.unit,
-              inrValue: data.data.rate * row.qty * parseInt(row?.exchange),
-              hsncode: data.data.hsn,
-              gstrate: data.data.gstrate,
-              sgst: 0,
-              igst: (row?.inrValue * percentage) / 100,
-            };
+      if (componentResponse.success) {
+        let arr1 = rowCount;
+        arr1 = arr1.map((row) => {
+          if (row.id == id) {
+            if (row.gsttype == "L") {
+              let percentage = componentResponse.data.gstrate / 2;
+              return {
+                ...row,
+                component: value,
+                rate: componentResponse.data.rate,
+                unit: componentResponse.data.unit,
+                inrValue: componentResponse.data.rate * row?.qty * parseInt(row?.exchange),
+                hsncode: componentResponse.data.hsn,
+                gstrate: componentResponse.data.gstrate,
+                cgst: (row?.inrValue * percentage) / 100,
+                sgst: (row?.inrValue * percentage) / 100,
+                igst: 0,
+              };
+            } else if (row.gsttype == "I") {
+              let percentage = componentResponse.data.gstrate;
+              return {
+                ...row,
+                cgst: 0,
+                component: value,
+                rate: componentResponse.data.rate,
+                unit: componentResponse.data.unit,
+                inrValue: componentResponse.data.rate * row.qty * parseInt(row?.exchange),
+                hsncode: componentResponse.data.hsn,
+                gstrate: componentResponse.data.gstrate,
+                sgst: 0,
+                igst: (row?.inrValue * percentage) / 100,
+              };
+            } else {
+              return {
+                ...row,
+                component: value,
+                rate: componentResponse.data.rate,
+                unit: componentResponse.data.unit,
+                gstrate: componentResponse.data.gstrate,
+                hsncode: componentResponse.data.hsn,
+                inrValue: componentResponse.data.rate * row.qty * parseInt(row?.exchange),
+              };
+            }
           } else {
-            return {
-              ...row,
-              component: value,
-              rate: data.data.rate,
-              unit: data.data.unit,
-              gstrate: data.data.gstrate,
-              hsncode: data.data.hsn,
-              inrValue: data.data.rate * row.qty * parseInt(row?.exchange),
-            };
+            return row;
           }
-        } else {
-          return row;
-        }
-      });
-      setRowCount(arr1);
+        });
+        setRowCount(arr1);
+      }
     }
     if (name != "component") {
       setRowCount(arr);
@@ -336,7 +338,7 @@ export default function EditComponent({
   };
   const getComponents = async (s) => {
     // if (searchInput.length > 2) {
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: s,
     // });
     const response = await executeFun(() => getComponentOptions(s), "select");
@@ -466,30 +468,32 @@ export default function EditComponent({
   const submitHandler = async () => {
     if (submitConfirm) {
       setSubmitLoading(true);
-      const { data } = await imsAxios.post("/purchaseOrder/updateData4Update", {
+      const response = await imsAxios.post("/purchaseOrder/updateData4Update", {
         ...submitConfirm,
       });
       setSubmitLoading(false);
-      if (data.code == 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setUpdatePoId(null);
       } else {
-        toast.error(data.message);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
   //getting currencies on page load
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = data.data.map((d) => {
-      return {
-        text: d.currency_symbol,
-        value: d.currency_id,
-        notes: d.currency_notes,
-      };
-    });
+    if (response.success) {
+      arr = response.data.map((d) => {
+        return {
+          text: d.currency_symbol,
+          value: d.currency_id,
+          notes: d.currency_notes,
+        };
+      });
+    }
     setCurrencies(arr);
   };
   const removePart = async (row) => {
@@ -503,11 +507,11 @@ export default function EditComponent({
       setRemovePartLoading(row.id);
       const response = await imsAxios.post("/purchaseOrder/removePart", obj);
       setRemovePartLoading(false);
-      if (response.data.code === 200) {
-        toast.success(response.data.message);
+      if (response.success) {
+        toast.success(response.message);
         removeRows(row.id);
       } else {
-        toast.error(response.data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       removeRows(row.id);

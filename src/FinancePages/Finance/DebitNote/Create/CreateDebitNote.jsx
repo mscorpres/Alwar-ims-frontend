@@ -19,12 +19,12 @@ export const CreateDebitNote = () => {
     const response = await imsAxios.get("/tally/tds/nature_of_tds");
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         let arr = data.data;
 
         return arr;
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -43,7 +43,7 @@ export const CreateDebitNote = () => {
       tds_percent: "0",
     });
     // console.log("data===========", data.data[0].ven_tds[0]);
-    if (data.code === 200) {
+    if (response.success) {
       let arr = data.data;
       setAllTdsOptions(arr[0].ven_tds);
 
@@ -55,7 +55,7 @@ export const CreateDebitNote = () => {
       });
       setTdsArray(tdsC);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const getDetails = async (vbtCodes) => {
@@ -66,14 +66,14 @@ export const CreateDebitNote = () => {
     // setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         const tdsOptions = await getTDSData();
         let tdsPerc = tdsOptions.filter(
           (tds) => tds.tds_key === data.data[0].tds_code
         )[0]?.percentage;
         const tdsPercentage = +Number(tdsPerc).toFixed(2);
 
-        let arr = data.data.map((row) => {
+        let arr = response.data.map((row) => {
           const value = +Number(
             +Number(row.inrate).toFixed(3) * +Number(row.vbt_qty).toFixed(3)
           ).toFixed(3);
@@ -111,7 +111,7 @@ export const CreateDebitNote = () => {
         //   ];
         // setSummaryDetails(summaryDetailsArr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

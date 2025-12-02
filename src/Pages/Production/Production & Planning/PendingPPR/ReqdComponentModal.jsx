@@ -50,8 +50,8 @@ export default function ReqdComponentModal({
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          let arr = data.data.map((row, index) => ({
+        if (response.success) {
+          let arr = response.data.map((row, index) => ({
             ...row,
             id: v4(),
             // qty:
@@ -76,7 +76,7 @@ export default function ReqdComponentModal({
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const value = data.data;
 
           return {
@@ -89,7 +89,7 @@ export default function ReqdComponentModal({
             bomQty: value.bom_qty,
           };
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
           return {
             error: true,
           };
@@ -180,12 +180,12 @@ export default function ReqdComponentModal({
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           // setReqdKeys(false);
           setRqdSaved(true);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -229,11 +229,11 @@ export default function ReqdComponentModal({
         component: row.component,
       });
       const { data } = response;
-      if (data.code === 200) {
+      if (response.success) {
         getDetails(true);
-        toast.success(data.message);
+        toast.success(response.message);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
     } finally {
@@ -272,10 +272,10 @@ export default function ReqdComponentModal({
         component: row.component,
       });
       const { data } = response;
-      if (data.code === 200) {
+      if (response.success) {
         inputHandler("saved", true, row.id);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       console.log("error while saving new component", error);
@@ -496,12 +496,12 @@ const NewComponentModal = ({
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           getDetails(true);
           resetHandler();
           hide();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

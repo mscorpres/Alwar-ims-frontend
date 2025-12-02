@@ -29,8 +29,8 @@ const Uom = () => {
 
     // old code
     // setLoading(true);
-    // const { data } = await imsAxios.get("/uom");
-    // let arr = data.data.map((row, index) => {
+    // const response = await imsAxios.get("/uom");
+    // let arr = response.data.map((row, index) => {
     //   return {
     //     ...row,
     //     index: index + 1,
@@ -61,11 +61,11 @@ const Uom = () => {
     //   toast.error("Please Add Description");
     // } else {
     //   setLoading(true);
-    //   const { data } = await imsAxios.post("/uom/insert", {
+    //   const response = await imsAxios.post("/uom/insert", {
     //     uom: newUom.uom,
     //     description: newUom.description,
     //   });
-    //   if (data.code === 200) {
+    //   if (response.success) {
     //     setNewUom({
     //       uom: "",
     //       description: "",
@@ -73,7 +73,7 @@ const Uom = () => {
     //     fetchUOm();
     //     setLoading(false);
     //   } else {
-    //     toast.error(data.message.msg);
+    //     toast.error(response.message?.msg || response.message);
     //     setLoading(false);
     //   }
     // }

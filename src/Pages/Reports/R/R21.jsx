@@ -16,14 +16,14 @@ function R21() {
 
   const getRows = async () => {
     setFetchLoading(true);
-    const data = await imsAxios.get("/report21");
-    console.log("data", data);
+    const response = await imsAxios.get("/report21");
+    console.log("data", response);
     setFetchLoading(false);
     let headers = [];
-    if (data.status === 200) {
+    if (response.success) {
       let location = {};
       let headerArr = [];
-      let arr = data.data.result.map((row) => {
+      let arr = response.data.result.map((row) => {
         let obj = JSON.parse(row.locations);
         for (const key in obj) {
           if (obj.hasOwnProperty(key)) {

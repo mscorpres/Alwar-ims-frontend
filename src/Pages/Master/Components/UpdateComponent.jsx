@@ -45,7 +45,7 @@ export default function UpdateComponent() {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const value = data.data[0];
           const finalObj = {
             partCode: value.partcode,
@@ -79,7 +79,7 @@ export default function UpdateComponent() {
           };
           componentForm.setFieldsValue(finalObj);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -93,14 +93,14 @@ export default function UpdateComponent() {
       const response = await imsAxios.post("/uom/uomSelect2");
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (response.success) {
+          const arr = response.data.map((row) => ({
             text: row.text,
             value: row.id,
           }));
           setuomOptions(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -114,14 +114,14 @@ export default function UpdateComponent() {
       const response = await imsAxios.post("/groups/groupSelect2");
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (response.success) {
+          const arr = response.data.map((row) => ({
             text: row.text,
             value: row.id,
           }));
           setgroupOptions(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -177,7 +177,7 @@ export default function UpdateComponent() {
     //   });
     //   const { data } = response;
     //   if (data) {
-    //     if (data.code === 200) {
+    //     if (response.success) {
     //       if (data.header) {
     //         const finalObj = {
     //           name: data.header.category,
@@ -195,7 +195,7 @@ export default function UpdateComponent() {
     //         setCategoryData(null);
     //       }
     //     } else {
-    //       toast.error(data.message.msg);
+    //       toast.error(response.message?.msg || response.message);
     //     }
     //   }
     // } catch (error) {
@@ -215,11 +215,11 @@ export default function UpdateComponent() {
 
       const { data } = response;
       if (data) {
-        if (data.code === "200") {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           getDetails();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

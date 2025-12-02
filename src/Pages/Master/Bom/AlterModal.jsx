@@ -27,7 +27,7 @@ const AlterModal = ({
 
   const dropDownData = async (search) => {
     setSearchLoading(true);
-    const { data } = await imsAxios.post("/bom/getAlternativeComponents", {
+    const response = await imsAxios.post("/bom/getAlternativeComponents", {
       subject: fetchData?.bomId,
       current_component: altModal?.id,
       searchTerm: search,
@@ -44,7 +44,7 @@ const AlterModal = ({
 
   const addAlterComponent = async () => {
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/bom/addNewAltComponent", {
+    const response = await imsAxios.post("/bom/addNewAltComponent", {
       subject_id: fetchData?.bomId,
       product_id: fetchData?.sku,
       // parent_component: sfgEditModal.bom_product_sku,
@@ -52,7 +52,7 @@ const AlterModal = ({
       child_component: selValue.selOptionVale?.key,
     });
     setSubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       fetchMappningComponent();
       setSelValue({
         selOptionVale: "",
@@ -63,13 +63,13 @@ const AlterModal = ({
   };
 
   const fetchMappningComponent = async () => {
-    const { data } = await imsAxios.post("/bom/getAllAlternativeComponents", {
+    const response = await imsAxios.post("/bom/getAllAlternativeComponents", {
       subjectid: fetchData?.bomId,
       product_id: fetchData?.sku,
       parent_component: altModal.id,
     });
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -79,13 +79,13 @@ const AlterModal = ({
       setAllData(arr);
     } else {
       setAllData([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
   const deleteRow = async (a) => {
     setMinusLoading(a.refid);
-    const { data } = await imsAxios.post("/bom/removeAltComponent", {
+    const response = await imsAxios.post("/bom/removeAltComponent", {
       subject: a.subject,
       product: a.product_sku,
       parent_component: a.parent_component,
@@ -93,7 +93,7 @@ const AlterModal = ({
       refid: a.refid,
     });
     setMinusLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       fetchMappningComponent();
       toast.success("Data Deteled Successfullt");
     } else {

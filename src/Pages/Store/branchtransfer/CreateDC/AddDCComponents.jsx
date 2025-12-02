@@ -44,7 +44,7 @@ export default function AddDCComponents({
   const getComponents = async (searchInput) => {
     if (searchInput.length > 2) {
       // setSelectLoading(true);
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: searchInput,
       // });
       // setSelectLoading(false);
@@ -68,7 +68,7 @@ export default function AddDCComponents({
     let arr = rows;
     if (name == "component") {
       setPageLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/component/getComponentDetailsByCode",
         {
           component_code: value.value,
@@ -180,18 +180,18 @@ export default function AddDCComponents({
   const submitHandler = async () => {
     if (showSubmitConfirm) {
       setSubmitLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/branchTransfer/createBranchTransfer",
         showSubmitConfirm
       );
       setSubmitLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         detailsResetFunction();
         resetFunction();
-        toast.success(data.message);
+        toast.success(response.message);
         setActiveTab("1");
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
     setShowSubmitConfirm(false);

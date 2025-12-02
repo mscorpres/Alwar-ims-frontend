@@ -43,14 +43,14 @@ function EditTCS({
 
   const getGLList = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       `/tally/tcs/tcsLedgerOptions?search=${search}`
     );
     // console.log(data.data);
     setSelectLoading(false);
     let arr = [];
-    if (!data.msg) {
-      arr = data.data.map((d) => {
+    if (response.success) {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -72,7 +72,7 @@ function EditTCS({
       status,
     } = tcsData;
     setLoading(true);
-    const { data } = await imsAxios.put(
+    const response = await imsAxios.put(
       "/tally/tcs/update",
       {
         ID: ID,
@@ -85,14 +85,12 @@ function EditTCS({
       }
     );
     setLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setEditingTCS(null);
       getTCSList();
     } else {
-      for (const key in data.message) {
-        toast.error(data.message[key][0]);
-      }
+      toast.error(response.message?.msg || response.message);
     }
   };
 

@@ -220,12 +220,6 @@ export const fetchLocations = async (search, type?: "sf") => {
     searchTerm: search,
   });
 
-  if (response.data.code === 200) {
-    return {
-      success: true,
-      data: response.data.data,
-    };
-  }
   return response;
 };
 export const getProductsOptions = async (search: string, sku?: boolean) => {
@@ -282,8 +276,8 @@ export const getMINOptions = async (search) => {
   });
 
   let arr = [];
-  if (response.data.code === 200) {
-    arr = convertSelectOptions(response.data.data);
+  if (response.success) {
+    arr = convertSelectOptions(response.data);
   }
   response.data = arr;
   return response;

@@ -226,7 +226,7 @@ export default function ExportMaterialInWithPO({}) {
         () => checkInvoiceforMIN(payload),
         "select"
       );
-      // const { data } = await imsAxios.post("/backend/checkInvoice", {
+      // const response = await imsAxios.post("/backend/checkInvoice", {
       //   invoice: invoices,
       //   vendor: searchData.vendor,
       // });
@@ -379,10 +379,10 @@ export default function ExportMaterialInWithPO({}) {
           () => poMINforImport(final),
           "select"
         );
-        // const { data } = await imsAxios.post("/purchaseOrder/poMIN", final);
+        // const response = await imsAxios.post("/purchaseOrder/poMIN", final);
         let { data } = response;
         // setSubmitLoading(false);
-        if (data.code == "200") {
+        if (response.success) {
           setSearchData({
             vendor: "",
             poNumber: "",
@@ -407,7 +407,7 @@ export default function ExportMaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else {
         setSubmitLoading(false);
@@ -418,10 +418,10 @@ export default function ExportMaterialInWithPO({}) {
     }
   };
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -433,14 +433,14 @@ export default function ExportMaterialInWithPO({}) {
 
   const getLocation = async (costCode) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/transaction/getLocationInMin", {
+    const response = await imsAxios.post("/transaction/getLocationInMin", {
       search: "",
       cost_center: costCode,
     });
     setPageLoading(false);
-    let arr = data.data.data;
-    if (data.code == 200) {
-      let arr = data.data.data.map((d) => {
+    let arr = response.data.data;
+    if (response.success) {
+      let arr = data.response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
@@ -462,12 +462,12 @@ export default function ExportMaterialInWithPO({}) {
   const getAutoComnsumptionOptions = async () => {
     setPageLoading(true);
 
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       "/transaction/fetchAutoConsumpLocation"
     );
     setPageLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -551,13 +551,13 @@ export default function ExportMaterialInWithPO({}) {
       po: searchData.poNumber.trim(),
       vendor: searchData.vendor,
     };
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/purchaseOrder/fetchVendorPO",
       search
     );
     setSearchLoading(false);
 
-    if (data.code == 200) {
+    if (response.success) {
       let obj = data.data;
       obj = {
         ...obj,
@@ -570,7 +570,7 @@ export default function ExportMaterialInWithPO({}) {
       setPoData(obj);
       setResetPoData(obj);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setPoData({ materials: [] });
       //   toast.error("Some error Occurred");
     }

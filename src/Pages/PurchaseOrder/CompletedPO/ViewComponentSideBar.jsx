@@ -48,20 +48,24 @@ export default function ViewComponentSideBar({
   ];
   const printFun = async () => {
     setLoading("print");
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: componentData?.poId,
     });
-    printFunction(data.data.buffer.data);
+    if (response.success) {
+      printFunction(response.data.buffer.data);
+    }
     setLoading(null);
   };
 
   const handleDownload = async () => {
     setLoading("download");
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: componentData?.poId,
     });
-    let filename = `PO ${componentData?.poId}`;
-    downloadFunction(data.data.buffer.data, filename);
+    if (response.success) {
+      let filename = `PO ${componentData?.poId}`;
+      downloadFunction(response.data.buffer.data, filename);
+    }
     setLoading(null);
   };
   return (

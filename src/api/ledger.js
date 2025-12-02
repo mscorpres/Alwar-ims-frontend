@@ -20,12 +20,12 @@ export const getLedgerOptions = async (search) => {
   });
 
   let arr = [];
-  if (response.data.code === 200) {
-    arr = convertSelectOptions(response.data.data);
+  if (response.success) {
+    arr = convertSelectOptions(response.data);
   }
 
-  response.data.data = arr;
-  return response.data;
+  response.data = arr;
+  return response;
 };
 
 export const getLedgerEmail = async (ledgerCode) => {

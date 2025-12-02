@@ -30,7 +30,7 @@ const Alter = ({
 
   const dropDownData = async () => {
     setSkeletonLoading(true);
-    const { data } = await imsAxios.post("/bom/getAlternativeComponents", {
+    const response = await imsAxios.post("/bom/getAlternativeComponents", {
       subject: fetchData?.subjectid,
       current_component: altModal?.compKey,
     });
@@ -46,7 +46,7 @@ const Alter = ({
 
   const addAlterComponent = async () => {
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/bom/addNewAltComponent", {
+    const response = await imsAxios.post("/bom/addNewAltComponent", {
       subject_id: fetchData.subjectid,
       product_id: fetchData.sku,
       // parent_component: sfgEditModal.bom_product_sku,
@@ -54,7 +54,7 @@ const Alter = ({
       child_component: selValue.selOptionVale,
     });
     setSubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       fetchMappningComponent();
       setSelValue({
         selOptionVale: "",
@@ -65,15 +65,15 @@ const Alter = ({
   };
 
   const fetchMappningComponent = async () => {
-    const { data } = await imsAxios.post("/bom/getAllAlternativeComponents", {
+    const response = await imsAxios.post("/bom/getAllAlternativeComponents", {
       // subjectid: sfgEditModal?.subject_id,
       // product_id: sfgEditModal?.bom_product_sku,
       subjectid: fetchData.subjectid,
       product_id: fetchData.sku,
       parent_component: altModal?.compKey,
     });
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -83,13 +83,13 @@ const Alter = ({
       setAllData(arr);
     } else {
       setAllData([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
   const deleteRow = async (a) => {
     setMinusLoading(a.refid);
-    const { data } = await imsAxios.post("/bom/removeAltComponent", {
+    const response = await imsAxios.post("/bom/removeAltComponent", {
       subject: a.subject,
       product: a.product_sku,
       parent_component: a.parent_component,
@@ -97,7 +97,7 @@ const Alter = ({
       refid: a.refid,
     });
     setMinusLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       fetchMappningComponent();
       toast.success("Data Deteled Successfullt");
     } else {

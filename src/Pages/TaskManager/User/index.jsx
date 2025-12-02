@@ -17,7 +17,7 @@ const UserTasks = () => {
     try {
       const response = await imsAxios.get("/taskmaster/fetchTaskByName");
       const { data } = response;
-      const arr = data.data.map((task) => ({
+      const arr = response.data.map((task) => ({
         taskId: task.task_id,
         status: task.status,
         title: task.task_title,

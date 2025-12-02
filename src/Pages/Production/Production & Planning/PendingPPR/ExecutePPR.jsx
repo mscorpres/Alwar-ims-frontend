@@ -56,7 +56,7 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
   };
   const getPPRData = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/ppr/fetchPprComponentDetails", {
+    const response = await imsAxios.post("/ppr/fetchPprComponentDetails", {
       accesstoken: editPPR.prod_randomcode,
       pprrequest: editPPR.prod_transaction,
       skucode: editPPR.prod_product_sku,
@@ -68,7 +68,7 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
       mfgQty: 1,
       myComment: "",
     };
-    if (data.code == 200) {
+    if (response.success) {
       let arr = data.data.comp_data.map((row) => {
         return {
           ...row,
@@ -82,7 +82,7 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
 
       setHeaderData(arr1);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setEditPPR(null);
     }
   };
@@ -175,9 +175,9 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
     },
   ];
   const getLocations = async () => {
-    const { data } = await imsAxios.get("/ppr/mfg_locations");
+    const response = await imsAxios.get("/ppr/mfg_locations");
     const arr = [];
-    data.data.map((a) => arr.push({ text: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ text: a.text, value: a.id }));
     setLocationOptions(arr);
   };
   const compInputHandler = async (name, value, id) => {
@@ -258,14 +258,14 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
       const response = await imsAxios.post("/ppr/executePPR", finalObj);
       if (response.data) {
         const { data } = response;
-        if (data.code == 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           getRows();
           setTimeout(() => {
             setEditPPR(null);
           }, 3000);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

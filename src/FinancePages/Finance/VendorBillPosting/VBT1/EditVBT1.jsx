@@ -217,12 +217,12 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
     finalObj = { ...finalObj, ...compData };
 
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt01/add_vbt01", {
+    const response = await imsAxios.post("/tally/vbt01/add_vbt01", {
       ...finalObj,
       vbt_gstin: finalObj?.vbt_gstin,
     });
     setLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       toast.success(data.message.msg);
       setTimeout(() => {
         setEditingVBT(null);
@@ -243,7 +243,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
   };
 
   const getGl = async () => {
-    const { data } = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
+    const response = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {

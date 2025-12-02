@@ -64,22 +64,19 @@ const Material = () => {
     try {
       setComponents([]);
       const response = await imsAxios.get("/component");
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row, index) => ({
-            id: index + 1,
-            componentName: row.c_name,
-            partCode: row.c_part_no,
-            key: row.component_key,
-            unit: row.units_name,
-            status: row.is_enabled === "YES" ? "Active" : "Inactive",
-          }));
+      if (response.success) {
+        const arr = response.data.map((row, index) => ({
+          id: index + 1,
+          componentName: row.c_name,
+          partCode: row.c_part_no,
+          key: row.component_key,
+          unit: row.units_name,
+          status: row.is_enabled === "YES" ? "Active" : "Inactive",
+        }));
 
-          setComponents(arr);
-        } else {
-          toast.error(data.message.msg);
-        }
+        setComponents(arr);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -94,16 +91,15 @@ const Material = () => {
       setLoading("fetch");
       const response = await imsAxios.post("/groups/groupSelect2");
 
-      const { data } = response;
-      if (data?.code === 200) {
-        const arr = data.data.map((row) => ({
+      if (response.success) {
+        const arr = response.data.map((row) => ({
           text: row.text,
           value: row.id,
         }));
 
         setGroupOptions(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message);
       }
     } catch (error) {
       setAsyncOptions([]);
@@ -116,13 +112,10 @@ const Material = () => {
     try {
       setLoading("fetch");
       const response = await imsAxios.get("/mfgcategory/listCategories");
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          setAttrCategoryOptions(data.data);
-        } else {
-          setAttrCategoryOptions([]);
-        }
+      if (response.success) {
+        setAttrCategoryOptions(response.data);
+      } else {
+        setAttrCategoryOptions([]);
       }
     } catch (error) {
     } finally {
@@ -135,10 +128,8 @@ const Material = () => {
     try {
       setLoading("fetch");
       const response = await imsAxios.post("uom/uomSelect2");
-      const { data } = response;
-      if (data) {
-        // if (data.code === 200) {
-        let arr = data.map((row) => ({
+      if (response.success) {
+        let arr = response.data.map((row) => ({
           text: row.text,
           value: row.id,
         }));
@@ -146,9 +137,8 @@ const Material = () => {
         console.log("arr", arr);
         setUomOptions(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message);
       }
-      // }
     } catch (error) {
     } finally {
       setLoading(false);
@@ -307,18 +297,17 @@ const Material = () => {
       payload
     );
     console.log("response", response);
-    const { data } = response;
-    if (data.code === 200) {
+    if (response.success) {
       Modal.confirm({
         title: "Are you sure you want to submit this Component?",
-        content: `${data.message}`,
+        content: `${response.message}`,
         onOk() {
           submitHandler(payload);
         },
         onCancel() {},
       });
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message);
       // Modal.confirm({
       //   title: "Are you sure you want to submit this Material?",
       //   content: `${data.message.msg}`,
@@ -348,17 +337,14 @@ const Material = () => {
         "/component/addComponent/save",
         payload
       );
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
-          setUniqueId("");
-          setGeneratedCompName("");
-          resetHandler();
-          getRows();
-        } else {
-          toast.error(data.message.msg);
-        }
+      if (response.success) {
+        toast.success(response.message);
+        setUniqueId("");
+        setGeneratedCompName("");
+        resetHandler();
+        getRows();
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -876,20 +862,17 @@ const CategoryModal = ({
           category: categoryKey.value,
         }
       );
-      const { data } = response;
 
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
-            label: row.text,
-            name: row.id,
-            type: row.inp_type,
-            hasValue: row.hasValue,
-          }));
-          setFields(arr);
-        } else {
-          toast.error(data.message.msg);
-        }
+      if (response.success) {
+        const arr = response.data.map((row) => ({
+          label: row.text,
+          name: row.id,
+          type: row.inp_type,
+          hasValue: row.hasValue,
+        }));
+        setFields(arr);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -905,14 +888,13 @@ const CategoryModal = ({
         const response = await imsAxios.post("/mfgcategory/getAttributeValue", {
           attribute: row.name,
         });
-        const { data } = response;
-        if (data.code === 200) {
-          optionsArr.push({ data: data.message });
+        if (response.success) {
+          optionsArr.push({ data: response.data });
           setFieldSelectOptions((curr) => [
             ...curr,
             {
               name: row.name,
-              options: data.message.map((row) => ({
+              options: response.data.map((row) => ({
                 text: row.attr_value,
                 value: row.code,
               })),

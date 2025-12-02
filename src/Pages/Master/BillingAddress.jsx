@@ -15,15 +15,17 @@ const BillingAddress = () => {
 
   const fetchLocation = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/billingAddress/getAll");
-    let arr = data.data.map((row) => {
-      return {
-        ...row,
-        id: v4(),
-      };
-    });
-    setData(arr);
+    const response = await imsAxios.get("/billingAddress/getAll");
     setLoading(false);
+    if (response.success) {
+      let arr = response.data.map((row) => {
+        return {
+          ...row,
+          id: v4(),
+        };
+      });
+      setData(arr);
+    }
   };
 
   const columns = [

@@ -248,10 +248,10 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
   //   console.log("minid", response);
   //   console.log("this is using the url");
   //   const { data } = response;
-  //   if (data.code === 200) {
+  //   if (response.success) {
   //     setEditingVBT(data.data);
   //   } else {
-  //     toast.error(data.message.msg);
+  //     toast.error(response.message?.msg || response.message);
   //     setEditingVBT(null);
   //   }
   //   setLoading(false);
@@ -264,14 +264,14 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
     let mins = selectedRows.map((row) => vbtData.filter((r) => r.id == row)[0]);
     setEditingVBT(mins?.map((row) => row.min_transaction));
     // console.log(mins);
-    // const { data } = await imsAxios.post(
+    // const response = await imsAxios.post(
     //   `/tally/${apiUrl}/fetch_multi_min_data`,
     //   {
     //     mins: mins.map((row) => row.min_transaction),
     //   }
     // );
     // setLoading(false);
-    // if (data.code === 200) {
+    // if (response.success) {
     //   console.log(data.data);
     //   let arr = data.data;
     //   arr = arr.map((row) => ({
@@ -281,7 +281,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
     //   console.log("arr--------------", arr);
     //   setEditingVBT(arr);
     // } else {
-    //   toast.error(data.message.msg);
+    //   toast.error(response.message?.msg || response.message);
     //   setEditingVBT(null);
     // }
     // setLoading(false);
@@ -322,8 +322,8 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       });
     }
     const { data } = response;
-    if (data.code === 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -344,7 +344,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
         // setVBTData(combinedData);
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setVBTData([]);
     }
     setSearchLoading(false);
@@ -430,7 +430,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       part_code: values.part_code,
       remark: values.remark,
     });
-    if (response.data.code === 200) {
+    if (response.success) {
       toast.success(response.data.data.status);
       getRows();
     } else {

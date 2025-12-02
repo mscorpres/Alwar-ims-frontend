@@ -43,7 +43,7 @@ function SampleQC() {
   };
   const getPartOptions = async (search) => {
     // setSelectLoading(true);
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: search,
     // });
     // setSelectLoading(false);
@@ -62,13 +62,13 @@ function SampleQC() {
   };
   const getRows = async () => {
     setSearchLoading(true);
-    const { data } = await imsAxios.post("/qc/fetchQCSamples", {
+    const response = await imsAxios.post("/qc/fetchQCSamples", {
       data: searchInput,
       wise: wise,
     });
     setSearchLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -79,7 +79,7 @@ function SampleQC() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
     }
   };
@@ -224,15 +224,15 @@ function SampleQC() {
       samQty: samples.map((sample) => sample.sampleQty),
     };
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/qc/addSampling_stage1", finalObj);
+    const response = await imsAxios.post("/qc/addSampling_stage1", finalObj);
     setSubmitLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       getRows();
       setShowConfirmModal(false);
       // setsSamples([]);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const resetFun = () => {

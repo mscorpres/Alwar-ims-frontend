@@ -30,12 +30,12 @@ export default function PaytmQCReport() {
   const getRows = async () => {
     setSearchLoading(true);
 
-    const { data } = await imsAxios.post("/paytmQc/fetchPaytmQcReport", {
+    const response = await imsAxios.post("/paytmQc/fetchPaytmQcReport", {
       data: searchDate,
     });
     setSearchLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -82,7 +82,7 @@ export default function PaytmQCReport() {
       console.log(chartArr);
       setChartData(chartArr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 

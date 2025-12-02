@@ -70,17 +70,14 @@ export default function PoApproval() {
       }
     );
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
-          ...row,
-          id: index + 1,
-        }));
-        setRows(arr);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
+        ...row,
+        id: index + 1,
+      }));
+      setRows(arr);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   const approveSubmitHandler = async (poid, remark) => {
@@ -90,15 +87,12 @@ export default function PoApproval() {
       remark,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
-        getRows();
-        setApprovePo(null);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      toast.success(response.message);
+      getRows();
+      setApprovePo(null);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   const ApproveSelectedPo = () => {

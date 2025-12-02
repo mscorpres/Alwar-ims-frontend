@@ -192,13 +192,12 @@ const Login = () => {
       password: values.password2,
     });
     console.log("response", response);
-    let { data } = response;
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setSignUpPage("1");
       signUp.resetFields();
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   // useEffect(() => {

@@ -19,7 +19,7 @@ const RemoveModal = ({
   const [rem, setRem] = useState("");
 
   const cancelReq = async () => {
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/storeApproval/AllowComponentsCancellation",
       {
         component: delModal.compKey,
@@ -28,12 +28,12 @@ const RemoveModal = ({
         remark: rem,
       }
     );
-    if (data.code == 200) {
+    if (data.success) {
       setDelModal(false);
       getDataFetch();
       setRem("");
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setDelModal(false);
       getDataFetch();
       setRem("");

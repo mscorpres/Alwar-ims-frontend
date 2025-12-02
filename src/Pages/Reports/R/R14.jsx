@@ -70,11 +70,11 @@ const R14 = () => {
       toast.error("Please Select Type");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("/audit/fetchAuditReport", {
+      const response = await imsAxios.post("/audit/fetchAuditReport", {
         type: allData.selType.value,
       });
       // setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return {
             ...row,
@@ -83,7 +83,7 @@ const R14 = () => {
         });
         setResponseData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         toast.error(data.message);
         setLoading(false);
       }

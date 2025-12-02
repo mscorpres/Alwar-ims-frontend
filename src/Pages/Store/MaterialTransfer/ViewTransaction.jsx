@@ -69,13 +69,13 @@ function ViewTransaction() {
 
       // console.log("datee->>>", c);
 
-      const { data } = await imsAxios.post("/godown/report_rmsf_same", {
+      const response = await imsAxios.post("/godown/report_rmsf_same", {
         data: datee,
         wise: allData.selectdate,
       });
       console.log(data);
-      if (data.code == 200) {
-        let arr = data.data.map((row) => {
+      if (data.success) {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -83,8 +83,8 @@ function ViewTransaction() {
         });
         setDataComesFromDateWise(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else {
+        toast.error(data.message?.msg || data.message);
         setLoading(false);
       }
     }

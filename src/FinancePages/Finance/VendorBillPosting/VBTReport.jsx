@@ -85,7 +85,7 @@ export default function VBTReport() {
 
   const printFun = async (vbtId) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt_report/print_vbt_report", {
+    const response = await imsAxios.post("/tally/vbt_report/print_vbt_report", {
       vbt_key: vbtId,
     });
     printFunction(data.buffer.data);
@@ -96,7 +96,7 @@ export default function VBTReport() {
     let link = "/tally/vbt_report/print_vbt_report";
     let filename = id;
 
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       vbt_key: id,
     });
 
@@ -104,25 +104,25 @@ export default function VBTReport() {
     setLoading(false);
   };
   const deleteFun = async () => {
-    const { data } = await imsAxios.post("/tally/vbt01/vbt_delete", {
+    const response = await imsAxios.post("/tally/vbt01/vbt_delete", {
       vbt_code: deleteConfirm,
     });
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       getSearchResults();
     }
   };
   const getEditVBTDetails = async (code) => {
     setLoading(true);
 
-    const { data } = await imsAxios.post("/tally/vbt01/vbt_edit", {
+    const response = await imsAxios.post("/tally/vbt01/vbt_edit", {
       vbt_code: code,
     });
     setLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setEditingVBT(data.message);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const setDebitNoteVbtCodesHandler = async (singleRowArr) => {
@@ -895,7 +895,7 @@ export default function VBTReport() {
     }
     if (searchInput || search) {
       setLoading(true);
-      const { data } = await imsAxios.post("/tally/vbt_report/vbt_report", {
+      const response = await imsAxios.post("/tally/vbt_report/vbt_report", {
         data:
           wise == "vendorwise"
             ? searchInput
@@ -910,8 +910,8 @@ export default function VBTReport() {
         vbt_type: vbtOption,
       });
       setLoading(false);
-      if (data.code == 200) {
-        const arr = data.data.map((row) => {
+      if (response.success) {
+        const arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -924,9 +924,9 @@ export default function VBTReport() {
         setRows(arr);
       } else {
         if (data.message.msg) {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         } else if (data.message) {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         } else {
           toast.error("Something wrong happened");
         }
@@ -944,12 +944,12 @@ export default function VBTReport() {
 
   const getVBTDetails = async (vbtId) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt_report/vbt_report_data", {
+    const response = await imsAxios.post("/tally/vbt_report/vbt_report_data", {
       vbt_key: vbtId,
     });
     setLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -959,9 +959,9 @@ export default function VBTReport() {
       setViewReportData(arr);
     } else {
       if (data.message.msg) {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       } else if (data.message) {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       } else {
         toast.error("Something wrong happened");
       }

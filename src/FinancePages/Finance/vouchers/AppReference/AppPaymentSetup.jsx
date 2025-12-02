@@ -56,7 +56,7 @@ export default function AppPaymentSetup() {
     });
     setLoading(false);
     const { data } = response;
-    if (data.code === 200) {
+    if (response.success) {
       const arr = data.bill_data.map((item, index) => ({
         ...item,
         id: v4(),
@@ -156,12 +156,12 @@ export default function AppPaymentSetup() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setShowSubmitConfirm(false);
         getVBTRows();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

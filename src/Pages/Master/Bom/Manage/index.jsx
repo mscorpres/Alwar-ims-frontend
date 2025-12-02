@@ -35,8 +35,8 @@ const ManageBOM = () => {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        const arr = data.data.map((row, index) => ({
+      if (response.success) {
+        const arr = response.data.map((row, index) => ({
           id: index + 1,
           product: row.subject_name,
           sku: row.bom_product_sku,
@@ -59,7 +59,7 @@ const ManageBOM = () => {
     });
     const { data } = response;
     if (data) {
-      if (data.status === "success") {
+      if (response.success ) {
         setRows((curr) =>
           curr.map((row) => {
             if (row.bomId === id) {
@@ -84,7 +84,7 @@ const ManageBOM = () => {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         downloadExcel(data.data.buffer.data, `BOM ${name}`);
       }
     }

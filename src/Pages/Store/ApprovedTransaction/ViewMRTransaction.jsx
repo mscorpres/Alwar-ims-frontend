@@ -12,7 +12,7 @@ export default function ViewMRTransaction({ viewTransaction }) {
   const getDetails = async () => {
     setPageLoading(true);
     setDetails([]);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/transaction/fetchAllComponentStatus",
       {
         transactionid: viewTransaction,

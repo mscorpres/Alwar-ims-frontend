@@ -38,11 +38,11 @@ function ManageDC() {
     } else {
       setLoading(true);
 
-      const { data } = await imsAxios.post("/gatepass/fetchAllGatepass", {
+      const response = await imsAxios.post("/gatepass/fetchAllGatepass", {
         data: datee,
         wise: allData.selType,
       });
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return {
             ...row,
@@ -52,7 +52,7 @@ function ManageDC() {
         setDateData(arr);
         // toast(data.status);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         toast(data.message);
         setLoading(false);
       }
@@ -61,11 +61,11 @@ function ManageDC() {
 
   const gpWiseDataFecth = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/gatepass/fetchAllGatepass", {
+    const response = await imsAxios.post("/gatepass/fetchAllGatepass", {
       data: allData.gpInput,
       wise: allData.selType,
     });
-    if (data.code == 200) {
+    if (response.success) {
       let arr = data.response.data.map((row) => {
         return {
           ...row,
@@ -74,7 +74,7 @@ function ManageDC() {
       });
       setDateData1(arr);
       setLoading(false);
-    } else if (data.code == 500) {
+    } else if (!response.success) {
       toast(data.message);
       setLoading(false);
     }
@@ -96,7 +96,7 @@ function ManageDC() {
   };
   const printFun = async (id) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/gatepass/printGatePass", {
+    const response = await imsAxios.post("/gatepass/printGatePass", {
       transaction: id,
     });
     setLoading(false);
@@ -105,7 +105,7 @@ function ManageDC() {
   };
   const downloadFun = async (id) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/gatepass/printGatePass", {
+    const response = await imsAxios.post("/gatepass/printGatePass", {
       transaction: id,
     });
     setLoading(false);

@@ -24,12 +24,12 @@ function MapClient() {
   ];
   const getClients = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/backend/fetchCustmors", {
+    const response = await imsAxios.post("/tally/backend/fetchCustmors", {
       search: search,
     });
     setSelectLoading(false);
-    if (data[0]) {
-      let arr = data.map((row) => ({
+    if (response.success && response.data) {
+      let arr = response.data.map((row) => ({
         text: row.text,
         value: row.id,
       }));
@@ -40,12 +40,12 @@ function MapClient() {
   };
   const getSubGroupSelect = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/getSubgroup", {
+    const response = await imsAxios.post("/tally/getSubgroup", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((d) => {
+    if (response.success) {
+      let arr = response.data.map((d) => {
         return { text: d.label, value: d.id };
       });
       setAsyncOptions(arr);
@@ -66,7 +66,7 @@ function MapClient() {
   };
   const submitHandler = async (values) => {
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/addCustLedger", {
+    const response = await imsAxios.post("/tally/ledger/addCustLedger", {
       name: values.name,
       code: values.code,
       sub_group: values.sub_group,
@@ -76,11 +76,11 @@ function MapClient() {
       status: values.status,
     });
     setSubmitLoading(false);
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       clientReset();
     } else {
-      toast.error(errorToast(data.message));
+      toast.error(response.message?.msg || response.message);
     }
   };
 

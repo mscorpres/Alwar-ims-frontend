@@ -58,7 +58,7 @@ function CreateFgReturn() {
     }
   }; //to get location from database
   const locationList = async (search) => {
-    const { data } = await imsAxios.post("/backend/fetchLocation", {
+    const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: search,
     });
     let locArr = [];
@@ -68,9 +68,9 @@ function CreateFgReturn() {
     setLocationList(locArr);
   };
   const getLocations = async () => {
-    const { data } = await imsAxios.get("/ppr/mfg_locations");
+    const response = await imsAxios.get("/ppr/mfg_locations");
     const arr = [];
-    data.data.map((a) => arr.push({ text: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ text: a.text, value: a.id }));
     setLocationList(arr);
   };
   const resetFunction = () => {

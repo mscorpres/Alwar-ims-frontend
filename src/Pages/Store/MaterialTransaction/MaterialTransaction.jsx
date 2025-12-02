@@ -76,7 +76,7 @@
 
 //   const getOption = async (e) => {
 //     if (e.length > 2) {
-//       const { data } = await imsAxios.post("/backend/vendorList", {
+//       const response = await imsAxios.post("/backend/vendorList", {
 //         search: e,
 //       });
 
@@ -91,11 +91,11 @@
 
 //   //getting vendor branches
 //   const getVendorBracnch = async () => {
-//     const { data } = await imsAxios.post("/backend/vendorBranchList", {
+//     const response = await imsAxios.post("/backend/vendorBranchList", {
 //       vendorcode: vendorBranches.vendorname.value,
 //     });
 
-//     const arr = data.data.map((d) => {
+//     const arr = response.data.map((d) => {
 //       return { value: d.id, label: d.text };
 //     });
 //     setBranches(arr);
@@ -108,7 +108,7 @@
 //   };
 
 //   const getAddress = async () => {
-//     const { data } = await imsAxios.post("/backend/vendorAddress", {
+//     const response = await imsAxios.post("/backend/vendorAddress", {
 //       vendorcode: vendorBranches.vendorname.value,
 //       branchcode: vendorBranches.vendorbranch.value,
 //     });

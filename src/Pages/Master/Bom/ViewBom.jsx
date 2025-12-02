@@ -41,8 +41,8 @@ const ViewBom = () => {
   ];
   const fetchAllData = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/bom/fgBom");
-    let arr = data.data.map((row) => {
+    const response = await imsAxios.get("/bom/fgBom");
+    let arr = response.data.map((row) => {
       return {
         ...row,
         id: v4(),

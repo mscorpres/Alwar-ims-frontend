@@ -84,18 +84,15 @@ export default function ReqWithoutBom() {
     );
     setLoading(false);
     headerLocationMessage.destroy();
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        const arr = data.data.map((row) => ({
-          value: row.id,
-          text: row.text,
-        }));
-        setHeaderLocationOptions(arr);
-      } else {
-        toast.error(data.message);
-        setHeaderLocationOptions([]);
-      }
+    if (response.success) {
+      const arr = response.data.map((row) => ({
+        value: row.id,
+        text: row.text,
+      }));
+      setHeaderLocationOptions(arr);
+    } else {
+      toast.error(response.message?.msg || response.message);
+      setHeaderLocationOptions([]);
     }
   };
 
@@ -231,17 +228,14 @@ export default function ReqWithoutBom() {
     });
     pickLocationLoadingMessage.destroy();
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        const arr = data.data.data.map((row) => ({
-          value: row.id,
-          text: row.text,
-        }));
-        setPickLocationOptions(arr);
-      } else {
-        setPickLocationOptions([]);
-      }
+    if (response.success && response.data?.data) {
+      const arr = response.response.data.map((row) => ({
+        value: row.id,
+        text: row.text,
+      }));
+      setPickLocationOptions(arr);
+    } else {
+      setPickLocationOptions([]);
     }
   };
 
@@ -254,15 +248,12 @@ export default function ReqWithoutBom() {
     });
     setLoading(false);
 
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        requestForm.setFieldValue("description", data.data);
-      } else {
-        toast.error(data.message);
-        requestForm.setFieldValue("description", "");
-        return {};
-      }
+    if (response.success) {
+      requestForm.setFieldValue("description", response.data);
+    } else {
+      toast.error(response.message?.msg || response.message);
+      requestForm.setFieldValue("description", "");
+      return {};
     }
   };
   // getting component details
@@ -273,14 +264,11 @@ export default function ReqWithoutBom() {
       location: location,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        return data.data;
-      } else {
-        toast.error(data.message.msg);
-        // return {};
-      }
+    if (response.success) {
+      return response.data;
+    } else {
+      toast.error(response.message?.msg || response.message);
+      // return {};
     }
   };
 
@@ -321,16 +309,12 @@ export default function ReqWithoutBom() {
       values
     );
     // setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
-        resetHandler();
-        setLoading(false);
-      } else {
-        toast.error(data.message.msg);
-        setLoading(false);
-      }
+    if (response.success) {
+      toast.success(response.message);
+      resetHandler();
+      setLoading(false);
+    } else {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
     setLoading(false);

@@ -35,7 +35,7 @@ const CompletedPPR = () => {
   const getProductDataFromType = async (e) => {
     if (e?.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/fetchAllProduct", {
+      const response = await imsAxios.post("/backend/fetchAllProduct", {
         searchTerm: e,
       });
       setSelectLoading(false);
@@ -48,13 +48,13 @@ const CompletedPPR = () => {
   };
   const getRows = async () => {
     setSearchLoading(true);
-    const { data } = await imsAxios.post("ppr/fetchCompletePpr", {
+    const response = await imsAxios.post("ppr/fetchCompletePpr", {
       searchBy: wise,
       searchValue: searchInput,
     });
     setSearchLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -64,7 +64,7 @@ const CompletedPPR = () => {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 

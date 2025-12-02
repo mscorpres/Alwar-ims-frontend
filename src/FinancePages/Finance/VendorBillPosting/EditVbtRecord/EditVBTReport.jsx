@@ -80,7 +80,7 @@ function EditVBTReport({ editVbtDrawer, setEditVbtDrawer }) {
       tds_percent: "0",
     });
     // console.log("data===========", data.data[0].ven_tds[0]);
-    if (data.code === 200) {
+    if (response.success) {
       let arr = data.data;
       setAllTdsOptions(arr[0].ven_tds);
 
@@ -92,11 +92,11 @@ function EditVBTReport({ editVbtDrawer, setEditVbtDrawer }) {
       });
       setTdsArray(tdsC);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const getGl = async () => {
-    const { data } = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
+    const response = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {

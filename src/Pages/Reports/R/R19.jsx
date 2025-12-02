@@ -40,11 +40,11 @@ function R19() {
   };
 
   const getBom = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData?.selectProduct,
     });
     //  console.log(data);
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.bomid, label: d.bomname };
     });
     setBomName(arr);
@@ -60,19 +60,19 @@ function R19() {
     } else {
       setLoading(true);
       setMainData([]);
-      const { data } = await imsAxios.post("/report19", {
+      const response = await imsAxios.post("/report19", {
         sku: allData?.selectProduct,
         bom: allData?.selectBom,
       });
 
-      if (data.code == 200) {
-        let arr = data.data.map((row, i) => {
+      if (response.success) {
+        let arr = response.data.map((row, i) => {
           return { ...row, id: v4(), i: i + 1 };
         });
         setMainData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

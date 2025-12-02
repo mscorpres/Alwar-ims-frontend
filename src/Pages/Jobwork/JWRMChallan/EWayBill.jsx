@@ -122,7 +122,7 @@ const EWayBill = () => {
           setComponents(arr);
           form.setFieldsValue(finalObj);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -140,7 +140,7 @@ const EWayBill = () => {
       const { data } = response;
       if (data) {
         if (data.data.length) {
-          const arr = data.data.map((row) => ({
+          const arr = response.data.map((row) => ({
             text: row.name,
             value: row.code,
           }));
@@ -159,10 +159,10 @@ const EWayBill = () => {
       const response = await imsAxios.post("/jwEwaybill/trans_mode");
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setTransporterModeOptions(data.data);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

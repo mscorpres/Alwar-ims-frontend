@@ -15,19 +15,16 @@ function ShippingAddress() {
     setLoading("fetch");
     const response = await imsAxios.get("/shippingAddress/getAll");
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
-          id: index,
-          index: index + 1,
-          ...row,
-        }));
-        setRows(arr);
-      } else {
-        setRows([]);
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
+        id: index,
+        index: index + 1,
+        ...row,
+      }));
+      setRows(arr);
+    } else {
+      setRows([]);
+      toast.error(response.message);
     }
   };
   const columns = [

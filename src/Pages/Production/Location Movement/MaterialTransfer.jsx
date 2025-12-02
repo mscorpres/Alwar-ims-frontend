@@ -55,14 +55,14 @@ function MaterialTransfer({ type }) {
       console.log("rejection does not goes on here");
       link = "/godown/fetchLocationForSF2SF_from";
     }
-    const { data } = await imsAxios.post(link);
+    const response = await imsAxios.post(link);
     let arr = [];
-    data.data.map((a) => arr.push({ text: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ text: a.text, value: a.id }));
     setLocationData(arr);
   };
 
   const getLocationDetail = async () => {
-    const { data } = await imsAxios.post("godown/fetchLocationDetail_from", {
+    const response = await imsAxios.post("godown/fetchLocationDetail_from", {
       location_key: allData.locationSel,
     });
     // console.log(data.data)
@@ -71,7 +71,7 @@ function MaterialTransfer({ type }) {
 
   const getComponent = async (e) => {
     if (e?.length > 2) {
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: e,
       // });
       const response = await executeFun(() => getComponentOptions(e), "select");
@@ -88,7 +88,7 @@ function MaterialTransfer({ type }) {
     const row = rows[rowIndex];
     const component = componentValue ?? row?.componentName;
     if (!allData.locationSel || !component) return;
-    const { data } = await imsAxios.post("/godown/godownStocks", {
+    const response = await imsAxios.post("/godown/godownStocks", {
       component,
       location: allData.locationSel,
     });
@@ -101,16 +101,16 @@ function MaterialTransfer({ type }) {
 
   const getDropLoc = async () => {
     if (type == "sftorej") {
-      const { data } = await imsAxios.post("/godown/fetchLocationForSF2REJ_to");
+      const response = await imsAxios.post("/godown/fetchLocationForSF2REJ_to");
 
       let arr = [];
-      data.data.map((a) => arr.push({ text: a.text, value: a.id }));
+      response.data.map((a) => arr.push({ text: a.text, value: a.id }));
       setLocRejDetail(arr);
     } else {
-      const { data } = await imsAxios.post("/godown/fetchLocationForSF2SF_to");
+      const response = await imsAxios.post("/godown/fetchLocationForSF2SF_to");
 
       let arr = [];
-      data.data.map((a) => arr.push({ text: a.text, value: a.id }));
+      response.data.map((a) => arr.push({ text: a.text, value: a.id }));
       setLocRejDetail(arr);
     }
   };
@@ -119,7 +119,7 @@ function MaterialTransfer({ type }) {
     const row = rows[rowIndex];
     const rejLoc = rejLocValue ?? row?.rejLoc;
     if (!rejLoc) return;
-    const { data } = await imsAxios.post("/godown/fetchLocationDetail_to", {
+    const response = await imsAxios.post("/godown/fetchLocationDetail_to", {
       location_key: rejLoc,
     });
     setRows((prev) => {
@@ -156,7 +156,7 @@ function MaterialTransfer({ type }) {
     const comments = rows.map((r) => r.comment || "");
 
     setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       type == "sftorej" ? "/godown/transferSF2REJ" : "/godown/transferSF2SF",
       {
         comments: comments,
@@ -169,7 +169,7 @@ function MaterialTransfer({ type }) {
       }
     );
 
-    if (data.code == 200) {
+    if (response.success) {
       setAllData({
         locationSel: "",
         dropBranch: "",
@@ -186,9 +186,9 @@ function MaterialTransfer({ type }) {
       ]);
       setLocDetail("");
       setLoading(false);
-      toast.success(data.message);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+      toast.success(response.message);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };
@@ -226,7 +226,7 @@ function MaterialTransfer({ type }) {
 
   const handleBranchSelection = async (branchCode) => {
     try {
-      const { data } = await imsAxios.post("/location/fetchLocationBranch", {
+      const response = await imsAxios.post("/location/fetchLocationBranch", {
         branch: branchCode,
       });
       let arr = [];

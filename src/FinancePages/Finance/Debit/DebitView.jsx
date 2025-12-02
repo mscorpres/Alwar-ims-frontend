@@ -104,15 +104,15 @@ export default function DebitView({
     let debitArr = [];
     let arr = [];
     if (viewDebitDetail) {
-      const { data } = await imsAxios.post("/tally/dv/debitVoucherDetail", {
+      const response = await imsAxios.post("/tally/dv/debitVoucherDetail", {
         dv_key: viewDebitDetail,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setJournalDate(data.data[0].insert_date);
         setRefDate(data.data[0].ref_date);
         arr = data.data;
-        data.data.map((row) => {
+        response.data.map((row) => {
           if (row.credit != "") {
             creditArr.push(row.credit);
           } else {
@@ -149,7 +149,7 @@ export default function DebitView({
   };
   const printFun = async () => {
     setPrintLoading(true);
-    const { data } = await imsAxios.post("/tally/jv/jv_print", {
+    const response = await imsAxios.post("/tally/jv/jv_print", {
       jv_key: viewDebitDetail,
     });
     setPrintLoading(false);
@@ -158,7 +158,7 @@ export default function DebitView({
   const downloadFun = async () => {
     setDownloadLoading(true);
     let filename = `Journal Voucher ${viewDebitDetail}`;
-    const { data } = await imsAxios.post("/tally/jv/jv_print", {
+    const response = await imsAxios.post("/tally/jv/jv_print", {
       jv_key: viewDebitDetail,
     });
     setDownloadLoading(false);

@@ -21,19 +21,19 @@ function MinReverseModal({
     mainData.map((a) => authArray.push(a.authentication));
     mainData.map((aa) => compArray.push(aa.componentKey));
 
-    const { data } = await imsAxios.post("/reversal/saveMINReversal", {
+    const response = await imsAxios.post("/reversal/saveMINReversal", {
       branch: "BRMSC012",
       authentication: authArray,
       component: compArray,
       remark: remark,
       transaction: inputStore,
     });
-    if (data.code == 200) {
+    if (data.success) {
       setRemark("");
       setReverseModal(false);
       setReverseLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setReverseModal(false);
       setReverseLoading(false);
     }

@@ -91,12 +91,12 @@ const TransactionOut = () => {
     } else {
       setLoading(true);
       setDateData([]);
-      const { data } = await imsAxios.post("/transaction/transactionOut", {
+      const response = await imsAxios.post("/transaction/transactionOut", {
         data: datee,
       });
       // console.log("Response", data);
-      if (data.code == 200) {
-        let arr = data.data.map((row) => {
+      if (data.success) {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -104,8 +104,8 @@ const TransactionOut = () => {
         });
         setDateData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else {
+        toast.error(data.message?.msg || data.message);
         setLoading(false);
       }
     }

@@ -13,7 +13,7 @@ function AddPhoto({ updatingImage, setUpdatingImage }) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [image, setImage] = useState(false);
   const getImages = async () => {
-    const { data } = await imsAxios.post("/products/fetchImageProduct", {
+    const response = await imsAxios.post("/products/fetchImageProduct", {
       product: updatingImage.key,
     });
   };
@@ -25,17 +25,17 @@ function AddPhoto({ updatingImage, setUpdatingImage }) {
     formData.append("caption", caption);
     formData.append("component", updatingImage.key);
     setSubmitLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/component/upload_comp_img",
       formData
     );
     setSubmitLoading(false);
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setCaption("");
       setUpdatingImage(false);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const props = {

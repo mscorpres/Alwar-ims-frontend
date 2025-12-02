@@ -34,8 +34,8 @@ function CPMMaster() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => {
+      if (response.success) {
+        let arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -44,7 +44,7 @@ function CPMMaster() {
         });
         setRows(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -52,7 +52,7 @@ function CPMMaster() {
   const handleSubmit = async (updatedData) => {
     try {
       const response = await imsAxios.put('/ppr/update/project', updatedData);
-      if (response.data.code === 200) {
+      if (response.success) {
         toast.success("Project updated successfully!");
         setIsModalVisible(false);
         getAllDetailFun(); // Refresh the data after successful update
@@ -92,10 +92,10 @@ function CPMMaster() {
     const { data } = response;
     console.log(data)
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         getAllDetailFun();
         // getDataTree();
-        toast.success(data.message);
+        toast.success(response.message);
       } else {
         toast.error(data.message);
       }

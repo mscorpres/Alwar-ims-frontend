@@ -41,7 +41,7 @@ const OpenModal10 = ({
   const [searchInput, setSearchInput] = useState("");
   const { executeFun, loading: loading1 } = useApi();
   const getSearchByProduct = async (e) => {
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: "e",
     // });
     const response = await executeFun(() => getComponentOptions(e), "select");
@@ -55,7 +55,7 @@ const OpenModal10 = ({
   };
 
   const getSearchByLocation = async (e) => {
-    const { data } = await imsAxios.post("/backend/fetchLocation", {
+    const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: e,
     });
 
@@ -69,7 +69,7 @@ const OpenModal10 = ({
 
   const getFetchAllName = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/fetchAllUser", {
+      const response = await imsAxios.post("/backend/fetchAllUser", {
         search: e,
       });
       let arr = [];
@@ -86,13 +86,13 @@ const OpenModal10 = ({
     allData.selectProduct.map((aa) => a.push(aa.value));
     allData.selectLocation.map((aa1) => b.push(aa1.value));
 
-    const { data } = await imsAxios.post("/report10/update", {
+    const response = await imsAxios.post("/report10/update", {
       component_part: a,
       location: b,
     });
-    if (data.code == 200) {
+    if (response.success) {
       setViewModal(false);
-      toast.success(data.message);
+      toast.success(response.message);
     }
   };
 

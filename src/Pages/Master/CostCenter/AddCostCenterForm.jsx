@@ -12,17 +12,17 @@ const AddCostCenterForm = ({ getRows }) => {
   const submitHandler = async (values) => {
     try {
       setLoading("submitting");
-      const { data } = await imsAxios.post("/purchaseOrder/createCostCenter", {
+      const response = await imsAxios.post("/purchaseOrder/createCostCenter", {
         cost_center_id: values.id,
         cost_center_name: values.name,
       });
 
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         resetHandler();
         getRows();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message);
       }
     } catch (error) {
       console.log("there is some error");

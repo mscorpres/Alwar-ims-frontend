@@ -100,15 +100,15 @@ export default function PaytmQCUpdate({ setUpdatingQC, updatingQC, getRows }) {
   ];
   const getSearchResults = async () => {
     setSearchLoading(true);
-    const { data } = await imsAxios.post("/paytmQc/editPaytmQc", {
+    const response = await imsAxios.post("/paytmQc/editPaytmQc", {
       imei_no: updatingQC,
     });
     setSearchLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setQCData(data.data);
       setResetQCData(data.data);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const validateData = () => {
@@ -136,7 +136,7 @@ export default function PaytmQCUpdate({ setUpdatingQC, updatingQC, getRows }) {
   const updateFunction = async () => {
     if (showSubmitConfirm) {
       setSubmitLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/paytmQc/updatePaytmQc",
         showSubmitConfirm
       );

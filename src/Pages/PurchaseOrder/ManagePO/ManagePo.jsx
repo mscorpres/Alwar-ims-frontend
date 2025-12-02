@@ -50,21 +50,25 @@ const ManagePO = () => {
   ];
   const printFun = async (poid) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: poid,
     });
 
-    printFunction(data.data.buffer.data);
+    if (response.success) {
+      printFunction(response.data.buffer.data);
+    } else {
+      toast.error(response.message?.msg || response.message);
+    }
     setLoading(false);
   };
 
   const handleCancelPO = async (poid) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/purchaseOrder/fetchStatus4PO", {
+    const response = await imsAxios.post("/purchaseOrder/fetchStatus4PO", {
       purchaseOrder: poid,
     });
     setLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setShowCancelPO(poid);
     } else {
       toast.error("PO is already cancelled");
@@ -72,12 +76,16 @@ const ManagePO = () => {
   };
   const handleDownload = async (poid) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: poid,
     });
     setLoading(false);
-    let filename = `PO ${poid}`;
-    downloadFunction(data.data.buffer.data, filename);
+    if (response.success) {
+      let filename = `PO ${poid}`;
+      downloadFunction(response.data.buffer.data, filename);
+    } else {
+      toast.error(response.message?.msg || response.message);
+    }
   };
 
   const columns = [
@@ -253,7 +261,7 @@ const ManagePO = () => {
     }
     if (searchInput || search) {
       setSearchLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/purchaseOrder/fetchPendingData4PO",
         {
           data:
@@ -266,19 +274,15 @@ const ManagePO = () => {
         }
       );
       setSearchLoading(false);
-      if (data.code == 200) {
-        let arr = data?.data?.map((row, index) => ({
+      if (response.success) {
+        let arr = response?.data?.map((row, index) => ({
           ...row,
           id: row.po_transaction,
           index: index + 1,
         }));
         setRows(arr);
       } else {
-        if (data.message.msg) {
-          toast.error(data.message.msg);
-        } else {
-          toast.error(data.message);
-        }
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       if (wise == "single_date_wise" && searchDateRange == null) {
@@ -307,15 +311,15 @@ const ManagePO = () => {
   //getting component view data
   const getComponentData = async (poid, status) => {
     setViewLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/purchaseOrder/fetchComponentList4PO",
       {
         poid,
       }
     );
     setViewLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: index,
@@ -326,44 +330,44 @@ const ManagePO = () => {
       setShowViewSideBar(true);
       getPoLogs(poid);
     } else {
-      toast.error(data.message);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
   const getPoLogs = async (po_id) => {
-    const { data } = await imsAxios.post("/purchaseOthers/pologs", {
+    const response = await imsAxios.post("/purchaseOthers/pologs", {
       po_id,
     });
-    if (data.code === "200" || data.code == 200) {
-      let arr = data.data;
+    if (response.success) {
+      let arr = response.data;
       setnewPoLogs(arr.reverse());
       // console.logg("data for po logs", arr);
     }
   };
   const getPoDetail = async (poid) => {
     setLoading(true);
-    const { data, message } = await imsAxios
+    const response = await imsAxios
       .post("/purchaseOrder/fetchData4Update", {
         pono: poid.replaceAll("_", "/"),
       })
       .then((res) => {
-        if (res.code == 500) {
-          toast.error(res.message.msg);
+        if (!res.success) {
+          toast.error(res.message?.msg || res.message);
           setLoading(false);
         } else {
           return res;
         }
       });
     setLoading(false);
-    if (data?.code == 200) {
+    if (response?.success) {
       setUpdatePoId({
-        ...data.data.bill,
-        materials: data.data.materials,
-        ...data.data.ship,
-        ...data.data.vendor[0],
+        ...response.data.bill,
+        materials: response.data.materials,
+        ...response.data.ship,
+        ...response.data.vendor[0],
       });
     } else {
-      toast.error(data?.message || message);
+      toast.error(response?.message?.msg || response?.message);
     }
   };
   useEffect(() => {

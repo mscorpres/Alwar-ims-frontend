@@ -23,7 +23,7 @@ const ProccessedMrRequest = () => {
   const getUser = async (search) => {
     try {
       setLoading("select", true);
-      const { data } = await imsAxios.post("/backend/fetchAllUser", { search });
+      const response = await imsAxios.post("/backend/fetchAllUser", { search });
       if (data) {
         let arr = data.map((row) => ({
           value: row.id,
@@ -45,13 +45,13 @@ const ProccessedMrRequest = () => {
         date: values.date,
         user: values.user,
       };
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/transaction/viewApprovalStatus",
         payload
       );
 
-      if (data?.code === 200) {
-        const arr = data.data.map((row, index) => ({
+      if (data?.success) {
+        const arr = response.data.map((row, index) => ({
           id: index + 1,
           requestDate: row.datetime,
           requestId: row.transaction,
@@ -61,7 +61,7 @@ const ProccessedMrRequest = () => {
 
         setRows(arr);
       } else {
-        toast.error(data?.message.msg);
+        toast.error(data?.message?.msg || data?.message);
       }
     } catch (error) {
     } finally {

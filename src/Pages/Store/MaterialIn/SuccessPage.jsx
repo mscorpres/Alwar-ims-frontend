@@ -20,7 +20,7 @@ export default function SuccessPage({
   const printFun = async () => {
     setPringLoading(true);
 
-    const { data } = await imsAxios.post("/minPrint/printSingleMin", {
+    const response = await imsAxios.post("/minPrint/printSingleMin", {
       transaction: po?.materialInId,
     });
     setPringLoading(false);
@@ -32,7 +32,7 @@ export default function SuccessPage({
   const handleDownload = async () => {
     console.log("");
     setDownloadLoading(true);
-    const { data } = await imsAxios.post("/minPrint/printSingleMin", {
+    const response = await imsAxios.post("/minPrint/printSingleMin", {
       transaction: po?.materialInId,
     });
     setDownloadLoading(false);

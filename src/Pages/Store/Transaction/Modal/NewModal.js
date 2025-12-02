@@ -66,13 +66,13 @@ export default function NewModal({
 
   const getDataFetch = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/storeApproval/fetchTransactionItems",
       {
         transaction: open?.transaction_id,
       }
     );
-    if (data.code == 200) {
+    if (data.success) {
       let arr = data.data.material.map((row) => {
         return {
           ...row,
@@ -87,8 +87,8 @@ export default function NewModal({
         setModalOpen(false);
         getPendingData();
       }
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setOpen(false);
       getPendingData();
       // setLoading(false);
@@ -96,18 +96,18 @@ export default function NewModal({
   };
 
   const getLocation = async () => {
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       "/storeApproval/fetchLocationAllotedTransApprv"
     );
     const arr = [];
-    data.data.map((a) => arr.push({ label: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ label: a.text, value: a.id }));
     setLocation(arr);
   };
 
   const saveFunction = async (materialData, headerData) => {
     setSpinLoading(true);
     console.log(materialData, headerData);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/storeApproval/AllowComponentsApproval",
       {
         location: headerData?.locationKey,
@@ -119,7 +119,7 @@ export default function NewModal({
         subject: headerData?.bomKey,
       }
     );
-    if (data.code == 200) {
+    if (data.success) {
       if (mat.length > 1) {
         getDataFetch();
         setSpinLoading(false);
@@ -131,8 +131,8 @@ export default function NewModal({
         getPendingData();
         setSpinLoading(false);
       }
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setSpinLoading(false);
     }
   };

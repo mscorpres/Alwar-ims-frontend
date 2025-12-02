@@ -54,7 +54,7 @@ function VBT01Report({
     const data = await imsAxios.get(
       `/tally/vbt/checkInvoice?vbtInvoiceNo=${checkInvoiceId}&vendor=${vendorCode}`
     );
-    if (data.status === 200 || data.status === "200") {
+    if (data.status === 200 || response.success ) {
       let arr = data.data;
       if (arr.checkInvoice == true) {
         // setConfirmModal(true);
@@ -73,7 +73,7 @@ function VBT01Report({
         });
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       // setEditingVBT(null);
     }
   };
@@ -143,9 +143,9 @@ function VBT01Report({
       mins: minIdArr.map((row) => row),
     });
     const { data } = response;
-    if (data.code === 200) {
+    if (response.success) {
       setVbtComponent(data);
-      const arr = data.data.map((row) => ({
+      const arr = response.data.map((row) => ({
         ...row,
         minId: row.min_id,
         poNumber: row.poNumber,
@@ -212,7 +212,7 @@ function VBT01Report({
         checkInvoice(arr[0].invoice_id, arr[0].ven_code);
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setEditingVBT(null);
     }
     setLoading(false);
@@ -248,7 +248,7 @@ function VBT01Report({
       tds_gl_code: "--",
       tds_percent: "0",
     });
-    if (data.code === 200) {
+    if (response.success) {
       let arr = data.data;
       setAllTdsOptions(arr[0].ven_tds);
 
@@ -260,7 +260,7 @@ function VBT01Report({
       });
       setTdsArray(tdsC);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const getFreightGlOptions = async (vbtCode) => {
@@ -298,7 +298,7 @@ function VBT01Report({
     } else {
       link = `/tally/${apiUrl}/${apiUrl}_gl_options`;
     }
-    const { data } = await imsAxios.get(link);
+    const response = await imsAxios.get(link);
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {
@@ -630,8 +630,8 @@ function VBT01Report({
       finalData
     );
     const { data } = response;
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       // setTimeout(() => {
 
       setEditingVBT(null);

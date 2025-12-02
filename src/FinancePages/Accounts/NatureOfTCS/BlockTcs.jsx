@@ -12,11 +12,11 @@ function BlockTCS() {
 
   const getAllBlockTCS = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       "tally/tcs/list/blocked"
     );
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -24,7 +24,7 @@ function BlockTCS() {
       });
       setAllBlockedData(arr);
     } else {
-      toast.error("Some error Occured");
+      toast.error(response.message?.msg || response.message);
     }
 
     setLoading(false);

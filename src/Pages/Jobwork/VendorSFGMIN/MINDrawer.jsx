@@ -44,13 +44,13 @@ function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
   ];
   const getDetail = async () => {
     setFetchLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/jwvendor/fetchVendorSFGdetails",
       transactionInwarding
     );
     setFetchLoading(false);
-    if (data.code === 200) {
-      let arr = data.data.map((row, index) => ({
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
         id: v4(),
         index: index + 1,
         qty: 0,
@@ -140,17 +140,17 @@ function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
   };
   const submitHandler = async () => {
     setSubmitLoading(false);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/jwvendor/sfgInward",
       showConfirmSubmit
     );
-    if (data.code === 200) {
+    if (response.success) {
       setShowConfirmSubmit(false);
-      toast.success(data.message);
+      toast.success(response.message);
       setSubmitLoading(false);
       setTransactionInwarding(false);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   useEffect(() => {

@@ -60,11 +60,11 @@ function StockControl() {
     if (data) {
       if (data.code === 200 || data.code === "200") {
         // reset();
-        toast.success(data.message);
+        toast.success(response.message);
         displayDataTable();
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 

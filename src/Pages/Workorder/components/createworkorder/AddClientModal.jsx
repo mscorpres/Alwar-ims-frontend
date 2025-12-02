@@ -56,7 +56,7 @@ const AddClientModal = ({ setOpen, open }) => {
   const getFetchState = async (e) => {
     if (e.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
@@ -83,15 +83,15 @@ const AddClientModal = ({ setOpen, open }) => {
     };
     try {
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("client/addclient", obj);
-    if (data.code == 200) {
+    const response = await imsAxios.post("client/addclient", obj);
+    if (response.success) {
       // fetchVendor();
       reset()
-      toast.success(data.message);
+      toast.success(response.message);
       setOpen(null);
       // setShowAddVendorModal(false);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     } catch (error) {
     toast.error(error)
@@ -104,16 +104,16 @@ const AddClientModal = ({ setOpen, open }) => {
     // formData.append("branch", JSON.stringify(obj.branch));
     // formData.append("uploadfile", files[0]);
     // setSubmitLoading(true);
-    // const { data } = await imsAxios.post("client/addclient", obj);
+    // const response = await imsAxios.post("client/addclient", obj);
   //   setSubmitLoading(false);
-  //   if (data.code == 200) {
+  //   if (response.success) {
   //     // fetchVendor();
   //     reset()
   //     toast.success(data.message.toString().replaceAll("<br/>", " "));
   //     setOpen(null);
   //     // setShowAddVendorModal(false);
   //   } else {
-  //     toast.error(data.message.msg);
+  //     toast.error(response.message?.msg || response.message);
   //   }
   };
 

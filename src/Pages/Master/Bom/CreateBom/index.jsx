@@ -29,14 +29,14 @@ const CreateBom = () => {
       const response = await imsAxios.get(`products/bySku?sku=${values.sku}`);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const product = data.data[0].p_name;
           const productKey = data.data[0].product_key;
           form.setFieldValue("product", product);
           form.setFieldValue("productKey", productKey);
           setProductSelected(true);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -121,9 +121,9 @@ const CreateBom = () => {
       const response = await imsAxios.post(url, values);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           if (stage === "preview") {
-            const arr = data.data.map((row, index) => ({
+            const arr = response.data.map((row, index) => ({
               id: index + 1,
               category: row.CATEGORY,
               source: row.COMP_SOURCE,
@@ -139,13 +139,13 @@ const CreateBom = () => {
             setpreviewData(arr);
           }
           if (stage === "submit") {
-            toast.success(data.message);
+            toast.success(response.message);
             setProductSelected(false);
             form.resetFields();
             setpreviewData([]);
           }
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

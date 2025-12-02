@@ -33,12 +33,12 @@ const CancelEwayBillModal = ({ show, hide }) => {
       const response = await imsAxios.post("/jwEwaybill/cancel", payload);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           hide();
           form.resetFields();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

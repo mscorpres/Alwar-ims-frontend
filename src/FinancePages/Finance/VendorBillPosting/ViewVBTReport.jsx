@@ -44,14 +44,14 @@ export default function ViewVBTReport({
   const getVBTDetails = async (viewReportData) => {
     // console.log("adddddddddddddd", viewReportData);
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt_report/vbt_report_data", {
+    const response = await imsAxios.post("/tally/vbt_report/vbt_report_data", {
       vbt_key: viewReportData,
     });
     // console.log(data);
     setLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       // console.log(viewReportData);
-      const arr = data.data.map((row) => {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -92,9 +92,9 @@ export default function ViewVBTReport({
       // console.log("componets", components);
     } else {
       if (data.message.msg) {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       } else if (data.message) {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       } else {
         toast.error("Something wrong happened");
       }
@@ -103,7 +103,7 @@ export default function ViewVBTReport({
   const printFun = async () => {
     // setLoading(true);
     setPrintLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt_report/print_vbt_report", {
+    const response = await imsAxios.post("/tally/vbt_report/print_vbt_report", {
       vbt_key: viewReportData[0]?.vbt_code,
     });
     setPrintLoading(false);

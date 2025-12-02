@@ -42,9 +42,9 @@ export default function BankPayment() {
   const { executeFun, loading: loading1 } = useApi();
   const [bankPaymentForm] = Form.useForm();
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -206,12 +206,12 @@ export default function BankPayment() {
   ];
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return { text: row.text, value: row.id };
       });
       setAsyncOptions(arr);
@@ -221,7 +221,7 @@ export default function BankPayment() {
   };
   const getHeaderAccount = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/backend/fetchBankLedger", {
+    const response = await imsAxios.post("/tally/backend/fetchBankLedger", {
       search: search,
     });
     setSelectLoading(false);
@@ -245,10 +245,10 @@ export default function BankPayment() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setProjectDesc(data.data.description);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -342,11 +342,11 @@ export default function BankPayment() {
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code == 200) {
+        if (response.success) {
           resetFunction();
-          toast.success(data.message);
+          toast.success(response.message);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     }

@@ -104,28 +104,28 @@ const App = () => {
 
     if (!status) {
       setFavLoading(true);
-      const { data } = await imsAxios.post("/backend/favouritePages", {
+      const response = await imsAxios.post("/backend/favouritePages", {
         pageUrl: pathname,
         source: "react",
       });
       setFavLoading(false);
-      if (data.code == 200) {
+      if (data.success) {
         favs = JSON.parse(data.data);
       } else {
-        toast.error(data.message.msg);
+        toast.error(data.message?.msg || data.message);
       }
     } else {
       let page_id = favs.filter((f) => f.url == pathname)[0].page_id;
       setFavLoading(true);
-      const { data } = await imsAxios.post("/backend/removeFavouritePages", {
+      const response = await imsAxios.post("/backend/removeFavouritePages", {
         page_id,
       });
       setFavLoading(false);
-      if (data.code == 200) {
+      if (data.success) {
         let fav = JSON.parse(data.data);
         favs = fav;
       } else {
-        toast.error(data.message.msg);
+        toast.error(data.message?.msg || data.message);
       }
     }
     dispatch(setFavourites(favs));
@@ -535,7 +535,7 @@ const App = () => {
 //     const fetchEnabledModules = async () => {
 //       try {
 //         console.log("Fetching modules for branch:", user.company_branch); // Debug branch
-//         const { data } = await imsAxios.get("/branchdata/getEnabledModules", {
+//         const response = await imsAxios.get("/branchdata/getEnabledModules", {
 //           headers: {
 //             "x-csrf-token": user.token,
 //             "Company-Branch": user.company_branch,
@@ -543,7 +543,7 @@ const App = () => {
 //           },
 //         });
 //         console.log("Enabled Modules Response:", data); // Debug API response
-//         if (data.code === 200) {
+//         if (response.success) {
 //           setEnabledModules(data.data || []); // Ensure empty array if undefined
 //         } else {
 //           toast.error(data.message?.msg || "Failed to fetch enabled modules");

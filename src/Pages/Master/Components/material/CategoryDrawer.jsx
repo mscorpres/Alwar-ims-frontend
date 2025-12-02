@@ -53,15 +53,15 @@ export default function CategoryDrawer({
       const { data } = response;
 
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (response.success) {
+          const arr = response.data.map((row) => ({
             label: row.text,
             name: row.id,
             type: row.inp_type,
           }));
           setFields(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {}
@@ -77,7 +77,7 @@ export default function CategoryDrawer({
           attribute: row.name,
         });
         const { data } = response;
-        if (data.code === 200) {
+        if (response.success) {
           optionsArr.push({ data: data.message });
           setFieldSelectOptions((curr) => [
             ...curr,
@@ -103,7 +103,7 @@ export default function CategoryDrawer({
       const { data } = response;
 
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           let finalObj = {};
           let arr = [];
           setUniqueId(data.inputs.rm_cat_code);
@@ -181,10 +181,10 @@ export default function CategoryDrawer({
 
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setCategoryOptions(data.data);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

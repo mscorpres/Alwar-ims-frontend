@@ -70,18 +70,18 @@ const R11 = () => {
 
   const getFecth = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/report11", {
+    const response = await imsAxios.post("/report11", {
       type: "fetchStock",
     });
     let arr = data.response.data.map((row) => {
       return { ...row, id: v4() };
     });
     setLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setAllData(arr);
       setPendingCount(data.response.totalError);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 

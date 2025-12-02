@@ -24,14 +24,14 @@ export default function ComponentImages({ showImages, setShowImages }) {
 
   const getImages = async () => {
     setSkeletonLoading(true);
-    const { data } = await imsAxios.post("/component/fetchImageComponent", {
+    const response = await imsAxios.post("/component/fetchImageComponent", {
       component: showImages.partNumber,
     });
-    if (data.code == 200) {
+    if (response.success) {
       setImages(data.data);
     } else {
       setImages([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     setSkeletonLoading(false);
   };
@@ -43,8 +43,8 @@ export default function ComponentImages({ showImages, setShowImages }) {
     });
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         let arr = images;
         arr = images.filter((row) => row.image_id !== image.image_id);
         setImages(arr);

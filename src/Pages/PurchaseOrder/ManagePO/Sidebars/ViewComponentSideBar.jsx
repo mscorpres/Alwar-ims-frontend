@@ -20,21 +20,25 @@ export default function ViewComponentSideBar({
   const [loading, setLoading] = useState(null);
   const printFun = async () => {
     setLoading("print");
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: componentData?.poid,
     });
 
-    printFunction(data.data.buffer.data);
+    if (response.success) {
+      printFunction(response.data.buffer.data);
+    }
     setLoading(null);
   };
   const handleDownload = async () => {
     setLoading("download");
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: componentData?.poid,
     });
     setLoading(null);
-    let filename = `PO ${componentData?.poid}`;
-    downloadFunction(data.data.buffer.data, filename);
+    if (response.success) {
+      let filename = `PO ${componentData?.poid}`;
+      downloadFunction(response.data.buffer.data, filename);
+    }
   };
   const columns = [
     {

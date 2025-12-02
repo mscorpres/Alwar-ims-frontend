@@ -18,14 +18,14 @@ export default function CancelPO({
   const [loading, setLoading] = useState(false);
   const getPOStatus = async () => {
     if (showCancelPO) {
-      const { data } = await imsAxios.post("/purchaseOrder/fetchStatus4PO", {
+      const response = await imsAxios.post("/purchaseOrder/fetchStatus4PO", {
         purchaseOrder: showCancelPO,
       });
-      if (data.code == 200) {
+      if (response.success) {
         setStatus("okay");
-        setPayment(data?.data?.advPayment == "1" ? true : false);
+        setPayment(response?.data?.advPayment == "1" ? true : false);
       } else {
-        setStatus(data);
+        setStatus(response);
       }
     }
   };
@@ -44,12 +44,12 @@ export default function CancelPO({
     if (showCancelPO) {
       setLoading(true);
 
-      const { data } = await imsAxios.post("/purchaseOrder/CancelPO", {
+      const response = await imsAxios.post("/purchaseOrder/CancelPO", {
         purchase_order: showCancelPO,
         remark: reason,
       }).then((res) => {
-        if(res.code==500){
-          toast.error(res.message.msg)
+        if(!res.success){
+          toast.error(res.message?.msg || res.message)
           setLoading(false);
           setShowCancelPO(null);
         }
@@ -59,8 +59,8 @@ export default function CancelPO({
       }
     );
       setLoading(false);
-      if (data.code == 200) {
-        toast.success(data.message.msg);
+      if (response?.success) {
+        toast.success(response.message?.msg || response.message);
         setReason("");
         let arr = rows;
         getSearchResults();
@@ -77,7 +77,7 @@ export default function CancelPO({
         setRows(arr);
         setShowCancelPO(null);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response?.message?.msg || response?.message);
       }
     }
   };

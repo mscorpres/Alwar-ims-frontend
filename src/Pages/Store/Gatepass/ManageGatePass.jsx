@@ -73,41 +73,37 @@ export default function ManageGatePass() {
   const downloadFun = async (id) => {
     setLoading(true);
     let filename = `Gatepass ${id}`;
-    const { data } = await imsAxios.post("/gatepass/printGP", {
+    const response = await imsAxios.post("/gatepass/printGP", {
       transaction: id,
     });
     setLoading(false);
-    if (data.code == 200) {
+    if (data.success) {
       downloadFunction(data.data.buffer.data, filename);
     } else {
-      toast.error(
-        data.message.msg ? data.message.msg : data.message && data.message
-      );
+      toast.error(data.message?.msg || data.message);
     }
   };
   const printFun = async (id) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/gatepass/printGP", {
+    const response = await imsAxios.post("/gatepass/printGP", {
       transaction: id,
     });
     setLoading(false);
-    if (data.code == 200) {
+    if (data.success) {
       printFunction(data.data.buffer.data);
     } else {
-      toast.error(
-        data.message.msg ? data.message.msg : data.message && data.message
-      );
+      toast.error(data.message?.msg || data.message);
     }
   };
   const getRows = async () => {
     serSearchLoading(true);
-    const { data } = await imsAxios.post("/gatepass/fetchAllGP", {
+    const response = await imsAxios.post("/gatepass/fetchAllGP", {
       data: wise == "datewise" ? searchDateRange : searchInput,
       wise: wise,
     });
     serSearchLoading(false);
-    if (data.code == 200) {
-      const arr = data.response.data.map((row, index) => {
+    if (data.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -116,9 +112,7 @@ export default function ManageGatePass() {
       });
       setRows(arr);
     } else {
-      toast.error(
-        data.message.msg ? data.message.msg : data.message && data.message
-      );
+      toast.error(data.message?.msg || data.message);
     }
   };
   const additional = () => (

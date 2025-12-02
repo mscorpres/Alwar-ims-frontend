@@ -69,13 +69,13 @@ export default function ContraReport() {
     }
 
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/contra/contra_report_list", {
+    const response = await imsAxios.post("/tally/contra/contra_report_list", {
       wise: wise,
       data: d,
     });
     setLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -85,7 +85,7 @@ export default function ContraReport() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
     }
     setLoading(false);
@@ -93,7 +93,7 @@ export default function ContraReport() {
   };
   const printFun = async (id) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/contra/contra_print", {
+    const response = await imsAxios.post("/tally/contra/contra_print", {
       code: id,
     });
     printFunction(data.buffer.data);
@@ -104,7 +104,7 @@ export default function ContraReport() {
     let link = "/tally/contra/contra_print";
     let filename = "Contra Transaction " + id;
 
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       code: id,
     });
     downloadFunction(data.buffer.data, filename);
@@ -113,28 +113,28 @@ export default function ContraReport() {
   const deleteFun = async () => {
     setLoading(true);
     if (deleteConfirm) {
-      const { data } = await imsAxios.post("/tally/contra/contra_delete", {
+      const response = await imsAxios.post("/tally/contra/contra_delete", {
         contra_code: deleteConfirm,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setDeleteConfirm(null);
-        toast.success(data.message);
+        toast.success(response.message);
         getRows();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/contra/bank_cash_ledgers", {
+    const response = await imsAxios.post("/tally/contra/bank_cash_ledgers", {
       search: search,
     });
     setSelectLoading(false);
     let arr = [];
-    if (data.code == 200) {
-      arr = data.data.map((row) => {
+    if (response.success) {
+      arr = response.data.map((row) => {
         return { text: row.text, value: row.id };
       });
       setAsyncOptions(arr);

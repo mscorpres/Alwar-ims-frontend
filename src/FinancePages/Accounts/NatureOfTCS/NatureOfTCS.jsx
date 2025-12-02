@@ -40,7 +40,7 @@ function NatureofTCS() {
 
   // const getGLCodes = async (searchInput) => {
   //   setSelectLoading(true);
-  //   const { data } = await imsAxios.post(
+  //   const response = await imsAxios.post(
   //     "/tally/tds/tds_ledger_options",
   //     {
   //       search: searchInput,
@@ -49,7 +49,7 @@ function NatureofTCS() {
   //   setSelectLoading(false);
   //   let arr = [];
   //   if (!data.msg) {
-  //     arr = data.data.map((d) => {
+  //     arr = response.data.map((d) => {
   //       return { text: d.text, value: d.id };
   //     });
   //     setAsyncOptions(arr);
@@ -61,9 +61,9 @@ function NatureofTCS() {
   const getTCSList = async () => {
     setLoading(true);
     setTCSList([]);
-    const { data } = await imsAxios.get("/tally/tcs/list");
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    const response = await imsAxios.get("/tally/tcs/list");
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -71,7 +71,7 @@ function NatureofTCS() {
       });
       setTCSList(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
 
     setLoading(false);
@@ -147,13 +147,13 @@ function NatureofTCS() {
 
   const getGLList = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       `/tally/tcs/tcsLedgerOptions?search=${search}`
     );
     setSelectLoading(false);
     let arr = [];
-    if (!data.msg) {
-      arr = data.data.map((d) => {
+    if (response.success) {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -168,18 +168,18 @@ function NatureofTCS() {
       toast.error("Please enter all the fields");
     } else {
       setFormLoading(true);
-      const { data } = await imsAxios.post("/tally/tcs/add", {
+      const response = await imsAxios.post("/tally/tcs/add", {
         ...newTCS,
         ledger: newTCS.ledger,
       });
       setFormLoading(false);
       // console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         getTCSList();
-        toast.success(data.message);
+        toast.success(response.message);
         reset();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

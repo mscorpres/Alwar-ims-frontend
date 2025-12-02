@@ -33,16 +33,16 @@ function R30() {
     setFetchLoading(true);
     values = { ...values, date: dateRange };
     // log
-    const { data } = await imsAxios.post("/report30", values);
+    const response = await imsAxios.post("/report30", values);
     setFetchLoading(false);
-    if (data.code === 200) {
+    if (response.success) {
       let arr = data.response.data.map((row, index) => ({
         ...row,
         id: index + 1,
       }));
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
     }
   };
@@ -63,7 +63,7 @@ function R30() {
     // let arr = data.message;
     let arr = data.response.data;
 
-    if (data.code === 200) {
+    if (response.success) {
       arr = arr.map((row, index) => ({
         id: index + 1,
         ...row,
@@ -136,14 +136,14 @@ function R30() {
 
   const getAsyncOptions = async (url, search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post(url, {
+    const response = await imsAxios.post(url, {
       search: search,
       searchTerm: search,
     });
     setSelectLoading(false);
     let arr = [];
     if (data.code) {
-      arr = data.data.map((row) => ({
+      arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
@@ -159,20 +159,20 @@ function R30() {
     let vendor = searchForm.getFieldsValue().vendor;
     if (vendor) {
       setFormLoading(true);
-      const { data } = await imsAxios.post("/backend/fetchVendorJWLocation", {
+      const response = await imsAxios.post("/backend/fetchVendorJWLocation", {
         search: vendor,
       });
 
       setFormLoading(false);
-      if (data.code === 200) {
+      if (response.success) {
         let arr = [];
-        arr = data.data.map((row) => ({
+        arr = response.data.map((row) => ({
           value: row.id,
           text: row.text,
         }));
         setLocationOptions(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

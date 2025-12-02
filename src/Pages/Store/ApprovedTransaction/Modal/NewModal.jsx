@@ -65,7 +65,7 @@ export default function NewModal({
       });
     } else if (name == "loc") {
       setLocLoading(true);
-      const { data } = await imsAxios.post("/godown/godownStocks", {
+      const response = await imsAxios.post("/godown/godownStocks", {
         component: id?.compKey,
         location: value,
       });
@@ -92,13 +92,13 @@ export default function NewModal({
   // console.log(locLoading);
   const getDataFetch = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/storeApproval/fetchTransactionItems",
       {
         transaction: open?.transaction_id,
       }
     );
-    if (data.code == 200) {
+    if (data.success) {
       let arr = data.data.material.map((row, index) => {
         return {
           ...row,
@@ -114,8 +114,8 @@ export default function NewModal({
         setModalOpen(false);
         getPendingData();
       }
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setOpen(false);
       getPendingData();
       // setLoading(false);
@@ -123,11 +123,11 @@ export default function NewModal({
   };
 
   const getLocation = async () => {
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       "/storeApproval/fetchLocationAllotedTransApprv"
     );
     const arr = [];
-    data.data.map((a) => arr.push({ label: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ label: a.text, value: a.id }));
     setLocation(arr);
     // console.log(arr);
   };
@@ -135,7 +135,7 @@ export default function NewModal({
   const saveFunction = async (materialData, headerData) => {
     setUpdateLoading(materialData?.id);
     setSpinLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/storeApproval/AllowComponentsApproval",
       {
         location: headerData?.locationKey,
@@ -150,7 +150,7 @@ export default function NewModal({
       }
     );
     setUpdateLoading(false);
-    if (data.code == 200) {
+    if (data.success) {
       if (mat.length > 1) {
         // getDataFetch();
         setMat((allDataComes) => {
@@ -165,17 +165,17 @@ export default function NewModal({
         toast.success(data.message.replaceAll("<br/>", "\n"));
         setSpinLoading(false);
       }
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setSpinLoading(false);
     }
-    // if(data.code == 200){
+    // if (response.success){
     //   setSpinLoading(false)
-    //   toast.success(data.message)
+    //   toast.success(response.message)
     // }
-    // else if(data.code == 500){
+    // else if (!response.success){
     //   setSpinLoading(false)
-    //   toast.error(data.message.msg)
+    //   toast.error(response.message?.msg || response.message)
     // }
   };
 

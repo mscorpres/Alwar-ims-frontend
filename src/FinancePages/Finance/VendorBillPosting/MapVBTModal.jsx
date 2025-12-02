@@ -30,11 +30,11 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
   const getGroups = async (search) => {
     if (selectedVBT) {
       setFetchLoading(true);
-      const { data } = await imsAxios.post("/tally/vbt/fetch_vbt_group", {
+      const response = await imsAxios.post("/tally/vbt/fetch_vbt_group", {
         vbt_key: selectedVBT,
       });
       setFetchLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         // let arr = data.data.vbt_group_key.split(",");
         let arr = data.data.vbt_group_key.map((row) => {
           return {
@@ -50,11 +50,11 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
   };
   const getGSTGlGroups = async () => {
     setFetchLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt/fetch_vbt_group", {
+    const response = await imsAxios.post("/tally/vbt/fetch_vbt_group", {
       vbt_key: "gst",
     });
     setFetchLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       // let arr = data.data.vbt_group_key.split(",");
       let arr = data.data.vbt_group_key.map((row) => {
         return {
@@ -69,12 +69,12 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
   };
   const searchGroups = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/getSubgroup", {
+    const response = await imsAxios.post("/tally/getSubgroup", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => ({
+    if (response.success) {
+      let arr = response.data.map((row) => ({
         text: row.label,
         value: row.id,
       }));
@@ -88,12 +88,12 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
       return group.value;
     });
     setGstSubmitLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt/update_vbt_group_module", {
+    const response = await imsAxios.post("/tally/vbt/update_vbt_group_module", {
       vbt_module: "gst",
       sub_groups: selGroups,
     });
     setGstSubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       if (data.message.msg.toLowerCase().includes("updated")) {
         toast.success("VBT Updated");
       } else {
@@ -102,7 +102,7 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
       setSelectedGroup(null);
       setMapVBT(null);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const submitFunction = async () => {
@@ -110,12 +110,12 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
       return group.value;
     });
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/vbt/update_vbt_group_module", {
+    const response = await imsAxios.post("/tally/vbt/update_vbt_group_module", {
       vbt_module: selectedVBT,
       sub_groups: selGroups,
     });
     setLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       if (data.message.msg.toLowerCase().includes("updated")) {
         toast.success("VBT Updated");
       } else {
@@ -124,7 +124,7 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
       setSelectedGroup(null);
       setMapVBT(null);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   useEffect(() => {

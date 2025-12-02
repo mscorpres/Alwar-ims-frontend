@@ -43,13 +43,13 @@ function CashPaymentResister() {
   const getLedgerFunction = async (e) => {
     if (e?.length > 1) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+      const response = await imsAxios.post("/tally/ledger/ledger_options", {
         seacrh: e,
       });
       setSelectLoading(false);
       // console.log(data.data);
       let arr = [];
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -60,11 +60,11 @@ function CashPaymentResister() {
     if (e == "date_wise") {
       setDateData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/tally/cash/cashpayment_list", {
+      const response = await imsAxios.post("/tally/cash/cashpayment_list", {
         wise: selectedValue.selType,
         data: datee,
       });
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -73,18 +73,18 @@ function CashPaymentResister() {
         });
         setDateData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } else if (e == "eff_wise") {
       setEffectiveData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/tally/cash/cashpayment_list", {
+      const response = await imsAxios.post("/tally/cash/cashpayment_list", {
         wise: selectedValue.selType,
         data: datee,
       });
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -93,18 +93,18 @@ function CashPaymentResister() {
         });
         setEffectiveData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } else if (e == "key_wise") {
       setCodeData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/tally/cash/cashpayment_list", {
+      const response = await imsAxios.post("/tally/cash/cashpayment_list", {
         wise: selectedValue.selType,
         data: selectedValue?.code,
       });
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -113,14 +113,14 @@ function CashPaymentResister() {
         });
         setCodeData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } else if (e == "ledger_wise") {
       setLedgerData([]);
       setLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/cashpayment_list",
         // "/tally/cash/cashreceipt_list",
         {
@@ -128,7 +128,7 @@ function CashPaymentResister() {
           data: selectedValue?.pick,
         }
       );
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -137,8 +137,8 @@ function CashPaymentResister() {
         });
         setLedgerData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

@@ -164,7 +164,7 @@ export default function PendingModal({
 
   const fetchDetailWhenClickModal = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/ppr/fetchPprComponentDetails", {
+    const response = await imsAxios.post("/ppr/fetchPprComponentDetails", {
       accesstoken: showModal.prod_randomcode,
       pprrequest: showModal.prod_transaction,
       sku: showModal.prod_product_sku,
@@ -172,7 +172,7 @@ export default function PendingModal({
     //  let arr = tabs;
 
     let arr = tabs;
-    if (data.code == 200) {
+    if (response.success) {
       setHeaderData(data.data.header_data);
       arr = arr.map((tab) => {
         if (tab.name == "Part") {
@@ -208,16 +208,16 @@ export default function PendingModal({
 
       // setComponentData(data.data.comp_data);
       // // console.log(data.data);
-      // toast.success(data.data.data);
+      // toast.success(response.data.data);
       // setLoading(false);
 
       //  setLoading(false);
     }
   };
   const getLocation = async () => {
-    const { data } = await imsAxios.get("/ppr/mfg_locations");
+    const response = await imsAxios.get("/ppr/mfg_locations");
     const arr = [];
-    data.data.map((a) => arr.push({ label: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ label: a.text, value: a.id }));
     setLocationStore(arr);
   };
   const deleteArr = (id) => {
@@ -293,7 +293,7 @@ export default function PendingModal({
       toast.error("Please add quantity");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("/ppr/addBomOutData", {
+      const response = await imsAxios.post("/ppr/addBomOutData", {
         accesstoken: headerData.accesstoken,
         bom: headerData.key,
         component: allComponent,
@@ -308,11 +308,11 @@ export default function PendingModal({
         sku: headerData.sku,
         comment: sendData.repSend,
       });
-      if (data.code == 200) {
+      if (response.success) {
         toast.success("ad");
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

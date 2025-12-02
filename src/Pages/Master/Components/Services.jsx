@@ -24,10 +24,10 @@ function Services() {
 
   const getServices = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/component/service");
+    const response = await imsAxios.get("/component/service");
     setLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -36,16 +36,16 @@ function Services() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
     }
   };
 
   const getUnits = async () => {
-    const { data } = await imsAxios.get("/uom");
+    const response = await imsAxios.get("/uom");
     let u = [];
 
-    data.data.map((d) => u.push({ text: d.units_name, value: d.units_id }));
+    response.data.map((d) => u.push({ text: d.units_name, value: d.units_id }));
     setUnits(u);
   };
 
@@ -61,17 +61,17 @@ function Services() {
       return toast.error("Please enter a note");
     }
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/component/addServices", {
+    const response = await imsAxios.post("/component/addServices", {
       ...newService,
       uom: newService.uom,
     });
     setSubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       getServices();
       resetFun();
-      toast.success(data.message);
+      toast.success(response.message);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const resetFun = () => {

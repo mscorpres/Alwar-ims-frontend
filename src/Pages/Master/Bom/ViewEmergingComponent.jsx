@@ -49,7 +49,7 @@ export default function ViewEmergingComponent({
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setMergedComponent(data.data[0]);
           let arr = [
             {
@@ -83,7 +83,7 @@ export default function ViewEmergingComponent({
           ];
           setSummary(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
           setMergedComponent(false);
           setViewEmergingPart(false);
         }
@@ -102,13 +102,13 @@ export default function ViewEmergingComponent({
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setMergedComponent(false);
           setViewEmergingPart(false);
           next();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     }

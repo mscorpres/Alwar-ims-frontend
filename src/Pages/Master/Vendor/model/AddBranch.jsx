@@ -49,15 +49,16 @@ const AddBranch = ({ openBranch, setOpenBranch, getVendorBracnch }) => {
   const getFetchState = async (e) => {
     if (e.length > 1) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
-      let arr = [];
-      arr = data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
+      if (response.success && response.data) {
+        let arr = response.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+      }
     }
   };
 
@@ -78,7 +79,7 @@ const AddBranch = ({ openBranch, setOpenBranch, getVendorBracnch }) => {
       toast.error("Please enter Address");
     } else {
       setSubmitLoading(true);
-      const { data } = await imsAxios.post("/vendor/addVendorBranch", {
+      const response = await imsAxios.post("/vendor/addVendorBranch", {
         vendor: {
           vendorname: openBranch.vendor_code,
         },
@@ -95,15 +96,15 @@ const AddBranch = ({ openBranch, setOpenBranch, getVendorBracnch }) => {
         },
       });
       setSubmitLoading(false);
-      if (data.code == 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         if (getVendorBracnch) {
           getVendorBracnch(openBranch.vendor_code);
         }
         setOpenBranch(false);
         reset();
-      } else if (data.code == 500) {
-        toast.error(errorToast(data.message));
+      } else {
+        toast.error(response.message);
       }
     }
   };

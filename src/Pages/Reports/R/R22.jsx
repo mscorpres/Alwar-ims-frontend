@@ -35,11 +35,11 @@ function R22() {
     }
   };
   const getBom = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData?.selectProduct,
     });
     console.log(data.data);
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
     setBomName(arr);
@@ -53,13 +53,13 @@ function R22() {
       toast.error("Please select a valid date");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("/report22", {
+      const response = await imsAxios.post("/report22", {
         skucode: allData.selectProduct,
         subject: allData.selectBom,
         date: selectDate,
       });
       // console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return {
             ...row,
@@ -76,7 +76,7 @@ function R22() {
         });
         setResData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         setLoading(true);
         toast.error(data.message);
         setLoading(false);

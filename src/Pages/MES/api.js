@@ -22,7 +22,7 @@ const getAllProcesses = async () => {
     const response = await imsAxios.get(url);
     const { data } = response;
     if (data && data?.data) {
-      const obj = data.data.map((row, index) => ({
+      const obj = response.data.map((row, index) => ({
         id: index + 1,
         name: row.process_name,
         code: row.process_code,
@@ -69,7 +69,7 @@ const getSkuBomOptions = async (sku) => {
 
     const { data } = response;
     if (data && data?.code === 200) {
-      const arr = data.data.map((row) => ({
+      const arr = response.data.map((row) => ({
         text: row.bomname,
         value: row.bomid,
       }));
@@ -90,7 +90,7 @@ const getSkuSfgOptions = async (sku) => {
 
     const { data } = response;
     if (data && data?.code === 200) {
-      const arr = data.data.map((row) => ({
+      const arr = response.data.map((row) => ({
         text: row.sfgsku,
         value: row.sfgid,
       }));
@@ -169,7 +169,7 @@ const mapProcess = async (values) => {
     const response = await imsAxios.post(url, finalObj);
     const { data } = response;
     if (data) {
-      if (data.status === "success") {
+      if (response.success ) {
         return apiResponse([], data.message.msg, true, false, true);
       } else {
         return apiResponse([], data?.message?.msg, false, true, true);

@@ -39,11 +39,11 @@ const Rejection = () => {
 
   const getRejectedList = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/getMinTransactionByNo", {
+      const response = await imsAxios.post("/backend/getMinTransactionByNo", {
         search: e,
       });
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -52,21 +52,21 @@ const Rejection = () => {
   };
 
   const getLoctionsss = async () => {
-    const { data } = await imsAxios.post("/rejection/fetchAllotedLocation");
+    const response = await imsAxios.post("/rejection/fetchAllotedLocation");
     let u = [];
     console.log(data.data);
-    data.data.map((d) => u.push({ label: d.text, value: d.id }));
+    response.data.map((d) => u.push({ label: d.text, value: d.id }));
     setloctionData(u);
   };
 
   const rejectListFunction = async () => {
     setAllDataComes([]);
     setLoading(true);
-    const { data } = await imsAxios.post("/rejection/fetchMINData", {
+    const response = await imsAxios.post("/rejection/fetchMINData", {
       min_transaction: rejectedValue?.selValue,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (data.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -76,8 +76,8 @@ const Rejection = () => {
       getLoctionsss();
       setAllDataComes(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.min_transaction[0]);
+    } else {
+      toast.error(data.message?.msg || data.message?.min_transaction?.[0] || data.message);
       setLoading(false);
     }
   };
@@ -182,7 +182,7 @@ const Rejection = () => {
     allDataComes.map((aa) => compArry.push(aa.componentKey));
     allDataComes.map((aa) => qtyArry.push(aa?.inward_qty));
     allDataComes.map((aa) => locArry.push(aa?.loc));
-    const { data } = await imsAxios.post("/rejection/saveRejection", {
+    const response = await imsAxios.post("/rejection/saveRejection", {
       branch: "BRMSC012",
       component: compArry,
       qty: qtyArry,
@@ -191,13 +191,13 @@ const Rejection = () => {
       min_transaction: rejectedValue.selValue,
     });
 
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (data.success) {
+      toast.success(response.message);
       setAllDataComes([]);
       setLoadingRejection(false);
-    } else if (data.code == 500) {
+    } else {
       // allDataComes([]);
-      toast.error(data.message.msg);
+      toast.error(data.message?.msg || data.message);
       setLoadingRejection(false);
     }
   };

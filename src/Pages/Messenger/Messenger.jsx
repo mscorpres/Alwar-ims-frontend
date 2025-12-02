@@ -48,9 +48,9 @@ export default function Messenger() {
 
   const getAllConverations = async () => {
     setGetConversationLoading(true);
-    const { data } = await imsAxios.get("/chat/get-conversations");
+    const response = await imsAxios.get("/chat/get-conversations");
     setGetConversationLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setConversations(data.data);
     }
   };
@@ -59,12 +59,12 @@ export default function Messenger() {
       conversationId: rec.conversationId,
     });
     setGetMessagesLoading(true);
-    const { data } = await imsAxios.post("/chat/get-conversationById", {
+    const response = await imsAxios.post("/chat/get-conversationById", {
       conversationId: rec.conversationId,
     });
     setGetMessagesLoading(false);
     setCurrentConversation(rec);
-    if (data.code == 200) {
+    if (response.success) {
       setMessages(data.data);
     }
     let arr = conversations.map((conv) => {
@@ -83,14 +83,14 @@ export default function Messenger() {
     if (newMessage.length > 0) {
       setSendMessageLoading(true);
 
-      const { data } = await imsAxios.post("/chat/save-messages", {
+      const response = await imsAxios.post("/chat/save-messages", {
         text: newMessage,
         conversationId: currentConversation.conversationId,
         receiver: currentConversation.receiver.id,
         // sender: user?.id,
       });
       setSendMessageLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         socket.emit("send_chat_msg", {
           // senderId: receiver.unique_id,
           receiver: data.data.receiver,
@@ -132,12 +132,12 @@ export default function Messenger() {
         setConversations(arr);
         setNewMessage("");
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
   const searchUsers = async (search) => {
-    const { data } = await imsAxios.post("backend/fetchAllUser", {
+    const response = await imsAxios.post("backend/fetchAllUser", {
       search: search,
     });
     if (data[0].id == 0) {
@@ -163,10 +163,10 @@ export default function Messenger() {
         name: searchedUser.fname,
       },
     };
-    const { data } = await imsAxios.post("/chat/checkConvertation", {
+    const response = await imsAxios.post("/chat/checkConvertation", {
       user: searchedUser.id,
     });
-    if (data.code == 200) {
+    if (response.success) {
       setUserSearch("");
 
       setCurrentConversation({

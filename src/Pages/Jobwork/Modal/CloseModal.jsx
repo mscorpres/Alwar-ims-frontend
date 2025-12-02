@@ -12,18 +12,18 @@ function CloseModal({ closeModalOpen, setCloseModalOpen, getRows }) {
   // console.log(row);
 
   const generateFun = async () => {
-    const { data } = await imsAxios.post("/jobwork/closePO", {
+    const response = await imsAxios.post("/jobwork/closePO", {
       skucode: row.skuKey,
       transaction: row.jwId,
       remark: remark,
     });
     setCloseModalOpen(false);
-    if (data.code == 200) {
+    if (response.success) {
       setRemark("");
 
       getRows();
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
     }
   };
 
