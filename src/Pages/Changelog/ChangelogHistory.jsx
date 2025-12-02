@@ -1,92 +1,10 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, CircularProgress, Paper } from "@mui/material";
-import { Select, DatePicker, Button, Tag } from "antd";
+import { Select, Button, Tag } from "antd";
 import { PlayCircleOutlined, FileTextOutlined, DownOutlined, UpOutlined, SearchOutlined, ReloadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../axiosInterceptor";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
-
-// Sample data - replace with API data
-const sampleChangelogData = [
-  {
-    id: 1,
-    date: "2025-01-15",
-    title: "NewNew Dashboard FeaturesNew Dashboard FeaturesNew Dashboard FeaturesNew Dashboard FeaturesNew Dashboard FeaturesNew Dashboard Features Dashboard Features",
-    description: [
-      "Added new analytics widgets with real-time data visualization",
-      "Improved chart rendering performance by 40%",
-      "Fixed dashboard loading issues on slow networks",
-      "Added customizable widget layouts",
-      "New export functionality for reports",
-      "Improved chart rendering performance by 40%",
-      "Fixed dashboard loading issues on slow networks",
-      "Added customizable widget layouts",
-      "New export functionality for reports",
-    ],
-    videoUrl: "https://www.youtube.com/watch?v=example1",
-    docUrl: "https://docs.example.com/dashboard-guide",
-  },
-  {
-    id: 2,
-    date: "2025-01-10",
-    title: "Bug Fixes & Improvements",
-    description: [
-      "Fixed login session timeout issue that was causing users to be logged out unexpectedly after 30 minutes of inactivity",
-      "Improved form validation with better error messages",
-      "Updated notification system with push notifications support",
-    ],
-    videoUrl: null,
-    docUrl: "https://docs.example.com/bugfixes",
-  },
-  {
-    id: 3,
-    date: "2025-01-05",
-    title: "Security Updates",
-    description: [
-      "Enhanced password encryption using bcrypt with higher salt rounds",
-      "Added two-factor authentication via SMS and authenticator apps",
-      "Fixed XSS vulnerabilities in user input fields",
-      "Implemented CSRF token protection",
-      "Added rate limiting for API endpoints",
-      "Security audit completed with all critical issues resolved",
-    ],
-    videoUrl: "https://www.youtube.com/watch?v=example3",
-    docUrl: null,
-  },
-  {
-    id: 4,
-    date: "2024-12-20",
-    title: "UI Enhancements",
-    description: [
-      "New sidebar design with collapsible menu",
-      "Improved mobile responsiveness across all pages",
-      "Dark mode support added with system preference detection",
-    ],
-    videoUrl: null,
-    docUrl: null,
-  },
-  {
-    id: 5,
-    date: "2024-12-10",
-    title: "Performance Optimization",
-    description:
-      "This release includes major performance improvements. We reduced API response time by implementing efficient caching mechanisms and optimized database queries. The application now loads 50% faster on initial page load. Memory usage has been reduced by 30% through better garbage collection and resource management. Additionally, we implemented lazy loading for images and components to improve perceived performance.",
-    videoUrl: "https://www.youtube.com/watch?v=example5",
-    docUrl: "https://docs.example.com/performance",
-  },
-  {
-    id: 6,
-    date: "2024-11-25",
-    title: "New Module Release",
-    description: [
-      "Launched inventory management module",
-      "Added stock tracking features",
-      "Integrated barcode scanning",
-    ],
-    videoUrl: null,
-    docUrl: null,
-  },
-];
 
 // Component for expandable description
 const ExpandableDescription = ({ description, maxLines = 3 }) => {
@@ -94,7 +12,7 @@ const ExpandableDescription = ({ description, maxLines = 3 }) => {
   const isArray = Array.isArray(description);
   const shouldTruncate = isArray
     ? description.length > maxLines
-    : description.length > 200;
+    : description?.length > 200;
 
   const displayContent = () => {
     if (isArray) {
@@ -110,7 +28,7 @@ const ExpandableDescription = ({ description, maxLines = 3 }) => {
       }
       return (
         <Typography variant="body2">
-          {description.substring(0, 200)}...
+          {description?.substring(0, 200)}...
         </Typography>
       );
     }
@@ -152,24 +70,28 @@ const ExpandableDescription = ({ description, maxLines = 3 }) => {
 };
 
 const ChangelogHistory = () => {
-  const [loading, setLoading] = useState(false);
-  const [changelogData, setChangelogData] = useState(sampleChangelogData);
-  const [filteredData, setFilteredData] = useState(sampleChangelogData);
+  // Project launch date: 01 Dec 2020
+  const launchYear = 2020;
+  const launchMonth = 11; // December (0-indexed)
+  
+  // Current year and month
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
 
-  // Filter states
-  const [filterYear, setFilterYear] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [changelogData, setChangelogData] = useState([]);
+
+  // Filter states - default year to current year
+  const [filterYear, setFilterYear] = useState(currentYear);
   const [filterMonth, setFilterMonth] = useState(null);
-  const [filterDate, setFilterDate] = useState(null);
   const [filterHaving, setFilterHaving] = useState([]);
+  const yearOptions = [];
+  for (let year = currentYear; year >= launchYear; year--) {
+    yearOptions.push({ label: year.toString(), value: year });
+  }
 
-  // Get unique years from data
-  const yearOptions = useMemo(() => {
-    const years = [...new Set(changelogData.map((item) => new Date(item.date).getFullYear()))];
-    return years.sort((a, b) => b - a).map((year) => ({ label: year.toString(), value: year }));
-  }, [changelogData]);
-
-  // Month options
-  const monthOptions = [
+  // Month options - all months
+  const allMonths = [
     { label: "January", value: 0 },
     { label: "February", value: 1 },
     { label: "March", value: 2 },
@@ -184,52 +106,80 @@ const ChangelogHistory = () => {
     { label: "December", value: 11 },
   ];
 
-  // Handle filter search
-  const handleSearch = () => {
-    let result = [...changelogData];
-
-    // Filter by year
-    if (filterYear) {
-      result = result.filter((item) => new Date(item.date).getFullYear() === filterYear);
-    }
-
-    // Filter by month
-    if (filterMonth !== null) {
-      result = result.filter((item) => new Date(item.date).getMonth() === filterMonth);
-    }
-
-    // Filter by exact date
-    if (filterDate) {
-      const selectedDate = filterDate.format("YYYY-MM-DD");
-      result = result.filter((item) => item.date === selectedDate);
-    }
-
-    // Filter by having (Doc/Video)
-    if (filterHaving.length > 0) {
-      result = result.filter((item) => {
-        if (filterHaving.includes("doc") && filterHaving.includes("video")) {
-          return item.docUrl && item.videoUrl;
-        }
-        if (filterHaving.includes("doc")) {
-          return item.docUrl;
-        }
-        if (filterHaving.includes("video")) {
-          return item.videoUrl;
-        }
-        return true;
-      });
-    }
-
-    setFilteredData(result);
+  // Get month options based on selected year (only show valid months)
+  const getMonthOptions = () => {
+    return allMonths.filter((month) => {
+      // For launch year (2020), only show December onwards
+      if (filterYear === launchYear && month.value < launchMonth) {
+        return false;
+      }
+      
+      // For current year, only show up to current month
+      if (filterYear === currentYear && month.value > currentMonth) {
+        return false;
+      }
+      
+      return true;
+    });
   };
 
-  // Handle reset
+  const monthOptions = getMonthOptions();
+
+  // Fetch changelog data from API
+  const fetchChangelog = async (filters = {}) => {
+    try {
+      setLoading(true);
+      const response = await imsAxios.get("/changelog/fetch", { params: filters });
+      // Axios interceptor returns response.data directly
+      if (response?.success) {
+        setChangelogData(response.data || []);
+      } else {
+        toast.error(response?.message || "Failed to fetch changelog");
+        setChangelogData([]);
+      }
+    } catch (error) {
+      console.error("Error fetching changelog:", error);
+      toast.error("Failed to fetch changelog");
+      setChangelogData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Initial load - fetch with current year
+  useEffect(() => {
+    fetchChangelog({ year: currentYear });
+  }, []);
+
+  // Handle filter search
+  const handleSearch = () => {
+    const filters = {};
+
+    if (filterYear) {
+      filters.year = filterYear;
+    }
+
+    if (filterMonth !== null) {
+      filters.month = filterMonth;
+    }
+
+    if (filterHaving.includes("doc")) {
+      filters.hasDoc = true;
+    }
+
+    if (filterHaving.includes("video")) {
+      filters.hasVideo = true;
+    }
+
+    fetchChangelog(filters);
+  };
+
+  // Handle reset - reset to current year
   const handleReset = () => {
-    setFilterYear(null);
+    setFilterYear(currentYear);
     setFilterMonth(null);
-    setFilterDate(null);
     setFilterHaving([]);
-    setFilteredData(changelogData);
+    fetchChangelog({ year: currentYear });
   };
 
   // Toggle having filter
@@ -271,7 +221,29 @@ const ChangelogHistory = () => {
     };
   };
 
-  const groupedData = groupByYearAndMonth(filteredData);
+  const groupedData = groupByYearAndMonth(changelogData);
+
+  // Handle download
+  const handleDownload = () => {
+    // Convert changelog data to downloadable format
+    const content = changelogData.map(item => {
+      const desc = Array.isArray(item.description) 
+        ? item.description.join('\n  - ') 
+        : item.description;
+      return `Date: ${item.date}\nTitle: ${item.title}\nDescription:\n  - ${desc}\n${item.videoUrl ? 'Video: ' + item.videoUrl + '\n' : ''}${item.docUrl ? 'Doc: ' + item.docUrl + '\n' : ''}\n---\n`;
+    }).join('\n');
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `changelog_${dayjs().format('YYYY-MM-DD')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success("Changelog downloaded successfully");
+  };
 
   if (loading) {
     return (
@@ -283,7 +255,7 @@ const ChangelogHistory = () => {
         minHeight="50vh"
         gap={2}
       >
-        <CircularProgress size={60} />
+        <CircularProgress size={60} sx={{ color: "#047780" }} />
         <Typography variant="h6" color="textSecondary">
           Loading changelog history...
         </Typography>
@@ -326,26 +298,29 @@ const ChangelogHistory = () => {
           >
             Changelog History
           </Typography>
-          <Button
-            type="primary"
-            icon={<DownloadOutlined />}
-            style={{
-              backgroundColor: "#047780",
-              borderColor: "#047780",
-              height: 36,
-            }}
-          >
-            Download
-          </Button>
+          {changelogData.length > 0 && (
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={handleDownload}
+              style={{
+                backgroundColor: "#047780",
+                borderColor: "#047780",
+                height: 36,
+              }}
+            >
+              Download
+            </Button>
+          )}
         </Box>
 
-        {filteredData.length === 0 ? (
+        {changelogData.length === 0 ? (
           <Paper sx={{ p: 4, textAlign: "center" }}>
             <Typography variant="h6" color="textSecondary">
               No changelog history found
             </Typography>
             <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-              Try adjusting your filters
+              Try adjusting your filters or add new changelog entries
             </Typography>
           </Paper>
         ) : (
@@ -431,160 +406,160 @@ const ChangelogHistory = () => {
                           }}
                         />
 
-                      {/* Timeline Items */}
-                      {groupedData[year][month].map((item, index) => {
-                        const dateInfo = formatDate(item.date);
-                        return (
-                          <Box
-                            key={item.id}
-                            sx={{
-                              display: "flex",
-                              alignItems: "flex-start",
-                              mb: 4,
-                              position: "relative",
-                            }}
-                          >
-                            {/* Date Circle */}
+                        {/* Timeline Items */}
+                        {groupedData[year][month].map((item, index) => {
+                          const dateInfo = formatDate(item.date);
+                          return (
                             <Box
+                              key={item.changelog_id || item.id || index}
                               sx={{
-                                width: 100,
-                                height: 100,
-                                borderRadius: "50%",
-                                border: "3px solid #047780",
-                                backgroundColor: "#fff",
                                 display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                zIndex: 1,
-                                flexShrink: 0,
-                                boxShadow: "0 2px 8px rgba(4, 119, 128, 0.2)",
+                                alignItems: "flex-start",
+                                mb: 4,
+                                position: "relative",
                               }}
                             >
-                              <Typography
+                              {/* Date Circle */}
+                              <Box
                                 sx={{
-                                  fontWeight: "bold",
-                                  fontSize: 22,
-                                  lineHeight: 1,
-                                  color: "#333",
+                                  width: 100,
+                                  height: 100,
+                                  borderRadius: "50%",
+                                  border: "3px solid #047780",
+                                  backgroundColor: "#fff",
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  zIndex: 1,
+                                  flexShrink: 0,
+                                  boxShadow: "0 2px 8px rgba(4, 119, 128, 0.2)",
                                 }}
                               >
-                                {dateInfo.day}
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  fontWeight: "bold",
-                                  fontSize: 14,
-                                  lineHeight: 1.2,
-                                  color: "#333",
-                                }}
-                              >
-                                {dateInfo.month}
-                              </Typography>
-                              <Typography
-                                sx={{
-                                  fontWeight: 500,
-                                  fontSize: 12,
-                                  color: "#047780",
-                                }}
-                              >
-                                {dateInfo.year}
-                              </Typography>
-                            </Box>
-
-                            {/* Content */}
-                            <Box sx={{ ml: 3, pt: 1, flex: 1 }}>
-                              <Typography
-                                variant="h6"
-                                sx={{
-                                  fontWeight: "bold",
-                                  color: "#333",
-                                  mb: 1,
-                                }}
-                              >
-                                {item.title}
-                              </Typography>
-
-                              {/* Expandable Description */}
-                              <ExpandableDescription
-                                description={item.description}
-                                maxLines={3}
-                              />
-
-                              {/* Video & Doc Links */}
-                              {(item.videoUrl || item.docUrl) && (
-                                <Box
+                                <Typography
                                   sx={{
-                                    display: "flex",
-                                    gap: 2,
-                                    mt: 1.5,
-                                    flexWrap: "wrap",
+                                    fontWeight: "bold",
+                                    fontSize: 22,
+                                    lineHeight: 1,
+                                    color: "#333",
                                   }}
                                 >
-                                  {item.videoUrl && (
-                                    <Box
-                                      component="a"
-                                      href={item.videoUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      sx={{
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        gap: 0.5,
-                                        px: 1.5,
-                                        py: 0.5,
-                                        backgroundColor: "#ff4d4f",
-                                        color: "#fff",
-                                        borderRadius: 1,
-                                        fontSize: 13,
-                                        fontWeight: 500,
-                                        textDecoration: "none",
-                                        transition: "all 0.2s",
-                                        "&:hover": {
-                                          backgroundColor: "#d9363e",
-                                          transform: "translateY(-1px)",
-                                        },
-                                      }}
-                                    >
-                                      <PlayCircleOutlined style={{ fontSize: 16 }} />
-                                      Watch Video
-                                    </Box>
-                                  )}
-                                  {item.docUrl && (
-                                    <Box
-                                      component="a"
-                                      href={item.docUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      sx={{
-                                        display: "inline-flex",
-                                        alignItems: "center",
-                                        gap: 0.5,
-                                        px: 1.5,
-                                        py: 0.5,
-                                        backgroundColor: "#047780",
-                                        color: "#fff",
-                                        borderRadius: 1,
-                                        fontSize: 13,
-                                        fontWeight: 500,
-                                        textDecoration: "none",
-                                        transition: "all 0.2s",
-                                        "&:hover": {
-                                          backgroundColor: "#035a61",
-                                          transform: "translateY(-1px)",
-                                        },
-                                      }}
-                                    >
-                                      <FileTextOutlined style={{ fontSize: 16 }} />
-                                      View Docs
-                                    </Box>
-                                  )}
-                                </Box>
-                              )}
+                                  {dateInfo.day}
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontWeight: "bold",
+                                    fontSize: 14,
+                                    lineHeight: 1.2,
+                                    color: "#333",
+                                  }}
+                                >
+                                  {dateInfo.month}
+                                </Typography>
+                                <Typography
+                                  sx={{
+                                    fontWeight: 500,
+                                    fontSize: 12,
+                                    color: "#047780",
+                                  }}
+                                >
+                                  {dateInfo.year}
+                                </Typography>
+                              </Box>
+
+                              {/* Content */}
+                              <Box sx={{ ml: 3, pt: 1, flex: 1 }}>
+                                <Typography
+                                  variant="h6"
+                                  sx={{
+                                    fontWeight: "bold",
+                                    color: "#333",
+                                    mb: 1,
+                                  }}
+                                >
+                                  {item.title}
+                                </Typography>
+
+                                {/* Expandable Description */}
+                                <ExpandableDescription
+                                  description={item.description}
+                                  maxLines={3}
+                                />
+
+                                {/* Video & Doc Links */}
+                                {(item.videoUrl || item.docUrl) && (
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      gap: 2,
+                                      mt: 1.5,
+                                      flexWrap: "wrap",
+                                    }}
+                                  >
+                                    {item.videoUrl && (
+                                      <Box
+                                        component="a"
+                                        href={item.videoUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        sx={{
+                                          display: "inline-flex",
+                                          alignItems: "center",
+                                          gap: 0.5,
+                                          px: 1.5,
+                                          py: 0.5,
+                                          backgroundColor: "#ff4d4f",
+                                          color: "#fff",
+                                          borderRadius: 1,
+                                          fontSize: 13,
+                                          fontWeight: 500,
+                                          textDecoration: "none",
+                                          transition: "all 0.2s",
+                                          "&:hover": {
+                                            backgroundColor: "#d9363e",
+                                            transform: "translateY(-1px)",
+                                          },
+                                        }}
+                                      >
+                                        <PlayCircleOutlined style={{ fontSize: 16 }} />
+                                        Watch Video
+                                      </Box>
+                                    )}
+                                    {item.docUrl && (
+                                      <Box
+                                        component="a"
+                                        href={item.docUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        sx={{
+                                          display: "inline-flex",
+                                          alignItems: "center",
+                                          gap: 0.5,
+                                          px: 1.5,
+                                          py: 0.5,
+                                          backgroundColor: "#047780",
+                                          color: "#fff",
+                                          borderRadius: 1,
+                                          fontSize: 13,
+                                          fontWeight: 500,
+                                          textDecoration: "none",
+                                          transition: "all 0.2s",
+                                          "&:hover": {
+                                            backgroundColor: "#035a61",
+                                            transform: "translateY(-1px)",
+                                          },
+                                        }}
+                                      >
+                                        <FileTextOutlined style={{ fontSize: 16 }} />
+                                        View Docs
+                                      </Box>
+                                    )}
+                                  </Box>
+                                )}
+                              </Box>
                             </Box>
-                          </Box>
-                        );
-                      })}
+                          );
+                        })}
                       </Box>
                     </Box>
                   ))}
@@ -631,7 +606,16 @@ const ChangelogHistory = () => {
             placeholder="Select Year"
             options={yearOptions}
             value={filterYear}
-            onChange={(value) => setFilterYear(value)}
+            onChange={(value) => {
+              setFilterYear(value);
+              // Reset month if invalid for selected year
+              if (value === launchYear && filterMonth !== null && filterMonth < launchMonth) {
+                setFilterMonth(null);
+              }
+              if (value === currentYear && filterMonth !== null && filterMonth > currentMonth) {
+                setFilterMonth(null);
+              }
+            }}
             allowClear
           />
         </Box>
@@ -648,20 +632,6 @@ const ChangelogHistory = () => {
             value={filterMonth}
             onChange={(value) => setFilterMonth(value)}
             allowClear
-          />
-        </Box>
-
-        {/* Date Filter */}
-        <Box sx={{ mb: 2.5 }}>
-          <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: "#555" }}>
-            Date
-          </Typography>
-          <DatePicker
-            style={{ width: "100%" }}
-            placeholder="Select Date"
-            value={filterDate}
-            onChange={(date) => setFilterDate(date)}
-            format="DD-MM-YYYY"
           />
         </Box>
 
