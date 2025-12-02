@@ -182,9 +182,6 @@ export { default as ViewBookData } from "./gstreco/ViewBookData/ViewBookData.jsx
 export { default as ViewGstData } from "./gstreco/ViewGstData/ViewGstData.jsx";
 export { default as WeeklyAudit } from "./Reports/WeeklyAudit/WeeklyAudit.jsx";
 
-//control panel
-export { default as AllPages } from "./ControlPanel/AllPages.jsx";
-export { default as AllUsers } from "./ControlPanel/AllUsers.jsx";
 
 // this always comes last
 export { default as Page404 } from "./Page404";

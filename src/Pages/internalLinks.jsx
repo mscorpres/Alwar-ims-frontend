@@ -1200,21 +1200,6 @@ const links = [
   ],
   [
     {
-      routeName: "All Pages",
-      routePath: "/controlPanel/allPages",
-    },
-    {
-      routeName: "All Users",
-      routePath: "/controlPanel/allUsers",
-    },
-    ///
-    {
-      routeName: "Registered Users",
-      routePath: "/controlPanel/registeredUsers",
-    },
-  ],
-  [
-    {
       routeName: "Create Asset",
       routePath: "/assets/create",
     },
