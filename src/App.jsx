@@ -165,7 +165,7 @@ const App = () => {
     arr.map((row) => {
       if (row.routeName?.toLowerCase().includes(search)) {
         let obj = {
-          text: row.routeName,
+          label: row.routeName,
           value: row.routePath,
         };
         modOpt.push(obj);
@@ -741,44 +741,41 @@ const App = () => {
                   </div>
                 </Space>
                 <Space>
-                  <div className="location-select">
-                    <Space style={
-                      {
-                        width: 250,
-                        color: "white",
-                        backgroundColor: "#4d636f",
-                        // padding:10,
-                        borderRadius: 10,
-                        border: "1px solid #4d636f",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        // gap: 10,
+                  <Select
+                    showSearch
+                    placeholder="Search..."
+                    value={searchModule || undefined}
+                    onChange={(value) => {
+                      setSearchModule(value);
+                      navigate(value);
+                    }}
+                    onSearch={(value) => {
+                      if (value.length > 2) {
+                        getModuleSearchOptions(value.toLowerCase());
+                      } else {
+                        setModulesOptions([]);
                       }
-                    }>
-                      <Typography.Text style={{ color: "white" }}>
-                        <SearchOutlined />
-                      </Typography.Text>
-                      <div style={{ width: 250, color: "white" }}>
-                        <MyAsyncSelect
-                          style={{ color: "black" }}
-                          
-                          placeholder="Select users"
-                          onBlur={() => setModulesOptions([])}
-                          noBorder={true}
-                          hideArrow={true}
-                          searchIcon={false}
-                          color="white"
-                          optionsState={modulesOptions}
-                          loadOptions={getModuleSearchOptions}
-                          value={searchModule}
-                          onChange={setSearchModule}
-                          onMouseEnter={showRecentSearch}
-                          options={showHisList}
-                        />
-                      </div>
-                    </Space>
-                  </div>
+                    }}
+                    options={
+                      modulesOptions.length > 0 ? modulesOptions : showHisList
+                    }
+                    filterOption={false}
+                    notFoundContent={null}
+                    style={{
+                      width: 200,
+                    }}
+                    className="header-search-select"
+                    suffixIcon={
+                      <SearchOutlined
+                        style={{ color: "rgba(255, 255, 255, 0.7)" }}
+                      />
+                    }
+                    onFocus={() => {
+                      if (showHisList.length === 0) {
+                        showRecentSearch();
+                      }
+                    }}
+                  />
                 </Space>
                 <Space
                   size="large"
