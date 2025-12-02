@@ -31,40 +31,82 @@ export default function TicketsModal({ open, handleClose }) {
   const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
   const { user } = useSelector((state) => state.login);
 
+  // Masters data from API
+  const [topicOptions, setTopicOptions] = useState([]);
+  const [priorityOptions, setPriorityOptions] = useState([]);
+  const [languageOptions, setLanguageOptions] = useState([]);
+
   // Create ticket form state
   const [formData, setFormData] = useState({
     topic: null,
     subject: "",
     concern: "",
+    priority: null,
+    language: null,
     attachment: null,
   });
   const [fileList, setFileList] = useState([]);
 
-  // Topic options
-  const topicOptions = [
-    { label: "Technical Issue", value: "technical" },
-    { label: "Bug Report", value: "bug" },
-    { label: "Feature Request", value: "feature" },
-    { label: "General Inquiry", value: "general" },
-    { label: "Access Issue", value: "access" },
-    { label: "Data Issue", value: "data" },
-    { label: "Other", value: "other" },
-  ];
+  // Fetch masters (topics, priority, language)
+  const fetchMasters = async () => {
+    try {
+      const response = await imsAxios.get("/ticket/masters");
+      if (response?.success && response?.data) {
+        const { topics, priorities, languages } = response.data;
+        
+        // Map topics - { value, text }
+        if (topics && Array.isArray(topics)) {
+          setTopicOptions(
+            topics.map((t) => ({
+              label: t.text,
+              value: t.value,
+            }))
+          );
+        }
+        
+        // Map priorities - { value, text }
+        if (priorities && Array.isArray(priorities)) {
+          setPriorityOptions(
+            priorities.map((p) => ({
+              label: p.text,
+              value: p.value,
+            }))
+          );
+        }
+        
+        // Map languages - { value, text }
+        if (languages && Array.isArray(languages)) {
+          setLanguageOptions(
+            languages.map((l) => ({
+              label: l.text,
+              value: l.value,
+            }))
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching masters:", error);
+    }
+  };
 
   // Getting tickets list
   const getTickets = async () => {
     setLoading("fetching");
-    const response = await imsAxios.post(`/chat/get-pendingTicket`, {
-      email: user.email,
-    });
-    setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        setTickets(data.data);
+    try {
+      const response = await imsAxios.get("/ticket/fetch", {
+        params: { email: user.email, topic: 18 },
+      });
+      setLoading(false);
+      if (response?.success && response?.data) {
+        setTickets(response.data || []);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response?.message || "Failed to fetch tickets");
+        setTickets([]);
       }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error fetching tickets:", error);
+      setTickets([]);
     }
   };
 
@@ -98,6 +140,8 @@ export default function TicketsModal({ open, handleClose }) {
       topic: null,
       subject: "",
       concern: "",
+      priority: null,
+      language: null,
       attachment: null,
     });
     setFileList([]);
@@ -123,16 +167,22 @@ export default function TicketsModal({ open, handleClose }) {
       setLoading("submitting");
 
       const submitData = new FormData();
+      submitData.append("email", user.email);
+      submitData.append("name", user.user_name || user.name);
       submitData.append("topic", formData.topic);
       submitData.append("subject", formData.subject);
-      submitData.append("concern", formData.concern);
-      submitData.append("email", user.email);
-      submitData.append("userName", user.user_name || user.name);
+      submitData.append("message", formData.concern);
+      if (formData.priority) {
+        submitData.append("priority", formData.priority);
+      }
+      if (formData.language) {
+        submitData.append("language", formData.language);
+      }
       if (formData.attachment) {
         submitData.append("attachment", formData.attachment);
       }
 
-      const response = await imsAxios.post("/chat/create-ticket", submitData, {
+      const response = await imsAxios.post("/ticket/create", submitData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -140,13 +190,13 @@ export default function TicketsModal({ open, handleClose }) {
 
       setLoading(false);
 
-      if (response.success) {
+      if (response?.success) {
         toast.success("Ticket created successfully!");
         resetForm();
         setActiveMenu("fetch");
         getTickets();
       } else {
-        toast.error(response.message || "Failed to create ticket");
+        toast.error(response?.message || "Failed to create ticket");
       }
     } catch (error) {
       setLoading(false);
@@ -164,6 +214,7 @@ export default function TicketsModal({ open, handleClose }) {
   useEffect(() => {
     if (open) {
       setActiveMenu("create");
+      fetchMasters();
     } else {
       setTickets([]);
       resetForm();
@@ -257,7 +308,34 @@ export default function TicketsModal({ open, handleClose }) {
                   options={topicOptions}
                   value={formData.topic}
                   onChange={(value) => handleFormChange("topic", value)}
+                  loading={topicOptions.length === 0}
                 />
+              </div>
+
+              {/* Priority & Language Row */}
+              <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
+                <div style={{ flex: 1 }}>
+                  <Typography.Text strong>Priority</Typography.Text>
+                  <Select
+                    style={{ width: "100%", marginTop: 8 }}
+                    placeholder="Select Priority"
+                    options={priorityOptions}
+                    value={formData.priority}
+                    onChange={(value) => handleFormChange("priority", value)}
+                    allowClear
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <Typography.Text strong>Language</Typography.Text>
+                  <Select
+                    style={{ width: "100%", marginTop: 8 }}
+                    placeholder="Select Language"
+                    options={languageOptions}
+                    value={formData.language}
+                    onChange={(value) => handleFormChange("language", value)}
+                    allowClear
+                  />
+                </div>
               </div>
 
               {/* Subject */}
@@ -392,7 +470,16 @@ export default function TicketsModal({ open, handleClose }) {
             </Col>
             <Col span={8}>
               <Typography.Text strong>Priority: </Typography.Text>
-              <Typography.Text>{ticket.priority}</Typography.Text>
+              <Typography.Text
+                style={{
+                  backgroundColor: ticket.priorityColor || "#f0f0f0",
+                  padding: "2px 8px",
+                  borderRadius: 4,
+                  fontSize: 12,
+                }}
+              >
+                {ticket.priority}
+              </Typography.Text>
             </Col>
             <Col span={8}>
               <Typography.Text strong>Ticket No.: </Typography.Text>
