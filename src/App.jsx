@@ -767,7 +767,7 @@ const App = () => {
                     className="header-search-select"
                     suffixIcon={
                       <SearchOutlined
-                        style={{ color: "rgba(255, 255, 255, 0.7)" }}
+                        style={{ color: "rgba(0, 0, 0, 0.45)" }}
                       />
                     }
                     onFocus={() => {
@@ -869,8 +869,17 @@ const App = () => {
                       />
                     </Badge>
                   </div>
-                  <UserMenu user={user} logoutHandler={logoutHandler} setShowSettings={setShowSetting}/>
-                  {showSetting && <SettingDrawer open={showSetting} hide={() => setShowSetting(false)} />}
+                  <UserMenu
+                    user={user}
+                    logoutHandler={logoutHandler}
+                    setShowSettings={setShowSetting}
+                  />
+                  {showSetting && (
+                    <SettingDrawer
+                      open={showSetting}
+                      hide={() => setShowSetting(false)}
+                    />
+                  )}
                 </Space>
               </Row>
             </Header>
@@ -891,8 +900,8 @@ const App = () => {
           />
           {user && user.passwordChanged === "C" && (
             <Sidebar
-            items={items(user)}
-            items1={items1(user, setShowTickets)}
+              items={items(user)}
+              items1={items1(user, setShowTickets)}
               className="site-layout-background"
               key={1}
               setShowSideBar={setShowSideBar}
