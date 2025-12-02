@@ -1219,5 +1219,16 @@ const links = [
       routePath: "/production/prodMis",
     },
   ],
+  // Version & Changelog
+  [
+    {
+      routeName: "Version Files",
+      routePath: "/version/files",
+    },
+    {
+      routeName: "Changelog History",
+      routePath: "/changelog/history",
+    },
+  ],
 ];
 export default links;

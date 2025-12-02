@@ -241,6 +241,7 @@ import CreateScrapeChallan from "../Pages/Workorder/components/WoCreateChallan/C
 //
 import ProductionMIS from "../Pages/Production/ProductionMIS/ProductionMIS";
 import R33 from "../Pages/Reports/R/R33";
+import ChangelogHistory from "../Pages/Changelog/ChangelogHistory.jsx";
 
 import CreateFgReturn from "../Pages/Store/FgReturn/CreateFgReturn.jsx";
 import PendingReversal from "../Pages/Store/FgReturn/PendingReversal/PendingReversal.jsx";
@@ -1434,6 +1435,12 @@ const Routes = [
   {
     path: "/version/files",
     main: () => <VersionDownload />,
+  },
+
+  // changelog history
+  {
+    path: "/changelog/history",
+    main: () => <ChangelogHistory />,
   },
 
   // should always be at the end
