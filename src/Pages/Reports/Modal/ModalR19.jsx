@@ -13,7 +13,7 @@ function ModalR19({ modalOpen, setModalOpen, allData, fetchData }) {
   const [selectLoading, setSelectLoading] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const getExist = async () => {
-    const { data } = await imsAxios.post("/report19/getSelectedValue");
+    const response = await imsAxios.post("/report19/getSelectedValue");
     const arr = data.data.part_options.map((d) => {
       return { value: d.id, label: d.text };
     });
@@ -22,7 +22,7 @@ function ModalR19({ modalOpen, setModalOpen, allData, fetchData }) {
 
   const getComponents = async (search) => {
     // setSelectLoading(true);
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: search,
     // });
     // setSelectLoading(false);
@@ -38,18 +38,18 @@ function ModalR19({ modalOpen, setModalOpen, allData, fetchData }) {
       }));
       setAsyncOptions(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
   const saveData = async () => {
-    const { data } = await imsAxios.post("/report19/addPart", {
+    const response = await imsAxios.post("/report19/addPart", {
       component_part: allSelectedValue,
     });
-    if (data.code == 200) {
+    if (response.success) {
       fetchData();
       setModalOpen(false);
-      toast.success(data.message);
+      toast.success(response.message);
     }
   };
 

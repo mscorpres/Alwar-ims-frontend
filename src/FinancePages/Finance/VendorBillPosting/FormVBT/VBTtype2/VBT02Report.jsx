@@ -109,9 +109,9 @@ function VBT02Report({
     setRoundOffValue(0);
   };
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -135,7 +135,7 @@ function VBT02Report({
   //     tds_gl_code: "--",
   //     tds_percent: "0",
   //   });
-  //   if (data.code === 200) {
+  //   if (response.success) {
   //     let arr = data.data;
   //     setAllTdsOptions(arr[0].ven_tds);
 
@@ -147,7 +147,7 @@ function VBT02Report({
   //     });
   //     setTdsArray(tdsC);
   //   } else {
-  //     toast.error(data.message.msg);
+  //     toast.error(response.message?.msg || response.message);
   //   }
   // };
   const getGl = async () => {
@@ -160,7 +160,7 @@ function VBT02Report({
     } else {
       link = `/tally/${apiUrl}/${apiUrl}_gl_options`;
     }
-    const { data } = await imsAxios.get(link);
+    const response = await imsAxios.get(link);
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {
@@ -697,9 +697,9 @@ function VBT02Report({
       }
     );
     const { data } = response;
-    if (data.code === 200) {
+    if (response.success) {
       setVbtComponent(data);
-      let arr = data.data.map((row) => ({
+      let arr = response.data.map((row) => ({
         ...row,
         id: v4(),
         minId: row.min_id,
@@ -820,7 +820,7 @@ function VBT02Report({
       // setmainArrs(arr);
       setSingleArr(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setEditingVBT(null);
     }
     // setLoading(false);

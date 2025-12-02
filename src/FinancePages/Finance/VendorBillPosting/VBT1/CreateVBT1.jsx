@@ -31,11 +31,11 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
     { label: "Round Off", sign: "+", values: [] },
   ]);
   const checkInvoice = async (checkInvoiceId, vendorCode) => {
-    const data = await imsAxios.get(
+    const response = await imsAxios.get(
       `/tally/vbt/checkInvoice?vbtInvoiceNo=${checkInvoiceId}&vendor=${vendorCode}`
     );
-    if (data.status === 200 || data.status === "200") {
-      let arr = data.data;
+    if (response.success) {
+      let arr = response.data;
       if (arr.checkInvoice == true) {
         // setConfirmModal(true);
 
@@ -53,7 +53,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
         });
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       // setEditingVBT(null);
     }
   };
@@ -249,8 +249,8 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code == 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setTimeout(() => {
             setEditingVBT(null);
           }, 2000);
@@ -263,7 +263,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
     }
   };
   const getGl = async () => {
-    const { data } = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
+    const response = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {

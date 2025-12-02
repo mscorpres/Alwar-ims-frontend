@@ -89,14 +89,15 @@ const QaProcessMap = () => {
   };
   //get BOM for Single Product If bom Rquired
   const bom = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: qaProcessData.sku,
     });
-    let bomarr = [];
-    bomarr = data.data.map((d) => {
-      return { text: d.bomname, value: d.bomid };
-    });
-    SetBomOptions(bomarr);
+    if (response.success) {
+      let bomarr = response.data.map((d) => {
+        return { text: d.bomname, value: d.bomid };
+      });
+      SetBomOptions(bomarr);
+    }
     processList();
   };
   useEffect(() => {
@@ -108,33 +109,35 @@ const QaProcessMap = () => {
     const response = await imsAxios.post("backend/fetchallsfgForProduct", {
       search: qaProcessData.sku,
     });
-    const { data } = response;
-    let skuarr = [];
-    skuarr = data?.data?.map((d) => {
-      return { text: d.sfgid, value: d.sfgsku };
-    });
-    setskulist(skuarr);
+    if (response.success) {
+      let skuarr = response.data?.map((d) => {
+        return { text: d.sfgid, value: d.sfgsku };
+      });
+      setskulist(skuarr);
+    }
   };
 
   // for view the list of processes
   const processList = async () => {
-    const { data } = await imsAxios.post("/qaProcessmaster/view_process");
-    let processArr = [];
-    processArr = data.map((d) => {
-      return { text: d.text, value: d.id };
-    });
-    setProcessListOptions(processArr);
+    const response = await imsAxios.post("/qaProcessmaster/view_process");
+    if (response.success && response.data) {
+      let processArr = response.data.map((d) => {
+        return { text: d.text, value: d.id };
+      });
+      setProcessListOptions(processArr);
+    }
   };
   //to get location from database
   const locationList = async (search) => {
-    const { data } = await imsAxios.post("/backend/fetchLocation", {
+    const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: search,
     });
-    let locArr = [];
-    locArr = data.map((d) => {
-      return { text: d.text, value: d.id };
-    });
-    setLocationList(locArr);
+    if (response.success && response.data) {
+      let locArr = response.data.map((d) => {
+        return { text: d.text, value: d.id };
+      });
+      setLocationList(locArr);
+    }
   };
 
   const handleyesno = (result) => {
@@ -208,7 +211,7 @@ const QaProcessMap = () => {
     setLoading1(false);
     console.log("response", response);
 
-    if (response?.data?.status === "success" || response?.success == true) {
+    if (response?.success) {
       toast.success(response.message);
       setQaProcessInput([
         {
@@ -227,30 +230,12 @@ const QaProcessMap = () => {
       ]);
 
       setQaProcessData({ sku: "" });
-    } else if (response.status === 403) {
-      toast.error(response.data?.message?.msg);
     } else {
-      setQaProcessInput([
-        {
-          id: v4(),
-          bomRequired: "",
-          bom: "",
-          process: "",
-          processLevel: "",
-          ProcessLocation: "",
-          passLocation: "",
-          failLocation: "",
-          sku: "",
-          lot_size: "",
-          processRemark: "",
-        },
-      ]);
-      qaProcessData.sku = "";
-      toast.error("");
+      toast.error(response.message);
     }
   };
   // const fetchingSkuProcess = async() => {
-  //      const {data} = await imsAxios.post('/qaProcessmaster/fetchQAProcess',{'sku': qaProcessData.sku});
+  //      const response = await imsAxios.post('/qaProcessmaster/fetchQAProcess',{'sku': qaProcessData.sku});
   //      setQaProcessInput([
   //       {
   //         id: v4(),
@@ -265,9 +250,9 @@ const QaProcessMap = () => {
   //         processRemark:''
   //       },
   //     ])
-  //      if (data.status === 'success') {
+  //      if (response.success ) {
   //       // setButtonView(false);
-  //       const newRows = data.data.map((item) => ({
+  //       const newRows = response.data.map((item) => ({
   //         id: item.qa_process_key,
   //         bomRequired: item.bom_required,
   //         bom: item.subject_name,
@@ -343,7 +328,7 @@ const QaProcessMap = () => {
   //   qaProcessData.process= process;
 
   //   const response = await imsAxios.post('/qaProcessmaster/updateMappedQAProcess',qaProcessData);
-  //   if(response.data.status === 'success'){
+  //   if(response.response.success ){
   //     toast.success(response.data.message.msg)
   //     setQaProcessInput([
   //       {

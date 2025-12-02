@@ -40,7 +40,7 @@ const JwsfInward = () => {
 
   const getOption = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/getProductByNameAndNo", {
+      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
       // console.log(data);
@@ -71,12 +71,12 @@ const JwsfInward = () => {
       toast.error("Please Select Option");
     } else {
       setLoading("fetch", true);
-      const { data } = await imsAxios.post("/jobwork/jw_sf_inward", {
+      const response = await imsAxios.post("/jobwork/jw_sf_inward", {
         data: datee,
         wise: allData.setType,
       });
-      if (data.code == 200) {
-        let arr = data.data.map((row, index) => {
+      if (response.success) {
+        let arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -85,8 +85,8 @@ const JwsfInward = () => {
         });
         setDateData(arr);
         setLoading("fetch", false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading("fetch", false);
       }
     }
@@ -94,12 +94,12 @@ const JwsfInward = () => {
 
   const fetchJWwise = async () => {
     setLoading("fetch", true);
-    const { data } = await imsAxios.post("/jobwork/jw_sf_inward", {
+    const response = await imsAxios.post("/jobwork/jw_sf_inward", {
       data: allData.jw,
       wise: allData.setType,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -108,20 +108,20 @@ const JwsfInward = () => {
       });
       setDJWData(arr);
       setLoading("fetch", false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading("fetch", false);
     }
   };
 
   const fetchSKUwise = async () => {
     setLoading("fetch", true);
-    const { data } = await imsAxios.post("/jobwork/jw_sf_inward", {
+    const response = await imsAxios.post("/jobwork/jw_sf_inward", {
       data: allData.sku,
       wise: allData.setType,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -130,19 +130,19 @@ const JwsfInward = () => {
       });
       setSKUData(arr);
       setLoading("fetch", false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading("fetch", false);
     }
   };
   const fetchVendorwise = async () => {
     setLoading("fetch", true);
-    const { data } = await imsAxios.post("/jobwork/jw_sf_inward", {
+    const response = await imsAxios.post("/jobwork/jw_sf_inward", {
       data: allData.ven,
       wise: allData.setType,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -151,8 +151,8 @@ const JwsfInward = () => {
       });
       setVendorData(arr);
       setLoading("fetch", false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading("fetch", false);
     }
   };

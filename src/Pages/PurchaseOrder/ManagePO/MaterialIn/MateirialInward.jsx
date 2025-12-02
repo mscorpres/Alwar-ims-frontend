@@ -163,29 +163,29 @@ export default function MateirialInward({
   const submitMIN = async () => {
     //uploading invoices
     if (showSubmitConfirm) {
-      const { data: fileData } = await imsAxios.post(
+      const fileResponse = await imsAxios.post(
         "/transaction/upload-invoice",
         showSubmitConfirm.fileData
       );
-      if (fileData.code == "200") {
+      if (fileResponse.success) {
         let final = {
           companybranch: "BRMSC012",
-          invoices: fileData.data,
+          invoices: fileResponse.data,
           poid: materialInward,
         };
 
         final = { ...final, ...showSubmitConfirm.componentData };
         setSubmitLoading(true);
 
-        const { data } = await imsAxios.post("/purchaseOrder/poMIN", final);
+        const response = await imsAxios.post("/purchaseOrder/poMIN", final);
         setSubmitLoading(false);
-        if (data.code == "200") {
+        if (response.success) {
           setShowSubmitConfirm(false);
           let arr = poData.materials.filter(
             (row) => row.maxQty > 0 && row.invoiceId != ""
           );
           setSuccessPageData({
-            materialInId: data.transaction_id,
+            materialInId: response.transaction_id,
             poId: final.poid,
             vendor: poData?.vendor_type?.vendorname,
             components: arr.map((row) => {
@@ -201,12 +201,12 @@ export default function MateirialInward({
               };
             }),
           });
-          // let first = data.message.replaceAll("<br/>", " ").split("[")[0];
-          // let second = data.message.replaceAll("<br/>", " ").split(";")[1];
+          // let first = response.message.replaceAll("<br/>", " ").split("[")[0];
+          // let second = response.message.replaceAll("<br/>", " ").split(";")[1];
           // let final = first + second;
           // toast.success(final.replaceAll("]", ""));
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else {
         toast.error(
@@ -216,25 +216,27 @@ export default function MateirialInward({
     }
   };
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = data.data.map((d) => {
-      return {
-        text: d.currency_symbol,
-        value: d.currency_id,
-        notes: d.currency_notes,
-      };
-    });
+    if (response.success) {
+      arr = response.data.map((d) => {
+        return {
+          text: d.currency_symbol,
+          value: d.currency_id,
+          notes: d.currency_notes,
+        };
+      });
+    }
     setCurrencies(arr);
   };
   const getLocation = async () => {
-    const { data } = await imsAxios.post("/transaction/getLocationInMin", {
+    const response = await imsAxios.post("/transaction/getLocationInMin", {
       search: locationSearchInput,
     });
-    let arr = data.data.data;
-    if (!data.msg) {
-      arr = data.data.data.map((d) => {
+    let arr = [];
+    if (response.success && response.data?.data) {
+      arr = response.response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -244,11 +246,11 @@ export default function MateirialInward({
     return arr;
   };
   const getAutoComnsumptionOptions = async () => {
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       "/transaction/fetchAutoConsumpLocation"
     );
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -391,12 +393,12 @@ export default function MateirialInward({
   const getDetail = async () => {
     setLoading(true);
 
-    const { data } = await imsAxios.post("/purchaseOrder/fetchData4MIN", {
+    const response = await imsAxios.post("/purchaseOrder/fetchData4MIN", {
       pono: materialInward,
     });
     setLoading(false);
-    if (data.code == 200) {
-      let obj = data.data;
+    if (response.success) {
+      let obj = response.data;
       obj = {
         ...obj,
         materials: obj.materials.map((mat, index) => {

@@ -40,7 +40,7 @@ const JwIssue = () => {
 
   const getOption = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/getProductByNameAndNo", {
+      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
       // console.log(data);
@@ -72,14 +72,14 @@ const JwIssue = () => {
     } else {
       setLoading("fetch", true);
       setDateData([]);
-      const { data } = await imsAxios.post("/jobwork/jw_rm_issue_list", {
+      const response = await imsAxios.post("/jobwork/jw_rm_issue_list", {
         data: datee,
         wise: allData.setType,
       });
       // console.log(data.data);
       setLoading("fetch", false);
-      if (data.code == 200) {
-        let arr = data.data.map((row, index) => {
+      if (response.success) {
+        let arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -93,8 +93,8 @@ const JwIssue = () => {
         // console.log(arr);
         setDateData(arr);
         setLoading("fetch", false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading("fetch", false);
       }
     }
@@ -103,14 +103,14 @@ const JwIssue = () => {
   const JWFecthData = async () => {
     setLoading("fetch", true);
     setJWData([]);
-    const { data } = await imsAxios.post("/jobwork/jw_rm_issue_list", {
+    const response = await imsAxios.post("/jobwork/jw_rm_issue_list", {
       data: allData.jwId,
       wise: allData.setType,
     });
     // console.log(data.data);
     // setLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -119,8 +119,8 @@ const JwIssue = () => {
       });
       setJWData(arr);
       setLoading("fetch", false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading("fetch", false);
     }
   };
@@ -128,14 +128,14 @@ const JwIssue = () => {
   const dataFetchSFG = async () => {
     setLoading("fetch", true);
     setSFGData([]);
-    const { data } = await imsAxios.post("/jobwork/jw_rm_issue_list", {
+    const response = await imsAxios.post("/jobwork/jw_rm_issue_list", {
       data: allData.sfg,
       wise: allData.setType,
     });
     // console.log(data.data);
     // setLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -144,8 +144,8 @@ const JwIssue = () => {
       });
       setSFGData(arr);
       setLoading("fetch", false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading("fetch", false);
     }
   };
@@ -153,14 +153,14 @@ const JwIssue = () => {
   const vendorFetch = async () => {
     setLoading("fetch", true);
     setVendorData([]);
-    const { data } = await imsAxios.post("/jobwork/jw_rm_issue_list", {
+    const response = await imsAxios.post("/jobwork/jw_rm_issue_list", {
       data: allData.vendorName,
       wise: allData.setType,
     });
     // console.log(data.data);
     // setLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -169,8 +169,8 @@ const JwIssue = () => {
       });
       setVendorData(arr);
       setLoading("fetch", false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading("fetch", false);
     }
   };

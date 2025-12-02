@@ -58,10 +58,10 @@ const JwReturnModel = ({ show, close }) => {
   ];
   const getLocationOptions = async () => {
     try {
-      const { data } = await imsAxios.get("/jobwork/jw_rm_return_location");
+      const response = await imsAxios.get("/jobwork/jw_rm_return_location");
       setLoading("fetch", true);
       if (data) {
-        const arr = data.data.map((row) => ({
+        const arr = response.data.map((row) => ({
           text: row.text,
           value: row.id,
         }));
@@ -78,8 +78,8 @@ const JwReturnModel = ({ show, close }) => {
     // setPageLoading(true);
     let { data } = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
     // setPageLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -92,7 +92,7 @@ const JwReturnModel = ({ show, close }) => {
   const getData = async (sku, transaction) => {
     try {
       setLoading("fetch", true);
-      const { data } = await imsAxios.post("/jobwork/getJwRmReturnData", {
+      const response = await imsAxios.post("/jobwork/getJwRmReturnData", {
         skucode: sku,
         transaction: transaction,
       });
@@ -118,7 +118,7 @@ const JwReturnModel = ({ show, close }) => {
         }
       }
 
-      const componentArr = data.data.map((row) => ({
+      const componentArr = response.data.map((row) => ({
         id: v4(),
         component: row.component,
         componentKey: row.component_key,

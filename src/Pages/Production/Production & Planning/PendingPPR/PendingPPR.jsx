@@ -46,7 +46,7 @@ const PendingPPR = () => {
   const getProducts = async (e) => {
     if (e?.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/fetchAllProduct", {
+      const response = await imsAxios.post("/backend/fetchAllProduct", {
         searchTerm: e,
       });
       setSelectLoading(true);
@@ -61,14 +61,14 @@ const PendingPPR = () => {
   const getRows = async () => {
     setSearchLoading(true);
     if (searchInput != "") {
-      const { data } = await imsAxios.post("/ppr/fetchPendingPpr", {
+      const response = await imsAxios.post("/ppr/fetchPendingPpr", {
         searchBy: wise,
         searchValue: searchInput.value ?? searchInput,
       });
 
       setSearchLoading(false);
-      if (data.code == 200) {
-        const arr = data.data.map((row, index) => {
+      if (response.success) {
+        const arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -76,8 +76,8 @@ const PendingPPR = () => {
           };
         });
         setRows(arr);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setRows([]);
       }
     }

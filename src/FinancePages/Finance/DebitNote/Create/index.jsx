@@ -21,12 +21,12 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
     const response = await imsAxios.get("/tally/tds/nature_of_tds");
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         let arr = data.data;
 
         return arr;
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -41,7 +41,7 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
 
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const tdsOptions = await getTDSData();
           let tdsPerc = tdsOptions.filter(
             (tds) => tds.tds_key === data.data[0].tds_code
@@ -52,7 +52,7 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
             tdsPercentage = tdsPercentage + "%";
           }
 
-          let arr = data.data.map((row) => {
+          let arr = response.data.map((row) => {
             const value = +Number(
               +Number(row.inrate).toFixed(3) * +Number(row.vbt_qty).toFixed(3)
             ).toFixed(3);
@@ -99,7 +99,7 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
 
           setVendorDetails(vendorObj);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -237,8 +237,8 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
       const respose = await imsAxios.post(`/tally/vbt01/debit/create`, values);
       const { data } = respose;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setDebitNoteDrawer(null);
           setRoundOffValue(0);
           setRoundOffSign("+");

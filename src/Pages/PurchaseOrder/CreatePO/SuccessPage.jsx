@@ -19,7 +19,7 @@ export default function SuccessPage({
   const printFun = async () => {
     setPringLoading(true);
 
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: po.poId,
     });
     setPringLoading(false);
@@ -27,7 +27,7 @@ export default function SuccessPage({
   };
   const handleDownload = async () => {
     setDownloadLoading(true);
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: po?.poId,
     });
     setDownloadLoading(false);

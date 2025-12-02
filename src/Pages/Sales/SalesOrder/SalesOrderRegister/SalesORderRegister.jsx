@@ -41,7 +41,7 @@ function SalesORderRegister() {
     let arr = [];
 
     if (response.success) {
-      arr = response.data.data.map((row, index) => ({
+      arr = response.response.data.map((row, index) => ({
         id: index + 1,
         constCenter: row.cost_center,
         createdBy: row.create_by,
@@ -63,7 +63,7 @@ function SalesORderRegister() {
     //   data: searchTerm,
     // });
     // const { data } = response;
-    // if (data.code === 200) {
+    // if (response.success) {
     //   let arr = data.message;
     //   arr = arr.map((row, index) => ({
     //     id: index + 1,
@@ -105,7 +105,7 @@ function SalesORderRegister() {
     );
     const { data } = response;
     let arr = data.message;
-    if (data.code === 200) {
+    if (response.success) {
       arr = arr.map((row, index) => ({
         id: index + 1,
         ...row,
@@ -123,7 +123,7 @@ function SalesORderRegister() {
   //   );
   //   const { data } = response;
   //   let arr = data.message;
-  //   if (data.code === 200) {
+  //   if (response.success) {
   //     arr = arr.map((row, index) => ({
   //       id: index + 1,
   //       ...row,

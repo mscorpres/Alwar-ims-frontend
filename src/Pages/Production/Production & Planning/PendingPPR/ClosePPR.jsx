@@ -14,14 +14,14 @@ export default function ClosePPR({
 
   const handleCancelPPR = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/ppr/closePPR", {
+    const response = await imsAxios.post("/ppr/closePPR", {
       sku: cancelPPR.prod_product_sku,
       ppr: cancelPPR.prod_transaction,
       remark: remark,
     });
     setLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       getRows();
       setTimeout(() => {
         setsCancelPPR(null);

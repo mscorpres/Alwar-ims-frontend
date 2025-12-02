@@ -25,8 +25,8 @@ function Pending() {
     });
     // console.log("response", response);
     const { data } = response;
-    if (data.code === 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: index + 1,
@@ -35,8 +35,8 @@ function Pending() {
       setRows(arr);
       setLoading(false);
     }
-    if (data.code === 500) {
-      toast.error(data.message.msg);
+    if (!response.success) {
+      toast.error(response.message?.msg || response.message);
     }
     setLoading(false);
   };

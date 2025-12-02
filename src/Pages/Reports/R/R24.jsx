@@ -37,7 +37,7 @@ const R24 = () => {
 
   const getUserOptions = async (search) => {
     setLoading("select");
-    const { data } = await imsAxios.post("/backend/fetchAllUser", {
+    const response = await imsAxios.post("/backend/fetchAllUser", {
       search: search,
     });
     setLoading(false);
@@ -47,7 +47,7 @@ const R24 = () => {
 
   const getComponentOption = async (search) => {
     // setLoading("select");
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: search,
     // });
     // setLoading(false);
@@ -71,7 +71,7 @@ const R24 = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === "200") {
+        if (response.success) {
           let arr = data.response.data;
           arr = arr.map((row, index) => ({
             id: index + 1,
@@ -109,7 +109,7 @@ const R24 = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const arr = data.data.part_options.map((row) => ({
             value: row.id,
             text: row.text,
@@ -117,7 +117,7 @@ const R24 = () => {
 
           setUserComponents(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
           setUserComponents([]);
         }
       } else {
@@ -141,12 +141,12 @@ const R24 = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           getUserComponents(stateUser.id);
           filterForm.setFieldValue("component", undefined);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -165,11 +165,11 @@ const R24 = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           getUserComponents(stateUser.id);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

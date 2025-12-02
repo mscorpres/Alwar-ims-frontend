@@ -128,7 +128,7 @@ const SalesOrderForm = () => {
       "select"
     );
     if (response.success) {
-      const arr = response.data.data.map((row) => ({
+      const arr = response.response.data.map((row) => ({
         text: row.city.name,
         value: row.city.id,
       }));
@@ -233,7 +233,7 @@ const SalesOrderForm = () => {
 
   const getShippingAddress = async (shipaddressid) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/shippingAddress", {
+    const response = await imsAxios.post("/backend/shippingAddress", {
       shipping_code: shipaddressid,
     });
     setPageLoading(false);

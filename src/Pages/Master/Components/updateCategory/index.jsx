@@ -40,14 +40,14 @@ const UpdateCategory = () => {
       const response = await imsAxios.get("/mfgcategory/listCategories");
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (response.success) {
+          const arr = response.data.map((row) => ({
             id: row.id,
             category: row.text,
           }));
           setCategories(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -64,11 +64,11 @@ const UpdateCategory = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setselectedCategory(data.header.category_id);
           setExistingValues(data.inputs);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -84,13 +84,13 @@ const UpdateCategory = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setComponent({
             partCode: data.data.c_part_no,
             componentName: data.data.c_name,
           });
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -227,15 +227,15 @@ const Fields = ({
         });
         const { data } = response;
         if (data) {
-          if (data.code === 200) {
-            const arr = data.data.map((row) => ({
+          if (response.success) {
+            const arr = response.data.map((row) => ({
               type: row.inp_type,
               key: row.attr_key,
               label: row.attr_name,
             }));
             setFields(arr);
           } else {
-            toast.error(data.message.msg);
+            toast.error(response.message?.msg || response.message);
           }
         }
       } else {
@@ -291,13 +291,13 @@ const Fields = ({
 
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           if (!existingValues) {
             setStage(0);
           }
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

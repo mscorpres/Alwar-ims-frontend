@@ -34,8 +34,8 @@ export default function CPMReport() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           ...row,
           index: index + 1,
           id: index,
@@ -48,7 +48,7 @@ export default function CPMReport() {
         console.log(arr);
         setRows(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

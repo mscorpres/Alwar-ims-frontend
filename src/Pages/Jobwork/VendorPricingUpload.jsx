@@ -25,8 +25,8 @@ export default function VendorPricingUpload() {
     setPreviewLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code == 200) {
-        let arr = data.data.data.map((row) => {
+      if (response.success) {
+        let arr = data.response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -35,7 +35,7 @@ export default function VendorPricingUpload() {
 
         setPreviewRows(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       toast.error("Something went wrong");
@@ -54,10 +54,10 @@ export default function VendorPricingUpload() {
 
     // console.log(data);
     if (data) {
-      if (data.code == 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       toast.error("Something went wrong");

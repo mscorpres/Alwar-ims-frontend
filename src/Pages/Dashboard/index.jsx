@@ -159,7 +159,7 @@ const Dashboard = () => {
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           if (transactionType === "transactions") {
             setTransactionSummary([
               {
@@ -231,7 +231,7 @@ const Dashboard = () => {
           }
         }
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
     } finally {
@@ -250,7 +250,7 @@ const Dashboard = () => {
       const response = await imsAxios.post("/tranCount/master_counts");
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setMasterSummary([
             {
               title: "Components",
@@ -278,7 +278,7 @@ const Dashboard = () => {
             },
           ]);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -301,7 +301,7 @@ const Dashboard = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const arr = data.data.topProducts.map((item, index) => ({
             sku: item.productSku,
             qty: item.totalmfgQuantity,
@@ -310,7 +310,7 @@ const Dashboard = () => {
 
           setMfgProductSummary(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -332,7 +332,7 @@ const Dashboard = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setPendingTransactionSummary([
             {
               title: "Pending PO",
@@ -359,7 +359,7 @@ const Dashboard = () => {
             },
           ]);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

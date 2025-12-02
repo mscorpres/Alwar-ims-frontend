@@ -227,7 +227,7 @@ function R20() {
     const { data } = response;
     console.log("response for downloaded file", data);
     if (response.status === 200) {
-      downloadExcel(data.data.data, "component1215145", data.data.type);
+      downloadExcel(response.data.data, "component1215145", data.data.type);
     }
   };
 

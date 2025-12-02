@@ -39,7 +39,7 @@ const DetailsModal = ({
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const finalObj = {
             taskId: data.data.task_id,
             title: data.data.task_title,
@@ -69,10 +69,10 @@ const DetailsModal = ({
       const response = await imsAxios.get("/taskmaster/check_admin");
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setIsAdmin(data.data.isAdmin);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {
@@ -104,14 +104,14 @@ const DetailsModal = ({
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           toast.success("Task Updated Successfully");
           handleReset();
           setShowStatusConfirm(false);
           // hide();
           fetchTasks();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

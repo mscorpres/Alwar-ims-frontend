@@ -41,12 +41,12 @@ const R3 = () => {
     } else {
       setResponseData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/report3", {
+      const response = await imsAxios.post("/report3", {
         date: selectDate,
         action: "search_r3",
       });
-      if (data.code == 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         let arr = data.response.data.map((row) => {
           return {
             ...row,
@@ -55,8 +55,8 @@ const R3 = () => {
         });
         setResponseData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

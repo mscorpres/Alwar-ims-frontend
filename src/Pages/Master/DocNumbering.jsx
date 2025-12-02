@@ -8,9 +8,10 @@ const DocNumbering = () => {
   const [numData, setNumData] = useState([]);
 
   const fetchNumb = async () => {
-    const { data } = await imsAxios.get("/numbering/allNumbering");
-    //  console.log(data.data)
-    setNumData(data.data);
+    const response = await imsAxios.get("/numbering/allNumbering");
+    if (response.success) {
+      setNumData(response.data);
+    }
   };
 
   console.log(numData);

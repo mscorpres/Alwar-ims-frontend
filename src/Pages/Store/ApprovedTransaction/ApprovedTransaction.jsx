@@ -28,7 +28,7 @@ const ApprovedTransaction = () => {
   const printFun = async (transactionId) => {
     setLoading(true);
     //  console.log(d);
-    const { data } = await imsAxios.post("/storeApproval/print_request", {
+    const response = await imsAxios.post("/storeApproval/print_request", {
       transaction: transactionId,
     });
     setLoading(false);
@@ -78,7 +78,7 @@ const ApprovedTransaction = () => {
   const getPendingData = async () => {
     setAllPending([]);
     setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/storeApproval/fetchTransactionForApproval",
       {
         status: componentData.selType,
@@ -86,8 +86,8 @@ const ApprovedTransaction = () => {
       }
     );
     // console.log(data)
-    if (data.code == 200) {
-      const arr = data.response.data.map((row, i) => {
+    if (data.success) {
+      const arr = response.data.map((row, i) => {
         return {
           ...row,
           id: v4(),
@@ -96,8 +96,8 @@ const ApprovedTransaction = () => {
       });
       setAllPending(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
     // }

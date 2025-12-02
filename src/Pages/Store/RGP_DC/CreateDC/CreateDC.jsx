@@ -107,7 +107,7 @@ export default function CreateDC() {
   //getting vendor branches
   const getVendorBracnch = async (vendorCode) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/vendorBranchList", {
+    const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
@@ -134,7 +134,7 @@ export default function CreateDC() {
   };
   // getting vendor address after selecting vendor branch
   const getVendorAddress = async ({ vendorCode, vendorBranch }) => {
-    const { data } = await imsAxios.post("/backend/vendorAddress", {
+    const response = await imsAxios.post("/backend/vendorAddress", {
       vendorcode: vendorCode,
       branchcode: vendorBranch,
     });
@@ -147,7 +147,7 @@ export default function CreateDC() {
   // gettig billing address
   const getBillTo = async () => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/backend/billingAddressList", {
+    const response = await imsAxios.post("/backend/billingAddressList", {
       search: "",
     });
     setSelectLoading(false);
@@ -160,7 +160,7 @@ export default function CreateDC() {
   // getting billing address details
   const getBillingAddress = async (billaddressid) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/billingAddress", {
+    const response = await imsAxios.post("/backend/billingAddress", {
       billing_code: billaddressid,
     });
     setPageLoading(false);

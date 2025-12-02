@@ -112,19 +112,19 @@ export default function EditBankVoucher({
       }
 
       setSubmitLoading(true);
-      const { data } = await imsAxios.post(link, {
+      const response = await imsAxios.post(link, {
         ...finalObj,
       });
       setSubmitLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         // resetHandler();
-        toast.success(data.message);
+        toast.success(response.message);
         getRows();
         setTimeout(() => {
           setEditVoucher(null);
         }, 3000);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       if (problem == "gls") {
@@ -136,13 +136,13 @@ export default function EditBankVoucher({
   };
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
     let arr = [];
     if (!data.msg) {
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -152,7 +152,7 @@ export default function EditBankVoucher({
   };
   const getHeaderAccount = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/voucher/bank_header", {
+    const response = await imsAxios.post("/tally/voucher/bank_header", {
       search: search,
     });
     setSelectLoading(false);
@@ -246,12 +246,12 @@ export default function EditBankVoucher({
     } else if (voucherType === "bank-receipt") {
       link = "/tally/voucher/editBR";
     }
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       v_code: editVoucher,
     });
     setLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           id: v4(),
           glCode: { value: row.particular_key, label: row.particular },
@@ -266,7 +266,7 @@ export default function EditBankVoucher({
       setBank({ value: data.data[0].bank_key, label: data.data[0].bank_name });
       setEffectiveDate(data.data[0].ref_date);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setEditVoucher(null);
     }
   };

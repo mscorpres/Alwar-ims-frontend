@@ -95,10 +95,10 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
         };
       });
       setTableData(arr);
-      if (data.code == 200) {
+      if (response.success) {
         // setHeaderData(arr1);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setEditPPR(null);
       }
     } else {
@@ -295,16 +295,16 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
         toast.success(response.message);
         setEditPPR(null);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
-      // if (data.code == 200) {
-      //   toast.success(data.message);
+      // if (response.success) {
+      //   toast.success(response.message);
       //   // getRows();
       //   setTimeout(() => {
       //     setEditPPR(null);
       //   }, 3000);
       // } else {
-      //   toast.error(data.message.msg);
+      //   toast.error(response.message?.msg || response.message);
       // }
       // }
     } catch (error) {

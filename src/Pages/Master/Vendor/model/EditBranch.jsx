@@ -47,46 +47,45 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const getDetails = async () => {
     setSkeletonLoading(true);
 
-    const { data: tdsData } = await imsAxios.get("/vendor/getAllTds");
-    const { data: vendorData } = await imsAxios.post("/vendor/getVendor", {
+    const tdsResponse = await imsAxios.get("/vendor/getAllTds");
+    const vendorResponse = await imsAxios.post("/vendor/getVendor", {
       vendor_id: editVendor?.vendor_code,
     });
     setSkeletonLoading(false);
-    let tdsArr = tdsData?.data.map((row) => {
-      return { text: row.tds_name, value: row.tds_key };
-    });
-    let obj = {
-      msmeStatus: vendorData.data.vendor_msme_status,
-      year: vendorData.data.vendor_msme_year,
-      msmeId: vendorData.data.vendor_msme_id,
-      type: vendorData.data.vendor_msme_type,
-      activity: vendorData.data.vendor_msme_activity,
-      ...vendorData?.data[0],
-    };
-    updateVendorForm.setFieldsValue(obj);
-    setVendorStatus(obj.vendor_status);
-    setTdsOptions(tdsArr);
-    let msmedata = vendorData.data;
-    let a = msmedata[0]?.msme_data.map(
-      (r, id) => {
-        // if (r.year !== "--") {
-        return {
-          vendor_msme_year: r.year,
-          vendor_msme_type: r.type,
-          vendor_msme_activity: r.activity,
-          id: v4(),
-        };
-      }
-      // return;
-    );
+    
+    if (tdsResponse.success) {
+      let tdsArr = tdsResponse.data.map((row) => {
+        return { text: row.tds_name, value: row.tds_key };
+      });
+      setTdsOptions(tdsArr);
+    }
+    
+    if (vendorResponse.success) {
+      let obj = {
+        msmeStatus: vendorResponse.data.vendor_msme_status,
+        year: vendorResponse.data.vendor_msme_year,
+        msmeId: vendorResponse.data.vendor_msme_id,
+        type: vendorResponse.data.vendor_msme_type,
+        activity: vendorResponse.data.vendor_msme_activity,
+        ...vendorResponse.data[0],
+      };
+      updateVendorForm.setFieldsValue(obj);
+      setVendorStatus(obj.vendor_status);
+      let msmedata = vendorResponse.data;
+      let a = msmedata[0]?.msme_data.map(
+        (r, id) => {
+          return {
+            vendor_msme_year: r.year,
+            vendor_msme_type: r.type,
+            vendor_msme_activity: r.activity,
+            id: v4(),
+          };
+        }
+      );
 
-    setRows(a);
-    setIsMSMEEdited(false);
-    // let b = rows.map((a) => {
-    //   return {
-    //     b: a.activity,
-    //   };
-    // });
+      setRows(a);
+      setIsMSMEEdited(false);
+    }
   };
   const submitHandler = async () => {
     let obj;
@@ -138,25 +137,25 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     // formData.append("tally_tds", values?.vendor_tds);
     // formData.append("vendor_loc", values?.vendor_loc);
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/vendor/updateVendor", formData);
+    const response = await imsAxios.post("/vendor/updateVendor", formData);
     setSubmitLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       fetchVendor();
       setEditVendor(null);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message);
     }
   };
   const changeStatus = async (value) => {
     setStatusLoading(true);
-    const { data } = await imsAxios.post("/vendor/updateVendorStatus", {
+    const response = await imsAxios.post("/vendor/updateVendorStatus", {
       status: value ? "B" : "A",
       vendor_code: editVendor?.vendor_code,
     });
     setStatusLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       if (value) {
         setVendorStatus("B");
       } else {
@@ -165,15 +164,15 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     }
   };
   const getAllVendorLocationOptions = async () => {
-    const { data } = await imsAxios.get("/vendor/getAllLocation");
-    if (data.code === 200) {
-      let arr = data.data.map((row) => ({
+    const response = await imsAxios.get("/vendor/getAllLocation");
+    if (response.success) {
+      let arr = response.data.map((row) => ({
         text: row.loc_name,
         value: row.location_key,
       }));
       setLocationOptions(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message);
       setLocationOptions([]);
     }
   };

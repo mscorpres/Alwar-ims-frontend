@@ -299,7 +299,7 @@ export default function AddComponents({
     if (name == "component") {
       console.log(newPurchaseOrder);
       setPageLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/purchaseOrder/getComponentDetailsByCode",
         {
           component_code: value.value,
@@ -377,7 +377,7 @@ export default function AddComponents({
   const getComponents = async (searchInput) => {
     if (searchInput.length > 2) {
       // setSelectLoading(true);
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: searchInput,
       // });
       // setSelectLoading(false);
@@ -459,9 +459,9 @@ export default function AddComponents({
   }, [rowCount]);
   //getting currencies on page load
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,

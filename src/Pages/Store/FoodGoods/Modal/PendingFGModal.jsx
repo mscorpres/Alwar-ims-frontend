@@ -31,22 +31,22 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
 
   const submitData = async () => {
     setLoadingModal(true);
-    const { data } = await imsAxios.post("/fgIN/saveFGs", {
+    const response = await imsAxios.post("/fgIN/saveFGs", {
       pprqty: allPendingData.qty,
       pprrequest1: fGModal.mfg_ref_transid_1,
       pprrequest2: fGModal.mfg_transaction,
       pprsku: fGModal.mfg_sku,
     });
     //  console.log(data.message)
-    if (data.code === 200) {
+    if (data.success) {
       getPendingData();
       setAllPendingData({
         qty: "",
       });
       setLoadingModal(false);
       setFGModal(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setAllPendingData({
         qty: "",
       });

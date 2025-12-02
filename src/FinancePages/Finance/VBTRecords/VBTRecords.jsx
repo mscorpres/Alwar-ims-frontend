@@ -111,7 +111,7 @@ function VBTRecords() {
   // console.log("data= in vbt reocrds", response);
   // const { data } = response;
   // console.log("data reocrds", data);
-  // console.log("data.buffer ", data.data.data);
+  // console.log("data.buffer ", response.data.data);
   // const arr = data.map((row) => {
   //   return {
   //     ...row,
@@ -124,7 +124,7 @@ function VBTRecords() {
 
   // setRows(arr);
   // console.log("data.data ->>>>>", arr);
-  // downloadExcel(data.data.data, "VBT records");
+  // downloadExcel(response.data.data, "VBT records");
 
   //     } else {
   //       // console.log(data.message);

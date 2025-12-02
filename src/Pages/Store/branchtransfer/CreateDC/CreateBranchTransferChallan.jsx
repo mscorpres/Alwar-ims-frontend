@@ -68,11 +68,11 @@ export default function CreateBranchTransferChallan() {
   ];
 
   const getfromtolocations = async (value) => {
-    const { data } = await imsAxios.post("/branchTransfer/transferLocations", {
+    const response = await imsAxios.post("/branchTransfer/transferLocations", {
       from_branch: newGatePass.pickupbranch,
       to_branch: value,
     });
-    if (data.status === "success") {
+    if (response.success ) {
       const droparr = [];
       const pickuparr = [];
       data.data.droplocs.map((a) =>
@@ -84,7 +84,7 @@ export default function CreateBranchTransferChallan() {
       setpickuplocation(pickuparr);
       setdroplocation(droparr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
@@ -136,7 +136,7 @@ export default function CreateBranchTransferChallan() {
   //getting vendor branches
   const getVendorBracnch = async (vendorCode) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/vendorBranchList", {
+    const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
@@ -163,7 +163,7 @@ export default function CreateBranchTransferChallan() {
   };
   // getting vendor address after selecting vendor branch
   const getVendorAddress = async ({ vendorCode, vendorBranch }) => {
-    const { data } = await imsAxios.post("/backend/vendorAddress", {
+    const response = await imsAxios.post("/backend/vendorAddress", {
       vendorcode: vendorCode,
       branchcode: vendorBranch,
     });
@@ -177,16 +177,16 @@ export default function CreateBranchTransferChallan() {
   // get all branch List
 
   const getallbranchs = async () => {
-    const { data } = await imsAxios.get("/branchTransfer/listBranchTransfer");
+    const response = await imsAxios.get("/branchTransfer/listBranchTransfer");
     const arr = [];
-    data.data.map((a) => arr.push({ text: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ text: a.text, value: a.id }));
     setBranchOptions(arr);
   };
 
   // gettig billing address
   const getBillTo = async () => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/backend/billingAddressList", {
+    const response = await imsAxios.post("/backend/billingAddressList", {
       search: "",
     });
     setSelectLoading(false);
@@ -199,7 +199,7 @@ export default function CreateBranchTransferChallan() {
   // getting billing address details
   const getBillingAddress = async (billaddressid) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/billingAddress", {
+    const response = await imsAxios.post("/backend/billingAddress", {
       billing_code: billaddressid,
     });
     setPageLoading(false);

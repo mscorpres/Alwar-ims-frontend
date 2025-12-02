@@ -24,21 +24,18 @@ const CategoryMaster = () => {
     try {
       setLoading("fetch");
       const response = await imsAxios.get("/mfgcategory/getAttributes");
-      const { data } = response;
 
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.message
-            .filter((row) => row.inp_type === "select")
-            .map((row) => ({
-              label: row.text,
-              name: row.id,
-              type: row.inp_type,
-            }));
-          setFields(arr);
-        } else {
-          toast.error(data.message.msg);
-        }
+      if (response.success) {
+        const arr = response.data
+          .filter((row) => row.inp_type === "select")
+          .map((row) => ({
+            label: row.text,
+            name: row.id,
+            type: row.inp_type,
+          }));
+        setFields(arr);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -53,14 +50,13 @@ const CategoryMaster = () => {
         const response = await imsAxios.post("/mfgcategory/getAttributeValue", {
           attribute: row.name,
         });
-        const { data } = response;
-        if (data.code === 200) {
-          optionsArr.push({ data: data.message });
+        if (response.success) {
+          optionsArr.push({ data: response.data });
           setFieldSelectOptions((curr) => [
             ...curr,
             {
               name: row.name,
-              options: data.message.map((row) => ({
+              options: response.data.map((row) => ({
                 text: row.attr_value,
                 value: row.attr_value,
               })),
@@ -82,13 +78,12 @@ const CategoryMaster = () => {
       const response = await imsAxios.post("/mfgcategory/getAttributeValue", {
         attribute: attributeId,
       });
-      const { data } = response;
-      if (data.code === 200) {
-        optionsArr.push({ data: data.message });
+      if (response.success) {
+        optionsArr.push({ data: response.data });
         setFieldSelectOptions((curr) => {
           return curr.map((row) => {
             if (row.name === attributeId) {
-              const opt = data.message.map((newOpt) => ({
+              const opt = response.data.map((newOpt) => ({
                 text: newOpt.attr_value,
                 value: newOpt.attr_value,
               }));
@@ -245,14 +240,13 @@ const AddOptionModal = ({ show, hide, getSingleFieldSelectOptions }) => {
         "/mfgcategory/insertAttributesData",
         payload
       );
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
-          hide();
-          getSingleFieldSelectOptions(payload.attribute);
-          form.resetFields();
-        }
+      if (response.success) {
+        toast.success(response.message);
+        hide();
+        getSingleFieldSelectOptions(payload.attribute);
+        form.resetFields();
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {

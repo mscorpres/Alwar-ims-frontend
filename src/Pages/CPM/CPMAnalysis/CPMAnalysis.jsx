@@ -39,15 +39,15 @@ export default function CPMAnalysis() {
   const getRows = async () => {
     setSearchLoading(true);
     // setDetail([]);
-    const { data } = await imsAxios.post("/ppr/fetch_finalProjectBomReport", {
+    const response = await imsAxios.post("/ppr/fetch_finalProjectBomReport", {
       // date: dataa?.dateValue,
       project: projectId,
     });
     setSearchLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setDetail(data);
 
-      let arr = data.data.map((row) => ({
+      let arr = response.data.map((row) => ({
         ...row,
         uniqueKey: row.key,
         leftQty: "--",
@@ -72,7 +72,7 @@ export default function CPMAnalysis() {
       setFilteredRows(arr);
     } else {
       setRows([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
@@ -332,14 +332,14 @@ export default function CPMAnalysis() {
   const getDetails = async (record) => {
     if (record.uniqueKey) {
       setNestedTableLoading(record.part);
-      const { data } = await imsAxios.post("/ppr/fetch_groupProjectBomReport", {
+      const response = await imsAxios.post("/ppr/fetch_groupProjectBomReport", {
         project: projectId,
         part: record.key,
       });
       setNestedTableLoading(false);
       record.uniqueKey = null;
       let arr = filteredRows;
-      let arr1 = data.data.map((row, index) => {
+      let arr1 = response.data.map((row, index) => {
         return {
           ...row,
           index: index + 1,
@@ -389,23 +389,23 @@ export default function CPMAnalysis() {
   };
 
   const getUpdate = async () => {
-    const { data } = await imsAxios.post("/ppr/updatePPRDetail", {
+    const response = await imsAxios.post("/ppr/updatePPRDetail", {
       project: projectId,
       detail: detail?.detail,
     });
-    if (data.code == 200) {
+    if (response.success) {
       toast.success(data.message.msg);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
     }
   };
 
   const getDate = async () => {
     // setDateData([]);
-    const { data } = await imsAxios.post("/backend/fetchProjectData", {
+    const response = await imsAxios.post("/backend/fetchProjectData", {
       search: projectId,
     });
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.id, label: d.label };
     });
     setDateData(arr);

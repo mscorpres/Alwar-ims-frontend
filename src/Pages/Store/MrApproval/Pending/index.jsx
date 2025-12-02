@@ -28,17 +28,17 @@ const PendingApproval = () => {
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.response.data.map((row, index) => ({
+        if (data.success) {
+          const arr = response.data.map((row, index) => ({
             id: index + 1,
             requestedFrom: row.user_name,
             requestId: row.transaction_id,
             requestDate: row.insert_full_date,
           }));
-          console.log(data.response.data);
+          console.log(data.data);
           setRows(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(data.message?.msg || data.message);
         }
       }
     } catch (error) {
@@ -133,7 +133,7 @@ const PendingApproval = () => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (data.success) {
           const buffer = data.data.buffer.data;
           if (action === "print") {
             printFunction(buffer);
@@ -141,7 +141,7 @@ const PendingApproval = () => {
             downloadFunction(buffer, requestId);
           }
         } else {
-          toast.error(data.message.msg);
+          toast.error(data.message?.msg || data.message);
         }
       }
     } catch (error) {

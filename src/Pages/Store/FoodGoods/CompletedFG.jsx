@@ -42,12 +42,12 @@ const CompletedFG = () => {
   const skuWise = async () => {
     setLoading(true);
     setSkuData([]);
-    const { data } = await imsAxios.post("/fgIN/fgInCompleted", {
+    const response = await imsAxios.post("/fgIN/fgInCompleted", {
       searchBy: all.info,
       searchValue: all.selOption,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (data.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -56,8 +56,8 @@ const CompletedFG = () => {
       });
       setSkuData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
   };
@@ -67,12 +67,12 @@ const CompletedFG = () => {
     setLoading(true);
     setDateData([]);
 
-    const { data } = await imsAxios.post("/fgIN/fgInCompleted", {
+    const response = await imsAxios.post("/fgIN/fgInCompleted", {
       searchBy: all.info,
       searchValue: datee,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (data.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -81,8 +81,8 @@ const CompletedFG = () => {
       });
       setDateData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
   };

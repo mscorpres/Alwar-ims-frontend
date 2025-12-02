@@ -36,7 +36,7 @@ export default function EditDCComponents({
   const getComponents = async (searchInput) => {
     if (searchInput.length > 2) {
       // setSelectLoading(true);
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: searchInput,
       // });
       // setSelectLoading(false);
@@ -60,7 +60,7 @@ export default function EditDCComponents({
     let arr = rows;
     if (name == "component") {
       setPageLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/component/getComponentDetailsByCode",
         {
           component_code: value.value,
@@ -184,12 +184,12 @@ export default function EditDCComponents({
   const submitHandler = async () => {
     if (showSubmitConfirm) {
       setSubmitLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/gatepass/updateDc",
         showSubmitConfirm
       );
       setSubmitLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setUpdateDCId(false);
         // let successInfo = {
         //   id: data.data.transactionID,
@@ -198,9 +198,9 @@ export default function EditDCComponents({
         // };
         setShowSubmitConfirm(false);
         setActiveTab("1");
-        toast.success(data.message);
+        toast.success(response.message);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
     setShowSubmitConfirm(false);

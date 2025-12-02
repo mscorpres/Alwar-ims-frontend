@@ -123,18 +123,18 @@ export default function DebitEdit({ editDebit, setEditDebit }) {
     if (!problem) {
       //   console.log(finalObj);
       setSubmitLoading(true);
-      const { data } = await imsAxios.post("/tally/dv/updateDebitVoucher", {
+      const response = await imsAxios.post("/tally/dv/updateDebitVoucher", {
         ...finalObj,
       });
       setSubmitLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         // resetHandler();
-        toast.success(data.message);
+        toast.success(response.message);
         setTimeout(() => {
           setEditDebit(null);
         }, 3000);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       if (problem == "gls") {
@@ -144,13 +144,13 @@ export default function DebitEdit({ editDebit, setEditDebit }) {
   };
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
     let arr = [];
     if (!data.msg) {
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -242,12 +242,12 @@ export default function DebitEdit({ editDebit, setEditDebit }) {
   ];
   const getVoucherDetails = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/dv/editDebitVoucher", {
+    const response = await imsAxios.post("/tally/dv/editDebitVoucher", {
       dv_key: editDebit,
     });
     setLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           id: row.trans_id,
           glCode: { value: row.l_key, label: row.l_name },
@@ -262,7 +262,7 @@ export default function DebitEdit({ editDebit, setEditDebit }) {
       console.log(moment(data.data[0].effective_date));
       setEffectiveDate(data.data[0].effective_date);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const inputHandler = (name, value, id) => {

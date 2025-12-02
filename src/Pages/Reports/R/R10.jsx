@@ -39,7 +39,7 @@ const R10 = () => {
     setPageLoading(true);
     setTableLoading(true);
     // table data fetch
-    const { data } = await imsAxios.post("/report10", {
+    const response = await imsAxios.post("/report10", {
       user_id: selectedUser.value,
     });
     setTableLoading(false);
@@ -55,7 +55,7 @@ const R10 = () => {
 
     // const validatedData = validateResponse(data);
     let arr = [];
-    if (data.code == 500) {
+    if (!response.success) {
       setColumns([]);
       setrows([]);
       setUpdateData({
@@ -165,7 +165,7 @@ const R10 = () => {
   };
   const getComponents = async (search) => {
     // setSelectLoading(true);
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: search,
     // });
     // setSelectLoading(false);
@@ -182,13 +182,13 @@ const R10 = () => {
   };
   const getLocation = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/fetchLocation");
+    const response = await imsAxios.post("/backend/fetchLocation");
     let arr = data.map((row) => ({ value: row.id, text: row.text }));
     setLocationOptions(arr);
     setPageLoading(false);
   };
   const searchLocation = async (search) => {
-    const { data } = await imsAxios.post("/backend/fetchLocation", {
+    const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: search,
     });
     let arr = data.map((row) => ({ text: row.text, value: row.id }));
@@ -196,7 +196,7 @@ const R10 = () => {
   };
   const getUsers = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/backend/fetchAllUser", {
+    const response = await imsAxios.post("/backend/fetchAllUser", {
       search: search,
     });
     setSelectLoading(false);
@@ -207,7 +207,7 @@ const R10 = () => {
     // true;
     console.log(updateData);
     if (updateData.locations.length > 0) {
-      const { data } = await imsAxios.post("report10/update", {
+      const response = await imsAxios.post("report10/update", {
         component_part: updateData.components.map((row) =>
           row && row?.value ? row?.value : row
         ),

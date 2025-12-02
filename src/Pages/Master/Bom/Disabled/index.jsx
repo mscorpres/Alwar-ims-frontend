@@ -16,7 +16,7 @@ const Disabled = () => {
       const response = await imsAxios.get("/bom/getDraftBOMs");
       const { data } = response;
       if (data && data?.data.length) {
-        const arr = data.data.map((row, index) => ({
+        const arr = response.data.map((row, index) => ({
           id: index + 1,
           product: row.subject_name,
           sku: row.bom_product_sku,
@@ -26,7 +26,7 @@ const Disabled = () => {
 
         setRows(arr);
       } else if (data && !data?.data) {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       setRows([]);
@@ -45,7 +45,7 @@ const Disabled = () => {
     });
     const { data } = response;
     if (data) {
-      if (data.status === "success") {
+      if (response.success ) {
         setRows((curr) =>
           curr.map((row) => {
             if (row.bomId === id) {

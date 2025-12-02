@@ -200,32 +200,27 @@ export default function MaterialInWithoutPO() {
       console.log("response-------", response);
       if (response.success) {
         // const { data } = response.data;
-        if (response.data.code == 200) {
-          setShowSuccessPage({
-            materialInId: response.data.data.txn,
-            vendor: { vendorname: values.vendorName.label },
-            components: values.components.map((row, index) => {
-              return {
-                id: index,
-                componentName: row.component.label,
-                inQuantity: row.qty,
-                invoiceNumber: row.invoiceId,
-                invoiceDate: row.invoiceDate,
-                location: row.location.label,
-              };
-            }),
-          });
-          form.resetFields();
-          vendorResetFunction();
-          materialResetFunction();
-          setPreviewRows([]);
-          setPreview(false);
-        } else {
-          // console.log("r/esponse.data.message", response.data.message);
-          toast.error(response.data.message);
-        }
+        setShowSuccessPage({
+          materialInId: response.data.txn,
+          vendor: { vendorname: values.vendorName.label },
+          components: values.components.map((row, index) => {
+            return {
+              id: index,
+              componentName: row.component.label,
+              inQuantity: row.qty,
+              invoiceNumber: row.invoiceId,
+              invoiceDate: row.invoiceDate,
+              location: row.location.label,
+            };
+          }),
+        });
+        form.resetFields();
+        vendorResetFunction();
+        materialResetFunction();
+        setPreviewRows([]);
+        setPreview(false);
       } else {
-        toast.error(response.data.message);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -248,10 +243,10 @@ export default function MaterialInWithoutPO() {
     setAsyncOptions(arr);
   };
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -264,26 +259,26 @@ export default function MaterialInWithoutPO() {
   const getLocation = async (costCenter) => {
     setSelectLoading(true);
     setLocationOptions([]);
-    const { data } = await imsAxios.post("/transaction/getLocationInMin", {
+    const response = await imsAxios.post("/transaction/getLocationInMin", {
       search: "",
       cost_center: costCenter,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.data.map((d) => {
+    if (data.success) {
+      let arr = data.response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(data.message?.msg || data.message);
     }
   };
   const getAutoComnsumptionOptions = async () => {
     setPageLoading(true);
     let { data } = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
     setPageLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (data.success) {
+      let arr = response.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -399,13 +394,10 @@ export default function MaterialInWithoutPO() {
       project_name: value,
     });
     setPageLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        form.setFieldValue("projectName", data.data.description);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      form.setFieldValue("projectName", response.data.description);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   const vendorResetFunction = () => {

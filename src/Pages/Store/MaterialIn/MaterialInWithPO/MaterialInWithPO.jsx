@@ -212,7 +212,7 @@ export default function MaterialInWithPO({}) {
         () => checkInvoiceforMIN(payload),
         "select"
       );
-      // const { data } = await imsAxios.post("/backend/checkInvoice", {
+      // const response = await imsAxios.post("/backend/checkInvoice", {
       //   invoice: invoices,
       //   vendor: searchData.vendor,
       // });
@@ -250,7 +250,7 @@ export default function MaterialInWithPO({}) {
         "/transaction/upload-invoice",
         values.formData
       );
-      if (fileData.code == "200") {
+      if (fileData.success) {
         let final = {
           companybranch: "BRMSC012",
           invoices: fileData.data,
@@ -259,12 +259,11 @@ export default function MaterialInWithPO({}) {
         };
         final = { ...final, ...values.componentData };
         const response = await executeFun(() => poMINforMIN(final), "select");
-        // const { data } = await imsAxios.post("/purchaseOrder/poMIN", final);
-        // console.log("data po min", data);
-        let { data } = response;
+        // const response = await imsAxios.post("/purchaseOrder/poMIN", final);
+        // console.log("data po min", response);
 
         // setSubmitLoading(false);
-        if (data.code == "200") {
+        if (response.success) {
           setSearchData({
             vendor: "",
             poNumber: "",
@@ -272,7 +271,7 @@ export default function MaterialInWithPO({}) {
           setInvoices([]);
           setSubmitLoading(false);
           setMaterialInSuccess({
-            materialInId: data.transaction_id,
+            materialInId: response.data.transaction_id,
             poId: poData.headers.transaction,
             vendor: poData.headers.vendorcode,
             components: poData.materials.map((row) => {
@@ -291,7 +290,7 @@ export default function MaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else {
         setSubmitLoading(false);
@@ -302,10 +301,10 @@ export default function MaterialInWithPO({}) {
     }
   };
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -316,14 +315,14 @@ export default function MaterialInWithPO({}) {
   };
   const getLocation = async (costCode) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/transaction/getLocationInMin", {
+    const response = await imsAxios.post("/transaction/getLocationInMin", {
       search: "",
       cost_center: costCode,
     });
     setPageLoading(false);
-    let arr = data.data.data;
-    if (data.code == 200) {
-      let arr = data.data.data.map((d) => {
+    let arr = data.data?.data;
+    if (data.success) {
+      let arr = data.response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
@@ -335,12 +334,12 @@ export default function MaterialInWithPO({}) {
   const getAutoComnsumptionOptions = async () => {
     setPageLoading(true);
 
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       "/transaction/fetchAutoConsumpLocation"
     );
     setPageLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (data.success) {
+      let arr = response.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -506,13 +505,13 @@ export default function MaterialInWithPO({}) {
       po: searchData.poNumber.trim(),
       vendor: searchData.vendor,
     };
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/purchaseOrder/fetchVendorPO",
       search
     );
     setSearchLoading(false);
 
-    if (data.code == 200) {
+    if (data.success) {
       let obj = data.data;
       obj = {
         ...obj,
@@ -555,7 +554,7 @@ export default function MaterialInWithPO({}) {
       setPoData(obj);
       setResetPoData(obj);
     } else {
-      toast.error(data.message.msg);
+      toast.error(data.message?.msg || data.message);
       setPoData({ materials: [] });
       //   toast.error("Some error Occurred");
     }

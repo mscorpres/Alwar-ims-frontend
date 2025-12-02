@@ -32,13 +32,13 @@ export default function EditProjectForm({
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         editProjectForm.setFieldsValue({
           project_id: editProject,
           project_name: data.detail,
         });
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setEditProject(false);
       }
     }
@@ -57,12 +57,12 @@ export default function EditProjectForm({
     setSubmitConfirm(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setEditProject(false);
         getAllDetailFun();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

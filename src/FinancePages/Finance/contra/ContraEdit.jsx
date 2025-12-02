@@ -20,8 +20,8 @@ export default function ContraEdit({ contra, close }) {
     });
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        const arr = data.data.map((row) => {
+      if (response.success) {
+        const arr = response.data.map((row) => {
           return {
             id: row.ID,
             ledger: {
@@ -36,7 +36,7 @@ export default function ContraEdit({ contra, close }) {
         });
         setRows(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -60,13 +60,13 @@ export default function ContraEdit({ contra, close }) {
     });
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        const arr = data.data.map((row) => {
+      if (response.success) {
+        const arr = response.data.map((row) => {
           return { text: row.text, value: row.id };
         });
         setAsyncOptions(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -94,11 +94,11 @@ export default function ContraEdit({ contra, close }) {
     );
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         close();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

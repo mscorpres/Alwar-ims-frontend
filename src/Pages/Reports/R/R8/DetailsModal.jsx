@@ -14,7 +14,7 @@ const DetailsModal = ({ show, close }) => {
     try {
       setRows([]);
       setLoading("fetch");
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/report8/getMfgConsumptionComponent",
         {
           mfg_no: mfgId,

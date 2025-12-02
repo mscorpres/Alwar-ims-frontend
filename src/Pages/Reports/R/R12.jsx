@@ -82,10 +82,10 @@ const R12 = () => {
   };
 
   const getBom = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData?.selectProduct,
     });
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
     setBomName(arr);
@@ -100,20 +100,20 @@ const R12 = () => {
       toast.error("Please select add Qty");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("/report12", {
+      const response = await imsAxios.post("/report12", {
         subjectcode: allData.selectBom,
         skucode: allData.selectProduct,
         product_fg_qty: allData.fgQty,
         action: "search_r12",
       });
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return { ...row, id: v4() };
         });
         console.log(arr);
         setResData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         setLoading(true);
         toast.error(data.message);
         setLoading(false);

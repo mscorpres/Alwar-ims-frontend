@@ -26,17 +26,17 @@ function ViewClients() {
 
   const getRows = async () => {
     setFetchLoading(true);
-    const { data } = await imsAxios.get("/client/getClient");
+    const response = await imsAxios.get("/client/getClient");
     setFetchLoading(false);
-    if (data.code === 200) {
-      let arr = data.data.map((row, index) => ({
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
         ...row,
         id: index,
         index: index + 1,
       }));
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
       setShowAllBranch(false);
     }
@@ -47,8 +47,8 @@ function ViewClients() {
   //   );
   //   // console.log(data);
   //   const { data } = response;
-  //   if (data.code == 200) {
-  //     let arr = data.data.map((row) => {
+  //   if (response.success) {
+  //     let arr = response.data.map((row) => {
   //       return {
   //         ...row,
   //         id: v4(),
@@ -56,7 +56,7 @@ function ViewClients() {
   //     });
   //     setBranchModal(arr);
   //   } else {
-  //     toast.error(data.message.msg);
+  //     toast.error(response.message?.msg || response.message);
   //   }
   // };
   const handleDownloadExcel = () => {

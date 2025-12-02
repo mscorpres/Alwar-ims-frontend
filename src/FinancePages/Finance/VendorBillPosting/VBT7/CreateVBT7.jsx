@@ -39,7 +39,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
     const data = await imsAxios.get(
       `/tally/vbt/checkInvoice?vbtInvoiceNo=${checkInvoiceId}&vendor=${vendorCode}`
     );
-    if (data.status === 200 || data.status === "200") {
+    if (data.status === 200 || response.success ) {
       let arr = data.data;
       if (arr.checkInvoice == true) {
         // setConfirmModal(true);
@@ -58,7 +58,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
         });
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       // setEditingVBT(null);
     }
   };
@@ -250,13 +250,13 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
       finalObj = { ...finalObj, ...compData };
 
       setLoading(true);
-      const { data } = await imsAxios.post("/tally/vbt07/add_vbt07", {
+      const response = await imsAxios.post("/tally/vbt07/add_vbt07", {
         ...finalObj,
         vbt_gstin: finalObj?.vbt_gstin.value ?? finalObj?.vbt_gstin,
       });
       setLoading(false);
-      if (data.code == 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setTimeout(() => {
           setEditingVBT(null);
         }, 2000);
@@ -268,7 +268,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
     }
   };
   const getGl = async () => {
-    const { data } = await imsAxios.get("/tally/vbt/vbtGlOptions?type=vbt07");
+    const response = await imsAxios.get("/tally/vbt/vbtGlOptions?type=vbt07");
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {

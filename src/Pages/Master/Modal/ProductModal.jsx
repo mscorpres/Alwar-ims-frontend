@@ -45,10 +45,10 @@ function ProductModal({ productModal, setProductModal, fetchProductData }) {
   console.log(product);
 
   const getUOM = async () => {
-    const { data } = await imsAxios.get("/uom");
+    const response = await imsAxios.get("/uom");
     //  console.log(data.data);
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return { label: d.units_name, value: d.units_id };
     });
     // console.log(arr);
@@ -78,10 +78,10 @@ function ProductModal({ productModal, setProductModal, fetchProductData }) {
 
   const getFetchExistingProduct = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/products/getProductForUpdate", {
+    const response = await imsAxios.post("/products/getProductForUpdate", {
       product_key: productModal?.product_key,
     });
-    data.data.map((a) => setProduct(a));
+    response.data.map((a) => setProduct(a));
     setLoading(false);
   };
 
@@ -96,7 +96,7 @@ function ProductModal({ productModal, setProductModal, fetchProductData }) {
   };
 
   const updateProduct = async () => {
-    const { data } = await imsAxios.post("/products/updateProduct", {
+    const response = await imsAxios.post("/products/updateProduct", {
       producttKey: productModal.product_key,
       category: product.productcategory,
       mrp: product?.mrp,
@@ -123,7 +123,7 @@ function ProductModal({ productModal, setProductModal, fetchProductData }) {
       description: product?.description,
     });
     console.log(data);
-    if (data.code == 200) {
+    if (response.success) {
       setProductModal(false);
       fetchProductData();
     }

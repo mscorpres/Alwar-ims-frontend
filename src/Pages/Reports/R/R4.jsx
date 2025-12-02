@@ -67,13 +67,13 @@ const R4 = () => {
     } else {
       setResponseData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/report4", {
+      const response = await imsAxios.post("/report4", {
         date: selectDate,
         action: "search_r4",
       });
 
       // console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return {
             ...row,
@@ -82,9 +82,9 @@ const R4 = () => {
         });
         setResponseData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         setLoading(true);
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

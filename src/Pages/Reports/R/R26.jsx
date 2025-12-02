@@ -31,9 +31,9 @@ const R26 = () => {
       // console.log("response", response);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           if (wiseOption == "ven-cons") {
-            arr = data.data.map((row, index) => ({
+            arr = response.data.map((row, index) => ({
               id: index + 1,
               createDate: row.create_dt,
               component: row.part_name,
@@ -50,7 +50,7 @@ const R26 = () => {
               unit: row.unit,
             }));
           } else {
-            arr = data.data.data.map((row, index) => ({
+            arr = data.response.data.map((row, index) => ({
               id: index + 1,
               date: row.DATE,
               component: row.COMPONENT,
@@ -66,7 +66,7 @@ const R26 = () => {
 
           setRows(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
           throw new Error("Some error occured");
         }
       } else {

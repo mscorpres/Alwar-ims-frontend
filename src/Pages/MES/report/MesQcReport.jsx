@@ -166,7 +166,7 @@ function MesQcaReport() {
       const { data } = response;
       if (data.status === "error") {
         toast.error(data.message);
-      } else if (data.status === "success") {
+      } else if (response.success ) {
         if (data.response.data) {
           const arr = data.response.data.map((row, index) => {
             const date = row.barcode[0].insert_dt.split(" ");

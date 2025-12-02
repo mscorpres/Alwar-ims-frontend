@@ -43,11 +43,11 @@ export default function UpdateService({ editService, setEditService, units }) {
   ];
   const getDetails = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("component/fetchUpdateComponent", {
+    const response = await imsAxios.post("component/fetchUpdateComponent", {
       componentKey: editService.componentKey,
     });
-    if (data.code == 200) {
-      const res = data.data[0];
+    if (response.success) {
+      const res = response.data[0];
       setServiceDetails({
         serviceName: res.name,
         uom: res.uomid,
@@ -58,7 +58,7 @@ export default function UpdateService({ editService, setEditService, units }) {
         sac: res.sac,
       });
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message);
       setEditService(null);
     }
     setPageLoading(false);
@@ -83,16 +83,16 @@ export default function UpdateService({ editService, setEditService, units }) {
       componentname: serviceDetails.serviceName,
     };
     setSubmitLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/component/updateServiceComponent",
       newObj
     );
     setSubmitLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setEditService(null);
     } else {
-      toast.error(toast.message.msg);
+      toast.error(response.message);
     }
   };
   useEffect(() => {

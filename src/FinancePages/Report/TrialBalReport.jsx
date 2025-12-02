@@ -25,7 +25,7 @@ function TrialBalReport() {
 
   const fetchTrialBalanceFun = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/reports/trailBalanaceReport", {
+    const response = await imsAxios.post("/tally/reports/trailBalanaceReport", {
       date: date,
     });
     setLoading(false);

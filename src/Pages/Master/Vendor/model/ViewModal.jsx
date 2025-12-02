@@ -32,17 +32,15 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
 
   const fetchAllBranchList = async () => {
     setSkeletonLoading(true);
-    const { data } = await imsAxios.post("/vendor/getAllBranchList", {
+    const response = await imsAxios.post("/vendor/getAllBranchList", {
       vendor_id: viewVendor.vendor_code,
     });
-    let a = [];
-    data.data.final.map((d) => a.push({ text: d.text, value: d.id }));
-    getBranchDetails(a[0].value, "skeletonLoading");
-    setAllBranchData(a);
-    const { data: data1 } = await imsAxios.post("/vendor/getBranchDetails", {
-      addresscode: a[0].value,
-    });
-
+    if (response.success) {
+      let a = [];
+      response.data.final.map((d) => a.push({ text: d.text, value: d.id }));
+      getBranchDetails(a[0].value, "skeletonLoading");
+      setAllBranchData(a);
+    }
     setSkeletonLoading(false);
   };
   // console.log(allField);
@@ -50,44 +48,44 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
     if (loadingType != "skeletonLoading") {
       setSpinLoading(true);
     }
-    const { data } = await imsAxios.post("/vendor/getBranchDetails", {
+    const response = await imsAxios.post("/vendor/getBranchDetails", {
       addresscode: branchId,
     });
     setSpinLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setAllField((allField) => {
         return {
           ...allField,
-          branchCode: data.data.final[0].address_code,
-          label: data.data.final[0].label,
-          email: data.data.final[0].email_id,
-          city: data.data.final[0].city,
-          gst: data.data.final[0].gstin,
-          pcode: data.data.final[0].pincode,
-          mob: data.data.final[0].mobile_no,
-          fax: data.data.final[0].fax,
-          address: data.data.final[0].address,
+          branchCode: response.data.final[0].address_code,
+          label: response.data.final[0].label,
+          email: response.data.final[0].email_id,
+          city: response.data.final[0].city,
+          gst: response.data.final[0].gstin,
+          pcode: response.data.final[0].pincode,
+          mob: response.data.final[0].mobile_no,
+          fax: response.data.final[0].fax,
+          address: response.data.final[0].address,
           state: {
-            value: data.data.final[0].statecode,
-            label: data.data.final[0].statename,
+            value: response.data.final[0].statecode,
+            label: response.data.final[0].statename,
           },
         };
       });
       setResetData((allField) => {
         return {
           ...allField,
-          branchCode: data.data.final[0].address_code,
-          label: data.data.final[0].label,
-          email: data.data.final[0].email_id,
-          city: data.data.final[0].city,
-          gst: data.data.final[0].gstin,
-          pcode: data.data.final[0].pincode,
-          mob: data.data.final[0].mobile_no,
-          fax: data.data.final[0].fax,
-          address: data.data.final[0].address,
+          branchCode: response.data.final[0].address_code,
+          label: response.data.final[0].label,
+          email: response.data.final[0].email_id,
+          city: response.data.final[0].city,
+          gst: response.data.final[0].gstin,
+          pcode: response.data.final[0].pincode,
+          mob: response.data.final[0].mobile_no,
+          fax: response.data.final[0].fax,
+          address: response.data.final[0].address,
           state: {
-            value: data.data.final[0].statecode,
-            label: data.data.final[0].statename,
+            value: response.data.final[0].statecode,
+            label: response.data.final[0].statename,
           },
         };
       });
@@ -96,16 +94,16 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
   const getOption = async (a) => {
     // console.log(a)
     if (a?.length > 1) {
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: a,
       });
 
-      let arr = [];
-
-      arr = data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
+      if (response.success && response.data) {
+        let arr = response.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+      }
     }
   };
 
@@ -122,7 +120,7 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
       return toast.error("Please enter branch GST Number");
     }
     setsubmitLoading(true);
-    const { data } = await imsAxios.post("/vendor/updateBranchDetails", {
+    const response = await imsAxios.post("/vendor/updateBranchDetails", {
       label: allField.label,
       state: allField.state.value,
       city: allField.city,
@@ -136,11 +134,11 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
       vendor_code: viewVendor.vendor_code,
     });
     setsubmitLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setViewVendor(null);
-      toast.success(data.message);
+      toast.success(response.message);
     } else {
-      toast.error(errorToast(data.message));
+      toast.error(response.message);
     }
   };
 

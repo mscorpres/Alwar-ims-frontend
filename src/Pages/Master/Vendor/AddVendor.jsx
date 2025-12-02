@@ -42,16 +42,16 @@ const AddVendor = () => {
   const getFetchState = async (e) => {
     if (e.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
-      let arr = [];
-      arr = data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
-      // return arr;
+      if (response.success && response.data) {
+        let arr = response.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+      }
     }
   };
 
@@ -77,16 +77,12 @@ const AddVendor = () => {
       showSubmitConfirmModal
     );
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
-        reset();
-      } else {
-        setShowSubmitConfirmModal(false);
-        // console.log("data.message", data.message);
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      toast.success(response.message);
+      reset();
+    } else {
+      setShowSubmitConfirmModal(false);
+      toast.error(response.message);
     }
   };
 

@@ -73,7 +73,7 @@ export default function Drive() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setCurrentDirectory(data.data);
       }
     }
@@ -84,7 +84,7 @@ export default function Drive() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setCurrentItems(data.data);
         // setCurrentDirectory(data.data[0].unique_id);
       }
@@ -98,8 +98,8 @@ export default function Drive() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           ...row,
           id: row.ID,
           index: index + 1,

@@ -68,7 +68,7 @@ const WoCompleted = () => {
       );
       const { data } = response;
       printFunction(response.data.data.buffer.data);
-      toast.success(data.message);
+      toast.success(response.message);
     } catch (error) {
       console.log("some error occured while fetching rows", error);
     } finally {
@@ -87,7 +87,7 @@ const WoCompleted = () => {
       );
       const { data } = response;
       downloadFunction(response.data.data.buffer.data);
-      toast.success(data.message);
+      toast.success(response.message);
     } catch (error) {
       console.log("some error occured while fetching rows", error);
     } finally {
@@ -106,7 +106,7 @@ const WoCompleted = () => {
         }
       );
       const { data } = response;
-      const arr = data.data.map((row, index) => ({
+      const arr = response.data.map((row, index) => ({
         id: index + 1,
         date: row.date,
         requiredQty: row.ord_qty,

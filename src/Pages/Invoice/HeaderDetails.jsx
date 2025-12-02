@@ -36,7 +36,7 @@ const HeaderDetails = ({ form, setTcsOptions, loading, setLoading }) => {
       const response = await imsAxios.get("/tally/backend/states");
       const { data } = response;
       if (data) {
-        const arr = data.data.map((row) => ({
+        const arr = response.data.map((row) => ({
           text: row.name,
           value: row.code.toString(),
         }));
@@ -50,14 +50,14 @@ const HeaderDetails = ({ form, setTcsOptions, loading, setLoading }) => {
   };
   const getClientOptions = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.get(`/client/getClient?name=${search}`);
+    const response = await imsAxios.get(`/client/getClient?name=${search}`);
     setSelectLoading(false);
     let arr = [];
     arr = data?.data?.map((d) => {
       return { text: d.name, value: d.code };
     });
     setAsyncOptions(arr);
-    if (data.code == 500) {
+    if (!response.success) {
       setAsyncOptions(arr);
     }
   };
@@ -82,7 +82,7 @@ const HeaderDetails = ({ form, setTcsOptions, loading, setLoading }) => {
     form.setFieldValue("shippingPan", billingValues.billingPan);
   };
   const getFunctionClientName = async () => {
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       `/client/getClient?code=${client.value}`
     );
     form.setFieldValue("billingEmail", data.data[0].email);
@@ -90,7 +90,7 @@ const HeaderDetails = ({ form, setTcsOptions, loading, setLoading }) => {
   const getBranchDetails = async (locationId) => {
     try {
       setLoading("fetching");
-      const { data } = await imsAxios.get(
+      const response = await imsAxios.get(
         `/client/getClientDetail?addressID=${locationId}`
       );
       form.setFieldValue("billingState", {
@@ -126,10 +126,10 @@ const HeaderDetails = ({ form, setTcsOptions, loading, setLoading }) => {
   const getLocation = async (clientId) => {
     try {
       setLoading("fetching");
-      const { data } = await imsAxios.get(
+      const response = await imsAxios.get(
         `/client/branches?clientCode=${clientId}`
       );
-      let arr = data.data.map((row) => ({
+      let arr = response.data.map((row) => ({
         text: row.city.name,
         value: row.city.id,
       }));

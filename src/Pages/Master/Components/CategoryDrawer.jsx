@@ -22,7 +22,7 @@ export default function CategoryDrawer({ show, hide }) {
       const response = await imsAxios.get("/mfgcategory/getAttributes");
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const arr = data.message.map((row) => ({
             label: row.text,
             name: row.id,
@@ -31,7 +31,7 @@ export default function CategoryDrawer({ show, hide }) {
           console.log("here are the fields", arr);
           setFields(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {}
@@ -45,7 +45,7 @@ export default function CategoryDrawer({ show, hide }) {
           attribute: row.name,
         });
         const { data } = response;
-        if (data.code === 200) {
+        if (response.success) {
           optionsArr.push({ data: data.message });
           setFieldSelectOptions((curr) => [
             ...curr,
@@ -70,7 +70,7 @@ export default function CategoryDrawer({ show, hide }) {
       const { data } = response;
 
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           let finalObj = {};
           setUniqueId(data.inputs.rm_cat_code);
           for (var key in data.inputs) {

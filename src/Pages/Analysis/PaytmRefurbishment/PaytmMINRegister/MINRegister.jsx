@@ -56,7 +56,7 @@ function MINRegister() {
     });
     setLoading(false);
     const { data } = response;
-    if (data.code === 200) {
+    if (response.success) {
       let obj = {
         total: data.data.total,
         pending: data.data.pending,
@@ -64,7 +64,7 @@ function MINRegister() {
       };
       setPreviousCount(obj);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     setScanningMIN(row.txn);
   };
@@ -86,8 +86,8 @@ function MINRegister() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           id: v4(),
           index: index + 1,
           ...row,
@@ -98,7 +98,7 @@ function MINRegister() {
         setScanningMIN(false);
       } else {
         setRows([]);
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -119,14 +119,14 @@ function MINRegister() {
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setSubmitConfirm(false);
           setImeiArr([]);
           setImeiInput("");
           setScanningMIN(false);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     }

@@ -17,7 +17,7 @@ const TransferModal = ({ show, hide }) => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const finalObj = {
             assignedToName: data.data.assign_to_name,
             assignedTo: data.data.assign_to,
@@ -26,7 +26,7 @@ const TransferModal = ({ show, hide }) => {
 
           setCurrent(finalObj);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
           hide();
         }
       }
@@ -45,8 +45,8 @@ const TransferModal = ({ show, hide }) => {
       });
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (response.success) {
+          const arr = response.data.map((row) => ({
             value: row.id,
             text: row.text,
           }));
@@ -76,11 +76,11 @@ const TransferModal = ({ show, hide }) => {
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           toast.success("Task Transfered successfully");
           hide();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

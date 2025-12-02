@@ -9,10 +9,10 @@ export default function AddBranchModal({ open, setOpen }) {
   const [storeData, setStoreData] = useState([]);
 
   const fetchDataFromViewBom = async () => {
-    const { data } = await imsAxios.post("/bom/bomComponents", {
+    const response = await imsAxios.post("/bom/bomComponents", {
       subject_id: open.bomId,
     });
-    let arr = data.data.map((row) => {
+    let arr = response.data.map((row) => {
       return {
         ...row,
         id: v4(),

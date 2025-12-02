@@ -107,12 +107,11 @@ const WoShipment = () => {
     }
     const response = await imsAxios.post(link, obj);
     console.log("Repinse=>", response);
-    const { data } = response;
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setCancelRemark("");
     } else {
-      toast.error(data.message);
+      toast.error(response.message?.msg || response.message);
     }
     setCancelRemark("");
     getRows();

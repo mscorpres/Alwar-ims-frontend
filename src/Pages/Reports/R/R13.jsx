@@ -108,13 +108,13 @@ const R13 = () => {
     } else {
       setLoading(true);
       setResponseData([]);
-      const { data } = await imsAxios.post("/transaction/transactionIn", {
+      const response = await imsAxios.post("/transaction/transactionIn", {
         data: datee,
         min_types: allData?.selType,
       });
 
-      if (data.code == 200) {
-        let arr = data.data.map((row) => {
+      if (response.success) {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -122,8 +122,8 @@ const R13 = () => {
         });
         setResponseData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

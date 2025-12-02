@@ -93,13 +93,13 @@ export default function JournalPosting() {
   };
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
     let arr = [];
     if (!data.msg) {
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -285,15 +285,15 @@ export default function JournalPosting() {
       if (pathname.includes("jv01")) {
         link = "/tally/jv/create_jv01";
       }
-      const { data } = await imsAxios.post(link, {
+      const response = await imsAxios.post(link, {
         ...finalObj,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         resetHandler();
         toast.success(data.message.msg);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       if (problem == "gls") {

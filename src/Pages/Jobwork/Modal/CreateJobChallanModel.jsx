@@ -59,10 +59,10 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
 
   // console.log(restDispatchAddress?.address);
   const getFetchAllData = async () => {
-    const { data } = await imsAxios.post("/jobwork/createJwChallan", {
+    const response = await imsAxios.post("/jobwork/createJwChallan", {
       transaction: challanModal?.issue_transaction_id,
     });
-    if (data.code == 200) {
+    if (response.success) {
       let arr = data?.data?.data.map((row, index) => {
         return {
           ...row,
@@ -73,13 +73,13 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       // console.log(data.data);
       setProductData(arr);
       setVendorData(data.data.header);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
     }
   };
 
   const getBillingLocation = async (e) => {
-    const { data } = await imsAxios.post("/backend/billingAddressList");
+    const response = await imsAxios.post("/backend/billingAddressList");
     let a = [];
     data.map((x) => a.push({ text: x.text, value: x.id }));
     setBillingLocationData(a);
@@ -87,7 +87,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
   };
 
   const getBillingAddress = async () => {
-    const { data } = await imsAxios.post("/backend/billingAddress", {
+    const response = await imsAxios.post("/backend/billingAddress", {
       billing_code: userData?.billingLocationValue,
     });
     setrestBillingAddress(data?.data);
@@ -95,14 +95,14 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
 
   // dispatch Locatiom
   const getDispatchLocation = async () => {
-    const { data } = await imsAxios.post("/backend/dispatchAddressList");
+    const response = await imsAxios.post("/backend/dispatchAddressList");
     let a = [];
     data.map((x) => a.push({ text: x.text, value: x.id }));
     setDispatchLocation(a);
   };
 
   const getRestDispatchAddress = async () => {
-    const { data } = await imsAxios.post("/backend/dispatchAddress", {
+    const response = await imsAxios.post("/backend/dispatchAddress", {
       dispatch_code: userData?.dispatchLocationValue,
     });
     setRestDispatchAddress(data.data);
@@ -161,7 +161,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
         })
       );
     } else if (name == "loc") {
-      const { data } = await imsAxios.post("/backend/compStockLoc", {
+      const response = await imsAxios.post("/backend/compStockLoc", {
         component: a,
         location: value,
       });
@@ -183,15 +183,15 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
   const deleteRow = async (i) => {
     console.log(i);
     setLoadChallan(true);
-    const { data } = await imsAxios.post("/jobwork/removeChallanJWPart", {
+    const response = await imsAxios.post("/jobwork/removeChallanJWPart", {
       partcode: i?.component_key,
       row_id: i?.trans_row_id,
     });
-    if (data.code == 200) {
+    if (response.success) {
       getFetchAllData();
       setLoadChallan(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoadChallan(false);
     }
     // console.log(data);
@@ -308,10 +308,10 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
   ];
 
   const getArrayLocation = async (e) => {
-    const { data } = await imsAxios.get("/jobwork/jwChallanLocations");
+    const response = await imsAxios.get("/jobwork/jwChallanLocations");
     //  console.log(data);
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return { label: d.text, value: d.id };
     });
     //  console.log(arr);
@@ -384,7 +384,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
     // console.log(hsnCodeArray);
 
     // console.log(restBillingAddress?.address);
-    const { data } = await imsAxios.post("/jobwork/saveCreateChallan", {
+    const response = await imsAxios.post("/jobwork/saveCreateChallan", {
       transaction_id: productData[0].jw_id,
       reference_id: productData[0].ref_id,
       billingaddrid: userData?.billingLocationValue,
@@ -409,10 +409,10 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       hsncode: hsnCodeArray,
     });
     console.log(data);
-    if (data.code == 200) {
+    if (response.success) {
       close();
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
     }
   };
   return (

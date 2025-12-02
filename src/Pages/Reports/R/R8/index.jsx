@@ -44,9 +44,9 @@ function R8() {
         payload.wise = "skuwise";
       }
 
-      const { data } = await imsAxios.post("/report8", payload);
+      const response = await imsAxios.post("/report8", payload);
       if (data) {
-        const arr = data.data.map((row, index) => ({
+        const arr = response.data.map((row, index) => ({
           ...row,
           id: index + 1,
         }));

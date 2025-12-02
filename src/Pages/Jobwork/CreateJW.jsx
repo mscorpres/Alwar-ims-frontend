@@ -136,8 +136,8 @@ export default function CreateJW({}) {
     setLoading("fetch", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row) => ({
+      if (response.success) {
+        let arr = response.data.map((row) => ({
           text: row.text,
           value: row.id,
         }));
@@ -148,7 +148,7 @@ export default function CreateJW({}) {
         });
         createPoForm.setFieldValue("vendorbranch", arr[0].value);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       toast.error("Some error occured while getting vendor branches ");
@@ -164,14 +164,14 @@ export default function CreateJW({}) {
     setLoading("fetch", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         createPoForm.setFieldValue(
           "vendoraddress",
           data.data?.address?.replaceAll("<br>", "\n")
         );
         createPoForm.setFieldValue("gstin", data.data?.gstid);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       toast.error("Some error occured while getting vendor address ");
@@ -230,14 +230,14 @@ export default function CreateJW({}) {
     setLoading("select", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setProjectDescription(data.data);
         createPoForm.setFieldValue(
           "project_description",
           data.data?.description
         );
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       toast.error("Some error occured wile getting project details");
@@ -271,7 +271,7 @@ export default function CreateJW({}) {
     setLoading("fetch", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         createPoForm.setFieldValue(
           "billaddress",
           data.data?.address?.replaceAll("<br>", "\n")
@@ -312,7 +312,7 @@ export default function CreateJW({}) {
     setLoading("fetch", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         createPoForm.setFieldValue(
           "shipaddress",
           data.data?.address?.replaceAll("<br>", "\n")
@@ -329,7 +329,7 @@ export default function CreateJW({}) {
   const getusers = async (s) => {
     setLoading("select", true);
     if (s?.length > 2) {
-      const { data } = await imsAxios.post("/backend/fetchAllUser", {
+      const response = await imsAxios.post("/backend/fetchAllUser", {
         search: s,
       });
       setLoading("select", false);
@@ -372,14 +372,14 @@ export default function CreateJW({}) {
     setLoading("fetch", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setUom(data.data?.unit);
         createPoForm.setFieldValue("qty", data.data?.description);
         createPoForm.setFieldValue("rate", data.data?.rate);
         createPoForm.setFieldValue("hsn", data.data?.hsn);
         createPoForm.setFieldValue("gstRate", data.data?.gstrate);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       toast.error("Some error occured wile getting component details");
@@ -484,12 +484,12 @@ export default function CreateJW({}) {
     // setLoading("submitting", false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         resetHandler();
         setLoading("submitting", false);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setLoading("submitting", false);
       }
     }

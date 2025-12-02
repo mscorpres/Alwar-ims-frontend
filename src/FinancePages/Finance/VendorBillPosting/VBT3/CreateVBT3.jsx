@@ -33,7 +33,7 @@ export default function CreateVBT3({ editingVBT, setEditingVBT, setVBTData }) {
     const data = await imsAxios.get(
       `/tally/vbt/checkInvoice?vbtInvoiceNo=${checkInvoiceId}&vendor=${vendorCode}`
     );
-    if (data.status === 200 || data.status === "200") {
+    if (data.status === 200 || response.success ) {
       let arr = data.data;
       if (arr.checkInvoice == true) {
         // setConfirmModal(true);
@@ -52,7 +52,7 @@ export default function CreateVBT3({ editingVBT, setEditingVBT, setVBTData }) {
         });
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       // setEditingVBT(null);
     }
   };
@@ -276,7 +276,7 @@ export default function CreateVBT3({ editingVBT, setEditingVBT, setVBTData }) {
     }
   };
   const getGl = async () => {
-    const { data } = await imsAxios.get("/tally/vbt03/vbt03_gl_options");
+    const response = await imsAxios.get("/tally/vbt03/vbt03_gl_options");
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {
@@ -480,9 +480,9 @@ export default function CreateVBT3({ editingVBT, setEditingVBT, setVBTData }) {
     setRows(arr);
   };
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,

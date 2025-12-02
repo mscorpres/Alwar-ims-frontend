@@ -53,9 +53,9 @@ const Material = () => {
 
   const allComponent = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/component");
+    const response = await imsAxios.get("/component");
 
-    let arr = data.data.map((row) => {
+    let arr = response.data.map((row) => {
       return {
         ...row,
         id: v4(),
@@ -98,25 +98,25 @@ const Material = () => {
     const response = await executeFun(() => getUOMList(), "fetch");
     console.log("uom response", response);
     setUom(response.data);
-    // const { data } = await imsAxios.post("/uom/uomSelect2");
+    // const response = await imsAxios.post("/uom/uomSelect2");
     // let a = [];
     // data?.data?.map((x) => a.push({ text: x.text, value: x.id }));
     // setUom(a);
   };
 
   const fetchSelectGropu = async (e) => {
-    const { data } = await imsAxios.post("/groups/groupSelect2", {
+    const response = await imsAxios.post("/groups/groupSelect2", {
       searchTerm: e,
     });
     let a = [];
-    data.data.map((x) => a.push({ text: x.text, value: x.id }));
+    response.data.map((x) => a.push({ text: x.text, value: x.id }));
     setSelectGroup(a);
   };
 
   const getOption = async (productSearchInput) => {
     if (productSearchInput?.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/searchHsn", {
+      const response = await imsAxios.post("/backend/searchHsn", {
         searchTerm: productSearchInput,
       });
       setSelectLoading(false);
@@ -168,7 +168,7 @@ const Material = () => {
       let taxArr = [];
       hsnData.map((rows) => hsnArr.push(rows.hsnCode));
       hsnData.map((rows) => taxArr.push(rows.tax));
-      const { data } = await imsAxios.post("/component/addComponent", {
+      const response = await imsAxios.post("/component/addComponent", {
         part: material.partno,
         uom: material.unit,
         component: material.comp,
@@ -181,7 +181,7 @@ const Material = () => {
         new_partno: material.new_partno,
       });
 
-      if (data.code === 200) {
+      if (response.success) {
         // allComponent();
         setMaterial({
           partno: "",
@@ -204,8 +204,8 @@ const Material = () => {
         allComponent();
         setLoading(false);
         toast.success("Added Successfully");
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

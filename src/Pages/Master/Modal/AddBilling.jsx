@@ -36,17 +36,17 @@ const AddBilling = ({
     if (e.length > 1) {
       setSelectLoading(true);
 
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
-      let arr = [];
-      arr = data.map((vList) => {
-        return { text: vList.text, value: vList.id };
-      });
-      console.log("Array Vendor=>", arr);
-      // return arr;
-      setAsyncOptions(arr);
+      if (response.success && response.data) {
+        let arr = response.data.map((vList) => {
+          return { text: vList.text, value: vList.id };
+        });
+        console.log("Array Vendor=>", arr);
+        setAsyncOptions(arr);
+      }
     }
   };
 
@@ -67,7 +67,7 @@ const AddBilling = ({
       return toast.error("Please Enter Address...");
     } else {
       setSubmitLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/billingAddress/saveBillingAddress",
         {
           label: addBilling.name,
@@ -80,13 +80,13 @@ const AddBilling = ({
         }
       );
       setSubmitLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         fetchLocation();
         setShowAddBillingModal(false);
         resetFun();
-        toast.success(data.message);
+        toast.success(response.message);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message);
       }
     }
   };

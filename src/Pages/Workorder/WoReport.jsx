@@ -70,7 +70,7 @@ const WoReport = () => {
       );
       const { data } = response;
       printFunction(response.data.data.buffer.data);
-      toast.success(data.message);
+      toast.success(response.message);
     } catch (error) {
       console.log("some error occured while fetching rows", error);
     } finally {
@@ -89,7 +89,7 @@ const WoReport = () => {
       );
       const { data } = response;
       downloadFunction(response.data.data.buffer.data);
-      toast.success(data.message);
+      toast.success(response.message);
     } catch (error) {
       console.log("some error occured while fetching rows", error);
     } finally {
@@ -148,9 +148,8 @@ const WoReport = () => {
         wise: "date",
         data: searchInput,
       });
-      const { data } = response;
-      if (data.code === 200) {
-        let newArr = data.data.map((r, index) => ({
+      if (response.success) {
+        let newArr = response.data.map((r, index) => ({
           serialno: r.serial_no,
           partCode: r.part_code,
           minDate: r.min_date,
@@ -164,10 +163,10 @@ const WoReport = () => {
           challan: r?.challan,
         }));
         setRows(newArr);
-        setworeportdata(data.data);
+        setworeportdata(response.data);
         setdisstate(true);
       } else {
-        toast.error(data.data.data);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       console.log("some error occured while fetching rows", error);

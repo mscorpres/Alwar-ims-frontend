@@ -17,16 +17,16 @@ function CashReceiptModal({ open, setOpen }) {
   const [header, setHeader] = useState([]);
 
   const getAllDataFetch = async () => {
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/cash/cash_receipt_report",
       {
         v_code: open,
       }
     );
-    if (data.code == 200) {
+    if (response.success) {
       setHeader(data.header[0]);
 
-      const arr = data.data.map((row) => {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),

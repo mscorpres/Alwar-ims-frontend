@@ -31,14 +31,14 @@ function R18() {
       };
 
       setFetchLoading(true);
-      const { data } = await imsAxios.post("/report18", finalObj);
+      const response = await imsAxios.post("/report18", finalObj);
       setFetchLoading(false);
 
-      if (data.code === 200) {
+      if (response.success) {
         let headers = [];
         let location = {};
         let headerArr = [];
-        let arr = data.data.map((row) => {
+        let arr = response.data.map((row) => {
           let obj = JSON.parse(row.locations);
           for (const key in obj) {
             if (obj.hasOwnProperty(key)) {

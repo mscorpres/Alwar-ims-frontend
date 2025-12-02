@@ -48,8 +48,8 @@ function PaytmRefurbishmentMIN() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row) => ({
+      if (response.success) {
+        let arr = response.data.map((row) => ({
           text: row.text,
           value: row.id,
         }));
@@ -58,7 +58,7 @@ function PaytmRefurbishmentMIN() {
         setVendorBranchOptions(arr);
       } else {
         setVendorBranchOptions([]);
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -71,14 +71,14 @@ function PaytmRefurbishmentMIN() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         let { address } = data.data;
         minForm.setFieldValue(
           "vendorAddress",
           address.replaceAll("<br>", "\n")
         );
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -115,8 +115,8 @@ function PaytmRefurbishmentMIN() {
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setSubmitConfirmModal(false);
           resetHandler();
         } else {

@@ -37,12 +37,12 @@ function MapVendor({ options, statusOptions, getLedgerList }) {
 
   const getSubGroupSelect = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/getSubgroup", {
+    const response = await imsAxios.post("/tally/getSubgroup", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((d) => {
+    if (response.success) {
+      let arr = response.data.map((d) => {
         return { text: d.label, value: d.id };
       });
       setAsyncOptions(arr);
@@ -91,7 +91,7 @@ function MapVendor({ options, statusOptions, getLedgerList }) {
       return toast.error("Please Select TDS Apply");
     }
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/addVendorLedger", {
+    const response = await imsAxios.post("/tally/ledger/addVendorLedger", {
       ...newVendor,
       sub_group: sub_group,
       gst: gst,
@@ -100,13 +100,13 @@ function MapVendor({ options, statusOptions, getLedgerList }) {
     });
     setLoading(false);
     // console.llg(data);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       getLedgerList();
       vendorReset();
       // reset();
     } else {
-      toast.error(errorToast(data.message));
+      toast.error(response.message?.msg || response.message);
     }
   };
   const vendorReset = () => {

@@ -40,19 +40,21 @@ export default function CreateSubGroup() {
     { label: "Bank Accounts", values: "B" },
   ];
   const getSubGroupsTree = async () => {
-    const { data } = await imsAxios.get("/tally/sub_group_tree");
-    setSubGroups(data.data);
+    const response = await imsAxios.get("/tally/sub_group_tree");
+    if (response.success) {
+      setSubGroups(response.data);
+    }
   };
 
   const getSubGroupSelect = async (value) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/getSubgroup", {
+    const response = await imsAxios.post("/tally/getSubgroup", {
       search: value,
     });
     let arr = [];
     setSelectLoading(false);
-    if (data.code == 200) {
-      arr = data.data.map((d) => {
+    if (response.success) {
+      arr = response.data.map((d) => {
         return { text: d.label, value: d.id };
       });
       setSubGroupAsyncOptions(arr);
@@ -75,17 +77,17 @@ export default function CreateSubGroup() {
       return toast.error("Please Enter a Code");
     }
     setFormLoading(true);
-    const { data } = await imsAxios.post("/tally/create_sub_group", {
+    const response = await imsAxios.post("/tally/create_sub_group", {
       ...newsubGroup,
       parent: newsubGroup.parent,
     });
     setFormLoading(false);
     getSubGroupsTree();
     reset();
-    if (data.code == 200) {
+    if (response.success) {
       toast.success("Sub Group added succesfully");
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const reset = () => {

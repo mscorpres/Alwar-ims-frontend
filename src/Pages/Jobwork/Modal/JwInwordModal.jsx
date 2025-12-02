@@ -61,7 +61,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   const { executeFun, loading: loading1 } = useApi();
   const getFetchData = async () => {
     setModalLoad("fetch", true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/jobwork/fetch_jw_sf_inward_components",
       {
         skucode: row.sku,
@@ -69,9 +69,9 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       }
     );
 
-    if (data.code == 200) {
+    if (response.success) {
       getLocation(data.header.cost_center);
-      let arr = data.data.map((row, index) => {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -83,7 +83,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       setMainData(arr);
       setHeaderData(data.header);
       setModalLoad("fetch", false);
-    } else if (data.code == 500) {
+    } else if (!response.success) {
       toast.error(data?.message?.msg);
     }
     setModalLoad("fetch", false);
@@ -93,7 +93,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       const response = await executeFun(() => getComponentOptions(e), "select");
       //     setLoading("select", false);
       //     const { data } = response;
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: e,
       // });
       const { data } = response;
@@ -105,11 +105,11 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     }
   };
   const getLocation = async (costCenter) => {
-    const { data } = await imsAxios.post("/backend/jw_sf_inward_location", {
+    const response = await imsAxios.post("/backend/jw_sf_inward_location", {
       cost_center: costCenter,
     });
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return { label: d.text, value: d.id };
     });
     setLocValue(arr);
@@ -529,9 +529,9 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     };
     const response = await executeFun(() => getBomItem(final), "select");
     // const response = await imsAxios.post("/jobwork/getBomItem");
-    if (response.data.status === "success" || response.data.code == 200) {
+    if (response.response.success || response.success) {
       const { data } = response;
-      let arr = data.data.map((r, id) => {
+      let arr = response.data.map((r, id) => {
         return {
           id: id + 1,
           bomQty: r.bom_qty,

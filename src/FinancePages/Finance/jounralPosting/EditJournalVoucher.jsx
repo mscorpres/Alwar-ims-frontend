@@ -124,18 +124,18 @@ export default function EditJournalVoucher({ editVoucher, setEditVoucher }) {
     if (!problem) {
       //   console.log(finalObj);
       setSubmitLoading(true);
-      const { data } = await imsAxios.post("/tally/jv/update_jv", {
+      const response = await imsAxios.post("/tally/jv/update_jv", {
         ...finalObj,
       });
       setSubmitLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         // resetHandler();
-        toast.success(data.message);
+        toast.success(response.message);
         setTimeout(() => {
           setEditVoucher(null);
         }, 3000);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       if (problem == "gls") {
@@ -145,13 +145,13 @@ export default function EditJournalVoucher({ editVoucher, setEditVoucher }) {
   };
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
     let arr = [];
     if (!data.msg) {
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -280,12 +280,12 @@ export default function EditJournalVoucher({ editVoucher, setEditVoucher }) {
   ];
   const getVoucherDetails = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/tally/jv/jv_edit", {
+    const response = await imsAxios.post("/tally/jv/jv_edit", {
       jv_key: editVoucher,
     });
     setLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           id: row.trans_id,
           glCode: { value: row.l_key, label: row.l_name },
@@ -300,7 +300,7 @@ export default function EditJournalVoucher({ editVoucher, setEditVoucher }) {
       console.log(moment(data.data[0].effective_date));
       setEffectiveDate(data.data[0].effective_date);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const inputHandler = (name, value, id) => {

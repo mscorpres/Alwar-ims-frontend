@@ -49,10 +49,10 @@ const OpenR29Modal = ({
   };
 
   const getBom = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: dataa?.selectProduct,
     });
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.bomid, label: d.bomname };
     });
     setBomName(arr);
@@ -69,13 +69,13 @@ const OpenR29Modal = ({
   const generateFun = async () => {
     setLoading(true);
     setAllResponseData([]);
-    const { data } = await imsAxios.post("/report29", {
+    const response = await imsAxios.post("/report29", {
       product: dataa.selectProduct,
       subject: dataa.bom,
       date: date,
     });
     console.log(data, "r29 dataaaaaaaaaaaaaaaaa");
-    if (data.code == 200) {
+    if (response.success) {
       setData({
         selectProduct: "",
         bom: "",
@@ -89,7 +89,7 @@ const OpenR29Modal = ({
       setAllResponseData(arr);
       // setShow(false);
       setLoading(false);
-    } else if (data.code == 500) {
+    } else if (!response.success) {
       toast.error(data.message);
       // setViewModal(false);
       // setShow(false);

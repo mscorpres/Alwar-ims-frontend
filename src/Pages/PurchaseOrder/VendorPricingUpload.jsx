@@ -20,10 +20,10 @@ export default function VendorPricingUpload() {
     const api = "/purchaseorder/uploadVendorPricing?stage=1";
     let formData = new FormData();
     formData.append("uploadfile", file);
-    const { data } = await imsAxios.post(api, formData);
+    const response = await imsAxios.post(api, formData);
     setPreviewLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.data.map((row) => {
+    if (response.success) {
+      let arr = data.response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -32,23 +32,23 @@ export default function VendorPricingUpload() {
 
       setPreviewRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const submitFunction = async () => {
     let formData = new FormData();
     formData.append("uploadfile", file);
     setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/purchaseorder/uploadVendorPricing?stage=2",
       formData
     );
     setLoading(false);
     // console.log(data);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const previewColumns = [

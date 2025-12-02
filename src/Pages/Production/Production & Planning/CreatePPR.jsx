@@ -55,9 +55,9 @@ const CreatePPR = () => {
   });
 
   const getLocation = async () => {
-    const { data } = await imsAxios.get("ppr/ppr_section_location");
+    const response = await imsAxios.get("ppr/ppr_section_location");
     const locArr = [];
-    data.data.map((a) =>
+    response.data.map((a) =>
       locArr.push({ text: `(${a.name}) ${a.address}`, value: a.location_key })
     );
     setLocationn(locArr);
@@ -79,13 +79,13 @@ const CreatePPR = () => {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         createPPRForm.setFieldValue(
           "projectDescription",
           data.data.description
         );
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -153,11 +153,11 @@ const CreatePPR = () => {
       const response = await imsAxios.post("/ppr/createPPR", payload);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           resetFunction();
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } catch (error) {

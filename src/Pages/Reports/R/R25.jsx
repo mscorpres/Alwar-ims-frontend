@@ -39,7 +39,7 @@ const R25 = () => {
     // let link = "/backend/getComponentByNameAndNo";
 
     // setSelectLoading(true);
-    // const { data } = await imsAxios.post(link, {
+    // const response = await imsAxios.post(link, {
     //   search: search,
     // });
     // setSelectLoading(false);
@@ -61,12 +61,12 @@ const R25 = () => {
 
   const fetchReportName = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/report25/fetchR25ReportName", {
+    const response = await imsAxios.post("/report25/fetchR25ReportName", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => ({
+    if (response.success) {
+      let arr = response.data.map((row) => ({
         text: row.report_name,
         value: row.report_id,
       }));
@@ -86,7 +86,7 @@ const R25 = () => {
         product_fg_qty: values?.qty,
       });
       const { data } = response;
-      if (data.code === 200) {
+      if (response.success) {
         let arr = data.data;
         arr = arr.map((row, index) => ({
           id: index + 1,
@@ -178,7 +178,7 @@ const R25 = () => {
     let arr = [];
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         obj = {
           name: data.data.report.label,
           id: data.data.report.value,

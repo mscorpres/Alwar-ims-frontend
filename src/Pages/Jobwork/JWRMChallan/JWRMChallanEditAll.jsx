@@ -56,7 +56,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     });
     // console.log(response.data.data.header)
     setLoading("fetchDetails", false);
-    if (response.data.code === 200) {
+    if (response.success) {
       let arr = response.data.data.material.map((row, index) => ({
         id: v4(),
         index: index + 1,
@@ -92,7 +92,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       setLoading("tableSpinner", false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           arr = arr.map((row) => {
             if (row.id === id) {
               return {
@@ -105,7 +105,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
             }
           });
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     } else {
@@ -187,7 +187,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     // console.log("response", response);
 
     setLoading("submit", false);
-    if (response.data.code === 200) {
+    if (response.success) {
       toast.success(response.data.message);
       setEditJWAll(false);
       getRows();
@@ -201,8 +201,8 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
   };
   const getLocations = async () => {
     const response = await imsAxios.get("/jobwork/jwChallanLocations");
-    if (response.data.code === 200) {
-      let arr = response.data.data.map((row) => ({
+    if (response.success) {
+      let arr = response.response.data.map((row) => ({
         text: row.text,
         value: row.id,
       }));
@@ -272,7 +272,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       dispatch_code: value,
     });
     setLoading("page", false);
-    if (response.data.code === 200) {
+    if (response.success) {
       let obj = createJobWorkChallanForm.getFieldsValue();
       obj = {
         ...obj,
@@ -292,7 +292,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       billing_code: value,
     });
     setLoading("page", false);
-    if (response.data.code === 200) {
+    if (response.success) {
       let obj = createJobWorkChallanForm.getFieldsValue();
       obj = {
         ...obj,
@@ -473,12 +473,12 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
   const deleteRow = async (i) => {
     console.log(i);
     setLoading("tableSpinner", true);
-    const { data } = await imsAxios.post("/jobwork/removeChallanJWPart", {
+    const response = await imsAxios.post("/jobwork/removeChallanJWPart", {
       partcode: i?.component_key,
       row_id: i?.trans_row_id,
     });
     setLoading("tableSpinner", false);
-    if (data.code == 200) {
+    if (response.success) {
       let arr = rows;
       arr = arr.filter((row) => row.id !== i.id);
       arr = arr.map((row, index) => ({
@@ -487,8 +487,8 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       }));
       setRows(arr);
       // getDetails();
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoadChallan(false);
     }
     // console.log(data);

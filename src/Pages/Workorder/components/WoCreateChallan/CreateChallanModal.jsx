@@ -174,9 +174,8 @@ const CreateChallanModal = ({
       "/wo_challan/previewExcelShipmentData",
       formData
     );
-    const { data } = res;
-    if (data.code === 200) {
-      let arr = data.data.map((r, index) => {
+    if (res.success) {
+      let arr = res.data.map((r, index) => {
         return {
           id: index + 1,
           ...r,
@@ -344,13 +343,13 @@ const CreateChallanModal = ({
         "/wo_challan/updateWO_DeliveryChallan",
         cddata
       );
-      if (response.data.code === 200) {
-        toast.success(response.data.message);
+      if (response.success) {
+        toast.success(response.message);
         challanForm.resetFields();
         close();
         setLoading(false);
       } else {
-        toast.error(response.data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } catch (error) {
@@ -413,13 +412,13 @@ const CreateChallanModal = ({
         "wo_challan/updateWO_ReturnChallan",
         cddata
       );
-      if (response.data.code === 200) {
-        toast.success(response.data.message);
+      if (response.success) {
+        toast.success(response.message);
         challanForm.resetFields();
         setLoading(false);
         close();
       } else {
-        toast.error(response.data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } catch (error) {
@@ -443,7 +442,7 @@ const CreateChallanModal = ({
     // console.log("response ->", response);
     const { data } = response;
     // let arr = data.data;
-    if (data.code == 200) {
+    if (response.success) {
       let arrHead = data.header;
       // console.log("data", response);
 
@@ -785,7 +784,7 @@ const CreateChallanModal = ({
         }
       );
       const { data } = response;
-      const arr = data.data.map((row, index) => ({
+      const arr = response.data.map((row, index) => ({
         id: index + 1,
         componentKey: row.component_key,
         component: row.component_name,
@@ -813,32 +812,27 @@ const CreateChallanModal = ({
       product_key: inputValue,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        // console.log("data in data fetch product", dataProductdetails);
-        // fetchbomlist(data.data.product_sku);
-        // setUom(data.data?.unit);
-        // challanForm.setFieldValue("qty", data.data?.description);
-        // challanForm.setFieldValue("rate", data.data?.rate);
-        // challanForm.setFieldValue("hsncode", data.data?.hsn);
-        // challanForm.setFieldValue("gstRate", data.data?.gstrate);
-        let obj = {
-          hsncode: data.data?.hsn,
-          // rate: data.data?.rate,
-          // gstRate: data.data?.gstRate,
-          secondary_product: data.data?.product_name,
-          secondary_productId: inputValue,
-          productname: dataProductdetails.text,
-          qty: minqty,
-        };
-        // challanForm.setFieldsValue()
-        challanForm.setFieldValue("components", [obj]);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      // console.log("data in data fetch product", dataProductdetails);
+      // fetchbomlist(response.data.product_sku);
+      // setUom(response.data?.unit);
+      // challanForm.setFieldValue("qty", response.data?.description);
+      // challanForm.setFieldValue("rate", response.data?.rate);
+      // challanForm.setFieldValue("hsncode", response.data?.hsn);
+      // challanForm.setFieldValue("gstRate", response.data?.gstrate);
+      let obj = {
+        hsncode: response.data?.hsn,
+        // rate: response.data?.rate,
+        // gstRate: response.data?.gstRate,
+        secondary_product: response.data?.product_name,
+        secondary_productId: inputValue,
+        productname: dataProductdetails.text,
+        qty: minqty,
+      };
+      // challanForm.setFieldsValue()
+      challanForm.setFieldValue("components", [obj]);
     } else {
-      toast.error("Some error occured wile getting component details");
+      toast.error(response.message?.msg || response.message || "Some error occured wile getting component details");
     }
   };
 
@@ -911,8 +905,8 @@ const CreateChallanModal = ({
         challanForm.setFieldValue("clientname", data.client.name);
         challanForm.setFieldValue("address", caddress);
       }
-      if (data.code === 200) {
-        const arr = data.branchList.map((row) => ({
+      if (response.success) {
+        const arr = response.data.branchList.map((row) => ({
           text: row.text,
           value: row.id,
           address: row.address,
@@ -920,9 +914,9 @@ const CreateChallanModal = ({
           pincode: row.pincode,
         }));
         setaddoptions(arr);
+      } else {
+        toast.error(response.message?.msg || response.message);
       }
-      // toast.success(data.message)
-      toast.error(data.message?.msg);
     } catch (error) {
       toast.error(error);
     } finally {
@@ -958,14 +952,13 @@ const CreateChallanModal = ({
       "/wo_challan/saveShipmentthroughExcel",
       formData
     );
-    const { data } = res;
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (res.success) {
+      toast.success(res.message);
       challanForm.resetFields();
       setRows([]);
       close();
     } else {
-      toast.error(data.message.msg);
+      toast.error(res.message?.msg || res.message);
     }
   };
   const createDeliveryChallan = async () => {
@@ -1087,13 +1080,13 @@ const CreateChallanModal = ({
             cddata
           );
           // console.log("response", response);
-          if (response.data.status === "success") {
-            toast.success(response.data.message);
+          if (response.success) {
+            toast.success(response.message);
             challanForm.resetFields();
             close();
             setLoading(false);
           } else {
-            toast.error(response.data.message.msg);
+            toast.error(response.message?.msg || response.message);
             setLoading(false);
           }
         } catch (error) {
@@ -1217,10 +1210,10 @@ const CreateChallanModal = ({
         );
       }
 
-      if (response.data.code === 200) {
+      if (response.success) {
         // console.log("response", response);
         close();
-        toast.success(response.data.message);
+        toast.success(response.message);
         challanForm.resetFields();
         setLoading(false);
         setRtnChallan(false);
@@ -1228,7 +1221,7 @@ const CreateChallanModal = ({
         // console.log("showCreateChallanModal-----");
         // setDetailData("");
       } else {
-        toast.error(response.data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } catch (error) {

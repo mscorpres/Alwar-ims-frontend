@@ -51,7 +51,7 @@ const CompletedPo = () => {
     }
     if (w) {
       setSearchLoading(true);
-      const { data } = await imsAxios.post("/purchaseOrder/fetchCompletePO", {
+      const response = await imsAxios.post("/purchaseOrder/fetchCompletePO", {
         data:
           wise === "vendor_wise"
             ? searchInput
@@ -62,15 +62,15 @@ const CompletedPo = () => {
       });
       setSearchLoading(false);
       setLoading(false);
-      // console.log(data.data);
-      if (data.code === 200) {
-        let arr = data.data;
+      // console.log(response.data);
+      if (response.success) {
+        let arr = response.data;
         arr = arr.map((row, index) => {
           return { ...row, id: row.po_transaction_code, index: index + 1 };
         });
         setRows(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setRows([]);
       }
     } else {
@@ -100,40 +100,48 @@ const CompletedPo = () => {
   };
   const getComponentData = async (poid) => {
     seViewLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/purchaseOrder/fetchComponentList4PO",
       {
         poid,
       }
     );
     seViewLoading(false);
-    if (data.code === 200) {
-      let arr = data.data;
+    if (response.success) {
+      let arr = response.data;
       arr = arr.map((row) => {
         return { ...row, id: row.componentPartID };
       });
       setComponentData({ poId: poid, components: arr });
       setShowComponentSideBar(true);
     } else {
-      toast.error("Some error occured please try again");
+      toast.error(response.message?.msg || response.message);
     }
   };
   const printFun = async (poid) => {
     setLoading(true);
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: poid,
     });
-    printFunction(data.data.buffer.data);
+    if (response.success) {
+      printFunction(response.data.buffer.data);
+    } else {
+      toast.error(response.message?.msg || response.message);
+    }
     setLoading(false);
   };
   const handleDownload = async (poid) => {
     setLoading("download");
-    const { data } = await imsAxios.post("/poPrint", {
+    const response = await imsAxios.post("/poPrint", {
       poid: poid,
     });
     setLoading(null);
-    let filename = poid;
-    downloadFunction(data.data.buffer.data, filename);
+    if (response.success) {
+      let filename = poid;
+      downloadFunction(response.data.buffer.data, filename);
+    } else {
+      toast.error(response.message?.msg || response.message);
+    }
   };
 
   const columns = [

@@ -25,14 +25,14 @@ export default function CreateMaster() {
 
   const getMasterGroups = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/tally/master_group_list");
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    const response = await imsAxios.get("/tally/master_group_list");
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return { ...row, id: v4() };
       });
       setMasterGroups(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     setLoading(false);
   };
@@ -46,15 +46,15 @@ export default function CreateMaster() {
       return toast.error("Please input both fields");
     }
     setFormLoading(true);
-    const { data } = await imsAxios.post("/tally/create_master_group", {
+    const response = await imsAxios.post("/tally/create_master_group", {
       ...newMasterGroup,
     });
     setFormLoading(false);
-    if (data.code == "200") {
-      toast.success(data.message.msg);
+    if (response.success) {
+      toast.success(response.message?.msg || response.message);
       getMasterGroups();
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const reset = () => {

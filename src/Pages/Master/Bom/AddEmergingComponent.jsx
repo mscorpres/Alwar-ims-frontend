@@ -63,14 +63,14 @@ export default function AddEmergingComponent({
     });
     setLoading(false);
     const { data } = response;
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setConfirm(false);
       setAddingEmergingPart(false);
       setEmergingPart("");
       next();
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const handleCancel = () => {

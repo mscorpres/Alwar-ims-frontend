@@ -43,11 +43,11 @@ const initialState = {
 //   "auth/login",
 //   async (user, thunkAPI) => {
 //     try {
-//       const { data } = await imsAxios.post("/auth/signin", {
+//       const response = await imsAxios.post("/auth/signin", {
 //         username: user.username,
 //         password: user.password,
 //       });
-//       if (data.code == 200) {
+//       if (response.success) {
 //         localStorage.setItem(
 //           "loggedInUser",
 //           JSON.stringify({

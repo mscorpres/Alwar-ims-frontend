@@ -72,14 +72,14 @@ export default function JobWorkApproval() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           ...row,
           id: index + 1,
         }));
         setRows(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -92,12 +92,12 @@ export default function JobWorkApproval() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         getRows();
         setApprovePo(null);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

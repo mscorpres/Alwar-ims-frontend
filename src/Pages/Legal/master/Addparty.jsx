@@ -17,10 +17,10 @@ function Addparty() {
   const [form] = Form.useForm();
   const addRows = async (values) => {
     console.log("values", values);
-    const data = await imsAxios.post("/qaProcessmaster/insert_Process", values);
+    const response = await imsAxios.post("/qaProcessmaster/insert_Process", values);
 
-    console.log("row Data", data);
-    if (data.status === "200" || data.status === 200) {
+    console.log("row Data", response);
+    if (response.success) {
       // getRows();
     }
   };
@@ -32,7 +32,7 @@ function Addparty() {
       searchTerm: partysearch,
     });
     console.log(response.data);
-    if (response.status === 200) {
+    if (response.success) {
       const newarr = response.data.parties.filter(
         (row) => row.party_name === partysearch
       );

@@ -17,7 +17,7 @@ function EditSheet({ editingSheet, setEditingSheet }) {
     setLoading(false);
     let { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setEditingData(data.data);
       }
     }
@@ -30,8 +30,8 @@ function EditSheet({ editingSheet, setEditingSheet }) {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row) => ({
+      if (response.success) {
+        let arr = response.data.map((row) => ({
           text: row.label,
           value: row.id,
         }));
@@ -80,10 +80,10 @@ function EditSheet({ editingSheet, setEditingSheet }) {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

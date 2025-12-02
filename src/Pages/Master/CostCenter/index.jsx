@@ -11,11 +11,11 @@ const CostCenter = () => {
   const getCostCenters = async () => {
     try {
       setLoading("fetchingRows");
-      const { data } = await imsAxios.get("/costCenter", {
+      const response = await imsAxios.get("/costCenter", {
         search: "",
       });
-      if (data) {
-        const arr = data.data.map((row, index) => ({
+      if (response.success) {
+        const arr = response.data.map((row, index) => ({
           id: index,
           index: index + 1,
           ...row,

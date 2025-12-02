@@ -45,12 +45,12 @@ export default function ViewContraDetail({ contraId, setContraId }) {
     setLoading(true);
 
     if (contraId) {
-      const { data } = await imsAxios.post("/tally/contra/contra_report", {
+      const response = await imsAxios.post("/tally/contra/contra_report", {
         data: contraId,
       });
       setLoading(false);
-      if (data.code == 200) {
-        const arr = data.data.map((row) => {
+      if (response.success) {
+        const arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -64,7 +64,7 @@ export default function ViewContraDetail({ contraId, setContraId }) {
   };
   const printFun = async () => {
     setPrintLoading(true);
-    const { data } = await imsAxios.post("/tally/contra/contra_print", {
+    const response = await imsAxios.post("/tally/contra/contra_print", {
       code: contraId,
     });
     printFunction(data.buffer.data);
@@ -73,7 +73,7 @@ export default function ViewContraDetail({ contraId, setContraId }) {
   const downloadFun = async () => {
     setDownloadLoading(true);
     let filename = `Contra ${contraId}`;
-    const { data } = await imsAxios.post("/tally/contra/contra_print", {
+    const response = await imsAxios.post("/tally/contra/contra_print", {
       code: contraId,
     });
     downloadFunction(data.buffer.data, filename);

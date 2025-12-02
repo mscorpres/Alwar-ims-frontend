@@ -30,7 +30,7 @@ function AppReport() {
     allRefData.vendorName = "";
     allRefData.vendorID = "";
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ap/fetchVendorLedger", {
+    const response = await imsAxios.post("/tally/ap/fetchVendorLedger", {
       search: search,
     });
     setSelectLoading(false);
@@ -43,7 +43,7 @@ function AppReport() {
   const fetchReport = async () => {
     setLoading(true);
     setRows([]);
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       `/tally/ap/fetchApReport?vendor=${allRefData?.vendorName}`
     );
     const arr = data?.map((row, index) => {

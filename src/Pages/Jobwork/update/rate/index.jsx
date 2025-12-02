@@ -39,9 +39,9 @@ const JWUpdateRate = () => {
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           setStage("submit");
-          const arr = data.data.map((row, index) => ({
+          const arr = response.data.map((row, index) => ({
             id: index + 1,
             component: row.PART_NAME,
             partCode: row.PART_CODE,
@@ -51,7 +51,7 @@ const JWUpdateRate = () => {
 
           setpreviewRows(arr);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       } else {
       }
@@ -70,8 +70,8 @@ const JWUpdateRate = () => {
 
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (response.success) {
+          const arr = response.data.map((row) => ({
             text: row.jw_id,
             value: row.jw_id,
           }));
@@ -110,8 +110,8 @@ const JWUpdateRate = () => {
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           updateJwForm.resetFields();
           setpreviewRows([]);
         }

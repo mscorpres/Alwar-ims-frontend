@@ -21,19 +21,19 @@ export default function EditLedger({ getLedgerList }) {
   const [codeConfirmed, setCodeConfirmed] = useState("pending");
   const confirmCode = async () => {
     setCodeConfirmLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/check_leadger_code", {
+    const response = await imsAxios.post("/tally/ledger/check_leadger_code", {
       code: ledgerData?.l_code,
     });
     setCodeConfirmLoading(false);
-    if (data.code === 200) {
-      if (data.data.exist) {
+    if (response.success) {
+      if (response.data.exist) {
         setCodeConfirmed("exist");
-      } else if (!data.data.exist) {
+      } else if (!response.data.exist) {
         setCodeConfirmed("not exist");
       }
     } else {
       setCodeConfirmed("exist");
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
@@ -54,12 +54,12 @@ export default function EditLedger({ getLedgerList }) {
   ];
   const getLedgers = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           text: row.text,
           value: row.id,
@@ -72,12 +72,12 @@ export default function EditLedger({ getLedgerList }) {
   };
   const getSubGroupSelect = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/getSubgroup", {
+    const response = await imsAxios.post("/tally/getSubgroup", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row) => {
+    if (response.success) {
+      let arr = response.data.map((row) => {
         return {
           text: row.label,
           value: row.id,
@@ -91,13 +91,13 @@ export default function EditLedger({ getLedgerList }) {
   const getLedgerData = async () => {
     setLoading(true);
     if (selectedLedger) {
-      const { data } = await imsAxios.post("/tally/ledger/editLedger", {
+      const response = await imsAxios.post("/tally/ledger/editLedger", {
         code: selectedLedger,
       });
       setLoading(false);
-      validateResponse(data);
-      if (data.code == 200) {
-        let obj = data.data;
+      validateResponse(response);
+      if (response.success) {
+        let obj = response.data;
         obj = {
           ...obj,
           subGroup: { label: obj.group_name, value: obj.group_key },
@@ -132,13 +132,13 @@ export default function EditLedger({ getLedgerList }) {
       type: ledgerData.ledger_type,
     };
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/tally/ledger/updateLedger", {
+    const response = await imsAxios.post("/tally/ledger/updateLedger", {
       ...finalObj,
     });
-    validateResponse(data);
+    validateResponse(response);
     setSubmitLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       getLedgerList();
       resetHandler();
     }

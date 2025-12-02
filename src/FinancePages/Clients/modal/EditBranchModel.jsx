@@ -46,11 +46,11 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
 
   const getCountryShow = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.get("/tally/backend/countries");
+    const response = await imsAxios.get("/tally/backend/countries");
     setPageLoading(false);
     let arr = [];
-    if (data.data[0]) {
-      arr = data.data.map((row) => ({
+    if (response.success && response.data[0]) {
+      arr = response.data.map((row) => ({
         text: row.name,
         value: row.code,
       }));
@@ -60,10 +60,10 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
 
   const getState = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.get("/tally/backend/states");
+    const response = await imsAxios.get("/tally/backend/states");
     setPageLoading(false);
-    if (data.data[0]) {
-      let arr = data.data.map((row) => ({
+    if (response.success && response.data[0]) {
+      let arr = response.data.map((row) => ({
         text: row.name,
         value: row.code,
       }));
@@ -91,17 +91,12 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
     };
     console.log("cointry", country);
     const response = await imsAxios.put("client/updateBranch", newobj);
-    const { data } = response;
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setBranchId(null);
-      setBranchModal(false);
-    } else if (data.code == 500) {
-      toast.error(data.status);
-      setBranchId(null);
-      setBranchModal(false);
       setBranchModal(false);
     } else {
+      toast.error(response.message?.msg || response.message);
       setBranchId(null);
       setBranchModal(false);
     }

@@ -30,20 +30,20 @@ export default function AddClients() {
 
   const getCountries = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.get("/tally/backend/countries");
+    const response = await imsAxios.get("/tally/backend/countries");
     setPageLoading(false);
     let arr = [];
-    if (data.data[0]) {
-      arr = data.data.map((row) => ({ text: row.name, value: row.code }));
+    if (response.success && response.data[0]) {
+      arr = response.data.map((row) => ({ text: row.name, value: row.code }));
       setCountriesOptions(arr);
     }
   };
   const getState = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.get("/tally/backend/states");
+    const response = await imsAxios.get("/tally/backend/states");
     setPageLoading(false);
-    if (data.data[0]) {
-      let arr = data.data.map((row) => ({
+    if (response.success && response.data[0]) {
+      let arr = response.data.map((row) => ({
         text: row.name,
         value: row.code,
       }));
@@ -72,16 +72,13 @@ export default function AddClients() {
     setSubmitLoading(true);
     const response = await imsAxios.post("/client/add", newObj);
     setSubmitLoading(false);
-    const { data } = response;
-    console.log("data", data);
-    if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
-        resetFunction();
-        setShowSubmitConfirm(false);
-      } else {
-        toast.error(data.message.msg);
-      }
+    console.log("data", response);
+    if (response.success) {
+      toast.success(response.message);
+      resetFunction();
+      setShowSubmitConfirm(false);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   const resetFunction = () => {

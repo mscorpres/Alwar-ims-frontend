@@ -53,7 +53,7 @@ export default function MessageModal({
 
   const getAllConverations = async () => {
     setGetConversationLoading(true);
-    const { data } = await imsAxios.get("/chat/get-conversations");
+    const response = await imsAxios.get("/chat/get-conversations");
     setGetConversationLoading(false);
     if (data?.code == 200) {
       setConversations(data.data);
@@ -64,12 +64,12 @@ export default function MessageModal({
       conversationId: rec.conversationId,
     });
     setGetMessagesLoading(true);
-    const { data } = await imsAxios.post("/chat/get-conversationById", {
+    const response = await imsAxios.post("/chat/get-conversationById", {
       conversationId: rec.conversationId,
     });
     setGetMessagesLoading(false);
     setCurrentConversation(rec);
-    if (data.code == 200) {
+    if (response.success) {
       setMessages(data.data);
     }
     let arr = conversations.map((conv) => {
@@ -88,14 +88,14 @@ export default function MessageModal({
     if (newMessage.length > 0) {
       setSendMessageLoading(true);
 
-      const { data } = await imsAxios.post("/chat/save-messages", {
+      const response = await imsAxios.post("/chat/save-messages", {
         text: newMessage,
         conversationId: currentConversation.conversationId,
         receiver: currentConversation.receiver.id,
         // sender: user?.id,
       });
       setSendMessageLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         SiSocketdotio.emit("send_chat_msg", {
           // senderId: receiver.unique_id,
           receiver: data.data.receiver,
@@ -138,7 +138,7 @@ export default function MessageModal({
         setConversations(arr);
         setNewMessage("");
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else if (uploadingFile) {
       // creating the form data
@@ -152,11 +152,11 @@ export default function MessageModal({
       formData.append("uploaded_file", uploadingFile);
       formData.append("otherData", JSON.stringify(otherData));
       // sending file and other data through api
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/chat//save-messages-files",
         formData
       );
-      if (data.code == 200) {
+      if (response.success) {
         SiSocketdotio.emit("send_chat_msg", {
           // senderId: receiver.unique_id,
           receiver: data.data.receiver,
@@ -202,13 +202,13 @@ export default function MessageModal({
         setConversations(arr);
         setUploadingFile(false);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
   const searchUsers = async (search) => {
     setGetConversationLoading(true);
-    const { data } = await imsAxios.post("backend/fetchAllUser", {
+    const response = await imsAxios.post("backend/fetchAllUser", {
       search: search,
     });
     setGetConversationLoading(false);
@@ -235,10 +235,10 @@ export default function MessageModal({
         name: searchedUser.fname,
       },
     };
-    const { data } = await imsAxios.post("/chat/checkConvertation", {
+    const response = await imsAxios.post("/chat/checkConvertation", {
       user: searchedUser.id,
     });
-    if (data.code == 200) {
+    if (response.success) {
       setUserSearch("");
 
       setCurrentConversation({

@@ -24,8 +24,8 @@ export default function JwDetailsView({ viewPoDetails, setViewPoDetails }) {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           id: index + 1,
           ...row,
         }));

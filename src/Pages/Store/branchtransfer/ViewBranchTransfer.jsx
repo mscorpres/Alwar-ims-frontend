@@ -39,14 +39,14 @@ function ViewBranchTransfer() {
   const { executeFun, loading: loading1 } = useApi();
   const getcomoponents = async (trans_id) => {
     setLoading("fetch");
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/branchTransfer/branchTransferDetails",
       {
         trans_id: trans_id,
       }
     );
     console.log(data);
-    let arr = data.data.map((row, index) => ({
+    let arr = response.data.map((row, index) => ({
       id: index,
       index: index + 1,
       component: row.component,
@@ -155,11 +155,11 @@ function ViewBranchTransfer() {
       const { data } = response;
       if (data.status === "error") {
         toast.error(data.message);
-      } else if (data.status === "success") {
-        if (data.code === 200) {
+      } else if (response.success ) {
+        if (response.success) {
           console.log("coming here");
           console.log(data);
-          const arr = data.data.map((row, index) => {
+          const arr = response.data.map((row, index) => {
             return {
               key: index,
               id: index,
@@ -383,16 +383,16 @@ const ViewModal = ({
   ];
   const approveTransfer = async () => {
     setLoading("fetch");
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/branchTransfer/approveTransferStock",
       {
         trans_id: detaildata[0].trans_id,
       }
     );
-    if (data.status === "success") {
-      toast.success(data.message);
+    if (response.success ) {
+      toast.success(response.message);
     } else if (data.status === "error") {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
     setLoading(false);
     setshow(false);

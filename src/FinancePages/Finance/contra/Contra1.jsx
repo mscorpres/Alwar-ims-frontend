@@ -148,13 +148,13 @@ export default function Contra1() {
   // change api
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/contra/bank_cash_ledgers", {
+    const response = await imsAxios.post("/tally/contra/bank_cash_ledgers", {
       search: search,
     });
     setSelectLoading(false);
     let arr = [];
-    if (data.code == 200) {
-      arr = data.data.map((row) => {
+    if (response.success) {
+      arr = response.data.map((row) => {
         return { text: row.text, value: row.id };
       });
       setAsyncOptions(arr);
@@ -270,18 +270,18 @@ export default function Contra1() {
     };
     if (!problem) {
       setLoading(true);
-      const { data } = await imsAxios.post("/tally/contra/create_contra", {
+      const response = await imsAxios.post("/tally/contra/create_contra", {
         ...finalObj,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         resetHandler();
         if (data.message.msg.includes("completed")) {
           return toast.success("Contra Created");
         }
         toast.success(data.message.msg);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       if (problem == "account") {

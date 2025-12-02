@@ -43,7 +43,7 @@ function ProfilLossReport() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         let incomeMaster = data.data.income_master;
         let indirectIncomes = incomeMaster[0].children.filter(
           (row) => row.code === "8030000"
@@ -134,7 +134,7 @@ function ProfilLossReport() {
         console.log("net loss is => ", NL);
         setTotal(totalObj);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setIncomeRows([]);
         setExpenseRows([]);
       }

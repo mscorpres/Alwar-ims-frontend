@@ -32,62 +32,72 @@ const ReqWithBom = () => {
 
   const getLocationValueFetch = async () => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/production/fetchLocationForWitoutBom"
     );
     setSelectLoading(false);
     const locArr = [];
-    data.data.map((obj) => locArr.push({ text: obj.text, value: obj.id }));
+    if (response.success) {
+      response.data.map((obj) => locArr.push({ text: obj.text, value: obj.id }));
+    }
     setLocation(locArr);
   };
   const getLocation = async () => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/transaction/getMaterialRequestPickLocation"
     );
-    // const { data } = await imsAxios.post("/transaction/getLocationInMin");
+    // const response = await imsAxios.post("/transaction/getLocationInMin");
     setSelectLoading(false);
     const locArr1 = [];
-    data.data.data.map((obj) =>
-      locArr1.push({ text: obj.text, value: obj.id })
-    );
+    if (response.success && response.data?.data) {
+      response.response.data.map((obj) =>
+        locArr1.push({ text: obj.text, value: obj.id })
+      );
+    }
     setLocation1(locArr1);
   };
 
   const locationDetail = async (locValue, setFun) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/production/fetchLocationDetail", {
+    const response = await imsAxios.post("/production/fetchLocationDetail", {
       location_key: locValue,
     });
     setPageLoading(false);
-    setFun(data.data);
+    if (response.success) {
+      setFun(response.data);
+    }
   };
 
   const getProductSkuFetch = async (e) => {
     if (e?.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/getProductByNameAndNo", {
+      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
       setSelectLoading(false);
       let arr = [];
-      arr = data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
+      if (response.success) {
+        arr = response.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+      }
       setAsyncOptions(arr);
     }
   };
 
   const getProductName = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/production/getProductDetail", {
+    const response = await imsAxios.post("/production/getProductDetail", {
       p_key: allBom.proSku.value,
     });
-    setDetailProductName(data.data);
     setPageLoading(false);
-    const sto = [];
-    data.boms.map((ob) => sto.push({ text: ob.text, value: ob.id }));
-    setDetailBom(sto);
+    if (response.success) {
+      setDetailProductName(response.data);
+      const sto = [];
+      response.boms?.map((ob) => sto.push({ text: ob.text, value: ob.id }));
+      setDetailBom(sto);
+    }
   };
 
   const nextPage = () => {

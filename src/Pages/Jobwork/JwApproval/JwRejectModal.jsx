@@ -17,13 +17,13 @@ export default function JwRejectModal({ open, close, getRows }) {
     });
     setLoading(false);
     const { data } = response;
-    if (data.code === 200) {
+    if (response.success) {
       close();
       resetHandler();
       getRows();
-      toast.success(data.message);
+      toast.success(response.message);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 

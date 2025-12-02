@@ -30,12 +30,12 @@ function UpdateRM() {
   const getOption = async (e) => {
     if (e?.length > 2) {
       setSelLoading(true);
-      const { data } = await imsAxios.post("/backend/getMinTransactionByNo", {
+      const response = await imsAxios.post("/backend/getMinTransactionByNo", {
         search: e,
       });
       setSelLoading(false);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -46,11 +46,11 @@ function UpdateRM() {
     setLoading(true);
     setMainData([]);
     setHeaderData([]);
-    const { data } = await imsAxios.post("/transaction/fetchMINData", {
+    const response = await imsAxios.post("/transaction/fetchMINData", {
       min_transaction: inputStore,
     });
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (data.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -60,8 +60,8 @@ function UpdateRM() {
       setMainData(arr);
       setHeaderData(data.header);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
   };
@@ -197,7 +197,7 @@ function UpdateRM() {
     mainData.map((invo) => invoiceArray.push(invo.invoice_id));
     mainData.map((rem) => remarkArray.push(rem.remark));
 
-    const { data } = await imsAxios.post("/transaction/updateMIN", {
+    const response = await imsAxios.post("/transaction/updateMIN", {
       branch: "BRMSC012",
       key: keyArray,
       component: compKeyArray,
@@ -205,11 +205,11 @@ function UpdateRM() {
       remark: remarkArray,
       min_transaction: inputStore,
     });
-    if (data.code == 200) {
+    if (data.success) {
       setUpdteModal(false);
       resetFun();
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setUpdteModal(false);
     }
     console.log(data);

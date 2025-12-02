@@ -40,14 +40,14 @@ function R16() {
   const fetch = async () => {
     setDateData([]);
     setLoading(true);
-    const { data } = await imsAxios.post("/transaction/transactionOut", {
+    const response = await imsAxios.post("/transaction/transactionOut", {
       data: datee,
     });
 
-    if (data.code == 200) {
+    if (response.success) {
       // setLoading(true);
-      toast.success(data.message);
-      let arr = data.data.map((row) => {
+      toast.success(response.message);
+      let arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -55,8 +55,8 @@ function R16() {
       });
       setDateData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };

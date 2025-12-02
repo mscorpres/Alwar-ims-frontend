@@ -33,7 +33,7 @@ export default function EditTDSMoal({ editingTDS, setEditingTDS, getTDSList }) {
       percentage,
     } = tdsData;
     // setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/tds/update_new_nature_of_tds",
       {
         code: tds_code,
@@ -45,24 +45,22 @@ export default function EditTDSMoal({ editingTDS, setEditingTDS, getTDSList }) {
       }
     );
     setLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message.msg);
+    if (response.success) {
+      toast.success(response.message?.msg || response.message);
       setEditingTDS(null);
       getTDSList();
     } else {
-      for (const key in data.message) {
-        toast.error(data.message[key][0]);
-      }
+      toast.error(response.message?.msg || response.message);
     }
   };
   const getGLCodes = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/tally/tds/tds_ledger_options", {
+    const response = await imsAxios.post("/tally/tds/tds_ledger_options", {
       search: search,
     });
     setSelectLoading(false);
-    if (data.code === 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return {
           text: row.text,
           value: row.id,

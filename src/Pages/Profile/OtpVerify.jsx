@@ -187,18 +187,18 @@ function OtpVerify({
       setLoading(false);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (response.success) {
+          toast.success(response.message);
           setOTPSent(true);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     }
   };
   const checkMobile = async () => {
     setLoading("submit");
-    const { data } = await imsAxios.get("/profile/checkMobile");
+    const response = await imsAxios.get("/profile/checkMobile");
     setLoading(false);
     validateResponse(data);
     setUserNumber(
@@ -227,12 +227,12 @@ function OtpVerify({
     });
     setLoading(false);
     const { data } = response;
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setShowOTPVerifyModal(false);
       updateUserState("mobileConfirmed");
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   useEffect(() => {

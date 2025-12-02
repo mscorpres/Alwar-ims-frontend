@@ -21,16 +21,18 @@ const Vendor = () => {
 
   const fetchVendor = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/vendor/getAll");
-    let arr = data.data.map((row) => {
-      return {
-        ...row,
-        id: v4(),
-        vendor_status: row.vendor_status == "B" ? "Blocked" : "Active",
-      };
-    });
-    setAllVender(arr);
+    const response = await imsAxios.get("/vendor/getAll");
     setLoading(false);
+    if (response.success) {
+      let arr = response.data.map((row) => {
+        return {
+          ...row,
+          id: v4(),
+          vendor_status: row.vendor_status == "B" ? "Blocked" : "Active",
+        };
+      });
+      setAllVender(arr);
+    }
   };
   const coloums = [
     { field: "vendor_name", headerName: "Name", width: 500 },

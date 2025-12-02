@@ -30,11 +30,11 @@ function ClientBranchAdd({ branchAddOpen, setBranchAddOpen }) {
 
   const getCountries = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.get("/tally/backend/countries");
+    const response = await imsAxios.get("/tally/backend/countries");
     setPageLoading(false);
     let arr = [];
-    if (data.data[0]) {
-      arr = data.data.map((row) => ({
+    if (response.success && response.data[0]) {
+      arr = response.data.map((row) => ({
         text: row.name,
         value: row.code,
       }));
@@ -43,10 +43,10 @@ function ClientBranchAdd({ branchAddOpen, setBranchAddOpen }) {
   };
   const getState = async () => {
     setPageLoading(true);
-    const { data } = await imsAxios.get("/tally/backend/states");
+    const response = await imsAxios.get("/tally/backend/states");
     setPageLoading(false);
-    if (data.data[0]) {
-      let arr = data.data.map((row) => ({
+    if (response.success && response.data[0]) {
+      let arr = response.data.map((row) => ({
         text: row.name,
         value: row.code,
       }));
@@ -71,16 +71,13 @@ function ClientBranchAdd({ branchAddOpen, setBranchAddOpen }) {
     setSubmitLoading(true);
     const response = await imsAxios.post("/client/addBranch", newObj);
     setSubmitLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
-        resetFunction();
-        setBranchAddOpen(false);
-        setShowSubmitConfirm(false);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      toast.success(response.message);
+      resetFunction();
+      setBranchAddOpen(false);
+      setShowSubmitConfirm(false);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   const resetFunction = () => {

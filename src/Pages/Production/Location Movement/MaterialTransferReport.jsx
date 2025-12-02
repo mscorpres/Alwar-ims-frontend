@@ -26,13 +26,13 @@ export default function MaterialTransferReport({ type }) {
       link = "/godown/report_sf_rej";
     }
     setSearchLoading(true);
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       data: searchDateRange,
       wise: wise,
     });
     setSearchLoading(false);
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -41,7 +41,7 @@ export default function MaterialTransferReport({ type }) {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
     }
   };

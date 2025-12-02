@@ -41,7 +41,7 @@ function JwPendingRequest() {
         ? "/backend/getProductByNameAndNo"
         : type === "vendor" && "/backend/vendorList";
     setLoading("select");
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       search: search,
     });
     setLoading(false);
@@ -57,20 +57,20 @@ function JwPendingRequest() {
   };
   const getRows = async () => {
     setLoading("fetch");
-    const { data } = await imsAxios.post("/jobwork/getJobworkChallan", {
+    const response = await imsAxios.post("/jobwork/getJobworkChallan", {
       data: searchInput,
       wise: wise,
     });
     setLoading(false);
-    if (data.code === 200) {
-      let arr = data.data.map((row, index) => ({
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
         id: index + 1,
         ...row,
       }));
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const handlePrint = async (challan_id, refId, btn_status, invoice_id) => {
@@ -79,17 +79,17 @@ function JwPendingRequest() {
       btn_status === "create"
         ? "/jobwork/print_jw_rm_issue"
         : "/jobwork/printJobworkChallan";
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       invoice_id: invoice_id,
       transaction: refId,
       ref_id: refId,
       challan: challan_id,
     });
     setLoading(false);
-    if (data.code === 200) {
+    if (response.success) {
       printFunction(data.data.buffer.data);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const handleDownload = async (challan_id, refId, btn_status, invoice_id) => {
@@ -98,17 +98,17 @@ function JwPendingRequest() {
       btn_status === "create"
         ? "/jobwork/print_jw_rm_issue"
         : "/jobwork/printJobworkChallan";
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       invoice_id: invoice_id,
       transaction: refId,
       ref_id: refId,
       challan: challan_id,
     });
     setLoading(false);
-    if (data.code === 200) {
+    if (response.success) {
       downloadFunction(data.data.buffer.data, data.data.filename);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const columns = [

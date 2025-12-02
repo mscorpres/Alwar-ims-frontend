@@ -22,18 +22,15 @@ export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
       }
     );
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
-          id: index + 1,
-          ...row,
-        }));
-        setRows(arr);
-      } else {
-        toast.message(data.message.msg);
-        setViewPoDetails(false);
-      }
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
+        id: index + 1,
+        ...row,
+      }));
+      setRows(arr);
+    } else {
+      toast.error(response.message?.msg || response.message);
+      setViewPoDetails(false);
     }
   };
   const columns = [

@@ -60,13 +60,13 @@ const R5 = () => {
     } else {
       setResponseData([]);
       setLoading(true);
-      const { data } = await imsAxios.post("/report5", {
+      const response = await imsAxios.post("/report5", {
         date: selectDate,
         action: "search_r5",
       });
 
       // console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return {
             ...row,
@@ -75,7 +75,7 @@ const R5 = () => {
         });
         setResponseData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         setLoading(true);
         toast.error(data.message);
         setLoading(false);

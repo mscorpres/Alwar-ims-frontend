@@ -131,7 +131,7 @@ const Qctest = () => {
   };
   const fetchSinglePPR = async (e) => {
     setProcessOptions("");
-    const { data } = await imsAxios.post("createqca/fetchPprDetails", {
+    const response = await imsAxios.post("createqca/fetchPprDetails", {
       ppr_no: e,
     });
     setPprNo(e);
@@ -152,17 +152,17 @@ const Qctest = () => {
   };
   //2) PROCESS SEARCH API
   const getProcessofSku = async (skucode) => {
-    const { data } = await imsAxios.post("qaProcessmaster/fetchQAProcess", {
+    const response = await imsAxios.post("qaProcessmaster/fetchQAProcess", {
       sku: skucode,
     });
     if (data.status === "error") {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setProcessOptions([]);
       return;
     }
     setProcessData(data.data);
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return { text: d.process.name, value: d.process.key };
     });
     setProcessOptions(arr);
@@ -203,13 +203,13 @@ const Qctest = () => {
       failReason: "--",
       correction: "--",
     };
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/createqca/insert_qca_process",
       passSendData
     );
     setbuttonloading("");
     setbuttonstyle("pointer");
-    if (data.status === "success") {
+    if (response.success ) {
       setScanData([...ScanData, scaannn]);
       toast.success(data.message.msg);
       setCurrentScan(currentscan + 1);
@@ -255,13 +255,13 @@ const Qctest = () => {
       correction: "--",
     };
 
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/createqca/insert_qca_process",
       failSendData
     );
     setbuttonloading("");
     setbuttonstyle("pointer");
-    if (data.status === "success") {
+    if (response.success ) {
       setScanData([...ScanData, scaannn]);
       toast.success(data.message.msg);
       setFailedScan(failedscan + 1);
@@ -288,7 +288,7 @@ const Qctest = () => {
   };
 
   const getfaillist = async () => {
-    const { data } = await imsAxios.get("/createqca/getDefectNames");
+    const response = await imsAxios.get("/createqca/getDefectNames");
     let arr = [];
     arr = data.map((item) => {
       return { text: item.defect_name, value: item.problem_key };
@@ -337,7 +337,7 @@ const Qctest = () => {
       setLotStatus(true);
       toast.success(data.message.msg);
     } else if (response.status === 403) {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
 
@@ -374,7 +374,7 @@ const Qctest = () => {
     setFailedScan(0);
     setPassedScan(0);
     setCurrentScan(0);
-    const { data } = await imsAxios.post("/createqca/fetch_testing_data", {
+    const response = await imsAxios.post("/createqca/fetch_testing_data", {
       qca_ppr: pprNo,
       qca_process: e,
     });
@@ -387,7 +387,7 @@ const Qctest = () => {
     setFailedScan(faillength.length);
     setPassedScan(passlength.length);
     setCurrentScan(totalcounter);
-    const updatesscandata = data.data.map((item) => {
+    const updatesscandata = response.data.map((item) => {
       const result = splitDateAndTime(item.insertdt);
       return {
         id: v4(),

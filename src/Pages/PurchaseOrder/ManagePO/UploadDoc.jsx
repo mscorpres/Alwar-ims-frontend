@@ -34,15 +34,15 @@ export default function UploadDoc({
   const getPoExistingDocuments = async () => {
     setLoading(true);
     if (showUploadDocModal2) {
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/purchaseOrder/fetchUploadedAttachment",
         {
           po_id: showUploadDocModal2,
         }
       );
       setLoading(false);
-      if (data.code == 200) {
-        let arr = data.data.map((row) => {
+      if (response.success) {
+        let arr = response.data.map((row) => {
           return {
             uid: row.doc_id,
             name: row.doc_name,
@@ -63,19 +63,19 @@ export default function UploadDoc({
   //   }
   // }, [showUploadDoc]);
   const deleteFun = async (item) => {
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/purchaseOrder/deleteUploadedAttachment",
       {
         doc_id: item?.uid,
         po_id: showUploadDocModal2,
       }
     );
-    if (data.code == 200) {
+    if (response.success) {
       setFileToBeDeleted(null);
-      toast.success(data.message);
+      toast.success(response.message);
       await getPoExistingDocuments(showUploadDocModal2?.poId);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const props = {
@@ -96,18 +96,18 @@ export default function UploadDoc({
     formData.append("po_id", showUploadDocModal2);
     formData.append("doc_name", fileName);
     setUploadLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/purchaseOrder/uploadAttachment",
       formData
     );
     setUploadLoading(false);
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       getPoExistingDocuments();
       setFileName("");
       setFileList([]);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   useEffect(() => {

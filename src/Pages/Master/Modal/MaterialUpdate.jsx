@@ -100,11 +100,11 @@ export default function MaterialUpdate({
   ];
   const getGroup = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/groups/groupSelect2", {
+      const response = await imsAxios.post("/groups/groupSelect2", {
         searchTerm: e,
       });
       let arr = [];
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -113,11 +113,11 @@ export default function MaterialUpdate({
   };
 
   const getUOM = async (e) => {
-    const { data } = await imsAxios.post("/uom/uomSelect2", {
+    const response = await imsAxios.post("/uom/uomSelect2", {
       searchTerm: e,
     });
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return { label: d.text, value: d.id };
     });
     // console.log(arr);
@@ -138,13 +138,13 @@ export default function MaterialUpdate({
     //   description: "",
     // });
     setLoading("fetch");
-    const { data } = await imsAxios.post("/component/fetchUpdateComponent", {
+    const response = await imsAxios.post("/component/fetchUpdateComponent", {
       componentKey: materialModal,
     });
     setLoading(false);
 
     // console.log(data);
-    data.data.map((an) => setAllUpdataData(an));
+    response.data.map((an) => setAllUpdataData(an));
   };
 
   // console.log(allUpdateData);
@@ -167,7 +167,7 @@ export default function MaterialUpdate({
     } else {
       setLoading("submit");
 
-      const { data } = await imsAxios.post("/component/updateComponent", {
+      const response = await imsAxios.post("/component/updateComponent", {
         componentKey: materialModal,
         componentname: allUpdateData?.name,
         uom: allUpdateData?.uomid,
@@ -196,11 +196,11 @@ export default function MaterialUpdate({
         componentcategory: allUpdateData?.category,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setMaterialModal(false);
         allComponent();
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

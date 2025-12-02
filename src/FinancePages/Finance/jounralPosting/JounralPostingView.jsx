@@ -100,15 +100,15 @@ export default function JounralPostingView({ jvId, setJvId }) {
     let debitArr = [];
     let arr = [];
     if (jvId) {
-      const { data } = await imsAxios.post("/tally/jv/jv_detail", {
+      const response = await imsAxios.post("/tally/jv/jv_detail", {
         jv_key: jvId,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setJournalDate(data.data[0].insert_date);
         setRefDate(data.data[0].ref_date);
         arr = data.data;
-        data.data.map((row) => {
+        response.data.map((row) => {
           if (row.credit != "") {
             creditArr.push(row.credit);
           } else {
@@ -145,7 +145,7 @@ export default function JounralPostingView({ jvId, setJvId }) {
   };
   const printFun = async () => {
     setPrintLoading(true);
-    const { data } = await imsAxios.post("/tally/jv/jv_print", {
+    const response = await imsAxios.post("/tally/jv/jv_print", {
       jv_key: jvId,
     });
     setPrintLoading(false);
@@ -154,7 +154,7 @@ export default function JounralPostingView({ jvId, setJvId }) {
   const downloadFun = async () => {
     setDownloadLoading(true);
     let filename = `Journal Voucher ${jvId}`;
-    const { data } = await imsAxios.post("/tally/jv/jv_print", {
+    const response = await imsAxios.post("/tally/jv/jv_print", {
       jv_key: jvId,
     });
     setDownloadLoading(false);

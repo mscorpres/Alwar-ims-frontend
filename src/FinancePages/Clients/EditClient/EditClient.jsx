@@ -53,7 +53,7 @@ function EditClient({
 
   // const changeStatus = async (value) => {
   //   setStatusLoading(true);
-  //   const { data } = await imsAxios.post(
+  //   const response = await imsAxios.post(
   //     "/vendor/updateVendorStatus",
   //     {
   //       status: value ? "B" : "A",
@@ -61,8 +61,8 @@ function EditClient({
   //     }
   //   );
   //   setStatusLoading(false);
-  //   if (data.code == 200) {
-  //     toast.success(data.message);
+  //   if (response.success) {
+  //     toast.success(response.message);
   //     if (value) {
   //       setVendorStatus("B");
   //     } else {
@@ -89,14 +89,14 @@ function EditClient({
   //     tcs: values?.tcs,
   //   };
 
-  //   const { data } = await imsAxios.put(
+  //   const response = await imsAxios.put(
   //     "/client/update",
   //     obj
   //   );
-  //   if (data.code == 200) {
+  //   if (response.success) {
   //     getRows();
   //     setUpdatingClient(null);
-  //     toast.success(data.message);
+  //     toast.success(response.message);
   //   }
   // };
 
@@ -112,41 +112,46 @@ function EditClient({
   // };
 
   const getMatchById = async () => {
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       `/client/getClient?code=${updatingClient?.code}`
     );
-    let obj = {
-      ...data.data[0],
-    };
-    updateClientForm.setFieldsValue(obj);
-    setClientStatus(obj.status);
+    if (response.success) {
+      let obj = {
+        ...response.data[0],
+      };
+      updateClientForm.setFieldsValue(obj);
+      setClientStatus(obj.status);
+    }
     setAddClientApi(false);
   };
 
   const getAllTdsCall = async () => {
     const response = await imsAxios.get("/vendor/getAllTds");
-    let { data } = response;
-    let tdsArr = data?.data?.map((row) => {
-      return { text: row.tds_name, value: row.tds_key };
-    });
-    setTdsOptions(tdsArr);
+    if (response.success) {
+      let tdsArr = response.data?.map((row) => {
+        return { text: row.tds_name, value: row.tds_key };
+      });
+      setTdsOptions(tdsArr);
+    }
   };
 
   const getAllTcsCall = async () => {
     setTcsOptions([]);
-    const { data } = await imsAxios.get("/tally/tcs/getAllTcs");
-    console.log(data);
+    const response = await imsAxios.get("/tally/tcs/getAllTcs");
+    console.log(response);
 
-    let tcsArr = data?.map((row) => {
-      return { text: row.tcsName, value: row.tcsKey };
-    });
-    console.log(tcsArr);
-    setTcsOptions(tcsArr);
+    if (response.success) {
+      let tcsArr = response.data?.map((row) => {
+        return { text: row.tcsName, value: row.tcsKey };
+      });
+      console.log(tcsArr);
+      setTcsOptions(tcsArr);
+    }
   };
 
   // const changeStatus = async (value) => {
   //   setStatusLoading(true);
-  //   const { data } = await imsAxios.post(
+  //   const response = await imsAxios.post(
   //     "/vendor/updateVendorStatus",
   //     {
   //       status: value ? "B" : "A",
@@ -154,8 +159,8 @@ function EditClient({
   //     }
   //   );
   //   setStatusLoading(false);
-  //   if (data.code == 200) {
-  //     toast.success(data.message);
+  //   if (response.success) {
+  //     toast.success(response.message);
   //     if (value) {
   //       setVendorStatus("B");
   //     } else {
@@ -182,11 +187,13 @@ function EditClient({
       tcs: values?.tcs,
     };
 
-    const { data } = await imsAxios.put("/client/update", obj);
-    if (data.code == 200) {
+    const response = await imsAxios.put("/client/update", obj);
+    if (response.success) {
       getRows();
       setUpdatingClient(null);
-      toast.success(data.message);
+      toast.success(response.message);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
 

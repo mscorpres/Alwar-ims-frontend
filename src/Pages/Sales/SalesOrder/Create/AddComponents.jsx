@@ -317,7 +317,7 @@ export default function AddComponents({
     if (name == "component") {
       // console.log("newPurchaseOrder", newPurchaseOrder);
       // setPageLoading(true);
-      // const { data } = await imsAxios.post(
+      // const response = await imsAxios.post(
       //   "/purchaseOrder/getComponentDetailsByCode",
       //   {
       //     component_code: value.value,
@@ -438,7 +438,7 @@ export default function AddComponents({
     }
     // if (searchInput.length > 2) {
     //   // setSelectLoading(true);
-    //   const { data } = await imsAxios.post("/backend/fetchProduct", {
+    //   const response = await imsAxios.post("/backend/fetchProduct", {
     //     searchTerm: searchInput,
     //   });
     //   // setSelectLoading(false);
@@ -515,9 +515,9 @@ export default function AddComponents({
   }, [rowCount, rowCount.qty]);
   //getting currencies on page load
   const getCurrencies = async () => {
-    const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+    const response = await imsAxios.get("/backend/fetchAllCurrecy");
     let arr = [];
-    arr = data.data.map((d) => {
+    arr = response.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,

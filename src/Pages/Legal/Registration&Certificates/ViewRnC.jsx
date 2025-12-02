@@ -192,7 +192,7 @@ function ViewRnC() {
       if (data.status === "error") {
         toast.error(data.message);
       } else if (response.status === 200) {
-        const arr = data.data.map((row, index) => {
+        const arr = response.data.map((row, index) => {
           return {
             key: index,
             id: index,

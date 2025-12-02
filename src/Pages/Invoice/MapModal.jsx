@@ -13,7 +13,7 @@ const MapModal = ({ open, close }) => {
   const getGSTGlGroups = async () => {
     try {
       setLoading(true);
-      const { data } = await imsAxios.get(
+      const response = await imsAxios.get(
         `/tally/invoice/fetchInvGroup?type=GST`
       );
       const arr = data.map((row) => ({ label: row.text, value: row.value }));
@@ -28,7 +28,7 @@ const MapModal = ({ open, close }) => {
   const getInvoiceGroup = async () => {
     try {
       setLoading("fetching");
-      const { data } = await imsAxios.get(
+      const response = await imsAxios.get(
         `tally/invoice/fetchInvGroup?type=INV01`
       );
       const arr = data.map((row) => ({ label: row.text, value: row.value }));
@@ -47,7 +47,7 @@ const MapModal = ({ open, close }) => {
       });
       const { data } = response;
       if (data) {
-        const arr = data.data.map((row) => ({
+        const arr = response.data.map((row) => ({
           text: row.label,
           value: row.id,
         }));

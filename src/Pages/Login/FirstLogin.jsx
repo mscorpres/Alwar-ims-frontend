@@ -30,13 +30,13 @@ function FirstLogin() {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         dispatch(setUser({ passwordChanged: "C" }));
-        toast.success(data.message);
+        toast.success(response.message);
 
         navigate("/r1");
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
     console.log(values);

@@ -226,7 +226,7 @@ export default function CreatePo() {
       const { data } = response;
       if (data) {
         setShowSubmitConfirm(null);
-        if (data.code == 200) {
+        if (response.success) {
           resetFunction();
           rowsReset();
           setActiveTab("1");
@@ -247,7 +247,7 @@ export default function CreatePo() {
             }),
           });
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
       }
     }
@@ -255,7 +255,7 @@ export default function CreatePo() {
   const getPOs = async (searchInput) => {
     if (searchInput?.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/searchPoByPoNo", {
+      const response = await imsAxios.post("/backend/searchPoByPoNo", {
         search: searchInput,
       });
       setSelectLoading(false);
@@ -278,10 +278,10 @@ export default function CreatePo() {
     setPageLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         return data.data;
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };
@@ -362,7 +362,7 @@ export default function CreatePo() {
   const getusers = async (s) => {
     if (s?.length > 2) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/fetchAllUser", {
+      const response = await imsAxios.post("/backend/fetchAllUser", {
         search: s,
       });
       setSelectLoading(false);
@@ -401,11 +401,11 @@ export default function CreatePo() {
   //getting vendor branches
   const getVendorBracnch = async (vendorCode) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/vendorBranchList", {
+    const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.id, text: d.text };
     });
     setVendorBranches(arr);
@@ -413,7 +413,7 @@ export default function CreatePo() {
   };
   // getting vendor address
   const getVendorAddress = async ({ vendorCode, vendorBranch }) => {
-    const { data } = await imsAxios.post("/backend/vendorAddress", {
+    const response = await imsAxios.post("/backend/vendorAddress", {
       vendorcode: vendorCode.value,
       branchcode: vendorBranch,
     });
@@ -421,7 +421,7 @@ export default function CreatePo() {
   };
   const getBillTo = async () => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/backend/billingAddressList", {
+    const response = await imsAxios.post("/backend/billingAddressList", {
       search: "",
     });
     setSelectLoading(false);
@@ -433,7 +433,7 @@ export default function CreatePo() {
   };
   const shipTo = async () => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/backend/shipingAddressList", {
+    const response = await imsAxios.post("/backend/shipingAddressList", {
       search: "",
     });
     setSelectLoading(false);
@@ -454,7 +454,7 @@ export default function CreatePo() {
   };
   const getBillingAddress = async (billaddressid) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/billingAddress", {
+    const response = await imsAxios.post("/backend/billingAddress", {
       billing_code: billaddressid,
     });
     setPageLoading(false);
@@ -468,7 +468,7 @@ export default function CreatePo() {
   };
   const getShippingAddress = async (shipaddressid) => {
     setPageLoading(true);
-    const { data } = await imsAxios.post("/backend/shippingAddress", {
+    const response = await imsAxios.post("/backend/shippingAddress", {
       shipping_code: shipaddressid,
     });
     setPageLoading(false);
@@ -554,10 +554,10 @@ export default function CreatePo() {
     setPageLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         setProjectDesc(data.data.description);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

@@ -76,39 +76,39 @@ function PendingTransfer() {
     setLoading(true);
     e.preventDefault();
 
-    const { data } = await imsAxios.post("/godown/fetchPending_tranfers", {
+    const response = await imsAxios.post("/godown/fetchPending_tranfers", {
       data: datee,
       wise: allData.typeWise,
     });
     console.log(data);
-    if (data.code == 200) {
-      let arr = data.response.data.map((row) => {
+    if (data.success) {
+      let arr = response.data.map((row) => {
         return { ...row, id: v4() };
       });
       setDataComesFromDateWise(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
   };
 
   const transactionWise = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/godown/fetchPending_tranfers", {
+    const response = await imsAxios.post("/godown/fetchPending_tranfers", {
       data: allData.transactionText,
       wise: allData.typeWise,
     });
 
-    if (data.code == 200) {
-      let arr = data.response.data.map((row) => {
+    if (data.success) {
+      let arr = response.data.map((row) => {
         return { ...row, id: v4() };
       });
       setDataComesFromTransactionWise(arr);
       setLoading(false);
       // setFilterDate(data.data);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
     // setDataComesFromTransactionWise(data.response.data);
@@ -116,11 +116,11 @@ function PendingTransfer() {
 
   const getLocationFetch = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/fetchLocation", {
+      const response = await imsAxios.post("/backend/fetchLocation", {
         searchTerm: e,
       });
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { label: d.text, value: d.id };
       });
       return arr;
@@ -129,28 +129,28 @@ function PendingTransfer() {
 
   const locationWiseDateFecth = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/godown/fetchPending_tranfers", {
+    const response = await imsAxios.post("/godown/fetchPending_tranfers", {
       data: allData.locationText,
       wise: allData.typeWise,
     });
     console.log(data);
-    if (data.code == 200) {
-      let arr = data.response.data.map((row) => {
+    if (data.success) {
+      let arr = response.data.map((row) => {
         return { ...row, id: v4() };
       });
       setdataComesFromLocationWise(arr);
       setLoading(false);
       // setFilterDate(data.data);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
   };
 
   const getLocation = async () => {
-    const { data } = await imsAxios.post("/backend/fetchLocation");
+    const response = await imsAxios.post("/backend/fetchLocation");
     const arr = [];
-    data.map((a) => arr.push({ text: a.text, value: a.id }));
+    response.data.map((a) => arr.push({ text: a.text, value: a.id }));
     setLocationData(arr);
   };
 

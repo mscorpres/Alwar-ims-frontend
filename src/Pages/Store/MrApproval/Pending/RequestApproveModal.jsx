@@ -40,7 +40,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
 
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (data.success) {
           // console.log("data", data);
           const header = data.data.header[0];
           const materials = data.data.material;
@@ -71,7 +71,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
           setDetails(detailsData);
           setComponentOptions(compOptions);
         } else {
-          toast.error(data.message.msg);
+          toast.error(data.message?.msg || data.message);
         }
       }
     } catch (error) {
@@ -89,8 +89,8 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       // console.log("response", response);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (data.success) {
+          const arr = response.data.map((row) => ({
             value: row.id,
             text: row.text,
           }));
@@ -111,13 +111,13 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       const response = await imsAxios.post("/godown/godownStocks", payload);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (data.success) {
           const qty = data.data.available_qty;
           const rate = data?.data?.avr_rate;
           form.setFieldValue("availableQty", qty);
           form.setFieldValue("weightedRate", rate);
         } else {
-          toast.error(data.message.msg);
+          toast.error(data.message?.msg || data.message);
         }
       }
     } catch (error) {
@@ -170,12 +170,12 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
 
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          toast.success(data.message);
+        if (data.success) {
+          toast.success(response.message);
           getRows();
           // hide();
         } else {
-          toast.error(data.message.msg);
+          toast.error(data.message?.msg || data.message);
         }
       }
     } catch (error) {

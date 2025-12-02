@@ -90,17 +90,17 @@ function R9() {
   };
 
   const getDataByLocation = async (e) => {
-    const { data } = await imsAxios.post("/backend/fetchLocation");
+    const response = await imsAxios.post("/backend/fetchLocation");
     let v = [];
     data?.map((ad) => v.push({ text: ad.text, value: ad.id }));
     setloctionDataTo(v);
 
     if (e.length > 3) {
-      const { data } = await imsAxios.post("/backend/fetchLocation", {
+      const response = await imsAxios.post("/backend/fetchLocation", {
         searchTerm: e,
       });
 
-      if (data.code == 500) {
+      if (!response.success) {
         toast.error(data.massage);
       } else {
         let arr = [];
@@ -113,11 +113,11 @@ function R9() {
   };
 
   const getBom = async () => {
-    const { data } = await imsAxios.post("/backend/fetchBomForProduct", {
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData?.selectProduct,
     });
     console.log(data.data);
-    const arr = data.data.map((d) => {
+    const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
     setBomName(arr);
@@ -134,7 +134,7 @@ function R9() {
       toast.error("Please select a valid date");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("/report9", {
+      const response = await imsAxios.post("/report9", {
         skucode: allData.selectProduct,
         subject: allData.selectBom,
         location: allData.selectLocation,
@@ -142,7 +142,7 @@ function R9() {
         action: "search_r9",
       });
       // console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data.response.data.map((row) => {
           return {
             ...row,
@@ -159,7 +159,7 @@ function R9() {
         });
         setResData(arr);
         setLoading(false);
-      } else if (data.code == 500) {
+      } else if (!response.success) {
         setLoading(true);
         toast.error(data.message);
         setLoading(false);
@@ -168,7 +168,7 @@ function R9() {
   };
 
   const getLocationFunctionTo = async (e) => {
-    const { data } = await imsAxios.post("/backend/fetchLocation", {
+    const response = await imsAxios.post("/backend/fetchLocation", {
       seacrhTerm: e,
     });
     // console.log(data);
@@ -179,7 +179,7 @@ function R9() {
   };
 
   const getLocationShow = async () => {
-    const { data } = await imsAxios.post("/report9/fetchLocationDetail", {
+    const response = await imsAxios.post("/report9/fetchLocationDetail", {
       location_key: allData?.selectLocation,
     });
     setLocationDetail(data?.data);

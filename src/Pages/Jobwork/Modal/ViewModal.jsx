@@ -41,9 +41,9 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         data.header.map((a) => setView(a));
-        let arr = data.data.map((row, index) => {
+        let arr = response.data.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -52,7 +52,7 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
         });
         setMainData(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setViewModalOpen(false);
       }
     } else {

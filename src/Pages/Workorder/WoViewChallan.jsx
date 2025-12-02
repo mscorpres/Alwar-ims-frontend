@@ -476,9 +476,8 @@ const WoViewChallan = () => {
       wise: wise,
       data: searchInput,
     });
-    const { data } = response;
-    if (data.code === 200) {
-      const arr = data.data.map((row, index) => ({
+    if (response.success) {
+      const arr = response.data.map((row, index) => ({
         id: index + 1,
         // ...rows,
         //  date: row.received_challan_rm_dt,
@@ -507,7 +506,7 @@ const WoViewChallan = () => {
       setLoading(false);
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
 
       setLoading(false);
     }
@@ -550,9 +549,8 @@ const WoViewChallan = () => {
       response = await imsAxios.post("/wo_challan/getDeliveryChallanDetails", {
         challan_id: challanID,
       });
-      const { data } = response;
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           id: index + 1,
           ...row,
         }));
@@ -566,9 +564,8 @@ const WoViewChallan = () => {
       response = await imsAxios.post("/wo_challan/fetchScrapChallanDetails", {
         challan_id: challanID,
       });
-      const { data } = response;
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (response.success) {
+        let arr = response.data.map((row, index) => ({
           id: index + 1,
           ...row,
         }));

@@ -157,7 +157,7 @@ const PartCodeConversionReport = () => {
       });
 
       console.log(response.data);
-      if (response.data.code == 200) {
+      if (response.success) {
         SetfetchConversion(response.data.data);
         toast.success(response.data.status);
       } else {
@@ -174,7 +174,7 @@ const PartCodeConversionReport = () => {
   const handleClientOptions = async (search) => {
     try {
       // setLoading("select");
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: search,
       // });
       // console.log(data);

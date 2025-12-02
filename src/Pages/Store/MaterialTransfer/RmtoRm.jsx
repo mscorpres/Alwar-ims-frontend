@@ -71,22 +71,22 @@ function RmtoRm() {
 
   // console.log(branchName);
   const getLocationFunction = async () => {
-    const { data } = await imsAxios.post("/godown/fetchLocationForRM2RM_from");
+    const response = await imsAxios.post("/godown/fetchLocationForRM2RM_from");
 
     let v = [];
-    data.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
+    response.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
     setloctionData(v);
   };
   const getLocationFunctionTo = async () => {
-    const { data } = await imsAxios.post("/godown/fetchLocationForRM2RM_to");
+    const response = await imsAxios.post("/godown/fetchLocationForRM2RM_to");
 
     let v = [];
-    data.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
+    response.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
     setloctionDataTo(v);
   };
 
   const branchInfoFunction = async () => {
-    const { data } = await imsAxios.post("/godown/fetchLocationDetail_from", {
+    const response = await imsAxios.post("/godown/fetchLocationDetail_from", {
       location_key: allData.locationFrom,
     });
     // console.log(data.data);
@@ -95,7 +95,7 @@ function RmtoRm() {
 
   const getComponentList = async (e) => {
     if (e?.length > 2) {
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: e,
       // });
       const response = await executeFun(() => getComponentOptions(e), "select");
@@ -114,7 +114,7 @@ function RmtoRm() {
     const component = componentValue ?? row?.component;
     if (!allData.locationFrom || !component) return;
 
-    const { data } = await imsAxios.post("/godown/godownStocks", {
+    const response = await imsAxios.post("/godown/godownStocks", {
       component: component,
       location: allData.locationFrom,
     });
@@ -165,7 +165,7 @@ function RmtoRm() {
     const qtys = rows.map((row) => row.qty1);
     const comments = rows.map((row) => row.comment || "");
 
-    const { data } = await imsAxios.post("/godown/transferRM2RM", {
+    const response = await imsAxios.post("/godown/transferRM2RM", {
       comment: comments,
       fromlocation: allData.locationFrom,
       component: components,
@@ -175,7 +175,7 @@ function RmtoRm() {
       tobranch: allData.dropBranch,
     });
 
-    if (data.code == 200) {
+    if (data.success) {
       toast.success(data.message.toString()?.replaceAll("<br/>", ""));
       // Reset form
       setAllData({
@@ -198,15 +198,15 @@ function RmtoRm() {
       ]);
       setbBanchName("");
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
   };
 
   const handleBranchSelection = async (branchCode) => {
     try {
-      const { data } = await imsAxios.post("/location/fetchLocationBranch", {
+      const response = await imsAxios.post("/location/fetchLocationBranch", {
         branch: branchCode,
       });
       let arr = [];
@@ -234,7 +234,7 @@ function RmtoRm() {
     const location = locationValue ?? row?.locationTo;
     if (!location) return;
 
-    const { data } = await imsAxios.post("/godown/fetchLocationDetail_to", {
+    const response = await imsAxios.post("/godown/fetchLocationDetail_to", {
       location_key: location,
     });
 

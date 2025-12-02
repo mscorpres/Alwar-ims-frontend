@@ -70,13 +70,13 @@ function RegisteredUser() {
     // console.log("response", response);
     let arr = [];
     let { data } = response;
-    if (data.code === 200) {
-      arr = data.data.map((r, index) => {
+    if (response.success) {
+      arr = response.data.map((r, index) => {
         return { ...r, id: index + 1 };
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   useEffect(() => {
@@ -110,8 +110,8 @@ function RegisteredUser() {
       `/auth/signup/reject/${finalObj.custid}`
     );
     const { data } = response;
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setLoading(false);
       getRows();
     } else {
@@ -135,13 +135,13 @@ function RegisteredUser() {
       }
     );
     const { data } = response;
-    if (data.code == 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       setLoading(false);
       form.resetFields();
       getRows();
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };

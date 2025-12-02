@@ -115,7 +115,7 @@ export default function CreateWO({}) {
       });
       const { data } = response;
       if (data) {
-        let arr = data.data.map((row) => ({
+        let arr = response.data.map((row) => ({
           text: row.name,
           value: row.code,
         }));
@@ -138,26 +138,22 @@ export default function CreateWO({}) {
         code: inputValue,
       });
       const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.branchList.map((row) => ({
-            text: row.text,
-            value: row.id,
-            address: row.address,
-          }));
-          setclientBranchOptions(arr);
-          setAddOptions(arr);
-          setClientData(data);
-          if (dm === undefined) {
-            createWoForm.setFieldValue("clientbranch", "");
-            createWoForm.setFieldValue("gstin", "");
-            createWoForm.setFieldValue("caddress", "");
-          }
-        } else {
-          toast.error(data.message.msg);
+      if (response.success) {
+        const arr = response.data.branchList.map((row) => ({
+          text: row.text,
+          value: row.id,
+          address: row.address,
+        }));
+        setclientBranchOptions(arr);
+        setAddOptions(arr);
+        setClientData(response.data);
+        if (dm === undefined) {
+          createWoForm.setFieldValue("clientbranch", "");
+          createWoForm.setFieldValue("gstin", "");
+          createWoForm.setFieldValue("caddress", "");
         }
       } else {
-        toast.error("Some error occured while getting Client branches ");
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -192,20 +188,15 @@ export default function CreateWO({}) {
       product_key: inputValue,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        fetchbomlist(data.data.product_sku);
-        setUom(data.data?.unit);
-        createWoForm.setFieldValue("qty", data.data?.description);
-        createWoForm.setFieldValue("rate", data.data?.rate);
-        createWoForm.setFieldValue("hsn", data.data?.hsn);
-        createWoForm.setFieldValue("gstRate", data.data?.gstrate);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      fetchbomlist(response.data.product_sku);
+      setUom(response.data?.unit);
+      createWoForm.setFieldValue("qty", response.data?.description);
+      createWoForm.setFieldValue("rate", response.data?.rate);
+      createWoForm.setFieldValue("hsn", response.data?.hsn);
+      createWoForm.setFieldValue("gstRate", response.data?.gstrate);
     } else {
-      toast.error("Some error occured wile getting component details");
+      toast.error(response.message?.msg || response.message || "Some error occured wile getting component details");
     }
   };
 
@@ -213,7 +204,7 @@ export default function CreateWO({}) {
     const response = await imsAxios.post("backend/fetchBomProduct", {
       search: search,
     });
-    let arr = response.data.data.map((row) => ({
+    let arr = response.response.data.map((row) => ({
       text: row.bomname,
       value: row.bomid,
     }));
@@ -301,14 +292,15 @@ export default function CreateWO({}) {
   const getAddInfo = async (e) => {
     try {
       setLoading("fetch");
-      const { data } = await imsAxios.post("backend/fetchClientAddress", {
+      const response = await imsAxios.post("backend/fetchClientAddress", {
         addressID: e,
         code: clientcode,
       });
-      if (data.code === 200) {
-        createWoForm.setFieldValue("gstin", data.data.gst);
-        createWoForm.setFieldValue("caddress", data.data.address);
-        toast.error(data.message.msg);
+      if (response.success) {
+        createWoForm.setFieldValue("gstin", response.data.gst);
+        createWoForm.setFieldValue("caddress", response.data.address);
+      } else {
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -360,14 +352,11 @@ export default function CreateWO({}) {
       finalObj
     );
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
-        resetHandler();
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      toast.success(response.message);
+      resetHandler();
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
 
@@ -384,13 +373,10 @@ export default function CreateWO({}) {
       project_name: value,
     });
     // setPageLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        setProjectDesc(data.data.description);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      setProjectDesc(response.data.description);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   const handleFetchCostCenterOptions = async (search) => {

@@ -101,17 +101,17 @@ const MINModal = ({ showView, setShowView, getRows }) => {
         formData
       );
       setFiles([]);
-      if (uploadwodoc.data.code === 200) {
-        toast.success(uploadwodoc.data.message);
+      if (uploadwodoc.success) {
+        toast.success(uploadwodoc.message);
 
         setLoading(false);
-        if (data.code === 200) {
+        if (data.success) {
           setShowView(false);
           getRows();
           minForm.resetFields();
         }
-      } else if (uploadwodoc.data.code === 500) {
-        toast.error(uploadwodoc.data.message.msg);
+      } else {
+        toast.error(uploadwodoc.message?.msg || uploadwodoc.message);
         setLoading(false);
       }
     }

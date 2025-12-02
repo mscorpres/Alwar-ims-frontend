@@ -75,7 +75,7 @@ function FinalInvoice() {
   };
 
   const downloadFunction = async (id) => {
-    const { data } = await imsAxios.get(
+    const response = await imsAxios.get(
       `/invoice/downloadInvoice?invoiceID=${id}`
     );
     printFunction(data.buffer.data);

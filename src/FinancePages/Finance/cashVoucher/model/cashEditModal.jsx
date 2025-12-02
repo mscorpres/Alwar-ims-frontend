@@ -45,8 +45,8 @@ export default function CashEditModal({ cashEdit, setCashEdit }) {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let rowsArr = data.data.map((row) => ({
+      if (response.success) {
+        let rowsArr = response.data.map((row) => ({
           ...row,
           ledger: { label: row.particularLabel, value: row.particularID },
           id: row.ID,
@@ -68,14 +68,14 @@ export default function CashEditModal({ cashEdit, setCashEdit }) {
           rows: rowsArr,
         });
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
         setCashEdit(false);
       }
     }
   };
   const getHeaderAccountOptions = async (search) => {
     setLoading("select");
-    const { data } = await imsAxios.post("/tally/cash/fetch_cash", {
+    const response = await imsAxios.post("/tally/cash/fetch_cash", {
       search: search,
     });
     setLoading(false);
@@ -86,12 +86,12 @@ export default function CashEditModal({ cashEdit, setCashEdit }) {
   };
   const getLedgerOptions = async (search) => {
     setLoading("select");
-    const { data } = await imsAxios.post("/tally/ledger/ledger_options", {
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
       search: search,
     });
     setLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row) => {
+    if (response.success) {
+      const arr = response.data.map((row) => {
         return { text: row.text, value: row.id };
       });
       setAsyncOptions(arr);
@@ -151,11 +151,11 @@ export default function CashEditModal({ cashEdit, setCashEdit }) {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setCashEdit(false);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

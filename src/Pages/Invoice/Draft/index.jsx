@@ -35,7 +35,7 @@ const DraftInvoice = () => {
   const handleDownload = async (invoiceId) => {
     try {
       setLoading("download");
-      const { data } = await imsAxios.get(
+      const response = await imsAxios.get(
         `/invoice/downloadInvoice?invoiceID=${invoiceId}`
       );
       downloadFunction(data.buffer.data, invoiceId);
@@ -49,7 +49,7 @@ const DraftInvoice = () => {
   const handlePrint = async (invoiceId) => {
     try {
       setLoading("download");
-      const { data } = await imsAxios.get(
+      const response = await imsAxios.get(
         `/invoice/downloadInvoice?invoiceID=${invoiceId}`
       );
       printFunction(data.buffer.data);
@@ -103,7 +103,7 @@ const DraftInvoice = () => {
   const handleActivate = async (invoiceId) => {
     try {
       setLoading(true);
-      const { data } = await imsAxios.put("/invoice/updateInvoice", {
+      const response = await imsAxios.put("/invoice/updateInvoice", {
         invoiceID: invoiceId,
       });
       toast.success(data);

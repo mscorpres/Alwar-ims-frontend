@@ -68,15 +68,15 @@ const WeeklyAudit = () => {
   const handlesingleComponent = async () => {
     try {
       setFetchLoading(true);
-      const { data } = await imsAxios.post("/monthAudit/addPart", {
+      const response = await imsAxios.post("/monthAudit/addPart", {
         component: searchInput,
       });
-      if (data.code === 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setSearchInput("");
         getRows();
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -88,7 +88,7 @@ const WeeklyAudit = () => {
   const getCompOptions = async (search) => {
     try {
       // setLoading("select");
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       //   search: search,
       // });
       const response = await executeFun(
@@ -115,8 +115,8 @@ const WeeklyAudit = () => {
     setLoading("1");
     const response = await imsAxios.post("/monthAudit/uploadExcel", formData);
     setLoading(false);
-    if (response.data.code == 200) {
-      //   let arr = data.data.data.map((row, index) => ({ ...row, id: index + 1 }));
+    if (response.success) {
+      //   let arr = data.response.data.map((row, index) => ({ ...row, id: index + 1 }));
       //   setVerifiedFile(arr);
 
       toast.success(response.data.message);
@@ -138,16 +138,16 @@ const WeeklyAudit = () => {
 
   const getRows = async () => {
     setFetchLoading(true);
-    const { data } = await imsAxios.get("/monthAudit/getPartList");
+    const response = await imsAxios.get("/monthAudit/getPartList");
     setFetchLoading(false);
-    if (data.code === 200) {
-      let arr = data.data.map((row, index) => ({
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
         ...row,
         id: index + 1,
       }));
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const downloadFun = () => {
@@ -168,7 +168,7 @@ const WeeklyAudit = () => {
     const response = await imsAxios.post("/monthAudit/removePart", {
       part_code: id,
     });
-    if (response.data.code === 200) {
+    if (response.success) {
       getRows();
       toast.success(response.data.message);
     } else {

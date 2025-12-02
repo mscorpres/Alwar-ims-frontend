@@ -37,16 +37,16 @@ export default function Profile() {
 
   const getUserDetails = async () => {
     setSkeletonLoading(true);
-    const { data } = await imsAxios.get("/profile/userDetails");
+    const response = await imsAxios.get("/profile/userDetails");
     setSkeletonLoading(false);
-    if (data.code == 200) {
+    if (response.success) {
       setUserDetails(data.data);
     } else {
       toast.error(errorToast(data.message));
     }
   };
   const onFinish = async () => {
-    const { data } = await imsAxios.post("/profile/userChangePassword", {
+    const response = await imsAxios.post("/profile/userChangePassword", {
       oldpassword: showSubmitConfirm.currentPassword,
       newpassword: showSubmitConfirm.password,
     });

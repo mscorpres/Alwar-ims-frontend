@@ -35,7 +35,7 @@ const EditModal = ({ show, close, bomType }) => {
       await getRows(id);
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
+        if (response.success) {
           const detailsObj = {
             product: data.data.product,
             partCode: data.data.sfg_inward_rm_code,
@@ -87,7 +87,7 @@ const EditModal = ({ show, close, bomType }) => {
     const response = await imsAxios.post("/bom/updateBomComponent", finalObj);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
+      if (response.success) {
         if (row.new) {
           setRows((curr) =>
             curr.map((comp) => {
@@ -105,10 +105,10 @@ const EditModal = ({ show, close, bomType }) => {
             })
           );
         }
-        toast.success(data.message);
+        toast.success(response.message);
         getDetails(show.id);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
     setLoading(false);
@@ -133,8 +133,8 @@ const EditModal = ({ show, close, bomType }) => {
       );
       const { data } = response;
       if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+        if (response.success) {
+          const arr = response.data.map((row) => ({
             id: row.compKey,
             componentName: row.component,
             partCode: row.partcode,

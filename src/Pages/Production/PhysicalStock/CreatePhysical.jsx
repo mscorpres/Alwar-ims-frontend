@@ -72,7 +72,7 @@ function CreatePhysicalProduction() {
       let qty = "";
       let unit = "";
       if (found?.location && value) {
-        const { data } = await imsAxios.post("/audit/RMStock", {
+        const response = await imsAxios.post("/audit/RMStock", {
           component: value,
           location: found?.location,
         });
@@ -121,7 +121,7 @@ function CreatePhysicalProduction() {
       let qty = "";
       let unit = "";
       if (found?.comp && value) {
-        const { data } = await imsAxios.post("/sfPhysical/sfStock", {
+        const response = await imsAxios.post("/sfPhysical/sfStock", {
           location: value,
           component: found?.comp,
         });
@@ -198,7 +198,7 @@ function CreatePhysicalProduction() {
         },
       ]);
       toast.success("Success");
-    } else if (data.code == 500) {
+    } else if (!response.success) {
       toast.error("Something Went Wrong");
       setLoading(false);
     }

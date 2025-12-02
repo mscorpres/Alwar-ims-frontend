@@ -24,20 +24,20 @@ export default function CreateCostModal({
     ) {
       setSubmitLoading(true);
 
-      const { data } = await imsAxios.post("/purchaseOrder/createCostCenter", {
+      const response = await imsAxios.post("/purchaseOrder/createCostCenter", {
         cost_center_id: newCostCenter.cost_center_id,
         cost_center_name: newCostCenter.cost_center_name,
       });
       setSubmitLoading(false);
-      if (data.code == 200) {
-        toast.success(data.message);
+      if (response.success) {
+        toast.success(response.message);
         setShowAddCostModal(false);
         setNewCostCenter({
           cost_center_name: "",
           cost_center_id: "",
         });
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
       toast.error("Cost Center should have a Name and ID");

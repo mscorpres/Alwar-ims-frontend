@@ -121,10 +121,10 @@ export default function RnC({}) {
     console.log(response.data.data);
     if (response.status === 200) {
       const uniqueNatureOfAgreement = [
-        ...new Set(response.data.data.map((item) => item.nature_of_agreement)),
+        ...new Set(response.response.data.map((item) => item.nature_of_agreement)),
       ];
       const uniquetypeOfAgreement = [
-        ...new Set(response.data.data.map((item) => item.type_of_agreement)),
+        ...new Set(response.response.data.map((item) => item.type_of_agreement)),
       ];
       const newArr = uniqueNatureOfAgreement.map((value) => ({
         text: value,

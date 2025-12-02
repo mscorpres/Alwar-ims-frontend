@@ -35,13 +35,13 @@ function ReportQC() {
   const getRows = async () => {
     setRows([]);
     setSearchLoading(true);
-    const { data } = await imsAxios.post("/qc/final_qc_report", {
+    const response = await imsAxios.post("/qc/final_qc_report", {
       data: searchInput,
       type: searchStatus,
     });
     setSearchLoading(false);
-    if (data.code == 200) {
-      const arr = data.data.map((row, index) => {
+    if (response.success) {
+      const arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -51,7 +51,7 @@ function ReportQC() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
     }
   };

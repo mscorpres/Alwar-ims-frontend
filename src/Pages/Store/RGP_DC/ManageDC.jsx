@@ -108,12 +108,12 @@ function ManageDC() {
 
     setLoading(true);
     try {
-      const { data } = await imsAxios.post("/gatepass/fetchAllGatepass", {
+      const response = await imsAxios.post("/gatepass/fetchAllGatepass", {
         data: state.selType === "datewise" ? dateRange : state.gpInput,
         wise: state.selType,
       });
 
-      if (data.code === 200) {
+      if (response.success) {
         const formattedData = data.response.data.map((row) => ({
           ...row,
           id: uuidv4(),
@@ -152,7 +152,7 @@ function ManageDC() {
   const printFun = useCallback(async (id) => {
     setLoading(true);
     try {
-      const { data } = await imsAxios.post("/gatepass/printGatePass", {
+      const response = await imsAxios.post("/gatepass/printGatePass", {
         transaction: id,
       });
       const validatedData = validateResponse(data);
@@ -168,7 +168,7 @@ function ManageDC() {
   const downloadFun = useCallback(async (id) => {
     setLoading(true);
     try {
-      const { data } = await imsAxios.post("/gatepass/printGatePass", {
+      const response = await imsAxios.post("/gatepass/printGatePass", {
         transaction: id,
       });
       const validatedData = validateResponse(data);

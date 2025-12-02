@@ -21,11 +21,11 @@ function ReverseMin() {
 
   const getOption = async (e) => {
     if (e?.length > 2) {
-      const { data } = await imsAxios.post("/backend/getMinTransactionByNo", {
+      const response = await imsAxios.post("/backend/getMinTransactionByNo", {
         search: e,
       });
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -34,12 +34,12 @@ function ReverseMin() {
 
   const fetchInputData = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post("/reversal/fetchMINData", {
+    const response = await imsAxios.post("/reversal/fetchMINData", {
       transaction: inputStore,
     });
     // console.log(data);
-    if (data.code == 200) {
-      let arr = data.data.map((row, index) => {
+    if (data.success) {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -49,8 +49,8 @@ function ReverseMin() {
       setMainData(arr);
       setHeaderData(data.header);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else {
+      toast.error(data.message?.msg || data.message);
       setLoading(false);
     }
   };

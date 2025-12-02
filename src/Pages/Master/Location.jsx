@@ -56,17 +56,19 @@ function Location() {
   };
   const getDataTree = async () => {
     setTreeLoading(true);
-    const { data } = await imsAxios.post("/location/fetchLocationTree");
+    const response = await imsAxios.post("/location/fetchLocationTree");
     setTreeLoading(false);
-    let a = customFlatArray(data.data);
-    let arr = a.map((r, id) => {
-      return { id: id + 1, ...r };
-    });
-    // console.log("arr", arr);
-    setLocationData(arr);
-    // console.log("final arr", arr);
-    // setLocationData(a);
-    setTreeData(data.data);
+    if (response.success) {
+      let a = customFlatArray(response.data);
+      let arr = a.map((r, id) => {
+        return { id: id + 1, ...r };
+      });
+      // console.log("arr", arr);
+      setLocationData(arr);
+      // console.log("final arr", arr);
+      // setLocationData(a);
+      setTreeData(response.data);
+    }
   };
 
   let arr = [];
@@ -112,12 +114,12 @@ function Location() {
 
   const getParentLocationOptions = async (search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post("/location/fetchLocation", {
+    const response = await imsAxios.post("/location/fetchLocation", {
       searchTerm: search,
     });
     setSelectLoading(false);
-    if (data[0]) {
-      let arr = data.map((row) => ({
+    if (response.success && response.data) {
+      let arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
@@ -137,14 +139,14 @@ function Location() {
       vendor_loc: values?.jobworkLocation,
     };
     setSubmitLoading(true);
-    const { data } = await imsAxios.post("/location/insertLocation", obj);
+    const response = await imsAxios.post("/location/insertLocation", obj);
     setSubmitLoading(false);
-    if (data.code === 200) {
-      toast.success(data.message);
+    if (response.success) {
+      toast.success(response.message);
       resetForm();
       getDataTree();
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message);
     }
   };
 
@@ -154,9 +156,8 @@ function Location() {
       searchTerm: search,
     });
     setSelectLoading(false);
-    const { data } = response;
-    if (data) {
-      let arr = data.map((row) => ({ text: row.text, value: row.id }));
+    if (response.success && response.data) {
+      let arr = response.data.map((row) => ({ text: row.text, value: row.id }));
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
@@ -173,15 +174,11 @@ function Location() {
       payload
     );
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        const status = data.data[0].status;
-        disableLocationForm.setFieldValue("status", status === "ACTIVE");
-      }
-      {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      const status = response.data[0].status;
+      disableLocationForm.setFieldValue("status", status === "ACTIVE");
+    } else {
+      toast.error(response.message);
     }
   };
 
@@ -206,27 +203,21 @@ function Location() {
       "/location/changeLocationStatus",
       values
     );
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        getDataTree();
-        toast.success(data.message);
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      getDataTree();
+      toast.success(response.message);
+    } else {
+      toast.error(response.message);
     }
   };
   const mapLocSubmitHandler = async (values) => {
     const response = await imsAxios.post("/location/updatLocationCC", values);
-    const { data } = response;
-    if (data) {
-      if (data.code === 200) {
-        getDataTree();
-        toast.success(data.message);
-        maploc.resetFields();
-      } else {
-        toast.error(data.message.msg);
-      }
+    if (response.success) {
+      getDataTree();
+      toast.success(response.message);
+      maploc.resetFields();
+    } else {
+      toast.error(response.message);
     }
   };
   const maplocValidateHandler = async () => {

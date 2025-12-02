@@ -37,15 +37,15 @@ const TransactionIn = () => {
     setLoading(false);
     const { data } = response;
     if (data) {
-      if (data.code === 200) {
-        let arr = data.data.map((row, index) => ({
+      if (data.success) {
+        let arr = response.data.map((row, index) => ({
           index: index + 1,
           id: v4(),
           ...row,
         }));
         setRows(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(data.message?.msg || data.message);
         setRows([]);
       }
     }

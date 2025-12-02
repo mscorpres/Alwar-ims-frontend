@@ -58,14 +58,14 @@ const Edit = ({
         setProductName(response.data.name);
       }
       // setDetailsLoading(true);
-      // const { data } = await imsAxios.post(
+      // const response = await imsAxios.post(
       //   "/products/getProductForUpdate",
       //   {
       //     product_key: editingProduct,
       //   }
       // );
       // setDetailsLoading(false);
-      // if (data.code === 200) {
+      // if (response.success) {
       //   let obj = data.data[0];
       //   obj = {
       //     ...obj,
@@ -141,14 +141,14 @@ const Edit = ({
     //   console.log(fgObj);
     //   let finalObj = productType === "sfg" ? sfgObj : fgObj;
     //   setSubmitLoading(true);
-    //   const { data } = await imsAxios.post(link, finalObj);
+    //   const response = await imsAxios.post(link, finalObj);
     //   setSubmitLoading(false);
-    //   if (data.code === 200) {
-    //     toast.success(data.message);
+    //   if (response.success) {
+    //     toast.success(response.message);
     //     getProductRows();
     //     setEditingProduct(false);
     //   } else {
-    //     toast.error(data.message.msg);
+    //     toast.error(response.message?.msg || response.message);
     //   }
     // } catch (err) {
     //   console.log("errror", err);

@@ -69,8 +69,8 @@ const POAnalysis = () => {
     const { data } = response;
     let arr = [];
     if (data) {
-      if (data.code === 200) {
-        arr = data.data.map((row, index) => ({
+      if (response.success) {
+        arr = response.data.map((row, index) => ({
           id: index + 1,
           date: row.date,
           jwId: row.po_sku_transaction,
@@ -86,7 +86,7 @@ const POAnalysis = () => {
           project_name: row.project_name,
         }));
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     } else {
     }
@@ -116,7 +116,7 @@ const POAnalysis = () => {
         downloadFunction(data.data.buffer.data, jwId);
       }
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
     }
   };
   const askPassword = () => {

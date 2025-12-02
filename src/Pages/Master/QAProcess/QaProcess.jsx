@@ -11,18 +11,18 @@ function QaProcess() {
   const [form] = Form.useForm();
   const addRows = async (values) => {
     console.log("values", values);
-    const data = await imsAxios.post("/qaProcessmaster/insert_Process", values);
+    const response = await imsAxios.post("/qaProcessmaster/insert_Process", values);
 
-    console.log("row Data", data);
-    if (data.status === "200" || data.status === 200) {
+    console.log("row Data", response);
+    if (response.success) {
       getRows();
     }
   };
   const getRows = async () => {
     const response = await imsAxios.get("/qaProcessmaster/fetch_Process");
-    // console.log("datadata", data.data);
-    if (response.status === "200" || response.status === 200) {
-      const { data } = response.data;
+    // console.log("datadata", response);
+    if (response.success) {
+      const data = response.data;
       console.log("datadata", data);
       const arr = data.map((row, index) => {
         return {

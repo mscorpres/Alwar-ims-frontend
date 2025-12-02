@@ -46,7 +46,7 @@ function CashReceiptReport() {
   const getLedgerFunction = async (e) => {
     if (e?.length > 1) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/ledger/ledger_options",
         {
           seacrh: e,
@@ -55,7 +55,7 @@ function CashReceiptReport() {
       setSelectLoading(false);
       // console.log(data.data);
       let arr = [];
-      arr = data.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -67,7 +67,7 @@ function CashReceiptReport() {
     if (e == "date_wise") {
       setDateData([]);
       setLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/cashreceipt_list",
         {
           wise: selectedValue.selType,
@@ -75,7 +75,7 @@ function CashReceiptReport() {
         }
       );
       //  console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -85,14 +85,14 @@ function CashReceiptReport() {
         setDateData(arr);
         setSelectValueWhenFetch("date_wise");
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } else if (e == "eff_wise") {
       setEffective([]);
       setLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/cashreceipt_list",
         {
           wise: selectedValue.selType,
@@ -100,7 +100,7 @@ function CashReceiptReport() {
         }
       );
       console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -111,14 +111,14 @@ function CashReceiptReport() {
         setSelectValueWhenFetch("eff_wise");
         setEffective(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } else if (e == "key_wise") {
       setCodeData([]);
       setLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/cashreceipt_list",
         {
           wise: selectedValue.selType,
@@ -126,7 +126,7 @@ function CashReceiptReport() {
         }
       );
       //  console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -136,14 +136,14 @@ function CashReceiptReport() {
         setCodeData(arr);
         setSelectValueWhenFetch("key_wise");
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     } else if (e == "ledger_wise") {
       setLedgerData([]);
       setLoading(true);
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/tally/cash/cashreceipt_list",
         {
           wise: selectedValue.selType,
@@ -151,7 +151,7 @@ function CashReceiptReport() {
         }
       );
       //  console.log(data);
-      if (data.code == 200) {
+      if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
             ...row,
@@ -161,8 +161,8 @@ function CashReceiptReport() {
         setLedgerData(arr);
         setSelectValueWhenFetch("ledger_wise");
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message.msg);
+      } else if (!response.success) {
+        toast.error(response.message?.msg || response.message);
         setLoading(false);
       }
     }

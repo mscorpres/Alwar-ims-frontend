@@ -63,14 +63,14 @@ export default function VoucherView({ detailVoucherId, setDetailVoucherId }) {
       }
 
       setLoading(true);
-      const { data } = await imsAxios.post(link, {
+      const response = await imsAxios.post(link, {
         v_code: detailVoucherId,
       });
       setLoading(false);
-      if (data.code == 200) {
+      if (response.success) {
         setVoucherDate(data.data[0].insert_date);
 
-        const arr = data.data.map((row) => {
+        const arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -92,7 +92,7 @@ export default function VoucherView({ detailVoucherId, setDetailVoucherId }) {
       link = "tally/voucher/br_print";
       filename = `Bank Receipt ${detailVoucherId}`;
     }
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       v_code: detailVoucherId,
     });
     setDownloadLoading(false);
@@ -106,7 +106,7 @@ export default function VoucherView({ detailVoucherId, setDetailVoucherId }) {
     } else if (voucherType == "BR") {
       link = "tally/voucher/br_print";
     }
-    const { data } = await imsAxios.post(link, {
+    const response = await imsAxios.post(link, {
       v_code: detailVoucherId,
     });
     setPrintLoading(false);

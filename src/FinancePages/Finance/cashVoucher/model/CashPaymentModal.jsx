@@ -17,15 +17,15 @@ function CashPaymentModal({ setOpen, open }) {
   // console.log("HEADER", header);
   const getFetchData = async () => {
     setLoading(true);
-    const { data } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/tally/cash/cash_payment_report",
       {
         v_code: open,
       }
     );
-    if (data.code == 200) {
+    if (response.success) {
       setHeader(data.header[0]);
-      const arr = data.data.map((row) => {
+      const arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),

@@ -37,9 +37,9 @@ function R17() {
   const getRows = async (values) => {
     setFetchLoading(true);
     values = { ...values, date: dateRange };
-    const { data } = await imsAxios.post("/report17", values);
+    const response = await imsAxios.post("/report17", values);
     setFetchLoading(false);
-    if (data.code === 200) {
+    if (response.success) {
       let arr = data.response.data2.map((row, index) => ({
         ...row,
         id: index,
@@ -54,7 +54,7 @@ function R17() {
       ];
       setSummaryData(summaryArr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(response.message?.msg || response.message);
       setRows([]);
     }
   };
@@ -92,7 +92,7 @@ function R17() {
   };
   const getPartOptions = async (search) => {
     // setSelectLoading(false);
-    // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     //   search: search,
     // });
     // setSelectLoading(true);
@@ -112,14 +112,14 @@ function R17() {
 
   const getAsyncOptions = async (url, search) => {
     setSelectLoading(true);
-    const { data } = await imsAxios.post(url, {
+    const response = await imsAxios.post(url, {
       search: search,
       searchTerm: search,
     });
     setSelectLoading(false);
     let arr = [];
     if (data.code) {
-      arr = data.data.map((row) => ({
+      arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
@@ -143,19 +143,19 @@ function R17() {
     let vendor = searchForm.getFieldsValue().vendor;
     if (vendor) {
       setFormLoading(true);
-      const { data } = await imsAxios.post("/backend/fetchVendorJWLocation", {
+      const response = await imsAxios.post("/backend/fetchVendorJWLocation", {
         search: vendor,
       });
       setFormLoading(false);
-      if (data.code === 200) {
+      if (response.success) {
         let arr = [];
-        arr = data.data.map((row) => ({
+        arr = response.data.map((row) => ({
           value: row.id,
           text: row.text,
         }));
         setLocationOptions(arr);
       } else {
-        toast.error(data.message.msg);
+        toast.error(response.message?.msg || response.message);
       }
     }
   };

@@ -28,12 +28,12 @@ const ViewFGOut = () => {
       toast.error("Please Select Date");
     } else {
       setLoading(true);
-      const { data } = await imsAxios.post("/fgout/fetchFgOutRpt", {
+      const response = await imsAxios.post("/fgout/fetchFgOutRpt", {
         method: localVar.sel,
         date: selectDate,
       });
-      if (data.code == 200) {
-        let arr = data.data.map((row) => {
+      if (data.success) {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -41,8 +41,8 @@ const ViewFGOut = () => {
         });
         setFetchDataFromDate(arr);
         setLoading(false);
-      } else if (data.code == 500) {
-        toast.error(data.message);
+      } else {
+        toast.error(data.message?.msg || data.message);
         setLoading(false);
       }
     }

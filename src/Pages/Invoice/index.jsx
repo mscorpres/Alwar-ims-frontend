@@ -37,7 +37,7 @@ const CreateInvoice = () => {
     setActiveTab(key);
   };
   const submitHandler = async (obj) => {
-    const { data } = await imsAxios.post("/invoice/create", obj);
+    const response = await imsAxios.post("/invoice/create", obj);
     if (data) {
       toast.success(data);
       // reset();

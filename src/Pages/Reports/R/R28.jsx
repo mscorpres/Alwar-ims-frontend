@@ -52,14 +52,14 @@ function R28() {
   const getRows = async () => {
     setDateData([]);
     setLoading(true);
-    const { data } = await imsAxios.post("/report28", {
+    const response = await imsAxios.post("/report28", {
       date: datee,
     });
     console.log("data", data);
-    if (data.code == 200) {
+    if (response.success) {
       setLoading(false);
-      toast.success(data.message);
-      let arr = data.data.map((row, index) => {
+      toast.success(response.message);
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: index + 1,
@@ -67,8 +67,8 @@ function R28() {
       });
       setDateData(arr);
       setLoading(false);
-    } else if (data.code == 500) {
-      toast.error(data.message.msg);
+    } else if (!response.success) {
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };

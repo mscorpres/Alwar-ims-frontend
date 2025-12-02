@@ -17,7 +17,7 @@ const AddClientBranch = ({ openBranch, setOpenBranch }) => {
   const getFetchState = async (e) => {
     if (e.length > 1) {
       setSelectLoading(true);
-      const { data } = await imsAxios.post("/backend/stateList", {
+      const response = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
@@ -45,15 +45,15 @@ const addBranch = async() => {
     console.log(obj)
     try {
         setSubmitLoading(true);
-        const { data } = await imsAxios.post("client/addbranch", obj);
-        if (data.code == 200) {
+        const response = await imsAxios.post("client/addbranch", obj);
+        if (response.success) {
           // fetchVendor();
           reset()
-          toast.success(data.message);
+          toast.success(response.message);
           setOpenBranch(false)
           // setShowAddVendorModal(false);
         } else {
-          toast.error(data.message.msg);
+          toast.error(response.message?.msg || response.message);
         }
         } catch (error) {
           toast.error(error)
