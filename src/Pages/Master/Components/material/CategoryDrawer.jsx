@@ -1,3 +1,4 @@
+import React, { useEffect,useState } from "react";
 import {
   Col,
   Divider,
@@ -5,19 +6,14 @@ import {
   Flex,
   Form,
   Input,
-  Modal,
   Row,
   Typography,
 } from "antd";
-import React from "react";
 import MyButton from "../../../../Components/MyButton";
 import { useParams } from "react-router";
-import { useState } from "react";
-import { useEffect } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { toast } from "react-toastify";
 import MySelect from "../../../../Components/MySelect";
-import { Numbers } from "@mui/icons-material";
 
 export default function CategoryDrawer({
   show,
@@ -25,7 +21,6 @@ export default function CategoryDrawer({
   getDetails,
   setUniqueIdData,
 }) {
-  // console.log("show", show, hide, getDetails, setUniqueIdData);
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([]);
   const [uniqueId, setUniqueId] = useState("");
@@ -123,10 +118,6 @@ export default function CategoryDrawer({
 
   const validateHandler = async () => {
     const values = await form.validateFields();
-    // console.log(values);
-    // console.log(uniqueId);
-    // console.log("selectedCategory", selectedCategory);
-    // console.log("msnf", manfCode);
 
     const attr_raw =
       selectedCategory.label === "Capacitor"
@@ -170,7 +161,6 @@ export default function CategoryDrawer({
       };
     }
 
-    // console.log("payload,", payload);
     setUniqueIdData(payload);
     hide();
   };
@@ -210,7 +200,7 @@ export default function CategoryDrawer({
     }
   }, [show]);
   useEffect(() => {
-    // console.log("selectedCategory?.value", selectedCategory?.value);
+   
     if (selectedCategory && selectedCategory?.value !== "348423984423") {
       if (
         selectedCategory?.value !== "Other" ||
@@ -286,8 +276,6 @@ export default function CategoryDrawer({
         let codeValue = zeroPad(makingString);
         setUniqueId(filledFields + codeValue);
       }
-    } else {
-      console.log("makingString greater than 5  =", makingString);
     }
   };
 

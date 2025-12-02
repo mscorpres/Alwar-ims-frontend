@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Card,
-  Col,
-  Row,
-  Typography,
-  Switch,
-  Modal,
-} from "antd";
+import { Card, Col, Row, Typography, Switch, Modal } from "antd";
 import ViewBomOfProject from "./ViewBomOfProject";
 import { imsAxios } from "../../../axiosInterceptor";
 
@@ -26,32 +19,31 @@ function CPMMaster() {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editProject, setEditProject] = useState(false);
-  const [viewProject , setViewProject] = useState(false);
+  const [viewProject, setViewProject] = useState(false);
 
   const getAllDetailFun = async () => {
     setLoading("table");
     const response = await imsAxios.post("/ppr/allProjects");
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        let arr = response.data.map((row, index) => {
-          return {
-            ...row,
-            id: v4(),
-            index: index + 1,
-          };
-        });
-        setRows(arr);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+
+    if (response.success) {
+      let arr = response.data.map((row, index) => {
+        return {
+          ...row,
+          id: v4(),
+          index: index + 1,
+        };
+      });
+      setRows(arr);
+    } else {
+      toast.error(response.message?.msg || response.message);
+      setRows([]);
     }
   };
 
   const handleSubmit = async (updatedData) => {
     try {
-      const response = await imsAxios.put('/ppr/update/project', updatedData);
+      const response = await imsAxios.put("/ppr/update/project", updatedData);
       if (response.success) {
         toast.success("Project updated successfully!");
         setIsModalVisible(false);
@@ -68,7 +60,7 @@ function CPMMaster() {
     downloadCSVnested2(rows, columns, "All Projects");
   };
 
-  const disableValidateHandler = async (row,status) => {
+  const disableValidateHandler = async (row, status) => {
     const payload = {
       project: row.project,
       status: status ? "1" : "0",
@@ -84,14 +76,11 @@ function CPMMaster() {
   };
 
   const disableSubmitHandler = async (values) => {
-    console.log(values)
     const response = await imsAxios.put(
       `/backend/project/status/${values.project}`,
       values
     );
-    const { data } = response;
-    console.log(data)
-    if (data) {
+    if (response.success) {
       if (response.success) {
         getAllDetailFun();
         // getDataTree();
@@ -111,11 +100,7 @@ function CPMMaster() {
       headerName: "Status",
       field: "projectStatus",
       width: 100,
-      renderCell: ({row}) => (
-        <>
-          {row.status === 1 ? "Active" : "InActive"}
-        </>
-      ),
+      renderCell: ({ row }) => <>{row.status === 1 ? "Active" : "InActive"}</>,
     },
     {
       headerName: "Modify Status",
@@ -127,8 +112,8 @@ function CPMMaster() {
           size="small"
           checked={row.status === 1}
           onChange={(e) => {
-            console.log(e)
-            disableValidateHandler(row,e);
+            console.log(e);
+            disableValidateHandler(row, e);
           }}
         />
       ),
@@ -181,7 +166,7 @@ function CPMMaster() {
               getAllDetailFun={getAllDetailFun}
             />
           ) : ( */}
-            <NewProjectForm />
+          <NewProjectForm />
           {/* )} */}
         </Card>
       </Col>

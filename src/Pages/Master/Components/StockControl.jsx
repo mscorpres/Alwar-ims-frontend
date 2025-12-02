@@ -1,6 +1,5 @@
-import { Button, Card, Col, Row, Space, Upload, message, Form } from "antd";
-import React, { useState, useeffect } from "react";
-import { BsFillCloudArrowUpFill } from "react-icons/bs";
+import { Button, Card, Col, Row, Space, Upload, Form } from "antd";
+import React, { useState } from "react";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { InboxOutlined } from "@ant-design/icons";
@@ -32,15 +31,12 @@ function StockControl() {
     setLoading("fetch");
     const response = await imsAxios.get("/component/fetchSfCtrl");
     setLoading(false);
-
-    const { data: newData } = response;
-    if (newData.code === 200 || newData.code === "200") {
-      let arr = newData.data.map((row, index) => ({
+     if (response.success) {
+      let arr = response.data.map((row, index) => ({
         ...row,
         id: index + 1,
       }));
       setRows(arr);
-      console.log(rows);
     }
   };
 

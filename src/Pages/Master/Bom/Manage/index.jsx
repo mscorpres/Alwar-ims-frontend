@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { useEffect } from "react";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { Switch } from "antd";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -10,9 +9,7 @@ import ViewModal from "./ViewModal";
 import { downloadExcel } from "../../../../Components/printFunction";
 import EditModal from "./Edit";
 import { downloadCSVnested2 } from "../../../../Components/exportToCSV";
-import{
-  CommonIcons,
-} from "../../../../Components/TableActions.jsx/TableActions";
+import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { Row } from "antd";
 
 const ManageBOM = () => {
@@ -57,23 +54,21 @@ const ManageBOM = () => {
       subject_id: id,
       status: statusText,
     });
-    const { data } = response;
-    if (data) {
-      if (response.success ) {
-        setRows((curr) =>
-          curr.map((row) => {
-            if (row.bomId === id) {
-              return {
-                ...row,
-                status: row.status === "ENABLE" ? "DISABLED" : "ENABLE",
-              };
-            } else {
-              return row;
-            }
-          })
-        );
-      }
+    if (response.success) {
+      setRows((curr) =>
+        curr.map((row) => {
+          if (row.bomId === id) {
+            return {
+              ...row,
+              status: row.status === "ENABLE" ? "DISABLED" : "ENABLE",
+            };
+          } else {
+            return row;
+          }
+        })
+      );
     }
+
     setLoading(false);
   };
   const handleBOMDownload = async (id, name) => {
@@ -82,11 +77,11 @@ const ManageBOM = () => {
       subject_id: id,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        downloadExcel(data.data.buffer.data, `BOM ${name}`);
-      }
+
+    if (response.success) {
+      downloadExcel(response.data.buffer.data, `BOM ${name}`);
+    } else {
+      toast.error(response.message?.msg || response.message);
     }
   };
   const actionColumns = [
@@ -139,7 +134,7 @@ const ManageBOM = () => {
   }, []);
 
   const handleDownload = () => {
-    downloadCSVnested2(rows, columns, "FG BOM",actionColumns);
+    downloadCSVnested2(rows, columns, "FG BOM", actionColumns);
   };
   return (
     <div style={{ height: "90%", padding: 10, paddingTop: 0 }}>

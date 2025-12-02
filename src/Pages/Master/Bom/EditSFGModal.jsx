@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Alter from "./Alter";
 import {
-  Button,
   Col,
   Divider,
   Drawer,
@@ -12,7 +11,6 @@ import {
   Space,
 } from "antd";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
-import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import errorToast from "../../../Components/errorToast";
@@ -114,13 +112,11 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
       arr = data.map((vList) => {
         return { text: vList.text, value: vList.id };
       });
-      // console.log("Array Vendor=>", arr);
       setAsyncOptions(arr);
     }
   };
 
   const deleteRow = (id) => {
-    // console.log(id)
     setSecondData((secondData) => {
       return secondData.filter((row) => row.id != id);
     });
@@ -128,13 +124,11 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
   };
 
   const clas = (a) => {
-    // console.log("Line no 99 ->>>>>>>>>", a);
     setAltModal(a);
   };
 
   const addDataRow = async (id) => {
     let b = secondData.filter((a) => a.id == id)[0];
-    // console.log("bbbbbbb", b);
 
     if (b.component == "") {
       return toast.error("Please select a component");
@@ -158,7 +152,6 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
       let arr = secondData;
       arr = arr.map((row) => {
         if (row.id === id) {
-          console.log(row);
           return {
             ...row,
             component: row.component.label,
@@ -171,14 +164,11 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
       setSecondData(arr);
       toast.success(response.message);
     } else {
-      toast.error(errorToast(data.message));
+      toast.error(response.message?.msg || response.message);
     }
-    // console.log(data);
-    // console.log("first")
   };
 
   const clickOnUpdata = async (a) => {
-    // console.log(a);
     if (a.component == "") {
       return toast.error("Please select a component");
     } else if (a.requiredQty == 0 || a.requiredQty == "" || a.requiredQty < 0) {
@@ -201,9 +191,8 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
       // next();
       toast.success(response.message);
     } else {
-      toast.error(errorToast(data.message));
+      toast.error(errorToast(response.message));
     }
-    // // console.log(data);
   };
   const handlerEmergingMogal = (row) => {
     let obj = {
@@ -383,7 +372,6 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
     if (sfgEditModal == null) {
       reset();
     } else if (sfgEditModal?.subject_id) {
-      // console.log(sfgEditModal);
       editPerticularId();
       next();
     }
