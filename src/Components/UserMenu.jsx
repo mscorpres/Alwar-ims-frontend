@@ -38,10 +38,9 @@ export default function UserMenu({ user, logoutHandler, setShowSettings }) {
     ),
   });
 
-  const menu = <Menu items={menuItems} />;
   return (
     <Dropdown
-      overlay={menu}
+      menu={{ items: menuItems }}
       placement="bottom"
       style={{ height: "40%" }}
       trigger={["click"]}

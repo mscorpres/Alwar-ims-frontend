@@ -62,7 +62,7 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
   };
   const getPPRData = async (editPPR) => {
     setPageLoading(true);
-    console.log("row", editPPR);
+   
     // return;
     const response = await imsAxios.post("/fg_return/fetchComponentDetails", {
       product_id: editPPR?.productKey,
@@ -72,7 +72,6 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
 
     if (response.success) {
       let  {data}  = response;
-
       let arr1 = {
         ...data.header_data,
         location: "",
@@ -156,7 +155,7 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
         />
       ),
     },
-   
+
     {
       headerName: "Remark",
       flex: 1,
@@ -179,14 +178,13 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
   };
   const getData = (response) => {
     const { data } = response;
-    console.log(data,"data==================")
-    if (data) {
+console.log(response,"res=====================================")
+    if (response?.success) {
       if (data.length) {
         const arr = data.map((row) => ({
           text: row.text,
           value: row.id,
         }));
-        // console.log("location options", arr);
 
         setLocationOptions(arr);
         locationOptionsRef.current = arr;
@@ -208,21 +206,7 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
         return obj;
       }
     });
-    // if (name === "actqty") {
-    //   arr = arr.map((row) => {
-    //     let obj = row;
-    //     if (obj.id == id) {
-    //       obj = {
-    //         ...obj,
-    //         borderRed: +row.location_qty < +value && true,
-    //         [name]: value,
-    //       };
-    //       return obj;
-    //     } else {
-    //       return obj;
-    //     }
-    //   });
-    // }
+ 
     setTableData(arr);
   };
   const headerInputhandler = (name, value) => {
@@ -267,34 +251,22 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
     });
   };
   const submitHandler = async (finalObj) => {
-    console.log("finalObj", finalObj);
-    // return;
+   
     try {
       setSubmitLoading(true);
       const response = await imsAxios.post(
         "/fg_return/executeFG_reversal",
         finalObj
       );
-      console.log("response", response);
-      // if (response.success) {
-      const { data } = response;
+    
       if (response.success) {
-        // console.log("response.message", response.message);
+     
         toast.success(response.message);
         setEditPPR(null);
       } else {
         toast.error(response.message?.msg || response.message);
       }
-      // if (response.success) {
-      //   toast.success(response.message);
-      //   // getRows();
-      //   setTimeout(() => {
-      //     setEditPPR(null);
-      //   }, 3000);
-      // } else {
-      //   toast.error(response.message?.msg || response.message);
-      // }
-      // }
+  
     } catch (error) {
     } finally {
       setSubmitLoading(false);
@@ -553,7 +525,6 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
           activeKey={activeKey}
           onEdit={onEdit}
           items={tabsExist.map((tab) => {
-            console.log(activeKey);
             return {
               disabled: activeKey === "1",
               ...tabItems.filter((item) => tab == item.key)[0],

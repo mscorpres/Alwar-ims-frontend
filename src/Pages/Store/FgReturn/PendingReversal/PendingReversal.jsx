@@ -108,15 +108,14 @@ function PendingReversal() {
               name="data"
               label={wise === "skuwise" ? "Select Product" : "Select Date"}
             >
-              {wise === "skuwise" && (
+              {wise === "skuwise" ? (
                 <MyAsyncSelect
                   loadOptions={handleFetchProductOptions}
                   selectLoading={loading("select")}
                   optionsState={asyncOptions}
                   onBlur={() => setAsyncOptions([])}
                 />
-              )}
-              {wise === "datewise" && (
+              ) : (
                 <MyDatePicker
                   setDateRange={(value) => form.setFieldValue("data", value)}
                 />

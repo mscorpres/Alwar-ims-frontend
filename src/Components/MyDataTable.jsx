@@ -130,7 +130,7 @@ export default function MyDataTable(props) {
         footer: { rows: props.data },
       }}
       pageSize={100}
-      rowsPerPageOptions={[1000]}
+      rowsPerPageOptions={[25, 50, 100, 1000]}
       density="compact"
       sx={{
         "& .MuiDataGrid-cell": {

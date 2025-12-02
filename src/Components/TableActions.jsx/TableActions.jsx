@@ -81,15 +81,15 @@ export default function TableActions({
     <GridActionsCellItem
       showInMenu={showInMenu}
       icon={
-        !showInMenu && (
+        !showInMenu ? (
           <Tooltip title={label}>
             <Icon />
           </Tooltip>
-        )
+        ) : undefined
       }
       disabled={disabled}
       label={label}
-      onClick={!disabled && onClick}
+      onClick={onClick}
     />
   );
 }
