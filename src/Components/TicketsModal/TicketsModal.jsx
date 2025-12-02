@@ -1,19 +1,57 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Col, Drawer, Modal, Row, Typography } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Drawer,
+  Row,
+  Typography,
+  Input,
+  Select,
+  Upload,
+  Space,
+  Divider,
+  Skeleton,
+} from "antd";
+import {
+  PlusOutlined,
+  UnorderedListOutlined,
+  InboxOutlined,
+} from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { imsAxios } from "../../axiosInterceptor";
 import { toast } from "react-toastify";
-import ToolTipEllipses from "../ToolTipEllipses";
-import { Link } from "react-router-dom";
-import Loading from "../Loading";
+
+const { TextArea } = Input;
 const axiosLink = "https://support.mscorpres.com";
 
 export default function TicketsModal({ open, handleClose }) {
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
+  const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
   const { user } = useSelector((state) => state.login);
 
-  // getting tickets list
+  // Create ticket form state
+  const [formData, setFormData] = useState({
+    topic: null,
+    subject: "",
+    concern: "",
+    attachment: null,
+  });
+  const [fileList, setFileList] = useState([]);
+
+  // Topic options
+  const topicOptions = [
+    { label: "Technical Issue", value: "technical" },
+    { label: "Bug Report", value: "bug" },
+    { label: "Feature Request", value: "feature" },
+    { label: "General Inquiry", value: "general" },
+    { label: "Access Issue", value: "access" },
+    { label: "Data Issue", value: "data" },
+    { label: "Other", value: "other" },
+  ];
+
+  // Getting tickets list
   const getTickets = async () => {
     setLoading("fetching");
     const response = await imsAxios.post(`/chat/get-pendingTicket`, {
@@ -30,13 +68,108 @@ export default function TicketsModal({ open, handleClose }) {
     }
   };
 
+  // Handle form field changes
+  const handleFormChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  // Handle file upload
+  const handleFileChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+    if (newFileList.length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        attachment: newFileList[0].originFileObj,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        attachment: null,
+      }));
+    }
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setFormData({
+      topic: null,
+      subject: "",
+      concern: "",
+      attachment: null,
+    });
+    setFileList([]);
+  };
+
+  // Handle submit ticket
+  const handleSubmit = async () => {
+    // Validation
+    if (!formData.topic) {
+      toast.error("Please select a topic");
+      return;
+    }
+    if (!formData.subject.trim()) {
+      toast.error("Please enter a subject");
+      return;
+    }
+    if (!formData.concern.trim()) {
+      toast.error("Please describe your concern");
+      return;
+    }
+
+    try {
+      setLoading("submitting");
+
+      const submitData = new FormData();
+      submitData.append("topic", formData.topic);
+      submitData.append("subject", formData.subject);
+      submitData.append("concern", formData.concern);
+      submitData.append("email", user.email);
+      submitData.append("userName", user.user_name || user.name);
+      if (formData.attachment) {
+        submitData.append("attachment", formData.attachment);
+      }
+
+      const response = await imsAxios.post("/chat/create-ticket", submitData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      setLoading(false);
+
+      if (response.success) {
+        toast.success("Ticket created successfully!");
+        resetForm();
+        setActiveMenu("fetch");
+        getTickets();
+      } else {
+        toast.error(response.message || "Failed to create ticket");
+      }
+    } catch (error) {
+      setLoading(false);
+      console.error("Error creating ticket:", error);
+      toast.error("Failed to create ticket");
+    }
+  };
+
+  // Handle cancel
+  const handleCancel = () => {
+    resetForm();
+    setActiveMenu("fetch");
+  };
+
   useEffect(() => {
     if (open) {
-      getTickets();
+      setActiveMenu("create");
     } else {
       setTickets([]);
+      resetForm();
     }
   }, [open]);
+
   return (
     <Drawer
       title="Your Tickets"
@@ -44,17 +177,215 @@ export default function TicketsModal({ open, handleClose }) {
       onClose={handleClose}
       open={open}
       width={800}
-      styles={{ body: { padding: 5 } }}
-      extra={
-        <Button href={`${axiosLink}/open.php`} target="_blank" type="link">
-          Open a new Ticket
-        </Button>
-      }
+      styles={{ body: { padding: 0 } }}
     >
-      {loading && <Loading />}
-      {tickets.map((ticket) => (
-        <Card size="small">
-          <Row gutter={(6, 4)}>
+      <div style={{ display: "flex", height: "100%" }}>
+        {/* Left Vertical Icon Menu */}
+        <div
+          style={{
+            width: 50,
+            borderRight: "1px solid #cccccc",
+            backgroundColor: "#eeeeee",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            paddingTop: 12,
+            gap: 8,
+          }}
+        >
+          {/* Create Ticket Icon */}
+          <div
+            onClick={() => setActiveMenu("create")}
+            style={{
+              width: 36,
+              height: 36,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 6,
+              cursor: "pointer",
+              backgroundColor: activeMenu === "create" ? "#047780" : "transparent",
+              color: activeMenu === "create" ? "#fff" : "#666",
+              transition: "all 0.2s ease",
+            }}
+            title="Create Ticket"
+          >
+            <PlusOutlined style={{ fontSize: 18 }} />
+          </div>
+
+          {/* My Tickets Icon */}
+          <div
+            onClick={() => {
+              setActiveMenu("fetch");
+              getTickets();
+            }}
+            style={{
+              width: 36,
+              height: 36,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 6,
+              cursor: "pointer",
+              backgroundColor: activeMenu === "fetch" ? "#047780" : "transparent",
+              color: activeMenu === "fetch" ? "#fff" : "#666",
+              transition: "all 0.2s ease",
+            }}
+            title="My Tickets"
+          >
+            <UnorderedListOutlined style={{ fontSize: 18 }} />
+          </div>
+        </div>
+
+        {/* Right Content Area */}
+        <div style={{ flex: 1, padding: 20, overflow: "auto" }}>
+          {/* Create Ticket Form */}
+          {activeMenu === "create" && (
+            <div style={{ maxWidth: 600 }}>
+              <Typography.Title level={4} style={{ marginBottom: 24 }}>
+                Create New Ticket
+              </Typography.Title>
+
+              {/* Topic */}
+              <div style={{ marginBottom: 20 }}>
+                <Typography.Text strong>
+                  Topic <span style={{ color: "red" }}>*</span>
+                </Typography.Text>
+                <Select
+                  style={{ width: "100%", marginTop: 8 }}
+                  placeholder="Select Topic"
+                  options={topicOptions}
+                  value={formData.topic}
+                  onChange={(value) => handleFormChange("topic", value)}
+                />
+              </div>
+
+              {/* Subject */}
+              <div style={{ marginBottom: 20 }}>
+                <Typography.Text strong>
+                  Subject <span style={{ color: "red" }}>*</span>
+                </Typography.Text>
+                <Input
+                  style={{ marginTop: 8 }}
+                  placeholder="Enter subject"
+                  value={formData.subject}
+                  onChange={(e) => handleFormChange("subject", e.target.value)}
+                  maxLength={100}
+                  showCount
+                />
+              </div>
+
+              {/* Concern */}
+              <div style={{ marginBottom: 20 }}>
+                <Typography.Text strong>
+                  Describe Your Concern <span style={{ color: "red" }}>*</span>
+                </Typography.Text>
+                <TextArea
+                  style={{ marginTop: 8 }}
+                  placeholder="Please describe your issue or concern in detail..."
+                  rows={6}
+                  value={formData.concern}
+                  onChange={(e) => handleFormChange("concern", e.target.value)}
+                  maxLength={1000}
+                  showCount
+                />
+              </div>
+
+              {/* Attachment */}
+              <div style={{ marginBottom: 24 }}>
+                <Typography.Text strong>Attachment</Typography.Text>
+                <Upload.Dragger
+                  style={{ marginTop: 8 }}
+                  fileList={fileList}
+                  onChange={handleFileChange}
+                  beforeUpload={() => false}
+                  maxCount={1}
+                  accept=".png,.jpg,.jpeg,.pdf,.doc,.docx,.xls,.xlsx"
+                >
+                  <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                  </p>
+                  <p className="ant-upload-text">
+                    Click or drag file to upload
+                  </p>
+                  <p className="ant-upload-hint">
+                    Supported: PNG, JPG, PDF, DOC, XLS (Max 1 file)
+                  </p>
+                </Upload.Dragger>
+              </div>
+
+              <Divider />
+
+              {/* Bottom Fixed Buttons */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: 12,
+                }}
+              >
+                <Button onClick={handleCancel}>Cancel</Button>
+                <Button
+                  type="primary"
+                  onClick={handleSubmit}
+                  loading={loading === "submitting"}
+                  style={{ backgroundColor: "#047780", borderColor: "#047780" }}
+                >
+                  Submit
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Fetch Tickets List */}
+          {activeMenu === "fetch" && (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 16,
+                }}
+              >
+                <Typography.Title level={4} style={{ margin: 0 }}>
+                  My Tickets
+                </Typography.Title>
+                <Button
+                  href={`${axiosLink}/open.php`}
+                  target="_blank"
+                  type="link"
+                >
+                  Open on Support Portal
+                </Button>
+              </div>
+
+              {/* Skeleton Loading */}
+              {loading === "fetching" && (
+                <Space direction="vertical" style={{ width: "100%" }} size={12}>
+                  {[1, 2, 3].map((item) => (
+                    <Card size="small" key={item}>
+                      <Skeleton active paragraph={{ rows: 2 }} />
+                    </Card>
+                  ))}
+                </Space>
+              )}
+
+              {/* No Tickets */}
+              {tickets.length === 0 && loading !== "fetching" && (
+                <Card style={{ textAlign: "center", padding: 40 }}>
+                  <Typography.Text type="secondary">
+                    No tickets found
+                  </Typography.Text>
+                </Card>
+              )}
+
+              {/* Tickets List */}
+              {!loading && tickets.length > 0 && (
+              <Space direction="vertical" style={{ width: "100%" }} size={12}>
+                {tickets.map((ticket, index) => (
+                  <Card size="small" key={ticket.ticket || index}>
+                    <Row gutter={[6, 4]}>
             <Col span={8}>
               <Typography.Text strong>Date: </Typography.Text>
               <Typography.Text>{ticket.date}</Typography.Text>
@@ -65,24 +396,37 @@ export default function TicketsModal({ open, handleClose }) {
             </Col>
             <Col span={8}>
               <Typography.Text strong>Ticket No.: </Typography.Text>
-              <Typography.Text strong>
                 <a
                   target="_blank"
+                          rel="noopener noreferrer"
                   href={`${axiosLink}/view.php?e=${user.email}&t=${ticket.ticket}`}
                 >
-                  <Typography.Text style={{ color: "blue" }} copyable={true}>
+                          <Typography.Text
+                            style={{ color: "#047780" }}
+                            copyable
+                          >
                     {ticket.ticket}
                   </Typography.Text>
                 </a>
-              </Typography.Text>
             </Col>
             <Col span={24}>
               <Typography.Text strong>Subject: </Typography.Text>
               <Typography.Text>{ticket.subject}</Typography.Text>
             </Col>
             <Col span={24}>
-              <Typography.Text strong>Status</Typography.Text>
-              <Typography.Text>
+                        <Typography.Text strong>Status: </Typography.Text>
+                        <Typography.Text
+                          style={{
+                            color:
+                              ticket.status === "O"
+                                ? "#faad14"
+                                : ticket.status === "R"
+                                ? "#52c41a"
+                                : ticket.status === "C"
+                                ? "#1890ff"
+                                : "#999",
+                          }}
+                        >
                 {ticket.status === "O"
                   ? "Open"
                   : ticket.status === "A"
@@ -91,12 +435,20 @@ export default function TicketsModal({ open, handleClose }) {
                   ? "Closed"
                   : ticket.status === "R"
                   ? "Resolved"
-                  : ticket.status === "D" && "Deleted"}
+                            : ticket.status === "D"
+                            ? "Deleted"
+                            : ticket.status}
               </Typography.Text>
             </Col>
           </Row>
         </Card>
       ))}
+              </Space>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
     </Drawer>
   );
 }
