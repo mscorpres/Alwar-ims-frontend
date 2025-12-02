@@ -40,10 +40,10 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
     });
     setLoading(false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
+   
+      if (response?.success) {
         data.header.map((a) => setView(a));
-        let arr = response.data.map((row, index) => {
+        let arr = data?.data?.map((row, index) => {
           return {
             ...row,
             id: v4(),
@@ -52,13 +52,10 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
         });
         setMainData(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setViewModalOpen(false);
       }
-    } else {
-      setViewModalOpen(false);
-      toast.error("Something went wrong");
-    }
+  
   };
 
   const columns = [
@@ -119,10 +116,7 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
     { field: "rtn_inward_value", headerName: "RM Return Value", width: 150 },
   ];
 
-  const cancel = () => {
-    setMainData([]);
-    setViewModalOpen(false);
-  };
+
   const handleDownload = () => {
     downloadCSV(
       mainData,

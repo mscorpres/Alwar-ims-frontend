@@ -38,8 +38,6 @@ import MyButton from "../../Components/MyButton";
 import { downloadCSV } from "../../Components/exportToCSV.jsx";
 
 const POAnalysis = () => {
-  const { executeFun, loading: loading1 } = useApi();
-  const navigate = useNavigate();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -68,9 +66,9 @@ const POAnalysis = () => {
     setLoading(false);
     const { data } = response;
     let arr = [];
-    if (data) {
-      if (response.success) {
-        arr = response.data.map((row, index) => ({
+  
+      if (response?.success) {
+        arr = data.map((row, index) => ({
           id: index + 1,
           date: row.date,
           jwId: row.po_sku_transaction,
@@ -88,8 +86,7 @@ const POAnalysis = () => {
       } else {
         toast.error(response.message?.msg || response.message);
       }
-    } else {
-    }
+    
     setRows(arr);
   };
 
@@ -109,14 +106,14 @@ const POAnalysis = () => {
     const response = await imsAxios.post("/jobwork/print_jw_analysis", payload);
     setLoading(false);
     const { data } = response;
-    if (data) {
+    if (response.success) {
       if (action === "print") {
-        printFunction(data.data.buffer.data);
+        printFunction(data?.buffer.data);
       } else {
-        downloadFunction(data.data.buffer.data, jwId);
+        downloadFunction(data?.buffer.data, jwId);
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response?.message);
     }
   };
   const askPassword = () => {
@@ -132,14 +129,14 @@ const POAnalysis = () => {
     });
     const { data } = response;
     setConfirmLoading(true);
-    if (response.status === 200) {
-      const link = `https://oakter.vendor.mscorpres.co.in/requests/pending?token=${data.redirectToken}`;
+    if (response.success) {
+      const link = `https://oakter.vendor.mscorpres.co.in/requests/pending?token=${data?.redirectToken}`;
       window.open(link, "_blank");
       setConfirmLoading(false);
       setOpen(false);
       passwordForm.resetFields();
     } else {
-      toast.error(response.data);
+      toast.error(response?.message);
       setConfirmLoading(false);
     }
     // navigate("");
@@ -182,18 +179,9 @@ const POAnalysis = () => {
         label="Download"
         onClick={() => handlePrint(row.jwId, "download")}
       />,
-      // <GridActionsCellItem
-      //   showInMenu
-      //   label="Vendor Login"
-      //   onClick={() => getRowinModal(row)}
-      // />,
+    
     ],
   };
-  const getRowinModal = (row) => {
-    setOpen(true);
-    setSelectedRow(row);
-  };
-
   const selectedWise = filterForm.getFieldValue("wise");
 
   return (

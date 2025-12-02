@@ -32,21 +32,17 @@ import {
 import { convertSelectOptions } from "../../utils/general.ts";
 import useApi from "../../hooks/useApi.ts";
 
-// vendor type options
 const vendorTypeOptions = [
   { text: "JWI", value: "j01" },
   { text: "Vendor", value: "v01" },
 ];
-
 const poTypeOptions = [{ text: "New", value: "N" }];
 
-// gst type options
 const gstTypeOptions = [
   { text: "Local", value: "L" },
   { text: "Interstate", value: "I" },
 ];
 
-// gst rate options
 const gstRateOptions = [
   { text: "0%", value: "0" },
   { text: "5%", value: "5" },
@@ -59,7 +55,7 @@ const newPurchaseOrder = {
   pocreatetype: "N",
   original_po: "",
   vendortype: "j01",
-  vendorname: "",
+  vendorname: undefined || "",
   vendorbranch: "",
   gstin: "",
   vendoraddress: "",
@@ -115,8 +111,7 @@ export default function CreateJW({}) {
   });
   const [uom, setUom] = useState("");
   const [createPoForm] = Form.useForm();
-  // get po options
-  //   in case of po type change
+
   const getPoOptions = async (inputValue) => {};
   //   get vendor options
   const getVendorOption = async (search) => {
@@ -135,23 +130,20 @@ export default function CreateJW({}) {
     });
     setLoading("fetch", false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
-        let arr = response.data.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
-        setVendorBranchOptions(arr);
-        getVendorBranchDetails({
-          vendorcode: inputValue,
-          branchcode: arr[0].value,
-        });
-        createPoForm.setFieldValue("vendorbranch", arr[0].value);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+
+    if (response.success) {
+      let arr = data.map((row) => ({
+        text: row.text,
+        value: row.id,
+      }));
+      setVendorBranchOptions(arr);
+      getVendorBranchDetails({
+        vendorcode: inputValue,
+        branchcode: arr[0].value,
+      });
+      createPoForm.setFieldValue("vendorbranch", arr[0].value);
     } else {
-      toast.error("Some error occured while getting vendor branches ");
+      toast.error(response.message);
     }
   };
   //   getting vendor branch details
@@ -163,32 +155,27 @@ export default function CreateJW({}) {
     });
     setLoading("fetch", false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
-        createPoForm.setFieldValue(
-          "vendoraddress",
-          data.data?.address?.replaceAll("<br>", "\n")
-        );
-        createPoForm.setFieldValue("gstin", data.data?.gstid);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+
+    if (response.success) {
+      createPoForm.setFieldValue(
+        "vendoraddress",
+        data?.address?.replaceAll("<br>", "\n")
+      );
+      createPoForm.setFieldValue("gstin", data?.gstid);
     } else {
-      toast.error("Some error occured while getting vendor address ");
+      toast.error(response.message?.msg || response.message);
     }
   };
 
   const getData = (response) => {
     const { data } = response;
-    if (data) {
-      if (data.length) {
-        const arr = data.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
+    if (response.success) {
+      const arr = data.map((row) => ({
+        text: row.text,
+        value: row.id,
+      }));
 
-        setAsyncLocationOptions(arr);
-      }
+      setAsyncLocationOptions(arr);
     }
   };
 
@@ -208,7 +195,7 @@ export default function CreateJW({}) {
       "select"
     );
     let arr = [];
-    if (response.success) arr = convertSelectOptions(response.data);
+    if (response?.success) arr = convertSelectOptions(response?.data);
     setAsyncOptions(arr);
   };
 
@@ -218,7 +205,7 @@ export default function CreateJW({}) {
       () => getProjectOptions(search),
       "select"
     );
-    setAsyncOptions(response.data);
+    setAsyncOptions(response?.data);
   };
 
   // get project details
@@ -229,18 +216,12 @@ export default function CreateJW({}) {
     });
     setLoading("select", false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
-        setProjectDescription(data.data);
-        createPoForm.setFieldValue(
-          "project_description",
-          data.data?.description
-        );
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+
+    if (response.success) {
+      setProjectDescription(data);
+      createPoForm.setFieldValue("project_description", data?.description);
     } else {
-      toast.error("Some error occured wile getting project details");
+      toast.error(response.message);
     }
   };
   //   get billing address options
@@ -249,9 +230,11 @@ export default function CreateJW({}) {
     const response = await imsAxios.post("/backend/billingAddressList", {
       search: inputValue,
     });
+   
     setLoading("select", false);
+
     const { data } = response;
-    if (data[0]) {
+    if (response.success) {
       let arr = data.map((row) => ({
         text: row.text,
         value: row.id,
@@ -270,18 +253,16 @@ export default function CreateJW({}) {
     });
     setLoading("fetch", false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
-        createPoForm.setFieldValue(
-          "billaddress",
-          data.data?.address?.replaceAll("<br>", "\n")
-        );
-        createPoForm.setFieldValue("billGST", data.data?.gstin);
-        createPoForm.setFieldValue("billPan", data.data?.pan);
-      } else {
-      }
-    } else {
-      toast.error("Some error occured wile getting billing address details");
+   
+
+    if (response?.success) {
+      
+      createPoForm.setFieldValue(
+        "billaddress",
+        data?.address
+      );
+      createPoForm.setFieldValue("billGST", data?.gstin);
+      createPoForm.setFieldValue("billPan", data?.pan);
     }
   };
   //   get billing address options
@@ -292,7 +273,7 @@ export default function CreateJW({}) {
     });
     setLoading("select", false);
     const { data } = response;
-    if (data[0]) {
+    if (response.success) {
       let arr = data.map((row) => ({
         text: row.text,
         value: row.id,
@@ -311,18 +292,14 @@ export default function CreateJW({}) {
     });
     setLoading("fetch", false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
-        createPoForm.setFieldValue(
-          "shipaddress",
-          data.data?.address?.replaceAll("<br>", "\n")
-        );
-        createPoForm.setFieldValue("shipGST", data.data?.gstin);
-        createPoForm.setFieldValue("shipPan", data.data?.pan);
-      } else {
-      }
-    } else {
-      toast.error("Some error occured wile getting billing address details");
+
+    if (response.success) {
+      createPoForm.setFieldValue(
+        "shipaddress",
+        data?.address?.replaceAll("<br>", "\n")
+      );
+      createPoForm.setFieldValue("shipGST", data?.gstin);
+      createPoForm.setFieldValue("shipPan", data?.pan);
     }
   };
 
@@ -334,8 +311,8 @@ export default function CreateJW({}) {
       });
       setLoading("select", false);
       let arr = [];
-      if (!data.msg) {
-        arr = data.map((d) => {
+      if (response?.success) {
+        arr = response?.data.map((d) => {
           return { text: d.text, value: d.id };
         });
         setRequestByOptions(arr);
@@ -353,7 +330,7 @@ export default function CreateJW({}) {
     });
     setLoading("select", false);
     const { data } = response;
-    if (data) {
+    if (response.success) {
       let arr = data.map((row) => ({
         text: row.text,
         value: row.id,
@@ -369,20 +346,18 @@ export default function CreateJW({}) {
     const response = await imsAxios.post("jobwork/fetchProductData4Table", {
       product_name: inputValue,
     });
+ 
     setLoading("fetch", false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
-        setUom(data.data?.unit);
-        createPoForm.setFieldValue("qty", data.data?.description);
-        createPoForm.setFieldValue("rate", data.data?.rate);
-        createPoForm.setFieldValue("hsn", data.data?.hsn);
-        createPoForm.setFieldValue("gstRate", data.data?.gstrate);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+
+    if (response.success) {
+      setUom(data?.unit);
+      createPoForm.setFieldValue("qty", data?.description);
+      createPoForm.setFieldValue("rate", data?.rate);
+      createPoForm.setFieldValue("hsn", data?.hsn);
+      createPoForm.setFieldValue("gstRate", data?.gstrate);
     } else {
-      toast.error("Some error occured wile getting component details");
+      toast.error(response.message);
     }
   };
   const inputHandler = () => {
@@ -478,21 +453,16 @@ export default function CreateJW({}) {
       () => createJobWorkReq(finalObj),
       "select"
     );
-    console.log("response", response);
 
-    // const response = await imsAxios.post("/jobwork/createJobWorkReq", finalObj);
-    // setLoading("submitting", false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        toast.success(response.message);
-        resetHandler();
-        setLoading("submitting", false);
-      } else {
-        toast.error(response.message?.msg || response.message);
-        setLoading("submitting", false);
-      }
+    if (response.success) {
+      toast.success(response.message);
+      resetHandler();
+      setLoading("submitting", false);
+    } else {
+      toast.error(response.message);
+      setLoading("submitting", false);
     }
+
     setLoading("submitting", false);
   };
   // reset handlerd

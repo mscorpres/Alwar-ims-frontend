@@ -26,12 +26,23 @@ const MyAsyncSelect = forwardRef(function MyAsyncSelect({
 }, ref) {
   const [searchValue, setSearchValue] = useState("");
   const updatedValue = useDebounce(searchValue);
+ 
 
   useEffect(() => {
     if (updatedValue.length >= 3) {
       loadOptions(updatedValue);
     }
   }, [updatedValue]);
+
+  // Normalize value for labelInValue mode
+  const normalizedValue = labelInValue
+    ? value && typeof value === "object" && value.value !== undefined
+      ? value
+      : value === "" || value === null || value === undefined
+      ? undefined
+      : undefined
+    : value;
+
   return (
     <Select
       ref={ref}
@@ -40,7 +51,7 @@ const MyAsyncSelect = forwardRef(function MyAsyncSelect({
       disabled={disabled}
       showSearch
       variant={noBorder ? "borderless" : "outlined"}
-      value={value}
+      value={normalizedValue}
       placeholder={placeholder}
       onFocus={onFocus}
       // suffixIcon={<SearchOutlined />}
