@@ -28,9 +28,9 @@ function Services() {
   const { executeFun, loading: loading1 } = useApi();
   const getServices = async () => {
     setLoading(true);
-    const { data } = await imsAxios.get("/component/service");
+    const data  = await imsAxios.get("/component/service");
     setLoading(false);
-    if (data.code == 200) {
+    if (data.success) {
       const arr = data.data.map((row, index) => {
         return {
           ...row,
@@ -40,7 +40,7 @@ function Services() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message.msg);
+      toast.error(data?.message);
       setRows([]);
     }
   };

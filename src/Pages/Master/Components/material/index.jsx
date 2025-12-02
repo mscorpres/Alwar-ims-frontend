@@ -64,22 +64,21 @@ const Material = () => {
     try {
       setComponents([]);
       const response = await imsAxios.get("/component");
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row, index) => ({
+      const data  = response;
+      if (data?.success) {
+          const arr = data?.data?.map((row, index) => ({
             id: index + 1,
             componentName: row.c_name,
             partCode: row.c_part_no,
             key: row.component_key,
             unit: row.units_name,
             status: row.is_enabled === "YES" ? "Active" : "Inactive",
+            newPartCode: row.c_new_part_no,
           }));
 
           setComponents(arr);
         } else {
-          toast.error(data.message.msg);
-        }
+          toast.error(data?.message);
       }
     } catch (error) {
     } finally {
