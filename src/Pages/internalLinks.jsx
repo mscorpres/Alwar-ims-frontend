@@ -420,7 +420,7 @@ const links = [
   // edit and reverse MIN links
   [
     { routeName: "Edit MIN", routePath: "/update-rm" },
-    { routeName: "Reverse MIN", routePath: "/reverse-min" },
+    // { routeName: "Reverse MIN", routePath: "/reverse-min" },
   ],
   // FG inward links
   [

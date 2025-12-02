@@ -44,7 +44,7 @@ export default function TicketsModal({ open, handleClose }) {
       onClose={handleClose}
       open={open}
       width={800}
-      bodyStyle={{ padding: 5 }}
+      styles={{ body: { padding: 5 } }}
       extra={
         <Button href={`${axiosLink}/open.php`} target="_blank" type="link">
           Open a new Ticket

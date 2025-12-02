@@ -29,7 +29,7 @@ function CreateFgReturn() {
       () => getProductsOptions(searchInput, true),
       "select"
     );
-    let { data } = response;
+    let  data  = response?.data;
 
     setAsyncOptions(data);
   };
@@ -39,30 +39,26 @@ function CreateFgReturn() {
     const response = await imsAxios.post("/ppr/fetchProductData", {
       search: sku,
     });
+    console.log(response,"=====================response")
     setLoading(false);
 
-    const { data } = response;
-    if (data) {
+    const  data  = response?.data;
+    if (response?.success) {
       const bomArr = data.bom.map((row) => ({
         text: row.text,
         value: row.id,
       }));
       fgReturn.setFieldValue("uom", data.other.uom);
       setBomOptions(bomArr);
-      //   createPPRForm.setFieldValue(
-      //     "existingQty",
-      //     data?.other?.existingplanedQty
-      //   );
-      //   createPPRForm.setFieldValue("stock", data?.other?.stockInHand);
-      //   createPPRForm.setFieldValue("uom", data?.other?.uom);
+      
     }
-  }; //to get location from database
+  }; 
   const locationList = async (search) => {
     const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: search,
     });
     let locArr = [];
-    locArr = data.map((d) => {
+    locArr = response?.data.map((d) => {
       return { text: d.text, value: d.id };
     });
     setLocationList(locArr);
@@ -91,8 +87,8 @@ function CreateFgReturn() {
     // console.log("payload", payload);
     const response = await imsAxios.post("/fg_return/saveFG_return", payload);
     // console.log("response", response);
-    if (response.success == true) {
-      toast.success(response.message);
+    if (response?.success) {
+      toast.success(response?.message);
       resetFunction();
       setLoading(false);
     }

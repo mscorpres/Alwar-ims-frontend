@@ -18,7 +18,6 @@ function ReToRej() {
     qty1: "",
     locationTo: "",
   });
-  console.log(allDataRej);
   const [locationFrom, setLocationFrom] = useState([]);
   const [branch, setBranch] = useState([]);
   const [locDataTo, setloctionDataTo] = useState([]);
@@ -32,17 +31,13 @@ function ReToRej() {
       address: "",
     },
   ]);
-  const [locationName, setLocationName] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
-  // console.log(allDataRej);
-  // console.log(branch);
 
-  // function start here
   const getLocationFunction = async () => {
     const response = await imsAxios.post("/godown/fetchLocationForRM2REJ_from");
 
     let v = [];
-    response.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
+    response?.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
     setLocationFrom(v);
   };
 
@@ -51,18 +46,16 @@ function ReToRej() {
       location_key: allDataRej.locationFrom,
     });
     // console.log(data.data);
-    setBranch(data.data);
+    setBranch(response?.data);
   };
 
   const getComponentList = async (e) => {
     if (e?.length > 2) {
-      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-      //   search: e,
-      // });
+      
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
       let arr = [];
-      arr = data.map((d) => {
+      arr = data?.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -80,7 +73,7 @@ function ReToRej() {
     });
     setRows((prev) => {
       const updated = [...prev];
-      updated[rowIndex] = { ...updated[rowIndex], restDetail: data.data };
+      updated[rowIndex] = { ...updated[rowIndex], restDetail: response?.data };
       return updated;
     });
   };
@@ -89,7 +82,7 @@ function ReToRej() {
     const response = await imsAxios.post("/godown/fetchLocationForRM2REJ_to");
 
     let v = [];
-    response.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
+    response?.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
     setloctionDataTo(v);
   };
 
@@ -119,8 +112,8 @@ function ReToRej() {
       qty: qtys,
       type: "RM2REJ",
     });
-    if (data.success) {
-      toast.success(data.message.toString()?.replaceAll("<br/>", ""));
+    if (response?.success) {
+      toast.success(response.message.toString()?.replaceAll("<br/>", ""));
       setAllDataRej({
         locationFrom: "",
         comment: "",
@@ -140,7 +133,7 @@ function ReToRej() {
       ]);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
       setLoading(false);
     }
   };
@@ -154,7 +147,7 @@ function ReToRej() {
     });
     setRows((prev) => {
       const updated = [...prev];
-      updated[rowIndex] = { ...updated[rowIndex], address: data.data };
+      updated[rowIndex] = { ...updated[rowIndex], address: response?.data };
       return updated;
     });
   };

@@ -9,7 +9,7 @@ const generateUniqueId = () => {
 
 // Example usage
 const newId = generateUniqueId();
-console.log('Generated Unique ID:', newId );
+
 
 const formatTimestamp = () => {
   const now = new Date();
@@ -73,25 +73,11 @@ imsAxios.interceptors.response.use(
         console.log("this is the error response", error);
         toast.error(error.response.data.message);
       }
-      //  else {
-      //   toast.error(
-      //     error.response.data?.message?.msg ??
-      //       "Error while connecting to backend."
-      //   );
-      // }
+  
       return error.response.data;
     }
 
-    // if (error.response.status === 404) {
-    //   toast.error("Some Internal error occured");
-    // } else {
-
-    // if (error.response.data?.message) {
-    //   toast.error(
-    //     error.response.data?.message?.msg ??
-    //       "Error while connecting to backend."
-    //   );
-    // }
+   
     if (!error.response.data?.message) {
       toast.error(error.response?.data);
     }
@@ -99,7 +85,7 @@ imsAxios.interceptors.response.use(
     return error.response;
   }
 );
-console.log("this is the company branch", localStorage.getItem("otherData"));
+
 let branch =
   JSON.parse(localStorage.getItem("otherData"))?.company_branch ?? "BRMSC012";
 let session = JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";

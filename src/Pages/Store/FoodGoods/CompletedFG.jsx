@@ -34,7 +34,7 @@ const CompletedFG = () => {
       () => getProductsOptions(searchInput, true),
       "select"
     );
-    let { data } = response;
+    let  data  = response?.data;
 
     setAsyncSelect(data);
   };
@@ -46,8 +46,8 @@ const CompletedFG = () => {
       searchBy: all.info,
       searchValue: all.selOption,
     });
-    if (data.success) {
-      let arr = response.data.map((row, index) => {
+    if (response?.success) {
+      let arr = response?.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -57,7 +57,7 @@ const CompletedFG = () => {
       setSkuData(arr);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response.message?.msg || response.message);
       setLoading(false);
     }
   };
@@ -71,7 +71,7 @@ const CompletedFG = () => {
       searchBy: all.info,
       searchValue: datee,
     });
-    if (data.success) {
+    if (response.success) {
       let arr = response.data.map((row, index) => {
         return {
           ...row,
@@ -82,7 +82,7 @@ const CompletedFG = () => {
       setDateData(arr);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message?.msg || response?.message);
       setLoading(false);
     }
   };

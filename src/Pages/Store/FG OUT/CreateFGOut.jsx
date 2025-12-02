@@ -36,7 +36,6 @@ const CreateFGOut = () => {
       uom: "",
     },
   ]);
-  console.log(addRowData);
   // console.log(restValue);
 
   const plusRow = () => {
@@ -75,13 +74,12 @@ const CreateFGOut = () => {
   };
 
   const compInputHandler = async (name, id, value) => {
-    console.log(name, id, value);
     if (name == "product") {
       const response = await imsAxios.post("/fgOUT/fetchProductData", {
         search: value,
       });
-      const totalValue = data?.data?.total;
-      const unitValue = data?.data?.unit;
+      const totalValue = response?.data?.total;
+      const unitValue = response?.data?.unit;
       // console.log(totalValue);
       setAddRowData((product) =>
         product.map((h) => {
@@ -148,13 +146,13 @@ const CreateFGOut = () => {
         remark: arrRemark,
         comment: createFgOut.comment,
       });
-      if (data.success) {
+      if (response?.success) {
         resetFunction();
 
         toast.success(response.message);
         setLoadingUpdate(false);
       } else {
-        toast.error(data.message?.msg || data.message);
+        toast.error(response?.message?.msg || response?.message);
         setLoadingUpdate(false);
       }
     }

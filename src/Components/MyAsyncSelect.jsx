@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef } from "react";
 import { Select, Empty, Spin, Row } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 const { Option } = Select;
 
-export default function MyAsyncSelect({
+const MyAsyncSelect = forwardRef(function MyAsyncSelect({
   value,
   onChange,
   loadOptions,
@@ -23,9 +23,7 @@ export default function MyAsyncSelect({
   searchIcon,
   onFocus,
   onMouseEnter,
-  optionsList,
-  ref,
-}) {
+}, ref) {
   const [searchValue, setSearchValue] = useState("");
   const updatedValue = useDebounce(searchValue);
 
@@ -41,7 +39,7 @@ export default function MyAsyncSelect({
       onBlur={onBlur}
       disabled={disabled}
       showSearch
-      bordered={noBorder ? false : true}
+      variant={noBorder ? "borderless" : "outlined"}
       value={value}
       placeholder={placeholder}
       onFocus={onFocus}
@@ -49,7 +47,7 @@ export default function MyAsyncSelect({
       // allowClear
       defaultValue={defaultValue}
       mode={mode}
-      showArrow={hideArrow ? false : true}
+      suffixIcon={hideArrow ? null : undefined}
       size={size ? size : "default"}
       style={{
         width: "100%",
@@ -73,13 +71,11 @@ export default function MyAsyncSelect({
         value: d.value,
         label: d.text,
       }))}
-      optionsList={(optionsState || []).map((d) => ({
-        value: d.value,
-        label: d.text,
-      }))}
     ></Select>
   );
-}
+});
+
+export default MyAsyncSelect;
 
 export const useDebounce = (value, delay = 500) => {
   const [debouncedValue, setDebouncedValue] = useState(value);

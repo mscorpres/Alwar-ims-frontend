@@ -29,7 +29,6 @@ export default function MySelect({
       }}
       fieldNames={{ label: "text" }}
       showSearch
-      showArrow={true}
       filterOption={(input, option) => {
         return (option?.text?.toString()?.toLowerCase() ?? "").includes(
           input?.toString()?.toLowerCase()

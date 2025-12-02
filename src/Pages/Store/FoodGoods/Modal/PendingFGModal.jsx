@@ -38,7 +38,7 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
       pprsku: fGModal.mfg_sku,
     });
     //  console.log(data.message)
-    if (data.success) {
+    if (response?.success) {
       getPendingData();
       setAllPendingData({
         qty: "",
@@ -46,7 +46,7 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
       setLoadingModal(false);
       setFGModal(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message?.msg || response?.message);
       setAllPendingData({
         qty: "",
       });
@@ -55,11 +55,6 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
     }
   };
 
-  const reset = () => {
-    setAllPendingData({ qty: "" });
-    setFGModal(false);
-    // getPendingData();
-  };
 
   return (
     <Modal

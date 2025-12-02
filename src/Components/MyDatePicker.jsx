@@ -68,17 +68,20 @@ const MyDatePicker = ({
       onChange={(e) => {
         setDateRange(getDateFormatted(e));
       }}
-      ranges={{
-        Today: [dayjs(), dayjs()],
-        Yesterday: [dayjs().subtract(1, "day"), dayjs().subtract(1, "day")],
-        "Last 7 Days": [dayjs().subtract(7, "d"), dayjs().subtract(1, "d")],
-        "This Month": [dayjs().startOf("month"), dayjs()],
-        "Last Month": [
-          dayjs().startOf("month").subtract(1, "month"),
-          dayjs().startOf("month").subtract(1, "d"),
-        ],
-        "Last 90 Days": [dayjs().subtract(89, "d"), dayjs()],
-      }}
+      presets={[
+        { label: "Today", value: [dayjs(), dayjs()] },
+        { label: "Yesterday", value: [dayjs().subtract(1, "day"), dayjs().subtract(1, "day")] },
+        { label: "Last 7 Days", value: [dayjs().subtract(7, "d"), dayjs().subtract(1, "d")] },
+        { label: "This Month", value: [dayjs().startOf("month"), dayjs()] },
+        {
+          label: "Last Month",
+          value: [
+            dayjs().startOf("month").subtract(1, "month"),
+            dayjs().startOf("month").subtract(1, "d"),
+          ],
+        },
+        { label: "Last 90 Days", value: [dayjs().subtract(89, "d"), dayjs()] },
+      ]}
     />
   );
 };

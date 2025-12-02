@@ -23,7 +23,7 @@ const PendingFG = () => {
     imsAxios
       .post("/fgIN/pending")
       .then((response) => {
-        let arr = response.response.data.map((row) => {
+        let arr = response?.data.map((row) => {
           return {
             ...row,
             id: v4(),

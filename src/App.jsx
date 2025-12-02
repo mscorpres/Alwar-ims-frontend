@@ -722,7 +722,7 @@ const App = () => {
                     <Select
                       style={{ width: 200, color: "white" }}
                       options={options}
-                      bordered={false}
+                      variant="borderless"
                       placeholder="Select Company Branch"
                       onChange={(value) => handleSelectCompanyBranch(value)}
                       value={user.company_branch}
@@ -733,7 +733,7 @@ const App = () => {
                     <Select
                       style={{ width: 200, color: "white" }}
                       options={sessionOptions}
-                      bordered={false}
+                      variant="borderless"
                       placeholder="Select Session"
                       onChange={(value) => handleSelectSession(value)}
                       value={user.session}

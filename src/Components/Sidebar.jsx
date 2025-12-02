@@ -20,7 +20,7 @@ const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
         // forceSubMenuRender
         style={{ height: "70%", background: "#047780", overflowY: "auto" }}
         defaultSelectedKeys={["1"]}
-        mode="vertical"
+        mode="inline"
         triggerSubMenuAction="hover"
         inlineCollapsed={!showSideBar}
         items={items}
@@ -39,7 +39,7 @@ const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
           justifyContent: "flex-end",
         }}
         defaultSelectedKeys={["1"]}
-        mode="vertical"
+        mode="inline"
         inlineCollapsed={!showSideBar}
         items={items1}
       />

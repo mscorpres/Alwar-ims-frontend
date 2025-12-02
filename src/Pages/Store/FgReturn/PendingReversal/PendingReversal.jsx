@@ -38,7 +38,7 @@ function PendingReversal() {
       "select"
     );
 
-    setAsyncOptions(response.data);
+    setAsyncOptions(response?.data);
   };
 
   const getRows = async () => {
@@ -48,20 +48,17 @@ function PendingReversal() {
       "fetch"
     );
 
-    console.log("pending response", response);
-
     setRows(response.data);
   };
   const getExecuteDetails = async (row) => {
-    console.log("row", row);
-    // return;
+
     const response = await imsAxios.post("/fg_return/fetchComponentDetails", {
       product_id: row.productKey,
       fg_return_txn: row.transactionId,
     });
-    console.log("response", response);
+
     if (response.success) {
-      let { data } = response;
+      
       setExecutePPR(row);
     }
   };
@@ -111,15 +108,14 @@ function PendingReversal() {
               name="data"
               label={wise === "skuwise" ? "Select Product" : "Select Date"}
             >
-              {wise === "skuwise" && (
+              {wise === "skuwise" ? (
                 <MyAsyncSelect
                   loadOptions={handleFetchProductOptions}
                   selectLoading={loading("select")}
                   optionsState={asyncOptions}
                   onBlur={() => setAsyncOptions([])}
                 />
-              )}
-              {wise === "datewise" && (
+              ) : (
                 <MyDatePicker
                   setDateRange={(value) => form.setFieldValue("data", value)}
                 />
