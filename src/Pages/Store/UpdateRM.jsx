@@ -3,14 +3,9 @@ import { Breadcrumb, Button, Card, Col, Divider, Input, Row } from "antd";
 import axios from "axios";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import {
-  UserOutlined,
   MailOutlined,
-  MobileOutlined,
-  PrinterTwoTone,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
-import { FaUserCircle } from "react-icons/fa";
-import MyDataTable from "../../Components/MyDataTable";
 import { toast } from "react-toastify";
 import { v4 } from "uuid";
 import { imsAxios } from "../../axiosInterceptor";
@@ -35,7 +30,7 @@ function UpdateRM() {
       });
       setSelLoading(false);
       let arr = [];
-      arr = response.data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -49,8 +44,8 @@ function UpdateRM() {
     const response = await imsAxios.post("/transaction/fetchMINData", {
       min_transaction: inputStore,
     });
-    if (data.success) {
-      let arr = response.data.map((row, index) => {
+    if (response?.success) {
+      let arr = response?.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -58,10 +53,10 @@ function UpdateRM() {
         };
       });
       setMainData(arr);
-      setHeaderData(data.header);
+      setHeaderData(response?.data.header);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message?.msg || response?.message);
       setLoading(false);
     }
   };
@@ -73,7 +68,6 @@ function UpdateRM() {
   };
 
   const inputHandler = async (name, id, value) => {
-    console.log(name, id, value);
     if (name == "invoice_id") {
       setMainData((a) =>
         a.map((aa) => {

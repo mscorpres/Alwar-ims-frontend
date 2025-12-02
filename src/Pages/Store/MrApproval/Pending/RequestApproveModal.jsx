@@ -38,41 +38,40 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         payload
       );
 
-      const { data } = response;
-      if (data) {
-        if (data.success) {
-          // console.log("data", data);
-          const header = data.data.header[0];
-          const materials = data.data.material;
-          const compOptions = materials.map((row) => ({
-            text: `${row.partno} `,
-            componentName: row.component,
-            // text: `${row.partno} | ${row.component}`,
-            value: row.compKey,
-          }));
+      const data = response?.data;
 
-          const detailsData = materials.map((row) => ({
-            componentKey: row.compKey,
-            authKey: row.authIdentity,
-            requestedQty: row.requiredQty,
-            unit: row.unit,
-            remarks: row.remark,
-          }));
+      if (response.success) {
+        // console.log("data", data);
+        const header = data.header[0];
+        const materials = data?.material;
+        const compOptions = materials.map((row) => ({
+          text: `${row.partno} `,
+          componentName: row.component,
+          // text: `${row.partno} | ${row.component}`,
+          value: row.compKey,
+        }));
 
-          const headerData = {
-            bomKey: header.bomKey,
-            bom: header.bom,
-            locationKey: header.locationKey,
-            transactionKey: header.transaction,
-            location: header.location,
-            mfgQty: header.mfgqty,
-          };
-          setHeaders(headerData);
-          setDetails(detailsData);
-          setComponentOptions(compOptions);
-        } else {
-          toast.error(data.message?.msg || data.message);
-        }
+        const detailsData = materials.map((row) => ({
+          componentKey: row.compKey,
+          authKey: row.authIdentity,
+          requestedQty: row.requiredQty,
+          unit: row.unit,
+          remarks: row.remark,
+        }));
+
+        const headerData = {
+          bomKey: header.bomKey,
+          bom: header.bom,
+          locationKey: header.locationKey,
+          transactionKey: header.transaction,
+          location: header.location,
+          mfgQty: header.mfgqty,
+        };
+        setHeaders(headerData);
+        setDetails(detailsData);
+        setComponentOptions(compOptions);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -86,17 +85,14 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       const response = await imsAxios.get(
         "/storeApproval/fetchLocationAllotedTransApprv"
       );
-      // console.log("response", response);
-      const { data } = response;
-      if (data) {
-        if (data.success) {
-          const arr = response.data.map((row) => ({
-            value: row.id,
-            text: row.text,
-          }));
 
-          setPickLocationOptions(arr);
-        }
+      const data = response?.data;
+      if (response?.success) {
+        const arr = data.map((row) => ({
+          value: row.id,
+          text: row.text,
+        }));
+        setPickLocationOptions(arr);
       }
     } catch (error) {
     } finally {
@@ -150,7 +146,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         component: values.component,
         remark: values.remarks,
       };
-      link = "/storeApproval/AllowComponentsCancellation"; 
+      link = "/storeApproval/AllowComponentsCancellation";
     }
 
     Modal.confirm({
@@ -396,7 +392,6 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   )}
                   <Divider />
                 </Col>
-              
 
                 <Col span={8}>
                   <Typography.Text style={{ fontSize: 12 }} strong>
@@ -415,7 +410,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   <Divider />
                 </Col>
                 <Col span={8}>
-                <Typography.Text style={{ fontSize: 12 }} strong>
+                  <Typography.Text style={{ fontSize: 12 }} strong>
                     Weighted Average Rate
                   </Typography.Text>
                   <br />
@@ -425,7 +420,6 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   {!loading("fetchStock") && (
                     <Typography.Text style={{ fontSize: 12 }}>
                       {weightedRate ?? 0}{" "}
-                      
                     </Typography.Text>
                   )}
                   <Divider />

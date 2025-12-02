@@ -26,20 +26,19 @@ const PendingApproval = () => {
         "storeApproval/fetchTransactionForApproval",
         payload
       );
-      const { data } = response;
-      if (data) {
-        if (data.success) {
-          const arr = response.data.map((row, index) => ({
-            id: index + 1,
-            requestedFrom: row.user_name,
-            requestId: row.transaction_id,
-            requestDate: row.insert_full_date,
-          }));
-          console.log(data.data);
-          setRows(arr);
-        } else {
-          toast.error(data.message?.msg || data.message);
-        }
+      const data = response?.data;
+
+      if (response.success) {
+        const arr = data.map((row, index) => ({
+          id: index + 1,
+          requestedFrom: row.user_name,
+          requestId: row.transaction_id,
+          requestDate: row.insert_full_date,
+        }));
+     
+        setRows(arr);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {

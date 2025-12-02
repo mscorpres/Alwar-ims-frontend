@@ -23,10 +23,9 @@ function Pending() {
     const response = await imsAxios.post("/sfMin/sfMinTransferList", {
       date: searchInput,
     });
-    // console.log("response", response);
-    const { data } = response;
-    if (response.success) {
-      let arr = response.data.map((row, index) => {
+  
+    if (response?.success) {
+      let arr = response?.data.map((row, index) => {
         return {
           ...row,
           id: index + 1,
@@ -41,22 +40,7 @@ function Pending() {
     setLoading(false);
   };
   const columns = [
-    // {
-    //   headerName: "k",
-    //   field: "actions",
-    //   width: 10,
-    //   type: "actions",
-    //   getActions: ({ row }) => (
-    //     <GridActionsCellItem
-    //       //   showInMenu
-    //       //   disabled={loading}
-    //       onClick={() => {
-    //         // setViewReportData(row.vbt_code);
-    //       }}
-    //       label="View"
-    //     />
-    //   ),
-    // },
+  
     {
       headerName: "#",
       width: 30,

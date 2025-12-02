@@ -36,7 +36,6 @@ import {
 } from "./TableCollumns";
 import SingleProduct from "../../../Master/Vendor/SingleProduct";
 import CurrenceModal from "../CurrenceModal";
-import UploadDocs from "./UploadDocs";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import FormTable from "../../../../Components/FormTable";
@@ -67,7 +66,6 @@ export default function MaterialInWithPO({}) {
   });
   const [showCurrency, setShowCurrenncy] = useState(null);
   const [invoices, setInvoices] = useState([]);
-  const [showUploadDoc, setShowUploadDoc] = useState(false);
   const [autoConsumptionOptions, setAutoConsumptionOption] = useState([]);
   const [totalValues, setTotalValues] = useState([
     { label: "cgst", sign: "+", values: [] },
@@ -87,11 +85,12 @@ export default function MaterialInWithPO({}) {
   const [isScan, setIsScan] = useState(false);
   const [uplaoaClicked, setUploadClicked] = useState(false);
   const [form] = Form.useForm();
-  const components = Form.useWatch("components", form);
+
   let costCode;
   const { executeFun, loading: loading1 } = useApi();
   const validateData = async () => {
     let validation = false;
+
     poData.materials.map((row) => {
       if (
         row.c_partno &&
@@ -125,6 +124,7 @@ export default function MaterialInWithPO({}) {
       out_location: [],
       component: [],
     };
+
     if (validation == true) {
       let formData = new FormData();
       let values = await form.validateFields();
@@ -180,8 +180,7 @@ export default function MaterialInWithPO({}) {
           validation = false;
           return toast.error("gst type of all components should be the same");
         }
-        //uploading invoices
-        console.log("this is the component data", componentData);
+
         Modal.confirm({
           title: "Are you sure you want to submt this MIN",
           // icon: <ExclamationCircleFilled />,
@@ -203,6 +202,7 @@ export default function MaterialInWithPO({}) {
   const validateInvoices = async (values) => {
     try {
       const invoices = values.componentData.invoice;
+
       setSubmitLoading(true);
       let payload = {
         invoice: invoices,
@@ -212,12 +212,9 @@ export default function MaterialInWithPO({}) {
         () => checkInvoiceforMIN(payload),
         "select"
       );
-      // const response = await imsAxios.post("/backend/checkInvoice", {
-      //   invoice: invoices,
-      //   vendor: searchData.vendor,
-      // });
-      let { data } = response;
-      if (data) {
+
+      let data = response?.data;
+      if (response?.success) {
         setSubmitLoading(false);
         if (data.invoicesFound) {
           return Modal.confirm({
@@ -232,8 +229,6 @@ export default function MaterialInWithPO({}) {
         } else {
           submitMIN(values);
         }
-      } else {
-        console.log("some error occured");
       }
     } catch (error) {
     } finally {
@@ -241,29 +236,24 @@ export default function MaterialInWithPO({}) {
     }
   };
   const submitMIN = async (values, isScan) => {
-    console.log("isScan", isScan);
-    // return;
-    // log
     if (values.formData) {
       setSubmitLoading(true);
-      const { data: fileData } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/transaction/upload-invoice",
         values.formData
       );
-      if (fileData.success) {
+
+      if (response?.success) {
         let final = {
           companybranch: "BRMSC012",
-          invoices: fileData.data,
+          invoices: response?.data,
           poid: poData.headers.transaction,
           manual_mfg_code: poData.materials.map((row) => row.mfgCode),
         };
         final = { ...final, ...values.componentData };
         const response = await executeFun(() => poMINforMIN(final), "select");
-        // const response = await imsAxios.post("/purchaseOrder/poMIN", final);
-        // console.log("data po min", response);
 
-        // setSubmitLoading(false);
-        if (response.success) {
+        if (response?.success) {
           setSearchData({
             vendor: "",
             poNumber: "",
@@ -271,7 +261,7 @@ export default function MaterialInWithPO({}) {
           setInvoices([]);
           setSubmitLoading(false);
           setMaterialInSuccess({
-            materialInId: response.data.transaction_id,
+            materialInId: response?.data.transaction_id,
             poId: poData.headers.transaction,
             vendor: poData.headers.vendorcode,
             components: poData.materials.map((row) => {
@@ -290,7 +280,7 @@ export default function MaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
       } else {
         setSubmitLoading(false);
@@ -304,7 +294,7 @@ export default function MaterialInWithPO({}) {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = response.data.map((d) => {
+    arr = response?.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -320,9 +310,9 @@ export default function MaterialInWithPO({}) {
       cost_center: costCode,
     });
     setPageLoading(false);
-    let arr = data.data?.data;
-    if (data.success) {
-      let arr = data.response.data.map((d) => {
+    let arr = response?.data;
+    if (response?.success) {
+      let arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
@@ -338,8 +328,8 @@ export default function MaterialInWithPO({}) {
       "/transaction/fetchAutoConsumpLocation"
     );
     setPageLoading(false);
-    if (data.success) {
-      let arr = response.data.map((row) => {
+    if (response?.success) {
+      let arr = response?.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -350,7 +340,6 @@ export default function MaterialInWithPO({}) {
     }
   };
   const inputHandler = (name, value, id) => {
-    console.log(poData);
     let arr = poData?.materials;
     arr = arr.map((row) => {
       let obj = row;
@@ -485,9 +474,9 @@ export default function MaterialInWithPO({}) {
     // if (search?.length > 2) {
     const response = await executeFun(() => getVendorOptions(search), "select");
     let arr = [];
-    console.log("this is the vendor options", response.data);
-    if (response.success) {
-      arr = convertSelectOptions(response.data);
+    console.log("this is the vendor options", response?.data);
+    if (response?.success) {
+      arr = convertSelectOptions(response?.data);
       console.log("this is the arr options", arr);
     }
     setAsyncOptions(arr);
@@ -511,8 +500,8 @@ export default function MaterialInWithPO({}) {
     );
     setSearchLoading(false);
 
-    if (data.success) {
-      let obj = data.data;
+    if (response?.success) {
+      let obj = response?.data;
       obj = {
         ...obj,
 
@@ -554,14 +543,11 @@ export default function MaterialInWithPO({}) {
       setPoData(obj);
       setResetPoData(obj);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response.message);
       setPoData({ materials: [] });
-      //   toast.error("Some error Occurred");
     }
   };
   useEffect(() => {
-    // console.log("obj", costCode);
-    // console.log("codeCostCenter", codeCostCenter);
     if (codeCostCenter) {
       getLocation(codeCostCenter);
     }
@@ -579,21 +565,17 @@ export default function MaterialInWithPO({}) {
       field: "add",
       sortable: false,
       renderCell: ({ row }) => (
-        // row.index >= 2 && (
         <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
       ),
-      // ),
-      // sortable: false,
     },
     {
       headerName: "Component",
       field: "component_fullname",
-      // sortable: false,
+
       width: 200,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.component_fullname} />
       ),
-      // width: 150,
     },
     {
       headerName: "Part No.",

@@ -24,8 +24,9 @@ const ProccessedMrRequest = () => {
     try {
       setLoading("select", true);
       const response = await imsAxios.post("/backend/fetchAllUser", { search });
-      if (data) {
-        let arr = data.map((row) => ({
+ 
+      if (response?.success) {
+        let arr = response?.data.map((row) => ({
           value: row.id,
           text: row.text,
         }));
@@ -50,7 +51,7 @@ const ProccessedMrRequest = () => {
         payload
       );
 
-      if (data?.success) {
+      if (response?.success) {
         const arr = response.data.map((row, index) => ({
           id: index + 1,
           requestDate: row.datetime,
@@ -61,7 +62,7 @@ const ProccessedMrRequest = () => {
 
         setRows(arr);
       } else {
-        toast.error(data?.message?.msg || data?.message);
+        toast.error( response?.message);
       }
     } catch (error) {
     } finally {
@@ -89,9 +90,6 @@ const ProccessedMrRequest = () => {
     ],
   };
 
-  useEffect(() => {
-    console.log("this is the show details", showDetails);
-  }, [showDetails]);
   return (
     <Row gutter={6} style={{ height: "95%", padding: 10 }}>
       <Col span={4}>

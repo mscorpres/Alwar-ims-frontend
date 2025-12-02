@@ -81,7 +81,6 @@ export default function ExportMaterialInWithPO({}) {
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
   const [uplaodForm] = Form.useForm();
-  const components = Form.useWatch("components", form);
   let costCode;
   const { executeFun, loading: loading1 } = useApi();
   const { loading } = useApi();
@@ -230,10 +229,10 @@ export default function ExportMaterialInWithPO({}) {
       //   invoice: invoices,
       //   vendor: searchData.vendor,
       // });
-      let { data } = response;
-      if (data) {
+      let data  = response?.data;
+      if (response?.success) {
         setSubmitLoading(false);
-        if (data.invoicesFound) {
+        if (response?.invoicesFound) {
           return Modal.confirm({
             title:
               "Following invoices are already found in our records, Do you still wish to continue?",
@@ -246,9 +245,7 @@ export default function ExportMaterialInWithPO({}) {
         } else {
           submitMIN(values);
         }
-      } else {
-        console.log("some error occured");
-      }
+      } 
     } catch (error) {
     } finally {
       setSubmitLoading(false);
@@ -360,14 +357,14 @@ export default function ExportMaterialInWithPO({}) {
   const submitMIN = async (values, isScan) => {
     if (values.formData) {
       setSubmitLoading(true);
-      const { data: fileData } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/transaction/upload-invoice",
         values.formData
       );
-      if (fileData.code == "200") {
+      if (response?.success) {
         let final = {
           companybranch: "BRMSC012",
-          invoices: fileData.data,
+          invoices: response?.data,
           poid: searchData.poNumber,
           manual_mfg_code: poData.materials.map((row) => row.manualMfgCode),
           invoice: invoice,
@@ -380,7 +377,7 @@ export default function ExportMaterialInWithPO({}) {
           "select"
         );
         // const response = await imsAxios.post("/purchaseOrder/poMIN", final);
-        let { data } = response;
+        let  data  = response?.data;
         // setSubmitLoading(false);
         if (response.success) {
           setSearchData({
@@ -421,7 +418,7 @@ export default function ExportMaterialInWithPO({}) {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
     let arr = [];
-    arr = response.data.map((d) => {
+    arr = response?.data.map((d) => {
       return {
         text: d.currency_symbol,
         value: d.currency_id,
@@ -438,9 +435,9 @@ export default function ExportMaterialInWithPO({}) {
       cost_center: costCode,
     });
     setPageLoading(false);
-    let arr = response.data.data;
+    let arr = response?.data;
     if (response.success) {
-      let arr = data.response.data.map((d) => {
+      let arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
@@ -467,7 +464,7 @@ export default function ExportMaterialInWithPO({}) {
     );
     setPageLoading(false);
     if (response.success) {
-      let arr = response.data.map((row) => {
+      let arr = response?.data.map((row) => {
         return {
           value: row.id,
           text: row.text,
@@ -557,8 +554,8 @@ export default function ExportMaterialInWithPO({}) {
     );
     setSearchLoading(false);
 
-    if (response.success) {
-      let obj = data.data;
+    if (response?.success) {
+      let obj = response?.data;
       obj = {
         ...obj,
 

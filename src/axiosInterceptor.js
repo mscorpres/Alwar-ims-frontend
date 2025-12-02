@@ -57,7 +57,6 @@ imsAxios.interceptors.request.use(
 imsAxios.interceptors.response.use(
   (response) => {
     if (response.data?.success !== undefined) {
-      console.log("this is the response from axios interceptor", response.data);
       return response.data;
     }
     return response;

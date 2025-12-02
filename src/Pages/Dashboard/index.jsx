@@ -157,31 +157,31 @@ const Dashboard = () => {
           data: date,
         }
       );
-      const { data } = response;
+      const  data  = response?.data;
       if (data) {
         if (response.success) {
           if (transactionType === "transactions") {
             setTransactionSummary([
               {
                 title: "Rejection",
-                value: data.data.totalRejection,
+                value: data.totalRejection,
                 date: data.data.lastRejection,
               },
               {
                 title: "MFG",
-                value: data.data.totalMFG,
-                date: data.data.lastMFG,
+                value: data.totalMFG,
+                date: data.lastMFG,
               },
               {
                 title: "Consumption",
-                value: data.data.totalConsumption,
-                date: data.data.lastConsumption,
+                value: data.totalConsumption,
+                date: data.lastConsumption,
                 // link: "/transaction-In",
               },
               {
                 title: "Purchase Orders",
-                value: data.data.totalPO,
-                date: data.data.lastPO,
+                value: data.totalPO,
+                date: data.lastPO,
                 link: "/manage-po",
               },
             ]);
@@ -190,48 +190,48 @@ const Dashboard = () => {
               {
                 title: "Gatepass",
 
-                value: data.data.totalGatePass,
+                value: data.totalGatePass,
               },
               {
                 title: "RGP",
-                date: data.data.lastRGP,
-                value: data.data.totalRGP,
+                date: data.lastRGP,
+                value: data.totalRGP,
               },
               {
                 title: "NRGP",
-                date: data.data.lastNRGP,
-                value: data.data.totalNRGP,
+                date: data.lastNRGP,
+                value: data.totalNRGP,
               },
               {
                 title: "Challan",
-                date: data.data.lastDCchallan,
-                value: data.data.totalRGP_DCchallan,
+                date: data.lastDCchallan,
+                value: data.totalRGP_DCchallan,
               },
             ]);
           } else if (transactionType === "min") {
             setMINSummary([
               {
                 title: "PO MIN",
-                date: data.data.lastMin,
-                value: data.data.totalPOMin,
+                date: data.lastMin,
+                value: data.totalPOMin,
               },
               {
                 title: "Without PO MIN",
-                date: data.data.lastNormalMin,
-                value: data.data.totalNormalMIN,
+                date: data.lastNormalMin,
+                value: data.totalNormalMIN,
               },
 
               {
                 title: "JW MIN",
-                date: data.data.lastJWMin,
-                value: data.data.totalJWMin,
+                date: data.lastJWMin,
+                value: data.totalJWMin,
                 key: "jwMin",
               },
             ]);
           }
         }
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message || response.message);
       }
     } catch (error) {
     } finally {
@@ -248,37 +248,37 @@ const Dashboard = () => {
         master: true,
       }));
       const response = await imsAxios.post("/tranCount/master_counts");
-      const { data } = response;
+      const  data  = response?.data;
       if (data) {
         if (response.success) {
           setMasterSummary([
             {
               title: "Components",
-              value: data.data.totalComponents,
-              date: data.data.lastComponent,
+              value: data.totalComponents,
+              date: data.lastComponent,
               link: "/material",
             },
             {
               title: "Products",
-              value: data.data.totalProducts,
-              date: data.data.lastProduct,
+              value: data.totalProducts,
+              date: data.lastProduct,
               link: "/masters/products/fg",
             },
             {
               title: "Projects",
-              date: data.data.lastProject,
-              value: data.data.totalProjects,
+              date: data.lastProject,
+              value: data.totalProjects,
               link: "/master/reports/projects",
             },
             {
               title: "Vendors",
-              date: data.data.lastVendor,
-              value: data.data.totalVendors,
+              date: data.lastVendor,
+              value: data.totalVendors,
               link: "/vendor",
             },
           ]);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message || response.message);
         }
       }
     } catch (error) {
@@ -299,10 +299,10 @@ const Dashboard = () => {
       const response = await imsAxios.post("/tranCount/top_mfg_products", {
         data: date,
       });
-      const { data } = response;
+      const  data  = response?.data;
       if (data) {
         if (response.success) {
-          const arr = data.data.topProducts.map((item, index) => ({
+          const arr = data.topProducts.map((item, index) => ({
             sku: item.productSku,
             qty: item.totalmfgQuantity,
             product: item.productName,
@@ -310,7 +310,7 @@ const Dashboard = () => {
 
           setMfgProductSummary(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message || response.message);
         }
       }
     } catch (error) {
@@ -330,36 +330,36 @@ const Dashboard = () => {
       const response = await imsAxios.post("/tranCount/pending_counts", {
         data: date,
       });
-      const { data } = response;
+      const  data  = response?.data;
       if (data) {
         if (response.success) {
           setPendingTransactionSummary([
             {
               title: "Pending PO",
-              value: data.data.pendingPO,
+              value: data.pendingPO,
             },
             {
               title: "Pending JW PO",
-              value: data.data.pendingJW_PO,
+              value: data.pendingJW_PO,
             },
             {
               title: "Pending PPR",
-              value: data.data.pendingPPR,
+              value: data.pendingPPR,
               // link: "/transaction-In",
             },
             {
               title: "Pending FG",
-              value: data.data.pendingFG,
+              value: data.pendingFG,
               // link: "/manage-po",
             },
             {
               title: "Pending MR Approval",
-              value: data.data.pendingMRapproval,
+              value: data.pendingMRapproval,
               // link: "/manage-po",
             },
           ]);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message || response.message);
         }
       }
     } catch (error) {
