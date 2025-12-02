@@ -46,9 +46,9 @@ const Material = () => {
   const [showAttributesModal, setShowAttributesModal] = useState(false);
   const [hsnRows, setHsnRows] = useState([]);
   const [attributeValues, setAttributeValues] = useState(null);
-  const [uniqueId, setUniqueId] = useState(null);
+  const [uniqueId, setUniqueId] = useState("--");
   const [generatedCompName, setGeneratedCompName] = useState(null);
-  const [manfCode, setManfCode] = useState(null);
+  const [manfCode, setManfCode] = useState("--");
   const [typeOfComp, setTypeOfComp] = useState("");
   const [valFromName, setValForName] = useState("");
   const { executeFun, loading: loading1 } = useApi();
@@ -125,7 +125,6 @@ const Material = () => {
   };
 
   const getUomOptions = async () => {
-    console.log("here");
     try {
       setLoading("fetch");
       const response = await imsAxios.post("uom/uomSelect2");
@@ -135,7 +134,6 @@ const Material = () => {
           value: row.id,
         }));
 
-        console.log("arr", arr);
         setUomOptions(arr);
       } else {
         toast.error(response.message);
@@ -182,9 +180,6 @@ const Material = () => {
 
   const modalConfirmMaterial = async () => {
     const headerValues = await headerForm.validateFields();
-    // console.log("headerValues", headerValues);
-    console.log("attributeValues", attributeValues);
-    console.log("manfCode", manfCode);
     // return;
     let atrrRes = {
       multipler: attributeValues?.multiplier,
@@ -218,7 +213,7 @@ const Material = () => {
         group: headerValues.group,
         // attr_category: headerValues.attrCategory.value,
         attr_category: "R",
-        attr_code: uniqueId,
+        attr_code: uniqueId ||"--",
         // attr_code
         hsns: hsnRows.map((row) => row.code.value),
         taxs: hsnRows.map((row) => row.percentage),
@@ -239,7 +234,7 @@ const Material = () => {
         group: headerValues.group,
         // attr_category: headerValues.attrCategory.value,
         attr_category: "C",
-        attr_code: uniqueId,
+        attr_code: uniqueId ||"--",
         // attr_code
         hsns: hsnRows.map((row) => row.code.value),
         taxs: hsnRows.map((row) => row.percentage),
@@ -297,7 +292,6 @@ const Material = () => {
       "/component/addComponent/verify",
       payload
     );
-    console.log("response", response);
     if (response.success) {
       Modal.confirm({
         title: "Are you sure you want to submit this Component?",
@@ -333,7 +327,6 @@ const Material = () => {
     try {
       setLoading("submit");
       // return;
-      console.log("Here in submit handler");
       const response = await imsAxios.post(
         "/component/addComponent/save",
         payload
@@ -452,7 +445,6 @@ const Material = () => {
   }, [selectedCategory]);
   const typeIs = headerForm.getFieldValue("attrCategory");
 
-  // console.log("generatedCompName", generatedCompName);
   useEffect(() => {
     if (generatedCompName) {
       setGeneratedCompName(generatedCompName);
@@ -852,7 +844,6 @@ const CategoryModal = ({
   var result;
   const value = Form.useWatch("value", form);
   const getCategoryFields = async (categoryKey) => {
-    console.log("category key", categoryKey.label);
     setSelectedCategory(categoryKey);
     try {
       setLoading("fetch");
@@ -902,7 +893,6 @@ const CategoryModal = ({
             },
           ]);
         }
-        console.log("fieldsss is here", fieldSelectOptions);
       });
     } catch (error) {}
     setLoading(false);
@@ -919,10 +909,8 @@ const CategoryModal = ({
         getWholeNumber(value, decimalVal);
       } else {
         let newNum = removeAndCountTrailingZeros(value);
-        // console.log("newNum", newNum);
         getAlpha = removeTrailingZerosUsingSwitch(newNum.count);
         extractednum = newNum.stringWithoutTrailingZeros;
-        // console.log("extractednum", extractednum);
       }
     }
   };
@@ -931,33 +919,26 @@ const CategoryModal = ({
     return num.toString().padStart(5, "0");
   }
   const getComponentValueForName = (value) => {
-    // console.log("value===========", value);
     let componentVal;
     let categorSnip = selectedCategory?.label?.toUpperCase();
     let newSnip = categorSnip?.substr(0, 3);
     if (newSnip != "CAP") {
       if (value <= 999) {
-        // console.log("R", value + "R");
         componentVal = value + "R";
       } else if (value <= 999999 && value >= 1000) {
         componentVal = +Number(value / 1000).toFixed(1) + "K";
-        // console.log("K", componentVal + "K");
       } else if (value > 1000000) {
         componentVal = +Number(value / 1000000).toFixed(1) + "M";
-        // console.log("M", componentVal + "M");
       }
     } else {
       componentVal = value;
     }
     setValForName(componentVal);
-    // console.log("componentVal", componentVal);
     return componentVal;
   };
   //generate code
   const getUniqueNo = async (compCode) => {
-    // console.log("alpha getUniqueNo", alpha);
     let values = await form.validateFields();
-    // console.log("valuesvalues-----------", values);
     setAttributeValues(values);
     //
     let makingString;
@@ -966,11 +947,9 @@ const CategoryModal = ({
     } else {
       makingString = extractednum + alpha;
     }
-    // console.log("makingString", makingString);
 
     let categorSnip = selectedCategory.label.toUpperCase();
     let newSnip = categorSnip.substr(0, 3);
-    // console.log("categorSnip=", newSnip);
     if (newSnip == "CAP") {
       let compName =
         values.package_size.key +
@@ -988,7 +967,6 @@ const CategoryModal = ({
         "-" +
         "Capacitor";
 
-      console.log("compName", compCode);
       setGeneratedCompName(compName);
 
       let filledFields =
@@ -1001,12 +979,10 @@ const CategoryModal = ({
         // values.power_rating.value +
         values.tolerance.key +
         values.voltage.key;
-      // console.log("filledFields", filledFields);
 
       if (makingString.length <= 5) {
         let codeValue = zeroPad(makingString);
 
-        // console.log("!codeValue!", filledFields + codeValue + values.si_unit);
         setUniqueId(filledFields + codeValue + values.si_unit.key);
       }
       //the Filledfields are change
@@ -1025,7 +1001,6 @@ const CategoryModal = ({
         "-" +
         "Resistor";
 
-      console.log("compName", compCode);
       setGeneratedCompName(compName);
       headerForm.setFieldValue("componentname", compName);
 
@@ -1038,25 +1013,16 @@ const CategoryModal = ({
         ")" +
         values.power_rating.key +
         values.tolerance.key;
-      // console.log("filledFields", filledFields);
 
       if (makingString.length <= 5) {
         let codeValue = zeroPad(makingString);
-        // console.log("codeValue ", filledFields, codeValue);
 
         setUniqueId(filledFields + codeValue);
-        // console.log("codeValue ", filledFields + codeValue);
       }
     } else if (newSnip == "IND") {
-      // console.log(
-      //   " values.current_SI_Unit.label",
-      //   values.current_SI_Unit.label.split(" ")
-      // );
       let siUnit = values.current_SI_Unit.label.split(" ")[0];
       let siVal = values.current_SI_UnitText;
       let fqVal = values.frequencyText;
-      console.log("siUnit", siUnit);
-      console.log("siVal", siVal);
       let compName =
         values.mounting_style.label +
         "-" +
@@ -1070,7 +1036,6 @@ const CategoryModal = ({
         siVal +
         siUnit;
 
-      // console.log("compName", compCode);
       setGeneratedCompName(compName);
       headerForm.setFieldValue("componentname", compName);
 
@@ -1083,18 +1048,13 @@ const CategoryModal = ({
         ")" +
         values.power_rating?.key +
         values.tolerance.key;
-      // console.log("filledFields", filledFields);
 
       if (makingString.length <= 5) {
         let codeValue = zeroPad(makingString);
         setUniqueId(filledFields + codeValue);
-        // console.log("codeValue ", filledFields + codeValue);
       }
     }
-    // console.log("valuesvalues=", values);
-    // //
     else {
-      console.log("makingString greater than 5  =", makingString);
     }
   };
 
@@ -1104,7 +1064,6 @@ const CategoryModal = ({
     return parseInt(result);
   }
   function getLetterFromNumber(number) {
-    console.log("number number", number);
     const mapping = {
       1: "A",
       10: "B",
@@ -1122,7 +1081,6 @@ const CategoryModal = ({
     const result = Object.entries(mapping).find(
       ([key, value]) => parseInt(key) === number
     );
-    console.log("resultresult", result);
     form.setFieldValue("multiplier", result[1]);
     return result ? result[1] : "Number not found";
   }
@@ -1130,9 +1088,7 @@ const CategoryModal = ({
     let numberpowerOfTen;
 
     let number = addZerosToTen(numbers);
-    console.log("number ->", number);
     alpha = getLetterFromNumber(number);
-    console.log("apl", alpha);
     setAttributeValues({ multipler: alpha });
     // form.setFieldValue("multiplier", alpha);
   }
@@ -1194,22 +1150,17 @@ const CategoryModal = ({
   const getWholeNumber = (num, decimalVal) => {
     wholeVal = num * decimalVal;
     wholeVal = Number(wholeVal).toFixed(0);
-    // console.log("num is here", wholeVal);
   };
   // ---
   useEffect(() => {
     if (value) {
       let a = getComponentValueForName(value);
-      // console.log("value a", a);
-      // console.log("valueis added", value);
-      // console.log("alpha added", alpha);
       checkDecimal(value);
       getUniqueNo(a);
     }
   }, [value, alpha]);
   useEffect(() => {
     let a = getComponentValueForName(value);
-    // console.log("value a", a);
     setValForName(a);
   }, [value]);
 
@@ -1229,7 +1180,6 @@ const CategoryModal = ({
     }
   };
   const sortedFields = [...fields].sort((a, b) => {
-    // console.log("ff", fields);
     if (a.type === b.type) {
       return a.label.localeCompare(b.label);
     }
@@ -1239,7 +1189,6 @@ const CategoryModal = ({
     if (show) {
       setStage(0);
       getCategoryFields(show.selectedCategory);
-      console.log("show.selectedCategory", show.selectedCategory);
       setTypeOfComp(show.selectedCategory);
     }
   }, [show]);
@@ -1283,7 +1232,6 @@ const CategoryModal = ({
               Selected Category: {selectedCategory?.label}
             </Typography.Text>
 
-            {/* <Typography.Text>{show?.selectedCategory?.label} </Typography.Text> */}
           </Flex>
         </Col>
         <Divider />

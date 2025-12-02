@@ -3,7 +3,6 @@ import { v4 } from "uuid";
 import { toast } from "react-toastify";
 import Alter from "./Alter";
 import {
-  Button,
   Col,
   Divider,
   Drawer,
@@ -12,7 +11,7 @@ import {
   Skeleton,
   Space,
 } from "antd";
-import MyDataTable from "../../../Components/MyDataTable";
+
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import errorToast from "../../../Components/errorToast";
@@ -201,7 +200,7 @@ const EditBranch = ({ modalEditOpen, setModalEditOpen }) => {
       // next();
       toast.success(response.message);
     } else {
-      toast.error(errorToast(data.message));
+      toast.error(response.message?.msg || response.message);
     }
   };
   const handlerEmergingMogal = (row) => {

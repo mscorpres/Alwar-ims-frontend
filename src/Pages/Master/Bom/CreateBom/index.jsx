@@ -1,13 +1,11 @@
 import { Col, Form, Modal, Row } from "antd";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ProductDetails from "./ProductDetails";
 import Components from "./Components";
-import { useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { toast } from "react-toastify";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MyDataTable from "../../../../Components/MyDataTable";
-import { useEffect } from "react";
 import useApi from "../../../../hooks/useApi.ts";
 import { getComponentOptions } from "../../../../api/general.ts";
 const CreateBom = () => {
@@ -27,17 +25,14 @@ const CreateBom = () => {
       setLoading("fetch");
       const values = await form.validateFields(["sku"]);
       const response = await imsAxios.get(`products/bySku?sku=${values.sku}`);
-      const { data } = response;
-      if (data) {
-        if (response.success) {
-          const product = data.data[0].p_name;
-          const productKey = data.data[0].product_key;
+      if (response.success) {
+          const product = response.data[0].p_name;
+          const productKey = response.data[0].product_key;
           form.setFieldValue("product", product);
           form.setFieldValue("productKey", productKey);
           setProductSelected(true);
         } else {
-          toast.error(response.message?.msg || response.message);
-        }
+        toast.error(response.message?.msg || response.message);
       }
     } catch (error) {
       console.log("error while fetching SKU details", error);
@@ -99,9 +94,6 @@ const CreateBom = () => {
           qty: values.components.map((row) => row.qty),
         },
       };
-      // console.log("finalObj", finalObj);
-      // console.log("stage", stage);
-      // return;
     }
     if (stage === "submit") {
       Modal.confirm({
@@ -117,10 +109,8 @@ const CreateBom = () => {
   const submitHandler = async (values, url) => {
     try {
       setLoading("submit");
-      // console.log("submig handler valuesssss", values, url);
       const response = await imsAxios.post(url, values);
-      const { data } = response;
-      if (data) {
+  
         if (response.success) {
           if (stage === "preview") {
             const arr = response.data.map((row, index) => ({
@@ -144,10 +134,10 @@ const CreateBom = () => {
             form.resetFields();
             setpreviewData([]);
           }
-        } else {
+        }
+        else {
           toast.error(response.message?.msg || response.message);
         }
-      }
     } catch (error) {
       console.log("error while creating  bom", error);
     } finally {

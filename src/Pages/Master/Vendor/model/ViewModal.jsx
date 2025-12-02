@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { Button, Row, Col, Input, Skeleton, Form, Drawer, Space } from "antd";
 import MySelect from "../../../../Components/MySelect";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import errorToast from "../../../../Components/errorToast";
 import Loading from "../../../../Components/Loading";
 import { imsAxios } from "../../../../axiosInterceptor";
 const { TextArea } = Input;
@@ -37,13 +36,13 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
     });
     if (response.success) {
       let a = [];
-      response.data.final.map((d) => a.push({ text: d.text, value: d.id }));
+      response.data.map((d) => a.push({ text: d.text, value: d.id }));
       getBranchDetails(a[0].value, "skeletonLoading");
       setAllBranchData(a);
+      setSkeletonLoading(false);
     }
     setSkeletonLoading(false);
   };
-  // console.log(allField);
   const getBranchDetails = async (branchId, loadingType) => {
     if (loadingType != "skeletonLoading") {
       setSpinLoading(true);
@@ -56,43 +55,42 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
       setAllField((allField) => {
         return {
           ...allField,
-          branchCode: response.data.final[0].address_code,
-          label: response.data.final[0].label,
-          email: response.data.final[0].email_id,
-          city: response.data.final[0].city,
-          gst: response.data.final[0].gstin,
-          pcode: response.data.final[0].pincode,
-          mob: response.data.final[0].mobile_no,
-          fax: response.data.final[0].fax,
-          address: response.data.final[0].address,
+          branchCode: response.data[0].address_code,
+          label: response.data[0].label,
+          email: response.data[0].email_id,
+          city: response.data[0].city,
+          gst: response.data[0].gstin,
+          pcode: response.data[0].pincode,
+          mob: response.data[0].mobile_no,
+          fax: response.data[0].fax,
+          address: response.data[0].address,
           state: {
-            value: response.data.final[0].statecode,
-            label: response.data.final[0].statename,
+            value: response.data[0].statecode,
+            label: response.data[0].statename,
           },
         };
       });
       setResetData((allField) => {
         return {
           ...allField,
-          branchCode: response.data.final[0].address_code,
-          label: response.data.final[0].label,
-          email: response.data.final[0].email_id,
-          city: response.data.final[0].city,
-          gst: response.data.final[0].gstin,
-          pcode: response.data.final[0].pincode,
-          mob: response.data.final[0].mobile_no,
-          fax: response.data.final[0].fax,
-          address: response.data.final[0].address,
+          branchCode: response.data[0].address_code,
+          label: response.data[0].label,
+          email: response.data[0].email_id,
+          city: response.data[0].city,
+          gst: response.data[0].gstin,
+          pcode: response.data[0].pincode,
+          mob: response.data[0].mobile_no,
+          fax: response.data[0].fax,
+          address: response.data[0].address,
           state: {
-            value: response.data.final[0].statecode,
-            label: response.data.final[0].statename,
+            value: response.data[0].statecode,
+            label: response.data[0].statename,
           },
         };
       });
     }
   };
   const getOption = async (a) => {
-    // console.log(a)
     if (a?.length > 1) {
       const response = await imsAxios.post("/backend/stateList", {
         search: a,
@@ -147,7 +145,6 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
   };
 
   useEffect(() => {
-    // console.log(viewVendor);
     if (viewVendor == false) {
       reset();
     } else if (viewVendor) {
@@ -176,7 +173,6 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   <MySelect
                     value={allField.branchCode}
                     options={allBranchData}
-                    // placeholder="Select Branch"
                     onChange={(e) => {
                       getBranchDetails(e);
                       setAllField((allField) => {
@@ -192,14 +188,12 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   <Form.Item label="Branch Name">
                     <Input
                       size="default "
-                      // placeholder="Branch Name"
                       value={allField.label}
                       onChange={(e) =>
                         setAllField((allField) => {
                           return { ...allField, label: e.target.value };
                         })
                       }
-                      // prefix={<UserOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -224,14 +218,12 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   <Form.Item label="City">
                     <Input
                       size="default "
-                      // placeholder="Branch City"
                       value={allField.city}
                       onChange={(e) =>
                         setAllField((allField) => {
                           return { ...allField, city: e.target.value };
                         })
                       }
-                      // prefix={<UserOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -239,14 +231,12 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   <Form.Item label="GST Number">
                     <Input
                       size="default "
-                      // placeholder="Gst Number"
                       value={allField.gst}
                       onChange={(e) =>
                         setAllField((allField) => {
                           return { ...allField, gst: e.target.value };
                         })
                       }
-                      // prefix={<UserOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -254,14 +244,12 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   <Form.Item label="Pin Code">
                     <Input
                       size="default "
-                      // placeholder="Branch Pincode"
                       value={allField.pcode}
                       onChange={(e) =>
                         setAllField((allField) => {
                           return { ...allField, pcode: e.target.value };
                         })
                       }
-                      // prefix={<UserOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -269,14 +257,12 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   <Form.Item label="Email">
                     <Input
                       size="default "
-                      // placeholder="Email"
                       value={allField.email}
                       onChange={(e) =>
                         setAllField((allField) => {
                           return { ...allField, email: e.target.value };
                         })
                       }
-                      // prefix={<UserOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -285,13 +271,11 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                     <Input
                       size="default "
                       value={allField.mob}
-                      // placeholder="Mobile"
                       onChange={(e) =>
                         setAllField((allField) => {
                           return { ...allField, mob: e.target.value };
                         })
                       }
-                      // prefix={<UserOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -299,14 +283,12 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   <Form.Item label="Fax Number">
                     <Input
                       size="default "
-                      // placeholder="Fax No"
                       value={allField.fax}
                       onChange={(e) =>
                         setAllField((allField) => {
                           return { ...allField, fax: e.target.value };
                         })
                       }
-                      // prefix={<UserOutlined />}
                     />
                   </Form.Item>
                 </Col>
@@ -315,7 +297,6 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                     <TextArea
                       rows={4}
                       maxLength={200}
-                      // placeholder="Please Enter Full Address "
                       value={allField.address}
                       onChange={(e) =>
                         setAllField((allField) => {

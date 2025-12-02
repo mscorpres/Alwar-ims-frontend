@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card, Col, Divider, Drawer, Form, Input, Row, Typography } from "antd";
+import { Card, Col, Divider, Drawer, Input, Row, Typography } from "antd";
 import { imsAxios } from "../../../../../axiosInterceptor";
 import ToolTipEllipses from "../../../../../Components/ToolTipEllipses";
 import MySelect from "../../../../../Components/MySelect";
-import MyDataTable from "../../../../../Components/MyDataTable";
+
 import FormTable from "../../../../../Components/FormTable";
 import { useEffect } from "react";
 import { CommonIcons } from "../../../../../Components/TableActions.jsx/TableActions";
@@ -33,21 +33,22 @@ const EditModal = ({ show, close, bomType }) => {
         subject_id: id,
       });
       await getRows(id);
-      const { data } = response;
-      if (data) {
         if (response.success) {
           const detailsObj = {
-            product: data.data.product,
-            partCode: data.data.sfg_inward_rm_code,
-            sfgName: data.data.sfg_inward_rm_name,
-            sku: data.data.sku,
-            bom: data.data.subject,
-            bomId: data.data.subjectid,
+            product: response.data.product,
+            partCode: response.data.sfg_inward_rm_code,
+            sfgName: response.data.sfg_inward_rm_name,
+            sku: response.data.sku,
+            bom: response.data.subject,
+            bomId: response.data.subjectid,
           };
 
           setDetails(detailsObj);
         }
-      }
+        else{
+          toast.error(response.message?.msg || response.message);
+        }
+      
     } catch (error) {
       console.log("some error occured while fetching rows or details", error);
     } finally {
@@ -85,9 +86,7 @@ const EditModal = ({ show, close, bomType }) => {
 
     setLoading(row.id);
     const response = await imsAxios.post("/bom/updateBomComponent", finalObj);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
+    if (response.success) {
         if (row.new) {
           setRows((curr) =>
             curr.map((comp) => {
@@ -107,9 +106,9 @@ const EditModal = ({ show, close, bomType }) => {
         }
         toast.success(response.message);
         getDetails(show.id);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+    }
+    else {
+      toast.error(response.message?.msg || response.message);
     }
     setLoading(false);
   };

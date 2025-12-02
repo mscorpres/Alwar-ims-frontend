@@ -32,7 +32,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const [statusLoading, setStatusLoading] = useState(false);
   const [editMSME, setEditMSME] = useState([]);
   const [tdsOptions, setTdsOptions] = useState([]);
-  // const [msmeStat, setMsmeStat] = useState("N");
   const [locationOptions, setLocationOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [files, setFiles] = useState([]);
@@ -90,9 +89,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const submitHandler = async () => {
     let obj;
     const values = await updateVendorForm.validateFields();
-    console.log("values", values);
-    console.log("rows", rows);
-    // return
     if (values.vendor_msme_status === "Y") {
       obj = {
         vendorcode: editVendor?.vendor_code,
@@ -107,7 +103,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         msme_id: values.vendor_msme_id,
         msme_type: rows.map((r) => r.vendor_msme_type),
         msme_activity: rows.map((r) => r.vendor_msme_activity),
-        eInvoice: values.applicability,
+        eInvoice: values.applicability||"N",
         dateOfApplicability:
           values.applicability === "Y" ? values.dobApplicabilty : "--",
       };
@@ -122,20 +118,14 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         term_days: values.vendor_term_days,
         msme_status: "N",
         msme_id: "--",
-        eInvoice: values.applicability,
+        eInvoice: values.applicability||"N",
         dateOfApplicability:
           values.applicability === "Y" ? values.dobApplicabilty : "--",
       };
     }
-    console.log("obj", obj);
     const formData = new FormData();
     formData.append("uploadfile", files[0] ?? []);
     formData.append("vendor", JSON.stringify(obj));
-    // formData.append("vendorname", values?.vendor_name);
-    // formData.append("panno", values?.vendor_pan);
-    // formData.append("cinno", values?.vendor_cin);
-    // formData.append("tally_tds", values?.vendor_tds);
-    // formData.append("vendor_loc", values?.vendor_loc);
     setSubmitLoading(true);
     const response = await imsAxios.post("/vendor/updateVendor", formData);
     setSubmitLoading(false);
@@ -201,10 +191,9 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     { text: "Service", value: "Service" },
     { text: "Trading", value: "Trading" },
   ];
-  // console.//console.log("isMSMEEdited", isMSMEEdited);
+
 
   const deleteRow = (id) => {
-    // console.//console.log("aaaaaaaaaa", id);
     let newrows = rows.filter((a) => a.id !== id);
     setIsMSMEEdited(newrows);
     setRows(newrows);
@@ -248,21 +237,11 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     } else {
       value = [...rows, val];
     }
-    // });
-    // if (a.vendor_msme_year == values.vendor_msme_year) {
-    //   console.//console.log(" rows.year", rows.year, a);
-    //   setIsMSMEEdited([val]);
-    // } else {
 
     a = value.filter((b) => b.vendor_msme_year !== "--");
-    // let newData = value.filter((r) => r.vendor_msme_year !== "--");
     setIsMSMEEdited(a);
-    // rows.push
     setRows(a);
     updateMSMEForm.resetFields();
-
-    // }
-    // }
   };
 
   return (
@@ -379,8 +358,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                 >
                   <MySelect
                     options={msmeOptions}
-                    // value={msmeStat}
-                    // onChange={(value) => changeMSmeStatus(value)}
                   />
                 </Form.Item>
               </Col>{" "}
@@ -391,11 +368,9 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                     style={{ padding: "3px" }}
                     label="Date of Applicability"
                     name="dobApplicabilty"
-                    // rules={rules.dobApplicabilty}
                   >
                     <SingleDatePicker
                       size="default"
-                      // setDate={setEffective}
                       setDate={(value) =>
                         updateVendorForm.setFieldValue("dobApplicabilty", value)
                       }
@@ -409,8 +384,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                     <Form.Item label="MSME Status" name="vendor_msme_status">
                       <MySelect
                         options={msmeOptions}
-                        // value={msmeStat}
-                        // onChange={setMsmeStat}
                       />
                     </Form.Item>
                   </Col>{" "}
@@ -430,14 +403,12 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                     text="Add MSME"
                     onClick={() => setEditMSME(true)}
                   ></MyButton>
-                  {/* <Col span={24} gutter={[10, 10]}> */}
                   <Divider />
                   <Flex
                     gap={[10, 10]}
                     style={{ width: "100%" }}
                     justify="center"
                   >
-                    {/* {isMSMEEdited?.map((a) => ( */}
                     <>
                       {" "}
                       <div style={{ width: 185 }}>
@@ -449,12 +420,8 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                       <div style={{ width: 200 }}>
                         <Typography.Text strong>Activity</Typography.Text>
                       </div>
-                      {/* <Col span={2}></Col> */}
                     </>
-                    {/* ))} */}
                   </Flex>
-                  {/* </Col>
-                  <Col span={24} gutter={[10, 10]}> */}
                   {isMSMEEdited ? (
                     <Flex
                       gap={10}
