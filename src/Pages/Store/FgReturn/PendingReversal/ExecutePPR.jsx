@@ -178,7 +178,7 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
   };
   const getData = (response) => {
     const { data } = response;
-console.log(response,"res=====================================")
+
     if (response?.success) {
       if (data.length) {
         const arr = data.map((row) => ({

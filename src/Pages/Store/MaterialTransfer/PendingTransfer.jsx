@@ -12,8 +12,6 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
-const { RangePicker } = DatePicker;
-
 function PendingTransfer() {
   const [locationData, setLocationData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -31,10 +29,7 @@ function PendingTransfer() {
   const [dataComesFromLocationWise, setdataComesFromLocationWise] = useState(
     []
   );
-  const [seacrh, setSearch] = useState(null);
   const [viewModal, setViewModal] = useState(false);
-
-  // console.log(dataComesFromDateWise);
 
   const opt = [
     { label: "Date", value: "datewise" },
@@ -80,15 +75,15 @@ function PendingTransfer() {
       data: datee,
       wise: allData.typeWise,
     });
-    console.log(data);
-    if (data.success) {
-      let arr = response.data.map((row) => {
+
+    if (response?.success) {
+      let arr = response?.data.map((row) => {
         return { ...row, id: v4() };
       });
       setDataComesFromDateWise(arr);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
       setLoading(false);
     }
   };
@@ -100,32 +95,20 @@ function PendingTransfer() {
       wise: allData.typeWise,
     });
 
-    if (data.success) {
-      let arr = response.data.map((row) => {
+    if (response?.success) {
+      let arr = response?.data.map((row) => {
         return { ...row, id: v4() };
       });
       setDataComesFromTransactionWise(arr);
       setLoading(false);
       // setFilterDate(data.data);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
       setLoading(false);
     }
-    // setDataComesFromTransactionWise(data.response.data);
+    
   };
 
-  const getLocationFetch = async (e) => {
-    if (e?.length > 2) {
-      const response = await imsAxios.post("/backend/fetchLocation", {
-        searchTerm: e,
-      });
-      let arr = [];
-      arr = response.data.map((d) => {
-        return { label: d.text, value: d.id };
-      });
-      return arr;
-    }
-  };
 
   const locationWiseDateFecth = async () => {
     setLoading(true);
@@ -133,16 +116,16 @@ function PendingTransfer() {
       data: allData.locationText,
       wise: allData.typeWise,
     });
-    console.log(data);
-    if (data.success) {
-      let arr = response.data.map((row) => {
+  
+    if (response?.success) {
+      let arr = response?.data.map((row) => {
         return { ...row, id: v4() };
       });
       setdataComesFromLocationWise(arr);
       setLoading(false);
       // setFilterDate(data.data);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
       setLoading(false);
     }
   };
@@ -150,7 +133,7 @@ function PendingTransfer() {
   const getLocation = async () => {
     const response = await imsAxios.post("/backend/fetchLocation");
     const arr = [];
-    response.data.map((a) => arr.push({ text: a.text, value: a.id }));
+    response?.data.map((a) => arr.push({ text: a.text, value: a.id }));
     setLocationData(arr);
   };
 
@@ -158,12 +141,6 @@ function PendingTransfer() {
     getLocation();
   }, []);
 
-  useEffect(() => {
-    // if(allData.typeWise.value == 'transactionwise'){
-    // }
-  }, [allData.typeWise.value]);
-
-  useEffect(() => {}, []);
   return (
     <div style={{ height: "85%" }}>
       <Row gutter={16} style={{ margin: "5px" }}>

@@ -13,7 +13,6 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MyButton from "../../../Components/MyButton";
 
-const { RangePicker } = DatePicker;
 
 function ViewTransaction() {
   const [loading, setLoading] = useState(false);
@@ -23,20 +22,7 @@ function ViewTransaction() {
   });
   const [datee, setDatee] = useState("");
   const [dataComesFromDateWise, setDataComesFromDateWise] = useState([]);
-  // console.log(dataComesFromDateWise);
-  const col = [
-    { name: "Date", selector: (row) => row.date },
-    { name: "Part", selector: (row) => row.part },
-    { name: "Cat Part", selector: (row) => row.cat_part },
-    { name: "Component", selector: (row) => row.name },
-    { name: "Out Location", selector: (row) => row.out_location },
-    { name: "In Location", selector: (row) => row.in_location },
-    { name: "Qty", selector: (row) => row.qty },
-    { name: "UoM", selector: (row) => row.uom },
-    { name: "Txd In", selector: (row) => row.transaction },
-    { name: "Shiffed By", selector: (row) => row.date },
-  ];
-
+  
   const columns = [
     { field: "date", headerName: "Date", width: 150 },
     { field: "part", headerName: "Part Code", width: 150 },
@@ -73,9 +59,9 @@ function ViewTransaction() {
         data: datee,
         wise: allData.selectdate,
       });
-      console.log(data);
-      if (data.success) {
-        let arr = response.data.map((row) => {
+     
+      if (response?.success) {
+        let arr = response?.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -84,7 +70,7 @@ function ViewTransaction() {
         setDataComesFromDateWise(arr);
         setLoading(false);
       } else {
-        toast.error(data.message?.msg || data.message);
+        toast.error(response?.message);
         setLoading(false);
       }
     }

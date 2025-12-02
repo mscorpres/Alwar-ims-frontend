@@ -20,7 +20,6 @@ function RmtoRm() {
     dropBranch: "",
   });
 
-  // Convert to multiple rows structure
   const [rows, setRows] = useState([
     {
       id: v4(),
@@ -90,7 +89,7 @@ function RmtoRm() {
       location_key: allData.locationFrom,
     });
     // console.log(data.data);
-    setbBanchName(data.data);
+    setbBanchName(response?.data);
   };
 
   const getComponentList = async (e) => {
@@ -101,7 +100,7 @@ function RmtoRm() {
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
       let arr = [];
-      arr = data.map((d) => {
+      arr = data?.map((d) => {
         return { text: d.text, value: d.id };
       });
       // return arr;
@@ -123,9 +122,9 @@ function RmtoRm() {
       const updated = [...prev];
       updated[rowIndex] = {
         ...updated[rowIndex],
-        stockQty: data.data?.available_qty || "0",
-        unit: data.data?.unit || "",
-        avrRate: data.data?.avr_rate || "",
+        stockQty: response?.data?.available_qty || "0",
+        unit: response?.data?.unit || "",
+        avrRate: response?.data?.avr_rate || "",
       };
       return updated;
     });
@@ -175,8 +174,8 @@ function RmtoRm() {
       tobranch: allData.dropBranch,
     });
 
-    if (data.success) {
-      toast.success(data.message.toString()?.replaceAll("<br/>", ""));
+    if (response.success) {
+      toast.success(response.message.toString()?.replaceAll("<br/>", ""));
       // Reset form
       setAllData({
         locationFrom: "",
@@ -199,7 +198,7 @@ function RmtoRm() {
       setbBanchName("");
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error( response?.message);
       setLoading(false);
     }
   };
@@ -210,7 +209,7 @@ function RmtoRm() {
         branch: branchCode,
       });
       let arr = [];
-      const list = data?.data ?? data; // support both shapes
+      const list = response?.data ; 
       if (Array.isArray(list)) {
         list.map((a) => arr.push({ label: a.text, value: a.id }));
       }
@@ -224,7 +223,7 @@ function RmtoRm() {
         }))
       );
     } catch (error) {
-      console.error("Error fetching locations for branch", error);
+
       toast.error("Failed to fetch drop locations for selected branch");
     }
   };
@@ -242,7 +241,7 @@ function RmtoRm() {
       const updated = [...prev];
       updated[rowIndex] = {
         ...updated[rowIndex],
-        address: data.data,
+        address: response?.data,
       };
       return updated;
     });
@@ -413,7 +412,7 @@ function RmtoRm() {
                           </td>
                           <td style={{ width: "12vw" }}>
                             <Input
-                              suffix={row.unit}
+                              suffix={row.unit || ""}
                               disabled
                               value={
                                 row.stockQty
@@ -435,7 +434,7 @@ function RmtoRm() {
                                   return updated;
                                 });
                               }}
-                              suffix={row.unit}
+                              suffix={row.unit || ""}
                             />
                           </td>
                           <td style={{ width: "16vw" }}>

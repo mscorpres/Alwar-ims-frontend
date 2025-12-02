@@ -19,9 +19,6 @@ function TransactionRej() {
   const [loading, setLoading] = useState(false);
   const [datee, setDatee] = useState("");
   const [dataComesFromDateWise, setDataComesFromDateWise] = useState([]);
-  //   console.log(allData);
-  //   console.log(datee);
-  // console.log(dataComesFromDateWise);
 
   const columns = [
     { field: "date", headerName: "Date", width: 150 },
@@ -67,8 +64,8 @@ function TransactionRej() {
         data: datee,
         wise: allData.selectdate,
       });
-      if (data.success) {
-        let arr = response.data.map((row) => {
+      if (response?.success) {
+        let arr = response?.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -79,7 +76,7 @@ function TransactionRej() {
         setLoading(false);
       } else {
         setDataComesFromDateWise([]);
-        toast.error(data.message?.msg || data.message);
+        toast.error(response?.message);
         setLoading(false);
       }
     }
