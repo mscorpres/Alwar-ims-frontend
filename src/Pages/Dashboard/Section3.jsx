@@ -1,14 +1,12 @@
-import React, { useState } from "react";
-import { Card, Col, Divider, Row, Typography } from "antd";
-import MyDatePicker from "../../Components/MyDatePicker";
 
+import { Card, Col, Row, Typography } from "antd";
 const Section3 = ({ columns, rows, title, date, setDate }) => {
-  console.log("section3 rows", rows);
+
   return (
     <Col span={12} style={{ minHeight: "100%" }}>
       <Card
         style={{ minHeight: "100%" }}
-        bodyStyle={{ minHeight: "100%" }}
+        styles={{ body: { minHeight: "100%" } }}
         size="small"
       >
         <Row>
@@ -34,19 +32,26 @@ const Section3 = ({ columns, rows, title, date, setDate }) => {
             )}
             {rows.length > 0 && (
               <table style={{ width: "100%" }}>
-                {columns.map((col, colIndex) => (
-                  <td>
-                    <Typography.Text strong>{col.headerName}</Typography.Text>
-                  </td>
-                ))}
-
-                {rows.map((row, rowIndex) => (
-                  <tr style={{ borderBottom: "1px solid red" }}>
+                <thead>
+                  <tr>
                     {columns.map((col, colIndex) => (
-                      <td>{row[col.field]}</td>
+                      <th key={colIndex} style={{ textAlign: "left", padding: "8px" }}>
+                        <Typography.Text strong>{col.headerName}</Typography.Text>
+                      </th>
                     ))}
                   </tr>
-                ))}
+                </thead>
+                <tbody>
+                  {rows.map((row, rowIndex) => (
+                    <tr key={rowIndex} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                      {columns.map((col, colIndex) => (
+                        <td key={colIndex} style={{ padding: "8px" }}>
+                          {row[col.field]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             )}
           </Col>

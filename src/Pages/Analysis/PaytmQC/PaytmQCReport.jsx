@@ -88,12 +88,14 @@ export default function PaytmQCReport() {
 
   const columns = [
     {
+      field: "actions",
       headerName: "Action",
       type: "actions",
       width: 100,
       getActions: ({ row }) => [
-        // Edit icon
         <TableActions
+          key="edit"
+          field="actions"
           action="edit"
           onClick={() => setUpdatingQC(row.imei_no)}
         />,
@@ -102,7 +104,6 @@ export default function PaytmQCReport() {
     {
       field: "date",
       headerName: "Date",
-      // renderCell: ({ row }) => <ToolTipEllipses text={row.date} />,
       width: 100,
     },
     {

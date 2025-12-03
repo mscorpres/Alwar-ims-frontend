@@ -29,7 +29,6 @@ const JwsfInward = () => {
   const [jwData, setDJWData] = useState([]);
   const [skuData, setSKUData] = useState([]);
   const [vendorData, setVendorData] = useState([]);
-  // console.log(allData);
   const { executeFun, loading: loading1 } = useApi();
   const option = [
     { label: "Date Wise", value: "datewise" },
@@ -43,9 +42,8 @@ const JwsfInward = () => {
       const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
-      // console.log(data);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -167,15 +165,14 @@ const JwsfInward = () => {
     { field: "ord_qty", headerName: "JW PO Order Qty", width: 150 },
     // { field: "jw_sku_name", headerName: "Actions", width: 260 },
     {
+      field: "actions",
       type: "actions",
       headerName: "Actions",
       width: 150,
       getActions: ({ row }) => [
-        // <TableActions action="view" onClick={() => setViewModalOpen(row)} />,
-        // <TableActions action="cancel" onClick={() => setCloseModalOpen(row)} />,
-        // <TableActions action="print" onClick={() => console.log(row)} />,
-        // <TableActions action="edit" />,
+       
         <ArrowRightOutlined
+          key="arrow-right"
           onClick={() => setEditModal({ all: allData.setType, row })}
           style={{ color: "#1890ff", fontSize: "15px" }}
         />,

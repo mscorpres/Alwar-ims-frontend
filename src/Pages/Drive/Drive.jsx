@@ -164,23 +164,16 @@ export default function Drive() {
     { headerName: "Inserted Date", field: "insert_dt", flex: 1 },
     { headerName: "Inserted Time", field: "insert_time", flex: 1 },
     {
+      field: "actions",
       headerName: "Action",
       type: "actions",
       width: 100,
       getActions: ({ row }) => [
-        // MIN icon
-        // <TableActions
-        //   action="add"
-        //   disable={row.po_status == "C"}
-        //   onClick={() => setMaterialInward(row.po_transaction)}
-        //   label="MIN"
-        // />,
-        // Edit icon
-        <a target="_blank" href={row.file_path}>
-          <TableActions action="download" onClick={() => console.log(row)} />
+       
+        <a key="download-link" target="_blank" href={row.file_path}>
+          <TableActions action="download" onClick={() => console.log(row)} field="actions" />
         </a>,
 
-        // VIEW Icon
       ],
     },
   ];
@@ -190,12 +183,8 @@ export default function Drive() {
   useEffect(() => {
     if (currentPath === "/") {
       getRootDirectory();
-      // let rootDir = dummyData[0];
-      // setCurrentItems([rootDir]);
-      // setCurrentDirectory("dir1");
-    } else {
-      // let arr = dummyData.filter((item) => item.parent === currentDirectory);
-    }
+      
+    } 
   }, [currentPath]);
   useEffect(() => {
     setPreviousDirectory(currentItems[0]?.parent);

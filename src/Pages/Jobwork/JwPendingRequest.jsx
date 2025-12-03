@@ -45,8 +45,8 @@ function JwPendingRequest() {
       search: search,
     });
     setLoading(false);
-    if (data[0]) {
-      let arr = data.map((row) => ({
+    if (response?.success) {
+      let arr = response?.data.map((row) => ({
         text: row.text,
         value: row.id,
       }));

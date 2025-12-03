@@ -68,10 +68,10 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         transaction: row.transaction_id,
       }
     );
-
+const { data } = response;
     if (response.success) {
       getLocation(data.header.cost_center);
-      let arr = response.data.map((row, index) => {
+      let arr = response?.data?.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -84,7 +84,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       setHeaderData(data.header);
       setModalLoad("fetch", false);
     } else if (!response.success) {
-      toast.error(data?.message?.msg);
+      toast.error(response?.message);
     }
     setModalLoad("fetch", false);
   };

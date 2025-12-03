@@ -88,6 +88,8 @@ const ViewMIN = () => {
       width: 20,
       getActions: ({ row }) => [
         <GridActionsCellItem
+          key="download-attachment"
+          field="action"
           showInMenu
           // icon={<CloudDownloadOutlined className="view-icon" />}
           // onClick={() => handlePrintMIN(row.minId, "download")}
@@ -96,6 +98,8 @@ const ViewMIN = () => {
           label="Download Attachement"
         />,
         <GridActionsCellItem
+          key="print-min"
+          field="action"
           showInMenu
           // disabled={row.invoiceStatus == false}
           // icon={<PrinterFilled className="view-icon" />}
@@ -103,6 +107,8 @@ const ViewMIN = () => {
           label="Print MIN"
         />,
         <GridActionsCellItem
+          key="consumption-list"
+          field="action"
           showInMenu
           disabled={row.consumptionStatus == false}
           // icon={<PrinterFilled className="view-icon" />}
@@ -110,6 +116,8 @@ const ViewMIN = () => {
           label="Consumption List"
         />,
         <GridActionsCellItem
+          key="print-labels"
+          field="action"
           showInMenu
           // icon={<PrinterFilled className="view-icon" />}
           onClick={() => {

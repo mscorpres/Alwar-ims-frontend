@@ -38,11 +38,12 @@ function JWRMChallanEditMaterials({
 
   const [createJobWorkChallanForm] = Form.useForm();
   const getDetails = async () => {
-    console.log(editingJWMaterials);
+   
     setLoading("fetchingDetails", true);
     const response = await imsAxios.post("/jobwork/editJobworkChallan", {
       challan_no: editingJWMaterials,
     });
+  
     setLoading("fetchingDetails", false);
     if (response.success) {
       let arr = response.data.material.map((row, index) => ({
@@ -255,20 +256,20 @@ function JWRMChallanEditMaterials({
     });
     setLoading("values", false);
     const { data } = response;
-    if (data) {
+  
       if (response.success) {
         obj1 = {
           ...obj1,
-          billing_address: data.data.address.replaceAll("<br>", "\n"),
-          billingaddrgst: data.data.gstin,
-          billingaddrcin: data.data.cin,
-          billingaddrpan: data.data.pan,
+          billing_address: data.address.replaceAll("<br>", "\n"),
+          billingaddrgst: data.gstin,
+          billingaddrcin: data.cin,
+          billingaddrpan: data.pan,
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
         toast.error(response.message?.msg || response.message);
       }
-    }
+
   };
   const columns = [
     {field:"", headerName: "Sr. No", renderCell: ({ row }) => row.index, width: 80 },

@@ -25,11 +25,14 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
       po_transaction: openModal.sku_transaction_id,
       skucode: openModal.sku,
     });
+    
+   
     setLoading("fetch", false);
     const { data } = response;
-    if (response.success) {
-      data.headers.map((a) => setView(a));
-      let arr = data.components.map((row, index) => {
+  
+    if (response?.success) {
+      data?.header.map((a) => setView(a));
+      let arr = data?.components.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -190,7 +193,7 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
         onClose={cancel}
         open={openModal}
         getContainer={false}
-        style={{
+        rootStyle={{
           position: "absolute",
         }}
         extra={
@@ -237,7 +240,7 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
             <div style={{ height: "100%" }}>
               {" "}
               {loading1("select") && <Loading />}
-              {!loading("fetch") && mainData.length > 0 ? <FormTableDataGrid loading={loading("fetch") || loading1("select")} columns={columns} data={mainData} /> : <Loading />}
+              {!loading("fetch") && mainData?.length > 0 ? <FormTableDataGrid loading={loading("fetch") || loading1("select")} columns={columns} data={mainData} /> : <Loading />}
             </div>
           </div>
           <Row>

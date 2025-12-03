@@ -22,18 +22,16 @@ export default function JwDetailsView({ viewPoDetails, setViewPoDetails }) {
       }
     );
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        let arr = response.data.map((row, index) => ({
-          id: index + 1,
-          ...row,
-        }));
-        setRows(arr);
-      } else {
-        toast.message(data.message.msg);
-        setViewPoDetails(false);
-      }
+
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
+        id: index + 1,
+        ...row,
+      }));
+      setRows(arr);
+    } else {
+      toast.message(response?.message);
+      setViewPoDetails(false);
     }
   };
   const columns = [
@@ -109,9 +107,7 @@ export default function JwDetailsView({ viewPoDetails, setViewPoDetails }) {
       width="100vw"
       onClose={() => setViewPoDetails(false)}
       open={viewPoDetails}
-      bodyStyle={{
-        padding: 5,
-      }}
+      styles={{ body: { padding: 5 } }}
       extra={
         <Space>
           {rows.length} Items{" "}

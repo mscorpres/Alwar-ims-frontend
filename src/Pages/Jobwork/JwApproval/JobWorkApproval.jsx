@@ -110,6 +110,8 @@ export default function JobWorkApproval() {
       type: "actions",
       getActions: ({ row }) => [
         <GridActionsCellItem
+          key="view"
+          field="actions"
           showInMenu
           onClick={() => {
             setViewPoDetails(row.jw_transaction);

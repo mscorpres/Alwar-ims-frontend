@@ -30,7 +30,6 @@ const JwIssue = () => {
     vendorName: "",
   });
   const { executeFun, loading: loading1 } = useApi();
-  //   console.log(dateData);
   const options = [
     { label: "Date", value: "datewise" },
     { label: "JW ID", value: "jw_transaction_wise" },
@@ -43,9 +42,8 @@ const JwIssue = () => {
       const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
-      // console.log(data);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -59,8 +57,8 @@ const JwIssue = () => {
         "select"
       );
       let arr = [];
-      if (response.success) {
-        arr = convertSelectOptions(response.data);
+      if (response?.success) {
+        arr = convertSelectOptions(response?.data);
       }
       setAsyncOptions(arr);
     }
@@ -76,7 +74,6 @@ const JwIssue = () => {
         data: datee,
         wise: allData.setType,
       });
-      // console.log(data.data);
       setLoading("fetch", false);
       if (response.success) {
         let arr = response.data.map((row, index) => {
@@ -86,11 +83,6 @@ const JwIssue = () => {
             index: index + 1,
           };
         });
-        // for (let i = 0; i < arr.length; i++) {
-        //   console.log(arr[i].vendor);
-        //   dangerouslySetInnerHTML:{{__html:arr[i].vendor}}
-        // }
-        // console.log(arr);
         setDateData(arr);
         setLoading("fetch", false);
       } else if (!response.success) {
@@ -157,8 +149,6 @@ const JwIssue = () => {
       data: allData.vendorName,
       wise: allData.setType,
     });
-    // console.log(data.data);
-    // setLoading(false);
     if (response.success) {
       let arr = response.data.map((row, index) => {
         return {
@@ -197,7 +187,6 @@ const JwIssue = () => {
           <Popover content={content(row.vendor)}>
             <span dangerouslySetInnerHTML={{ __html: row.vendor }} />
           </Popover>
-          {/* <Popover>{row.qty_in}</Popover> */}
         </>
       ),
     },
@@ -205,14 +194,18 @@ const JwIssue = () => {
     { field: "product", headerName: "Product", width: 350 },
     { field: "req_qty", headerName: "Required Qty", width: 120 },
     {
+      field: "actions",
       type: "actions",
       headerName: "Actions",
       width: 150,
       getActions: ({ row }) => [
-        <ArrowRightOutlined onClick={() => setOpenModal(row)} />,
-        //   <TableActions action="view" onClick={() => setViewModalOpen(row)} />,
-        //   <TableActions action="cancel" onClick={() => setCloseModalOpen(row)} />,
-        //   <TableActions action="print" onClick={() => console.log(row)} />,
+        <div
+          key="arrow-right"
+          onClick={() => setOpenModal(row)}
+          style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
+        >
+          <ArrowRightOutlined />
+        </div>,
       ],
     },
   ];

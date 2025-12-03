@@ -29,8 +29,6 @@ import UpdateModal from "./Modal/UpdateModal";
 import { v4 } from "uuid";
 import socket from "../../Components/socket";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { Link } from "react-router-dom";
 import useApi from "../../hooks/useApi.ts";
 import { getVendorOptions } from "../../api/general.ts";
 import { convertSelectOptions } from "../../utils/general.ts";
@@ -147,34 +145,45 @@ const POAnalysis = () => {
     }
   }, [wise]);
   const actionColumn = {
+    field: "actions",
     headerName: "",
     type: "actions",
     width: 30,
     getActions: ({ row }) => [
       <GridActionsCellItem
+        key="view"
+        field="actions"
         showInMenu
         disabled={row.recipeStatus === "PENDING"}
         label="View"
         onClick={() => setViewModalOpen(row)}
       />,
       <GridActionsCellItem
+        key="edit"
+        field="actions"
         showInMenu
         disabled={row.recipeStatus !== "PENDING"}
         label="Edit"
         onClick={() => setUpdateModalInfo({ selType: wise.value, row })}
       />,
       <GridActionsCellItem
+        key="close"
+        field="actions"
         showInMenu
         disabled={Row.poStatus === "C"}
         label="Close"
         onClick={() => setCloseModalOpen({ seltype: wise.value, row })}
       />,
       <GridActionsCellItem
+        key="print"
+        field="actions"
         showInMenu
         label="Print"
         onClick={() => handlePrint(row.jwId, "print")}
       />,
       <GridActionsCellItem
+        key="download"
+        field="actions"
         showInMenu
         label="Download"
         onClick={() => handlePrint(row.jwId, "download")}
@@ -203,6 +212,7 @@ const POAnalysis = () => {
                 <Form.Item
                   label="Advanced Filter"
                   name="advancedFilter"
+                  valuePropName="checked"
                   className=""
                 >
                   <Checkbox

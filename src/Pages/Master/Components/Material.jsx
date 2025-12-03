@@ -226,6 +226,8 @@ const Material = () => {
       type: "actions",
       getActions: ({ row }) => [
         <GridActionsCellItem
+          key="update"
+          field="actions"
           showInMenu
           // disabled={disabled}
           label={
@@ -242,6 +244,8 @@ const Material = () => {
           }
         />,
         <GridActionsCellItem
+          key="view-images"
+          field="actions"
           showInMenu
           // disabled={disabled}
           label="View Images"
@@ -253,6 +257,8 @@ const Material = () => {
           }
         />,
         <GridActionsCellItem
+          key="upload-images"
+          field="actions"
           showInMenu
           // disabled={disabled}
           label="Upload Images"

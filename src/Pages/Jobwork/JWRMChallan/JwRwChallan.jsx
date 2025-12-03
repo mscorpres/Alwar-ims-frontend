@@ -49,12 +49,13 @@ function JwRwChallan() {
         ? "/backend/getProductByNameAndNo"
         : type === "vendor" && "/backend/vendorList";
     setLoading("select");
+    
     const response = await imsAxios.post(link, {
       search: search,
     });
     setLoading(false);
-    if (data[0]) {
-      let arr = data.map((row) => ({
+    if (response?.success) {
+      let arr = response?.data.map((row) => ({
         text: row.text,
         value: row.id,
       }));

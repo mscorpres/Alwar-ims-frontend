@@ -1,4 +1,4 @@
-import React from "react";
+
 import {
   CloudUploadOutlined,
   EditFilled,
@@ -30,6 +30,7 @@ export default function TableActions({
   action,
   label,
   showInMenu,
+  field,
 }) {
   const Icon = () => {
     if (action == "add") {
@@ -79,6 +80,7 @@ export default function TableActions({
   };
   return (
     <GridActionsCellItem
+      field={field || "actions"}
       showInMenu={showInMenu}
       icon={
         !showInMenu ? (

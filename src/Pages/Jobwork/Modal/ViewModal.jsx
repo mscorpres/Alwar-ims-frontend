@@ -153,7 +153,7 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
         onClose={() => setViewModalOpen(false)}
         open={viewModalOpen}
         getContainer={false}
-        bodyStyle={{ padding: 5 }}
+        styles={{ body: { padding: 5 } }}
       >
         <Row>
           <Card

@@ -122,6 +122,8 @@ const WoAnalysis = () => {
     type: "actions",
     getActions: ({ row }) => [
       <GridActionsCellItem
+        key="finalize-view"
+        field="actions"
         showInMenu
         // disabled={loading}
         onClick={() => {
@@ -141,6 +143,8 @@ const WoAnalysis = () => {
         label={row.status === "PENDING" ? "Finalize" : "View"}
       />,
       <GridActionsCellItem
+        key="material-in"
+        field="actions"
         showInMenu
         disabled={row.status === "PENDING"}
         onClick={() =>
@@ -154,6 +158,8 @@ const WoAnalysis = () => {
         label="Material In"
       />,
       <GridActionsCellItem
+        key="print"
+        field="actions"
         showInMenu
         // disabled={loading}
         onClick={() => {
@@ -162,6 +168,8 @@ const WoAnalysis = () => {
         label="Print"
       />,
       <GridActionsCellItem
+        key="download"
+        field="actions"
         showInMenu
         // disabled={loading}
         onClick={() => {
@@ -170,6 +178,8 @@ const WoAnalysis = () => {
         label="Download"
       />,
       <GridActionsCellItem
+        key="close"
+        field="actions"
         showInMenu
         // disabled={loading}
         onClick={() => {
