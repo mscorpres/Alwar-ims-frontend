@@ -147,6 +147,16 @@ export default function TicketsModal({ open, handleClose }) {
     setFileList([]);
   };
 
+  // Helper function to convert file to base64 data URL
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   // Handle submit ticket
   const handleSubmit = async () => {
     // Validation
@@ -166,27 +176,27 @@ export default function TicketsModal({ open, handleClose }) {
     try {
       setLoading("submitting");
 
-      const submitData = new FormData();
-      submitData.append("email", user.email);
-      submitData.append("name", user.user_name || user.name);
-      submitData.append("topic", formData.topic);
-      submitData.append("subject", formData.subject);
-      submitData.append("message", formData.concern);
-      if (formData.priority) {
-        submitData.append("priority", formData.priority);
-      }
-      if (formData.language) {
-        submitData.append("language", formData.language);
-      }
+      // Build JSON payload
+      const submitData = {
+        email: user.email,
+        name: user.user_name || user.name,
+        topic: formData.topic,
+        subject: formData.subject,
+        message: formData.concern,
+        priority: formData.priority || "",
+        language: formData.language || "",
+        attachments: [],
+      };
+
+      // Convert attachment to base64 if present
       if (formData.attachment) {
-        submitData.append("attachment", formData.attachment);
+        const base64 = await fileToBase64(formData.attachment);
+        submitData.attachments.push({
+          [formData.attachment.name]: base64,
+        });
       }
 
-      const response = await imsAxios.post("/ticket/create", submitData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await imsAxios.post("/ticket/create", submitData);
 
       setLoading(false);
 
