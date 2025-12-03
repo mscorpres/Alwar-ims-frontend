@@ -7,8 +7,6 @@ const generateUniqueId = () => {
   return uuidv4();
 };
 
-// Example usage
-const newId = generateUniqueId();
 
 
 const formatTimestamp = () => {

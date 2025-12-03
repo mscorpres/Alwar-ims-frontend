@@ -152,9 +152,9 @@ const loginSlice = createSlice({
       localStorage.setItem("currentLinks", JSON.stringify(action.payload));
     },
     setCompanyBranch: (state, action) => {
-      window.location.reload(true);
+     
       imsAxios.defaults.headers["Company-Branch"] = action.payload;
-      // clientAxios.defaults.headers["Company-Branch"] = action.payload;
+
       let user = state.user;
       user = { ...user, company_branch: action.payload };
       state.user = user;
@@ -170,7 +170,7 @@ const loginSlice = createSlice({
       );
     },
     setSession: (state, action) => {
-      // window.location.reload(true);
+ 
       imsAxios.defaults.headers["Session"] = action.payload;
       //  Axios.defaults.headers["Session"] = action.payload;
       let user = state.user;
@@ -215,43 +215,6 @@ const loginSlice = createSlice({
       localStorage.setItem("imsSettings", JSON.stringify(obj));
     },
   },
-  // extraReducers: (builder) => {
-  //   builder
-  //     .addCase(loginAuth.pending, (state) => {
-  //       state.user = null;
-  //       state.token = null;
-  //       state.loading = true;
-  //       state.isEditVBT = false;
-  //       state.isEditINV = false;
-  //     })
-  //     .addCase(loginAuth.fulfilled, (state, action) => {
-  //       state.user = {
-  //         email: action.payload.crn_email,
-  //         phone: action.payload.crn_mobile,
-  //         userName: action.payload.username,
-  //         token: action.payload.token,
-  //         favPages: JSON.parse(action.payload.fav_pages),
-  //         type: action.payload.crn_type,
-  //         mobileConfirmed: action.payload.other.m_v,
-  //         emailConfirmed: action.payload.other.e_v,
-  //         passwordChanged: action.payload.other.c_p ?? "C",
-  //         session: action.payload.session,
-  //         company_branch: JSON.parse(localStorage.getItem("otherData"))
-  //           ?.company_branch,
-  //         currentLink: JSON.parse(localStorage.getItem("otherData"))
-  //           ?.currentLink,
-  //         id: action.payload.crn_id,
-  //         showlegal: action.payload.department === "legal" ? true : false,
-  //       };
-  //       state.loading = false;
-  //       state.message = "User Logged in";
-  //     })
-  //     .addCase(loginAuth.rejected, (state, action) => {
-  //       toast.error(action.payload);
-  //       state.message = action.payload;
-  //       state.loading = false;
-  //     });
-  // },
 });
 
 export const selectUserDepartment = (state) => state;
