@@ -1,6 +1,4 @@
-import React from "react";
-import { CheckOutlined } from "@ant-design/icons";
-import "./CheckmarkLoader.css";
+
 
 const CheckmarkLoader = ({ size = 40 }) => {
   return (
