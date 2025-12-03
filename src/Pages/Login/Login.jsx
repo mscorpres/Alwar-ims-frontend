@@ -92,10 +92,9 @@ const Login = () => {
         "submit"
       );
       const { success } = res || {};
-      console.log("login success flag", success);
-
+    
       if (success) {
-        console.log("login response", res);
+       
         const isTwoStep = res?.isTwoStep ?? res?.data?.isTwoStep;
         if (isTwoStep === "Y") {
           // Two-step login, show OTP screen
@@ -114,6 +113,7 @@ const Login = () => {
           const obj = {
             email: payload.crn_email,
             phone: payload.crn_mobile,
+            comId: payload.company_id,
             userName: payload.username,
             token: payload.token,
             favPages: payload.fav_pages ? JSON.parse(payload.fav_pages) : [],
@@ -333,6 +333,7 @@ const Login = () => {
           email: payload.crn_email,
           phone: payload.crn_mobile,
           userName: payload.username,
+          comId: payload.company_id,
           token: payload.token,
           favPages: payload.fav_pages ? JSON.parse(payload.fav_pages) : [],
           type: payload.crn_type,
