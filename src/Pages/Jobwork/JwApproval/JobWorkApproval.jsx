@@ -15,13 +15,9 @@ import PoDetailsView from "./JwDetailsView.jsx";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import PoRejectModa from "./JwRejectModal.jsx";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import { CloseOutlined, CheckOutlined, EyeOutlined } from "@ant-design/icons";
 import PoApprovalModel from "./JwApprovalModal.jsx";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  getProjectOptions,
-  getVendorOptions,
-} from "../../../api/general.ts";
+import { getProjectOptions, getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
@@ -46,8 +42,8 @@ export default function JobWorkApproval() {
   const getVendorOption = async (search) => {
     const response = await executeFun(() => getVendorOptions(search), "select");
     let arr = [];
-    if (response.success) {
-      arr = convertSelectOptions(response.data);
+    if (response?.success) {
+      arr = convertSelectOptions(response?.data);
     }
     setAsyncOptions(arr);
   };
@@ -56,49 +52,42 @@ export default function JobWorkApproval() {
       () => getProjectOptions(search),
       "select"
     );
-    setAsyncOptions(response.data);
+    setAsyncOptions(response?.data);
   };
 
   const getRows = async () => {
     setRows([]);
     setLoading("fetch");
-    const response = await imsAxios.post(
-      "/jobwork/fetchneededApprovalJW",
-      {
-        data: searchInput,
-        wise: wise,
-      }
-    );
+    const response = await imsAxios.post("/jobwork/fetchneededApprovalJW", {
+      data: searchInput,
+      wise: wise,
+    });
     setLoading(false);
     const { data } = response;
-    if (data) {
-      if (response.success) {
-        let arr = response.data.map((row, index) => ({
-          ...row,
-          id: index + 1,
-        }));
-        setRows(arr);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+
+    if (response?.success) {
+      let arr = data.map((row, index) => ({
+        ...row,
+        id: index + 1,
+      }));
+      setRows(arr);
+    } else {
+      toast.error(response?.message);
     }
   };
   const approveSubmitHandler = async (poid, remark) => {
     setLoading("approving");
     const response = await imsAxios.post("/jobwork/updateJWApproval", {
-      jwid:poid,
+      jwid: poid,
       remark,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        toast.success(response.message);
-        getRows();
-        setApprovePo(null);
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
+    if (response.success) {
+      toast.success(response.message);
+      getRows();
+      setApprovePo(null);
+    } else {
+      toast.error(response.message);
     }
   };
   const ApproveSelectedPo = () => {
@@ -112,18 +101,7 @@ export default function JobWorkApproval() {
     });
     setApprovePo(arr);
   };
-  const RejectSelectedPo = () => {
-    // selectedPo
-    const arr = [];
-    selectedPo.map((row) => {
-      let matched = rows.filter((r) => r.id === row)[0];
-      if (matched) {
-        arr.push(matched.jw_transaction);
-      }
-    });
-    setRejectPo(arr);
-    // setApprovePo(arr);
-  };
+
   const columns = [
     {
       headerName: "",

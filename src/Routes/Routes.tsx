@@ -121,8 +121,6 @@ import {
   Agreement,
   ViewAgreement,
   AddAgreementType,
-  AllPages,
-  AllUsers,
   JobworkApproval,
 } from "../Pages/index.jsx";
 
@@ -232,7 +230,6 @@ import R31 from "../Pages/Reports/R/R31.jsx";
 import PendingPhysicalStock from "../Pages/Store/PhysicalStock/Pending.jsx";
 import RejectedPhysicalStock from "../Pages/Store/PhysicalStock/Rejected.jsx";
 import EditSalesOrder from "../Pages/Sales/SalesOrder/edit/index.jsx";
-import RegisteredUser from "../Pages/ControlPanel/RegisteredUser/RegisteredUser.jsx";
 import ShipmentsList from "../Pages/Sales/SalesOrder/SalesOrderRegister/Shipments/ShipmentsList.jsx";
 import Challan from "../Pages/Sales/SalesOrder/SalesOrderRegister/Challan/Challan.jsx";
 
@@ -244,6 +241,7 @@ import CreateScrapeChallan from "../Pages/Workorder/components/WoCreateChallan/C
 //
 import ProductionMIS from "../Pages/Production/ProductionMIS/ProductionMIS";
 import R33 from "../Pages/Reports/R/R33";
+import ChangelogHistory from "../Pages/Changelog/ChangelogHistory.jsx";
 
 import CreateFgReturn from "../Pages/Store/FgReturn/CreateFgReturn.jsx";
 import PendingReversal from "../Pages/Store/FgReturn/PendingReversal/PendingReversal.jsx";
@@ -1415,14 +1413,6 @@ const Routes = [
     main: () => <WeeklyAudit />,
   },
   {
-    path: "/controlPanel/allPages",
-    main: () => <AllPages />,
-  },
-  {
-    path: "/controlPanel/allUsers",
-    main: () => <AllUsers />,
-  },
-  {
     path: "/assets/create",
     main: () => <CreateAsset />,
   },
@@ -1435,11 +1425,6 @@ const Routes = [
     main: () => <Depreciation />,
   },
 
-  ///login
-  {
-    path: "/controlPanel/registeredUsers",
-    main: () => <RegisteredUser />,
-  },
   // far upload
   {
     path: routeConstants.far.upload,
@@ -1450,6 +1435,12 @@ const Routes = [
   {
     path: "/version/files",
     main: () => <VersionDownload />,
+  },
+
+  // changelog history
+  {
+    path: "/changelog/history",
+    main: () => <ChangelogHistory />,
   },
 
   // should always be at the end

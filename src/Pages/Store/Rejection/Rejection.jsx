@@ -14,21 +14,12 @@ const { TextArea } = Input;
 const Rejection = () => {
   const [loading, setLoading] = useState(false);
   const [loadingRejection, setLoadingRejection] = useState(false);
-  const [seacrh, setSearch] = useState(null);
   const [rejectedValue, setRejectedvalue] = useState({
     selValue: "",
   });
   const [asyncOptions, setAsyncOptions] = useState([]);
-
-  //   // console.log(rejectedValue);
-
   const [allDataComes, setAllDataComes] = useState([]);
   const [loctionData, setloctionData] = useState([]);
-
-  //   console.log(allDataComes);
-
-  // console.log(allDataComes);
-
   const [valueComesApi, setValueComesApi] = useState({
     branch: "",
     component: [],
@@ -43,7 +34,7 @@ const Rejection = () => {
         search: e,
       });
       let arr = [];
-      arr = response.data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -54,8 +45,7 @@ const Rejection = () => {
   const getLoctionsss = async () => {
     const response = await imsAxios.post("/rejection/fetchAllotedLocation");
     let u = [];
-    console.log(data.data);
-    response.data.map((d) => u.push({ label: d.text, value: d.id }));
+    response?.data.map((d) => u.push({ label: d.text, value: d.id }));
     setloctionData(u);
   };
 
@@ -65,8 +55,8 @@ const Rejection = () => {
     const response = await imsAxios.post("/rejection/fetchMINData", {
       min_transaction: rejectedValue?.selValue,
     });
-    if (data.success) {
-      let arr = response.data.map((row, index) => {
+    if (response?.success) {
+      let arr = response?.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -77,7 +67,9 @@ const Rejection = () => {
       setAllDataComes(arr);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message?.min_transaction?.[0] || data.message);
+      toast.error(
+        response?.message
+      );
       setLoading(false);
     }
   };
@@ -93,7 +85,6 @@ const Rejection = () => {
   };
 
   const compInputHandler = async (name, value, id) => {
-    console.log(name, value, id);
     if (name == "inward_qty") {
       setAllDataComes((a) =>
         a.map((aa) => {
@@ -191,22 +182,17 @@ const Rejection = () => {
       min_transaction: rejectedValue.selValue,
     });
 
-    if (data.success) {
-      toast.success(response.message);
+    if (response?.success) {
+      toast.success(response?.message);
       setAllDataComes([]);
       setLoadingRejection(false);
     } else {
       // allDataComes([]);
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
       setLoadingRejection(false);
     }
   };
-
-  useEffect(() => {
-    if (allDataComes.length > 0) {
-      console.log(allDataComes);
-    }
-  }, [allDataComes]);
+ 
 
   return (
     <>

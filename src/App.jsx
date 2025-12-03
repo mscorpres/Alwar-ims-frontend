@@ -27,7 +27,7 @@ import socket from "./Components/socket.js";
 import Notifications from "./Components/Notifications";
 // antd imports
 import Layout, { Content, Header } from "antd/lib/layout/layout";
-import { Badge, Row, Select, Space, Switch, Typography } from "antd";
+import { Badge, Row, Select, Space, Switch, Typography, Modal, Card } from "antd";
 // icons import
 import {
   CustomerServiceOutlined,
@@ -37,7 +37,8 @@ import {
   MenuOutlined,
   LoadingOutlined,
   SearchOutlined,
-  ControlOutlined,
+  SwapOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import { Tooltip, IconButton } from "@mui/material";
 import { SiSocketdotio } from "react-icons/si";
@@ -83,6 +84,16 @@ const App = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
+  const [showSwitchModule, setShowSwitchModule] = useState(false);
+  const [alwarSession, setAlwarSession] = useState(null);
+  const [alwarBranch, setAlwarBranch] = useState(null);
+  const [noidaSession, setNoidaSession] = useState(null);
+  const [noidaBranch, setNoidaBranch] = useState(null);
+  // Edit mode states for switch module dropdowns
+  const [editAlwarSession, setEditAlwarSession] = useState(false);
+  const [editAlwarBranch, setEditAlwarBranch] = useState(false);
+  const [editNoidaSession, setEditNoidaSession] = useState(false);
+  const [editNoidaBranch, setEditNoidaBranch] = useState(false);
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -92,11 +103,6 @@ const App = () => {
     arr = arr.filter((not) => not.ID != id);
     dispatch(setNotifications(arr));
   };
-  useEffect(() => {
-    if (pathname === "/controlPanel/registeredUsers" && user?.type == "user") {
-      navigate("/");
-    }
-  }, [user?.type]);
 
   const handleFavPages = async (status) => {
     let favs = user.favPages;
@@ -128,14 +134,6 @@ const App = () => {
       }
     }
     dispatch(setFavourites(favs));
-  };
-  // to trigger
-  const navToControl = () => {
-    if (user?.type == "user") {
-      navigate("/");
-    } else {
-      navigate("/controlPanel/registeredUsers");
-    }
   };
   const handleChangePageStatus = (value) => {
     let status = value ? "TEST" : "LIVE";
@@ -641,6 +639,43 @@ const App = () => {
     { label: "Session 24-25", value: "24-25" },
     { label: "Session 25-26", value: "25-26" },
   ];
+
+  // Location-wise branch options for Switch Module modal
+  const locationBranchOptions = {
+    alwar: [
+      { label: "B-36 Alwar [BRBA036]", value: "BRBA036" },
+    ],
+    noida: [
+      { label: "A-21 [BRMSC012]", value: "BRMSC012" },
+      { label: "B-29 [BRMSC029]", value: "BRMSC029" },
+      { label: "D-160 [BRBAD116]", value: "BRBAD116" },
+    ],
+  };
+
+  const handleSwitchModule = (location, branch, session) => {
+    dispatch(setCompanyBranch(branch));
+    dispatch(setSession(session));
+    socket.emit("getBranch", branch);
+    setShowSwitchModule(false);
+    // Reset edit modes
+    setEditAlwarSession(false);
+    setEditAlwarBranch(false);
+    setEditNoidaSession(false);
+    setEditNoidaBranch(false);
+    toast.success(`Switched to ${location} - ${branch}`);
+  };
+
+  // Helper to get label from value
+  const getSessionLabel = (value) => {
+    const found = sessionOptions.find((opt) => opt.value === value);
+    return found ? found.label : value || "Select Session";
+  };
+
+  const getBranchLabel = (value, location) => {
+    const options = location === "alwar" ? locationBranchOptions.alwar : locationBranchOptions.noida;
+    const found = options.find((opt) => opt.value === value);
+    return found ? found.label : "Select Branch";
+  };
   const path = window.location.hostname;
 
   const refreshConnection = () => {
@@ -783,17 +818,17 @@ const App = () => {
                     position: "relative",
                   }}
                 >
-                  {user?.type && user?.type.toLowerCase() == "developer" && (
-
-                      <ControlOutlined
-                        style={{
-                          fontSize: 18,
-                          color: "white",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => navToControl()}
-                      />
-                  )}
+                  <Tooltip title="Switch Module" placement="bottom">
+                    <SwapOutlined
+                      style={{
+                        fontSize: 18,
+                        color: "white",
+                        cursor: "pointer",
+                      }}
+                      onClick={() => setShowSwitchModule(true)}
+                    />
+                  </Tooltip>
+                  
                   <Tooltip
                     title={`Socket ${
                       isConnected ? "Connected" : "Disconnected"
@@ -880,6 +915,230 @@ const App = () => {
                       hide={() => setShowSetting(false)}
                     />
                   )}
+                  {/* Switch Module Modal */}
+                  <Modal
+                    title="Switch Module"
+                    open={showSwitchModule}
+                    onCancel={() => {
+                      setShowSwitchModule(false);
+                      setEditAlwarSession(false);
+                      setEditAlwarBranch(false);
+                      setEditNoidaSession(false);
+                      setEditNoidaBranch(false);
+                    }}
+                    footer={null}
+                    width={650}
+                    centered
+                    maskClosable={false}
+                  >
+                    <div style={{ display: "flex", gap: 24, justifyContent: "center", padding: "20px 0" }}>
+                      {/* Alwar Card */}
+                      <Card
+                        title={<span style={{ fontWeight: "bold", fontSize: 18 }}>Alwar</span>}
+                        style={{
+                          width: 280,
+                          border: "2px solid #047780",
+                          borderRadius: 4,
+                          boxShadow: "0 4px 12px rgba(4, 119, 128, 0.2)",
+                        }}
+                        styles={{ body: { padding: 16 } }}
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                          <div>
+                            <div style={{ fontWeight: 500, marginBottom: 6 }}>Session</div>
+                            {editAlwarSession ? (
+                              <Select
+                                style={{ width: "100%" }}
+                                placeholder="Select Session"
+                                options={sessionOptions}
+                                value={alwarSession || user?.session}
+                                onChange={(value) => {
+                                  setAlwarSession(value);
+                                  setEditAlwarSession(false);
+                                }}
+                                autoFocus
+                                open
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  padding: "4px 11px",
+                                  border: "1px solid #d9d9d9",
+                                  borderRadius: 6,
+                                  minHeight: 32,
+                                }}
+                              >
+                                <span>{getSessionLabel(alwarSession || user?.session)}</span>
+                                <EditOutlined
+                                  style={{ cursor: "pointer", color: "#1890ff" }}
+                                  onClick={() => setEditAlwarSession(true)}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 500, marginBottom: 6 }}>Branch</div>
+                            {editAlwarBranch ? (
+                              <Select
+                                style={{ width: "100%" }}
+                                placeholder="Select Branch"
+                                options={locationBranchOptions.alwar}
+                                value={alwarBranch}
+                                onChange={(value) => {
+                                  setAlwarBranch(value);
+                                  setEditAlwarBranch(false);
+                                }}
+                                autoFocus
+                                open
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  padding: "4px 11px",
+                                  border: "1px solid #d9d9d9",
+                                  borderRadius: 6,
+                                  minHeight: 32,
+                                }}
+                              >
+                                <span>{getBranchLabel(alwarBranch, "alwar")}</span>
+                                <EditOutlined
+                                  style={{ cursor: "pointer", color: "#1890ff" }}
+                                  onClick={() => setEditAlwarBranch(true)}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            style={{
+                              marginTop: 8,
+                              padding: "8px 16px",
+                              background: "#047780",
+                              color: "white",
+                              border: "none",
+                              borderRadius: 4,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              if (!alwarBranch) {
+                                toast.error("Please select a branch");
+                                return;
+                              }
+                              handleSwitchModule("Alwar", alwarBranch, alwarSession || user?.session);
+                            }}
+                          >
+                            Switch to Alwar
+                          </button>
+                        </div>
+                      </Card>
+
+                      {/* Noida Card */}
+                      <Card
+                        title={<span style={{ fontWeight: "bold", fontSize: 18 }}>Noida</span>}
+                        style={{
+                          width: 280,
+                          border: "2px solid #047780",
+                          borderRadius: 4,
+                          boxShadow: "0 4px 12px rgba(4, 119, 128, 0.2)",
+                        }}
+                        styles={{ body: { padding: 16 } }}
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                          <div>
+                            <div style={{ fontWeight: 500, marginBottom: 6 }}>Session</div>
+                            {editNoidaSession ? (
+                              <Select
+                                style={{ width: "100%" }}
+                                placeholder="Select Session"
+                                options={sessionOptions}
+                                value={noidaSession || user?.session}
+                                onChange={(value) => {
+                                  setNoidaSession(value);
+                                  setEditNoidaSession(false);
+                                }}
+                                autoFocus
+                                open
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  padding: "4px 11px",
+                                  border: "1px solid #d9d9d9",
+                                  borderRadius: 6,
+                                  minHeight: 32,
+                                }}
+                              >
+                                <span>{getSessionLabel(noidaSession || user?.session)}</span>
+                                <EditOutlined
+                                  style={{ cursor: "pointer", color: "#1890ff" }}
+                                  onClick={() => setEditNoidaSession(true)}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <div>
+                            <div style={{ fontWeight: 500, marginBottom: 6 }}>Branch</div>
+                            {editNoidaBranch ? (
+                              <Select
+                                style={{ width: "100%" }}
+                                placeholder="Select Branch"
+                                options={locationBranchOptions.noida}
+                                value={noidaBranch || "BRMSC012"}
+                                onChange={(value) => {
+                                  setNoidaBranch(value);
+                                  setEditNoidaBranch(false);
+                                }}
+                                autoFocus
+                                open
+                              />
+                            ) : (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  padding: "4px 11px",
+                                  border: "1px solid #d9d9d9",
+                                  borderRadius: 6,
+                                  minHeight: 32,
+                                }}
+                              >
+                                <span>{getBranchLabel(noidaBranch || "BRMSC012", "noida")}</span>
+                                <EditOutlined
+                                  style={{ cursor: "pointer", color: "#1890ff" }}
+                                  onClick={() => setEditNoidaBranch(true)}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          <button
+                            style={{
+                              marginTop: 8,
+                              padding: "8px 16px",
+                              background: "#047780",
+                              color: "white",
+                              border: "none",
+                              borderRadius: 4,
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              handleSwitchModule("Noida", noidaBranch || "BRMSC012", noidaSession || user?.session);
+                            }}
+                          >
+                            Switch to Noida
+                          </button>
+                        </div>
+                      </Card>
+                    </div>
+                  </Modal>
                 </Space>
               </Row>
             </Header>

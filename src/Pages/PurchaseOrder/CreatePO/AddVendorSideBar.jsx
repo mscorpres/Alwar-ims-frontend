@@ -67,9 +67,12 @@ const AddVendorSideBar = ({ setOpen, open }) => {
       });
       setSelectLoading(false);
       let arr = [];
-      arr = data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
+      const { data } = response;
+      if (data) {
+        arr = data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+      }
       setAsyncOptions(arr);
       // return arr;
     }
@@ -117,11 +120,10 @@ const AddVendorSideBar = ({ setOpen, open }) => {
     if (response.success) {
       // fetchVendor();
       reset();
-      toast.success(data.message.toString().replaceAll("<br/>", " "));
+      toast.success(response.message?.toString().replaceAll("<br/>", " ") || response.message);
       setOpen(null);
       // setShowAddVendorModal(false);
     } else {
-      console.log("data", data);
       toast.error(response.message?.msg || response.message);
       setSubmitLoading(false);
     }
@@ -185,7 +187,7 @@ const AddVendorSideBar = ({ setOpen, open }) => {
       title="Add Vendor"
       onClose={() => setOpen(null)}
       open={open}
-      bodyStyle={{ paddingTop: 5 }}
+      styles={{ body: { paddingTop: 5 } }}
     >
       <Form style={{ height: "100%" }} form={addVendorForm} layout="vertical">
         <div style={{ height: "97%", overflowY: "auto", overflowX: "hidden" }}>

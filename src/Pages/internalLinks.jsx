@@ -1200,21 +1200,6 @@ const links = [
   ],
   [
     {
-      routeName: "All Pages",
-      routePath: "/controlPanel/allPages",
-    },
-    {
-      routeName: "All Users",
-      routePath: "/controlPanel/allUsers",
-    },
-    ///
-    {
-      routeName: "Registered Users",
-      routePath: "/controlPanel/registeredUsers",
-    },
-  ],
-  [
-    {
       routeName: "Create Asset",
       routePath: "/assets/create",
     },
@@ -1232,6 +1217,17 @@ const links = [
     {
       routeName: "Production MIS",
       routePath: "/production/prodMis",
+    },
+  ],
+  // Version & Changelog
+  [
+    {
+      routeName: "Version Files",
+      routePath: "/version/files",
+    },
+    {
+      routeName: "Changelog History",
+      routePath: "/changelog/history",
     },
   ],
 ];
