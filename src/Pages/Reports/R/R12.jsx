@@ -107,15 +107,14 @@ const R12 = () => {
         action: "search_r12",
       });
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return { ...row, id: v4() };
         });
-        console.log(arr);
         setResData(arr);
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(data.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }

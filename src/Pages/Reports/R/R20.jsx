@@ -115,10 +115,11 @@ function R20() {
       componentKey: [componentKey],
       standardPrice: [standardPrice],
     });
-    const { data } = response;
-    if (response.status === 200) {
-      toast.success(data);
+  
+    if (response.success) {
+      toast.success(response.message);
       setShowModalData(false);
+      
     }
   };
   const previewMultiData = async (componentKey, standardPrice) => {
@@ -127,9 +128,8 @@ function R20() {
       componentKey: componentKey,
       standardPrice: standardPrice,
     });
-    const { data } = response;
-    if (response.status === 200) {
-      toast.success(data);
+    if (response.success) {
+      toast.success(response.message);
       setLoading(false);
       setIsModalOpen(false);
       setPreviewDT(true);
@@ -137,18 +137,12 @@ function R20() {
     }
   };
   const getComponents = async (search) => {
-    // setSelectLoading(true);
-    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-    //   search: search,
-    // });
-    // setSelectLoading(false);
     const response = await executeFun(
       () => getComponentOptions(search),
       "select"
     );
-    const { data } = response;
     let arr = [];
-    if (response.data[0]) {
+    if (response.success && response.data[0]) {
       arr = response.data.map((row) => ({
         text: row.text,
         value: row.id,
@@ -224,10 +218,8 @@ function R20() {
     toast.info("PartCode list will be downloaded shortly!");
     setLoading(true);
     const response = await imsAxios.get("/report20/componentList");
-    const { data } = response;
-    console.log("response for downloaded file", data);
-    if (response.status === 200) {
-      downloadExcel(response.data.data, "component1215145", data.data.type);
+    if (response.success) {
+      downloadExcel(response.data, "component1215145", response.data.type);
     }
   };
 
@@ -247,7 +239,6 @@ function R20() {
     previewSingleData(componentKey, standardPrice);
   };
   useEffect(() => {
-    console.log("inside USeeffect");
     if (showModalData) {
       previewMultiData(compKey, stdPrice);
     }
@@ -259,8 +250,6 @@ function R20() {
         width={1000}
         title="Basic Modal"
         open={isModalOpen}
-        // onOk={() => setShowModalData(true)}
-        // onCancel={handleCancel}
         footer={[
           <Button key="back" onClick={handleCancel}>
             Return

@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./r.css";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
-import moment from "moment";
-import { Button, Col, DatePicker, Row, Select, Space } from "antd";
+import { Button, Col, DatePicker, Row } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
-import { DownloadOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import MySelect from "../../../Components/MySelect";
 import MyDataTable from "../../../Components/MyDataTable";
-import InternalNav from "../../../Components/InternalNav";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
@@ -22,12 +18,8 @@ const R14 = () => {
     selType: "",
   });
   const [responseData, setResponseData] = useState([]);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState([]);
 
   const options = [{ label: "Fetch", value: "fetchStock" }];
-
-  // console.log(allData);
 
   const handleDownloadingCSV = () => {
     let arr = [];
@@ -73,9 +65,8 @@ const R14 = () => {
       const response = await imsAxios.post("/audit/fetchAuditReport", {
         type: allData.selType.value,
       });
-      // setLoading(false);
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -84,7 +75,7 @@ const R14 = () => {
         setResponseData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(data.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }

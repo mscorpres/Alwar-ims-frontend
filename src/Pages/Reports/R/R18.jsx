@@ -85,7 +85,7 @@ function R18() {
         setColumns(headers);
         setRows(arr);
       } else {
-        toast.error("Failed to fetch report data");
+        toast.error(response.message ?? "Failed to fetch report data");
       }
     } catch (error) {
       setFetchLoading(false);
