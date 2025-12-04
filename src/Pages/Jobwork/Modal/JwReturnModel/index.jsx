@@ -60,7 +60,7 @@ const JwReturnModel = ({ show, close }) => {
     try {
       const response = await imsAxios.get("/jobwork/jw_rm_return_location");
       setLoading("fetch", true);
-      if (data) {
+      if (response?.success) {
         const arr = response.data.map((row) => ({
           text: row.text,
           value: row.id,
@@ -76,7 +76,7 @@ const JwReturnModel = ({ show, close }) => {
   };
   const getAutoComnsumptionOptions = async () => {
     // setPageLoading(true);
-    let { data } = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
+    const response = await imsAxios.get("/transaction/fetchAutoConsumpLocation");
     // setPageLoading(false);
     if (response.success) {
       let arr = response.data.map((row) => {
@@ -96,7 +96,9 @@ const JwReturnModel = ({ show, close }) => {
         skucode: sku,
         transaction: transaction,
       });
-      const headerValues = data.header;
+      const {data,header} = response?.data;
+      console.log(data,header, "response as header and data")
+      const headerValues = header;
       let headerArr = [];
       const headerObj = {
         "Created By": headerValues.created_by,
@@ -118,7 +120,7 @@ const JwReturnModel = ({ show, close }) => {
         }
       }
 
-      const componentArr = response.data.map((row) => ({
+      const componentArr = data.map((row) => ({
         id: v4(),
         component: row.component,
         componentKey: row.component_key,

@@ -39,23 +39,22 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
       po_transaction: viewModalOpen.jwId,
     });
     setLoading(false);
-    const { data } = response;
-   
-      if (response?.success) {
-        data.header.map((a) => setView(a));
-        let arr = data?.data?.map((row, index) => {
-          return {
-            ...row,
-            id: v4(),
-            index: index + 1,
-          };
-        });
-        setMainData(arr);
-      } else {
-        toast.error(response.message);
-        setViewModalOpen(false);
-      }
-  
+    const { data, header } = response?.data;
+
+    if (response?.success) {
+      header.map((a) => setView(a));
+      let arr = data?.map((row, index) => {
+        return {
+          ...row,
+          id: v4(),
+          index: index + 1,
+        };
+      });
+      setMainData(arr);
+    } else {
+      toast.error(response.message);
+      setViewModalOpen(false);
+    }
   };
 
   const columns = [
@@ -115,7 +114,6 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
     { field: "consump_qty_value", headerName: "Consumption Value", width: 150 },
     { field: "rtn_inward_value", headerName: "RM Return Value", width: 150 },
   ];
-
 
   const handleDownload = () => {
     downloadCSV(

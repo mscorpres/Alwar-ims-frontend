@@ -43,7 +43,7 @@ const JwrmReturn = () => {
       const response = await imsAxios.post("/backend/getProductByNameAndNo", {
         search: e,
       });
-      // console.log(data);
+   
       let arr = [];
       arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
@@ -87,7 +87,7 @@ const JwrmReturn = () => {
         setLoading("fetch", false);
       } else if (!response.success) {
         toast.error(response.message);
-        setLoading("fetch", "fetch", false);
+        setLoading("fetch", false);
       }
     }
   };

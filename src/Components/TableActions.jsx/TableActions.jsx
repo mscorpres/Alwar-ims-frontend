@@ -32,6 +32,24 @@ export default function TableActions({
   showInMenu,
   field,
 }) {
+  // Default labels based on action type if not provided
+  const getDefaultLabel = () => {
+    if (label) return label;
+    const labelMap = {
+      add: "Add",
+      view: "View",
+      download: "Download",
+      print: "Print",
+      cancel: "Cancel",
+      upload: "Upload",
+      edit: "Edit",
+      scan: "Scan",
+      delete: "Delete",
+      check: "Check",
+      save: "Save",
+    };
+    return labelMap[action] || "Action";
+  };
   const Icon = () => {
     if (action == "add") {
       return <PlusOutlined className={`view-icon ${disabled && "disable"}`} />;
@@ -84,13 +102,13 @@ export default function TableActions({
       showInMenu={showInMenu}
       icon={
         !showInMenu ? (
-          <Tooltip title={label}>
+          <Tooltip title={getDefaultLabel()}>
             <Icon />
           </Tooltip>
         ) : undefined
       }
       disabled={disabled}
-      label={label}
+      label={getDefaultLabel()}
       onClick={onClick}
     />
   );

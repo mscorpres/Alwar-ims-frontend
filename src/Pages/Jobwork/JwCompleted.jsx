@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Button, Col, Input, Row, Select } from "antd";
+import  { useState } from "react";
+import { Col, Input, Row, Select } from "antd";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import MyDataTable from "../../Components/MyDataTable";
 import MyDatePicker from "../../Components/MyDatePicker";
 import { toast } from "react-toastify";
 import { v4 } from "uuid";
-import { EyeTwoTone } from "@ant-design/icons";
 import CompletedModal from "./Modal/CompletedModal";
 import { imsAxios } from "../../axiosInterceptor";
 import printFunction, {
@@ -50,7 +49,7 @@ const JwCompleted = () => {
       });
       // console.log(data);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -62,7 +61,7 @@ const JwCompleted = () => {
       transaction: d,
     });
     setLoading(false);
-    printFunction(data.data.buffer.data);
+    printFunction(response?.data.buffer);
   };
   const handleDownload = async (d) => {
     setLoading("print");
@@ -70,7 +69,7 @@ const JwCompleted = () => {
       transaction: d,
     });
     setLoading(false);
-    downloadFunction(data.data.buffer.data, d);
+    downloadFunction(response?.data.buffer, d);
   };
 
   const getVendor = async (search) => {
@@ -107,7 +106,7 @@ const JwCompleted = () => {
         setDateData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }
@@ -130,7 +129,7 @@ const JwCompleted = () => {
       setDJWData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading(false);
     }
   };
@@ -152,7 +151,7 @@ const JwCompleted = () => {
       setSKUData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading(false);
     }
   };
@@ -174,7 +173,7 @@ const JwCompleted = () => {
       setVendorData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading(false);
     }
   };
@@ -189,19 +188,23 @@ const JwCompleted = () => {
     { field: "ord_qty", headerName: "Order Qty", width: 120 },
     // { field: "jw_sku_name", headerName: "Actions", width: 260 },
     {
+      field: "actions",
       type: "actions",
       headerName: "Actions",
       width: 150,
       getActions: ({ row }) => [
         <TableActions
+          key="print"
           action="print"
           onClick={() => handlePrint(row.transaction_id)}
         />,
         <TableActions
+          key="download"
           action="download"
           onClick={() => handleDownload(row.transaction_id)}
         />,
         <TableActions
+          key="view"
           action="view"
           onClick={() =>
             setViewModalOpen({

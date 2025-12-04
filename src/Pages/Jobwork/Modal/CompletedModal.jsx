@@ -31,7 +31,7 @@ const CompletedModal = ({ editModal, setEditModal }) => {
       setModalLoad(false);
     } else if (!response.success) {
       setEditModal(false);
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       // setModalLoad(false);
     }
   };
@@ -44,16 +44,8 @@ const CompletedModal = ({ editModal, setEditModal }) => {
       transaction: d?.transaction,
     });
     setPrintLoading(false);
-    printFunction(data.data.buffer.data);
+    printFunction(response.data.buffer);
   };
-
-  //   const printShow = async (transactionId) => {
-  //    const formData = new FormData();
-  //    formData.append("transaction", transactionId);
-  //    const response = await imsAxios.post("/storeApproval/print_request", formData);
-  //    console.log(data);
-  //    printFunction(data.data.buffer.data);
-  //  };
 
   const columns = [
     {
@@ -81,11 +73,6 @@ const CompletedModal = ({ editModal, setEditModal }) => {
       headerName: "Action",
       width: 150,
       getActions: ({ row }) => [
-        // <TableActions action="view" onClick={() => setViewModalOpen(row)} />,
-        // <TableActions action="cancel" onClick={() => setCloseModalOpen(row)} />,
-        // <TableActions action="print" onClick={() => console.log(row)} />,
-        // <TableActions action="edit" />,
-
         <PrinterTwoTone
           onClick={() => printShow(row)}
           style={{ color: "#1890ff", fontSize: "15px" }}

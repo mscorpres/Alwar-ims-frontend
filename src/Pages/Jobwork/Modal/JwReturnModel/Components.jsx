@@ -17,6 +17,7 @@ import TableActions from "../../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 
 const Components = ({
+  form,
   locationOptions,
   formRules,
   rows,
@@ -56,8 +57,6 @@ const Components = ({
     );
   };
 
-  const [form] = Form.useForm();
-
   return (
     <Flex
       vertical
@@ -85,20 +84,22 @@ const Components = ({
           </>
         }
       >
-        <Form form={form} initialValues={initialValues}>
-          <SingleComponent
-            rows={rows}
-            form={form}
-            locationOptions={locationOptions}
-            autoConsOptions={autoConsOptions}
-          />
-        </Form>
+        <SingleComponent
+          rows={rows}
+          form={form}
+          locationOptions={locationOptions}
+          autoConsOptions={autoConsOptions}
+        />
       </Card>
       <div style={{ height: "83%" }}>
         <Card
           size="small"
           style={{ height: "100%", paddingBottom: 10 }}
-          bodyStyle={{ height: "100%" }}
+          styles={{
+            body: {
+              height: "100%",
+            },
+          }}
         >
           <div
             style={{
@@ -158,14 +159,13 @@ const Components = ({
                 style={{
                   overflowY: "auto",
                   height: "85%",
-                  bodyStyle: "100%",
                   marginBottom: "10px",
                   // backgroundColor: "red",
                 }}
               >
-                <Row bodyStyle="100%" style={{ justifyContent: "center" }}>
+                <Row style={{ justifyContent: "center" }}>
                   {selectedRows.map((row, index) => (
-                    <Col span={24}>
+                    <Col key={row.component?.value || index} span={24}>
                       <Row align="middle">
                         <Col span={1}>
                           <Flex align="center">
