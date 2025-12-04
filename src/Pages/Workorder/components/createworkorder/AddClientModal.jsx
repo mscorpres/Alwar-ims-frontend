@@ -148,7 +148,11 @@ const AddClientModal = ({ setOpen, open }) => {
       title="Add Client"
       onClose={() => setOpen(null)}
       open={open}
-      bodyStyle={{ paddingTop: 5 }}
+      styles={{
+        body: {
+          paddingTop: 5,
+        },
+      }}
     >
       <Form style={{ height: "100%" }} form={addClientForm} layout="vertical">
         <div style={{ height: "97%", overflowY: "auto", overflowX: "hidden" }}>

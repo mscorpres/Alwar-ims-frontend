@@ -29,11 +29,11 @@ function SFGMIN() {
       search: search,
     });
     setSelectLoading(false);
-    if (data[0]) {
-      let arr = data.map((row) => ({
+    if (response?.success) {
+      let arr = response?.data.map((row) => ({
         value: row.id,
         text: row.text,
-      }));
+      }))
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
@@ -55,7 +55,7 @@ function SFGMIN() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
     setFetchLoading(false);
   };
@@ -78,11 +78,13 @@ function SFGMIN() {
     { headerName: "Job Work Id", flex: 1, field: "jw_txn" },
     { headerName: "Transaction Id", flex: 1, field: "sfg_txn" },
     {
+      field: "actions",
       headerName: "Actions",
       flex: 1,
       type: "actions",
       getActions: ({ row }) => [
         <TableActions
+          key="min"
           action="add"
           //   disable={row.po_status == "C"}
           onClick={() =>

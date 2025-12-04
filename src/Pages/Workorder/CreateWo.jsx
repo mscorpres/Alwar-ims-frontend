@@ -5,7 +5,6 @@ import {
   Divider,
   Form,
   Input,
-  InputNumber,
   Modal,
   Row,
   Typography,
@@ -87,7 +86,6 @@ export default function CreateWO({}) {
   const [bomOptions, setBomOptions] = useState([]);
   const [showAddProjectConfirm, setShowAddProjectConfirm] = useState(false);
   const [showBranchModel, setShowBranchModal] = useState(false);
-  const [showBillingModel, setShowBillingModal] = useState(false);
   const [showAddCostModal, setShowAddCostModal] = useState(false);
   const [clientcode, setClientCode] = useState("");
   const [showAddClientModal, setShowAddClientModal] = useState(false);
@@ -113,8 +111,8 @@ export default function CreateWO({}) {
       const response = await imsAxios.post("/backend/getClient", {
         searchTerm: inputValue,
       });
-      const { data } = response;
-      if (data) {
+   
+      if (response?.success) {
         let arr = response.data.map((row) => ({
           text: row.name,
           value: row.code,
@@ -137,23 +135,24 @@ export default function CreateWO({}) {
       const response = await imsAxios.post("/backend/fetchClientDetail", {
         code: inputValue,
       });
-      const { data } = response;
+  
       if (response.success) {
-        const arr = response.data.branchList.map((row) => ({
+       
+        const arr = response?.data.branchList.map((row) => ({
           text: row.text,
           value: row.id,
           address: row.address,
         }));
         setclientBranchOptions(arr);
         setAddOptions(arr);
-        setClientData(response.data);
+        setClientData(response?.data?.client);
         if (dm === undefined) {
           createWoForm.setFieldValue("clientbranch", "");
           createWoForm.setFieldValue("gstin", "");
           createWoForm.setFieldValue("caddress", "");
         }
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -170,7 +169,7 @@ export default function CreateWO({}) {
     });
     setLoading(false);
     const { data } = response;
-    if (data) {
+    if (response?.success) {
       let arr = data.map((row) => ({
         text: row.text,
         value: row.id,
@@ -196,7 +195,7 @@ export default function CreateWO({}) {
       createWoForm.setFieldValue("hsn", response.data?.hsn);
       createWoForm.setFieldValue("gstRate", response.data?.gstrate);
     } else {
-      toast.error(response.message?.msg || response.message || "Some error occured wile getting component details");
+      toast.error(response.message || "Some error occured wile getting component details");
     }
   };
 
@@ -204,7 +203,7 @@ export default function CreateWO({}) {
     const response = await imsAxios.post("backend/fetchBomProduct", {
       search: search,
     });
-    let arr = response.response.data.map((row) => ({
+    let arr = response?.data.map((row) => ({
       text: row.bomname,
       value: row.bomid,
     }));
@@ -300,7 +299,7 @@ export default function CreateWO({}) {
         createWoForm.setFieldValue("gstin", response.data.gst);
         createWoForm.setFieldValue("caddress", response.data.address);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -313,7 +312,6 @@ export default function CreateWO({}) {
   const submitHandler = async () => {
     //validating form values
     const values = await createWoForm.validateFields();
-    console.log("values right here", values);
     // return;
     let finalObj = {
       client_name: values.clientname.value,
@@ -339,13 +337,9 @@ export default function CreateWO({}) {
       insert_dt: values.insertDate,
       cost_center: values.wocostcenter,
       project: values.project_name,
-      //       cost_center: values.insertDate,
-      //       project: values.project,
-      //       cost_center: “”,
-      // project: “”,
+  
     };
-    // console.log("final obj------", finalObj);
-    // return;
+   
     setLoading("submitting");
     const response = await imsAxios.post(
       "createwo/createWorkOrderReq",
@@ -356,7 +350,7 @@ export default function CreateWO({}) {
       toast.success(response.message);
       resetHandler();
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
   };
 
@@ -376,7 +370,7 @@ export default function CreateWO({}) {
     if (response.success) {
       setProjectDesc(response.data.description);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
   };
   const handleFetchCostCenterOptions = async (search) => {

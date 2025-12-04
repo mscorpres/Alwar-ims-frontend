@@ -150,7 +150,7 @@ function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
       setSubmitLoading(false);
       setTransactionInwarding(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
   };
   useEffect(() => {
