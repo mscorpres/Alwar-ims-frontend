@@ -38,7 +38,7 @@ function R22() {
     const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: allData?.selectProduct,
     });
-    console.log(data.data);
+
     const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
@@ -60,7 +60,7 @@ function R22() {
       });
       // console.log(data);
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -78,7 +78,7 @@ function R22() {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(data.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }

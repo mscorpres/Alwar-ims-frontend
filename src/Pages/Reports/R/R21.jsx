@@ -39,10 +39,9 @@ function R21() {
           ...location,
         };
       });
-      setClosing(data.data.closingDate);
+      setClosing(response.closingDate);
       setColumnsName(headerArr);
-      // console.log("columnName", data.data.result);
-      let locations = JSON.parse(data.data.result[0].locations);
+      let locations = JSON.parse(response.data[0].locations);
       for (const key in locations) {
         if (locations.hasOwnProperty(key)) {
           location = { headerName: key };

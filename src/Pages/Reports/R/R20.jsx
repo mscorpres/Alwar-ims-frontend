@@ -59,8 +59,7 @@ function R20() {
     setLoading(false);
 
     if (response) {
-      const { data } = response;
-      let arr = data.result.map((row, index) => {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),

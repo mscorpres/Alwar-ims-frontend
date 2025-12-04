@@ -57,16 +57,14 @@ function R31() {
         ...row,
         id: index + 1,
       }));
-      console.log(" data.data", data.data);
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setRows([]);
     }
   };
   const getComponentsList = async (row) => {
     setFetchLoading(true);
-    console.log("row", row);
     setJwId(row.jobwork);
     let values = await searchForm.validateFields();
     // console.log("values", values);
@@ -77,9 +75,8 @@ function R31() {
       challan: row.challan,
     });
     console.log("response", response);
-    const { data } = response;
     // let arr = data.message;
-    let arr = data.response.data;
+    let arr = response.data;
 
     if (response.success) {
       arr = arr.map((row, index) => ({
@@ -118,13 +115,13 @@ function R31() {
     });
     setSelectLoading(false);
     let arr = [];
-    if (data.code) {
+    if (response.success) {
       arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
     } else {
-      arr = data.map((row) => ({
+      arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));

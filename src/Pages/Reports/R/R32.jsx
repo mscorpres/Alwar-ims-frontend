@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MyDataTable from "../../gstreco/myDataTable";
 import { imsAxios } from "../../../axiosInterceptor";
-import { Button, Row } from "antd";
-import { MdOutlineDownloadForOffline } from "react-icons/md";
+import { Row } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 
@@ -12,9 +11,7 @@ function R32() {
   const getRows = async () => {
     setLoading(true);
     const response = await imsAxios.get("/report32");
-    console.log("response", response);
-    const { data } = response;
-    if (data.status) {
+    if (response.success) {
       let arr = [];
       arr = response.data.map((r, index) => {
         return {
@@ -22,7 +19,6 @@ function R32() {
           id: index + 1,
         };
       });
-      console.log("arr", arr);
       setRows(arr);
       setLoading(false);
     } else {

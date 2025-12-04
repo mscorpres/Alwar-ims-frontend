@@ -55,7 +55,6 @@ function R28() {
     const response = await imsAxios.post("/report28", {
       date: datee,
     });
-    console.log("data", data);
     if (response.success) {
       setLoading(false);
       toast.success(response.message);
@@ -68,7 +67,7 @@ function R28() {
       setDateData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading(false);
     }
   };

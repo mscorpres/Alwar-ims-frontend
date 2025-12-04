@@ -28,10 +28,8 @@ const R26 = () => {
         data: filter.date,
          ...(filter.wise === "fg-dismantle" && { txnId: filter.txnId }),
       });
-      // console.log("response", response);
-      const { data } = response;
-      if (data) {
-        if (response.success) {
+
+      if (response.success) {
           if (wiseOption == "ven-cons") {
             arr = response.data.map((row, index) => ({
               id: index + 1,
@@ -50,7 +48,7 @@ const R26 = () => {
               unit: row.unit,
             }));
           } else {
-            arr = data.response.data.map((row, index) => ({
+            arr = response.data.map((row, index) => ({
               id: index + 1,
               date: row.DATE,
               component: row.COMPONENT,
@@ -66,12 +64,10 @@ const R26 = () => {
 
           setRows(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
           throw new Error("Some error occured");
         }
-      } else {
-        throw new Error("Some error occured");
-      }
+      
     } catch (error) {
       setRows([]);
       console.log("Error while fetching R26 report", error);

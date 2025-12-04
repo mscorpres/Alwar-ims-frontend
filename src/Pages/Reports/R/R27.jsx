@@ -118,7 +118,7 @@ function R27() {
     if (response.success) {
       setLoading(false);
       toast.success(response.message);
-      let arr = data.response.data.map((row, index) => {
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: index + 1,
@@ -127,7 +127,7 @@ function R27() {
       setDateData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading(false);
     }
   };

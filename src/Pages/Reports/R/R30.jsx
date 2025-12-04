@@ -36,13 +36,13 @@ function R30() {
     const response = await imsAxios.post("/report30", values);
     setFetchLoading(false);
     if (response.success) {
-      let arr = data.response.data.map((row, index) => ({
+      let arr = response.data.map((row, index) => ({
         ...row,
         id: index + 1,
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setRows([]);
     }
   };
@@ -59,9 +59,8 @@ function R30() {
       challan: row.challan,
     });
     console.log("response", response);
-    const { data } = response;
     // let arr = data.message;
-    let arr = data.response.data;
+    let arr = response.data;
 
     if (response.success) {
       arr = arr.map((row, index) => ({
@@ -142,13 +141,13 @@ function R30() {
     });
     setSelectLoading(false);
     let arr = [];
-    if (data.code) {
+    if (response.success) {
       arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
     } else {
-      arr = data.map((row) => ({
+      arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
@@ -172,7 +171,7 @@ function R30() {
         }));
         setLocationOptions(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     }
   };

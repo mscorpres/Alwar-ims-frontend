@@ -72,7 +72,7 @@ const R24 = () => {
       const { data } = response;
       if (data) {
         if (response.success) {
-          let arr = data.response.data;
+          let arr = response.data; 
           arr = arr.map((row, index) => ({
             id: index + 1,
             component: row.COMPONENT,
@@ -89,6 +89,7 @@ const R24 = () => {
           }));
           setRows(arr);
         } else {
+          toast.error(response.message);
           setRows([]);
         }
       } else {
@@ -107,17 +108,16 @@ const R24 = () => {
       const response = await imsAxios.post("/report24/getSelectedValue", {
         user_id: userId,
       });
-      const { data } = response;
-      if (data) {
+      if (response.success) {
         if (response.success) {
-          const arr = data.data.part_options.map((row) => ({
+          const arr = response.data.part_options.map((row) => ({
             value: row.id,
             text: row.text,
           }));
 
           setUserComponents(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
           setUserComponents([]);
         }
       } else {
@@ -139,16 +139,15 @@ const R24 = () => {
           values.component.value,
         ],
       });
-      const { data } = response;
-      if (data) {
+    
         if (response.success) {
           toast.success(response.message);
           getUserComponents(stateUser.id);
           filterForm.setFieldValue("component", undefined);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
-      }
+      
     } catch (error) {
       console.log("Some error occured while adding user component", error);
     } finally {
@@ -163,15 +162,13 @@ const R24 = () => {
       const response = await imsAxios.post("/report24/update", {
         component_part: arr.map((row) => row.value),
       });
-      const { data } = response;
-      if (data) {
+    
         if (response.success) {
           toast.success(response.message);
           getUserComponents(stateUser.id);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
-      }
     } catch (error) {
       console.log("Some error occured while deleting user component", error);
     } finally {

@@ -17,28 +17,13 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions.j
 import { downloadCSV } from "../../../Components/exportToCSV.jsx";
 function R35() {
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [search, setSearch] = useState("");
-  const [selectDate, setSelectDate] = useState("");
-  const [searchedInput, setSearchedInput] = useState("");
   const [bomName, setBomName] = useState([]);
-  const [wise, setWise] = useState("date");
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
-  const [allData, setAllData] = useState({
-    selectProduct: "",
-    selectBom: "",
-  });
-  const [resData, setResData] = useState([]);
   const [form] = Form.useForm();
   const prod = Form.useWatch("product", form);
   const bomVal = Form.useWatch("bom", form);
-  const dateVal = Form.useWatch("date", form);
-  console.log("prod", prod);
-  const bomOptions = [
-    { text: "Date Wise", value: "date" },
-    { text: "BOM Wise", value: "bom" },
-    { text: "SKU Wise", value: "sku" },
-  ];
+  
   const columns = [
     { field: "id", headerName: "Sr. No.", width: 8 },
     {
@@ -136,7 +121,6 @@ function R35() {
     const response = await imsAxios.post("/backend/fetchBomForProduct", {
       search: prod.value,
     });
-    console.log(data.data);
     const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
@@ -146,19 +130,15 @@ function R35() {
   const fetchSearch = async () => {
     setLoading(true);
     const values = await form.validateFields();
-    console.log("val", values);
     const response = await imsAxios.post("/report35/get", {
       sku: values.product.value,
       bom: values.bom,
       date: values.date,
     });
-    console.log("response", response);
-    let { data } = response;
     if (response.success) {
-      let arr = data.map((r, index) => {
+      let arr = response.data.map((r, index) => {
         return { ...r, id: index + 1 };
       });
-      console.log("arr", arr);
       setRows(arr);
       setLoading(false);
     } else {
@@ -177,12 +157,10 @@ function R35() {
   useEffect(() => {
     if (prod) {
       form.setFieldValue("bom", "");
-      // form.setFieldValue("date", "");
       setRows([]);
     }
   }, [prod]);
-  console.log("bomVal", bomVal);
-  console.log("dateVal", dateVal);
+
   return (
     <div>
       {" "}

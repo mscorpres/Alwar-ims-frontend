@@ -74,13 +74,12 @@ const OpenR29Modal = ({
       subject: dataa.bom,
       date: date,
     });
-    console.log(data, "r29 dataaaaaaaaaaaaaaaaa");
     if (response.success) {
       setData({
         selectProduct: "",
         bom: "",
       });
-      let arr = data.response.data.map((row) => {
+      let arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -90,7 +89,7 @@ const OpenR29Modal = ({
       // setShow(false);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(data.message);
+      toast.error(response.message);
       // setViewModal(false);
       // setShow(false);
       setLoading(false);
