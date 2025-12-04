@@ -380,8 +380,10 @@ const JwReturnModel = ({ show, close }) => {
         onClose={close}
         destroyOnClose={true}
         open={show}
-        bodyStyle={{
-          padding: 5,
+        styles={{
+          body: {
+            padding: 5,
+          },
         }}
       >
         {loading("fetch") && <Loading />}
@@ -452,8 +454,10 @@ const JwReturnModel = ({ show, close }) => {
         onClose={() => setPreview(false)}
         destroyOnClose={true}
         open={preview}
-        bodyStyle={{
-          padding: 5,
+        styles={{
+          body: {
+            padding: 5,
+          },
         }}
       >
         {loading("fetch") && <Loading />}

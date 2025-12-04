@@ -45,7 +45,7 @@ const JwrmReturn = () => {
       });
       // console.log(data);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -86,7 +86,7 @@ const JwrmReturn = () => {
         setDateData(arr);
         setLoading("fetch", false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading("fetch", "fetch", false);
       }
     }
@@ -109,7 +109,7 @@ const JwrmReturn = () => {
       setDJWData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading("fetch", false);
     }
   };
@@ -131,7 +131,7 @@ const JwrmReturn = () => {
       setSKUData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading("fetch", false);
     }
   };
@@ -152,7 +152,7 @@ const JwrmReturn = () => {
       setVendorData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoading("fetch", false);
     }
   };
@@ -165,18 +165,15 @@ const JwrmReturn = () => {
     { field: "sku_code", headerName: "SKU", width: 100 },
     { field: "sku_name", headerName: "Name", width: 300 },
     { field: "ord_qty", headerName: "Required Qty", width: 150 },
-    // { field: "jw_sku_name", headerName: "Actions", width: 260 },
+
     {
+      field: "actions",
       type: "actions",
       headerName: "Actions",
       width: 150,
       getActions: ({ row }) => [
-        // <TableActions action="view" onClick={() => setViewModalOpen(row)} />,
-        // <TableActions action="cancel" onClick={() => setCloseModalOpen(row)} />,
-        // <TableActions action="print" onClick={() => console.log(row)} />,
-        // <TableActions action="edit" />,
-
         <ArrowRightOutlined
+          key="arrow-right"
           onClick={() =>
             setEditModal({ sku: row.sku, transaction: row.transaction_id })
           }
