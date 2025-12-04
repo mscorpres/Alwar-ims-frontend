@@ -174,12 +174,14 @@ function JwPendingRequest() {
       renderCell: ({ row }) => <ToolTipEllipses text={row.jw_sku_name} />,
     },
     {
+      field: "actions",
       headerName: "Actions",
       width: 150,
       type: "actions",
       getActions: ({ row }) => [
         // Download icon
         <TableActions
+          key="download"
           action="download"
           onClick={() =>
             handleDownload(

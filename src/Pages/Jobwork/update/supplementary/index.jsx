@@ -32,30 +32,15 @@ function UpdateJW() {
   const [viewModal, setViewModal] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
-  // Separate state for alternative components to avoid conflicts
   const [altComponentOptions, setAltComponentOptions] = useState([]);
-  const [altSearchInput, setAltSearchInput] = useState("");
   const setType = [{ label: "Supplymentary", value: "S" }];
   const statusOptions = [
     { label: "Active", value: "active" },
     { label: "Alternative", value: "alt" },
   ];
 
-  const [allData, setAllData] = useState({
-    name: "",
-  });
-  const [showAltPartCode, setShowAltPartCode] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
-  const [addField, setAddField] = useState([
-    {
-      id: v4(),
-      name: "",
-      part: "",
-      uom: "",
-      recipyQty: "",
-      row_id: 0,
-    },
-  ]);
+
 
   const getComponent = async (e) => {
     if (e?.length > 2) {
@@ -101,17 +86,16 @@ function UpdateJW() {
       }
     );
     if (response.success) {
-      setHeader(data?.data?.headers);
-      let arr = data?.data?.components.map((row, index) => {
-        // Map backend status to frontend status values
-        let status = "active"; // default
+      setHeader(response?.data?.headers);
+      let arr = response?.data?.components.map((row, index) => {
+       
+        let status = "active";
         if (row.part_status === "ALT") {
           status = "alt";
         } else if (row.part_status === "ACTIVE") {
           status = "active";
         }
 
-        // Map alternative components from backend
         let altComponents = [];
         if (row.part_alt && row.part_alt.length > 0) {
           altComponents = row.part_alt
@@ -149,7 +133,7 @@ function UpdateJW() {
       setComponent(arr);
       setLoadingUpdate(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setLoadingUpdate(false);
     }
   };
@@ -254,7 +238,7 @@ function UpdateJW() {
       const hasAlternateStatus = updatedComponent.some(
         (row) => row.status === "alt"
       );
-      setShowAltPartCode(hasAlternateStatus);
+    
     }
   };
 
@@ -446,7 +430,7 @@ function UpdateJW() {
                           ? "Search and select components"
                           : ""
                       }
-                      onInputChange={(e) => setAltSearchInput(e)}
+                    
                       optionsState={altComponentOptions}
                       onChange={(value) => {
                         const selectedOption = altComponentOptions.find(
@@ -558,11 +542,11 @@ function UpdateJW() {
           compName: "",
           comment: "",
         });
-        setShowAltPartCode(false);
+  
         toast.success(response.message);
         setLoadingUpdate(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoadingUpdate(false);
       }
     }
@@ -577,7 +561,7 @@ function UpdateJW() {
       comment: "",
     });
     setComponent([]);
-    setShowAltPartCode(false);
+  
   };
   useEffect(() => {
     if (updateData?.poType) {
@@ -588,7 +572,7 @@ function UpdateJW() {
   return (
     <>
       <div style={{}}>
-        {/* <InternalNav links={JobworkUpdate} /> */}
+      
         <Row gutter={16}>
           <Col span={24}>
             <Row gutter={10} style={{ margin: "10px" }}>

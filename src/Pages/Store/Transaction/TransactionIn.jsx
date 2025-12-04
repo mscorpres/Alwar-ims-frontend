@@ -60,12 +60,14 @@ const TransactionIn = () => {
   };
   const columns = [
     {
+      field: "actions",
       headerName: "",
       type: "actions",
       width: 30,
       getActions: ({ row }) => [
         // Upload DOC Icon
         <GridActionsCellItem
+          key="download-attachment"
           showInMenu
           onClick={() => handleDownloadAttachement(row.TRANSACTION)}
           disabled={row.invoiceStatus == false}

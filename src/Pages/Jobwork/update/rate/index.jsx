@@ -37,8 +37,7 @@ const JWUpdateRate = () => {
         "/part_rate/previewRateExcelData",
         form
       );
-      const { data } = response;
-      if (data) {
+     
         if (response.success) {
           setStage("submit");
           const arr = response.data.map((row, index) => ({
@@ -51,12 +50,11 @@ const JWUpdateRate = () => {
 
           setpreviewRows(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
-      } else {
-      }
+  
     } catch (error) {
-      console.log("error", error);
+   
     } finally {
       setLoading(false);
     }
@@ -68,8 +66,7 @@ const JWUpdateRate = () => {
         search: search.toString().toUpperCase(),
       });
 
-      const { data } = response;
-      if (data) {
+  
         if (response.success) {
           const arr = response.data.map((row) => ({
             text: row.jw_id,
@@ -78,7 +75,7 @@ const JWUpdateRate = () => {
 
           setAsyncOptions(arr);
         }
-      }
+  
     } catch {
       setAsyncOptions([]);
     } finally {
@@ -89,7 +86,6 @@ const JWUpdateRate = () => {
   const validateHandler = async () => {
     const values = await updateJwForm.validateFields();
     const formData = new FormData();
-    console.log(values);
     formData.append("file", values.files[0].originFileObj);
     formData.append("jobwork_id", values.jwId);
     Modal.confirm({
@@ -108,14 +104,13 @@ const JWUpdateRate = () => {
         "/part_rate/insertPartRatethroughExcel",
         payload
       );
-      const { data } = response;
-      if (data) {
+
         if (response.success) {
           toast.success(response.message);
           updateJwForm.resetFields();
           setpreviewRows([]);
         }
-      }
+  
     } catch (error) {
     } finally {
       setLoading(false);
@@ -149,7 +144,7 @@ const JWUpdateRate = () => {
     },
   };
   const normFile = (e) => {
-    console.log("Upload event:", e);
+   
     if (Array.isArray(e)) {
       return e.files[0].originFileObj;
     }
@@ -157,7 +152,7 @@ const JWUpdateRate = () => {
   };
   useEffect(() => {
     setStage("preview");
-    console.log("this is the file", file);
+  
     if (file?.length === 0) {
       setpreviewRows([]);
     }

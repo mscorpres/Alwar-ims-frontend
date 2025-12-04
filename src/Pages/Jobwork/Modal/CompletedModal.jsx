@@ -69,11 +69,13 @@ const CompletedModal = ({ editModal, setEditModal }) => {
       width: 320,
     },
     {
+      field: "actions",
       type: "actions",
       headerName: "Action",
       width: 150,
       getActions: ({ row }) => [
         <PrinterTwoTone
+          key="print"
           onClick={() => printShow(row)}
           style={{ color: "#1890ff", fontSize: "15px" }}
         />,

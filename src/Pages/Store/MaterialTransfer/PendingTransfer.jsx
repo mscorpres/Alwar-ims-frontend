@@ -60,6 +60,7 @@ function PendingTransfer() {
       type: "actions",
       getActions: ({ row }) => [
         <GridActionsCellItem
+          key="view"
           icon={<EyeTwoTone onClick={() => setViewModal(row)} />}
         />,
       ],

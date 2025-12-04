@@ -131,6 +131,7 @@ function JwRwChallan() {
 
   const columns = [
     {
+      field: "actions",
       headerName: "",
       width: 30,
       // flex: 1,
@@ -138,6 +139,7 @@ function JwRwChallan() {
       getActions: ({ row }) => [
         // Download icon
         <GridActionsCellItem
+          key="download"
           showInMenu
           // disabled={disabled}
           label={"Download"}

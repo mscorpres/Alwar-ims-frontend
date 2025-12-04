@@ -251,7 +251,11 @@ const UpdateJW = () => {
             <Card
               size="small"
               style={{ height: "100%" }}
-              bodyStyle={{ height: "98%" }}
+              styles={{
+                body: {
+                  height: "98%",
+                },
+              }}
             >
               {loading("fetchComponent") && <Loading />}
               <FormTable3

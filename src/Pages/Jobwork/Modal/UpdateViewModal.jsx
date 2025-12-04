@@ -15,11 +15,7 @@ function UpdateViewModal({ viewModal, setViewModal, header, component, loadingUp
       renderCell: ({ row }) => <Input value={row.recipe_qty} disabled />,
     },
   ];
-  useEffect(() => {
-    if (viewModal) {
-      console.log(component);
-    }
-  }, [viewModal]);
+
   return (
     <Space>
       <Drawer
