@@ -62,10 +62,6 @@ export default function CreateBranchTransferChallan() {
   const [droplocation, setdroplocation] = useState([]);
   const [branchOptions, setBranchOptions] = useState([]);
 
-  const passTypes = [
-    { text: "A21 to B29 Transfer", value: "A" },
-    { text: "B29 to A21 Transfer", value: "B" },
-  ];
 
   const getfromtolocations = async (value) => {
     const response = await imsAxios.post("/branchTransfer/transferLocations", {
@@ -75,16 +71,16 @@ export default function CreateBranchTransferChallan() {
     if (response.success ) {
       const droparr = [];
       const pickuparr = [];
-      data.data.droplocs.map((a) =>
+      response.data.droplocs.map((a) =>
         droparr.push({ text: a.text, value: a.value })
       );
-      data.data.picklocs.map((a) =>
+      response.data.picklocs.map((a) =>
         pickuparr.push({ text: a.text, value: a.value })
       );
       setpickuplocation(pickuparr);
       setdroplocation(droparr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
   };
 
@@ -140,8 +136,8 @@ export default function CreateBranchTransferChallan() {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
-    let validatedData = validateResponse(response?.data);
-    const arr = validatedData.data.map((d) => {
+    let validatedData = validateResponse(response);
+    const arr = validatedData.map((d) => {
       return { value: d.id, text: d.text };
     });
     setVendorBranches(arr);
@@ -167,10 +163,10 @@ export default function CreateBranchTransferChallan() {
       vendorcode: vendorCode,
       branchcode: vendorBranch,
     });
-    let validatedData = validateResponse(data);
+    let validatedData = validateResponse(response);
     return {
-      address: validatedData?.data?.address,
-      gstin: validatedData?.data.gstid,
+      address: validatedData?.address,
+      gstin: validatedData?.gstid,
     };
   };
 
@@ -191,7 +187,7 @@ export default function CreateBranchTransferChallan() {
     });
     setSelectLoading(false);
     let arr = [];
-    arr = data.map((d) => {
+    arr = response?.data.map((d) => {
       return { text: d.text, value: d.id };
     });
     setBillTopOptions(arr);
@@ -203,11 +199,11 @@ export default function CreateBranchTransferChallan() {
       billing_code: billaddressid,
     });
     setPageLoading(false);
-    let validatedData = validateResponse(data);
+    let validatedData = validateResponse(response);
     return {
-      gstin: validatedData.data?.gstin,
-      pan: validatedData.data?.pan,
-      address: validatedData.data?.address,
+      gstin: validatedData?.gstin,
+      pan: validatedData?.pan,
+      address: validatedData?.address,
     };
   };
   const resetFunction = () => {

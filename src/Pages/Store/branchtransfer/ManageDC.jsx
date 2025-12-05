@@ -43,7 +43,7 @@ function ManageDC() {
         wise: allData.selType,
       });
       if (response.success) {
-        let arr = data.response.data.map((row) => {
+        let arr = response.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -53,7 +53,7 @@ function ManageDC() {
         // toast(data.status);
         setLoading(false);
       } else if (!response.success) {
-        toast(data.message);
+        toast(response?.message);
         setLoading(false);
       }
     }
@@ -66,7 +66,7 @@ function ManageDC() {
       wise: allData.selType,
     });
     if (response.success) {
-      let arr = data.response.data.map((row) => {
+      let arr = response.data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -75,7 +75,7 @@ function ManageDC() {
       setDateData1(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast(data.message);
+      toast(response?.message);
       setLoading(false);
     }
   };
@@ -100,8 +100,8 @@ function ManageDC() {
       transaction: id,
     });
     setLoading(false);
-    const validatedData = validateResponse(data);
-    printFunction(validatedData.data.buffer.data);
+    const validatedData = validateResponse(response);
+    printFunction(validatedData.buffer);
   };
   const downloadFun = async (id) => {
     setLoading(true);
@@ -109,9 +109,9 @@ function ManageDC() {
       transaction: id,
     });
     setLoading(false);
-    const validatedData = validateResponse(data);
+    const validatedData = validateResponse(response);
     let filename = id;
-    downloadFunction(validatedData.data.buffer.data, filename);
+    downloadFunction(validatedData.buffer, filename);
   };
   const columns = [
     {

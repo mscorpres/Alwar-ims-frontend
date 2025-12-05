@@ -51,17 +51,17 @@ const Q3 = () => {
       const response = await imsAxios.post("/skuQueryA/fetchSKU_logs", {
         sku_code: searchInput,
       });
-      if (data) {
-        const { data1, data2 } = data.response;
+      if (response.success) {
+        const { skuData, data } = data.response;
         const detailsObj = {
-          stock: data1.closingqty,
-          product: data1.product,
-          pending: data1.pendingfgReturnQty,
-          sku: data1.sku,
-          uom: data1.uom,
+          stock: skuData.closingqty,
+          product: skuData.product,
+          pending: skuData.pendingfgReturnQty,
+          sku: skuData.sku,
+          uom: skuData.uom,
         };
 
-        const arr = data2.map((row, index) => ({
+        const arr = data?.map((row, index) => ({
           ...row,
           id: index + 1,
           txn: removeHtml(row.txn),

@@ -21,7 +21,7 @@ const RejectedPhysicalStock = () => {
     );
     let arr = [];
     if (response.success) {
-      arr = response.data.data.map((row, index) => ({
+      arr = response.data.map((row, index) => ({
         id: index + 1,
         component: row.part_name,
         partCode: row.part_code,

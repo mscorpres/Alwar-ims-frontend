@@ -77,10 +77,10 @@ export default function ManageGatePass() {
       transaction: id,
     });
     setLoading(false);
-    if (data.success) {
-      downloadFunction(data.data.buffer.data, filename);
+    if (response?.success) {
+      downloadFunction(response?.data.buffer.data, filename);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response.message);
     }
   };
   const printFun = async (id) => {
@@ -89,10 +89,10 @@ export default function ManageGatePass() {
       transaction: id,
     });
     setLoading(false);
-    if (data.success) {
-      printFunction(data.data.buffer.data);
+    if (response?.success) {
+      printFunction(response?.data.buffer.data);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
     }
   };
   const getRows = async () => {
@@ -102,7 +102,7 @@ export default function ManageGatePass() {
       wise: wise,
     });
     serSearchLoading(false);
-    if (data.success) {
+    if (response?.success) {
       const arr = response.data.map((row, index) => {
         return {
           ...row,
@@ -112,7 +112,7 @@ export default function ManageGatePass() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
     }
   };
   const additional = () => (

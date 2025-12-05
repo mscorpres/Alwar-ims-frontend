@@ -114,14 +114,14 @@ function ManageDC() {
       });
 
       if (response.success) {
-        const formattedData = data.response.data.map((row) => ({
+        const formattedData = response.data.map((row) => ({
           ...row,
           id: uuidv4(),
         }));
         setTableData(formattedData);
         toast.success("Data fetched successfully");
       } else {
-        toast.error(data.message || "Failed to fetch data");
+        toast.error(response?.message || "Failed to fetch data");
       }
     } catch (error) {
       toast.error("An error occurred while fetching data");
@@ -155,8 +155,8 @@ function ManageDC() {
       const response = await imsAxios.post("/gatepass/printGatePass", {
         transaction: id,
       });
-      const validatedData = validateResponse(data);
-      printFunction(validatedData.data.buffer.data);
+      const validatedData = validateResponse(response);
+      printFunction(validatedData.buffer.data);
     } catch (error) {
       toast.error("Failed to print document");
       console.error(error);
@@ -171,8 +171,9 @@ function ManageDC() {
       const response = await imsAxios.post("/gatepass/printGatePass", {
         transaction: id,
       });
-      const validatedData = validateResponse(data);
-      downloadFunction(validatedData.data.buffer.data, id);
+      const validatedData = validateResponse(response);
+
+      downloadFunction(validatedData.buffer?.data, id);
     } catch (error) {
       toast.error("Failed to download document");
       console.error(error);

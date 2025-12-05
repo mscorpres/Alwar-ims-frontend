@@ -32,12 +32,7 @@ export default function CreateGP() {
   const { executeFun, loading: loading1 } = useApi();
 
   const getComponentDetail = async (searchInputText) => {
-    // setSelectLoading(true);
-
-    // const response = await imsAxios.post("backend/getComponentByNameAndNo", {
-    //   search: searchInputText,
-    // });
-    // setSelectLoading(false);
+  
     const response = await executeFun(
       () => getComponentOptions(searchInputText),
       "select"
@@ -45,7 +40,7 @@ export default function CreateGP() {
     const { data } = response;
     let arr = [];
 
-    if (!data.msg) {
+    if (response?.success) {
       arr = data.map((d) => {
         return { text: d.text, value: d.id };
       });
@@ -257,11 +252,11 @@ export default function CreateGP() {
         ...finalObj,
       });
       setLoading(false);
-      if (data.success) {
+      if (response.success) {
         toast.success(response.message);
         resetFunction();
       } else {
-        toast.error(data.message?.msg || data.message || "Some Error Occurred");
+        toast.error(response.message || "Some Error Occurred");
       }
     }
   };

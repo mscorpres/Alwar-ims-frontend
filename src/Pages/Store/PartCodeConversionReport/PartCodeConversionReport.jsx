@@ -156,12 +156,11 @@ const PartCodeConversionReport = () => {
         data: searchInput,
       });
 
-      console.log(response.data);
       if (response.success) {
-        SetfetchConversion(response.data.data);
+        SetfetchConversion(response.data);
         toast.success(response.data.status);
       } else {
-        toast.error(response.data.message.msg);
+        toast.error(response.message);
         SetfetchConversion([]);
       }
     } catch (error) {
@@ -183,7 +182,7 @@ const PartCodeConversionReport = () => {
         "select"
       );
       const { data } = response;
-      if (data && data?.length) {
+      if (response.success) {
         const arr = data.map((row) => ({
           text: row.text,
           value: row.id,

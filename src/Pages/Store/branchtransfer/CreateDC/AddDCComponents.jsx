@@ -54,7 +54,7 @@ export default function AddDCComponents({
       );
       const { data } = response;
       let arr = [];
-      if (!data.msg) {
+      if (response?.success) {
         arr = data.map((d) => {
           return { text: d.text, value: d.id };
         });
@@ -74,7 +74,7 @@ export default function AddDCComponents({
           component_code: value.value,
         }
       );
-      let validatedData = validateResponse(response?.data);
+      let validatedData = validateResponse(response);
     
       setPageLoading(false);
       arr = arr.map((row) => {
@@ -83,9 +83,9 @@ export default function AddDCComponents({
           obj = {
             ...obj,
             [name]: value,
-            rate: validatedData.data.rate,
-            uom: validatedData.data.unit,
-            hsn: validatedData.data.hsn,
+            rate: validatedData.rate,
+            uom: validatedData.unit,
+            hsn: validatedData.hsn,
           };
           return obj;
         } else {
@@ -192,7 +192,7 @@ export default function AddDCComponents({
         toast.success(response.message);
         setActiveTab("1");
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     }
     setShowSubmitConfirm(false);

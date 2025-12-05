@@ -113,8 +113,8 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
-    let validatedData = validateResponse(response?.data);
-    const arr = validatedData.data.map((d) => {
+    let validatedData = validateResponse(response);
+    const arr = validatedData.map((d) => {
       return { value: d.id, text: d.text };
     });
     setVendorBranches(arr);
@@ -140,10 +140,10 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
       vendorcode: vendorCode,
       branchcode: vendorBranch,
     });
-    let validatedData = validateResponse(data);
+    let validatedData = validateResponse(response);
     return {
-      address: validatedData?.data?.address,
-      gstin: validatedData?.data.gstid,
+      address: validatedData?.address,
+      gstin: validatedData?.gstid,
     };
   };
   // gettig billing address
@@ -154,7 +154,7 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
     });
     setSelectLoading(false);
     let arr = [];
-    arr = data.map((d) => {
+    arr = response?.data.map((d) => {
       return { text: d.text, value: d.id };
     });
     setBillTopOptions(arr);
@@ -166,11 +166,11 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
       billing_code: billaddressid,
     });
     setPageLoading(false);
-    let validatedData = validateResponse(data);
+    let validatedData = validateResponse(response);
     return {
-      gstin: validatedData.data?.gstin,
-      pan: validatedData.data?.pan,
-      address: validatedData.data?.address,
+      gstin: validatedData?.gstin,
+      pan: validatedData?.pan,
+      address: validatedData?.address,
     };
   };
   const resetFunction = () => {
@@ -184,33 +184,34 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
       gpcode: updatedDCId,
     });
     setSkeletonLoading(false);
-    const validatedData = validateResponse(data);
-    if (!validatedData.code) {
-      setUpdateDCId(null);
-      return;
-    }
-    getVendorBracnch(validatedData.data?.vendor?.vendor.value);
+    const validatedData = validateResponse(response);
+
+    // if (!validatedData.code) {
+    //   setUpdateDCId(null);
+    //   return;
+    // }
+    getVendorBracnch(validatedData?.vendor?.vendor.value);
     let obj = {
       passType: "R",
-      vendorName: validatedData.data?.vendor?.vendor,
-      vendorBranch: validatedData.data.vendor.branch.vendor_branch,
-      vendorAddress: validatedData.data.vendor.vendor_address,
-      vendorGSTIN: validatedData.data.vendor.vendor_gst_in,
-      paymentTerms: validatedData.data.other.terms_of_payment,
-      referenceDate: validatedData.data.other.references_no,
-      otherReferences: validatedData.data.other.other_references,
-      buyerOrderNumber: validatedData.data.other.buyer_ord_no,
-      dispatchDocNumber: validatedData.data.other.dispatch_doc_no,
-      //   dipatchThrough: validatedData.data.other.,
-      destination: validatedData.data.other.destination,
-      deliveryTerms: validatedData.data.other.terms_of_delivery,
-      vehicleNumber: validatedData.data.other.vehicle_no,
-      narration: validatedData.data.other.narration,
-      billingId: validatedData.data.warehouse.warehouse,
-      billinAddress: validatedData.data.warehouse.warehouse_address,
-      billingPan: validatedData.data.warehouse.warehouse_panno,
-      billingGSTIN: validatedData.data.warehouse.warehouse_gst_in,
-      components: validatedData.data.material,
+      vendorName: validatedData?.vendor?.vendor,
+      vendorBranch: validatedData.vendor.branch.vendor_branch,
+      vendorAddress: validatedData.vendor.vendor_address,
+      vendorGSTIN: validatedData.vendor.vendor_gst_in,
+      paymentTerms: validatedData.other.terms_of_payment,
+      referenceDate: validatedData.other.references_no,
+      otherReferences: validatedData.other.other_references,
+      buyerOrderNumber: validatedData.other.buyer_ord_no,
+      dispatchDocNumber: validatedData.other.dispatch_doc_no,
+      //   dipatchThrough: validatedData.other.,
+      destination: validatedData.other.destination,
+      deliveryTerms: validatedData.other.terms_of_delivery,
+      vehicleNumber: validatedData.other.vehicle_no,
+      narration: validatedData.other.narration,
+      billingId: validatedData.warehouse.warehouse,
+      billinAddress: validatedData.warehouse.warehouse_address,
+      billingPan: validatedData.warehouse.warehouse_panno,
+      billingGSTIN: validatedData.warehouse.warehouse_gst_in,
+      components: validatedData.material,
     };
     setNewGatePass(obj);
     setResetData(obj);
@@ -224,7 +225,7 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
       setActiveTab("1");
     }
   }, [updatedDCId]);
-  useEffect(() => {}, [newGatePass]);
+
   return (
     <Drawer
       onClose={() => setUpdateDCId(null)}

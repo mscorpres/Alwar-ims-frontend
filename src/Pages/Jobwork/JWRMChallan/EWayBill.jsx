@@ -56,7 +56,7 @@ const EWayBill = () => {
       }
 
       const { data, items } = response;
-      if (data) {
+ 
         if (response?.success) {
           const { bill_from, bill_to, ship_from, ship_to } = data;
           const finalObj = {
@@ -124,7 +124,7 @@ const EWayBill = () => {
         } else {
           toast.error(response.message?.msg || response.message);
         }
-      }
+  
     } catch (error) {
     } finally {
       setLoading("fetch");
@@ -137,16 +137,15 @@ const EWayBill = () => {
   const getStateOptions = async () => {
     try {
       const response = await imsAxios.get("/tally/backend/states");
-      const { data } = response;
-      if (data) {
-        if (data.data.length) {
+   
+        if (response.success) {
           const arr = response.data.map((row) => ({
             text: row.name,
             value: row.code,
           }));
           setStateOptions(arr);
         }
-      }
+ 
     } catch (error) {
       setStateOptions([]);
     } finally {
@@ -158,13 +157,13 @@ const EWayBill = () => {
     try {
       const response = await imsAxios.post("/jwEwaybill/trans_mode");
       const { data } = response;
-      if (data) {
+    
         if (response.success) {
-          setTransporterModeOptions(data.data);
+          setTransporterModeOptions(data);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
-      }
+  
     } catch (error) {
     } finally {
       setLoading(false);
@@ -268,42 +267,28 @@ const EWayBill = () => {
           payload
         );
       }
-      const { data } = response;
-      if (response) {
-        if (response?.code === 200) {
+    
+  
+        if (response?.success) {
           toast.success(response?.message);
           setSuccessData({ ewayBillNo: response?.data?.ewayBillNo });
         } else {
-          toast.error(response.message.msg);
+          toast.error(response.message);
         }
-      }
+   
     } catch (error) {
     } finally {
       setLoading(false);
     }
   };
-  const getGstinDetails = async (gstin) => {
-    try {
-      const response = await imsAxios.get(
-        `/jwEwaybill/getGstinDetails?gstin=${gstin}`
-      );
-      const { data } = response;
-      if (data) {
-        form.setFieldValue("transporterName", data.tradeName);
-      }
-    } catch (error) {}
-  };
+  
 
   useEffect(() => {
     getDetails();
     getStateOptions();
     getTransporterModeOptions();
   }, []);
-  // useEffect(() => {
-  //   if (transporterId?.length === 15) {
-  //     getGstinDetails(transporterId);
-  //   }
-  // }, [transporterId]);
+
   return (
     <Form form={form} layout="vertical" style={{ padding: 10 }}>
       {!successData && (
@@ -371,7 +356,7 @@ const EWayBill = () => {
               size="small"
               title="Bill From"
               style={{ height: "100%" }}
-              bodyStyle={{ height: "100%" }}
+              styles={{ body: { height: "100%" } }}
             >
               <Row gutter={6}>
                 <Col span={12}>
@@ -464,7 +449,7 @@ const EWayBill = () => {
               size="small"
               title="Bill To"
               style={{ height: "100%" }}
-              bodyStyle={{ height: "100%" }}
+              styles={{ body: { height: "100%" } }}
             >
               <Row gutter={6}>
                 <Col span={12}>

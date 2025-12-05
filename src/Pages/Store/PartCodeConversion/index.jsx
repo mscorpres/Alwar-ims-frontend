@@ -58,16 +58,13 @@ const PartCodeConversion = () => {
         "select"
       );
       const { data } = response;
-      if (data) {
-        let arr = [];
-        if (data.length) {
-          arr = data.map((d) => {
-            return { text: d.text, value: d.id };
-          });
-          setAsyncOptions(arr);
-        } else {
-          setAsyncOptions([]);
-        }
+      imsAxios;
+      let arr = [];
+      if (response.success) {
+        arr = data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
       } else {
         setAsyncOptions([]);
       }
@@ -87,16 +84,13 @@ const PartCodeConversion = () => {
         payload
       );
       const { data } = response;
-      if (data) {
-        let arr = [];
-        if (data.success) {
-          arr = response.data.map((d) => {
-            return { text: d.text, value: d.id };
-          });
-          setAsyncOptions(arr);
-        } else {
-          setAsyncOptions([]);
-        }
+
+      let arr = [];
+      if (response?.success) {
+        arr = response.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
       } else {
         setAsyncOptions([]);
       }
@@ -113,12 +107,11 @@ const PartCodeConversion = () => {
         location,
       });
       const { data } = response;
-      if (data) {
-        if (data.success) {
-          setComponentStock(`${data.data.closingStock} ${data.data.uom ?? ""}`);
-        } else {
-          toast.error(data.message?.msg || data.message);
-        }
+
+      if (response?.success) {
+        setComponentStock(`${data.closingStock} ${data.uom ?? ""}`);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -343,8 +336,8 @@ const PartCodeConversion = () => {
         ...remarks,
       });
       const { data } = response;
-      if (data) {
-        if (data.success) {
+     
+        if (response?.success) {
           toast.success(response.message);
           setAddedComponents({
             in: [],
@@ -354,9 +347,9 @@ const PartCodeConversion = () => {
 
           setRemarks("");
         } else {
-          toast.error(data.message?.msg || data.message);
+          toast.error(response?.message);
         }
-      }
+   
     } catch (error) {
     } finally {
       setLoading(false);

@@ -7,16 +7,13 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
 import { downloadCSV } from "../../../Components/exportToCSV";
-import { DownloadOutlined, MessageOutlined } from "@ant-design/icons";
+import { DownloadOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../../axiosInterceptor";
 import { set } from "lodash";
 import { useEffect } from "react";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import Loading from "../../../Components/Loading";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import printFunction, {
-  downloadFunction,
-} from "../../../Components/printFunction";
 import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
@@ -44,8 +41,7 @@ function ViewBranchTransfer() {
       {
         trans_id: trans_id,
       }
-    );
-    console.log(data);
+    )
     let arr = response.data.map((row, index) => ({
       id: index,
       index: index + 1,
@@ -105,7 +101,7 @@ function ViewBranchTransfer() {
       });
       const { data } = response;
       if (data) {
-        sku = data.data[0].product_sku;
+        sku = data[0].product_sku;
       }
 
       // getting process list from sku
@@ -115,6 +111,7 @@ function ViewBranchTransfer() {
           sku,
         }
       );
+      console.log(processResponse,"pro res")
       const { data: processData } = processResponse;
       if (processData) {
         const arr = processData.data.map((row) => ({

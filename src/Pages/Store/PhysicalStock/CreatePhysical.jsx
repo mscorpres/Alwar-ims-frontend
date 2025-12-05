@@ -93,8 +93,8 @@ const Manual = () => {
         component: value,
       });
       // console.log(data.data);
-      const exist1 = data?.data.available_qty;
-      const exist2 = data?.data.unit;
+      const exist1 = response?.data.available_qty;
+      const exist2 = response?.data.unit;
 
       setAddRom((comp) =>
         comp.map((h) => {
@@ -174,8 +174,8 @@ const Manual = () => {
       remark: remarkArr,
     });
 
-    console.log(data);
-    if (data.success) {
+
+    if (response?.success) {
       setAddRom([
         {
           id: v4(),
@@ -186,10 +186,10 @@ const Manual = () => {
           rem: "",
         },
       ]);
-      toast.success("Success");
+      toast.success(response.message || "Success");
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message || "Something Went Wrong");
+      toast.error(response.message || "Something Went Wrong");
       setLoading(false);
     }
   };
