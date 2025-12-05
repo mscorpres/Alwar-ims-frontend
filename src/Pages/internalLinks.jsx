@@ -458,6 +458,14 @@ const links = [
       routePath: "/view-transaction",
     },
   ],
+  // JW to JW transfer links
+  [
+    { routeName: "JW To JW", routePath: "/warehouse/material-transfer/jw-to-jw" },
+    {
+      routeName: "View Transaction",
+      routePath: "/warehouse/material-transfer/jw-to-jw/view",
+    },
+  ],
   // RM to REJ links
   [
     { routeName: "RM To REJ", routePath: "/re-to-rej" },

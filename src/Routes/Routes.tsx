@@ -32,6 +32,8 @@ import {
   Vendor,
   AddVendor,
   RmtoRm,
+  JwToJw,
+  JwToJwViewTransaction,
   PendingTransfer,
   ViewTransaction,
   ReToRej,
@@ -422,6 +424,16 @@ const Routes = [
     path: "/rm-to-rm",
     exact: true,
     main: () => <RmtoRm />,
+  },
+  {
+    path: "/warehouse/material-transfer/jw-to-jw",
+    exact: true,
+    main: () => <JwToJw />,
+  },
+  {
+    path: "/warehouse/material-transfer/jw-to-jw/view",
+    exact: true,
+    main: () => <JwToJwViewTransaction />,
   },
   // {
   //   path: "/sf-to-rm",
