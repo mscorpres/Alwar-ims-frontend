@@ -235,7 +235,7 @@ export default function MaterialUpdate({
       onClose={() => setMaterialModal(false)}
       open={materialModal}
       getContainer={false}
-      style={{
+      rootStyle={{
         position: "absolute",
       }}
       extra={

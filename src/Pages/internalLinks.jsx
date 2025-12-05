@@ -342,7 +342,9 @@ const links = [
   // hsn map links
   [{ routeName: "HSN Map", routePath: "/hsn-map" }],
   // group links
-  [{ routeName: "Groups", routePath: "/group" }],
+  [{ routeName: "Groups", routePath: "/group" },
+    { routeName: "Sub Groups", routePath: "/sub-group" }
+  ],
   // master cost center links
   [
     {

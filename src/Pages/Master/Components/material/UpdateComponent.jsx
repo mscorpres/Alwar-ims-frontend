@@ -23,13 +23,7 @@ import MySelect from "../../../../Components/MySelect";
 import MyButton from "../../../../Components/MyButton";
 
 import Loading from "../../../../Components/Loading";
-import { Link } from "react-router-dom";
 import CategoryDrawer from "./CategoryDrawer";
-
-import useApi from "../../../../hooks/useApi.ts";
-import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import MyDataTable from "../../../gstreco/myDataTable";
-import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 
 import AlternatePartCode from "./AlternatePartCode";
 
@@ -37,6 +31,7 @@ export default function UpdateComponent() {
   const [loading, setLoading] = useState(false);
   const [uomOptions, setuomOptions] = useState([]);
   const [groupOptions, setgroupOptions] = useState([]);
+  const [subGroupOptions, setSubGroupOptions] = useState([]); 
   const [attr_raw, setUniqueIdData] = useState("");
   const [tooldata, setTooldata] = useState({});
   const [categoryData, setCategoryData] = useState(null);
@@ -50,7 +45,8 @@ export default function UpdateComponent() {
 
   const [tooltipVisible, setTooltipVisible] = useState(true);
   const [isEnabled, setIsEnabled] = useState(false);
-  const { executeFun, loading: loading1 } = useApi();
+  const selectedGroup = Form.useWatch("group", componentForm);
+
   useEffect(() => {
     // console.log("attr_raw", attr_raw);/
     if (attr_raw) {
@@ -70,85 +66,89 @@ export default function UpdateComponent() {
       const response = await imsAxios.post("/component/fetchUpdateComponent", {
         componentKey,
       });
-      if (response.success) {
-        const value = response.data[0];
-        // console.log("data...............", value);
-        let catType = value.attr_category;
-        // console.log("data...............", catType);
-        if (value.attr_category === "R") {
-          catType = "Resistor";
-        } else if (value.attr_category === "C") {
-          catType = "Capacitor";
+      const { data } = response;
+      if (data) {
+        if (data.code === 200) {
+          const value = data.data[0];
+          // console.log("data...............", value);
+          let catType = value.attr_category;
+          // console.log("data...............", catType);
+          if (value.attr_category === "R") {
+            catType = "Resistor";
+          } else if (value.attr_category === "C") {
+            catType = "Capacitor";
+          } else {
+            catType = "Other";
+          }
+          const finalObj = {
+            partCode: value.partcode,
+            newPartCode: value.new_partcode,
+            // altPartCode: value.map((r) => {
+            //   return {
+            //     altPartCodeName: r.alternate_part_codes,
+            //     altPartKeyCode: r.alternate_part_keys,
+            //   };
+            // }),
+
+            component: value.name,
+            uom: {
+              label: value.uomname,
+              value: value.uomid,
+            },
+            mrp: value.mrp,
+            group: value.groupid,
+            subgroup: value.subgroup,
+            isEnabled: value.enable_status,
+            jobWork: value.jobwork_rate,
+            qcStatus: value.qc_status,
+            description: value.description,
+            piaStatus: value.pia_status == "Y" && setIsEnabled(true),
+            taxType: value.tax_type,
+            taxRate: value.gst_rate,
+            brand: value.brand,
+            ean: value.ean,
+            weight: value.weight,
+            height: value.height,
+            width: value.width,
+            volumetricWeight: value.vweight,
+            minStock: value.minqty,
+            maxStock: value.maxqty,
+            minOrder: value.minorderqty,
+            leadTime: value.leadtime,
+            enableAlert: value.alert_status,
+            purchaseCost: value.pocost,
+            otherCost: value.othercost,
+            catType: catType,
+            alternate_part_codes: value.alternate_part_codes,
+            alternate_part_keys: value.alternate_part_keys,
+            alternate_part_name: value.alternate_part_name,
+            attrCategory: {
+              text: value.attr_category.text,
+              value: value.attr_category.value,
+            },
+            // componentcategory: value.attr_raw.matType,
+            category: value.category,
+            toolLabel: value.attr_raw,
+          };
+          setCategoryData({
+            // text: value.attr_category.text,
+            // value: value.attr_category.value,
+            text: value.attr_code,
+            value: value.attr_code,
+          });
+          setTooldata(finalObj.toolLabel);
+          componentForm.setFieldsValue(finalObj);
+
+          setFetchPartCode(finalObj);
+          const objects = finalObj.alternate_part_codes.map((code, index) => ({
+            value: finalObj.alternate_part_keys[index],
+            text: code,
+            label: code,
+          }));
+          altPartCodeForm.setFieldValue("alternatePart", objects);
         } else {
-          catType = "Other";
+          toast.error(data.message.msg);
         }
-        const finalObj = {
-          partCode: value.partcode,
-          newPartCode: value.new_partcode,
-          // altPartCode: value.map((r) => {
-          //   return {
-          //     altPartCodeName: r.alternate_part_codes,
-          //     altPartKeyCode: r.alternate_part_keys,
-          //   };
-          // }),
-
-          component: value.name,
-          uom: {
-            label: value.uomname,
-            value: value.uomid,
-          },
-          mrp: value.mrp,
-          group: value.groupid,
-          isEnabled: value.enable_status,
-          jobWork: value.jobwork_rate,
-          qcStatus: value.qc_status,
-          description: value.description,
-          piaStatus: value.pia_status == "Y" && setIsEnabled(true),
-          taxType: value.tax_type,
-          taxRate: value.gst_rate,
-          brand: value.brand,
-          ean: value.ean,
-          weight: value.weight,
-          height: value.height,
-          width: value.width,
-          volumetricWeight: value.vweight,
-          minStock: value.minqty,
-          maxStock: value.maxqty,
-          minOrder: value.minorderqty,
-          leadTime: value.leadtime,
-          enableAlert: value.alert_status,
-          purchaseCost: value.pocost,
-          otherCost: value.othercost,
-          catType: catType,
-          alternate_part_codes: value.alternate_part_codes,
-          alternate_part_keys: value.alternate_part_keys,
-          alternate_part_name: value.alternate_part_name,
-          attrCategory: {
-            text: value.attr_category.text,
-            value: value.attr_category.value,
-          },
-          // componentcategory: value.attr_raw.matType,
-          category: value.category,
-          toolLabel: value.attr_raw,
-        };
-        setCategoryData({
-          // text: value.attr_category.text,
-          // value: value.attr_category.value,
-          text: value.attr_code,
-          value: value.attr_code,
-        });
-        setTooldata(finalObj.toolLabel);
-        componentForm.setFieldsValue(finalObj);
-
-        setFetchPartCode(finalObj);
-        const objects = finalObj.alternate_part_codes.map((code, index) => ({
-          value: finalObj.alternate_part_keys[index],
-          text: code,
-          label: code,
-        }));
-        altPartCodeForm.setFieldValue("alternatePart", objects);
-      } else {
-        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -206,18 +206,57 @@ export default function UpdateComponent() {
     }
   }, [fetchPartCode]);
 
+  const getSubGroupOptions = async (groupId) => {
+    if (!groupId) {
+      setSubGroupOptions([]);
+      return;
+    }
+    try {
+      setLoading("fetch");
+      const response = await imsAxios.get(`/backend/sub-group/${groupId}`);
+      if (response?.success) {
+        const arr = response.data.map((row) => ({
+          text: row.name,
+          value: row.key,
+        }));
+
+        setSubGroupOptions(arr);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (error) {
+      setSubGroupOptions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedGroup) {
+      getSubGroupOptions(selectedGroup);
+      // Reset subgroup when group changes
+      componentForm.setFieldValue("subgroup", undefined);
+    } else {
+      setSubGroupOptions([]);
+      componentForm.setFieldValue("subgroup", undefined);
+    }
+  }, [selectedGroup]);
+
   const getUomOptions = async () => {
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/uom/uomSelect2");
-      if (response.success) {
-        const arr = response.data.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
-        setuomOptions(arr);
-      } else {
-        toast.error(response.message);
+      const { data } = response;
+      if (data) {
+        if (data.code === 200) {
+          const arr = data.data.map((row) => ({
+            text: row.text,
+            value: row.id,
+          }));
+          setuomOptions(arr);
+        } else {
+          toast.error(data.message.msg);
+        }
       }
     } catch (error) {
     } finally {
@@ -228,14 +267,17 @@ export default function UpdateComponent() {
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/groups/groupSelect2");
-      if (response.success) {
-        const arr = response.data.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
-        setgroupOptions(arr);
-      } else {
-        toast.error(response.message);
+      const { data } = response;
+      if (data) {
+        if (data.code === 200) {
+          const arr = data.data.map((row) => ({
+            text: row.text,
+            value: row.id,
+          }));
+          setgroupOptions(arr);
+        } else {
+          toast.error(data.message.msg);
+        }
       }
     } catch (error) {
     } finally {
@@ -303,17 +345,18 @@ export default function UpdateComponent() {
       "/component/updateComponent/verify",
       payload
     );
-    if (response.success) {
+    const { data } = response;
+    if (data.code === 200) {
       Modal.confirm({
         title: "Are you sure you want to submit this Updated Component?",
-        content: `${response.message}`,
+        content: `${data.message}`,
         onOk() {
           submitHandler(payload);
         },
         onCancel() {},
       });
     } else {
-      toast.error(response.message);
+      toast.error(data.message.msg);
     }
   };
   const validateHandler = async () => {
@@ -368,7 +411,7 @@ export default function UpdateComponent() {
     //   });
     //   const { data } = response;
     //   if (data) {
-    //     if (response.success) {
+    //     if (data.code === 200) {
     //       if (data.header) {
     //         const finalObj = {
     //           name: data.header.category,
@@ -386,7 +429,7 @@ export default function UpdateComponent() {
     //         setCategoryData(null);
     //       }
     //     } else {
-    //       toast.error(response.message?.msg || response.message);
+    //       toast.error(data.message.msg);
     //     }
     //   }
     // } catch (error) {
@@ -403,11 +446,14 @@ export default function UpdateComponent() {
         payload
       );
 
-      if (response.success) {
-        toast.success(response.message);
-        getDetails();
-      } else {
-        toast.error(response.message);
+      const { data } = response;
+      if (data) {
+        if (data.code === "200") {
+          toast.success(data.message);
+          getDetails();
+        } else {
+          toast.error(data.message.msg);
+        }
       }
     } catch (error) {
     } finally {
@@ -523,6 +569,11 @@ export default function UpdateComponent() {
                   <Col span={8}>
                     <Form.Item name="group" label="Group">
                       <MySelect options={groupOptions} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item name="subgroup" label="Sub Group">
+                      <MySelect options={subGroupOptions} />
                     </Form.Item>
                   </Col>
                   <Col span={8}>

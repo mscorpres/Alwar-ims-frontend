@@ -25,6 +25,7 @@ import {
   Uom,
   Product,
   Group,
+  SubGroup,
   Location,
   BillingAddress,
   CreateBom,
@@ -319,6 +320,10 @@ const Routes = [
   {
     path: "/group",
     main: () => <Group />,
+  },
+    {
+    path: "/sub-group",
+    main: () => <SubGroup />,
   },
   {
     path: "/location",
