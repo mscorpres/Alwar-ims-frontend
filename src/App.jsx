@@ -27,7 +27,7 @@ import socket from "./Components/socket.js";
 import Notifications from "./Components/Notifications";
 // antd imports
 import Layout, { Content, Header } from "antd/lib/layout/layout";
-import { Badge, Row, Select, Space, Modal, Card, Alert } from "antd";
+import { Badge, Row, Select, Space, Modal, Card, Alert, Button } from "antd";
 // icons import
 import {
   CustomerServiceOutlined,
@@ -94,6 +94,10 @@ const App = () => {
   const [editNoidaBranch, setEditNoidaBranch] = useState(false);
   const [isSwitchingModule, setIsSwitchingModule] = useState(false);
   const [switchingLocation, setSwitchingLocation] = useState(null);
+  const [switchLocation, setSwitchLocation] = useState(null);
+  const [switchBranch, setSwitchBranch] = useState(null);
+  const [switchSession, setSwitchSession] = useState(null);
+  const [switchSuccess, setSwitchSuccess] = useState(false);
   const company = JSON.parse(localStorage.getItem("loggedInUser"));
 
   const logoutHandler = () => {
@@ -659,18 +663,14 @@ const App = () => {
       const responseMessage = response?.message;
 
       if (isSuccess && newToken) {
+        // Show success checkmark
+        setSwitchSuccess(true);
+        
         setTimeout(() => {
           toast.success(`Switched to ${location} - ${branch}`);
           dispatch(setCompanyBranch(branch));
           dispatch(setSession(session));
           socket.emit("getBranch", branch);
-
-          setShowSwitchModule(false);
-
-          setEditAlwarSession(false);
-          setEditAlwarBranch(false);
-          setEditNoidaSession(false);
-          setEditNoidaBranch(false);
 
           localStorage.setItem(
             "loggedInUser",
@@ -692,7 +692,7 @@ const App = () => {
 
           const redirectUrl = `${targetUrl}?${urlParams.toString()}`;
           window.location.replace(redirectUrl);
-        }, 2000);
+        }, 1500);
       } else {
         setIsSwitchingModule(false);
         setSwitchingLocation(null);
@@ -964,355 +964,170 @@ const App = () => {
                   )}
                   {/* Switch Module Modal */}
                   <Modal
-                    title="Switch Module"
+                    title={null}
                     open={showSwitchModule}
                     onCancel={() => {
                       if (!isSwitchingModule) {
                         setShowSwitchModule(false);
-                        setEditAlwarSession(false);
-                        setEditAlwarBranch(false);
-                        setEditNoidaSession(false);
-                        setEditNoidaBranch(false);
+                        setSwitchLocation(null);
+                        setSwitchBranch(null);
+                        setSwitchSession(null);
                         setIsSwitchingModule(false);
                         setSwitchingLocation(null);
+                        setSwitchSuccess(false);
                       }
                     }}
                     footer={null}
-                    width={650}
+                    width={400}
                     centered
                     maskClosable={!isSwitchingModule}
                     closable={!isSwitchingModule}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 24,
-                        justifyContent: "center",
-                        padding: "20px 0",
-                      }}
-                    >
-                      {/* Alwar Card */}
-                      <Card
-                        title={
-                          <span style={{ fontWeight: "bold", fontSize: 18 }}>
-                            Alwar
-                          </span>
-                        }
+                    {isSwitchingModule ? (
+                      <div
                         style={{
-                          width: 280,
-                          border: "2px solid #047780",
-                          borderRadius: 4,
-                          boxShadow: "0 4px 12px rgba(4, 119, 128, 0.2)",
+                          padding: "60px 0",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
-                        styles={{ body: { padding: 16 } }}
                       >
-                        {isSwitchingModule && switchingLocation === "alwar" ? (
-                          <CheckmarkLoader />
+                        {switchSuccess ? (
+                          <>
+                            <video
+                              src="/assets/check.mp4"
+                              autoPlay
+                              muted
+                              style={{ width: 120, height: 120 }}
+                            />
+                            <p style={{ marginTop: 16, color: "#047780", fontWeight: 500 }}>
+                              Authenticated! Redirecting...
+                            </p>
+                          </>
                         ) : (
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 16,
-                            }}
-                          >
-                            <div>
-                              <div style={{ fontWeight: 500, marginBottom: 6 }}>
-                                Session
-                              </div>
-                              {editAlwarSession ? (
-                                <Select
-                                  disabled={comid === "COM0001"}
-                                  style={{ width: "100%" }}
-                                  placeholder="Select Session"
-                                  options={sessionOptions}
-                                  value={alwarSession || user?.session}
-                                  onChange={(value) => {
-                                    setAlwarSession(value);
-                                    setEditAlwarSession(false);
-                                  }}
-                                  autoFocus
-                                  open
-                                />
-                              ) : (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    padding: "4px 11px",
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: 6,
-                                    minHeight: 32,
-                                  }}
-                                >
-                                  <span>
-                                    {getSessionLabel(
-                                      alwarSession || user?.session
-                                    )}
-                                  </span>
-                                  <EditOutlined
-                                    style={{
-                                          cursor: comid === "COM0001" ? "not-allowed" : "pointer",
-                                      color: "#1890ff",
-                                    }}
-                                    onClick={() => {
-                                      if (comid === "COM0001") return;
-                                      setEditAlwarSession(true);
-                                    }}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <div style={{ fontWeight: 500, marginBottom: 6 }}>
-                                Branch
-                              </div>
-                              {editAlwarBranch ? (
-                                <Select
-                                  disabled={comid === "COM0001" ? true : false}
-                                  style={{ width: "100%" }}
-                                  placeholder="Select Branch"
-                                  options={locationBranchOptions.alwar}
-                                  value={alwarBranch}
-                                  onChange={(value) => {
-                                    setAlwarBranch(value);
-                                    setEditAlwarBranch(false);
-                                  }}
-                                  autoFocus
-                                  open
-                                />
-                              ) : (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    padding: "4px 11px",
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: 6,
-                                    minHeight: 32,
-                                  }}
-                                >
-                                  <span>
-                                    {getBranchLabel(alwarBranch, "alwar")}
-                                  </span>
-                                  <EditOutlined
-                                    style={{
-                                      cursor: comid === "COM0001" ? "not-allowed" : "pointer",
-                                      color: "#1890ff",
-                                    }}
-                                    onClick={() => {
-                                      if (comid === "COM0001") return;
-                                      setEditAlwarBranch(true);
-                                    }}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            {comid !== "COM0001" ? (
-                              <button
-                                style={{
-                                  marginTop: 8,
-                                  padding: "8px 16px",
-                                  background: "#047780",
-                                  color: "white",
-                                  border: "none",
-                                  borderRadius: 4,
-                                  cursor:
-                                    isSwitchingModule &&
-                                    switchingLocation === "alwar"
-                                      ? "not-allowed"
-                                      : "pointer",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  gap: 8,
-                                  opacity:
-                                    isSwitchingModule &&
-                                    switchingLocation === "alwar"
-                                      ? 0.7
-                                      : 1,
-                                }}
-                                disabled={
-                                  isSwitchingModule &&
-                                  switchingLocation === "alwar"
-                                }
-                                onClick={() => {
-                                  if (!alwarBranch) {
-                                    toast.error("Please select a branch");
-                                    return;
-                                  }
-                                  handleSwitchModule(
-                                    "Alwar",
-                                    alwarBranch,
-                                    alwarSession || user?.session
-                                  );
-                                }}
-                              >
-                                Switch to Alwar
-                              </button>
-                            ) : (
-                              <Alert message="You are already on Alwar" type="warning" banner style={{color:"#000"}} />
-                            )}
-                          </div>
-                        )}
-                      </Card>
-
-                      <Card
-                        title={
-                          <span style={{ fontWeight: "bold", fontSize: 18 }}>
-                            Noida
-                          </span>
-                        }
-                        style={{
-                          width: 280,
-                          border: "2px solid #047780",
-                          borderRadius: 4,
-                          boxShadow: "0 4px 12px rgba(4, 119, 128, 0.2)",
-                        }}
-                        styles={{ body: { padding: 16 } }}
-                      >
-                        {isSwitchingModule && switchingLocation === "noida" ? (
-                          <CheckmarkLoader />
-                        ) : (
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 16,
-                            }}
-                          >
-                            <div>
-                              <div style={{ fontWeight: 500, marginBottom: 6 }}>
-                                Session
-                              </div>
-                              {editNoidaSession ? (
-                                <Select
-                                  style={{ width: "100%" }}
-                                  placeholder="Select Session"
-                                  options={sessionOptions}
-                                  value={noidaSession || user?.session}
-                                  onChange={(value) => {
-                                    setNoidaSession(value);
-                                    setEditNoidaSession(false);
-                                  }}
-                                  autoFocus
-                                  open
-                                />
-                              ) : (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    padding: "4px 11px",
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: 6,
-                                    minHeight: 32,
-                                  }}
-                                >
-                                  <span>
-                                    {getSessionLabel(
-                                      noidaSession || user?.session
-                                    )}
-                                  </span>
-                                  <EditOutlined
-                                    style={{
-                                      cursor: "pointer",
-                                      color: "#1890ff",
-                                    }}
-                                    onClick={() => setEditNoidaSession(true)}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            <div>
-                              <div style={{ fontWeight: 500, marginBottom: 6 }}>
-                                Branch
-                              </div>
-                              {editNoidaBranch ? (
-                                <Select
-                                  style={{ width: "100%" }}
-                                  placeholder="Select Branch"
-                                  options={locationBranchOptions.noida}
-                                  value={noidaBranch || "BRMSC012"}
-                                  onChange={(value) => {
-                                    setNoidaBranch(value);
-                                    setEditNoidaBranch(false);
-                                  }}
-                                  autoFocus
-                                  open
-                                />
-                              ) : (
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between",
-                                    padding: "4px 11px",
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: 6,
-                                    minHeight: 32,
-                                  }}
-                                >
-                                  <span>
-                                    {getBranchLabel(
-                                      noidaBranch || "BRMSC012",
-                                      "noida"
-                                    )}
-                                  </span>
-                                  <EditOutlined
-                                    style={{
-                                      cursor: "pointer",
-                                      color: "#1890ff",
-                                    }}
-                                    onClick={() => setEditNoidaBranch(true)}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                            <button
+                          <>
+                            <div
                               style={{
-                                marginTop: 8,
-                                padding: "8px 16px",
-                                background: "#047780",
-                                color: "white",
-                                border: "none",
-                                borderRadius: 4,
-                                cursor:
-                                  isSwitchingModule &&
-                                  switchingLocation === "noida"
-                                    ? "not-allowed"
-                                    : "pointer",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                gap: 8,
-                                opacity:
-                                  isSwitchingModule &&
-                                  switchingLocation === "noida"
-                                    ? 0.7
-                                    : 1,
+                                width: 50,
+                                height: 50,
+                                border: "4px solid #f3f3f3",
+                                borderTop: "4px solid #047780",
+                                borderRadius: "50%",
+                                animation: "spin 1s linear infinite",
                               }}
-                              disabled={
-                                isSwitchingModule &&
-                                switchingLocation === "noida"
-                              }
-                              onClick={() => {
-                                handleSwitchModule(
-                                  "Noida",
-                                  noidaBranch || "BRMSC012",
-                                  noidaSession || user?.session
-                                );
-                              }}
-                            >
-                              Switch to Noida
-                            </button>
-                          </div>
+                            />
+                            <style>
+                              {`
+                                @keyframes spin {
+                                  0% { transform: rotate(0deg); }
+                                  100% { transform: rotate(360deg); }
+                                }
+                              `}
+                            </style>
+                            <p style={{ marginTop: 16, color: "#666" }}>
+                              Authenticating...
+                            </p>
+                          </>
                         )}
-                      </Card>
-                    </div>
+                      </div>
+                    ) : (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          padding: "20px 0",
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: 60,
+                            height: 60,
+                            borderRadius: "50%",
+                            background: "#f5f5f5",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginBottom: 16,
+                          }}
+                        >
+                          <SwapOutlined style={{ fontSize: 28, color: "#047780" }} />
+                        </div>
+                        <h3 style={{ margin: "0 0 24px 0", color: "#333" }}>
+                          Switch Module
+                        </h3>
+                        <div style={{ width: "100%", maxWidth: 300 }}>
+                          <div style={{ marginBottom: 16 }}>
+                            <div style={{ marginBottom: 6, fontWeight: 500, color: "#666" }}>
+                              Location
+                            </div>
+                            <Select
+                              style={{ width: "100%" }}
+                              placeholder="Select Location"
+                              options={[
+                                { label: "Alwar", value: "alwar" },
+                                { label: "Noida", value: "noida" },
+                              ]}
+                              value={switchLocation}
+                              onChange={(value) => {
+                                setSwitchLocation(value);
+                                setSwitchBranch(null);
+                              }}
+                            />
+                          </div>
+                          <div style={{ marginBottom: 16 }}>
+                            <div style={{ marginBottom: 6, fontWeight: 500, color: "#666" }}>
+                              Branch
+                            </div>
+                            <Select
+                              style={{ width: "100%" }}
+                              placeholder="Select Branch"
+                              disabled={!switchLocation}
+                              options={
+                                switchLocation
+                                  ? locationBranchOptions[switchLocation]
+                                  : []
+                              }
+                              value={switchBranch}
+                              onChange={(value) => setSwitchBranch(value)}
+                            />
+                          </div>
+                          <div style={{ marginBottom: 24 }}>
+                            <div style={{ marginBottom: 6, fontWeight: 500, color: "#666" }}>
+                              Session
+                            </div>
+                            <Select
+                              style={{ width: "100%" }}
+                              placeholder="Select Session"
+                              options={sessionOptions}
+                              value={switchSession || user?.session}
+                              onChange={(value) => setSwitchSession(value)}
+                            />
+                          </div>
+                          <Button
+                            type="primary"
+                            block
+                            size="large"
+                            style={{
+                              background: "#047780",
+                              borderColor: "#047780",
+                              height: 44,
+                            }}
+                            disabled={!switchLocation || !switchBranch}
+                            onClick={() => {
+                              handleSwitchModule(
+                                switchLocation.charAt(0).toUpperCase() + switchLocation.slice(1),
+                                switchBranch,
+                                switchSession || user?.session
+                              );
+                            }}
+                          >
+                            Authenticate
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </Modal>
                 </Space>
               </Row>
