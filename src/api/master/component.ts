@@ -164,7 +164,7 @@ export const getCategoryOptions = async (name: string, id: string) => {
 
   let arr = [];
   if (response.success) {
-    arr = response.data.map((row) => ({
+    arr = response.data.map((row:any) => ({
       text: row.attr_value,
       value: row.code,
       name: name,

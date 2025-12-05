@@ -134,7 +134,7 @@ const Material = () => {
       }
     } catch (error) {
       setSubGroupOptions([]);
-      console.log("err", error)
+      console.log("err", error);
     } finally {
       setLoading(false);
     }
@@ -900,20 +900,17 @@ const CategoryModal = ({
           category: categoryKey.value,
         }
       );
-      const { data } = response;
 
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
-            label: row.text,
-            name: row.id,
-            type: row.inp_type,
-            hasValue: row.hasValue,
-          }));
-          setFields(arr);
-        } else {
-          toast.error(data.message.msg);
-        }
+      if (response?.success) {
+        const arr = response.data.map((row) => ({
+          label: row.text,
+          name: row.id,
+          type: row.inp_type,
+          hasValue: row.hasValue,
+        }));
+        setFields(arr);
+      } else {
+        toast.error(response?.message);
       }
     } catch (error) {
     } finally {

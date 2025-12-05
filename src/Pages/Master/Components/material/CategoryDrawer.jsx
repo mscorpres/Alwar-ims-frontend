@@ -1,14 +1,5 @@
-import React, { useEffect,useState } from "react";
-import {
-  Col,
-  Divider,
-  Drawer,
-  Flex,
-  Form,
-  Input,
-  Row,
-  Typography,
-} from "antd";
+import React, { useEffect, useState } from "react";
+import { Col, Divider, Drawer, Flex, Form, Input, Row, Typography } from "antd";
 import MyButton from "../../../../Components/MyButton";
 import { useParams } from "react-router";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -45,19 +36,16 @@ export default function CategoryDrawer({
           category: categoryKey,
         }
       );
-      const { data } = response;
 
-      if (data) {
-        if (response.success) {
-          const arr = response.data.map((row) => ({
-            label: row.text,
-            name: row.id,
-            type: row.inp_type,
-          }));
-          setFields(arr);
-        } else {
-          toast.error(response.message?.msg || response.message);
-        }
+      if (response.success) {
+        const arr = response.data.map((row) => ({
+          label: row.text,
+          name: row.id,
+          type: row.inp_type,
+        }));
+        setFields(arr);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {}
   };
@@ -200,7 +188,6 @@ export default function CategoryDrawer({
     }
   }, [show]);
   useEffect(() => {
-   
     if (selectedCategory && selectedCategory?.value !== "348423984423") {
       if (
         selectedCategory?.value !== "Other" ||
