@@ -27,7 +27,7 @@ import socket from "./Components/socket.js";
 import Notifications from "./Components/Notifications";
 // antd imports
 import Layout, { Content, Header } from "antd/lib/layout/layout";
-import { Badge, Row, Select, Space, Modal, Card, Alert, Button } from "antd";
+import { Badge, Row, Select, Space, Modal, Button } from "antd";
 // icons import
 import {
   CustomerServiceOutlined,
@@ -709,20 +709,6 @@ const App = () => {
     }
   };
 
-  // Helper to get label from value
-  const getSessionLabel = (value) => {
-    const found = sessionOptions.find((opt) => opt.value === value);
-    return found ? found.label : value || "Select Session";
-  };
-
-  const getBranchLabel = (value, location) => {
-    const options =
-      location === "alwar"
-        ? locationBranchOptions.alwar
-        : locationBranchOptions.noida;
-    const found = options.find((opt) => opt.value === value);
-    return found ? found.label : "Select Branch";
-  };
   const path = window.location.hostname;
 
   const refreshConnection = () => {
