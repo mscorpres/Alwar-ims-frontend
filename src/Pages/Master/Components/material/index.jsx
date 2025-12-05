@@ -889,7 +889,7 @@ const CategoryModal = ({
   var result;
   const value = Form.useWatch("value", form);
   const getCategoryFields = async (categoryKey) => {
-    console.log("category key", categoryKey.label);
+   
     setSelectedCategory(categoryKey);
     try {
       setLoading("fetch");
@@ -927,8 +927,8 @@ const CategoryModal = ({
           attribute: row.name,
         });
         const { data } = response;
-        if (data.code === 200) {
-          optionsArr.push({ data: data.message });
+        if (response.success) {
+          optionsArr.push({ data: response.message });
           setFieldSelectOptions((curr) => [
             ...curr,
             {
@@ -1063,7 +1063,6 @@ const CategoryModal = ({
         "-" +
         "Resistor";
 
-      console.log("compName", compCode);
       setGeneratedCompName(compName);
       headerForm.setFieldValue("componentname", compName);
 
@@ -1076,20 +1075,12 @@ const CategoryModal = ({
         ")" +
         values.power_rating.key +
         values.tolerance.key;
-      // console.log("filledFields", filledFields);
-
       if (makingString.length <= 5) {
         let codeValue = zeroPad(makingString);
-        // console.log("codeValue ", filledFields, codeValue);
-
         setUniqueId(filledFields + codeValue);
-        // console.log("codeValue ", filledFields + codeValue);
       }
     } else if (newSnip == "IND") {
-      // console.log(
-      //   " values.current_SI_Unit.label",
-      //   values.current_SI_Unit.label.split(" ")
-      // );
+
       let siUnit = values.current_SI_Unit.label.split(" ")[0];
       let siVal = values.current_SI_UnitText;
       let fqVal = values.frequencyText;
@@ -1108,7 +1099,6 @@ const CategoryModal = ({
         siVal +
         siUnit;
 
-      // console.log("compName", compCode);
       setGeneratedCompName(compName);
       headerForm.setFieldValue("componentname", compName);
 
@@ -1129,11 +1119,8 @@ const CategoryModal = ({
         // console.log("codeValue ", filledFields + codeValue);
       }
     }
-    // console.log("valuesvalues=", values);
-    // //
-    else {
-      console.log("makingString greater than 5  =", makingString);
-    }
+   
+
   };
 
   //without decimal value functions
@@ -1175,11 +1162,11 @@ const CategoryModal = ({
     // form.setFieldValue("multiplier", alpha);
   }
   function removeAndCountTrailingZeros(number) {
-    // Convert number to string
+  
     const numString = number.toString();
     let count = 0;
 
-    // Handle case when number is 0  //add Zero in the starting ot create 4 number code value digit
+    
     if (numString === "0") {
       return {
         stringWithoutTrailingZeros: 0,
