@@ -38,9 +38,6 @@ const CreateChallanModal = ({
   editShipment,
   rtnchallan,
   setRtnChallan,
-  setDetailData,
-  // challanForm,
-  //testing
 }) => {
   const [challanForm] = Form.useForm();
   const [locationlist, setlocationlist] = useState([]);
@@ -58,44 +55,27 @@ const CreateChallanModal = ({
   const [minRows, setMinRows] = useState([]);
   const [newminRows, setnewMinRows] = useState([]);
   const [gstType, setgstType] = useState([]);
-  const components = Form.useWatch("components", challanForm);
-  const componentsMIN = Form.useWatch("componentsMIN", challanForm);
   const [loading, setLoading] = useState("fetch");
   const [productid, setproductid] = useState("fetch");
   const [branchid, setBranchId] = useState("");
   const [modal2Open, setModal2Open] = useState(false);
   const [minqty, setMinQty] = useState("");
   const [componentList, setComponentList] = useState([]);
-  const [totalsum, setTotalSum] = useState("");
   const [dataProductdetails, setDataProductdetails] = useState({
     text: "",
     value: "",
   });
 
   let sumOfMinAvailableQty;
-  console.log(
-    "show  close,  data,  editShipment,  rtnchallan  setRtnChallan,",
-    // show,
-    // close,
-    data,
-    editShipment
-    // rtnchallan,
-    // setRtnChallan
-  );
-  // console.log("close", close);
+
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [transaction, setTransactions] = useState("");
-  ////uplaod
   var bid;
-  var did;
   const [uplaodType, setUploadType] = useState("table");
   const [stage, setStage] = useState("preview");
-
-  const [productSelected, setProductSelected] = useState(false);
   const [previewData, setpreviewData] = useState([]);
   // const [form] = Form.useForm();
   const files = Form.useWatch("files", challanForm);
-  // console.log("data here of deatils data", editShipment);
   useEffect(() => {
     if (files) {
       setStage("preview");
@@ -162,14 +142,11 @@ const CreateChallanModal = ({
   ];
   const previewuploaData = async () => {
     const values = await challanForm.validateFields();
-    let finalObj = {};
     let formData = new FormData();
     formData.append("file", values.files[0].originFileObj);
     let url = "";
     setLoading(true);
-    // console.log("values", values);
-    // if (uplaodType === "file") {
-    //   if (stage === "preview") {
+
     const res = await imsAxios.post(
       "/wo_challan/previewExcelShipmentData",
       formData
@@ -200,7 +177,6 @@ const CreateChallanModal = ({
     setlocationlist(arr);
   };
   const showSubmitConfirmationModal = (f) => {
-    // submit confirm modal
     Modal.confirm({
       title: "Do you Want to Create this Shipment?",
       icon: <ExclamationCircleOutlined />,
@@ -213,7 +189,6 @@ const CreateChallanModal = ({
     });
   };
   const showReturnSubmitConfirmationModal = (f) => {
-    // submit confirm modal
     Modal.confirm({
       title: "Do you Want to Create this Return Challan?",
       icon: <ExclamationCircleOutlined />,
@@ -287,19 +262,6 @@ const CreateChallanModal = ({
       setLoading(false);
     }
   };
-  // const showSubmitConfirmationModal = (f, remove) => {
-  //   // submit confirm modal
-  //   Modal.confirm({
-  //     title: "Do you Want to Create the challan?",
-  //     icon: <ExclamationCircleOutlined />,
-  //     content: "Please check the details before sumitting",
-  //     okText: "Yes",
-  //     cancelText: "No",
-  //     onOk: () => {
-  //       remove(f.name);
-  //     },
-  //   });
-  // };
 
   const updateDeliveryChallan = async () => {
     try {
@@ -349,7 +311,7 @@ const CreateChallanModal = ({
         close();
         setLoading(false);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(false);
       }
     } catch (error) {
@@ -418,7 +380,7 @@ const CreateChallanModal = ({
         setLoading(false);
         close();
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(false);
       }
     } catch (error) {
@@ -427,9 +389,8 @@ const CreateChallanModal = ({
       setLoading(false);
     }
   };
-  //edit the challans
+
   const getEditShipmentData = async (h) => {
-    // console.log("response getEditShipmentData ->", h);
     let link;
     if (editShipment == "Shipment") {
       link = "/wo_challan/editWorkorderShipment";
@@ -444,41 +405,15 @@ const CreateChallanModal = ({
     // let arr = data.data;
     if (response.success) {
       let arrHead = data.header;
-      // console.log("data", response);
-
-      // let arrHead = data.header.map((row) => ({
-      //   clientbranch: row.client_branch,
-      //   // nature:
-      // }));
-      // challanForm.setFieldValue("components", arrHead);
-      // challanForm.setFieldValue("nature", arrHead.eway_nor);
-      // console.log("arrHead.client_branch", arrHead.client_branch);
-      // challanForm.setFieldValue("clientbranch", arrHead.client_branch);
       challanForm.setFieldValue("clientbranch", arrHead.client_branch);
       challanForm.setFieldValue("nature", arrHead.eway_no);
       challanForm.setFieldValue("pd", arrHead.ship_doc_no);
       challanForm.setFieldValue("vn", arrHead.vehicle);
       challanForm.setFieldValue("or", arrHead.other_ref);
-      // challanForm.setFieldValue("address", arrHead.clientcode.label);
       challanForm.setFieldValue("billingid", arrHead.billing_info.value);
       challanForm.setFieldValue("billingaddress", arrHead.billing_address);
       challanForm.setFieldValue("dispatchid", arrHead.dispatch_info.value);
-      // challanForm.setFieldValue("shipment_id", arrHead.shipmentId);
-      // challanForm.setFieldValue("dispatchid", h.dispatchId);
       challanForm.setFieldValue("shippingaddress", arrHead.dispatch_address);
-      let arrMat = data.material;
-      // console.log("data is here", data);
-      // let newcomp = {
-      //   productname: arrMat.product_name,
-      //   partCode: arrMat.product_sku,
-      //   qty: arrMat.received_qty,
-      //   rate: arrMat.product_rate,
-      //   hsn: arrMat.hsn_code,
-      //   productdescription: arrMat.sku_desc,
-      // };
-      // console.log("editShipment=", editShipment);
-
-      // challanForm.setFieldValue("components", [obj]);
       if (editShipment == "Shipment") {
         console.log("data");
         challanForm.setFieldValue("components", [
@@ -496,29 +431,7 @@ const CreateChallanModal = ({
             challan_remark: arrHead.challan_remark,
           },
         ]);
-        // let materialArr = data.min_out_data.map((a) => {
-        //   return {
-        //     materialRowId: a.row_id,
-        //     component_name: a.component_name,
-        //     component_key: a.component_key,
-        //     part_code: a.component_part_no,
-        //     min_id: a.wo_min_id,
-        //     min_date: a.wo_min_date,
-        //     out_qty: a.wo_out_qty,
-        //     hsn: a.hsn_code,
-        //     min_rate: a.wo_out_rate,
-        //     // description: a.remarks,
-        //     // description: data.material.remark,
-        //     // woId: h.woTransaction_Id,
-        //     // shipment_id: arrHead.shipment_id,
-        //     // clientbranchid: arrHead.clientaddress.value,
-        //     // description: arrHead.challan_remark,
-        //   };
-        // });
-        // // setMinRows(materialArr);
       } else {
-        // console.log("arrHead", arrHead);
-        // console.log("data.material.", data.material);
         challanForm.setFieldValue("challanRemark", arrHead.challan_remark);
         let materialArr = data.material.map((a) => {
           return {
@@ -530,11 +443,9 @@ const CreateChallanModal = ({
             hsn: a.hsn_code,
             rate: a.part_rate,
             description: a.remarks,
-            // description: data.material.remark,
             woId: h.woTransaction_Id,
             shipment_id: arrHead.shipment_id,
             clientbranchid: arrHead.clientaddress.value,
-            // description: arrHead.challan_remark,
           };
         });
         console.log("materialA", materialArr);
@@ -547,14 +458,10 @@ const CreateChallanModal = ({
           hsn: data.material.map((a) => a.hsn_code),
           rate: data.material.map((a) => a.part_rate),
           description: data.material.map((a) => a.remarks),
-          // description: data.material.remarks,
           woId: h.woTransaction_Id,
           shipment_id: arrHead.shipment_id,
           clientbranchid: arrHead.clientaddress.value,
-          // description: arrHead.challan_remark,
         };
-        console.log("a", a);
-        // challanForm.setFieldValue("components", [materialA]);
         const fields = challanForm.getFieldsValue();
         fields.components = materialArr;
         setComponentList(materialArr);
@@ -565,7 +472,6 @@ const CreateChallanModal = ({
           min_date: r.wo_min_date,
           min_id: r.wo_min_id,
           min_eway_bill: r.min_eway_bill,
-          // min_available_qty: r.wo_out_qty,
           min_rate: r.wo_out_rate,
           component_name: r.component_name,
           part_code: r.component_part_no,
@@ -576,16 +482,12 @@ const CreateChallanModal = ({
         };
       });
       setMinRows(arr);
-
       challanForm.setFieldValue("address", arrHead.clientaddress.label);
-      let news = challanForm.getFieldsValue("components");
-      // console.log("news", news);
     }
   };
   const closeDrawer = () => {
     challanForm.resetFields();
     close();
-    // console.log("here");
   };
   useEffect(() => {
     if (rows.length > 0) {
@@ -593,16 +495,13 @@ const CreateChallanModal = ({
         console.log("rows", rows);
         sumOfMinAvailableQty = 0;
         let getRowsQty = rows.filter((b) => b.out_qty > 0);
-        console.log("getRowsQty", getRowsQty);
         for (const item of getRowsQty) {
           sumOfMinAvailableQty += parseInt(item.out_qty);
         }
 
-        console.log("Sum of min_available_qty:", sumOfMinAvailableQty);
         setMinQty(sumOfMinAvailableQty);
         let a = challanForm.getFieldValue("components");
         a[0].qty = sumOfMinAvailableQty;
-
         challanForm.setFieldValue("components", a);
       } else {
         setLoading("fetch");
@@ -631,9 +530,6 @@ const CreateChallanModal = ({
   }, [rows]);
 
   useEffect(() => {
-    // console.log("dataaaaaaaaa", data);
-    // console.log("edit shipmetn)-> ", editShipment);
-    // console.log("challantype-> ", data);
     setDataProductdetails({ text: data.product, value: data.productId });
     setTransactions(data.transactionId);
     if (editShipment == "Shipment" && data) {
@@ -655,7 +551,6 @@ const CreateChallanModal = ({
       settest(show.label);
       setupdatechallan(show.label);
       getbomcomponents(data.productId, data.transactionId);
-      // console.log("here in return challan", data);
       setRtnChallan(true);
       getMinDetails(data);
     } else if (show.label === "Create shipment") {
@@ -681,9 +576,7 @@ const CreateChallanModal = ({
         data.shipaddress,
         data.challanId
       );
-      // (code, caddress,caid badd, sadd, cid
     }
-    // console.log("datain useeffect", data);
   }, [show]);
 
   useEffect(() => {
@@ -694,9 +587,8 @@ const CreateChallanModal = ({
     const response = await imsAxios.post("/createwo/fetch_wo_mins", {
       wo_id: d.transactionId,
     });
-    // console.log("response mindetails", response);
     const { data } = response;
-    let arr = data?.data?.map((r) => {
+    let arr = data?.map((r) => {
       return {
         min_date: r.min_date,
         min_id: r.min_id,
@@ -710,11 +602,9 @@ const CreateChallanModal = ({
       };
     });
     setMinRows(arr);
-    // challanForm.setFieldValue("componentsMIN", arr);
   };
 
   const inputHandler = (name, value, id) => {
-    // console.log("this is the chalan form values", minRows);
     let arr = minRows;
 
     if (name === "out_qty") {
@@ -783,8 +673,8 @@ const CreateChallanModal = ({
           wo_transaction: woid,
         }
       );
-      const { data } = response;
-      const arr = response.data.map((row, index) => ({
+      
+      const arr = response?.data?.items?.map((row, index) => ({
         id: index + 1,
         componentKey: row.component_key,
         component: row.component_name,
@@ -804,7 +694,7 @@ const CreateChallanModal = ({
     }
   };
   const removeRow = (id) => {
-    setMinRows(minRows.filter((row) => row.id !== id)); // remove the row
+    setMinRows(minRows.filter((row) => row.id !== id)); 
   };
   const getComponentDetails = async (inputValue) => {
     setLoading("fetch");
@@ -813,13 +703,7 @@ const CreateChallanModal = ({
     });
     setLoading(false);
     if (response.success) {
-      // console.log("data in data fetch product", dataProductdetails);
-      // fetchbomlist(response.data.product_sku);
-      // setUom(response.data?.unit);
-      // challanForm.setFieldValue("qty", response.data?.description);
-      // challanForm.setFieldValue("rate", response.data?.rate);
-      // challanForm.setFieldValue("hsncode", response.data?.hsn);
-      // challanForm.setFieldValue("gstRate", response.data?.gstrate);
+
       let obj = {
         hsncode: response.data?.hsn,
         // rate: response.data?.rate,
@@ -832,12 +716,13 @@ const CreateChallanModal = ({
       // challanForm.setFieldsValue()
       challanForm.setFieldValue("components", [obj]);
     } else {
-      toast.error(response.message?.msg || response.message || "Some error occured wile getting component details");
+      toast.error(
+        response.message || "Some error occured wile getting component details"
+      );
     }
   };
 
   const getClientdetails = async (code, caddress, caid, badd, sadd, cid) => {
-
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/backend/fetchClientDetail", {
@@ -846,13 +731,7 @@ const CreateChallanModal = ({
       const { data } = response;
       // console.log("data------", caddress);
       if (cid === undefined) {
-        // console.log("coming here", cid);
-        // data.branchList.map((item) => {
-        //   if (item.address === caddress) {
-        //     challanForm.setFieldValue("clientbranch", item.text);
-        //     setBranchId(item.id);
-        //   }
-        // });
+
         data.branchList.map((row) => {
           if (row.address === badd) {
             challanForm.setFieldValue("billingid", row.id);
@@ -915,7 +794,7 @@ const CreateChallanModal = ({
         }));
         setaddoptions(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -1086,7 +965,7 @@ const CreateChallanModal = ({
             close();
             setLoading(false);
           } else {
-            toast.error(response.message?.msg || response.message);
+            toast.error(response.message);
             setLoading(false);
           }
         } catch (error) {
@@ -1221,7 +1100,7 @@ const CreateChallanModal = ({
         // console.log("showCreateChallanModal-----");
         // setDetailData("");
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(false);
       }
     } catch (error) {
@@ -1292,9 +1171,7 @@ const CreateChallanModal = ({
       value: "table",
     },
   ];
-  console.log("challantitle", challantitle);
-  console.log("test", test);
-  console.log("edit", editShipment);
+
   return (
     <>
       <Drawer
@@ -1358,16 +1235,6 @@ const CreateChallanModal = ({
                               challanForm.setFieldValue("insertDate", value)
                             }
                           />
-                          {/* <InputMask
-                      // name="due_date[]"
-                      // value={vendorData?.invoice_date}
-                      // onChange={(e) =>
-                      //   vendorInputHandler("invoice_date", e.target.value)
-                      // }
-                      className="input-date"
-                      mask="99-99-9999"
-                      placeholder="__-__-____"
-                    /> */}
                         </Form.Item>
                       )}
                       {editShipment === "editReturn" && (
@@ -1525,17 +1392,10 @@ const defaultValues = {
 export default CreateChallanModal;
 //for return challan
 const Component = ({
-  fields,
-  field,
-  index,
-  add,
   form,
   calculation,
   gsttype,
-  remove,
   location,
-  locationfunction,
-  showSubmitConfirmationModal,
   setlocationlist,
   getLocationList,
   locationlist,

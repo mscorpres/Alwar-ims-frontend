@@ -73,7 +73,7 @@ export default function CreateGP() {
             [name]: value,
 
             qty: "",
-            uom: data?.data?.unit,
+            uom: response?.data?.unit,
           };
 
           return obj;

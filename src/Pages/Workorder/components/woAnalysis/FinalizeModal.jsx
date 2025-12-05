@@ -77,8 +77,10 @@ const FinalizeModal = ({ showView, setShowView, getRows }) => {
       title="Finalize Work Order"
       placement="right"
       onClose={() => setShowView(false)}
-      bodyStyle={{
-        padding: 5,
+      styles={{
+        body: {
+          padding: 5,
+        },
       }}
       open={showView}
       width="100%"

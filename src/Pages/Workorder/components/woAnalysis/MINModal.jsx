@@ -111,7 +111,7 @@ const MINModal = ({ showView, setShowView, getRows }) => {
           minForm.resetFields();
         }
       } else {
-        toast.error(uploadwodoc.message?.msg || uploadwodoc.message);
+        toast.error(uploadwodoc.message);
         setLoading(false);
       }
     }
@@ -129,15 +129,14 @@ const MINModal = ({ showView, setShowView, getRows }) => {
   };
   const getData = (response) => {
     const { data } = response;
-    if (data) {
-      if (data.length) {
-        const arr = data.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
 
-        setAsyncOptions(arr);
-      }
+    if (response?.success) {
+      const arr = data.map((row) => ({
+        text: row.text,
+        value: row.id,
+      }));
+
+      setAsyncOptions(arr);
     }
   };
   useEffect(() => {
@@ -239,8 +238,10 @@ const MINModal = ({ showView, setShowView, getRows }) => {
       title={`MIN | ${details?.woId ?? ""}`}
       placement="right"
       onClose={() => setShowView(false)}
-      bodyStyle={{
-        padding: 5,
+      styles={{
+        body: {
+          padding: 5,
+        },
       }}
       open={showView}
       width="100%"

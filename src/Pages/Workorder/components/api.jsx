@@ -50,7 +50,7 @@ const getClientOptions = async (search) => {
   const response = await imsAxios.post("/backend/getClient", {
     searchTerm: search,
   });
-  if (data && data?.data?.length) {
+  if (response?.success) {
     const arr = response.data.map((row) => ({
       text: row.name,
       value: row.code,
@@ -63,8 +63,8 @@ const getSKUOptions = async (search) => {
   const response = await imsAxios.post("/backend/getProductByNameAndNo", {
     search: search,
   });
-  if (data && data?.length) {
-    const arr = data.map((row) => ({
+  if (response?.success) {
+    const arr = response?.data.map((row) => ({
       text: row.text,
       value: row.id,
     }));
@@ -78,8 +78,8 @@ const getWorkOrderAnalysis = async (wise, searchInput) => {
     wise,
     data: searchInput,
   });
-  if (data) {
-    if (data.success) {
+ 
+    if (response?.success) {
       const arr = response.data.map((row, index) => ({
         id: index + 1,
         date: row.date,
@@ -100,17 +100,17 @@ const getWorkOrderAnalysis = async (wise, searchInput) => {
       }));
       return arr;
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
       return [];
     }
-  }
+
 };
 const postUpdatedWo = async (datas) => {
   const response = await imsAxios.post("/wo_challan/updateWO_Shipment", datas);
   if (response.success) {
     toast.success(response.message);
   } else {
-    toast.error(response.message?.msg || response.message);
+    toast.error(response.message);
   }
 };
 const getWorkOrderShipment = async (wise, searchInput) => {
@@ -118,9 +118,8 @@ const getWorkOrderShipment = async (wise, searchInput) => {
     wise,
     data: searchInput,
   });
-  //shipment added
-  if (data) {
-    if (data.success) {
+
+    if (response?.success) {
       const arr = response.data.map((row, index) => ({
         id: index + 1,
         shipmentDt: row.shipment_dt,
@@ -148,7 +147,7 @@ const getWorkOrderShipment = async (wise, searchInput) => {
       toast.error(data.message?.msg || data.message);
       return [];
     }
-  }
+
 };
 
 ///
@@ -265,7 +264,7 @@ const getScrapeInViewChallan = async (wise, searchInput) => {
 };
 ////generic api for all the challantype in view challan
 const getViewChallan = async (challantype, wise, searchInput) => {
-  console.log("challantype, wise, searchInput", challantype, wise, searchInput);
+ 
   let term;
   if (challantype == "Delivery Challan") {
     term = "delivery";
@@ -359,8 +358,8 @@ const getWorkOrderForMIN = async (id, woId, getComponents) => {
     wo_id: woId,
     getComponents: getComponents,
   });
-  if (data) {
-    const { components, details } = data;
+  if (response?.success) {
+    const { components, details } = response?.data;
     const arr = components.map((row, index) => ({
       index: index + 1,
       componentKey: row.component_key,
@@ -397,9 +396,9 @@ const getWorkOrderForMIN = async (id, woId, getComponents) => {
 
 const getLocationOptions = async () => {
   const response = await imsAxios.post("/backend/fetchLocation");
-  if (data) {
-    if (data.length) {
-      const arr = data.map((row) => ({
+
+    if (response?.success) {
+      const arr = response?.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
@@ -407,7 +406,7 @@ const getLocationOptions = async () => {
     } else {
       return [];
     }
-  }
+
 };
 
 const createMIN = async (values, showView) => {
@@ -434,7 +433,7 @@ const createMIN = async (values, showView) => {
     toast.success(response.message);
     return response;
   } else {
-    toast.error(response.message?.msg || response.message);
+    toast.error(response.message);
   }
 };
 
@@ -481,16 +480,17 @@ const closeWorkOrder = async (woId, sku, remarks) => {
 const getWorkOrderDetails = async (id, woId, sku) => {
   try {
     const { details } = await getWorkOrderForMIN(id, woId, false);
-    const { data: componentsData } = await imsAxios.post(
+    const response = await imsAxios.post(
       "/createwo/fetchComponentListforWO",
       {
         wo_transaction: woId,
         skucode: sku,
       }
     );
-    if (componentsData) {
-      const { data: components } = componentsData;
-      const arr = components.map((row, index) => ({
+    
+    if (response?.success) {
+      const { items } = response.data;
+      const arr = items.map((row, index) => ({
         id: index + 1,
         partCode: row.part_code,
         newPartCode: row.new_part_code,

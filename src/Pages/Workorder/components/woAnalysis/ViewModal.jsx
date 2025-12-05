@@ -17,6 +17,7 @@ const ViewModal = ({ showView, setShowView }) => {
       setRows([]);
       setDetails({});
       const details = await getWorkOrderDetails(subjectId, woId, sku);
+     
       setRows(details.components);
       setDetails(details.details);
     } catch (error) {
@@ -38,8 +39,10 @@ const ViewModal = ({ showView, setShowView }) => {
       title={showView?.woId ?? ""}
       placement="right"
       onClose={() => setShowView(false)}
-      bodyStyle={{
-        padding: 5,
+      styles={{
+        body: {
+          padding: 5,
+        },
       }}
       open={showView}
       width="100%"

@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react";
-import { Col, Input, Row, Space, Button, Collapse, Table } from "antd";
-import MySelect from "../../Components/MySelect";
+import { Col,Row, Space,Table } from "antd";
 import MyDatePicker from "../../Components/MyDatePicker";
-import MyDataTable from "../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import SelectChallanTypeModal from "./components/WoCreateChallan/SelectChallanTypeModal";
-import CreateChallanModal from "./components/WoCreateChallan/CreateChallanModal";
 import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
 import { getClientOptions } from "./components/api";
 import { imsAxios } from "../../axiosInterceptor";
@@ -13,7 +9,6 @@ import { toast } from "react-toastify";
 import printFunction, {
   downloadFunction,
 } from "../../Components/printFunction";
-import { v4 } from "uuid";
 import * as XLSX from "xlsx";
 import MyButton from "../../Components/MyButton";
 const WoReport = () => {
@@ -24,12 +19,14 @@ const WoReport = () => {
     type: "actions",
     getActions: ({ row }) => [
       <GridActionsCellItem
+        key="print"
         showInMenu
         // disabled={loading}
         onClick={() => printwocompleted(row)}
         label="Print"
       />,
       <GridActionsCellItem
+        key="download"
         showInMenu
         // disabled={loading}
         onClick={() => {
@@ -68,11 +65,11 @@ const WoReport = () => {
           transaction: row.transactionId,
         }
       );
-      const { data } = response;
-      printFunction(response.data.data.buffer.data);
+     
+      printFunction(response.data.buffer);
       toast.success(response.message);
     } catch (error) {
-      console.log("some error occured while fetching rows", error);
+    
     } finally {
       setLoading(false);
     }
@@ -91,7 +88,7 @@ const WoReport = () => {
       downloadFunction(response.data.data.buffer.data);
       toast.success(response.message);
     } catch (error) {
-      console.log("some error occured while fetching rows", error);
+    
     } finally {
       setLoading(false);
     }
@@ -127,6 +124,7 @@ const WoReport = () => {
       <Table
         columns={childColumns}
         dataSource={record.challan}
+        rowKey={(record, index) => record.id || `challan-${index}-${record.challan_no || record.serial_no || index}`}
         pagination={false}
         // showHeader={false}
         size="large"
@@ -150,6 +148,7 @@ const WoReport = () => {
       });
       if (response.success) {
         let newArr = response.data.map((r, index) => ({
+          id: `row-${index}-${r.serial_no || r.min_id || index}`,
           serialno: r.serial_no,
           partCode: r.part_code,
           minDate: r.min_date,
@@ -160,13 +159,16 @@ const WoReport = () => {
           pending_qty: r.pending_qty,
           minRate: r.min_rate,
           minValue: r.min_value,
-          challan: r?.challan,
+          challan: r?.challan?.map((ch, chIndex) => ({
+            ...ch,
+            id: `challan-${index}-${chIndex}-${ch.challan_no || ch.serial_no || chIndex}`,
+          })),
         }));
         setRows(newArr);
         setworeportdata(response.data);
         setdisstate(true);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     } catch (error) {
       console.log("some error occured while fetching rows", error);
@@ -309,11 +311,13 @@ const WoReport = () => {
           columns={columns}
           expandedRowRender={expandedRowRender}
           expandable={{
+            expandedRowKeys,
             onExpand: handleExpand,
             rowExpandable: (record) =>
               record.challan && record.challan.length > 0,
           }}
           dataSource={rows}
+          rowKey={(record, index) => record.id || `row-${index}`}
           scroll={{ x: 500, y: 1000 }}
           bordered
         />

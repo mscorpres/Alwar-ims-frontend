@@ -1,42 +1,33 @@
 import { useState, useEffect } from "react";
-import { Col, Input, Row, Space, Button, Modal, Form } from "antd";
+import { Col, Input, Row, Space, Modal, Form } from "antd";
 import MySelect from "../../Components/MySelect";
 import MyDatePicker from "../../Components/MyDatePicker";
 import MyDataTable from "../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import SelectChallanTypeModal from "./components/WoCreateChallan/SelectChallanTypeModal";
 import CreateChallanModal from "./components/WoCreateChallan/CreateChallanModal";
 import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
-import { Link } from "react-router-dom";
-import { downloadCSV } from "../../Components/exportToCSV";
 import ToolTipEllipses from "../../Components/ToolTipEllipses";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import {
-  createWorkOrderShipmentChallan,
   downloadAllViewChallan,
   fetchReturnChallanDetails,
   getClientOptions,
   getReturnRowsInViewChallan,
-  getScrapeInViewChallan,
   getViewChallan,
-  getWorkOrderAnalysis,
-  getdetailsOfReturnChallan,
   printreturnChallan,
 } from "./components/api";
 import { imsAxios } from "../../axiosInterceptor";
-import { DownloadOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import {  ExclamationCircleOutlined } from "@ant-design/icons";
 import { toast } from "react-toastify";
 import printFunction, {
   downloadExcel,
   downloadFunction,
 } from "../../Components/printFunction";
-import { responsiveArray } from "antd/es/_util/responsiveObserver";
 import { Drawer } from "antd/es";
 import MyButton from "../../Components/MyButton";
-import { Navigate, useNavigate } from "react-router";
+import {  useNavigate } from "react-router";
 const WoViewChallan = () => {
   const [wise, setWise] = useState(wiseOptions[1].value);
-  const [showTypeSelect, setShowTypeSelect] = useState(false);
   const [showCreateChallanModal, setShowCreateChallanModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -114,7 +105,7 @@ const WoViewChallan = () => {
         ref_id: "--",
       };
       const arr = await printreturnChallan(payload);
-      // console.log("console.log(response);", arr);
+   
       downloadFunction(arr.data.buffer.data, row.challan_id);
       setLoading(false);
     } else if (
@@ -146,12 +137,8 @@ const WoViewChallan = () => {
 
   const cancelwochallan = async (f) => {
     const values = await cancelform.validateFields();
-    console.log("here", values);
     try {
       setLoading("select" / "fetch");
-      console.log("challanoptions", challanoptions);
-      console.log("cancelRemark", cancelRemark);
-      console.log("f", f);
       let link;
       // return;
       if (challantype === "Scrape Challan" || f.challan_type == "scrape") {
@@ -160,25 +147,17 @@ const WoViewChallan = () => {
       const response = await imsAxios.post(
         link,
         {
-          // wo_id: woid,
+   
           challan_id: f.challan_id,
           remark: values.remark,
         }
-        // const response = await imsAxios.post(
-        //   challantype === "Delivery Challan"
-        //     ? "wo_challan/woDeliveryChallanCancel"
-        //     : "wo_challan/woReturnChallanCancel",
-        //   {
-        //     wo_id: woid,
-        //     challan_id: cid,
-        //     remark: cancelRemark,
-        //   }
+       
       );
-      console.log("response", response);
-      toast.success(response.data.message);
+   
+      toast.success(response.message);
       cancelform.resetFields();
       getAllRows();
-      // toast.error
+ 
     } catch (error) {
       toast.error(error);
     } finally {
@@ -190,7 +169,6 @@ const WoViewChallan = () => {
       navigate(`/wocreatescrapechallan?challan=${scrapeChallan}`);
     }
   }, [scrapeChallan]);
-  console.log("allChallanType", allChallanType);
 
   const actionColumn = {
     headerName: "",
@@ -249,17 +227,16 @@ const WoViewChallan = () => {
               label="Cancel Challan"
             />,
             <GridActionsCellItem
-            showInMenu
-            label={
-              <Link
-                style={{ textDecoration: "none", color: "black" }}
-                to={`/warehouse/e-way/scrape-wo/${row.challan_id.replaceAll("/", "_")}`}
-                target="_blank"
-              >
-                Create E-Way Bill
-              </Link>
-            }
-          />,
+              key="create-eway-scrape"
+              showInMenu
+              label="Create E-Way Bill"
+              onClick={() => {
+                window.open(
+                  `/warehouse/e-way/scrape-wo/${row.challan_id.replaceAll("/", "_")}`,
+                  "_blank"
+                );
+              }}
+            />,
           ]
         : challantype === "RM Challan"
         ? [
@@ -292,27 +269,18 @@ const WoViewChallan = () => {
               }}
               label="Download"
             />,
-            // <GridActionsCellItem
-            //   showInMenu
-            //   // disabled={loading}
-            //   onClick={() => {
-            //     setDetailData(row);
-            //     showSubmitConfirmationModal(row);
-            //   }}
-            //   label="Cancel Challan"
-            // />,
+
             <GridActionsCellItem
-            showInMenu
-            label={
-              <Link
-                style={{ textDecoration: "none", color: "black" }}
-                to={`/warehouse/e-way/wo/${row.challan_id.replaceAll("/", "_")}`}
-                target="_blank"
-              >
-                Create E-Way Bill
-              </Link>
-            }
-          />,
+              key="create-eway-wo"
+              showInMenu
+              label="Create E-Way Bill"
+              onClick={() => {
+                window.open(
+                  `/warehouse/e-way/wo/${row.challan_id.replaceAll("/", "_")}`,
+                  "_blank"
+                );
+              }}
+            />,
           ]
         : row.challan_type == "scrape"
         ? [
@@ -364,17 +332,16 @@ const WoViewChallan = () => {
               label="Cancel Challan"
             />,
             <GridActionsCellItem
-            showInMenu
-            label={
-              <Link
-                style={{ textDecoration: "none", color: "black" }}
-                to={`/warehouse/e-way/scrape-wo/${row.challan_id.replaceAll("/", "_")}`}
-                target="_blank"
-              >
-                Create E-Way Bill
-              </Link>
-            }
-          />,
+              key="create-eway-scrape"
+              showInMenu
+              label="Create E-Way Bill"
+              onClick={() => {
+                window.open(
+                  `/warehouse/e-way/scrape-wo/${row.challan_id.replaceAll("/", "_")}`,
+                  "_blank"
+                );
+              }}
+            />,
           ]
         : [
             <GridActionsCellItem
@@ -407,43 +374,21 @@ const WoViewChallan = () => {
               label="Download"
             />,
             <GridActionsCellItem
-            showInMenu
-            label={
-              <Link
-                style={{ textDecoration: "none", color: "black" }}
-                to={`/warehouse/e-way/wo/${row.challan_id.replaceAll("/", "_")}`}
-                target="_blank"
-              >
-                Create E-Way Bill
-              </Link>
-            }
-          />,
+              key="create-eway-wo"
+              showInMenu
+              label="Create E-Way Bill"
+              onClick={() => {
+                window.open(
+                  `/warehouse/e-way/wo/${row.challan_id.replaceAll("/", "_")}`,
+                  "_blank"
+                );
+              }}
+            />,
           ],
           
   };
 
-  const getRows = async () => {
-    // challantype
 
-    getAllRows(challantype);
-    return;
-    if (challantype === "Delivery Challan") {
-      getDeliveryRows();
-    } else if (challantype === "RM Challan") {
-      getReturnRows();
-    } else {
-      //scapre challan added
-      getScrapeRows();
-    }
-  };
-  const getScrapeRows = async () => {
-    setRows([]);
-    setLoading("fetch");
-    let arr = await getScrapeInViewChallan(wise, searchInput);
-
-    setRows(arr);
-    setLoading(false);
-  };
   const getAllRows = async (challantype) => {
     // setRows([]);
     setLoading("fetch");
@@ -555,7 +500,7 @@ const WoViewChallan = () => {
           ...row,
         }));
         setViewChallanData(arr);
-        // console.log("arrrrr", arr);
+      
         setLoading(false);
       }
     } else {

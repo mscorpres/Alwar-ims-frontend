@@ -71,7 +71,7 @@ export default function AddDCComponents({
           component_code: value.value,
         }
       );
-      let validatedData = validateResponse(data);
+      let validatedData = validateResponse(response?.data);
       setPageLoading(false);
       arr = arr.map((row) => {
         let obj = row;

@@ -347,13 +347,6 @@ const columns = [
     width: 150,
   },
 ];
-const cancelRules = {
-  remarks: [
-    {
-      required: true,
-      message: "Please provide a reason to cancel this work order",
-    },
-  ],
-};
+
 
 export default WoAnalysis;

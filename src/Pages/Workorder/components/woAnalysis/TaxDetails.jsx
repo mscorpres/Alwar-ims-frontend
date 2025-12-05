@@ -8,7 +8,7 @@ function TaxDetails({ summary, title, type, loading }) {
         {summary?.map((row, index) => {
           return (
             !row.hidden && (
-              <Col span={24}>
+              <Col key={row.title || index} span={24}>
                 <Row>
                   <Col span={18}>
                     <Typography.Text

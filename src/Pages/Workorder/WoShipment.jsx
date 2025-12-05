@@ -106,12 +106,11 @@ const WoShipment = () => {
       link = "/wo_challan/woShipmentCancel";
     }
     const response = await imsAxios.post(link, obj);
-    console.log("Repinse=>", response);
     if (response.success) {
       toast.success(response.message);
       setCancelRemark("");
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
     setCancelRemark("");
     getRows();

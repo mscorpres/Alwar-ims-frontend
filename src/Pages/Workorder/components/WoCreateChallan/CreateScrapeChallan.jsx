@@ -13,25 +13,15 @@ import {
   Divider,
   //
 } from "antd";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import ClientDetailsCard from "./ClientDetailsCard";
-import BillingDetailsCard from "./BillingDetailsCard";
-import DispatchAddress from "./DispatchDetailsCard";
 import { imsAxios } from "../../../../axiosInterceptor";
 import NavFooter from "../../../../Components/NavFooter";
 import { toast } from "react-toastify";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import Loading from "../../../../Components/Loading";
 import FormTable2 from "../../../../Components/FormTable2";
-import { v4 } from "uuid";
 import MySelect from "../../../../Components/MySelect";
-import TextArea from "antd/es/input/TextArea";
-import { postUpdatedWo, submitScrapreChallan } from "../api";
+import { submitScrapreChallan } from "../api";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
-import MyDataTable from "../../../../Components/MyDataTable";
-import FormTable from "../../../../Components/FormTable";
-import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import {
   getComponentDetail,
   getComponentOptions,
@@ -81,7 +71,6 @@ const CreateScrapeChallan = () => {
 
   const navigate = useNavigate();
   const { executeFun, loading: loading1 } = useApi();
-  const components = Form.useWatch("components", challanForm);
   const getComponent = async (searchTerm) => {
     const response = await executeFun(
       () => getProductsOptions(searchTerm, true),
@@ -97,22 +86,13 @@ const CreateScrapeChallan = () => {
       const response = await imsAxios.post("/backend/getClient", {
         searchTerm: inputValue,
       });
-      const { data } = response;
-      if (data) {
+      if (response?.success) {
         let arr = response.data.map((row) => ({
           text: row.name,
           value: row.code,
         }));
         setAsyncOptions(arr);
-        let obj = {
-          productname: "",
-          hsncode: "",
-          qty: "",
-          rate: "",
-          value: "",
-          description: "",
-        };
-        // challanForm.setFieldValue("components", [obj]);
+      
       } else {
         toast.error("Some error occured wile getting vendors");
       }
@@ -140,10 +120,8 @@ const CreateScrapeChallan = () => {
         code: clientcode,
       });
       if (response.success) {
-        console.log("data---", data);
-        // createWoForm.setFieldValue("gstin", data.data.gst);
         challanForm.setFieldValue("address", data.data.address);
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     } catch (error) {
       toast.error(error);
@@ -152,8 +130,6 @@ const CreateScrapeChallan = () => {
     }
   };
   const handleaddress = (e) => {
-    // setaddid(true);
-    console.log("addOptions ->", addOptions);
     addOptions.map((item) => {
       if (item.value === e.value || item.value === e) {
         challanForm.setFieldValue("shippingaddress", item.address);
@@ -162,7 +138,6 @@ const CreateScrapeChallan = () => {
   };
   //   get vendor branch options
   const getclientDetials = async (inputValue, dm) => {
-    console.log("getclientDetials", inputValue, dm);
     try {
       setLoading("fetch");
       setClientCode(inputValue);
@@ -170,7 +145,6 @@ const CreateScrapeChallan = () => {
         code: inputValue,
       });
       const { data } = response;
-      if (data) {
         if (response.success) {
           const arr = data.branchList.map((row) => ({
             text: row.text,
@@ -179,19 +153,16 @@ const CreateScrapeChallan = () => {
           }));
           setclientBranchOptions(arr);
           setAddOptions(arr);
-          setClientData(data);
-          // challanForm.setFieldValue("billingaddress", arr.address);
+          setClientData(data?.client);
           if (dm === undefined && editScrapeChallan !== "edit") {
             challanForm.setFieldValue("clientbranch", "");
             challanForm.setFieldValue("gstin", "");
             challanForm.setFieldValue("address", "");
           }
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
-      } else {
-        toast.error("Some error occured while getting Client branches ");
-      }
+    
     } catch (error) {
       toast.error(error);
     } finally {
@@ -203,7 +174,6 @@ const CreateScrapeChallan = () => {
       () => getComponentOptions(search),
       "select"
     );
-    console.log("response", response);
     let arr = [];
     if (response.success) {
       arr = convertSelectOptions(response.data);
@@ -251,16 +221,15 @@ const CreateScrapeChallan = () => {
     );
     if (response.success) {
       const { data } = response;
-      console.log("data", data);
       challanForm.setFieldValue(
         ["components", rowId, "gstRate"],
-        data.data.gstrate
+        data.gstrate
       );
       challanForm.setFieldValue(
         ["components", rowId, "hsnCode"],
-        data.data.hsn
+        data.hsn
       );
-      challanForm.setFieldValue(["components", rowId, "rate"], data.data.rate);
+      challanForm.setFieldValue(["components", rowId, "rate"], data.rate);
     }
   };
   const validateHandler = async () => {
@@ -365,7 +334,7 @@ const CreateScrapeChallan = () => {
         setLoading(true);
         navigate("/woviewchallan");
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
         setLoading(true);
       }
     } else {

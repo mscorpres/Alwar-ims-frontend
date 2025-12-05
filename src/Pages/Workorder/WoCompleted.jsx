@@ -105,7 +105,7 @@ const WoCompleted = () => {
           data: searchInput,
         }
       );
-      const { data } = response;
+    
       const arr = response.data.map((row, index) => ({
         id: index + 1,
         date: row.date,
@@ -116,7 +116,7 @@ const WoCompleted = () => {
       }));
       setRows(arr);
     } catch (error) {
-      console.log("some error occured while fetching rows", error);
+     
     } finally {
       setLoading(false);
     }
