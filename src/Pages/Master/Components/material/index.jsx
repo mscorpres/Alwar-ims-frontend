@@ -69,7 +69,7 @@ const Material = () => {
       const { data } = response;
 
       if (response?.success) {
-        const arr = data.map((row, index) => ({
+        const arr = data?.map((row, index) => ({
           id: index + 1,
           componentName: row.c_name,
           partCode: row.c_part_no,
@@ -98,7 +98,7 @@ const Material = () => {
 
       const { data } = response;
       if (response?.success) {
-        const arr = data.map((row) => ({
+        const arr = data?.map((row) => ({
           text: row.text,
           value: row.id,
         }));
@@ -123,7 +123,7 @@ const Material = () => {
       setLoading("fetch");
       const response = await imsAxios.get(`/backend/sub-group/${groupId}`);
       if (response?.success) {
-        const arr = response.data.map((row) => ({
+        const arr = response?.data.map((row) => ({
           text: row.name,
           value: row.key,
         }));
@@ -134,7 +134,7 @@ const Material = () => {
       }
     } catch (error) {
       setSubGroupOptions([]);
-      console.log("err", error);
+    
     } finally {
       setLoading(false);
     }
@@ -163,7 +163,7 @@ const Material = () => {
       const response = await imsAxios.post("uom/uomSelect2");
       const { data } = response;
       if (response?.success) {
-        let arr = data.map((row) => ({
+        let arr = data?.map((row) => ({
           text: row.text,
           value: row.id,
         }));
@@ -185,7 +185,7 @@ const Material = () => {
       });
       const { data } = response;
       if (response?.success) {
-        const arr = data.map((row) => ({
+        const arr = data?.map((row) => ({
           text: row.text,
           value: row.id,
         }));
@@ -329,7 +329,6 @@ const Material = () => {
       "/component/addComponent/verify",
       payload
     );
-    const { data } = response;
     if (response?.success) {
       Modal.confirm({
         title: "Are you sure you want to submit this Component?",
@@ -889,7 +888,7 @@ const CategoryModal = ({
   var result;
   const value = Form.useWatch("value", form);
   const getCategoryFields = async (categoryKey) => {
-   
+    
     setSelectedCategory(categoryKey);
     try {
       setLoading("fetch");
@@ -900,9 +899,10 @@ const CategoryModal = ({
           category: categoryKey.value,
         }
       );
+     
 
       if (response?.success) {
-        const arr = response.data.map((row) => ({
+        const arr = response?.data?.map((row) => ({
           label: row.text,
           name: row.id,
           type: row.inp_type,
@@ -922,25 +922,25 @@ const CategoryModal = ({
       let optionsArr = [];
       setLoading("fetch");
       setFieldSelectOptions([]);
-      await fields.map(async (row) => {
+      await fields?.map(async (row) => {
         const response = await imsAxios.post("/mfgcategory/getAttributeValue", {
           attribute: row.name,
         });
         const { data } = response;
-        if (response.success) {
-          optionsArr.push({ data: response.message });
+        if (response?.success) {
+          optionsArr.push({ data: response?.data });
           setFieldSelectOptions((curr) => [
             ...curr,
             {
               name: row.name,
-              options: data.message.map((row) => ({
+              options: data?.map((row) => ({
                 text: row.attr_value,
                 value: row.code,
               })),
             },
           ]);
         }
-        console.log("fieldsss is here", fieldSelectOptions);
+      
       });
     } catch (error) {}
     setLoading(false);
@@ -969,7 +969,7 @@ const CategoryModal = ({
     return num.toString().padStart(5, "0");
   }
   const getComponentValueForName = (value) => {
-    // console.log("value===========", value);
+  
     let componentVal;
     let categorSnip = selectedCategory?.label?.toUpperCase();
     let newSnip = categorSnip?.substr(0, 3);
@@ -1219,22 +1219,17 @@ const CategoryModal = ({
   const getWholeNumber = (num, decimalVal) => {
     wholeVal = num * decimalVal;
     wholeVal = Number(wholeVal).toFixed(0);
-    // console.log("num is here", wholeVal);
   };
   // ---
   useEffect(() => {
     if (value) {
       let a = getComponentValueForName(value);
-      // console.log("value a", a);
-      // console.log("valueis added", value);
-      // console.log("alpha added", alpha);
       checkDecimal(value);
       getUniqueNo(a);
     }
   }, [value, alpha]);
   useEffect(() => {
     let a = getComponentValueForName(value);
-    // console.log("value a", a);
     setValForName(a);
   }, [value]);
 
@@ -1264,7 +1259,6 @@ const CategoryModal = ({
     if (show) {
       setStage(0);
       getCategoryFields(show.selectedCategory);
-      console.log("show.selectedCategory", show.selectedCategory);
       setTypeOfComp(show.selectedCategory);
     }
   }, [show]);

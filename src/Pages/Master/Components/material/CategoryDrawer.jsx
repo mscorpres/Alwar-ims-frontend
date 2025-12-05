@@ -37,8 +37,8 @@ export default function CategoryDrawer({
         }
       );
 
-      if (response.success) {
-        const arr = response.data.map((row) => ({
+      if (response?.success) {
+        const arr = response?.data.map((row) => ({
           label: row.text,
           name: row.id,
           type: row.inp_type,
@@ -60,13 +60,13 @@ export default function CategoryDrawer({
           attribute: row.name,
         });
         const { data } = response;
-        if (response.success) {
+        if (response?.success) {
           optionsArr.push({ data: data.message });
           setFieldSelectOptions((curr) => [
             ...curr,
             {
               name: row.name,
-              options: data.message.map((row) => ({
+              options: data?.message.map((row) => ({
                 text: row.attr_value,
                 value: row.code,
               })),
@@ -85,7 +85,7 @@ export default function CategoryDrawer({
       });
       const { data } = response;
 
-      if (data) {
+  
         if (response.success) {
           let finalObj = {};
           let arr = [];
@@ -100,7 +100,7 @@ export default function CategoryDrawer({
         } else {
           toast.error(data.message);
         }
-      }
+    
     } catch (error) {}
   };
 
@@ -158,13 +158,13 @@ export default function CategoryDrawer({
       const response = await imsAxios.get("/mfgcategory/listCategories");
 
       const { data } = response;
-      if (data) {
-        if (response.success) {
-          setCategoryOptions(data.data);
+    
+        if (response?.success) {
+          setCategoryOptions(data);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
-      }
+   
     } catch (error) {
     } finally {
       setLoading(false);
