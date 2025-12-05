@@ -66,7 +66,7 @@ export default function EditDCComponents({
           component_code: value.value,
         }
       );
-      let validatedData = validateResponse(response?.data);
+      let validatedData = validateResponse(response);
       setPageLoading(false);
       arr = arr.map((row) => {
         let obj = row;

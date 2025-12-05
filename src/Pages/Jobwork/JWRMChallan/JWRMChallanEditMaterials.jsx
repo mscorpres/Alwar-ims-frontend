@@ -157,7 +157,7 @@ function JWRMChallanEditMaterials({
     setLoading("values", false);
     // console.log("response->", response)
     const { data } = response;
-    if (data) {
+ 
       if (response.success) {
         let arr = response.data.map((row) => ({
           text: row.text,
@@ -167,7 +167,7 @@ function JWRMChallanEditMaterials({
       } else {
         toast.error(response.message?.msg || response.message);
       }
-    }
+
   };
   const getVendorBranchDetails = async (branchCode) => {
     const vendorCode = createJobWorkChallanForm.getFieldsValue().vendor.value;

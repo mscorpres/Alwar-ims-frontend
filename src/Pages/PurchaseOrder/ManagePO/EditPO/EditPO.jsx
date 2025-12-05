@@ -93,7 +93,7 @@ export default function EditPO({ updatePoId, setUpdatePoId }) {
             vendorcode: value.value,
             branchcode: arr[0].value,
           });
-          console.log(response);
+      
           obj = {
             ...obj,
             [name]: value,

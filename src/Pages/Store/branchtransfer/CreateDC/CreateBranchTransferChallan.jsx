@@ -140,7 +140,7 @@ export default function CreateBranchTransferChallan() {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
-    let validatedData = validateResponse(data);
+    let validatedData = validateResponse(response?.data);
     const arr = validatedData.data.map((d) => {
       return { value: d.id, text: d.text };
     });

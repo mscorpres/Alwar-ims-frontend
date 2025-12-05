@@ -60,6 +60,7 @@ export default function CreateDC() {
     { text: "NRGP (Non-Returnable Gate Pass)", value: "NR", disabled: true },
   ];
 
+
   const inputHandler = async (name, value) => {
     let obj = newGatePass;
     if (name == "vendorName") {
@@ -111,8 +112,9 @@ export default function CreateDC() {
       vendorcode: vendorCode,
     });
     setPageLoading(false);
-    let validatedData = validateResponse(data);
-    const arr = validatedData.data.map((d) => {
+    let validatedData = validateResponse(response);
+   
+    const arr = validatedData.map((d) => {
       return { value: d.id, text: d.text };
     });
     setVendorBranches(arr);
@@ -138,10 +140,10 @@ export default function CreateDC() {
       vendorcode: vendorCode,
       branchcode: vendorBranch,
     });
-    let validatedData = validateResponse(data);
+    let validatedData = validateResponse(response);
     return {
-      address: validatedData?.data?.address,
-      gstin: validatedData?.data.gstid,
+      address: validatedData?.address,
+      gstin: validatedData?.gstid,
     };
   };
   // gettig billing address
@@ -152,7 +154,7 @@ export default function CreateDC() {
     });
     setSelectLoading(false);
     let arr = [];
-    arr = data.map((d) => {
+    arr = response?.data.map((d) => {
       return { text: d.text, value: d.id };
     });
     setBillTopOptions(arr);
@@ -164,11 +166,11 @@ export default function CreateDC() {
       billing_code: billaddressid,
     });
     setPageLoading(false);
-    let validatedData = validateResponse(data);
+    let validatedData = validateResponse(response);
     return {
-      gstin: validatedData.data?.gstin,
-      pan: validatedData.data?.pan,
-      address: validatedData.data?.address,
+      gstin: validatedData?.gstin,
+      pan: validatedData?.pan,
+      address: validatedData?.address,
     };
   };
   const resetFunction = () => {

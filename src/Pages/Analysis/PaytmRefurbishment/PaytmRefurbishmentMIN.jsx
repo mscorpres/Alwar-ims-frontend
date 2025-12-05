@@ -47,7 +47,7 @@ function PaytmRefurbishmentMIN() {
     });
     setLoading(false);
     const { data } = response;
-    if (data) {
+   
       if (response.success) {
         let arr = response.data.map((row) => ({
           text: row.text,
@@ -60,7 +60,7 @@ function PaytmRefurbishmentMIN() {
         setVendorBranchOptions([]);
         toast.error(response.message?.msg || response.message);
       }
-    }
+ 
   };
   const getVendorBranchAddress = async (value) => {
     setLoading("page");
