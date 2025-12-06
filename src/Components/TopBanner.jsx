@@ -4,6 +4,41 @@ import { LeftOutlined, RightOutlined, CloseOutlined, InfoCircleOutlined } from "
 const BANNER_STORAGE_KEY = "topBannerClosedAt";
 const HIDE_DURATION = 60 * 60 * 1000;
 
+const BannerButton = ({ onClick, children, style = {} }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        setIsActive(false);
+      }}
+      onMouseDown={() => setIsActive(true)}
+      onMouseUp={() => setIsActive(false)}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => setIsHovered(false)}
+      style={{
+        background: isHovered || isActive ? "#bde649" : "transparent",
+        border: "none",
+        color: "#555",
+        cursor: "pointer",
+        padding: "4px 6px",
+        display: "flex",
+        alignItems: "center",
+        borderRadius: "3px",
+        transition: "background 0.2s ease",
+        outline: "none",
+        ...style,
+      }}
+    >
+      {children}
+    </button>
+  );
+};
+
 const TopBanner = ({ messages = ["MY message here...."] }) => {
   const [visible, setVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -91,55 +126,21 @@ const TopBanner = ({ messages = ["MY message here...."] }) => {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "8px",
+          gap: "4px",
         }}
       >
-        <button
-          onClick={handlePrev}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#555",
-            cursor: "pointer",
-            padding: "4px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
+        <BannerButton onClick={handlePrev}>
           <LeftOutlined style={{ fontSize: "10px" }} />
-        </button>
-        <span style={{ color: "#555", fontSize: "12px" }}>
+        </BannerButton>
+        <span style={{ color: "#555", fontSize: "12px", padding: "0 4px" }}>
           {currentIndex + 1}/{messages.length}
         </span>
-        <button
-          onClick={handleNext}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#555",
-            cursor: "pointer",
-            padding: "4px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
+        <BannerButton onClick={handleNext}>
           <RightOutlined style={{ fontSize: "10px" }} />
-        </button>
-        <button
-          onClick={handleClose}
-          style={{
-            background: "transparent",
-            border: "none",
-            color: "#555",
-            cursor: "pointer",
-            padding: "4px",
-            marginLeft: "8px",
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
+        </BannerButton>
+        <BannerButton onClick={handleClose} style={{ marginLeft: "4px" }}>
           <CloseOutlined style={{ fontSize: "12px" }} />
-        </button>
+        </BannerButton>
       </div>
     </div>
   );

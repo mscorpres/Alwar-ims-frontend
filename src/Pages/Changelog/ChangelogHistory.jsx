@@ -305,8 +305,6 @@ const ChangelogHistory = () => {
               icon={<DownloadOutlined />}
               onClick={handleDownload}
               style={{
-                backgroundColor: customColor.newBgColor,
-                borderColor: customColor.newBgColor,
                 height: 36,
               }}
             >
@@ -690,8 +688,6 @@ const ChangelogHistory = () => {
             style={{
               flex: 1,
               height: 36,
-              backgroundColor: customColor.newBgColor,
-              borderColor: customColor.newBgColor,
             }}
           >
             Search

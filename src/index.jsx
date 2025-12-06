@@ -21,8 +21,13 @@ const theme = {
     Button: {
       colorText: "#12120E",
       colorPrimary: customColor.btnColor,
+      colorPrimaryHover: "#bde649",
+      colorPrimaryActive: "#bde649",
+      primaryColor: "#12120E",
       defaultBg: customColor.btnColor,
       defaultColor: "#12120E",
+      defaultHoverBg: "#bde649",
+      defaultActiveBg: "#bde649",
       fontWeight: 550,
     },
     Tabs: {
@@ -71,6 +76,11 @@ const theme = {
       headerFontSizeSM: 16,
       headerFontSize: 18,
       colorBgContainer: "#f5f5f2",
+    },
+    DatePicker: {
+      cellHoverBg: "#203624",
+      cellActiveWithRangeBg: "rgba(210, 245, 113, 0.3)",
+      cellHoverWithRangeBg: "rgba(32, 54, 36, 0.2)",
     },
   },
 };

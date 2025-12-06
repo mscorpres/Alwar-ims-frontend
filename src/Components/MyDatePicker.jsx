@@ -12,25 +12,23 @@ const MyDatePicker = ({
   select,
 }) => {
   const [searchDateRange, setSearchDateRange] = useState(
-    select && select == "This Month"
-      ? [startingDate ? dayjs() : dayjs().startOf("month"), dayjs()]
-      : [startingDate ? dayjs() : dayjs().subtract(89, "d"), dayjs()]
+    [startingDate ? dayjs() : dayjs().startOf("month"), dayjs()]
   );
 
   useEffect(() => {
     if (value) {
       setDateRange(value);
     } else if (value === "") {
-      setDateRange(getDateFormatted([dayjs().subtract(89, "d"), dayjs()]));
+      setDateRange(getDateFormatted([dayjs().startOf("month"), dayjs()]));
     } else {
-      setDateRange(getDateFormatted([dayjs().subtract(89, "d"), dayjs()]));
+      setDateRange(getDateFormatted([dayjs().startOf("month"), dayjs()]));
     }
   }, []);
   useEffect(() => {
     setTimeout(() => {
       if (value === "") {
         const formatted = getDateFormatted([
-          dayjs().subtract(89, "d"),
+          dayjs().startOf("month"),
           dayjs(),
         ]);
 
@@ -61,7 +59,7 @@ const MyDatePicker = ({
       value={
         value !== ""
           ? getDateFormatted(value)
-          : [dayjs().subtract(89, "d"), dayjs()]
+          : [dayjs().startOf("month"), dayjs()]
       }
       format={format}
       disabledDate={disabledtheDate == "true" ? disabledDate : ""}
@@ -96,8 +94,7 @@ const getDateFormatted = (value) => {
         dayjs(value.substring(11, 21), "DD-MM-YYYY"),
       ];
     } else {
-      return [dayjs().subtract(89, "d"), dayjs()];
-      // return undefined;
+      return [dayjs().startOf("month"), dayjs()];
     }
   }
   if (typeof value === "object" && value?.length) {
