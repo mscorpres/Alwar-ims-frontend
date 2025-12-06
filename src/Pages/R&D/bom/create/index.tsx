@@ -597,7 +597,7 @@ const BOMCreate = () => {
 
   return (
     <Form
-      style={{ padding: 10, height: "95%" }}
+      style={{ height: "95%" }}
       form={form}
       layout="vertical"
       initialValues={initialValues}

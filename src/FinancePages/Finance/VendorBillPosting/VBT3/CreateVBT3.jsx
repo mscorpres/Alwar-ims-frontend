@@ -589,7 +589,6 @@ export default function CreateVBT3({ editingVBT, setEditingVBT, setVBTData }) {
           // tdsData: row.ven_tds,
           // tdsGL: "",
           value: row.value,
-          comp_unit: row.comp_unit,
           foreignValue: 0,
           insurance: 0,
           misc: 0,

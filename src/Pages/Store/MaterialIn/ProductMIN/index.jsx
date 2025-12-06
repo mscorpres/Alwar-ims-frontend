@@ -658,7 +658,6 @@ export default function ProductMIN() {
         materialInward.indexOf(row) >= 1 && (
           <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
         ),
-      sortable: false,
     },
     {
       headerName: "Product",

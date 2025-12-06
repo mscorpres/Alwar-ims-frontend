@@ -92,7 +92,7 @@ const QueryQ5 = () => {
           ),
           unit: data.component.unit,
           openingTotal: data.total_opening,
-          openingTotal: data.total_closing,
+          closingTotal: data.total_closing,
         };
         switch (element) {
           case "Vendor":
@@ -114,7 +114,7 @@ const QueryQ5 = () => {
   };
 
   return (
-    <Row gutter={6} style={{ padding: 10, height: "95%" }}>
+    <Row gutter={6} style={{ height: "95%" }}>
       <Col
         span={4}
         style={{ overflowY: "auto", overflowX: "hidden", height: "100%" }}

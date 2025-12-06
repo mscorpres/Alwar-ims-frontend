@@ -506,7 +506,6 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
           tdsData: row.ven_tds,
           tdsGL: { label: "", value: "" },
           value: row.taxable_value,
-          comp_unit: row.comp_unit,
         };
       });
       setRows(arr);

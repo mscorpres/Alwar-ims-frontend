@@ -362,7 +362,7 @@ const VendorReconcilation = () => {
   ];
 
   return (
-    <div style={{ padding: 10, height: "95%" }}>
+    <div style={{ height: "95%" }}>
       {/* <AddNote
         open={showNoteDialog}
         hide={() => setShowNoteDialog(false)}

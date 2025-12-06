@@ -100,7 +100,7 @@ const Products = ({
 
         {
           title: "Total Value",
-          description: +Number(totalAmount).toFixed(3) ?? 0,
+          description: +Number(totalAmount || 0).toFixed(3),
         },
       ];
       setTaxDetails(obj);

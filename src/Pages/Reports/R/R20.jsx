@@ -280,7 +280,7 @@ function R20() {
         destroyOnClose={true}
         title={"Standard Price"}
       >
-        <Row gutter={6} style={{ padding: 10, height: "90%" }}>
+        <Row gutter={6} style={{ height: "90%" }}>
           <Col span={6}>
             <Col span={24}>
               <Card size="small" title="Upload Single Component">

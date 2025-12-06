@@ -756,7 +756,7 @@ const App = () => {
         pauseOnFocusLoss
         pauseOnHover
       />
-      {showBlackScreen && <TopBanner messages={["Welcome to the new IMS system! Check out the latest features.", "System maintenance scheduled for Sunday 10 PM - 12 AM"]} />}
+      {showBlackScreen && <TopBanner messages={["Welcome to IMS Alwar.", "System maintenance scheduled for 7th December Sunday 01 AM - 23 PM"]} />}
       <Layout
         style={{
           width: "100%",

@@ -435,7 +435,6 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
           tdsData: row.ven_tds,
           tdsGL: { label: "", value: "" },
           value: row.value,
-          comp_unit: row.comp_unit,
           item_description: row.item_description,
         };
       });
@@ -446,7 +445,7 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
         uom: 0,
         maxQty: 1,
         c_part_no: "Ser002",
-        comp_unit: 0,
+        comp_unit: "",
         in_gst_cgst: 0,
         in_gst_igst: 0,
         in_gst_sgst: 0,
@@ -454,7 +453,7 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
         in_gst_type: editingVBT[0].in_gst_type,
         in_hsn_code: 0,
         in_po_rate: 0,
-        freight: 0,
+        freight: true,
         bill_qty: 1,
         freightGl: "(Freight Inward)800105",
         gstAssetValue: 0, // value + freight
@@ -473,8 +472,6 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
         tdsData: editingVBT[0].ven_tds,
         tdsGL: { label: "", value: "" },
         value: 0,
-        comp_unit: "",
-        freight: true,
       };
       arr = [...arr, freightRow];
       setRows(arr);

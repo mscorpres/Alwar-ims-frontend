@@ -300,12 +300,6 @@ const rules = {
       message: "Party Type is required",
     },
   ],
-  partyAddress: [
-    {
-      required: true,
-      message: "Party Address is required",
-    },
-  ],
   partyCin: [
     {
       required: true,

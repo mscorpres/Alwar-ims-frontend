@@ -279,7 +279,6 @@ function CreateShipment({
           // foreignValueCombined: m.currency_symbol + " " + m.taxablevalue,
           foreignValue:
             +Number(m.item_qty).toFixed(2) * +Number(m.item_rate).toFixed(2),
-          pickLocation: m.item_pick_location.loc_key,
           gstTypeLabel: m.item_gst_type,
           cgst: m.cgst,
           sgst: m.sgst,

@@ -97,7 +97,7 @@ function ProductionMIS() {
     <Form
       form={misForm}
       layout="vertical"
-      style={{ padding: 10, height: "95%", overflowY: "hidden" }}
+      style={{ height: "95%", overflowY: "hidden" }}
       initialValues={initialValues}
     >
       <Row

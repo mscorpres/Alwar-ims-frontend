@@ -511,11 +511,10 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
           // tds amount is equal to percentage of tds asset value
           //vendor amount is equal to gst asset value - tds amount
           // tdsCodes: [{ text: "--", value: "--" }, ...tdsC],
-          tdsCodes: [{ text: "--", value: "--" }],
+          tdsCodes: [{ text: "--", value: "" }],
           tdsData: row.ven_tds,
           tdsGL: { label: "", value: "" },
           value: row.taxable_value,
-          comp_unit: row.comp_unit,
           item_description: row.item_description,
         };
       });

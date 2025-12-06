@@ -497,6 +497,7 @@ textarea {
   border: none !important;
   margin: 0 !important;
   margin-bottom: 5px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 .nested-table .ant-table-tbody .ant-table-row {
   background-color: rgb(185, 185, 185);

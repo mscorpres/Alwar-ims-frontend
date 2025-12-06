@@ -562,7 +562,6 @@ const initialValues = {
   state: "",
   mobile: "",
   city: "",
-  vendorName: "",
   pincode: "",
   address: "",
   msmeStatus: "N",

@@ -151,7 +151,6 @@ function CreatePhysicalProduction() {
       {
         id: v4(),
         comp: "",
-        rem: "",
         phyStock: "",
         uom: "",
         rem: "",

@@ -140,7 +140,6 @@ const Manual = () => {
       {
         id: v4(),
         comp: "",
-        rem: "",
         phyStock: "",
         uom: "",
         rem: "",

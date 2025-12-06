@@ -69,7 +69,7 @@ const ApprovalList = (props: Props) => {
   }, []);
 
   return (
-    <Row justify="center" style={{ padding: 10, height: "95%" }}>
+    <Row justify="center" style={{ height: "95%" }}>
       {selectedProduct && (
         <Approval
           show={showApprovalLogs}

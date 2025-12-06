@@ -53,11 +53,10 @@ const CreateInvoice = () => {
     );
 
     const obj = {
-      clientBranch: values.location,
+      clientBranch: values.location.value,
       clientID: values.client.value,
       buyerOrderDate: values.buyerOrderDate,
       buyerOrderNo: values.buyerOrderNo,
-      clientBranch: values.location.value,
       deliveryNote: values.deliveryNote,
       deliveryNoteDate: values.deliveryNoteDate,
       deliveryTerms: values.termsDelivery,
@@ -71,8 +70,7 @@ const CreateInvoice = () => {
       roadPermit: values.roadPermit,
       salesperson: values.salesPerson,
       shippingAddress: values.shippingAddress,
-      shippingCity: values,
-      shippingCity,
+      shippingCity: values.shippingCity,
       shippingGst: values.shippingGst,
       shippingName: values.shippingName,
       shippingPanNo: values.shippingPan,

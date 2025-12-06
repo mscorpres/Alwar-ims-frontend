@@ -413,7 +413,7 @@ const JwReturnModel = ({ show, close }) => {
                       </Col>
                       <Col>
                         <Typography.Text>
-                          {!totalValue || totalValue === NaN ? 0 : totalValue}
+                          {!totalValue || Number.isNaN(totalValue) ? 0 : totalValue}
                         </Typography.Text>
                       </Col>
                     </Row>

@@ -59,7 +59,7 @@ const HsnMap = () => {
       form={form}
       style={{ height: "95%" }}
     >
-      <Row justify="center" gutter={16} style={{ padding: 10, height: "100%" }}>
+      <Row justify="center" gutter={16} style={{ height: "100%" }}>
         <Col sm={8} xxl={4}>
           <Card size="small" title="Map HSN">
             <Form.Item
