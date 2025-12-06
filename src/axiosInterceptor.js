@@ -7,8 +7,6 @@ const generateUniqueId = () => {
   return uuidv4();
 };
 
-
-
 const formatTimestamp = () => {
   const now = new Date();
   const day = String(now.getDate()).padStart(2, "0");
