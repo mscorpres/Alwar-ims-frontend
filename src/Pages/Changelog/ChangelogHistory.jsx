@@ -5,6 +5,7 @@ import { PlayCircleOutlined, FileTextOutlined, DownOutlined, UpOutlined, SearchO
 import { imsAxios } from "../../axiosInterceptor";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import { customColor } from "../../utils/customColor";
 
 // Component for expandable description
 const ExpandableDescription = ({ description, maxLines = 3 }) => {
