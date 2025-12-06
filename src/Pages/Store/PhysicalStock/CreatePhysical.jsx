@@ -167,7 +167,7 @@ const Manual = () => {
     addrow.map((a) => remarkArr.push(a.rem));
 
     const response = await imsAxios.post("/audit/saveAudit", {
-      branch: "BRMSC012",
+      branch: "BRALWR36",
       component: comName,
       closing: existStock,
       audit: phyisalStock,

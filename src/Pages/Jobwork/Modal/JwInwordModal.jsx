@@ -454,7 +454,7 @@ const { data } = response;
     let filedata = value.fileComponents;
     let payload = {
       attachment: fetchAttachment,
-      companybranch: "BRMSC012",
+      companybranch: "BRALWR36",
       cost_center: header.cost_center,
       documentName: filedata.map((r) => r.documentName),
       component: mainData[0].component.value ?? mainData[0].component,
@@ -945,7 +945,7 @@ const defaultValues = {
   gstin: "",
   vendorAddress: "",
   ewaybill: "",
-  companybranch: "BRMSC012",
+  companybranch: "BRALWR36",
   projectID: "",
   costCenter: "",
   components: [

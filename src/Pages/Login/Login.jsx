@@ -53,7 +53,7 @@ const Login = () => {
   const [inpVal, setInpVal] = useState({
     username: "",
     password: "",
-    company_branch: "BRMSC012",
+    company_branch: "BRALWR36",
   });
   const { Title, Link, Text } = Typography;
   const [signUp] = Form.useForm();
@@ -94,7 +94,6 @@ const Login = () => {
       const { success } = res || {};
     
       if (success) {
-       
         const isTwoStep = res?.isTwoStep ?? res?.data?.isTwoStep;
         if (isTwoStep === "Y") {
           // Two-step login, show OTP screen

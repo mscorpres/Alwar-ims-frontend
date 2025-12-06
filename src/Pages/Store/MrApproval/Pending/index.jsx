@@ -19,7 +19,7 @@ const PendingApproval = () => {
     try {
       setRows([]);
       const payload = {
-        branch: "BRMSC012",
+        branch: "BRALWR36",
         status: "",
       };
       const response = await imsAxios.post(

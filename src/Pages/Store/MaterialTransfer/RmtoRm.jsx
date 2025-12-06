@@ -315,8 +315,8 @@ function RmtoRm() {
                   { text: "A-21 [BRMSC012]", value: "BRMSC012" },
                   { text: "B-29 [BRMSC029]", value: "BRMSC029" },
                   {
-                    text: "B-36 Alwar [BRBA036]",
-                    value: "BRBA036",
+                    text: "B36 [ALWAR]",
+                    value: "BRALWR36",
                   },
                   { text: "D-160 [BRBAD116]", value: "BRBAD116" },
                 ]}

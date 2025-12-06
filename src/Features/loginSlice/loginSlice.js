@@ -69,17 +69,17 @@ const initialState = {
 //         localStorage.setItem(
 //           "otherData",
 //           JSON.stringify({
-//             company_branch: "BRMSC012",
+//             company_branch: "B-36 Alwar",
 //             session: "23-24",
 //             setting: data.data.settings,
 //           })
 //         );
 //         imsAxios.defaults.headers["x-csrf-token"] = data.data.token;
-//         imsAxios.defaults.headers["Company-Branch"] = "BRMSC012";
+//         imsAxios.defaults.headers["Company-Branch"] = "B-36 Alwar";
 //         return await {
 //           ...data.data,
 //           session: "23-24",
-//           company_branch: "BRMSC012",
+//           company_branch: "B-36 Alwar",
 //         };
 //       } else {
 //         return thunkAPI.rejectWithValue(data.message);
@@ -194,7 +194,7 @@ const loginSlice = createSlice({
 
       // Update axios headers with selected branch and session
       const company_branch =
-        action.payload?.company_branch ?? obj.company_branch ?? "BRMSC012";
+        action.payload?.company_branch ?? obj.company_branch ?? "BRALWR36";
       const session = action.payload?.session ?? obj.session ?? "25-26";
 
       localStorage.setItem(

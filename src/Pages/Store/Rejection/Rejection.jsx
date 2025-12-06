@@ -174,7 +174,7 @@ const Rejection = () => {
     allDataComes.map((aa) => qtyArry.push(aa?.inward_qty));
     allDataComes.map((aa) => locArry.push(aa?.loc));
     const response = await imsAxios.post("/rejection/saveRejection", {
-      branch: "BRMSC012",
+      branch: "BRALWR36",
       component: compArry,
       qty: qtyArry,
       loc_to: locArry,

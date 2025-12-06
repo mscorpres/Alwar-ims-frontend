@@ -169,7 +169,7 @@ export default function MateirialInward({
       );
       if (fileResponse.success) {
         let final = {
-          companybranch: "BRMSC012",
+          companybranch: "BRALWR36",
           invoices: fileResponse.data,
           poid: materialInward,
         };

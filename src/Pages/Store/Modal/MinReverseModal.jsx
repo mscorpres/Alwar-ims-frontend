@@ -22,22 +22,22 @@ function MinReverseModal({
     mainData.map((aa) => compArray.push(aa.componentKey));
 
     const response = await imsAxios.post("/reversal/saveMINReversal", {
-      branch: "BRMSC012",
+      branch: "BRALWR36",
       authentication: authArray,
       component: compArray,
       remark: remark,
       transaction: inputStore,
     });
-    if (data.success) {
+    if (response?.success) {
       setRemark("");
       setReverseModal(false);
       setReverseLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response?.message);
       setReverseModal(false);
       setReverseLoading(false);
     }
-    console.log(data);
+
   };
 
   return (

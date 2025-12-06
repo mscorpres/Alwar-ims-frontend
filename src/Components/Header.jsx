@@ -17,7 +17,7 @@ const Header = ({ showSideBar, setShowSideBar, notifications }) => {
   const navigate = useNavigate();
   const [userMenu, setUserMenu] = useState(false);
   const [location, setLocation] = useState("");
-  const locationOptions = [{ value: "BRMSC012", label: "A-21 [BRMSC012]" }];
+  const locationOptions = [{ value: "B-36 Alwar", label: "BRALWR36" }];
   const [norificationStatus, setNotificationStatus] = useState(false);
 
   const logoutHandler = () => {

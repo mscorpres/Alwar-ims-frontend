@@ -410,7 +410,7 @@ const App = () => {
       const tokenToUse = localStorage.getItem("newToken") || user.token;
       imsAxios.defaults.headers["x-csrf-token"] = tokenToUse;
       imsAxios.defaults.headers["Company-Branch"] =
-        user.company_branch || "BRMSC012";
+        user.company_branch || "BRALWR36";
       imsAxios.defaults.headers["Session"] = user.session || "25-26";
       socket.emit("fetch_notifications", {
         source: "react",
@@ -642,7 +642,7 @@ const App = () => {
   const options = [
     { label: "A-21 [BRMSC012]", value: "BRMSC012" },
     { label: "B-29 [BRMSC029]", value: "BRMSC029" },
-    { label: "B-36 Alwar [BRBA036]", value: "BRBA036" },
+    { label: "B36 [ALWAR]", value: "BRALWR36" },
     { label: "D-160 [BRBAD116]", value: "BRBAD116" },
   ];
   const sessionOptions = [
@@ -653,7 +653,7 @@ const App = () => {
   ];
 
   const locationBranchOptions = {
-    alwar: [{ label: "B-36 Alwar [BRBA036]", value: "BRBA036" }],
+    alwar: [{ label: "B36 [ALWAR]", value: "BRALWR36" }],
     noida: [
       { label: "A-21 [BRMSC012]", value: "BRMSC012" },
       { label: "B-29 [BRMSC029]", value: "BRMSC029" },

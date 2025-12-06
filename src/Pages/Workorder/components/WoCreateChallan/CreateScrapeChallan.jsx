@@ -53,7 +53,7 @@ const CreateScrapeChallan = () => {
     gstin: "",
     vendorAddress: "",
     ewaybill: "",
-    companybranch: "BRMSC012",
+    companybranch: "BRALWR36", 
     projectID: "",
     costCenter: "",
     components: [

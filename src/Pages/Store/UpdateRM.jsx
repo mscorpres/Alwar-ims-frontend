@@ -192,21 +192,21 @@ function UpdateRM() {
     mainData.map((rem) => remarkArray.push(rem.remark));
 
     const response = await imsAxios.post("/transaction/updateMIN", {
-      branch: "BRMSC012",
+      branch: "BRALWR36",
       key: keyArray,
       component: compKeyArray,
       invoice: invoiceArray,
       remark: remarkArray,
       min_transaction: inputStore,
     });
-    if (data.success) {
+    if (response.success) {
       setUpdteModal(false);
       resetFun();
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response.message?.msg || response.message);
       setUpdteModal(false);
     }
-    console.log(data);
+
   };
   return (
     <Row gutter={10} style={{ margin: "5px" }}>
