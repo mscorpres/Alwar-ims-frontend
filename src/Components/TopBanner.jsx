@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { LeftOutlined, RightOutlined, CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
 
 const BANNER_STORAGE_KEY = "topBannerClosedAt";
-const HIDE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+const HIDE_DURATION = 60 * 60 * 1000;
 
 const TopBanner = ({ messages = ["MY message here...."] }) => {
   const [visible, setVisible] = useState(false);
@@ -53,6 +53,8 @@ const TopBanner = ({ messages = ["MY message here...."] }) => {
   };
 
   if (!visible || messages.length === 0) return null;
+
+  
 
   return (
     <div

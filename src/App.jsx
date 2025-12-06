@@ -103,6 +103,7 @@ const App = () => {
   const [switchBranch, setSwitchBranch] = useState(null);
   const [switchSession, setSwitchSession] = useState(null);
   const [switchSuccess, setSwitchSuccess] = useState(false);
+  const [showBlackScreen, setShowBlackScreen] = useState(false);
   const company = JSON.parse(localStorage.getItem("loggedInUser"));
 
   const logoutHandler = () => {
@@ -615,6 +616,17 @@ const App = () => {
     });
   }, []);
 
+  // Show black screen after TopBanner renders for some time
+  useEffect(() => {
+    if (user && user.passwordChanged === "C") {
+      const timer = setTimeout(() => {
+        setShowBlackScreen(true);
+      }, 1500); // Show black screen after 3 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [user]);
+
   useEffect(() => {
     setModulesOptions([]);
     if (searchModule.length > 2) {
@@ -744,7 +756,7 @@ const App = () => {
         pauseOnFocusLoss
         pauseOnHover
       />
-      <TopBanner messages={["Welcome to the new IMS system! Check out the latest features.", "System maintenance scheduled for Sunday 10 PM - 12 AM"]} />
+      {showBlackScreen && <TopBanner messages={["Welcome to the new IMS system! Check out the latest features.", "System maintenance scheduled for Sunday 10 PM - 12 AM"]} />}
       <Layout
         style={{
           width: "100%",
@@ -1221,6 +1233,7 @@ const App = () => {
           </Layout>
         </Layout>
       </Layout>
+
     </div>
   );
 };
