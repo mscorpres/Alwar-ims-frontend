@@ -165,7 +165,7 @@ export default function CreatePo() {
       advancePayment: newPurchaseOrder.advancePayment,
     };
     let error = false;
-    if (rowCount.length == 0) {
+    if (rowCount.length === 0) {
       toast.error("Please add at least one component");
       return;
     } else if (
@@ -190,17 +190,20 @@ export default function CreatePo() {
     }
 
     rowCount.map((count) => {
+
       if (
-        count.currency == "" ||
-        count.exchange == 0 ||
-        count.component == "" ||
-        count.qty == 0 ||
-        count.rate == ""
+        !count.currency === "" ||
+        !count.exchange_rate === 0  ||
+        !count.component === "" ||
+        !count.qty === 0 ||
+        count.rate === ""
       ) {
+        console.log(  count.currency,count.exchange_rate,count.component,count.qty,count.rate, "data")
         error = true;
       }
     });
     if (error) {
+     
       toast.error("Please enter all the values for all components");
       return;
     }
@@ -212,27 +215,21 @@ export default function CreatePo() {
     if (showSubmitConfirm) {
       const response = await imsAxios.post("/purchaseOrder/createPO", {
         ...showSubmitConfirm,
-      }).then((res) => {
-        if(res?.code == 500){
-          toast.error(res?.message.msg)
-          setSubmitLoading(false);
-        }
-        else{
-          return res
-        }
-      });
-      setSubmitLoading(false);
+      })
+     
       const { data } = response;
-      if (data) {
-        setShowSubmitConfirm(null);
-        if (response.success) {
+    
+      
+        if (response?.success) {
+           setSubmitLoading(false);
+             setShowSubmitConfirm(null);
           resetFunction();
           rowsReset();
           setActiveTab("1");
           setSuccessData({
             vendorName: newPurchaseOrder.vendorname.label,
             project: newPurchaseOrder.project_name,
-            poId: data.data.po_id,
+            poId: data?.po_id,
             components: rowCount.map((row, index) => {
               return {
                 id: index,
@@ -246,9 +243,11 @@ export default function CreatePo() {
             }),
           });
         } else {
-          toast.error(response.message?.msg || response.message);
+              setSubmitLoading(false);
+             setShowSubmitConfirm(null);
+          toast.error(response.message);
         }
-      }
+
     }
   };
   const getPOs = async (searchInput) => {
@@ -259,8 +258,8 @@ export default function CreatePo() {
       });
       setSelectLoading(false);
       let arr = [];
-      if (!data.msg) {
-        arr = data.map((d) => {
+      if (response?.success) {
+        arr = response?.data.map((d) => {
           return { text: d.text, value: d.id };
         });
         setAsyncOptions(arr);
@@ -369,8 +368,8 @@ export default function CreatePo() {
       });
       setSelectLoading(false);
       let arr = [];
-      if (!data.msg) {
-        arr = data.map((d) => {
+      if (response?.success) {
+        arr = response?.data.map((d) => {
           return { text: d.text, value: d.id };
         });
         setAsyncOptions(arr);

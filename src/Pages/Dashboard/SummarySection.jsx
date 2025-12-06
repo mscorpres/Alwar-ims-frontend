@@ -3,6 +3,7 @@ import React from "react";
 import MyButton from "../../Components/MyButton";
 import { useNavigate } from "react-router";
 import MyDatePicker from "../../Components/MyDatePicker";
+import { customColor } from "../../utils/customColor";
 
 const MasterSummary = ({
   loading,
@@ -70,7 +71,7 @@ const SummaryItem = ({
 }) => {
   return (
     <Col key={index} span={summaryLength ? 24 / summaryLength : 6}>
-      <Card size="small">
+      <Card size="small" style={{backgroundColor:customColor.cardColor}}>
         <Flex vertical justify="justify-between" align="stretch">
           <Col span={24}>
             <Row justify="space-between" align="middle">

@@ -307,39 +307,41 @@ export default function AddComponents({
           project: newPurchaseOrder.project_name,
         }
       );
+
+      const {data} = response
       setPageLoading(false);
       let arr1 = rowCount;
       arr1 = arr1.map((row) => {
         if (row.id == id) {
           let obj = row;
           if (row.gsttype == "L") {
-            let percentage = data.data.gstrate / 2;
+            let percentage = data.gstrate / 2;
             obj = {
               ...obj,
               component: value,
-              rate: Number(data.data.rate.toString().trim()),
-              unit: data.data.unit,
+              rate: Number(data.rate.toString().trim()),
+              unit: data.unit,
               inrValue:
-                Number(data.data.rate.toString().trim()) *
+                Number(data.rate.toString().trim()) *
                 Number(obj?.qty) *
                 Number(obj?.exchange_rate),
-              hsncode: data.data.hsn,
-              gstrate: data.data.gstrate,
+              hsncode: data.hsn,
+              gstrate: data.gstrate,
               cgst: (obj?.inrValue * percentage) / 100,
               sgst: (obj?.inrValue * percentage) / 100,
               igst: 0,
             };
           } else if (row.gsttype == "I") {
-            let percentage = data.data.gstrate;
+            let percentage = data.gstrate;
             obj = {
               ...row,
               cgst: 0,
               component: value,
-              rate: data.data.rate,
-              unit: data.data.unit,
-              inrValue: data.data.rate * row.qty * parseInt(row?.exchange_rate),
-              hsncode: data.data.hsn,
-              gstrate: data.data.gstrate,
+              rate: data.rate,
+              unit: data.unit,
+              inrValue: data.rate * row.qty * parseInt(row?.exchange_rate),
+              hsncode: data.hsn,
+              gstrate: data.gstrate,
               sgst: 0,
               igst: (row?.inrValue * percentage) / 100,
             };
@@ -347,20 +349,20 @@ export default function AddComponents({
             obj = {
               ...row,
               component: value,
-              rate: data.data.rate,
-              unit: data.data.unit,
-              gstrate: data.data.gstrate,
-              hsncode: data.data.hsn,
-              inrValue: data.data.rate * row.qty * parseInt(row?.exchange_rate),
+              rate: data.rate,
+              unit: data.unit,
+              gstrate: data.gstrate,
+              hsncode: data.hsn,
+              inrValue: data.rate * row.qty * parseInt(row?.exchange_rate),
             };
           }
           obj = {
             ...obj,
-            rate_cap: data.data.project_rate,
-            project_req_qty: data.data.project_qty,
-            po_exec_qty: data.data.po_ord_qty,
-            po_exec_qty: data.data.po_ord_qty,
-            tol_price: Number((data.data.project_rate * 1) / 100).toFixed(2),
+            rate_cap: data.project_rate,
+            project_req_qty: data.project_qty,
+            po_exec_qty: data.po_ord_qty,
+            po_exec_qty: data.po_ord_qty,
+            tol_price: Number((data.project_rate * 1) / 100).toFixed(2),
           };
           return obj;
         } else {
@@ -387,7 +389,7 @@ export default function AddComponents({
       );
       const { data } = response;
       let arr = [];
-      if (!data.msg) {
+      if (response?.success) {
         arr = data.map((d) => {
           return { text: d.text, value: d.id };
         });

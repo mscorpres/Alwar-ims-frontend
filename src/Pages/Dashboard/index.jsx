@@ -158,7 +158,7 @@ const Dashboard = () => {
         }
       );
       const  data  = response?.data;
-      if (data) {
+     
         if (response.success) {
           if (transactionType === "transactions") {
             setTransactionSummary([
@@ -230,9 +230,7 @@ const Dashboard = () => {
             ]);
           }
         }
-      } else {
-        toast.error(response.message || response.message);
-      }
+   
     } catch (error) {
     } finally {
       setLoading((curr) => ({

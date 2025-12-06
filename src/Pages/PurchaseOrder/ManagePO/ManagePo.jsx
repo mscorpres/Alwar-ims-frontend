@@ -57,7 +57,7 @@ const ManagePO = () => {
     if (response.success) {
       printFunction(response.data.buffer.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
     setLoading(false);
   };
@@ -84,7 +84,7 @@ const ManagePO = () => {
       let filename = `PO ${poid}`;
       downloadFunction(response.data.buffer.data, filename);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
   };
 
@@ -273,8 +273,9 @@ const ManagePO = () => {
           wise: wise,
         }
       );
-      setSearchLoading(false);
+    
       if (response.success) {
+          setSearchLoading(false);
         let arr = response?.data?.map((row, index) => ({
           ...row,
           id: row.po_transaction,
@@ -282,14 +283,18 @@ const ManagePO = () => {
         }));
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+         setSearchLoading(false);
+        toast.error(response.message);
       }
     } else {
       if (wise == "single_date_wise" && searchDateRange == null) {
+         setSearchLoading(false);
         toast.error("Please select start and end dates for the results");
       } else if (wise == "po_wise") {
+         setSearchLoading(false);
         toast.error("Please enter a PO id");
       } else if (wise == "vendor_wise") {
+         setSearchLoading(false);
         toast.error("Please select a vendor");
       }
     }
@@ -330,7 +335,7 @@ const ManagePO = () => {
       setShowViewSideBar(true);
       getPoLogs(poid);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
   };
 
@@ -352,7 +357,7 @@ const ManagePO = () => {
       })
       .then((res) => {
         if (!res.success) {
-          toast.error(res.message?.msg || res.message);
+          toast.error(res.message);
           setLoading(false);
         } else {
           return res;
@@ -367,12 +372,11 @@ const ManagePO = () => {
         ...response.data.vendor[0],
       });
     } else {
-      toast.error(response?.message?.msg || response?.message);
+        setLoading(false);
+      toast.error(response?.message);
     }
   };
-  useEffect(() => {
-    console.log("this is the wise in po", wise);
-  }, [wise]);
+
 
   return (
     <div className="manage-po" style={{ position: "relative", height: "100%" }}>

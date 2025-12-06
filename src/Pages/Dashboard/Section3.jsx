@@ -1,11 +1,12 @@
 
 import { Card, Col, Row, Typography } from "antd";
+import { customColor } from "../../utils/customColor";
 const Section3 = ({ columns, rows, title, date, setDate }) => {
 
   return (
     <Col span={12} style={{ minHeight: "100%" }}>
       <Card
-        style={{ minHeight: "100%" }}
+        style={{ minHeight: "100%", backgroundColor:customColor.cardColor }}
         styles={{ body: { minHeight: "100%" } }}
         size="small"
       >

@@ -101,6 +101,7 @@ const loginSlice = createSlice({
       state.user = null;
       state.message = "User Logged Out!";
       localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("newToken");
       localStorage.setItem("otherData", JSON.stringify(otherData));
       toast.info("User Logged Out!");
     },

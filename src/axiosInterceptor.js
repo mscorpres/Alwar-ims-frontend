@@ -103,6 +103,7 @@ imsAxios.interceptors.response.use(
 let branch =
   JSON.parse(localStorage.getItem("otherData"))?.company_branch ?? "BRALWR36";
 let session = JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";
+console.log(branch,"=================branch")
 
 imsAxios.defaults.headers["Company-Branch"] = branch;
 imsAxios.defaults.headers["Session"] = session;
