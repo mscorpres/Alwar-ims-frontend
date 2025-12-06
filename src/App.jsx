@@ -46,7 +46,7 @@ import MyAsyncSelect from "./Components/MyAsyncSelect";
 import internalLinks from "./Pages/internalLinks.jsx";
 import TicketsModal from "./Components/TicketsModal/TicketsModal";
 import { items, items1 } from "./utils/sidebarRoutes.jsx";
-// import TopBanner from "./Components/TopBanner";
+import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
 import CheckmarkLoader from "./Components/CheckmarkLoader";
 import { customColor } from "./utils/customColor.js";
@@ -744,7 +744,7 @@ const App = () => {
         pauseOnFocusLoss
         pauseOnHover
       />
-      {/* <TopBanner /> */}
+      <TopBanner messages={["Welcome to the new IMS system! Check out the latest features.", "System maintenance scheduled for Sunday 10 PM - 12 AM"]} />
       <Layout
         style={{
           width: "100%",
