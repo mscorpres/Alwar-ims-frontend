@@ -693,8 +693,8 @@ const App = () => {
 
           const targetUrl =
             location.toLowerCase() === "alwar"
-              ? "http://localhost:3002/"
-              : "http://localhost:3000/";
+              ? ""
+              : import.meta.env.VITE_REACT_APP_SWITCH_URL;
 
           const urlParams = new URLSearchParams();
           if (previousToken) {
