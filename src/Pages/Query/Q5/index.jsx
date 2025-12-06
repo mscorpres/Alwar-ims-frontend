@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { imsAxios } from "../../../axiosInterceptor";
 import {
   Button,
   Card,

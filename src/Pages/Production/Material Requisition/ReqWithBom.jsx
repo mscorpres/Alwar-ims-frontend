@@ -47,11 +47,10 @@ const ReqWithBom = () => {
     const response = await imsAxios.post(
       "/transaction/getMaterialRequestPickLocation"
     );
-    // const response = await imsAxios.post("/transaction/getLocationInMin");
     setSelectLoading(false);
     const locArr1 = [];
-    if (response.success && response.data?.data) {
-      response.response.data.map((obj) =>
+    if (response.success) {
+      response.data.map((obj) =>
         locArr1.push({ text: obj.text, value: obj.id })
       );
     }

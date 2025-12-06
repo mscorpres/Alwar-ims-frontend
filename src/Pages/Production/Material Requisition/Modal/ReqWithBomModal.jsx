@@ -68,6 +68,9 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
       arr = [...dataArray, ...dataArray1, ...dataArray2, ...dataArray3];
       setTableData(arr);
     }
+    else{
+      toast.error(response.message);
+    }
   };
 
   const columns = [

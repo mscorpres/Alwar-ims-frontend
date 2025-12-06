@@ -53,16 +53,10 @@ export default function ItemLocationLog() {
 
   //getting components options
   const getComponentOption = async (search) => {
-    // setLoading("select");
-    // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-    //   search,
-    // });
-    // setLoading(false);
     const response = await executeFun(
       () => getComponentOptions(search),
       "select"
     );
-    const { data } = response;
     getData(response);
   };
 
@@ -95,9 +89,8 @@ export default function ItemLocationLog() {
       component: values.component,
       location: values.location,
     });
-    const { data } = response;
     if (response.success) {
-      setAltDetails(data);
+      setAltDetails(response.data);
       setLoading(false);
     }
     setLoading(false);
@@ -113,26 +106,17 @@ export default function ItemLocationLog() {
         location: values.location,
         part_code: values.component,
       });
+      console.log(response)
       getDetails(values);
-      if(response?.data?.status === "error"){
-        toast.error(response?.data?.message?.msg);
+      if(response?.success == false){
+        toast.error(response?.message);
         setLoading(false);
-        return
+        return;
       }
-      const { data } = response;
-      const {
-        header,
-        bom_details,
-        body,
-        last_physical_entry_by,
-        last_physical_entry_dt,
-        last_remark,
-      } = data.data;
-      console.log("this is the header", header);
-      if (data) {
+      if (response.data) {
         if (response.success) {
-          const bomDetails = bom_details;
-          const arr = body.map((row, index) => ({
+          const bomDetails = response.data.bom_details;
+          const arr = response.data.body.map((row, index) => ({
             index: index + 1,
             id: v4(),
             qty_in_rate: row.qty_in_rate ?? "-",
@@ -142,10 +126,7 @@ export default function ItemLocationLog() {
           }));
           let bomDetailsArr = [];
           for (const key in bomDetails) {
-            // console.log("key", key);
-            // console.log("bomDetails", bomDetails);
             let obj = {
-              // product: key[0].product,
               sku: key,
               bom: bomDetails[key].map((row) => ({
                 name: row.bom_name,
@@ -155,7 +136,6 @@ export default function ItemLocationLog() {
             };
             bomDetailsArr = [...bomDetailsArr, obj];
           }
-          // console.log("bomDetailsArr", bomDetailsArr);
           setBomDetails(bomDetailsArr);
           setRows(arr);
           setSummaryData([
@@ -260,11 +240,6 @@ export default function ItemLocationLog() {
       field: "out_rate",
       width: 120,
     },
-    // {
-    //   headerName: "Total Value",
-    //   field: "total_value",
-    //   width: 120,
-    // },
     {
       headerName: "Weighted Average Rate",
       field: "weightedPurchaseRate",
@@ -454,20 +429,6 @@ export default function ItemLocationLog() {
                     header={`${row.partName} `}
                     key={row.partName}
                   >
-                    {/* {altDetails?.length === 0 && (
-                      <Row key={row.name} justify="space-between">
-                        <Col>
-                          <Typography.Text
-                            style={{ fontSize: "0.8rem" }}
-                            type="secondary"
-                          >
-                            No Data found.
-                          </Typography.Text>
-                        </Col>
-                      </Row>
-                    )} */}
-                    {/* {altDetails &&
-                      altDetails?.map((row) => ( */}
                     <Row key={row.partName} justify="space-between">
                       <Col>
                         <Typography.Text style={{ fontSize: "0.8rem" }} strong>
@@ -486,7 +447,6 @@ export default function ItemLocationLog() {
                       </Col>
                       <Divider style={{ margin: 5 }} />
                     </Row>
-                    {/* // ))} */}
                   </Collapse.Panel>
                 ))}
               </Collapse>

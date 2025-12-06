@@ -66,7 +66,7 @@ function MaterialTransfer({ type }) {
       location_key: allData.locationSel,
     });
     // console.log(data.data)
-    setLocDetail(data.data);
+    setLocDetail(response.data);
   };
 
   const getComponent = async (e) => {
@@ -94,7 +94,7 @@ function MaterialTransfer({ type }) {
     });
     setRows((prev) => {
       const updated = [...prev];
-      updated[rowIndex] = { ...updated[rowIndex], restDetail: data.data };
+      updated[rowIndex] = { ...updated[rowIndex], restDetail: response.data };
       return updated;
     });
   };
@@ -124,7 +124,7 @@ function MaterialTransfer({ type }) {
     });
     setRows((prev) => {
       const updated = [...prev];
-      updated[rowIndex] = { ...updated[rowIndex], address: data.data };
+      updated[rowIndex] = { ...updated[rowIndex], address: response.data };
       return updated;
     });
   };
@@ -230,7 +230,7 @@ function MaterialTransfer({ type }) {
         branch: branchCode,
       });
       let arr = [];
-      const list = data?.data ?? data; // support both shapes
+      const list = response?.data ?? response; // support both shapes
       if (Array.isArray(list)) {
         list.map((a) => arr.push({ text: a.text, value: a.id }));
       }

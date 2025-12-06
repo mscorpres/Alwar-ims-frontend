@@ -136,15 +136,19 @@ function R35() {
       date: values.date,
     });
     if (response.success) {
-      let arr = response.data.map((r, index) => {
+      // Handle both array and single object responses
+      const dataArray = Array.isArray(response.data)
+        ? response.data
+        : [response.data];
+      let arr = dataArray.map((r, index) => {
         return { ...r, id: index + 1 };
       });
       setRows(arr);
       setLoading(false);
     } else {
       toast.error(response.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
   const downloadHandler = () => {
     downloadCSV(rows, columns, `R35 Report`);

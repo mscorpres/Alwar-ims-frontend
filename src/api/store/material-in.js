@@ -113,7 +113,7 @@ export const getMINLabelRows = async (wise, value) => {
 
   let arr = [];
   if (response.success) {
-    arr = response.response.data.map((row, index) => ({
+    arr = response.data.map((row, index) => ({
       id: index + 1,
       createdDate: row.datetime,
       invoice: row.invoice,

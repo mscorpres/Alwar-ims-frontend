@@ -78,7 +78,7 @@ export default function NewModal({
           return {
             ...a,
             loc: value,
-            setl: data?.data?.available_qty,
+            setl: response?.data?.available_qty,
           };
         } else {
           return a;
@@ -98,8 +98,8 @@ export default function NewModal({
         transaction: open?.transaction_id,
       }
     );
-    if (data.success) {
-      let arr = data.data.material.map((row, index) => {
+    if (response.success) {
+      let arr = response.data.material.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -108,14 +108,14 @@ export default function NewModal({
       });
       if (arr.length > 0) {
         setMat(arr);
-        setHead(data?.data?.header);
+        setHead(response?.data?.header);
         setLoading(false);
       } else {
         setModalOpen(false);
         getPendingData();
       }
     } else {
-      toast.error(data.message?.msg || data.message);
+      toast.error(response.message);
       setOpen(false);
       getPendingData();
       // setLoading(false);

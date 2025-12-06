@@ -105,17 +105,15 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       setLoading("fetchSTock", true);
       const payload = { component, location };
       const response = await imsAxios.post("/godown/godownStocks", payload);
-      const { data } = response;
-      if (data) {
-        if (data.success) {
-          const qty = data.data.available_qty;
-          const rate = data?.data?.avr_rate;
+        if (response.success) {
+          const qty = response.data.available_qty;
+          const rate = response?.data?.avr_rate;
           form.setFieldValue("availableQty", qty);
           form.setFieldValue("weightedRate", rate);
         } else {
-          toast.error(data.message?.msg || data.message);
+          toast.error( response.message);
         }
-      }
+      
     } catch (error) {
     } finally {
       setLoading("fetchSTock", false);

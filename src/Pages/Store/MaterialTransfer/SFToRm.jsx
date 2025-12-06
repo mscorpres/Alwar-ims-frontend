@@ -20,7 +20,6 @@ function SFToRM() {
     component: "",
     qty1: "",
   });
-  // console.log(allData);
 
   const [locData, setloctionData] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -30,7 +29,6 @@ function SFToRM() {
   const [seacrh, setSearch] = useState(null);
   const [locationName, setLocationName] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
-  // console.log(branchName);
   const getLocationFunction = async () => {
     const response = await imsAxios.post("/godown/fetchLocationForRM2RM_from");
 
@@ -50,22 +48,17 @@ function SFToRM() {
     const response = await imsAxios.post("/godown/fetchLocationDetail_from", {
       location_key: allData.locationFrom,
     });
-    // console.log(data.data);
-    setbBanchName(data.data);
+    setbBanchName(response.data);
   };
 
   const getComponentList = async (e) => {
     if (e?.length > 2) {
-      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-      //   search: e,
-      // });
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
       let arr = [];
       arr = data.map((d) => {
         return { text: d.text, value: d.id };
       });
-      // return arr;
       setAsyncOptions(arr);
     }
   };
@@ -75,10 +68,7 @@ function SFToRM() {
       component: allData.component,
       location: allData.locationFrom,
     });
-
-    // console.log(data);
-
-    setQty(data.data);
+    setQty(response.data);
   };
 
   const saveRmToRm = async () => {
@@ -95,7 +85,6 @@ function SFToRM() {
     } else {
       setLoading(true);
       const response = await imsAxios.post("/godown/transferRM2RM", {
-        // companybranch: "BRMSC012",
         comment: allData.comment,
         fromlocation: allData.locationFrom,
         component: [allData.component],
@@ -103,14 +92,8 @@ function SFToRM() {
         qty: [allData.qty1],
         type: "RM2RM",
       });
-      if (data.success) {
-        // setAllData({
-        //   comment: "",
-        // });
-        // toast.success(
-        //   "This Component Transfer `${allData.locationTo.label} -> ${allData.locationFrom.label}`"
-        // );
-        toast.success(data.message.toString()?.replaceAll("<br/>", ""));
+      if (response.success) {
+        toast.success(response.message.toString()?.replaceAll("<br/>", ""));
         setAllData({
           locationFrom: "",
           companyBranch: "",
@@ -124,7 +107,7 @@ function SFToRM() {
         setQty("");
         setLoading(false);
       } else {
-        toast.error(data.message?.msg || data.message);
+        toast.error(response.message);
         setLoading(false);
       }
     }
@@ -134,7 +117,7 @@ function SFToRM() {
     const response = await imsAxios.post("/godown/fetchLocationDetail_to", {
       location_key: allData?.locationTo,
     });
-    setLocationName(data.data);
+    setLocationName(response.data);
   };
 
   const reset = async (e) => {
@@ -177,7 +160,6 @@ function SFToRM() {
 
   return (
     <div style={{ height: "95%" }}>
-      {/* <InternalNav links={Main} /> */}
       <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
         <Col span={6}>
           <Row gutter={10} style={{ margin: "5px" }}>
@@ -245,7 +227,6 @@ function SFToRM() {
                   <td>
                     <Input
                       suffix={qty?.unit}
-                      // style={{ width: "100%" }}
                       disabled
                       value={
                         qty?.available_qty
@@ -256,7 +237,6 @@ function SFToRM() {
                   </td>
                   <td>
                     <Input
-                      // style={{ width: "20%" }}
                       value={allData?.qty1}
                       onChange={(e) =>
                         setAllData((allData) => {
