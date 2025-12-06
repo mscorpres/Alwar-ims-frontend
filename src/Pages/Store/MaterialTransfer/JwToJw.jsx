@@ -386,7 +386,7 @@ function JwToJw() {
           }}
         >
           <Spin size="large" />
-          <p style={{ marginTop: 16, color: "#047780", fontWeight: 500 }}>
+          <p style={{ marginTop: 16, color: customColor.newBgColor, fontWeight: 500 }}>
             Processing data...
           </p>
         </div>
@@ -551,7 +551,7 @@ function JwToJw() {
                                       size="small"
                                       icon={<PlusOutlined />}
                                       onClick={addRow}
-                                      style={{ color: "#047780" }}
+                                      style={{ color: customColor.newBgColor }}
                                     />
                                   </Tooltip>
                                 </div>
@@ -684,7 +684,7 @@ function JwToJw() {
           <Button
             key="yes"
             type="primary"
-            style={{ background: "#047780" }}
+            style={{ background: customColor.newBgColor }}
             onClick={() => {
               setShowExcelWarning(false);
               setShowCsvModal(true);
@@ -762,7 +762,7 @@ function JwToJw() {
                 icon={<CheckOutlined />}
                 onClick={processSpreadsheetData}
                 disabled={!allData.jwVendor || !allData.jwPo}
-                style={{ background: "#047780" }}
+                style={{ background: customColor.newBgColor }}
               >
                 Process Data
               </Button>
@@ -781,7 +781,7 @@ function JwToJw() {
             }}
           >
             <Spin size="large" />
-            <p style={{ marginTop: 16, color: "#047780", fontWeight: 500 }}>
+            <p style={{ marginTop: 16, color: customColor.newBgColor, fontWeight: 500 }}>
               Processing Part Codes...
             </p>
           </div>
@@ -825,7 +825,7 @@ function JwToJw() {
                     <span style={{ color: "#ccc" }}>|</span>
                     <Tooltip title="Add Row">
                       <PlusOutlined
-                        style={{ color: "#047780", fontSize: 12, cursor: "pointer" }}
+                        style={{ color: customColor.newBgColor, fontSize: 12, cursor: "pointer" }}
                         onClick={() => addSpreadsheetRows()}
                       />
                     </Tooltip>

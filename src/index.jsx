@@ -7,17 +7,23 @@ import { Store } from "./Features/Store";
 import "./index.css";
 // import { unregister as unregisterServiceWorker } from "./serviceWorkerRegistration";
 import { ConfigProvider } from "antd";
+import { customColor } from "./utils/customColor";
 
 const theme = {
   token: {
-    colorPrimary: "#04b0a8",
-    colorInfo: "#04b0a8",
-    colorSuccess: "#04b0a8",
+    colorPrimary: customColor.btnColor,
+    colorInfo: customColor.btnColor,
+    colorSuccess: customColor.btnColor,
     fontSizeHeading5: 16,
+    // colorTextLightSolid: "#12120E",
   },
   components: {
     Button: {
-      // colorText: "rgba(255, 255, 255, 0.88)",
+      colorText: "#12120E",
+      colorPrimary: customColor.btnColor,
+    },
+    Tabs: {
+      colorText: "#12120E",
     },
     Divider: {
       verticalMarginInline: 4,

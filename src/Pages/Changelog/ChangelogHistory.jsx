@@ -45,7 +45,7 @@ const ExpandableDescription = ({ description, maxLines = 3 }) => {
             alignItems: "center",
             gap: 0.5,
             mt: 1,
-            color: "#047780",
+            color: customColor.newBgColor,
             cursor: "pointer",
             fontSize: 13,
             fontWeight: 500,
@@ -255,7 +255,7 @@ const ChangelogHistory = () => {
         minHeight="50vh"
         gap={2}
       >
-        <CircularProgress size={60} sx={{ color: "#047780" }} />
+        <CircularProgress size={60} sx={{ color: customColor.newBgColor }} />
         <Typography variant="h6" color="textSecondary">
           Loading changelog history...
         </Typography>
@@ -293,7 +293,7 @@ const ChangelogHistory = () => {
             variant="h4"
             sx={{
               fontWeight: "bold",
-              color: "#047780",
+              color: customColor.newBgColor,
             }}
           >
             Changelog History
@@ -304,8 +304,8 @@ const ChangelogHistory = () => {
               icon={<DownloadOutlined />}
               onClick={handleDownload}
               style={{
-                backgroundColor: "#047780",
-                borderColor: "#047780",
+                backgroundColor: customColor.newBgColor,
+                borderColor: customColor.newBgColor,
                 height: 36,
               }}
             >
@@ -351,7 +351,7 @@ const ChangelogHistory = () => {
                     sx={{
                       fontWeight: "bold",
                       fontSize: 28,
-                      color: "#047780",
+                      color: customColor.newBgColor,
                       transform: "rotate(-90deg)",
                       transformOrigin: "center center",
                       whiteSpace: "nowrap",
@@ -384,7 +384,7 @@ const ChangelogHistory = () => {
                           variant="h6"
                           sx={{
                             fontWeight: 600,
-                            color: "#047780",
+                            color: customColor.newBgColor,
                           }}
                         >
                           {month}
@@ -401,7 +401,7 @@ const ChangelogHistory = () => {
                             top: 0,
                             bottom: 0,
                             width: 3,
-                            backgroundColor: "#047780",
+                            backgroundColor: customColor.newBgColor,
                             zIndex: 0,
                           }}
                         />
@@ -460,7 +460,7 @@ const ChangelogHistory = () => {
                                   sx={{
                                     fontWeight: 500,
                                     fontSize: 12,
-                                    color: "#047780",
+                                    color: customColor.newBgColor,
                                   }}
                                 >
                                   {dateInfo.year}
@@ -537,7 +537,7 @@ const ChangelogHistory = () => {
                                           gap: 0.5,
                                           px: 1.5,
                                           py: 0.5,
-                                          backgroundColor: "#047780",
+                                          backgroundColor: customColor.newBgColor,
                                           color: "#fff",
                                           borderRadius: 1,
                                           fontSize: 13,
@@ -642,7 +642,7 @@ const ChangelogHistory = () => {
           </Typography>
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             <Tag
-              color={filterHaving.includes("doc") ? "#047780" : "default"}
+              color={filterHaving.includes("doc") ? customColor.newBgColor : "default"}
               style={{
                 cursor: "pointer",
                 padding: "4px 12px",
@@ -689,8 +689,8 @@ const ChangelogHistory = () => {
             style={{
               flex: 1,
               height: 36,
-              backgroundColor: "#047780",
-              borderColor: "#047780",
+              backgroundColor: customColor.newBgColor,
+              borderColor: customColor.newBgColor,
             }}
           >
             Search

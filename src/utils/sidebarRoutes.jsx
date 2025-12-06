@@ -471,11 +471,11 @@ export const items = (user) => [
         "B39"
         // <AiOutlineMinus />
       ),
-      getItem(
-        <Link to="/warehouse/physical/create">Physical Stock (Store)</Link>,
-        "B40"
-        // <AiOutlineMinus />
-      ),
+      // getItem(
+      //   <Link to="/warehouse/physical/create">Physical Stock (Store)</Link>,
+      //   "B40"
+      //   // <AiOutlineMinus />
+      // ),
       // Part Code Conversion
       getItem(
         <Link to="/warehouse/part-code-conversion">Part Code Conversion</Link>,
@@ -655,11 +655,11 @@ export const items = (user) => [
       "D6",
       <MdAccountBox />
     ),
-    getItem(
-      <Link to="/production/physical-stock/create">Physical Stock</Link>,
-      "D5",
-      <MdAccountBox />
-    ),
+    // getItem(
+    //   <Link to="/production/physical-stock/create">Physical Stock</Link>,
+    //   "D5",
+    //   <MdAccountBox />
+    // ),
   ]),
   //Legal
   // user?.showlegal
@@ -681,20 +681,20 @@ export const items = (user) => [
   // : null,
 
   //MES
-  getItem("MES", "Z", <DeploymentUnitOutlined />, [
-    getItem("QA Process", "Z1", <DeliveredProcedureOutlined />, [
-      getItem(<Link to="/master/qa-process">Create Process</Link>, "Z11"),
-      getItem(
-        <Link to="/master/qa-process-map">Create Process Map</Link>,
-        "Z12"
-      ),
-    ]),
-    getItem("QCA", "Z2", <CheckCircleOutlined />, [
-      getItem(<Link to="/print-qc-label">Print QCA Label</Link>, "Z21"),
-      getItem(<Link to="/qccheck">QC Check</Link>, "Z22"),
-      getItem(<Link to="/mes-report-qc">QC Report</Link>, "Z23"),
-    ]),
-  ]),
+  // getItem("MES", "Z", <DeploymentUnitOutlined />, [
+  //   getItem("QA Process", "Z1", <DeliveredProcedureOutlined />, [
+  //     getItem(<Link to="/master/qa-process">Create Process</Link>, "Z11"),
+  //     getItem(
+  //       <Link to="/master/qa-process-map">Create Process Map</Link>,
+  //       "Z12"
+  //     ),
+  //   ]),
+  //   getItem("QCA", "Z2", <CheckCircleOutlined />, [
+  //     getItem(<Link to="/print-qc-label">Print QCA Label</Link>, "Z21"),
+  //     getItem(<Link to="/qccheck">QC Check</Link>, "Z22"),
+  //     getItem(<Link to="/mes-report-qc">QC Report</Link>, "Z23"),
+  //   ]),
+  // ]),
   // getItem("MES", "Z", <DeploymentUnitOutlined />, [
   //   getItem(
   //     <Link to="/mes/process/create">Create Process</Link>,
@@ -764,7 +764,7 @@ export const items1 = (user, setShowTickets) => [
   //   "B",
   //   <CustomerServiceOutlined />
   // ),
-  getItem(<Link to="/version/files">Version</Link>, "V", <ContainerOutlined />),
+  getItem(<Link to="/changelog/history">Changelog History</Link>, "V", <ContainerOutlined />),
   getItem(<Link to="/myprofile">Profile</Link>, "A", <UserOutlined />),
 ];
 function getItem(label, key, icon, children) {

@@ -415,10 +415,10 @@ const links = [
     },
   ],
   //QA link
-  [
-    { routeName: "Create Process", routePath: "/master/qa-process" },
-    { routeName: "Create Process MAP", routePath: "/master/qa-process-map" },
-  ],
+  // [
+  //   { routeName: "Create Process", routePath: "/master/qa-process" },
+  //   { routeName: "Create Process MAP", routePath: "/master/qa-process-map" },
+  // ],
   // edit and reverse MIN links
   [
     { routeName: "Edit MIN", routePath: "/update-rm" },
@@ -591,42 +591,42 @@ const links = [
     { routeName: "Manage GP", routePath: "/manage-gp" },
   ],
   // physical stock
-  [
-    {
-      routeName: "Create Physical Stock",
-      routePath: "/warehouse/physical/create",
-    },
-    {
-      routeName: "Pending Physical Stock",
-      routePath: "/warehouse/physical/pending",
-    },
-    {
-      routeName: "Rejected Physical Stock",
-      routePath: "/warehouse/physical/rejected",
-    },
-    {
-      routeName: "View Physical Stock",
-      routePath: "/warehouse/physical/view",
-    },
-  ],
-  [
-    {
-      routeName: "Create ",
-      routePath: "/production/physical-stock/create",
-    },
-    {
-      routeName: "Pending",
-      routePath: "/production/physical-stock/pending",
-    },
-    {
-      routeName: "Rejected",
-      routePath: "/production/physical-stock/rejected",
-    },
-    {
-      routeName: "View",
-      routePath: "/production/physical-stock/view",
-    },
-  ],
+  // [
+  //   {
+  //     routeName: "Create Physical Stock",
+  //     routePath: "/warehouse/physical/create",
+  //   },
+  //   {
+  //     routeName: "Pending Physical Stock",
+  //     routePath: "/warehouse/physical/pending",
+  //   },
+  //   {
+  //     routeName: "Rejected Physical Stock",
+  //     routePath: "/warehouse/physical/rejected",
+  //   },
+  //   {
+  //     routeName: "View Physical Stock",
+  //     routePath: "/warehouse/physical/view",
+  //   },
+  // ],
+  // [
+  //   {
+  //     routeName: "Create ",
+  //     routePath: "/production/physical-stock/create",
+  //   },
+  //   {
+  //     routeName: "Pending",
+  //     routePath: "/production/physical-stock/pending",
+  //   },
+  //   {
+  //     routeName: "Rejected",
+  //     routePath: "/production/physical-stock/rejected",
+  //   },
+  //   {
+  //     routeName: "View",
+  //     routePath: "/production/physical-stock/view",
+  //   },
+  // ],
   // part code conversion
   //
   [
@@ -1231,10 +1231,10 @@ const links = [
   ],
   // Version & Changelog
   [
-    {
-      routeName: "Version Files",
-      routePath: "/version/files",
-    },
+    // {
+    //   routeName: "Version Files",
+    //   routePath: "/version/files",
+    // },
     {
       routeName: "Changelog History",
       routePath: "/changelog/history",

@@ -47,7 +47,7 @@ function PaytmGraph({
                 {
                   // base: 10,
                   label: "Paytm Report " + searchDate,
-                  backgroundColor: "#047780",
+                  backgroundColor: customColor.newBgColor,
                   data: chartData.map((row) => row.value),
                 },
               ],

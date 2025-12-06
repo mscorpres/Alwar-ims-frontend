@@ -21,6 +21,7 @@ import {
 import { useSelector } from "react-redux";
 import { imsAxios } from "../../axiosInterceptor";
 import { toast } from "react-toastify";
+import { customColor } from "../../utils/customColor";
 
 const { TextArea } = Input;
 const axiosLink = "https://support.mscorpres.com";
@@ -265,7 +266,7 @@ export default function TicketsModal({ open, handleClose }) {
               justifyContent: "center",
               borderRadius: 6,
               cursor: "pointer",
-              backgroundColor: activeMenu === "create" ? "#047780" : "transparent",
+              backgroundColor: activeMenu === "create" ? customColor.newBgColor : "transparent",
               color: activeMenu === "create" ? "#fff" : "#666",
               transition: "all 0.2s ease",
             }}
@@ -288,7 +289,7 @@ export default function TicketsModal({ open, handleClose }) {
               justifyContent: "center",
               borderRadius: 6,
               cursor: "pointer",
-              backgroundColor: activeMenu === "fetch" ? "#047780" : "transparent",
+              backgroundColor: activeMenu === "fetch" ? customColor.newBgColor : "transparent",
               color: activeMenu === "fetch" ? "#fff" : "#666",
               transition: "all 0.2s ease",
             }}
@@ -417,7 +418,7 @@ export default function TicketsModal({ open, handleClose }) {
                   type="primary"
                   onClick={handleSubmit}
                   loading={loading === "submitting"}
-                  style={{ backgroundColor: "#047780", borderColor: "#047780" }}
+                  style={{ backgroundColor: customColor.newBgColor, borderColor: customColor.newBgColor }}
                 >
                   Submit
                 </Button>
@@ -499,7 +500,7 @@ export default function TicketsModal({ open, handleClose }) {
                   href={`${axiosLink}/view.php?e=${user.email}&t=${ticket.ticket}`}
                 >
                           <Typography.Text
-                            style={{ color: "#047780" }}
+                            style={{ color: customColor.newBgColor }}
                             copyable
                           >
                     {ticket.ticket}

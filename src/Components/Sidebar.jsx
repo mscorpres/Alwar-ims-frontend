@@ -2,6 +2,7 @@ import React from "react";
 import "../index.css";
 import Sider from "antd/lib/layout/Sider";
 import { Menu } from "antd";
+import { customColor } from "../utils/customColor";
 const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
   return (
     <Sider
@@ -18,7 +19,7 @@ const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
       <Menu
         theme="dark"
         // forceSubMenuRender
-        style={{ height: "70%", background: "#047780", overflowY: "auto" }}
+        style={{ height: "70%", background: customColor.newBgColor, overflowY: "auto" }}
         defaultSelectedKeys={["1"]}
         mode="inline"
         triggerSubMenuAction="hover"
@@ -31,8 +32,8 @@ const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
         // forceSubMenuRender
         style={{
           height: "30%",
-          // background: "#047780",
-          background: " #047780",
+          background: customColor.newBgColor,
+       
           display: "flex",
           flexDirection: "column",
           paddingBottom: 50,

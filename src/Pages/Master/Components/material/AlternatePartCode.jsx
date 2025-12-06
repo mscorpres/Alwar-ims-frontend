@@ -218,7 +218,7 @@ const columns = [
         //   style={{
         //     width: 10,
         //     height: 10,
-        //     background: "#047780",
+        //     background: customColor.newBgColor,
         //     borderRadius: "100%",
         //   }}
         // ></div>

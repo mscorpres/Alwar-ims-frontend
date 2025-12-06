@@ -1,5 +1,6 @@
 import { Tooltip, Typography } from "antd";
 import React from "react";
+import { customColor } from "../utils/customColor";
 
 export default function ToolTipEllipses({ text, type, copy, width }) {
   return (
@@ -7,7 +8,7 @@ export default function ToolTipEllipses({ text, type, copy, width }) {
       overlayStyle={{ fontSize: "0.7rem", color: "white" }}
       placement="topLeft"
       title={text}
-      color="#047780"
+      color= {customColor.newBgColor}
     >
       {type == "Paragraph" ? (
         <Typography.Text ellipsis={{ width: "100%" }}> {text} </Typography.Text>

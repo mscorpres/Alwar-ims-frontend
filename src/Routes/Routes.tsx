@@ -515,22 +515,22 @@ const Routes = [
   },
 
   //production physical stock
-  {
-    path: "/production/physical-stock/create",
-    main: () => <CreatePhysicalProduction />,
-  },
-  {
-    path: "/production/physical-stock/pending",
-    main: () => <PendingPhysicalProduction />,
-  },
-  {
-    path: "/production/physical-stock/rejected",
-    main: () => <RejectedPhysicalProduction />,
-  },
-  {
-    path: "/production/physical-stock/view",
-    main: () => <ViewPhysicalProduction />,
-  },
+  // {
+  //   path: "/production/physical-stock/create",
+  //   main: () => <CreatePhysicalProduction />,
+  // },
+  // {
+  //   path: "/production/physical-stock/pending",
+  //   main: () => <PendingPhysicalProduction />,
+  // },
+  // {
+  //   path: "/production/physical-stock/rejected",
+  //   main: () => <RejectedPhysicalProduction />,
+  // },
+  // {
+  //   path: "/production/physical-stock/view",
+  //   main: () => <ViewPhysicalProduction />,
+  // },
   // MES QCA
   {
     path: "/mes-report-qc",
@@ -567,11 +567,11 @@ const Routes = [
     exact: true,
     main: () => <ReportQC />,
   },
-  {
-    path: "/warehouse/physical/create",
-    exact: true,
-    main: () => <CreatePhysical />,
-  },
+  // {
+  //   path: "/warehouse/physical/create",
+  //   exact: true,
+  //   main: () => <CreatePhysical />,
+  // },
   {
     path: "/warehouse/physical/pending",
     exact: true,
@@ -611,16 +611,16 @@ const Routes = [
   },
   // qc process
   //qa process
-  {
-    path: "/master/qa-process",
-    exact: true,
-    main: () => <QaProcess />,
-  },
-  {
-    path: "/master/qa-process-map",
-    exact: true,
-    main: () => <QaProcessMap />,
-  },
+  // {
+  //   path: "/master/qa-process",
+  //   exact: true,
+  //   main: () => <QaProcess />,
+  // },
+  // {
+  //   path: "/master/qa-process-map",
+  //   exact: true,
+  //   main: () => <QaProcessMap />,
+  // },
   // Reports
   {
     path: "/item-all-logs",

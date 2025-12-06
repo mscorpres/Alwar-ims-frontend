@@ -3,6 +3,7 @@ import { Button, Col, Menu, Row, Tooltip, Typography } from "antd";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import internalLinks from "../Pages/internalLinks";
+import { customColor } from "../utils/customColor";
 
 export default function InternalNav({
   // links,
@@ -74,6 +75,7 @@ export default function InternalNav({
         marginBottom: 5,
         width: "100%",
         background: "white",
+       
         // background: "rgb(235, 235, 235)",
       }}
       items={
@@ -84,10 +86,10 @@ export default function InternalNav({
             <Tooltip
               placement="bottomLeft"
               overlayStyle={{ fontSize: "0.7rem", color: "white" }}
-              color="#245181"
+              color={customColor.textColor}
               title={link.placeholder && link.placeholder}
             >
-              <Link to={link.routePath}>
+              <Link to={link.routePath} style={{color: customColor.textColor}}>
                 <span>{link.routeName}</span>
                 <span style={{ marginLeft: 5 }}>
                   {pathname == link.routePath && link.placeholder}

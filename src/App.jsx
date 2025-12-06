@@ -49,6 +49,7 @@ import { items, items1 } from "./utils/sidebarRoutes.jsx";
 // import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
 import CheckmarkLoader from "./Components/CheckmarkLoader";
+import { customColor } from "./utils/customColor.js";
 
 const App = () => {
   const [searchParams] = useSearchParams();
@@ -773,6 +774,7 @@ const App = () => {
                 width: "100%",
                 display: "flex",
                 alignItems: "center",
+        
               }}
             >
               <Row style={{ width: "100%" }} justify="space-between">
@@ -1003,7 +1005,7 @@ const App = () => {
                             <p
                               style={{
                                 marginTop: 16,
-                                color: "#047780",
+                                color: customColor.newBgColor,
                                 fontWeight: 500,
                               }}
                             >
@@ -1058,7 +1060,7 @@ const App = () => {
                           }}
                         >
                           <SwapOutlined
-                            style={{ fontSize: 28, color: "#047780" }}
+                            style={{ fontSize: 28, color: customColor.newBgColor }}
                           />
                         </div>
                         <h3 style={{ margin: "0 0 24px 0", color: "#333" }}>
@@ -1135,8 +1137,8 @@ const App = () => {
                             block
                             size="large"
                             style={{
-                              background: "#047780",
-                              borderColor: "#047780",
+                              background: customColor.newBgColor,
+                              borderColor: customColor.newBgColor,
                               height: 44,
                             }}
                             disabled={!switchLocation || !switchBranch}
