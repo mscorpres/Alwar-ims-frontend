@@ -41,6 +41,15 @@ export const items = (user) => [
   //     getItem(<Link to={fav.url}>{fav.page_name}</Link>, `A${index + 1}`)
   //   )
   // ),
+    getItem("Dashboard", "A",  <Link to="/"><MdDashboard  /></Link>,
+  //    [
+  //   getItem(
+  //     <Link to="/dashboard/sku_costing">SKU Costing</Link>,
+  //     "2"
+  //     // <AiOutlineMinus />
+  //   ),
+  // ]
+),
   getItem("Finance", "D", <BiMoney />, [
     getItem(
       <Link to="/tally/ChartOfAccounts">Account</Link>,
@@ -208,13 +217,7 @@ export const items = (user) => [
       ]),
     ]),
   ]),
-  getItem("Dashboard", "A", <MdDashboard />, [
-    getItem(
-      <Link to="/dashboard/sku_costing">SKU Costing</Link>,
-      "2"
-      // <AiOutlineMinus />
-    ),
-  ]),
+
   getItem("Material Management", "B", <BiTransfer />, [
     getItem("Master", "B1", <BsFillHddStackFill />, [
       getItem(

@@ -407,7 +407,7 @@ const App = () => {
       }
     }
     if (user && user.token) {
-        const tokenToUse = localStorage.getItem("newToken") || user.token;
+      const tokenToUse = localStorage.getItem("newToken") || user.token;
       imsAxios.defaults.headers["x-csrf-token"] = tokenToUse;
       imsAxios.defaults.headers["Company-Branch"] =
         user.company_branch || "BRMSC012";
@@ -702,6 +702,8 @@ const App = () => {
           }
 
           const redirectUrl = `${targetUrl}?${urlParams.toString()}`;
+          localStorage.removeItem("otherData");
+          localStorage.removeItem("loggedInUser");
           window.location.replace(redirectUrl);
         }, 1500);
       } else {
