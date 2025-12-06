@@ -1,10 +1,31 @@
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;550;600;700&display=swap");
 :root {
   --primary-green: #4d636f;
   --secondary-green: #3a4b53;
   --header-height: 6vh;
   --search-div-height: 5vh;
   --nav-footer-height: 7%;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #8c8c8c;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6e6e6e;
+}
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #8c8c8c #f1f1f1;
 }
 
 @keyframes spin {
@@ -20,8 +41,24 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: Inter, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
   list-style: none;
+}
+a {
+  color: #203624 !important;
+  text-decoration: underline !important;
+  text-decoration-style: dashed !important;
+}
+a:hover {
+  color: #203624 !important;
+  text-decoration: underline !important;
+  text-decoration-style: dashed !important;
+}
+/* Sidebar menu links should be visible on dark background */
+.ant-menu a,
+.ant-menu a:hover {
+  color: inherit !important;
+  text-decoration: none !important;
 }
 .location-select .ant-select-arrow {
   color: white !important;
@@ -29,9 +66,10 @@
 .header-search-select .ant-select-selector {
   background-color: white !important;
   border: 1px solid rgba(0, 0, 0, 0.1) !important;
-  border-radius: 6px !important;
+  border-radius: 20px !important;
   color: black !important;
   height: 28px !important;
+  padding-left: 15px !important;
 }
 
 .header-search-select .ant-select-selection-placeholder {
@@ -91,6 +129,37 @@ button:disabled {
 
 .ant-btn-primary {
   color: #12120E !important;
+}
+.ant-btn {
+  box-shadow: none !important;
+}
+.ant-btn:hover,
+.ant-btn:focus {
+  box-shadow: none !important;
+}
+/* Tooltip styling */
+.ant-tooltip .ant-tooltip-inner {
+  background-color: #d2f571 !important;
+  color: #12120E !important;
+  text-decoration: none !important;
+}
+.ant-tooltip .ant-tooltip-inner a,
+.ant-tooltip .ant-tooltip-inner span {
+  text-decoration: none !important;
+}
+.ant-tooltip .ant-tooltip-arrow::before {
+  background-color: #d2f571 !important;
+}
+/* Tab text bold */
+.ant-tabs-tab-btn {
+  font-weight: bold !important;
+}
+/* Active tab color */
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #203624 !important;
+}
+.ant-tabs-ink-bar {
+  background-color: #203624 !important;
 }
 .view-icon {
   color: var(--secondary-green) !important;
@@ -263,10 +332,20 @@ textarea {
   line-height: 40.5px !important;
   /* background: #fff !important; */
   background: #203624 !important;
+  border-radius: 0 !important;
 }
 .ant-menu-sub {
   max-height: 50vh !important;
   overflow-y: scroll;
+  min-width: 220px !important;
+  border-radius: 0 !important;
+}
+.ant-menu-submenu-popup {
+  border-radius: 0 !important;
+}
+.ant-menu-submenu-popup > .ant-menu {
+  border-radius: 0 !important;
+  min-width: 220px !important;
 }
 .MuiToolbar-regular .MuiTablePagination-toolbar,
 .css-8nphli {
@@ -321,6 +400,7 @@ textarea {
 .ant-menu-horizontal {
   border: none !important;
   margin: 0 !important;
+  margin-bottom: 5px !important;
 }
 .nested-table .ant-table-tbody .ant-table-row {
   background-color: rgb(185, 185, 185);
@@ -342,9 +422,67 @@ textarea {
 }
 .ant-input {
   font-size: 0.8rem;
+  border-radius: 0 !important;
+}
+.ant-select-selector {
+  border-radius: 0 !important;
+}
+textarea.ant-input {
+  border-radius: 0 !important;
+}
+.ant-input-number {
+  border-radius: 0 !important;
+}
+.ant-picker {
+  border-radius: 0 !important;
+}
+.ant-input-affix-wrapper {
+  border-radius: 0 !important;
+}
+.ant-card {
+  border-radius: 0 !important;
+}
+.ant-card-head {
+  border-radius: 0 !important;
+}
+.ant-card-body {
+  border-radius: 0 !important;
+}
+/* Focus and hover border color */
+.ant-input:hover,
+.ant-input:focus,
+.ant-input-focused {
+  border: 2px solid #4e8235 !important;
+}
+.ant-select:hover .ant-select-selector,
+.ant-select-focused .ant-select-selector {
+  border: 2px solid #4e8235 !important;
+}
+textarea.ant-input:hover,
+textarea.ant-input:focus {
+  border: 2px solid #4e8235 !important;
+}
+.ant-input-number:hover,
+.ant-input-number:focus,
+.ant-input-number-focused {
+  border: 2px solid #4e8235 !important;
+}
+.ant-input-affix-wrapper:hover,
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border: 2px solid #4e8235 !important;
+}
+.ant-picker:hover,
+.ant-picker:focus,
+.ant-picker-focused,
+.ant-picker-range:hover,
+.ant-picker-range-focused {
+  border: 2px solid #4e8235 !important;
+  box-shadow: none !important;
 }
 .ant-menu-title-content {
   font-size: 0.8rem;
+  font-weight: bold !important;
 }
 .MuiTableCell-head {
   /* padding: 5px 5px !important; */
