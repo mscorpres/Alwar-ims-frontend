@@ -196,7 +196,7 @@ const Rejection = () => {
 
   return (
     <>
-      <Row gutter={10} style={{ margin: "10px" }}>
+      <Row gutter={10} >
         <Col span={4}>
           <MyAsyncSelect
             style={{ width: "100%" }}
@@ -237,7 +237,7 @@ const Rejection = () => {
       </Skeleton>
 
       {allDataComes.length > 0 && (
-        <Row gutter={16} style={{ margin: "10px" }}>
+        <Row gutter={16} >
           <Col span={24}>
             <div style={{ textAlign: "end" }}>
               <Button onClick={reset} style={{ marginRight: "5px" }}>

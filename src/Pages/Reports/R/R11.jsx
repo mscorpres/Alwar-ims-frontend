@@ -98,7 +98,7 @@ const R11 = () => {
   }, []);
   return (
     <div style={{ height: "95%" }}>
-      <Row style={{ margin: "10px" }} justify="space-between">
+      <Row justify="space-between">
         <Typography.Title level={5} style={{ color: "red" }}>
           {pendingCount > 0 && `${pendingCount} Components pending to update`}
         </Typography.Title>

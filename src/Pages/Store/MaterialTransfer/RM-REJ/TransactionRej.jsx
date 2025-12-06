@@ -83,7 +83,7 @@ function TransactionRej() {
   };
   return (
     <div style={{ height: "100vh" }}>
-      <Row gutter={16} style={{ margin: "10px" }}>
+      <Row gutter={16}>
         <Col span={4} className="gutter-row">
           <div>
             <Select

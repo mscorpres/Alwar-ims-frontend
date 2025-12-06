@@ -344,7 +344,7 @@ function PendingQC() {
   }, [wise]);
   return (
     <>
-      <Row justify="space-between" style={{ margin: "10px" }}>
+      <Row justify="space-between">
         <div>
           <Space>
             <div style={{ width: 200 }}>

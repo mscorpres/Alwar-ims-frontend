@@ -311,7 +311,7 @@ const CreateFGOut = () => {
           />
         </Col>
       </Row>
-      <Row style={{ margin: "10px" }}>
+      <Row >
         <Col span={24}>
           <div style={{ textAlign: "end" }}>
             <MyButton

@@ -309,13 +309,13 @@ input[type="number"]::-webkit-outer-spin-button {
 td.ant-picker-cell:hover .ant-picker-cell-inner,
 .ant-picker-body td:hover .ant-picker-cell-inner,
 .ant-picker-content td:hover .ant-picker-cell-inner {
-  background-color: #203624 !important;
-  color: #fff !important;
+  background-color: #d2f571 !important;
+  color: #12120E !important;
 }
 .ant-picker-cell-in-view.ant-picker-cell-range-hover-start:not(.ant-picker-cell-range-start)::after,
 .ant-picker-cell-in-view.ant-picker-cell-range-hover-end:not(.ant-picker-cell-range-end)::after,
 .ant-picker-cell-in-view.ant-picker-cell-range-hover::after {
-  background-color: rgba(32, 54, 36, 0.2) !important;
+  background-color: rgba(210, 245, 113, 0.3) !important;
 }
 .ant-picker-cell-in-view.ant-picker-cell-in-range::before {
   background-color: rgba(210, 245, 113, 0.3) !important;
@@ -324,10 +324,20 @@ td.ant-picker-cell:hover .ant-picker-cell-inner,
   background-color: #d2f571 !important;
   border-color: #d2f571 !important;
   color: #12120E !important;
-  height: 24px !important;
-  min-width: 24px !important;
-  width: 24px !important;
-  line-height: 24px !important;
+}
+/* Date picker preset panel items */
+.ant-picker-presets li {
+  color: #12120E !important;
+}
+.ant-picker-presets li:hover {
+  background-color: #d2f571 !important;
+  color: #12120E !important;
+}
+.ant-picker-presets ul li {
+  transition: background-color 0.2s ease;
+}
+.ant-picker-presets ul li:hover {
+  background-color: #d2f571 !important;
 }
 .remove-cell-border .MuiDataGrid-cell,
 .css-z139qr-MuiTableCell-root {

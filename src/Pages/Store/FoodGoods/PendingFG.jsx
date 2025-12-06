@@ -100,7 +100,7 @@ const PendingFG = () => {
 
   return (
     <div style={{ height: "90%" }}>
-      <Row style={{ margin: "10px" }}>
+      <Row>
         {/* <Col span={4} className="gutter-row">
           <div>
             <Select options={options} placeholder="Pending" style={{ width: "100%" }} />

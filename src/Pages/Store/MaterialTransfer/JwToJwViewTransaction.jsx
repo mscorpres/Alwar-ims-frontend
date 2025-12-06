@@ -73,7 +73,7 @@ function JwToJwViewTransaction() {
 
   return (
     <div style={{ height: "90%" }}>
-      <Row gutter={16} justify="space-between" style={{ margin: "10px" }}>
+      <Row gutter={16} justify="space-between">
         <Space>
           <div style={{ width: 120 }}>
             <Select

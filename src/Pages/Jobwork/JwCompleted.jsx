@@ -219,7 +219,7 @@ const JwCompleted = () => {
   ];
   return (
     <div style={{ height: "95%" }}>
-      <Row gutter={10} style={{ margin: "10px" }}>
+      <Row gutter={10}>
         <Col span={4}>
           <Select
             placeholder="Please Select Option"

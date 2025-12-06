@@ -78,9 +78,10 @@ const theme = {
       colorBgContainer: "#f5f5f2",
     },
     DatePicker: {
-      cellHoverBg: "#203624",
+      cellHoverBg: "#d2f571",
       cellActiveWithRangeBg: "rgba(210, 245, 113, 0.3)",
-      cellHoverWithRangeBg: "rgba(32, 54, 36, 0.2)",
+      cellHoverWithRangeBg: "rgba(210, 245, 113, 0.3)",
+      presetsWidth: 120,
     },
   },
 };

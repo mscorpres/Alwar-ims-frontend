@@ -575,7 +575,7 @@ function UpdateJW() {
       
         <Row gutter={16}>
           <Col span={24}>
-            <Row gutter={10} style={{ margin: "10px" }}>
+            <Row gutter={10}>
               <Col span={6}>
                 <Row gutter={10}>
                   <Col span={24}>

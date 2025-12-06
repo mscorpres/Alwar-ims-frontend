@@ -37,7 +37,6 @@ export default function Notifications({
       {window.innerWidth > 800 && (
         <div style={{ background: "white" }} className="notifications">
           <List
-            bordered
             dataSource={notifications}
             renderItem={(item) => (
               <List.Item
