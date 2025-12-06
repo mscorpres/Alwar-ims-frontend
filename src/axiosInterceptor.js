@@ -21,10 +21,17 @@ const formatTimestamp = () => {
   return `${day}${month}${year}${hours}${minutes}${seconds}`;
 };
 const timestamp = formatTimestamp();
+const getToken = () => {
+  const newToken = localStorage.getItem("newToken");
+  if (newToken) {
+    return newToken;
+  }
+  return JSON.parse(localStorage.getItem("loggedInUser"))?.token;
+};
 const imsAxios = axios.create({
   baseURL: imsLink,
   headers: {
-    "x-csrf-token": JSON.parse(localStorage.getItem("loggedInUser"))?.token,    
+ "x-csrf-token": getToken(),
   
   },
 });
@@ -38,9 +45,18 @@ imsAxios.interceptors.request.use(
     config.headers["timeStamp"] = timestamp;
     config.headers["newId"] = newId;
 
+    // Use newToken if available, otherwise use loggedInUser token
+    const token = getToken();
+    if (token) {
+      config.headers["x-csrf-token"] = token;
+    }
+
     // Optionally add branch and session
-    let branch = JSON.parse(localStorage.getItem("otherData"))?.company_branch ?? "BRMSC012";
-    let session = JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";
+    let branch =
+      JSON.parse(localStorage.getItem("otherData"))?.company_branch ??
+      "BRMSC012";
+    let session =
+      JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";
     config.headers["Company-Branch"] = branch;
     config.headers["Session"] = session;
     config.headers["x-window-url"] = window.location.href;

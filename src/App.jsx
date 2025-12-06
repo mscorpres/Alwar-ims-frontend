@@ -5,6 +5,7 @@ import {
   useNavigate,
   useLocation,
   Link,
+  useSearchParams,
 } from "react-router-dom";
 import Sidebar from "./Components/Sidebar";
 import Rout from "./Routes/Routes";
@@ -50,6 +51,9 @@ import SettingDrawer from "./Components/SettingDrawer.jsx";
 import CheckmarkLoader from "./Components/CheckmarkLoader";
 
 const App = () => {
+  const [searchParams] = useSearchParams();
+  const tokenFromUrl = searchParams.get("previousToken");
+
   const { user, notifications, testPages } = useSelector(
     (state) => state.login
   );
@@ -199,9 +203,15 @@ const App = () => {
     setIsConnected(false);
     setIsLoading(false);
   });
-  useEffect(() => {
-    const otherData = JSON.parse(localStorage.getItem("otherData"));
 
+  useEffect(() => {
+    if (tokenFromUrl) {
+      localStorage.setItem("newToken", tokenFromUrl);
+      localStorage.removeItem("loggedInUser");
+      navigate("/login");
+    }
+  }, [tokenFromUrl]);
+  useEffect(() => {
     if (Notification.permission == "default") {
       Notification.requestPermission();
     }
@@ -373,7 +383,7 @@ const App = () => {
         dispatch(setNotifications(arr));
       });
     }
-  }, []);
+  }, [tokenFromUrl]);
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -397,7 +407,8 @@ const App = () => {
       }
     }
     if (user && user.token) {
-      imsAxios.defaults.headers["x-csrf-token"] = user.token;
+        const tokenToUse = localStorage.getItem("newToken") || user.token;
+      imsAxios.defaults.headers["x-csrf-token"] = tokenToUse;
       imsAxios.defaults.headers["Company-Branch"] =
         user.company_branch || "BRMSC012";
       imsAxios.defaults.headers["Session"] = user.session || "25-26";
@@ -665,7 +676,7 @@ const App = () => {
       if (isSuccess && newToken) {
         // Show success checkmark
         setSwitchSuccess(true);
-        
+
         setTimeout(() => {
           toast.success(`Switched to ${location} - ${branch}`);
           dispatch(setCompanyBranch(branch));
@@ -682,8 +693,8 @@ const App = () => {
 
           const targetUrl =
             location.toLowerCase() === "alwar"
-              ? "http://localhost:3000/"
-              : "http://localhost:3002/";
+              ? "http://localhost:3002/"
+              : "http://localhost:3000/";
 
           const urlParams = new URLSearchParams();
           if (previousToken) {
@@ -987,7 +998,13 @@ const App = () => {
                               muted
                               style={{ width: 120, height: 120 }}
                             />
-                            <p style={{ marginTop: 16, color: "#047780", fontWeight: 500 }}>
+                            <p
+                              style={{
+                                marginTop: 16,
+                                color: "#047780",
+                                fontWeight: 500,
+                              }}
+                            >
                               Authenticated! Redirecting...
                             </p>
                           </>
@@ -1038,14 +1055,22 @@ const App = () => {
                             marginBottom: 16,
                           }}
                         >
-                          <SwapOutlined style={{ fontSize: 28, color: "#047780" }} />
+                          <SwapOutlined
+                            style={{ fontSize: 28, color: "#047780" }}
+                          />
                         </div>
                         <h3 style={{ margin: "0 0 24px 0", color: "#333" }}>
                           Switch Module
                         </h3>
                         <div style={{ width: "100%", maxWidth: 300 }}>
                           <div style={{ marginBottom: 16 }}>
-                            <div style={{ marginBottom: 6, fontWeight: 500, color: "#666" }}>
+                            <div
+                              style={{
+                                marginBottom: 6,
+                                fontWeight: 500,
+                                color: "#666",
+                              }}
+                            >
                               Location
                             </div>
                             <Select
@@ -1063,7 +1088,13 @@ const App = () => {
                             />
                           </div>
                           <div style={{ marginBottom: 16 }}>
-                            <div style={{ marginBottom: 6, fontWeight: 500, color: "#666" }}>
+                            <div
+                              style={{
+                                marginBottom: 6,
+                                fontWeight: 500,
+                                color: "#666",
+                              }}
+                            >
                               Branch
                             </div>
                             <Select
@@ -1080,7 +1111,13 @@ const App = () => {
                             />
                           </div>
                           <div style={{ marginBottom: 24 }}>
-                            <div style={{ marginBottom: 6, fontWeight: 500, color: "#666" }}>
+                            <div
+                              style={{
+                                marginBottom: 6,
+                                fontWeight: 500,
+                                color: "#666",
+                              }}
+                            >
                               Session
                             </div>
                             <Select
@@ -1103,7 +1140,8 @@ const App = () => {
                             disabled={!switchLocation || !switchBranch}
                             onClick={() => {
                               handleSwitchModule(
-                                switchLocation.charAt(0).toUpperCase() + switchLocation.slice(1),
+                                switchLocation.charAt(0).toUpperCase() +
+                                  switchLocation.slice(1),
                                 switchBranch,
                                 switchSession || user?.session
                               );
