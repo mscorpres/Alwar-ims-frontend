@@ -11,9 +11,9 @@ import { customColor } from "./utils/customColor";
 
 const theme = {
   token: {
-    colorPrimary: customColor.btnColor,
-    colorInfo: customColor.btnColor,
-    colorSuccess: customColor.btnColor,
+    colorPrimary: "#203624",
+    colorInfo: "#203624",
+    colorSuccess: "#203624",
     fontSizeHeading5: 16,
     // colorTextLightSolid: "#12120E",
   },
@@ -21,9 +21,14 @@ const theme = {
     Button: {
       colorText: "#12120E",
       colorPrimary: customColor.btnColor,
+      defaultBg: customColor.btnColor,
+      defaultColor: "#12120E",
+      fontWeight: 550,
     },
     Tabs: {
       colorText: "#12120E",
+      itemSelectedColor: "#203624",
+      inkBarColor: "#203624",
     },
     Divider: {
       verticalMarginInline: 4,
@@ -59,12 +64,13 @@ const theme = {
       margin: 4,
     },
     Tooltip: {
-      colorBgSpotlight: "rgb(4, 176, 168)",
+      colorBgSpotlight: "#d2f571",
+      colorTextLightSolid: "#12120E",
     },
     Card: {
       headerFontSizeSM: 16,
       headerFontSize: 18,
-      colorBgContainer: "rgba(247, 249, 254,1)",
+      colorBgContainer: "#f5f5f2",
     },
   },
 };
