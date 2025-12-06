@@ -63,13 +63,13 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
     });
     setPageLoading(false);
     let arr1 = {
-      ...data.data.header_data,
+      ...response.data.header_data,
       location: "",
       mfgQty: 1,
       myComment: "",
     };
     if (response.success) {
-      let arr = data.data.comp_data.map((row) => {
+      let arr = response.data.comp_data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -256,8 +256,7 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
     try {
       setSubmitLoading(true);
       const response = await imsAxios.post("/ppr/executePPR", finalObj);
-      if (response.data) {
-        const { data } = response;
+     
         if (response.success) {
           toast.success(response.message);
           getRows();
@@ -265,9 +264,8 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
             setEditPPR(null);
           }, 3000);
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
-      }
     } catch (error) {
     } finally {
       setSubmitLoading(false);

@@ -228,8 +228,8 @@ export default function ReqWithoutBom() {
     });
     pickLocationLoadingMessage.destroy();
     setLoading(false);
-    if (response.success && response.data?.data) {
-      const arr = response.response.data.map((row) => ({
+    if (response.success) {
+      const arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));

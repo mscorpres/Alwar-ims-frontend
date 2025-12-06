@@ -82,7 +82,7 @@ const CreatePPR = () => {
       if (response.success) {
         createPPRForm.setFieldValue(
           "projectDescription",
-          data.data.description
+          data.description
         );
       } else {
         toast.error(response.message?.msg || response.message);
@@ -151,15 +151,12 @@ const CreatePPR = () => {
     try {
       setLoading("submit");
       const response = await imsAxios.post("/ppr/createPPR", payload);
-      const { data } = response;
-      if (data) {
         if (response.success) {
           toast.success(response.message);
           resetFunction();
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error( response.message);
         }
-      }
     } catch (error) {
     } finally {
       setLoading(false);

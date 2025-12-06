@@ -529,11 +529,11 @@ export const items = (user) => [
         "B42"
         // <AiOutlineMinus />
       ),
-      getItem(
-        <Link to="/warehouse/eway-bill/report">E-Way Bill Report</Link>,
-        "B47"
-        // <AiOutlineMinus />
-      ),
+      // getItem(
+      //   <Link to="/warehouse/eway-bill/report">E-Way Bill Report</Link>,
+      //   "B47"
+      //   // <AiOutlineMinus />
+      // ),
     ]),
     getItem("Query", "B5", <MdQueryStats />, [
       getItem(
