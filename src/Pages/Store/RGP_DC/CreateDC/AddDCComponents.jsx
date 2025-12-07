@@ -197,7 +197,7 @@ export default function AddDCComponents({
         detailsResetFunction();
         resetFunction();
         let successInfo = {
-          id: data.data.txn,
+          id: response.data.txn,
           components: rows,
           vendorName: newGatePass.vendorName.label,
         };

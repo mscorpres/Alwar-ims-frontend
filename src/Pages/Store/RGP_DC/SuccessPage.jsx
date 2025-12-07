@@ -22,7 +22,7 @@ export default function SuccessPage({
       transaction: successInfo.id,
     });
     setPringLoading(false);
-    printFunction(data.data.buffer.data);
+    printFunction(response.data.buffer.data);
   };
   const handleDownload = async () => {
     setDownloadLoading(true);
@@ -31,7 +31,7 @@ export default function SuccessPage({
     });
     setDownloadLoading(false);
     let filename = successInfo.id;
-    downloadFunction(data.data.buffer.data, filename);
+    downloadFunction(response.data.buffer.data, filename);
   };
   const columns = [
     {

@@ -412,7 +412,7 @@ export default function CreateWO({}) {
         height: "93%",
         overflowY: "scroll",
         overflowX: "hidden",
-        padding: "0vh 20px",
+        padding: "0vh 20px 10px",
       }}
     >
       {/* vendor */}

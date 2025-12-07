@@ -682,7 +682,7 @@ export default function CreatePo() {
                   height: "100%",
                   overflowY: "scroll",
                   overflowX: "hidden",
-                  padding: "0vh 20px",
+                  padding: "0vh 20px 10px",
                 }}
               >
                 {pageLoading && <Loading />}

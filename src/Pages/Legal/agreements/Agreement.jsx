@@ -327,7 +327,7 @@ export default function Agreeement({}) {
           height: "93%",
           overflowY: "scroll",
           overflowX: "hidden",
-          padding: "0vh 20px",
+          padding: "0vh 20px 10px",
           marginTop: "20px",
           marginBottom: "20px",
         }}
