@@ -78,6 +78,7 @@ export default function ManageGatePass() {
     });
     setLoading(false);
     if (response?.success) {
+      console.log(response,"rseponse=========================")
       downloadFunction(response?.data.buffer.data, filename);
     } else {
       toast.error(response.message);

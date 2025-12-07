@@ -193,6 +193,7 @@ export default function AddDCComponents({
       );
       setSubmitLoading(false);
       if (response.success) {
+           setShowSubmitConfirm(false);
         detailsResetFunction();
         resetFunction();
         let successInfo = {
@@ -201,6 +202,7 @@ export default function AddDCComponents({
           vendorName: newGatePass.vendorName.label,
         };
         setSuccessPage(successInfo);
+     
       } else {
         toast.error(response.message);
       }

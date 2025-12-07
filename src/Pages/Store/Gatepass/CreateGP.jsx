@@ -18,7 +18,6 @@ export default function CreateGP() {
     { id: v4(), item: "", qty: 0, uom: "", remark: "" },
   ]);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [fetchDetailsLoading, setFetchDetailsLoading] = useState(false);
   const [otherData, setOtherData] = useState({
     name: "",
@@ -128,7 +127,7 @@ export default function CreateGP() {
     const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       search: searchInputText,
     });
-    let arr = data;
+    let arr = response?.data;
     arr = arr.map((row) => {
       return {
         text: row.text,
