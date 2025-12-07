@@ -25,17 +25,18 @@ const CreateBom = () => {
       setLoading("fetch");
       const values = await form.validateFields(["sku"]);
       const response = await imsAxios.get(`products/bySku?sku=${values.sku}`);
+      const {data} = response
       if (response.success) {
-          const product = response.data[0].p_name;
-          const productKey = response.data[0].product_key;
+          const product = data.p_name;
+          const productKey = data.product_key;
           form.setFieldValue("product", product);
           form.setFieldValue("productKey", productKey);
           setProductSelected(true);
         } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     } catch (error) {
-      console.log("error while fetching SKU details", error);
+    
     } finally {
       setLoading(false);
     }
@@ -136,7 +137,7 @@ const CreateBom = () => {
           }
         }
         else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
     } catch (error) {
       console.log("error while creating  bom", error);
@@ -174,19 +175,16 @@ const CreateBom = () => {
   const fetchProjects = async () => {
     const response = await imsAxios.post("/ppr/allProjects");
     if (response.success) {
-      if (response.data.length) {
+    
         const arr = response.data.map((row) => ({
           value: row.project,
           text: row.description,
         }));
 
         setProjectData(arr);
-      } else {
-        toast.error("No projects found");
-        setProjectData([]);
-      }
+     
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setProjectData([]);
     }
   };

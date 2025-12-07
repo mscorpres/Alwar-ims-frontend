@@ -32,6 +32,8 @@ export default function TicketsModal({ open, handleClose }) {
   const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
   const { user } = useSelector((state) => state.login);
 
+  console.log("user", user)
+
   // Masters data from API
   const [topicOptions, setTopicOptions] = useState([]);
   const [priorityOptions, setPriorityOptions] = useState([]);
@@ -148,16 +150,6 @@ export default function TicketsModal({ open, handleClose }) {
     setFileList([]);
   };
 
-  // Helper function to convert file to base64 data URL
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
   // Handle submit ticket
   const handleSubmit = async () => {
     // Validation
@@ -177,27 +169,32 @@ export default function TicketsModal({ open, handleClose }) {
     try {
       setLoading("submitting");
 
-      // Build JSON payload
-      const submitData = {
-        email: user.email,
-        name: user.user_name || user.name,
-        topic: formData.topic,
-        subject: formData.subject,
-        message: formData.concern,
-        priority: formData.priority || "",
-        language: formData.language || "",
-        attachments: [],
-      };
-
-      // Convert attachment to base64 if present
-      if (formData.attachment) {
-        const base64 = await fileToBase64(formData.attachment);
-        submitData.attachments.push({
-          [formData.attachment.name]: base64,
-        });
+      // Build FormData payload
+      const submitFormData = new FormData();
+      submitFormData.append("name", user.userName || user.name || "");
+      submitFormData.append("email", user.email || "");
+      submitFormData.append("phone", user.phone || "");
+      submitFormData.append("subject", formData.subject);
+      submitFormData.append("message", formData.concern);
+      submitFormData.append("topic", formData.topic);
+      
+      if (formData.priority) {
+        submitFormData.append("priority", formData.priority);
+      }
+      
+      if (formData.language) {
+        submitFormData.append("language", formData.language);
       }
 
-      const response = await imsAxios.post("/ticket/create", submitData);
+      // Add attachment if present
+      if (formData.attachment) {
+        submitFormData.append("attachment[]", formData.attachment);
+      } else {
+        // Add empty attachment array if no file
+        submitFormData.append("attachment[]", "");
+      }
+
+      const response = await imsAxios.post("/ticket/create", submitFormData);
 
       setLoading(false);
 

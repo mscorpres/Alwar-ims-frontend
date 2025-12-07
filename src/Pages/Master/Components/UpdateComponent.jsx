@@ -44,43 +44,42 @@ export default function UpdateComponent() {
         componentKey,
       });
       const { data } = response;
-      if (data) {
-        if (response.success) {
-          const value = data.data[0];
-          const finalObj = {
-            partCode: value.partcode,
-            component: value.name,
-            uom: {
-              label: value.uomname,
-              value: value.uomid,
-            },
-            newPartCode: value.new_partcode,
-            mrp: value.mrp,
-            group: value.groupid,
-            isEnabled: value.enable_status,
-            jobWork: value.jobwork_rate,
-            qcStatus: value.qc_status,
-            description: value.description,
-            taxType: value.tax_type,
-            taxRate: value.gst_rate,
-            brand: value.brand,
-            ean: value.ean,
-            weight: value.weight,
-            height: value.height,
-            width: value.width,
-            volumetricWeight: value.vweight,
-            minStock: value.minqty,
-            maxStock: value.maxqty,
-            minOrder: value.minorderqty,
-            leadTime: value.leadtime,
-            enableAlert: value.alert_status,
-            purchaseCost: value.pocost,
-            otherCost: value.othercost,
-          };
-          componentForm.setFieldsValue(finalObj);
-        } else {
-          toast.error(response.message?.msg || response.message);
-        }
+
+      if (response.success) {
+        const value = data;
+        const finalObj = {
+          partCode: value.partcode,
+          component: value.name,
+          uom: {
+            label: value.uomname,
+            value: value.uomid,
+          },
+          newPartCode: value.new_partcode,
+          mrp: value.mrp,
+          group: value.groupid,
+          isEnabled: value.enable_status,
+          jobWork: value.jobwork_rate,
+          qcStatus: value.qc_status,
+          description: value.description,
+          taxType: value.tax_type,
+          taxRate: value.gst_rate,
+          brand: value.brand,
+          ean: value.ean,
+          weight: value.weight,
+          height: value.height,
+          width: value.width,
+          volumetricWeight: value.vweight,
+          minStock: value.minqty,
+          maxStock: value.maxqty,
+          minOrder: value.minorderqty,
+          leadTime: value.leadtime,
+          enableAlert: value.alert_status,
+          purchaseCost: value.pocost,
+          otherCost: value.othercost,
+        };
+        componentForm.setFieldsValue(finalObj);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -91,17 +90,15 @@ export default function UpdateComponent() {
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/uom/uomSelect2");
-      const { data } = response;
-      if (data) {
-        if (response.success) {
-          const arr = response.data.map((row) => ({
-            text: row.text,
-            value: row.id,
-          }));
-          setuomOptions(arr);
-        } else {
-          toast.error(response.message?.msg || response.message);
-        }
+
+      if (response.success) {
+        const arr = response.data.map((row) => ({
+          text: row.text,
+          value: row.id,
+        }));
+        setuomOptions(arr);
+      } else {
+        toast.error(response.message);
       }
     } catch (error) {
     } finally {
@@ -206,7 +203,7 @@ export default function UpdateComponent() {
 
   const submitHandler = async (payload) => {
     try {
-      console.log(payload)
+      console.log(payload);
       setLoading("submit");
       const response = await imsAxios.post(
         "/component/updateComponent",
@@ -303,7 +300,7 @@ export default function UpdateComponent() {
                   </Form.Item>
                 </Col>
                 <Col span={8}>
-                <Form.Item label="Attribute Code">
+                  <Form.Item label="Attribute Code">
                     <Row justify="space-between">
                       {categoryData && <Col>{categoryData.name}</Col>}
                       {categoryData && (
