@@ -211,7 +211,7 @@ const R10 = () => {
     const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: search,
     });
-    let arr = response.data.map((row) => ({ text: row.text, value: row.id }));
+    let arr = response?.data.map((row) => ({ text: row.text, value: row.id }));
     setAsyncOptions(arr);
   };
   const getUsers = async (search) => {
@@ -225,7 +225,7 @@ const R10 = () => {
   };
   const updateDataTable = async (userId) => {
     // true;
-    console.log(updateData);
+  
     if (updateData.locations.length > 0) {
       const response = await imsAxios.post("report10/update", {
         component_part: updateData.components.map((row) =>
@@ -242,7 +242,7 @@ const R10 = () => {
         getDataOnLoad();
       }
     }
-    // setShowUpdateModal(false);
+    setShowUpdateModal(false);
   };
   const getSelectedValue = async () => {
     setModalLoading(true);
@@ -374,10 +374,13 @@ const R10 = () => {
                   labelInValue
                   onBlur={() => setAsyncOptions([])}
                   onChange={(value) =>
+                  {
+                   
                     setUpdateData((data) => ({
                       ...data,
-                      locations: value,
+                      locations: value?.[0]?.value,
                     }))
+                  }
                   }
                   value={updateData.locations}
                   // defaultValue={[]}

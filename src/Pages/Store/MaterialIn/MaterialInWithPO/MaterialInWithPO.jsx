@@ -129,9 +129,7 @@ export default function MaterialInWithPO({}) {
       let formData = new FormData();
       let values = await form.validateFields();
       let a = values.components;
-      // let a = values.components.map((comp) => {
-      //   formData.append("files", comp.file[0]?.originFileObj);
-      // });
+
       if (a?.length) {
         if (!values?.components[0]?.file) {
           toast.info("Please upload Files");
@@ -242,11 +240,12 @@ export default function MaterialInWithPO({}) {
         "/transaction/upload-invoice",
         values.formData
       );
+     const {data} = response
 
-      if (response?.success) {
+      if (response?.success && data) {
         let final = {
           companybranch: "BRALWR36",
-          invoices: response?.data,
+          invoices: data,
           poid: poData.headers.transaction,
           manual_mfg_code: poData.materials.map((row) => row.mfgCode),
         };

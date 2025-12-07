@@ -25,7 +25,7 @@ export default function SuccessPage({
       transaction: po?.materialInId,
     });
     setPringLoading(false);
-    printFunction(response?.data.buffer);
+    printFunction(response?.data.buffer?.data);
   };
   const downloadExcel = async () => {
     downloadCSV(po.components, successColumns, `SFG Inward Report`);
@@ -38,7 +38,7 @@ export default function SuccessPage({
     });
     setDownloadLoading(false);
     let filename = `MIN ${po?.materialInId}`;
-    downloadFunction(response?.data.buffer, filename);
+    downloadFunction(response?.data.buffer?.data, filename);
   };
   useEffect(() => {
     console.log("SuccessPage - po object:", po);
