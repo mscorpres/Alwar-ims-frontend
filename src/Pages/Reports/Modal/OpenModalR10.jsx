@@ -81,6 +81,7 @@ const OpenModal10 = ({
   };
 
   const update = async () => {
+  
     let a = [];
     let b = [];
     allData.selectProduct.map((aa) => a.push(aa.value));
@@ -90,6 +91,7 @@ const OpenModal10 = ({
       component_part: a,
       location: b,
     });
+  
     if (response.success) {
       setViewModal(false);
       toast.success(response.message);
