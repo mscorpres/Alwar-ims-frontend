@@ -165,7 +165,7 @@ function JWRMChallanEditMaterials({
         }));
         setVendorBranchOptions(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
 
   };
@@ -189,7 +189,7 @@ function JWRMChallanEditMaterials({
         createJobWorkChallanForm.setFieldsValue(obj);
         return obj;
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     }
   };
@@ -244,7 +244,7 @@ function JWRMChallanEditMaterials({
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     }
   };
@@ -267,7 +267,7 @@ function JWRMChallanEditMaterials({
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
 
   };
