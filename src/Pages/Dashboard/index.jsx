@@ -10,10 +10,6 @@ import MyDatePicker from "../../Components/MyDatePicker";
 
 const Dashboard = () => {
   const [summaryDate, setSummaryDate] = useState("");
-  // const [gatePassDate, setGatePassDate] = useState("");
-  // const [pendingTransactionsDate, setpendingTransactionDate] = useState("");
-  // const [minDate, setMINDate] = useState("");
-  // const [mfgProductsDate, setMfgProductDate] = useState("");
 
   const [transactionSummary, setTransactionSummary] = useState([
     {

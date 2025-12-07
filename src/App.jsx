@@ -16,7 +16,6 @@ import "buffer";
 import {
   logout,
   setNotifications,
-  setFavourites,
   setTestPages,
   setCompanyBranch,
   setCurrentLink,
@@ -26,29 +25,24 @@ import UserMenu from "./Components/UserMenu";
 import Logo from "./Components/Logo";
 import socket from "./Components/socket.js";
 import Notifications from "./Components/Notifications";
-// antd imports
 import Layout, { Content, Header } from "antd/lib/layout/layout";
 import { Badge, Row, Select, Space, Modal, Button } from "antd";
-// icons import
 import {
   CustomerServiceOutlined,
   BellFilled,
   MenuOutlined,
   SearchOutlined,
   SwapOutlined,
-  EditOutlined,
 } from "@ant-design/icons";
 import { Tooltip, IconButton } from "@mui/material";
 import { SiSocketdotio } from "react-icons/si";
 import InternalNav from "./Components/InternalNav";
 import { imsAxios } from "./axiosInterceptor";
-import MyAsyncSelect from "./Components/MyAsyncSelect";
 import internalLinks from "./Pages/internalLinks.jsx";
 import TicketsModal from "./Components/TicketsModal/TicketsModal";
 import { items, items1 } from "./utils/sidebarRoutes.jsx";
 import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
-import CheckmarkLoader from "./Components/CheckmarkLoader";
 import { customColor } from "./utils/customColor.js";
 
 const App = () => {
@@ -58,7 +52,6 @@ const App = () => {
   const { user, notifications, testPages } = useSelector(
     (state) => state.login
   );
-  const comid = JSON.parse(localStorage.getItem("loggedInUser"))?.comId;
 
   const filteredRoutes = Rout.filter((route) => {
     // Include the route if it doesn't have a "dept" property or if showlegal is true
@@ -69,21 +62,17 @@ const App = () => {
   const dispatch = useDispatch();
   const [showSideBar, setShowSideBar] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showMessageDrawer, setShowMessageDrawer] = useState(false);
   const [showMessageNotifications, setShowMessageNotifications] =
     useState(false);
   const [newNotification, setNewNotification] = useState(null);
-  const [favLoading, setFavLoading] = useState(false);
   const { pathname } = useLocation();
-  const [testToggleLoading, setTestToggleLoading] = useState(false);
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
   const [modulesOptions, setModulesOptions] = useState([]);
   const [searchModule, setSearchModule] = useState("");
   const [showTickets, setShowTickets] = useState(false);
-  const [searchHis, setSearchHis] = useState("");
-  const [hisList, setHisList] = useState([]);
   const [showHisList, setShowHisList] = useState([]);
+  const [allModules, setAllModules] = useState([]);
   const notificationsRef = useRef();
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -97,7 +86,6 @@ const App = () => {
   const [switchSuccess, setSwitchSuccess] = useState(false);
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-  const company = JSON.parse(localStorage.getItem("loggedInUser"));
 
   const logoutHandler = () => {
     dispatch(logout());
@@ -108,46 +96,6 @@ const App = () => {
     dispatch(setNotifications(arr));
   };
 
-  const handleFavPages = async (status) => {
-    let favs = user.favPages;
-
-    if (!status) {
-      setFavLoading(true);
-      const response = await imsAxios.post("/backend/favouritePages", {
-        pageUrl: pathname,
-        source: "react",
-      });
-      setFavLoading(false);
-      if (data.success) {
-        favs = JSON.parse(data.data);
-      } else {
-        toast.error(data.message?.msg || data.message);
-      }
-    } else {
-      let page_id = favs.filter((f) => f.url == pathname)[0].page_id;
-      setFavLoading(true);
-      const response = await imsAxios.post("/backend/removeFavouritePages", {
-        page_id,
-      });
-      setFavLoading(false);
-      if (response.success) {
-        let fav = JSON.parse(response.data);
-        favs = fav;
-      } else {
-        toast.error(response.message);
-      }
-    }
-    dispatch(setFavourites(favs));
-  };
-  const handleChangePageStatus = (value) => {
-    let status = value ? "TEST" : "LIVE";
-    socket.emit("setPageStatus", {
-      page: pathname,
-      status: status,
-    });
-    setTestToggleLoading(true);
-    setTestPage(value);
-  };
   const handleSelectCompanyBranch = (value) => {
     dispatch(setCompanyBranch(value));
     setBranchSelected(true);
@@ -156,6 +104,34 @@ const App = () => {
   const handleSelectSession = (value) => {
     dispatch(setSession(value));
   };
+
+  // Function to get all modules
+  const getAllModules = () => {
+    let arr = [];
+    let allModOpt = [];
+    internalLinks.map((row) => {
+      let a = row;
+      arr.push(...a);
+    });
+    arr.map((row) => {
+      if (row && row.routeName) {
+        let obj = {
+          label: row.routeName,
+          value: row.routePath,
+        };
+        allModOpt.push(obj);
+      }
+    });
+    return allModOpt;
+  };
+
+  // Load all modules on component mount
+  useEffect(() => {
+    const allMods = getAllModules();
+    setAllModules(allMods);
+    // Show all modules by default
+    setModulesOptions(allMods);
+  }, []);
 
   const getModuleSearchOptions = (search) => {
     let arr = [];
@@ -173,14 +149,9 @@ const App = () => {
         modOpt.push(obj);
       }
     });
-    setSearchHis(modOpt);
     setModulesOptions(modOpt);
   };
-  useEffect(() => {
-    if (modulesOptions?.length === 0) {
-      setModulesOptions(showHisList);
-    }
-  }, [modulesOptions]);
+  // Removed useEffect that was interfering with search results
   // notifications recieve handlers
   socket.on("connect", () => {
     console.log("WebSocket connected!!!!");
@@ -298,7 +269,6 @@ const App = () => {
       });
 
       socket.on("getPageStatus", (data) => {
-        setTestToggleLoading(false);
         let pages;
         if (testPages) {
           pages = testPages;
@@ -466,7 +436,6 @@ const App = () => {
       });
 
       socket.on("getPageStatus", (data) => {
-        setTestToggleLoading(false);
         let pages;
         if (testPages) {
           pages = testPages;
@@ -618,22 +587,6 @@ const App = () => {
       return () => clearTimeout(timer);
     }
   }, [user]);
-
-  useEffect(() => {
-    setModulesOptions([]);
-    if (searchModule.length > 2) {
-      let searching = searchHis.filter((i) => i.value === searchModule);
-      // setHisList([...hisList,searching]);
-      let a = hisList.push(...hisList, ...searching);
-      const ids = hisList.map(({ text }) => text);
-      const filtered = hisList.filter(
-        ({ text }, index) => !ids.includes(text, index + 1)
-      );
-      localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
-
-      navigate(searchModule);
-    }
-  }, [searchModule]);
 
   const showRecentSearch = () => {
     let obj = JSON.parse(localStorage.getItem("searchHistory"));
@@ -845,14 +798,21 @@ const App = () => {
                       navigate(value);
                     }}
                     onSearch={(value) => {
-                      if (value.length > 2) {
+                      if (value && value.trim().length > 0) {
                         getModuleSearchOptions(value.toLowerCase());
                       } else {
-                        setModulesOptions([]);
+                        // Show all modules when search is cleared
+                        setModulesOptions(
+                          allModules.length > 0 ? allModules : []
+                        );
                       }
                     }}
                     options={
-                      modulesOptions.length > 0 ? modulesOptions : showHisList
+                      modulesOptions.length > 0
+                        ? modulesOptions
+                        : allModules.length > 0
+                        ? allModules
+                        : showHisList || []
                     }
                     filterOption={false}
                     notFoundContent={null}
@@ -866,6 +826,11 @@ const App = () => {
                       />
                     }
                     onFocus={() => {
+                      // Show all modules when focused if no search is active
+                      if (!searchModule && allModules.length > 0) {
+                        setModulesOptions(allModules);
+                      }
+                      // Load search history if available
                       if (showHisList.length === 0) {
                         showRecentSearch();
                       }

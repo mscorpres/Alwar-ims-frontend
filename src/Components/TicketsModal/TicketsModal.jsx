@@ -32,8 +32,6 @@ export default function TicketsModal({ open, handleClose }) {
   const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
   const { user } = useSelector((state) => state.login);
 
-  console.log("user", user)
-
   // Masters data from API
   const [topicOptions, setTopicOptions] = useState([]);
   const [priorityOptions, setPriorityOptions] = useState([]);
