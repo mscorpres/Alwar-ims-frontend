@@ -63,7 +63,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       transaction: challanModal?.issue_transaction_id,
     });
     if (response.success) {
-      let arr = data?.data?.data.map((row, index) => {
+      let arr = response?.data?.material.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -72,9 +72,9 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       });
       // console.log(data.data);
       setProductData(arr);
-      setVendorData(data.data.header);
+      setVendorData(response.data.header);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
     }
   };
 
