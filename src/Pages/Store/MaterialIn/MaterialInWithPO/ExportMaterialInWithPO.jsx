@@ -225,14 +225,11 @@ export default function ExportMaterialInWithPO({}) {
         () => checkInvoiceforMIN(payload),
         "select"
       );
-      // const response = await imsAxios.post("/backend/checkInvoice", {
-      //   invoice: invoices,
-      //   vendor: searchData.vendor,
-      // });
+
       let data  = response?.data;
       if (response?.success) {
         setSubmitLoading(false);
-        if (response?.invoicesFound) {
+        if (data?.invoicesFound) {
           return Modal.confirm({
             title:
               "Following invoices are already found in our records, Do you still wish to continue?",
@@ -404,7 +401,7 @@ export default function ExportMaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
       } else {
         setSubmitLoading(false);
@@ -435,9 +432,9 @@ export default function ExportMaterialInWithPO({}) {
       cost_center: costCode,
     });
     setPageLoading(false);
-    let arr = response?.data;
+    let arr = [];
     if (response.success) {
-      let arr = response.data.map((d) => {
+       arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
@@ -567,7 +564,7 @@ export default function ExportMaterialInWithPO({}) {
       setPoData(obj);
       setResetPoData(obj);
     } else {
-      toast.error(response.message?.msg || response.message);
+      toast.error(response.message);
       setPoData({ materials: [] });
       //   toast.error("Some error Occurred");
     }
@@ -819,11 +816,11 @@ export default function ExportMaterialInWithPO({}) {
       "fetch"
     );
 
-    if (response?.data?.status === "success") {
+    if (response?.success) {
       let { data } = response;
 
       // Flatten the new data structure to extract part details and other fields
-      const formattedRows = data?.data?.map((item) => {
+      const formattedRows = data?.map((item) => {
         const part = item.part;
         return {
           partCode: part.part_code,
@@ -862,7 +859,7 @@ export default function ExportMaterialInWithPO({}) {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response?.data?.message);
+      toast.error(response?.message);
       setPreview(false);
     }
   };

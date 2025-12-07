@@ -220,7 +220,7 @@ export default function MaterialInWithoutPO() {
         setPreviewRows([]);
         setPreview(false);
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     }
   };

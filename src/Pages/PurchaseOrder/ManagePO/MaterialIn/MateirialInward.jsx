@@ -185,7 +185,7 @@ export default function MateirialInward({
             (row) => row.maxQty > 0 && row.invoiceId != ""
           );
           setSuccessPageData({
-            materialInId: response.transaction_id,
+            materialInId: response?.data?.transaction_id,
             poId: final.poid,
             vendor: poData?.vendor_type?.vendorname,
             components: arr.map((row) => {
@@ -206,7 +206,7 @@ export default function MateirialInward({
           // let final = first + second;
           // toast.success(final.replaceAll("]", ""));
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
       } else {
         toast.error(
