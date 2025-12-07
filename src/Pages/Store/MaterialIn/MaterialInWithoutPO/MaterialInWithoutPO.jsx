@@ -107,7 +107,7 @@ export default function MaterialInWithoutPO() {
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [showSuccessPage, setShowSuccessPage] = useState(false);
+  const [showSuccessPage, setShowSuccessPage] = useState(null);
   const [preview, setPreview] = useState(false);
   const [previewRows, setPreviewRows] = useState([]);
   const [form] = Form.useForm();
@@ -151,7 +151,7 @@ export default function MaterialInWithoutPO() {
     const response = await executeFun(() => validateInvoice(values), "submit");
 
     if (response?.success) {
-      if (response?.data.invoicesFound) {
+      if (response?.data.invoicesFound.length > 0) {
         return Modal.confirm({
           title:
             "Following invoices are already found in our records, Do you still wish to continue?",
@@ -198,10 +198,15 @@ export default function MaterialInWithoutPO() {
         "submit"
       );
 
-      if (response.success) {
-        // const { data } = response.data;
+      if (response?.success) {
+        const { data } = response;
+        console.log(response, "full response during min");
+        console.log(data, "data during min");
+        // The transaction ID is nested: response.data.data.txn
+        const transactionId = data?.data?.txn || response?.data?.data?.txn || data?.txn;
+        console.log("Transaction ID:", transactionId);
         setShowSuccessPage({
-          materialInId: response.data.txn,
+          materialInId: transactionId,
           vendor: { vendorname: values.vendorName.label },
           components: values.components.map((row, index) => {
             return {
@@ -408,6 +413,20 @@ export default function MaterialInWithoutPO() {
     // // setVendorDetails(obj);
     // setShowResetConfirm(false);
     // form.setFieldsValue(obj);
+  };
+  const materialResetFunction = () => {
+    form.setFieldsValue({
+      components: [
+        {
+          gstType: "L",
+          location: "",
+          autoConsumption: 0,
+          currency: "364907247",
+          exchangeRate: 1,
+        },
+      ],
+    });
+    setShowResetConfirm(false);
   };
   const calculation = (rowId, obj) => {
     const { gstRate, gstType, qty, rate, exchangeRate, currency } = obj;
@@ -913,7 +932,7 @@ export default function MaterialInWithoutPO() {
         openBranch={showBranchModal}
       />
 
-      {!showSuccessPage && (
+      {showSuccessPage === null && (
         <Form
           style={{ height: "100%" }}
           initialValues={defaultValues}
@@ -1419,9 +1438,9 @@ export default function MaterialInWithoutPO() {
         nextLabel="Submit"
         loading={submitLoading}
       />
-      {showSuccessPage && (
+      {showSuccessPage !== null && (
         <SuccessPage
-          newMinFunction={() => setShowSuccessPage(false)}
+          newMinFunction={() => setShowSuccessPage(null)}
           successColumns={successColumns}
           po={showSuccessPage}
         />

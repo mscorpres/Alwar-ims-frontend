@@ -254,6 +254,8 @@ export default function MaterialInWithPO({}) {
         const response = await executeFun(() => poMINforMIN(final), "select");
 
         if (response?.success) {
+          const { data } = response;
+          console.log(data, "data during min");
           setSearchData({
             vendor: "",
             poNumber: "",
@@ -261,7 +263,7 @@ export default function MaterialInWithPO({}) {
           setInvoices([]);
           setSubmitLoading(false);
           setMaterialInSuccess({
-            materialInId: response?.data.transaction_id,
+            materialInId: data?.txn || data?.transaction_id,
             poId: poData.headers.transaction,
             vendor: poData.headers.vendorcode,
             components: poData.materials.map((row) => {
