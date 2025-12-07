@@ -142,10 +142,11 @@ export default function CreateWO({}) {
           text: row.text,
           value: row.id,
           address: row.address,
+          gst: row.gst,
         }));
         setclientBranchOptions(arr);
         setAddOptions(arr);
-        setClientData(response?.data?.client);
+        setClientData(response?.data);
         if (dm === undefined) {
           createWoForm.setFieldValue("clientbranch", "");
           createWoForm.setFieldValue("gstin", "");
@@ -203,7 +204,7 @@ export default function CreateWO({}) {
     const response = await imsAxios.post("backend/fetchBomProduct", {
       search: search,
     });
-    let arr = response?.data.map((row) => ({
+    let arr = response?.data?.data.map((row) => ({
       text: row.bomname,
       value: row.bomid,
     }));
@@ -222,6 +223,7 @@ export default function CreateWO({}) {
   };
 
   const handlebilladress = (e) => {
+    console.log(clientData)
     clientData.branchList.map((item) => {
       if (item.id === e) {
         createWoForm.setFieldValue("billPan", clientData.client.pan_no);

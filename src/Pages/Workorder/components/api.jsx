@@ -18,8 +18,8 @@ const getFinalizeComponents = async (id, woId, getComponents) => {
     wo_id: woId,
     getComponents: getComponents ?? true,
   });
-  if (data) {
-    const { components, details } = data;
+  if (response.success) {
+    const { components, details } = response.data;
 
     const arr = components.map((row, index) => ({
       index: index + 1,
