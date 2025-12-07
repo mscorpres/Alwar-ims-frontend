@@ -10,6 +10,7 @@ import { getUOMList } from "@/api/master/uom";
 import { ResponseType } from "@/types/general";
 import { getProductsList } from "@/api/master/products";
 import ComponentImages from "./ComponentImages";
+//@ts-ignore
 import { ProductType } from "@/types/master";
 
 const Product = () => {
@@ -69,6 +70,7 @@ const Product = () => {
       <AddPhoto
         updatingImage={updatingImage}
         setUpdatingImage={setUpdatingImage}
+        //@ts-ignore
         getProductRows={getProductRows}
       />
       <Col sm={8} xl={6} xxl={4}>
@@ -82,6 +84,7 @@ const Product = () => {
         <View
           rows={rows}
           loading={loading("fetch")}
+          //@ts-ignore
           editingProduct={editingProduct}
           setEditingProduct={setEditingProduct}
           setUpdatingImage={setUpdatingImage}

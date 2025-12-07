@@ -34,7 +34,7 @@ const ViewModal = ({ show, close }) => {
           setRows(arr);
         }
       } else {
-        toast.error(response.message?.msg || response.message);
+        toast.error(response.message);
       }
     } catch (error) {
       console.log("error while fetching bom components", error);
