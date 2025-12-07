@@ -23,8 +23,7 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
       po_transaction: row?.jwId,
       skucode: row?.skuKey,
     });
-    setView(response.data?.headers);
-
+    setView(response?.data?.header);
     if (response.success) {
       let arr = response.data.body.map((row, index) => {
         return {
