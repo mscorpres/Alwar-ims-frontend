@@ -20,7 +20,6 @@ function MaterialTransfer({ type }) {
 
   const [allData, setAllData] = useState({
     locationSel: "",
-    dropBranch: "",
   });
   const { executeFun, loading: loading1 } = useApi();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -133,7 +132,6 @@ function MaterialTransfer({ type }) {
     // validations
     if (!allData?.locationSel)
       return toast.error("Please select a Pick Location");
-    if (!allData?.dropBranch) return toast.error("Please select Drop Branch");
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
@@ -143,9 +141,7 @@ function MaterialTransfer({ type }) {
       if (!r.rejLoc)
         return toast.error(`Row ${i + 1}: Please select Drop Location`);
       if (
-        r.rejLoc == allData.locationSel &&
-        allData.dropBranch ==
-          JSON.parse(localStorage.getItem("otherData"))?.company_branch
+        r.rejLoc == allData.locationSel
       )
         return toast.error(`Row ${i + 1}: Both Location Same`);
     }
@@ -165,14 +161,12 @@ function MaterialTransfer({ type }) {
         tolocation: tolocations,
         qty: qtys,
         type: type == "sftorej" ? "SF2REJ" : "SF2SF",
-        tobranch: allData.dropBranch,
       }
     );
 
     if (response.success) {
       setAllData({
         locationSel: "",
-        dropBranch: "",
       });
       setRows([
         {
@@ -196,7 +190,6 @@ function MaterialTransfer({ type }) {
   const reset = () => {
     setAllData({
       locationSel: "",
-      dropBranch: "",
     });
     setRows([
       {
@@ -291,23 +284,6 @@ function MaterialTransfer({ type }) {
               </Col>
               <Col span={24} style={{ padding: "5px" }}>
                 <TextArea disabled value={locDetail} />
-              </Col>
-              <Col span={24} style={{ padding: "5px" }}>
-                <span>DROP BRANCH</span>
-                <MySelect
-                  options={[
-                    { text: "A-21 [BRMSC012]", value: "BRMSC012" },
-                    { text: "B-29 [BRMSC029]", value: "BRMSC029" },
-                    { text: "B36 [ALWAR]", value: "BRALWR36" },
-                    { text: "D-160 [BRBAD116]", value: "BRBAD116" },
-                  ]}
-                  placeholder="Select Drop Branch"
-                  value={allData.dropBranch}
-                  onChange={async (e) => {
-                    setAllData((prev) => ({ ...prev, dropBranch: e }));
-                    await handleBranchSelection(e);
-                  }}
-                />
               </Col>
             </Row>
           </Card>
