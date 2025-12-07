@@ -18,32 +18,35 @@ export default function SuccessPage({
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const printFun = async () => {
+  
     setPringLoading(true);
 
     const response = await imsAxios.post("/minPrint/printSingleMin", {
       transaction: po?.materialInId,
     });
     setPringLoading(false);
-    printFunction(response.data.buffer.data);
+    printFunction(response?.data.buffer);
   };
   const downloadExcel = async () => {
     downloadCSV(po.components, successColumns, `SFG Inward Report`);
   };
   const handleDownload = async () => {
-    console.log("");
+    
     setDownloadLoading(true);
     const response = await imsAxios.post("/minPrint/printSingleMin", {
       transaction: po?.materialInId,
     });
     setDownloadLoading(false);
     let filename = `MIN ${po?.materialInId}`;
-    downloadFunction(response.data.buffer.data, filename);
+    downloadFunction(response?.data.buffer, filename);
   };
   useEffect(() => {
+    console.log("SuccessPage - po object:", po);
+    console.log("SuccessPage - materialInId:", po?.materialInId);
     if (po?.components) {
       setRows(po?.components);
     }
-  }, [po?.components]);
+  }, [po]);
 
   return (
     <div style={{ height: "50vh" }}>
@@ -68,7 +71,7 @@ export default function SuccessPage({
               } from ${po?.vendor?.vendorname ?? po?.vendor}`
         }
         extra={[
-          <Row justify="center" gutter={16}>
+          <Row key="action-buttons" justify="center" gutter={16}>
             <Col>
               <CommonIcons action={"refreshButton"} onClick={newMinFunction} />
             </Col>
@@ -87,7 +90,7 @@ export default function SuccessPage({
               />
             </Col>
           </Row>,
-          <Row style={{ marginTop: 15, height: "40vh" }}>
+          <Row key="data-table" style={{ marginTop: 15, height: "40vh" }}>
             <MyDataTable data={rows} columns={successColumns} />
           </Row>,
         ]}

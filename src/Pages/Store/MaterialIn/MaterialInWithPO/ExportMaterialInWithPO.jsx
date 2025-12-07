@@ -840,7 +840,7 @@ export default function ExportMaterialInWithPO({}) {
           finalRate: item.final_rate,
           pendingQty: item.pending_qty,
           poOrderQty: item.po_order_qty,
-          value: (item.order_qty * item.import_rate).toFixed(3), // You may want to adjust the calculation for the value
+          value: (item.order_qty * item.import_rate).toFixed(3), 
         };
       });
       // Optional: map formatted rows to final structure
