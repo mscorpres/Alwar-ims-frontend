@@ -529,8 +529,7 @@ const { data } = response;
     };
     const response = await executeFun(() => getBomItem(final), "select");
     // const response = await imsAxios.post("/jobwork/getBomItem");
-    if (response.response.success || response.success) {
-      const { data } = response;
+    if (response.success) {
       let arr = response.data.map((r, id) => {
         return {
           id: id + 1,
@@ -696,7 +695,7 @@ const { data } = response;
                     style={{ fontSize: "12px", fontWeight: "bolder" }}
                   >
                     FG/SFG Name & SKU:{" "}
-                    {`${header?.product_name} / ${header?.sku_code}`}
+                    {`${header?.product_name === undefined ? "" : header?.product_name } / ${header?.sku_code === undefined ? "" : header?.sku_code}`}
                   </Col>
                   <Col
                     span={8}
