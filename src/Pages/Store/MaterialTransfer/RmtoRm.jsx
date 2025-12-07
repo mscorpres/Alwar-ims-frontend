@@ -17,7 +17,6 @@ function RmtoRm() {
   const [allData, setAllData] = useState({
     locationFrom: "",
     companyBranch: "",
-    dropBranch: "",
   });
 
   const [rows, setRows] = useState([
@@ -136,10 +135,6 @@ function RmtoRm() {
       return toast.error("Please select a Pick Location");
     }
 
-    if (!allData.dropBranch) {
-      return toast.error("Please select Drop Branch");
-    }
-
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (!row.component) {
@@ -171,7 +166,6 @@ function RmtoRm() {
       tolocation: tolocations,
       qty: qtys,
       type: "RM2RM",
-      tobranch: allData.dropBranch,
     });
 
     if (response.success) {
@@ -180,7 +174,6 @@ function RmtoRm() {
       setAllData({
         locationFrom: "",
         companyBranch: "",
-        dropBranch: "",
       });
       setRows([
         {
@@ -305,28 +298,6 @@ function RmtoRm() {
             </Col>
             <Col span={24} style={{ marginTop: "10px" }}>
               <TextArea rows={2} disabled value={branchName} />
-            </Col>
-            <Col span={24} style={{ marginTop: "10px" }}>
-              <span>DROP BRANCH</span>
-            </Col>
-            <Col span={24}>
-              <MySelect
-                options={[
-                  { text: "A-21 [BRMSC012]", value: "BRMSC012" },
-                  { text: "B-29 [BRMSC029]", value: "BRMSC029" },
-                  {
-                    text: "B36 [ALWAR]",
-                    value: "BRALWR36",
-                  },
-                  { text: "D-160 [BRBAD116]", value: "BRBAD116" },
-                ]}
-                placeholder="Select Drop Branch"
-                value={allData.dropBranch}
-                onChange={async (e) => {
-                  setAllData((prev) => ({ ...prev, dropBranch: e }));
-                  await handleBranchSelection(e);
-                }}
-              />
             </Col>
           </Row>
         </Col>
