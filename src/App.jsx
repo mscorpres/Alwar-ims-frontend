@@ -98,7 +98,6 @@ const App = () => {
   const [editNoidaSession, setEditNoidaSession] = useState(false);
   const [editNoidaBranch, setEditNoidaBranch] = useState(false);
   const [isSwitchingModule, setIsSwitchingModule] = useState(false);
-  const [switchingLocation, setSwitchingLocation] = useState(null);
   const [switchLocation, setSwitchLocation] = useState(null);
   const [switchBranch, setSwitchBranch] = useState(null);
   const [switchSession, setSwitchSession] = useState(null);
@@ -721,7 +720,6 @@ const App = () => {
         }, 1500);
       } else {
         setIsSwitchingModule(false);
-        setSwitchingLocation(null);
         toast.error(responseMessage || "Failed to switch module");
       }
     } catch (error) {
@@ -756,7 +754,14 @@ const App = () => {
         pauseOnFocusLoss
         pauseOnHover
       />
-      {showBlackScreen && <TopBanner messages={["Welcome to IMS Alwar.", "System maintenance scheduled for 7th December Sunday 01 AM - 23 PM"]} />}
+      {showBlackScreen && (
+        <TopBanner
+          messages={[
+            "Welcome to IMS Alwar.",
+            "System maintenance scheduled for 7th December Sunday 01 AM - 23 PM",
+          ]}
+        />
+      )}
       <Layout
         style={{
           width: "100%",
@@ -786,7 +791,6 @@ const App = () => {
                 width: "100%",
                 display: "flex",
                 alignItems: "center",
-        
               }}
             >
               <Row style={{ width: "100%" }} justify="space-between">
@@ -1072,7 +1076,10 @@ const App = () => {
                           }}
                         >
                           <SwapOutlined
-                            style={{ fontSize: 28, color: customColor.newBgColor }}
+                            style={{
+                              fontSize: 28,
+                              color: customColor.newBgColor,
+                            }}
                           />
                         </div>
                         <h3 style={{ margin: "0 0 24px 0", color: "#333" }}>
@@ -1233,7 +1240,6 @@ const App = () => {
           </Layout>
         </Layout>
       </Layout>
-
     </div>
   );
 };
