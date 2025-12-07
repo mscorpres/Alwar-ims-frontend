@@ -89,14 +89,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
   const [showSwitchModule, setShowSwitchModule] = useState(false);
-  const [alwarSession, setAlwarSession] = useState(null);
-  const [alwarBranch, setAlwarBranch] = useState(null);
-  const [noidaSession, setNoidaSession] = useState(null);
-  const [noidaBranch, setNoidaBranch] = useState(null);
-  const [editAlwarSession, setEditAlwarSession] = useState(false);
-  const [editAlwarBranch, setEditAlwarBranch] = useState(false);
-  const [editNoidaSession, setEditNoidaSession] = useState(false);
-  const [editNoidaBranch, setEditNoidaBranch] = useState(false);
+
   const [isSwitchingModule, setIsSwitchingModule] = useState(false);
   const [switchLocation, setSwitchLocation] = useState(null);
   const [switchBranch, setSwitchBranch] = useState(null);
@@ -136,11 +129,11 @@ const App = () => {
         page_id,
       });
       setFavLoading(false);
-      if (data.success) {
-        let fav = JSON.parse(data.data);
+      if (response.success) {
+        let fav = JSON.parse(response.data);
         favs = fav;
       } else {
-        toast.error(data.message?.msg || data.message);
+        toast.error(response.message);
       }
     }
     dispatch(setFavourites(favs));
@@ -208,8 +201,7 @@ const App = () => {
   useEffect(() => {
     if (tokenFromUrl) {
       localStorage.setItem("newToken", tokenFromUrl);
-      localStorage.removeItem("loggedInUser");
-      navigate("/login");
+      navigate("/");
     }
   }, [tokenFromUrl]);
   useEffect(() => {
@@ -675,7 +667,6 @@ const App = () => {
 
   const handleSwitchModule = async (location, branch, session) => {
     setIsSwitchingModule(true);
-    setSwitchingLocation(location.toLowerCase());
     const company = location === "alwar" ? "com0002" : "com0001";
     try {
       const existing = JSON.parse(localStorage.getItem("loggedInUser")) || {};
