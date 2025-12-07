@@ -35,7 +35,7 @@ export const saveJwMAterialIssue = async (finalObj) => {
     console.log("something happened wrong", error);
   }
 };
-export const checkInvoiceforMIN = async (payload) => {
+export const checkInvoiceforMIN = async (payload:any) => {
   try {
     const response = await imsAxios.post("/backend/checkInvoice", payload);
     return response;
@@ -43,7 +43,7 @@ export const checkInvoiceforMIN = async (payload) => {
     console.log("something happened wrong", error);
   }
 };
-export const poMINforMIN = async (final) => {
+export const poMINforMIN = async (final:any) => {
   try {
     const response = await imsAxios.post("/purchaseOrder/poMIN", final);
     return response;
