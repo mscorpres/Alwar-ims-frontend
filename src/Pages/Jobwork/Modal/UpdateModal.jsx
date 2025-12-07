@@ -23,10 +23,10 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
       po_transaction: row?.jwId,
       skucode: row?.skuKey,
     });
-    setView(data?.headers);
+    setView(response.data?.headers);
 
     if (response.success) {
-      let arr = response.data.map((row, index) => {
+      let arr = response.data.body.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -37,8 +37,8 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
       });
       setMainData(arr);
       setLoading(false);
-    } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+    } else{
+      toast.error(response.message);
       setLoading(false);
     }
   };
