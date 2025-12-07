@@ -52,7 +52,7 @@ const ProductDocuments = (props: DrawerProps) => {
   const fetchProductData = async () => {
     const response = await executeFun(() => getProductdata(props?.id), "fetch");
     if(response.success){
-      const data = response.data.data[0];
+      const data = response.data[0];
       form.setFieldsValue({
         name: data.productname,
         costCenter: { value: data.costcenter.value, label: data.costcenter.text },

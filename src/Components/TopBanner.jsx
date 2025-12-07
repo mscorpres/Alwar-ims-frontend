@@ -1,5 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { LeftOutlined, RightOutlined, CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  LeftOutlined,
+  RightOutlined,
+  CloseOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 
 const BANNER_STORAGE_KEY = "topBannerClosedAt";
 const HIDE_DURATION = 60 * 60 * 1000;
@@ -39,13 +44,17 @@ const BannerButton = ({ onClick, children, style = {} }) => {
   );
 };
 
-const TopBanner = ({ messages = ["MY message here...."] }) => {
+const TopBanner = ({
+  messages = ["MY message here...."],
+  onVisibilityChange,
+}) => {
   const [visible, setVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const bannerRef = React.useRef(null);
 
   useEffect(() => {
     const closedAt = localStorage.getItem(BANNER_STORAGE_KEY);
-    
+
     if (!closedAt) {
       // Never closed before, show banner
       setVisible(true);
@@ -53,7 +62,7 @@ const TopBanner = ({ messages = ["MY message here...."] }) => {
       const closedTime = parseInt(closedAt, 10);
       const now = Date.now();
       const timePassed = now - closedTime;
-      
+
       if (timePassed >= HIDE_DURATION) {
         // 1 hour has passed, show banner again
         setVisible(true);
@@ -61,18 +70,24 @@ const TopBanner = ({ messages = ["MY message here...."] }) => {
       } else {
         // Still within 1 hour, keep hidden
         setVisible(false);
-        
+
         // Set timeout to show banner after remaining time
         const remainingTime = HIDE_DURATION - timePassed;
         const timer = setTimeout(() => {
           setVisible(true);
           localStorage.removeItem(BANNER_STORAGE_KEY);
         }, remainingTime);
-        
+
         return () => clearTimeout(timer);
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (onVisibilityChange) {
+      onVisibilityChange(visible);
+    }
+  }, [visible, onVisibilityChange]);
 
   const handleClose = () => {
     setVisible(false);
@@ -89,10 +104,9 @@ const TopBanner = ({ messages = ["MY message here...."] }) => {
 
   if (!visible || messages.length === 0) return null;
 
-  
-
   return (
     <div
+      ref={bannerRef}
       style={{
         width: "100%",
         background: "#d2f571",
@@ -101,7 +115,10 @@ const TopBanner = ({ messages = ["MY message here...."] }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        position: "relative",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
         zIndex: 1000,
         fontWeight: 400,
         fontSize: "13px",
@@ -121,7 +138,7 @@ const TopBanner = ({ messages = ["MY message here...."] }) => {
         <span style={{ color: "#4a5a3a", margin: "0 4px" }}>|</span>
         <span style={{ color: "#12120E" }}>{messages[currentIndex]}</span>
       </div>
-      
+
       <div
         style={{
           display: "flex",

@@ -104,6 +104,7 @@ const App = () => {
   const [switchSession, setSwitchSession] = useState(null);
   const [switchSuccess, setSwitchSuccess] = useState(false);
   const [showBlackScreen, setShowBlackScreen] = useState(false);
+  const [isBannerVisible, setIsBannerVisible] = useState(false);
   const company = JSON.parse(localStorage.getItem("loggedInUser"));
 
   const logoutHandler = () => {
@@ -736,6 +737,8 @@ const App = () => {
   };
 
   const path = window.location.hostname;
+  const isTestServer =
+    path.includes("dev.mscorpres") || path.includes("localhost");
 
   const refreshConnection = () => {
     setIsLoading(true);
@@ -756,16 +759,25 @@ const App = () => {
         pauseOnFocusLoss
         pauseOnHover
       />
-      {showBlackScreen && <TopBanner messages={["Welcome to IMS Alwar.", "System maintenance scheduled for 7th December Sunday 01 AM - 23 PM"]} />}
+      {showBlackScreen && (
+        <TopBanner
+          messages={[
+            "Welcome to IMS Alwar.",
+            "System maintenance scheduled for 7th December Sunday 01 AM - 23 PM",
+          ]}
+          onVisibilityChange={setIsBannerVisible}
+        />
+      )}
       <Layout
         style={{
           width: "100%",
           top: 0,
+          paddingTop: isBannerVisible ? "30px" : "0px",
         }}
       >
         {/* header start */}
 
-        {(path.includes("dev.mscorpres") || path.includes("localhost")) && (
+        {isTestServer && (
           <div
             style={{
               backgroundColor: "yellow",
@@ -786,7 +798,6 @@ const App = () => {
                 width: "100%",
                 display: "flex",
                 alignItems: "center",
-        
               }}
             >
               <Row style={{ width: "100%" }} justify="space-between">
@@ -1072,7 +1083,10 @@ const App = () => {
                           }}
                         >
                           <SwapOutlined
-                            style={{ fontSize: 28, color: customColor.newBgColor }}
+                            style={{
+                              fontSize: 28,
+                              color: customColor.newBgColor,
+                            }}
                           />
                         </div>
                         <h3 style={{ margin: "0 0 24px 0", color: "#333" }}>
@@ -1210,7 +1224,12 @@ const App = () => {
 
               <div
                 style={{
-                  height: "calc(100vh - 50px)",
+                  height: (() => {
+                    const headerHeight = 50;
+                    const bannerHeight = isBannerVisible ? 40 : 0;
+                    const testServerHeight = isTestServer ? 15 : 0;
+                    return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px)`;
+                  })(),
                   width: "100%",
                   opacity: testPage ? 0.5 : 1,
                   pointerEvents:
@@ -1233,7 +1252,6 @@ const App = () => {
           </Layout>
         </Layout>
       </Layout>
-
     </div>
   );
 };

@@ -597,28 +597,28 @@ export const items = (user) => [
         ),
       ]),
     ]),
-    getItem("QCA", "C2", <MdDashboard />, [
-      getItem(
-        <Link to="/sample-qc">Create Sample</Link>,
-        "C131"
-        // <AiOutlineMinus />
-      ),
-      getItem(
-        <Link to="/pending-qc">Pending Sample</Link>,
-        "C132"
-        // <AiOutlineMinus />
-      ),
-      getItem(
-        <Link to="/completed-qc">Completed Sample</Link>,
-        "C133"
-        // <AiOutlineMinus />
-      ),
-      getItem(
-        <Link to="/report-qc">QC Report</Link>,
-        "C134"
-        // <AiOutlineMinus />
-      ),
-    ]),
+    // getItem("QCA", "C2", <MdDashboard />, [
+    //   getItem(
+    //     <Link to="/sample-qc">Create Sample</Link>,
+    //     "C131"
+    //     // <AiOutlineMinus />
+    //   ),
+    //   getItem(
+    //     <Link to="/pending-qc">Pending Sample</Link>,
+    //     "C132"
+    //     // <AiOutlineMinus />
+    //   ),
+    //   getItem(
+    //     <Link to="/completed-qc">Completed Sample</Link>,
+    //     "C133"
+    //     // <AiOutlineMinus />
+    //   ),
+    //   getItem(
+    //     <Link to="/report-qc">QC Report</Link>,
+    //     "C134"
+    //     // <AiOutlineMinus />
+    //   ),
+    // ]),
     getItem("Query", "C3", <MdQueryStats />, [
       getItem(
         <Link to="/item-all-logs">Q1 - Q6</Link>,
