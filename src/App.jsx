@@ -44,6 +44,7 @@ import { items, items1 } from "./utils/sidebarRoutes.jsx";
 import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
 import { customColor } from "./utils/customColor.js";
+import Information from "./Pages/Master/Components/Information.jsx";
 
 const App = () => {
   const [searchParams] = useSearchParams();
@@ -78,7 +79,6 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
   const [showSwitchModule, setShowSwitchModule] = useState(false);
-
   const [isSwitchingModule, setIsSwitchingModule] = useState(false);
   const [switchLocation, setSwitchLocation] = useState(null);
   const [switchBranch, setSwitchBranch] = useState(null);
@@ -731,6 +731,7 @@ const App = () => {
             TEST SERVER
           </div>
         )}
+        <Information />
         {user && user.passwordChanged === "C" && (
           <Layout style={{ height: "100%" }}>
             <Header

@@ -13,7 +13,6 @@ export { default as CreateBom } from "./Master/Bom/CreateBom";
 export { default as ManageBom } from "./Master/Bom/Manage";
 export { default as DisabledBom } from "./Master/Bom/Disabled";
 export { default as HsnMap } from "./Master/HSNMap/HsnMap.tsx";
-export { default as DocNumbering } from "./Master/DocNumbering";
 export { default as Vendor } from "./Master/Vendor/Vendor";
 export { default as CPMMaster } from "./Master/projects/CPMMaster";
 export { default as R19Master } from "./Master/reports/R19/R19Master";
