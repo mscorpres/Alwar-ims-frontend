@@ -57,7 +57,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     // console.log(response.data.data.header)
     setLoading("fetchDetails", false);
     if (response.success) {
-      let arr = response.data.data.material.map((row, index) => ({
+      let arr = response.data.material.map((row, index) => ({
         id: v4(),
         index: index + 1,
         issue_qty: 0,
@@ -67,7 +67,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         ...row,
       }));
       setRows(arr);
-      let obj = response.data.data.header;
+      let obj = response.data.header;
       // console.log(obj)
       obj = {
         ...obj,
