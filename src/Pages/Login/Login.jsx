@@ -190,7 +190,7 @@ const Login = () => {
       mobile: values.number,
       password: values.password2,
     });
-    console.log("response", response);
+  
     if (response.success) {
       toast.success(response.message);
       setSignUpPage("1");
