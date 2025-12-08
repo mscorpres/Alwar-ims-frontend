@@ -94,6 +94,7 @@ const App = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(false);
 
   const logoutHandler = () => {
+    setShowBlackScreen(false);
     dispatch(logout());
   };
   const deleteNotification = (id) => {
@@ -636,6 +637,9 @@ const App = () => {
       }, 1500); // Show black screen after 3 seconds
 
       return () => clearTimeout(timer);
+    } else {
+      // Reset black screen when user logs out or passwordChanged is not "C"
+      setShowBlackScreen(false);
     }
   }, [user]);
 
