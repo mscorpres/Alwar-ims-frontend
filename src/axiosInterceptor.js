@@ -53,10 +53,10 @@ imsAxios.interceptors.request.use(
 
     // Optionally add branch and session
     let branch =
-      JSON.parse(localStorage.getItem("otherData"))?.company_branch ??
+      JSON.parse(localStorage.getItem("branchData"))?.company_branch ??
       "BRALWR36";
     let session =
-      JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";
+      JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26";
     config.headers["Company-Branch"] = branch;
     config.headers["Session"] = session;
     config.headers["x-window-url"] = window.location.href;
@@ -101,9 +101,9 @@ imsAxios.interceptors.response.use(
 );
 
 let branch =
-  JSON.parse(localStorage.getItem("otherData"))?.company_branch ?? "BRALWR36";
-let session = JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";
-
+  JSON.parse(localStorage.getItem("branchData"))?.company_branch ?? "BRALWR36";
+let session =
+  JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26";
 
 imsAxios.defaults.headers["Company-Branch"] = branch;
 imsAxios.defaults.headers["Session"] = session;

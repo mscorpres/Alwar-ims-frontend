@@ -11,10 +11,10 @@ const initialState = {
     ? {
         ...JSON.parse(localStorage.getItem("loggedInUser")),
         favPages: fav,
-        company_branch: JSON.parse(localStorage.getItem("otherData"))
+        company_branch: JSON.parse(localStorage.getItem("branchData"))
           ?.company_branch,
         session:
-          JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26",
+          JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26",
         passwordChanged: "C",
         showlegal:
           JSON.parse(localStorage.getItem("loggedInUser"))?.department ===
@@ -23,7 +23,7 @@ const initialState = {
             : false,
       }
     : null,
-  testPages: JSON.parse(localStorage.getItem("otherData"))?.testPages,
+  testPages: JSON.parse(localStorage.getItem("branchData"))?.testPages,
   editVBT: JSON.parse(localStorage.getItem("editVBT")),
 
   notifications: JSON.parse(localStorage.getItem("userNotifications")) ?? [],
@@ -96,13 +96,13 @@ const loginSlice = createSlice({
   initialState,
   reducers: {
     logout: (state, action) => {
-      let otherData = JSON.parse(localStorage.getItem("otherData"));
-      otherData = { ...otherData, currentLink: state.user.currentLink };
+      let branchData = JSON.parse(localStorage.getItem("branchData"));
+      branchData = { ...branchData, currentLink: state.user.currentLink };
       state.user = null;
       state.message = "User Logged Out!";
       localStorage.removeItem("loggedInUser");
       localStorage.removeItem("newToken");
-      localStorage.setItem("otherData", JSON.stringify(otherData));
+      localStorage.setItem("branchData", JSON.stringify(branchData));
       toast.info("User Logged Out!");
     },
     addNotification: (state, action) => {
@@ -135,12 +135,12 @@ const loginSlice = createSlice({
       }
     },
     setTestPages: (state, action) => {
-      let obj = JSON.parse(localStorage.getItem("otherData"));
+      let obj = JSON.parse(localStorage.getItem("branchData"));
       // let testPages = obj.testPages;
       state.testPages = action.payload;
 
       localStorage.setItem(
-        "otherData",
+        "branchData",
         JSON.stringify({
           ...obj,
           testPages: action.payload,
@@ -159,13 +159,13 @@ const loginSlice = createSlice({
       let user = state.user;
       user = { ...user, company_branch: action.payload };
       state.user = user;
-      const existingOtherData = JSON.parse(
-        localStorage.getItem("otherData") || "{}"
+      const existingBranchData = JSON.parse(
+        localStorage.getItem("branchData") || "{}"
       );
       localStorage.setItem(
-        "otherData",
+        "branchData",
         JSON.stringify({
-          ...existingOtherData,
+          ...existingBranchData,
           company_branch: user.company_branch,
         })
       );
@@ -177,12 +177,12 @@ const loginSlice = createSlice({
       let user = state.user;
       user = { ...user, session: action.payload };
       state.user = user;
-      const existingOtherData = JSON.parse(
-        localStorage.getItem("otherData") || "{}"
+      const existingBranchData = JSON.parse(
+        localStorage.getItem("branchData") || "{}"
       );
       localStorage.setItem(
-        "otherData",
-        JSON.stringify({ ...existingOtherData, session: user.session })
+        "branchData",
+        JSON.stringify({ ...existingBranchData, session: user.session })
       );
     },
     setCurrentLink: (state, action) => {
@@ -199,7 +199,7 @@ const loginSlice = createSlice({
       const session = action.payload?.session ?? obj.session ?? "25-26";
 
       localStorage.setItem(
-        "otherData",
+        "branchData",
         JSON.stringify({
           company_branch,
           session,

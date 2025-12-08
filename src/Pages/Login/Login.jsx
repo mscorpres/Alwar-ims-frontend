@@ -92,7 +92,7 @@ const Login = () => {
         "submit"
       );
       const { success } = res || {};
-    
+
       if (success) {
         const isTwoStep = res?.isTwoStep ?? res?.data?.isTwoStep;
         if (isTwoStep === "Y") {
@@ -121,7 +121,7 @@ const Login = () => {
             emailConfirmed: payload.other?.e_v,
             passwordChanged: payload.other?.c_p ?? "C",
             company_branch: inpVal.company_branch, // Use selected branch from login form
-            currentLink: JSON.parse(localStorage.getItem("otherData"))
+            currentLink: JSON.parse(localStorage.getItem("branchData"))
               ?.currentLink,
             id: payload.crn_id,
             showlegal: payload.department === "legal" ? true : false,
@@ -340,7 +340,7 @@ const Login = () => {
           emailConfirmed: payload.other?.e_v,
           passwordChanged: payload.other?.c_p ?? "C",
           company_branch: userCredentials.company_branch, // Use stored branch from login
-          currentLink: JSON.parse(localStorage.getItem("otherData"))
+          currentLink: JSON.parse(localStorage.getItem("branchData"))
             ?.currentLink,
           id: payload.crn_id,
           showlegal: payload.department === "legal" ? true : false,

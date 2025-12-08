@@ -353,7 +353,7 @@ const App = () => {
       navigate("/login");
     } else if (user) {
       let branch = JSON.parse(
-        localStorage.getItem("otherData")
+        localStorage.getItem("branchData")
       )?.company_branch;
       if (branch) {
         setBranchSelected(true);
@@ -363,7 +363,7 @@ const App = () => {
   }, [user]);
   useEffect(() => {
     if (pathname === "/login" && user) {
-      const link = JSON.parse(localStorage.getItem("otherData"))?.currentLink;
+      const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
       if (user.passwordChanged === "P") {
         navigate("/first-login");
       } else {
@@ -659,7 +659,7 @@ const App = () => {
           }
 
           const redirectUrl = `${targetUrl}?${urlParams.toString()}`;
-          localStorage.removeItem("otherData");
+          localStorage.removeItem("branchData");
           localStorage.removeItem("loggedInUser");
           window.location.replace(redirectUrl);
         }, 1500);
