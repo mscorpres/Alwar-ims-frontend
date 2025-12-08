@@ -25,9 +25,8 @@ export default function MaterialUpdate({
   allComponent,
 }) {
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [imageModal, setImageModal] = useState(false);
   const [allUpdateData, setAllUpdataData] = useState([]);
-  console.log(allUpdateData);
+ 
   const [allData, setAllData] = useState({
     partno: "",
     name: "",

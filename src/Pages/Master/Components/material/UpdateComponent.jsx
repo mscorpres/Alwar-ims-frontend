@@ -213,7 +213,9 @@ export default function UpdateComponent() {
         }));
 
         setSubGroupOptions(arr);
-      } else {
+      } else { 
+       
+        setSubGroupOptions([]);
         toast.error(response.message);
       }
     } catch (error) {
