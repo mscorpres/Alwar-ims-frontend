@@ -44,9 +44,6 @@ import { useNavigate } from "react-router-dom";
 import { imsAxios } from "../../../../axiosInterceptor";
 import axiosResponseFunction from "../../../../Components/axiosResponseFun";
 import {
-  getCostCentresOptions,
-  getProjectOptions,
-  getVendorOptions,
   savefginward,
 } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
@@ -389,7 +386,7 @@ export default function ProductMIN() {
             }
           });
         } else {
-          toast.error(response.message?.msg || response.message);
+          toast.error(response.message);
         }
       } else {
         arr = arr.map((row) => ({
@@ -507,11 +504,12 @@ export default function ProductMIN() {
               [name]: value.value,
               locationName: value.label,
             };
+           
             return obj;
           } else {
             obj = { ...obj, [name]: value };
             return obj;
-          }
+          }j
         } else {
           return row;
         }
