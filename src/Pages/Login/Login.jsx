@@ -575,7 +575,7 @@ const Login = () => {
                   />
                 </Card>
               ) : signUpPage === "1" ? (
-                <Card style={{ height: 400, position: "relative" }}>
+                <Card style={{ height: 450, position: "relative" }}>
                   <Button
                     type="text"
                     icon={<EditOutlined />}
@@ -764,7 +764,7 @@ const Login = () => {
                   </Form>
                 </Card>
               ) : (
-                <Card style={{ height: 590, position: "relative" }}>
+                <Card style={{ height: 600, position: "relative" }}>
                   <Button
                     type="text"
                     icon={<EditOutlined />}
