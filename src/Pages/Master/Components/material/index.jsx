@@ -130,6 +130,7 @@ const Material = () => {
 
         setSubGroupOptions(arr);
       } else {
+           setSubGroupOptions([]);
         toast.error(response.message);
       }
     } catch (error) {
