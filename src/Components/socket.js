@@ -2,7 +2,7 @@ import {io} from "socket.io-client";
 import { socketLink } from "../axiosInterceptor";
 const userToken = JSON.parse(localStorage.getItem("loggedInUser"))?.token;
 const companyBranch = JSON.parse(
-  localStorage.getItem("otherData")
+  localStorage.getItem("branchData")
 )?.company_branch;
 
 export default io(socketLink, {
