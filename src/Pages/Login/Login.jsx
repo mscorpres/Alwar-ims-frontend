@@ -67,14 +67,10 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    // if (!recaptchaValue) {
-    //   toast.error("Please verify the reCAPTCHA");
-    //   // return;
-    // }
-    // if (!recaptchaValue) {
-    //   toast.error("Please verify the reCAPTCHA");
-    //   // return;
-    // }
+    if (!recaptchaValue) {
+      toast.error("Please verify the reCAPTCHA");
+      return;
+    }
     const { username, password } = inpVal;
     if (username === "" && password === "") {
       toast.error("Please fill the field");
@@ -143,6 +139,10 @@ const Login = () => {
     }
   };
   const validatecreateNewUser = async () => {
+     if (!recaptchaValue) {
+      toast.error("Please verify the reCAPTCHA");
+      return;
+    }
     const values = await signUp.validateFields();
     console.log("values", values);
     // createNewUser(values);
@@ -575,7 +575,7 @@ const Login = () => {
                   />
                 </Card>
               ) : signUpPage === "1" ? (
-                <Card style={{ height: 350, position: "relative" }}>
+                <Card style={{ height: 450, position: "relative" }}>
                   <Button
                     type="text"
                     icon={<EditOutlined />}
@@ -679,13 +679,13 @@ const Login = () => {
                         {/* <Link onClick={() => setForgotPassword("1")}>
                           Forgot Password
                         </Link> */}
-                        {/*<div className="flex justify-center">
+                        <div className="flex justify-center">
                           <ReCAPTCHA
                             sitekey="6LdmVcArAAAAAOb1vljqG4DTEEi2zP1TIjDd_0wR"
                             onChange={handleRecaptchaChange}
                             key={recaptchaKey}
                           />
-                        </div>*/}
+                        </div>
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
                           <Button
                             loading={loading("submit")}
@@ -764,7 +764,7 @@ const Login = () => {
                   </Form>
                 </Card>
               ) : (
-                <Card style={{ height: 490, position: "relative" }}>
+                <Card style={{ height: 600, position: "relative" }}>
                   <Button
                     type="text"
                     icon={<EditOutlined />}
@@ -884,6 +884,13 @@ const Login = () => {
                       <Input.Password />
                     </Form.Item>
                   </Form>
+                   <div className="flex justify-center">
+                          <ReCAPTCHA
+                            sitekey="6LdmVcArAAAAAOb1vljqG4DTEEi2zP1TIjDd_0wR"
+                            onChange={handleRecaptchaChange}
+                            key={recaptchaKey}
+                          />
+                        </div>
                   <Button
                     // loading={loading}
                     block
