@@ -452,7 +452,7 @@ const Login = () => {
                     position: "relative",
                   }}
                 >
-                  <Button
+                  {/* <Button
                     type="text"
                     icon={<EditOutlined />}
                     onClick={() => setShowCustomUrlModal(true)}
@@ -463,7 +463,7 @@ const Login = () => {
                       zIndex: 10,
                     }}
                     title="Add Custom URL"
-                  />
+                  /> */}
                   <Title
                     style={{
                       color: "#04b0a8",
@@ -576,7 +576,7 @@ const Login = () => {
                 </Card>
               ) : signUpPage === "1" ? (
                 <Card style={{ height: 450, position: "relative" }}>
-                  <Button
+                  {/* <Button
                     type="text"
                     icon={<EditOutlined />}
                     onClick={() => setShowCustomUrlModal(true)}
@@ -587,7 +587,7 @@ const Login = () => {
                       zIndex: 10,
                     }}
                     title="Add Custom URL"
-                  />
+                  /> */}
                   <Title
                     style={{
                       color: "gray",
@@ -765,7 +765,7 @@ const Login = () => {
                 </Card>
               ) : (
                 <Card style={{ height: 600, position: "relative" }}>
-                  <Button
+                  {/* <Button
                     type="text"
                     icon={<EditOutlined />}
                     onClick={() => setShowCustomUrlModal(true)}
@@ -776,7 +776,7 @@ const Login = () => {
                       zIndex: 10,
                     }}
                     title="Add Custom URL"
-                  />
+                  /> */}
                   <Title
                     style={{
                       color: "gray",
