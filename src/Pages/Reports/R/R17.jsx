@@ -143,9 +143,7 @@ function R17() {
     let vendor = searchForm.getFieldsValue().vendor;
     if (vendor) {
       setFormLoading(true);
-      const response = await imsAxios.post("/backend/fetchVendorJWLocation", {
-        search: vendor,
-      });
+      const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendor}`);
       setFormLoading(false);
       if (response.success) {
         let arr = [];
