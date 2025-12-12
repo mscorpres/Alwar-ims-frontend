@@ -55,8 +55,8 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
   // Fetch currencies
   const getCurrencies = async () => {
     try {
-      const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
-      let arr = data.data.map((d) => ({
+      const response = await imsAxios.get("/backend/fetchAllCurrecy");
+      let arr = response.data.map((d) => ({
         text: d.currency_symbol,
         value: d.currency_id,
         notes: d.currency_notes,
@@ -250,6 +250,7 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
             project_qty: row.project_qty,
             po_ord_qty: row.po_ord_qty,
             last_rate: row.last_rate || "--",
+            part_no: row.part_no,
           });
         });
       }
@@ -492,6 +493,13 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
       renderCell: ({ row }) => <ToolTipEllipses text={row.component?.label || "--"} />,
     },
     {
+      headerName: "Item Description",
+      width: 250,
+      field: "remark",
+      sortable: false,
+      renderCell: ({ row }) => <ToolTipEllipses text={row.remark || "--"} />,
+    },
+    {
       headerName: "Ord. Qty",
       width: 130,
       field: "qty",
@@ -503,7 +511,7 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
       ),
     },
     {
-      headerName: "order Rate",
+      headerName: "Order Rate",
       width: 180,
       field: "rate",
       sortable: false,
@@ -630,13 +638,6 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
       field: "igst",
       sortable: false,
       renderCell: ({ row }) => <span>{row.igst || "--"}</span>,
-    },
-    {
-      headerName: "Item Description",
-      width: 250,
-      field: "remark",
-      sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.remark || "--"} />,
     },
     {
       headerName: "Internal Remark",
