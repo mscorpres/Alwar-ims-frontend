@@ -738,7 +738,7 @@ const App = () => {
   }
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height:  "100vh" }}>
       <ToastContainer
         position="bottom-center"
         autoClose={1500}
@@ -1195,7 +1195,7 @@ const App = () => {
         {/* sidebar starts */}
         <Layout
           style={{
-            height: "100%",
+            height:  "100%",
             opacity: user && !branchSelected ? 0.5 : 1,
             pointerEvents: user && !branchSelected ? "none" : "all",
           }}
@@ -1212,6 +1212,7 @@ const App = () => {
               key={1}
               setShowSideBar={setShowSideBar}
               showSideBar={showSideBar}
+              isBannerVisible={isBannerVisible}
             />
           )}
           {/* sidebar ends */}

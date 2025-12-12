@@ -4,10 +4,11 @@ import Sider from "antd/lib/layout/Sider";
 import { Menu } from "antd";
 import { customColor } from "../utils/customColor";
 const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
+  const {isBannerVisible} = props
   return (
     <Sider
       style={{
-        height: "100vh",
+        height: isBannerVisible ? "calc(100vh - 50px)" : "100vh",
         zIndex: 99,
         overflowY: "auto",
       }}
