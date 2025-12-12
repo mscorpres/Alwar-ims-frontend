@@ -88,6 +88,7 @@ export { default as PendingPPR } from "./Production/Production & Planning/Pendin
 export { default as CompletedPo } from "./PurchaseOrder/CompletedPO/CompletedPo";
 export { default as ManagePO } from "./PurchaseOrder/ManagePO/ManagePo";
 export { default as EditPO } from "./PurchaseOrder/ManagePO/EditPO/EditPO";
+export { default as POrequest } from "./PurchaseOrder/POREQUEST/RequestPo.jsx";
 export { default as CreatePo } from "./PurchaseOrder/CreatePO/CreatePo";
 export { default as VendorPricingUpload } from "./PurchaseOrder/VendorPricingUpload";
 export { default as PoApproval } from "./PurchaseOrder/ManagePO/PoApproval/PoApproval";
