@@ -64,7 +64,7 @@ const CompletedPo = () => {
       setLoading(false);
       // console.log(response.data);
       if (response.success) {
-        let arr = response.data;
+        let arr = response.data?.final_data;
         arr = arr.map((row, index) => {
           return { ...row, id: row.po_transaction_code, index: index + 1 };
         });
