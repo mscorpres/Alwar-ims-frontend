@@ -1232,7 +1232,8 @@ const App = () => {
                     const headerHeight = 50;
                     const bannerHeight = isBannerVisible ? 40 : 0;
                     const testServerHeight = isTestServer ? 15 : 0;
-                    return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px)`;
+                    const byDefaultHeight = 55;
+                    return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                   })(),
                   width: "100%",
                   opacity: testPage ? 0.5 : 1,

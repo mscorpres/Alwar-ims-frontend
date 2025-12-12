@@ -1593,15 +1593,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
                                 }}
                               >
                                 Project ID
-                                {/* <span
-                                  onClick={() => setShowAddProjectConfirm(true)}
-                                  style={{
-                                    color: "#1890FF",
-                                    cursor: "pointer",
-                                  }}
-                                >
-                                  Add Project
-                                </span> */}
+                             
                               </div>
                             }
                           >
