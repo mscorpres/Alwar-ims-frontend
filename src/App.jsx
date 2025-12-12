@@ -823,7 +823,7 @@ const App = () => {
                       variant="borderless"
                       placeholder="Select Company Branch"
                       onChange={(value) => handleSelectCompanyBranch(value)}
-                      value={user.company_branch}
+                      value={user.company_branch || "BRALWR36"}
                       disabled
                     />
                   </div>

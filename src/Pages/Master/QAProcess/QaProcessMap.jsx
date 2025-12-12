@@ -150,7 +150,6 @@ const QaProcessMap = () => {
     });
     let newQaprocessInput = [];
     newQaprocessInput.push(...updatedQaProcessInputs);
-    console.log(newQaprocessInput);
     setQaProcessInput(newQaprocessInput);
   };
 
@@ -202,14 +201,12 @@ const QaProcessMap = () => {
     qaProcessData.process = process;
     qaProcessData.sfg_sku = sku;
     qaProcessData.qa_process_key = qa_process_key;
-    console.log(qaProcessData);
     setLoading1("submit");
     const response = await imsAxios.post(
       "/qaProcessmaster/updateMappedQAProcess",
       qaProcessData
     );
     setLoading1(false);
-    console.log("response", response);
 
     if (response?.success) {
       toast.success(response.message);
@@ -468,7 +465,6 @@ const QaProcessMap = () => {
     const response = await imsAxios.post("/qaProcessmaster/fetchQAProcess", {
       sku: qaProcessData.sku,
     });
-    console.log("process response", response);
     setLoading1(false);
     let arr = [];
     if (response?.success) {
@@ -504,7 +500,6 @@ const QaProcessMap = () => {
         lot_size: row.qa_lot_size,
         processRemark: row.qa_process_remark,
       }));
-      console.log("arr", arr);
 
       setQaProcessInput(arr);
       return {

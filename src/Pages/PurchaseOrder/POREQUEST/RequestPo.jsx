@@ -53,7 +53,7 @@ const RequestPo = () => {
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.po_transaction} copy={true} />
       ),
-      width: 150,
+      minWidth: 170,
     },
     {
       headerName: "PO ACCEPTANCE",

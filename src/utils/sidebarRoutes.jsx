@@ -686,20 +686,20 @@ export const items = (user) => [
   // : null,
 
   //MES
-  // getItem("MES", "Z", <DeploymentUnitOutlined />, [
-  //   getItem("QA Process", "Z1", <DeliveredProcedureOutlined />, [
-  //     getItem(<Link to="/master/qa-process">Create Process</Link>, "Z11"),
-  //     getItem(
-  //       <Link to="/master/qa-process-map">Create Process Map</Link>,
-  //       "Z12"
-  //     ),
-  //   ]),
-  //   getItem("QCA", "Z2", <CheckCircleOutlined />, [
-  //     getItem(<Link to="/print-qc-label">Print QCA Label</Link>, "Z21"),
-  //     getItem(<Link to="/qccheck">QC Check</Link>, "Z22"),
-  //     getItem(<Link to="/mes-report-qc">QC Report</Link>, "Z23"),
-  //   ]),
-  // ]),
+  getItem("MES", "Z", <DeploymentUnitOutlined />, [
+    getItem("QA Process", "Z1", <DeliveredProcedureOutlined />, [
+      getItem(<Link to="/master/qa-process">Create Process</Link>, "Z11"),
+      getItem(
+        <Link to="/master/qa-process-map">Create Process Map</Link>,
+        "Z12"
+      ),
+    ]),
+    getItem("QCA", "Z2", <CheckCircleOutlined />, [
+      getItem(<Link to="/print-qc-label">Print QCA Label</Link>, "Z21"),
+      getItem(<Link to="/qccheck">QC Check</Link>, "Z22"),
+      getItem(<Link to="/mes-report-qc">QC Report</Link>, "Z23"),
+    ]),
+  ]),
   // getItem("MES", "Z", <DeploymentUnitOutlined />, [
   //   getItem(
   //     <Link to="/mes/process/create">Create Process</Link>,

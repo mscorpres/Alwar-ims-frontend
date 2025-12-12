@@ -611,17 +611,16 @@ const Routes = [
     main: () => <MaterialTransferReport type="sftorej" />,
   },
   // qc process
-  //qa process
-  // {
-  //   path: "/master/qa-process",
-  //   exact: true,
-  //   main: () => <QaProcess />,
-  // },
-  // {
-  //   path: "/master/qa-process-map",
-  //   exact: true,
-  //   main: () => <QaProcessMap />,
-  // },
+  {
+    path: "/master/qa-process",
+    exact: true,
+    main: () => <QaProcess />,
+  },
+  {
+    path: "/master/qa-process-map",
+    exact: true,
+    main: () => <QaProcessMap />,
+  },
   // Reports
   {
     path: "/item-all-logs",

@@ -16,12 +16,15 @@ const PrintQCALabel = () => {
         skuType: values.type,
         totalQr: values.quantity,
       });
-      const { data } = response;
-      if (data) {
-        printFunction(data.data.buffer.data);
+      if (response.success) {
+        toast.success(response.message);
+        printFunction(response.data.buffer.data);
+      }
+      else{
+        toast.error(response.message);
       }
     } catch (error) {
-      console.log("error while printing labels", error);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }

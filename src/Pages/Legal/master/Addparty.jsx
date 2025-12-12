@@ -58,7 +58,7 @@ function Addparty() {
   const getRows = async () => {
     const response = await imsAxios.get("/qaProcessmaster/fetch_Process");
     // console.log("datadata", data.data);
-    if (response.status === "200" || response.status === 200) {
+    if (response.success) {
       const { data } = response.data;
       console.log("datadata", data);
       const arr = data.map((row, index) => {
@@ -69,6 +69,9 @@ function Addparty() {
         };
       });
       setRows(arr);
+    }
+    else{
+      toast.error(response.message);
     }
   };
   const submitForm = async () => {

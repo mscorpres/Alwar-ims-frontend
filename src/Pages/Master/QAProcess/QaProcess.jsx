@@ -5,25 +5,29 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import MyButton from "../../../Components/MyButton";
+import { toast } from "react-toastify";
 
 function QaProcess() {
   const [rows, setRows] = useState([]);
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const addRows = async (values) => {
-    console.log("values", values);
+    setLoading(true);
     const response = await imsAxios.post("/qaProcessmaster/insert_Process", values);
-
-    console.log("row Data", response);
     if (response.success) {
+      toast.success(response.message);
       getRows();
+      form.resetFields();
     }
+    else{
+      toast.error(response.message);
+    }
+    setLoading(false);
   };
   const getRows = async () => {
     const response = await imsAxios.get("/qaProcessmaster/fetch_Process");
-    // console.log("datadata", response);
     if (response.success) {
       const data = response.data;
-      console.log("datadata", data);
       const arr = data.map((row, index) => {
         return {
           ...row,
@@ -36,7 +40,6 @@ function QaProcess() {
   };
   const submitForm = async () => {
     const values = await form.validateFields();
-    console.log("form value", values);
     addRows(values);
   };
   const columns = [
@@ -91,7 +94,7 @@ function QaProcess() {
                 <Button>Reset</Button>
               </Col>
               <Col span={4}>
-                <MyButton variant="search" type="primary" onClick={submitForm}>
+                <MyButton variant="search" type="primary" onClick={submitForm} loading={loading}>
                   Submit
                 </MyButton>
               </Col>
