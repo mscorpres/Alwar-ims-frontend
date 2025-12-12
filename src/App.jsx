@@ -14,6 +14,8 @@ import { useSelector, useDispatch } from "react-redux/es/exports";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "buffer";
+import AppHeader from "./new/Header/AppHeader.jsx";
+import NotificationDropdown from "./Components/NotificationDropdown/NotificationDropdown";
 import {
   logout,
   setNotifications,
@@ -58,6 +60,7 @@ const App = () => {
   const { user, notifications, testPages } = useSelector(
     (state) => state.login
   );
+  const notificationButtonRef = useRef(null);
 
   const filteredRoutes = Rout.filter((route) => {
     // Include the route if it doesn't have a "dept" property or if showlegal is true
@@ -783,7 +786,7 @@ const App = () => {
         <Information />
         {user && user.passwordChanged === "C" && (
           <Layout style={{ height: "100%" }}>
-            <Header
+            {/* <Header
               style={{
                 zIndex: 4,
                 height: 45,
@@ -990,7 +993,7 @@ const App = () => {
                       hide={() => setShowSetting(false)}
                     />
                   )}
-                  {/* Switch Module Modal */}
+              
                   <Modal
                     title={null}
                     open={showSwitchModule}
@@ -1188,7 +1191,115 @@ const App = () => {
                   </Modal>
                 </Space>
               </Row>
-            </Header>
+            </Header> */}
+                <AppHeader
+              onToggleSidebar={() => setShowSideBar((open) => !open)}
+              logo={<Logo />}
+              title="IMS"
+              branchOptions={options}
+              sessionOptions={sessionOptions}
+              branchValue={user.company_branch}
+              sessionValue={user.session}
+              onChangeBranch={(value) => handleSelectCompanyBranch(value)}
+              onChangeSession={(value) => handleSelectSession(value)}
+              showSearch
+              searchComponent={
+                <Select
+                  showSearch
+                  placeholder="Search..."
+                  value={searchModule || undefined}
+                  onChange={(value) => {
+                    setSearchModule(value);
+                    navigate(value);
+                  }}
+                  onSearch={(value) => {
+                    if (value && value.trim().length > 0) {
+                      getModuleSearchOptions(value.toLowerCase());
+                    } else {
+                      // Show all modules when search is cleared
+                      setModulesOptions(
+                        allModules.length > 0 ? allModules : []
+                      );
+                    }
+                  }}
+                  options={
+                    modulesOptions?.length > 0
+                      ? modulesOptions
+                      : allModules.length > 0
+                      ? allModules
+                      : showHisList || []
+                  }
+                  filterOption={false}
+                  notFoundContent={null}
+                  style={{
+                    width: 200,
+                  }}
+                  className="header-search-select"
+                  suffixIcon={
+                    <SearchOutlined style={{ color: "rgba(0, 0, 0, 0.45)" }} />
+                  }
+                  onFocus={() => {
+                    // Show all modules when focused if no search is active
+                    if (!searchModule && allModules.length > 0) {
+                      setModulesOptions(allModules);
+                    }
+                    // Load search history if available
+                    if (showHisList.length === 0) {
+                      showRecentSearch();
+                    }
+                  }}
+                />
+              }
+            
+              socketConnected={isConnected}
+              socketLoading={isLoading}
+              onRefreshSocket={() => refreshConnection()}
+              notificationsCount={
+                notifications.filter((not) => not?.type != "message")?.length
+              }
+              onClickNotifications={() => dispatch(toggleNotifications())}
+              notificationButtonRef={notificationButtonRef}
+              messagesCount={
+                notifications.filter((not) => not?.type == "message").length
+              }
+              onClickMessages={() => dispatch(setShowTickets(true))}
+              switchModule={
+                <Tooltip title="Switch Module" placement="bottom">
+                  <SwapOutlined
+                    style={{
+                      fontSize: 18,
+                      color: "white",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => dispatch(setShowSwitchModule(true))}
+                  />
+                </Tooltip>
+              }
+              userMenu={
+                <UserMenu
+                  user={user}
+                  logoutHandler={logoutHandler}
+                  setShowSettings={(value) => dispatch(setShowSetting(value))}
+                />
+              }
+              extraRight={
+                showSetting ? (
+                  <SettingDrawer
+                    open={showSetting}
+                    hide={() => dispatch(setShowSetting(false))}
+                  />
+                ) : null
+              }
+            />
+                <NotificationDropdown
+              open={showNotifications}
+              onClose={() => dispatch(setShowNotifications(false))}
+              notifications={notifications.filter(
+                (not) => not?.type != "message"
+              )}
+              deleteNotification={deleteNotification}
+              anchorRef={notificationButtonRef}
+            />
           </Layout>
         )}
         {/* header ends */}
@@ -1200,20 +1311,41 @@ const App = () => {
             pointerEvents: user && !branchSelected ? "none" : "all",
           }}
         >
+           <div style={{ display: "flex", height: "100%", paddingTop: user && user.passwordChanged === "C" ? 45 : 0 }}>
           <TicketsModal
             open={showTickets}
             handleClose={() => setShowTickets(false)}
           />
           {user && user.passwordChanged === "C" && (
-            <Sidebar
-              items={items(user)}
-              items1={items1(user, setShowTickets)}
-              className="site-layout-background"
-              key={1}
-              setShowSideBar={setShowSideBar}
-              showSideBar={showSideBar}
-              isBannerVisible={isBannerVisible}
-            />
+            // <Sidebar
+            //   items={items(user)}
+            //   items1={items1(user, setShowTickets)}
+            //   className="site-layout-background"
+            //   key={1}
+            //   setShowSideBar={setShowSideBar}
+            //   showSideBar={showSideBar}
+            //   isBannerVisible={isBannerVisible}
+            // />
+             <>
+                <Sidebar
+                  className="site-layout-background"
+                  key={1}
+                  setShowSideBar={setShowSideBar}
+                  showSideBar={showSideBar}
+                  useJsonConfig={true}
+                  topOffset={
+                    isTestServer || isBannerVisible
+                      ? 90
+                      : 45
+                  }
+                  onWidthChange={(w) => {
+                    const layout = document.querySelector(
+                      "#app-content-left-margin"
+                    );
+                    if (layout) layout.style.marginLeft = `${w}px`;
+                  }}
+                />
+              </>
           )}
           {/* sidebar ends */}
           <Layout
@@ -1255,8 +1387,199 @@ const App = () => {
               </div>
             </Content>
           </Layout>
+          </div>
         </Layout>
       </Layout>
+
+         <Modal
+        title={null}
+        open={showSwitchModule}
+        onCancel={() => {
+          if (!isSwitchingModule) {
+            dispatch(setShowSwitchModule(false));
+            setSwitchLocation(null);
+            setSwitchBranch(null);
+            setSwitchSession(null);
+            setIsSwitchingModule(false);
+            setSwitchingLocation(null);
+            setSwitchSuccess(false);
+          }
+        }}
+        footer={null}
+        width={400}
+        centered
+        maskClosable={!isSwitchingModule}
+        closable={!isSwitchingModule}
+      >
+        {isSwitchingModule ? (
+          <div
+            style={{
+              padding: "60px 0",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {switchSuccess ? (
+              <>
+                <video
+                  src="/assets/check.mp4"
+                  autoPlay
+                  muted
+                  style={{ width: 120, height: 120 }}
+                />
+                <p
+                  style={{
+                    marginTop: 16,
+                    color: "#047780",
+                    fontWeight: 500,
+                  }}
+                >
+                  Authenticated! Redirecting...
+                </p>
+              </>
+            ) : (
+              <>
+                <div
+                  style={{
+                    width: 50,
+                    height: 50,
+                    border: "4px solid #f3f3f3",
+                    borderTop: "4px solid #047780",
+                    borderRadius: "50%",
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+                <style>
+                  {`
+                                @keyframes spin {
+                                  0% { transform: rotate(0deg); }
+                                  100% { transform: rotate(360deg); }
+                                }
+                              `}
+                </style>
+                <p style={{ marginTop: 16, color: "#666" }}>
+                  Authenticating...
+                </p>
+              </>
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              padding: "20px 0",
+            }}
+          >
+            <div
+              style={{
+                width: 60,
+                height: 60,
+                borderRadius: "50%",
+                background: "#f5f5f5",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 16,
+              }}
+            >
+              <SwapOutlined style={{ fontSize: 28, color: "#047780" }} />
+            </div>
+            <h3 style={{ margin: "0 0 24px 0", color: "#333" }}>
+              Switch Module
+            </h3>
+            <div style={{ width: "100%", maxWidth: 300 }}>
+              <div style={{ marginBottom: 16 }}>
+                <div
+                  style={{
+                    marginBottom: 6,
+                    fontWeight: 500,
+                    color: "#666",
+                  }}
+                >
+                  Location
+                </div>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select Location"
+                  options={[
+                    { label: "Alwar", value: "alwar" },
+                    { label: "Noida", value: "noida" },
+                  ]}
+                  value={switchLocation}
+                  onChange={(value) => {
+                    setSwitchLocation(value);
+                    setSwitchBranch(null);
+                  }}
+                />
+              </div>
+              <div style={{ marginBottom: 16 }}>
+                <div
+                  style={{
+                    marginBottom: 6,
+                    fontWeight: 500,
+                    color: "#666",
+                  }}
+                >
+                  Branch
+                </div>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select Branch"
+                  disabled={!switchLocation}
+                  options={
+                    switchLocation ? locationBranchOptions[switchLocation] : []
+                  }
+                  value={switchBranch}
+                  onChange={(value) => setSwitchBranch(value)}
+                />
+              </div>
+              <div style={{ marginBottom: 24 }}>
+                <div
+                  style={{
+                    marginBottom: 6,
+                    fontWeight: 500,
+                    color: "#666",
+                  }}
+                >
+                  Session
+                </div>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select Session"
+                  options={sessionOptions}
+                  value={switchSession || user?.session}
+                  onChange={(value) => setSwitchSession(value)}
+                />
+              </div>
+              <Button
+                type="primary"
+                block
+                size="large"
+                style={{
+                  background: "#047780",
+                  borderColor: "#047780",
+                  height: 44,
+                }}
+                disabled={!switchLocation || !switchBranch}
+                onClick={() => {
+                  handleSwitchModule(
+                    switchLocation.charAt(0).toUpperCase() +
+                      switchLocation.slice(1),
+                    switchBranch,
+                    switchSession || user?.session
+                  );
+                }}
+              >
+                Switch
+              </Button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
