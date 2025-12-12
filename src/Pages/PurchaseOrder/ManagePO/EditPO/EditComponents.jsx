@@ -417,7 +417,7 @@ export default function EditComponent({
     quotationterms: purchaseOrder?.termsofquotation?.trim(),
     termsandcondition: purchaseOrder?.termsofcondition?.trim(),
     costcenter: purchaseOrder?.costcenter?.value || purchaseOrder?.costcenter,
-    projectname: purchaseOrder?.projectname?.value?.trim(),
+    projectname: typeof purchaseOrder?.projectname === "object" ? purchaseOrder?.projectname?.value?.trim() : purchaseOrder?.projectname?.trim(),
     pocomment: purchaseOrder?.pocomment?.trim(),
     bill_address_id: purchaseOrder.addrbillid,
     billaddress: purchaseOrder.billaddress,
