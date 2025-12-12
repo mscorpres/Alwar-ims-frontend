@@ -704,9 +704,10 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
           <Form form={form} initialValues={purchaseOrder} size="small" layout="vertical" style={{ height: "100%" }}>
             <div
               style={{
-                height: "calc(100% - 80px)",
+                height: "calc(100% - 20px)",
                 overflowY: "scroll",
                 overflowX: "hidden",
+       
               }}
             >
               {/* Vendor Details */}
@@ -1060,7 +1061,7 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
         </Tabs.TabPane>
 
         <Tabs.TabPane tab="Components Details" style={{ height: "100%" }} key="2">
-          <Row gutter={8} style={{ height: "100%" }}>
+          <Row gutter={8} style={{ height: "calc(100% - 20px)", overflow: "auto" }}>
             <Col span={6} style={{ height: "99%" }}>
               <Row gutter={[0, 4]} style={{ height: "100%" }}>
                 {/* vendor card */}

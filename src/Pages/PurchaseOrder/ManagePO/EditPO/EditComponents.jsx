@@ -732,7 +732,7 @@ export default function EditComponent({
     setTotaTaxValue(obj);
   }, [rowCount]);
   return (
-    <div style={{ height: "99%" }}>
+    <div style={{ height: "calc(100vh - 160px)", overflowY: "auto", overflowX: "hidden" }}>
       {/* po update confirm modal */}
       <Modal
         title="Confirm Update PO!"

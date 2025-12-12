@@ -1090,7 +1090,8 @@ const [pendingPOData, setPendingPOData] = useState(null);
   return (
     <div
       style={{
-        height: "90%",
+        height: "calc(100vh - 180px)",
+        overflow:"hidden"
       }}
     >
       {/* create confirm modal */}
@@ -1220,7 +1221,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
               <div
                 style={{
                   height: "100%",
-                  overflowY: "scroll",
+                  overflowY: "hidden",
                   overflowX: "hidden",
                   padding: "0vh 20px 10px",
                 }}

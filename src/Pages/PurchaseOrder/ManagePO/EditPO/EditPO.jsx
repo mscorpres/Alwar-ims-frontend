@@ -360,8 +360,8 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
           >
             <div
               style={{
-                height: "100%",
-                overflowY: "scroll",
+                height: "calc(100vh - 160px)",
+                overflowY: "auto",
                 overflowX: "hidden",
               }}
             >
