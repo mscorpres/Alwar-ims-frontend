@@ -8,7 +8,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { Box, LinearProgress } from "@mui/material";
-import Sidebar from "./Components/Sidebar";
+import Sidebar from  "./new/Sidebar/Sidebar.jsx";
 import Rout from "./Routes/Routes";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import { toast, ToastContainer } from "react-toastify";
