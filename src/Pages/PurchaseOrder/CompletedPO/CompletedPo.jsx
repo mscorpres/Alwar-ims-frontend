@@ -387,7 +387,13 @@ const CompletedPo = () => {
           </Space>
         </Col>
       </Row>
-      <div style={{ height: "85%", padding: "0px 10px" }}>
+      <div style={{
+          height: "calc(100vh - 160px)",
+          overflowY: "auto",
+          overflowX: "hidden",
+          padding: "0 10px",
+        }}
+        >
         <MyDataTable
           loading={loading || viewLoading}
           data={rows}

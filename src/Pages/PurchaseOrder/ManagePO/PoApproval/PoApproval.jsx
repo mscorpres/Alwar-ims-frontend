@@ -298,7 +298,13 @@ export default function PoApproval() {
           />
         </Col>
       </Row>
-      <div style={{ height: "100%", paddingTop: 5 }}>
+      <div style={{
+          height: "calc(100vh - 160px)",
+          overflowY: "auto",
+          overflowX: "hidden",
+          padding: "0 10px",
+        }}
+        >
         <MyDataTable
           loading={loading === "fetch"}
           columns={columns}

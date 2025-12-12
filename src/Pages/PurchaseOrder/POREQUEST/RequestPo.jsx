@@ -312,7 +312,9 @@ const RequestPo = () => {
 
       <div
         style={{
-          height: "85%",
+          height: "calc(100vh - 160px)",
+          overflowY: "auto",
+          overflowX: "hidden",
           padding: "0 10px",
         }}
       >

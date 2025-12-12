@@ -482,10 +482,12 @@ const ManagePO = () => {
         setAsyncOptions={setAsyncOptions}
       />
       <div
-        style={{
-          height: "85%",
-          padding: "0 10px",
-        }}
+       style={{
+        height: "calc(100vh - 160px)",
+        overflowY: "auto",
+        overflowX: "hidden",
+        padding: "0 10px",
+      }}
       >
         <MyDataTable
           loading={loading || viewLoading || searchLoading}
