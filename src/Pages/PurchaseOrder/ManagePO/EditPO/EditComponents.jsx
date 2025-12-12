@@ -21,7 +21,6 @@ import {
   taxableCell,
 } from "./TableColumns";
 import Loading from "../../../../Components/Loading";
-import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { Button, Card, Col, Modal, Popconfirm, Row, Typography } from "antd";
 import {
   LoadingOutlined,
@@ -466,6 +465,7 @@ export default function EditComponent({
         }
       } else {
         toast.error(response.message);
+        setSubmitConfirm(null);
       }
     }
   };
@@ -511,7 +511,7 @@ export default function EditComponent({
       headerName: (
         <Button size="small" icon={<PlusOutlined />} onClick={addRows} />
       ),
-      width: 20,
+      width: 50,
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>
@@ -535,6 +535,13 @@ export default function EditComponent({
       sortable: false,
     },
     {
+      headerName: "Part no.",
+      width: 100,
+      field: "part_no",
+      sortable: false,
+      renderCell: (params) => disabledCell(params.row.part_no, inputHandler),
+    },
+    {
       headerName: "Component",
       width: 250,
       field: "component",
@@ -548,7 +555,13 @@ export default function EditComponent({
           asynOptions
         ),
     },
-   
+    {
+      headerName: "Item Description",
+      width: 200,
+      width: 250,
+      sortable: false,
+      renderCell: (params) => itemDescriptionCell(params, inputHandler),
+    },
     {
       headerName: "Ord. Qty",
       width: 130,
@@ -563,7 +576,7 @@ export default function EditComponent({
       sortable: false,
       renderCell: (params) => rateCell(params, inputHandler, currencies),
     },
-     {
+    {
       headerName: "Last rate",
       width: 180,
       field: "last_rate",
@@ -685,12 +698,7 @@ export default function EditComponent({
       sortable: false,
       renderCell: (params) => internalRemarkCell(params, inputHandler),
     },
-    {
-      headerName: "Item Description",
-      width: 250,
-      sortable: false,
-      renderCell: (params) => itemDescriptionCell(params, inputHandler),
-    },
+   
   ];
   useEffect(() => {
     getCurrencies();
