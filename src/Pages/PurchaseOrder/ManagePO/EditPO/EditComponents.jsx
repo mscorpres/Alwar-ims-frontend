@@ -405,6 +405,7 @@ export default function EditComponent({
     toast.error("All items must have same Currency and GST Type");
     return;
   }
+  console.log(purchaseOrder, "values")
 
   let finalPO = {
     poid: updatePoId?.orderid,
@@ -416,7 +417,7 @@ export default function EditComponent({
     quotationterms: purchaseOrder?.termsofquotation?.trim(),
     termsandcondition: purchaseOrder?.termsofcondition?.trim(),
     costcenter: purchaseOrder?.costcenter?.value || purchaseOrder?.costcenter,
-    projectname: purchaseOrder?.projectname?.trim(),
+    projectname: purchaseOrder?.projectname?.value?.trim(),
     pocomment: purchaseOrder?.pocomment?.trim(),
     bill_address_id: purchaseOrder.addrbillid,
     billaddress: purchaseOrder.billaddress,
