@@ -683,6 +683,20 @@ const App = () => {
     setShowHisList(arr);
   };
 
+  const getOffsetLeft = () => {
+    isTestServer ? 60 : isBannerVisible && isTestServer ? 120 : 0;
+
+    if (isTestServer && isBannerVisible) {
+      return 90;
+    } else if (isTestServer) {
+      return 60;
+    } else if (isBannerVisible) {
+      return 90;
+    } else {
+      return 0;
+    }
+  };
+
   const options = [
     { label: "A-21 [BRMSC012]", value: "BRMSC012" },
     { label: "B-29 [BRMSC029]", value: "BRMSC029" },
@@ -780,15 +794,7 @@ const App = () => {
         pauseOnFocusLoss
         pauseOnHover
       />
-      {showBlackScreen && (
-        <TopBanner
-          messages={[
-            "Welcome to IMS Alwar.",
-            "System maintenance scheduled for 7th December Sunday 01 AM - 23 PM",
-          ]}
-          onVisibilityChange={setIsBannerVisible}
-        />
-      )}
+
       <Layout
         style={{
           width: "100%",
@@ -809,6 +815,15 @@ const App = () => {
           >
             TEST SERVER
           </div>
+        )}
+        {showBlackScreen && (
+          <TopBanner
+            messages={[
+              "Welcome to IMS Alwar.",
+              "System maintenance scheduled for 7th December Sunday 01 AM - 23 PM",
+            ]}
+            onVisibilityChange={setIsBannerVisible}
+          />
         )}
         {/* <Information /> */}
         {user && user.passwordChanged === "C" && (
@@ -878,7 +893,7 @@ const App = () => {
                 notifications.filter((not) => not?.type != "message")?.length
               }
               onClickNotifications={() => dispatch(toggleNotifications())}
-                   notificationButtonRef={notificationButtonRef}
+              notificationButtonRef={notificationButtonRef}
               messagesCount={
                 notifications.filter((not) => not?.type == "message").length
               }
@@ -950,7 +965,7 @@ const App = () => {
                   setShowSideBar={setShowSideBar}
                   showSideBar={showSideBar}
                   useJsonConfig={true}
-                  topOffset={isTestServer || isBannerVisible ? 90 : 45}
+                  topOffset={getOffsetLeft()}
                   onWidthChange={(w) => {
                     const layout = document.querySelector(
                       "#app-content-left-margin"
@@ -983,7 +998,7 @@ const App = () => {
                   user && user.passwordChanged === "C"
                     ? showSideBar
                       ? 230
-                      : 56
+                      : 60
                     : 0,
 
                 minWidth: 0,

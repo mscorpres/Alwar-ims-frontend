@@ -401,16 +401,18 @@ const Sidebar = ({
           {/* Logo/Brand */}
           <div
             style={{
-              padding: "16px",
+             
               color: "#333",
               // fontWeight: "700",
               fontSize: 18,
               borderBottom: "1px solid #e0e0e0",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
               gap: 8,
               transition: "all 0.3s ease",
               minHeight: "56px",
+         
             }}
           >
             {/* Show two different logos depending on sidebar open/close */}
@@ -424,6 +426,7 @@ const Sidebar = ({
                   opacity: 1,
                   transition: "all 0.3s ease",
                   display: "block",
+               
                 }}
               />
             ) : (
@@ -436,6 +439,7 @@ const Sidebar = ({
                   opacity: 1,
                   transition: "all 0.3s ease",
                   display: "block",
+                     
                 }}
               />
             )}
@@ -503,7 +507,7 @@ const Sidebar = ({
             style={{
               height: "100%",
               width: secondSidebarWidth,
-              background: "#f6f0e3",
+              background: "#fff5e0",
               borderRight: "1px solid #e0e0e0",
               position: "absolute",
               top: 0,
@@ -527,7 +531,7 @@ const Sidebar = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                background: "#f6f0e3",
+                background: "#fff5e0",
                 minHeight: "56px",
               }}
             >

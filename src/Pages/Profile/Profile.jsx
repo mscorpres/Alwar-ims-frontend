@@ -107,7 +107,7 @@ export default function Profile() {
         {/* Left Sidebar - Profile Section */}
         <div
           style={{
-            backgroundColor: "#dfddddff",
+            backgroundColor: "#f1f1f1",
             padding: "40px 30px",
             color: "black",
             display: "flex",
@@ -254,13 +254,13 @@ export default function Profile() {
                 <Typography.Title level={2} style={{ margin: 0 }}>
                   Personal Information
                 </Typography.Title>
-                <Button
+                {/* <Button
                   type="text"
                   icon={<EditOutlined />}
                   onClick={() => {
                     // Handle edit functionality
                   }}
-                />
+                /> */}
               </div>
               <Typography.Text
                 style={{

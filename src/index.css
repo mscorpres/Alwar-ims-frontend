@@ -725,6 +725,18 @@ ul.MuiDataGrid-menuList li.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root,
 .location-select .ant-select-single .ant-select-selector {
   color: white !important;
 }
+/* Swiper fade effect - ensure proper slide isolation */
+.mySwiper .swiper-slide {
+  overflow: hidden !important;
+}
+
+.mySwiper .swiper-slide > div {
+  background-color: #f5f5f5 !important;
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
 @media screen and (max-width: 1600px) {
   .ant-tabs-small > .ant-tabs-nav .ant-tabs-tab {
     font-size: 0.7rem !important;

@@ -140,14 +140,14 @@ const Dashboard = () => {
             mb: 1,
           }}
         >
-          <Typography variant="h6">{title}</Typography>
+          <Typography variant="h6" sx={{fontWeight:"bold"}}>{title}</Typography>
           {subtitle && (
             <Typography variant="body2" color="text.secondary">
               {subtitle}
             </Typography>
           )}
         </Box>
-        <Divider sx={{ mb: 2 }} />
+        {/* <Divider sx={{ mb: 2 }} /> */}
         {loadingFlag ? (
           <Box
             sx={{
@@ -178,12 +178,12 @@ const Dashboard = () => {
                 sx={{
                   backgroundColor: "background.paper",
                   borderRadius: 2,
-                  boxShadow:
-                    "4px 4px 6px -1px rgba(0, 0, 0, 0.1), 4px 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                  "&:hover": {
                     boxShadow:
-                      "4px 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-                  },
+                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
+                "&:hover": {
+                  boxShadow:
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                },
                 }}
               >
                 <CardContent>
@@ -236,7 +236,7 @@ const Dashboard = () => {
             mb: 2,
           }}
         >
-          <Typography variant="h5">Dashboard</Typography>
+          <Typography variant="h6" sx={{fontWeight:"bold"}}>Master Summary</Typography>
           <Box sx={{ minWidth: 260 }}>
             <MyDatePicker
               setDateRange={(v) => {
@@ -247,7 +247,7 @@ const Dashboard = () => {
           </Box>
         </Box>
 
-        {renderSummaryGrid("Master Summary", masterSummary, loading.master)}
+        {renderSummaryGrid("", masterSummary, loading.master)}
 
         {/* Row 2: Transactions Overview and Pending Summary */}
         <Box
@@ -263,15 +263,16 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                
+                  boxShadow:
+                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
                 "&:hover": {
                   boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2,fontWeight:"bold" }}>
                 Transactions Overview
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
@@ -297,15 +298,15 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                 boxShadow:
+                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
                 "&:hover": {
                   boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2,fontWeight:"bold" }}>
                 Pending Summary
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
@@ -345,15 +346,15 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                 boxShadow:
+                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
                 "&:hover": {
                   boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2,fontWeight:"bold" }}>
                 Gate Pass Overview
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
@@ -379,15 +380,15 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                 boxShadow:
+                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
                 "&:hover": {
                   boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2 }}>
+              <Typography variant="h6" sx={{ mb: 2 , fontWeight:"bold"}}>
                 Top MFG Products
               </Typography>
               <ResponsiveContainer width="100%" height={280}>

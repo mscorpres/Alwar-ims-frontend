@@ -677,6 +677,7 @@ const ChangelogHistory = () => {
             style={{
               flex: 1,
               height: 36,
+            
             }}
           >
             Reset
