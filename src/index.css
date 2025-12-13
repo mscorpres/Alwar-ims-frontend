@@ -134,38 +134,38 @@ button:disabled {
 }
 
 .ant-btn-primary {
-  color: #12120E !important;
+  color: #fff !important;
+  background-color: #0d9489 !important;
+  border-color: #0d9489 !important;
+}
+/* .ant-btn-default {
   background-color: #d2f571 !important;
   border-color: #d2f571 !important;
-}
-.ant-btn-default {
-  background-color: #d2f571 !important;
-  border-color: #d2f571 !important;
   color: #12120E !important;
-}
+} */
 .ant-btn-link {
   color: #203624 !important;
 }
 .ant-btn-link:hover,
 .ant-btn-link:focus {
-  color: #4e8235 !important;
+  color: #0d9489 !important;
 }
 .ant-btn-text {
-  color: #12120E !important;
+  color: #fff !important;
 }
 .ant-btn-text:hover,
 .ant-btn-text:focus {
-  background-color: #bde649 !important;
+  background-color: #0d9489cb !important;
 }
 .ant-btn-dashed {
-  background-color: #d2f571 !important;
-  border-color: #d2f571 !important;
+  background-color: red !important;
+  border-color: red !important;
   color: #12120E !important;
 }
 .ant-btn-dashed:hover,
 .ant-btn-dashed:focus {
-  background-color: #bde649 !important;
-  border-color: #bde649 !important;
+  background-color: #0d9489 !important;
+  border-color: #0d9489 !important;
 }
 .ant-btn {
   box-shadow: none !important;
@@ -179,21 +179,28 @@ button:disabled {
 .ant-btn-primary:hover,
 .ant-btn-primary:focus,
 .ant-btn-primary:active {
-  background-color: #bde649 !important;
-  border-color: #bde649 !important;
-  color: #12120E !important;
+  background-color: #0d9489cb !important;
+  border-color: #0d9489cd !important;
+  color: #fff !important;
 }
-.ant-btn-default:hover,
-.ant-btn-default:focus,
-.ant-btn-default:active {
-  background-color: #bde649 !important;
-  border-color: #bde649 !important;
-  color: #12120E !important;
+/* Reset button styling */
+.reset-button {
+  background-color: #0d9489 !important;
+  border-color: #0d9489 !important;
+  color: #fff !important;
 }
+.reset-button:hover,
+.reset-button:focus,
+.reset-button:active {
+  background-color: #0d9489cb !important;
+  border-color: #0d9489cd !important;
+  color: #fff !important;
+}
+
 /* Tooltip styling */
 .ant-tooltip .ant-tooltip-inner {
-  background-color: #d2f571 !important;
-  color: #12120E !important;
+  background-color: #0d9489 !important;
+  color: #fff !important;
   text-decoration: none !important;
 }
 .ant-tooltip .ant-tooltip-inner a,

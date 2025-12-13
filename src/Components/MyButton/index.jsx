@@ -25,7 +25,18 @@ import {
 const MyButton = (props) => {
   if (props.variant === "reset") {
     return (
-      <Button {...props} type={props.type} icon={<SyncOutlined />}>
+      <Button 
+        {...props} 
+        type={props.type} 
+        icon={<SyncOutlined />}
+        className={`reset-button ${props.className || ""}`}
+        style={{ 
+          backgroundColor: "#0d9489", 
+          borderColor: "#0d9489", 
+          color: "#fff",
+          ...props.style 
+        }}
+      >
         {props.text ?? "Reset"}
       </Button>
     );

@@ -19,15 +19,15 @@ const theme = {
   },
   components: {
     Button: {
-      colorText: "#12120E",
+      colorText: "#fff",
       colorPrimary: customColor.btnColor,
-      colorPrimaryHover: "#bde649",
-      colorPrimaryActive: "#bde649",
-      primaryColor: "#12120E",
+      colorPrimaryHover: "#0d9489cd",
+      colorPrimaryActive: "#0d9489",
+      primaryColor: "#fff",
       defaultBg: customColor.btnColor,
-      defaultColor: "#12120E",
-      defaultHoverBg: "#bde649",
-      defaultActiveBg: "#bde649",
+      defaultColor: "#fff",
+      defaultHoverBg: "#0d9489",
+      defaultActiveBg: "#0d9489",
       fontWeight: 550,
     },
     Tabs: {
@@ -69,8 +69,8 @@ const theme = {
       margin: 4,
     },
     Tooltip: {
-      colorBgSpotlight: "#d2f571",
-      colorTextLightSolid: "#12120E",
+      colorBgSpotlight: "#0d9489",
+      colorTextLightSolid: "#fff",
     },
     Card: {
       headerFontSizeSM: 16,

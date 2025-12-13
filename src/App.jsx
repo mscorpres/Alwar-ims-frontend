@@ -1001,7 +1001,7 @@ const App = () => {
                       const headerHeight = 50;
                       const bannerHeight = isBannerVisible ? 40 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
-                      const byDefaultHeight = 55;
+                      const byDefaultHeight = pathname === "/myProfile" ? 0 : 55;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",

@@ -3,22 +3,21 @@ import { toast } from "react-toastify";
 import errorToast from "../../Components/errorToast";
 import {
   Avatar,
-  Badge,
   Button,
-  Card,
-  Col,
   Form,
   Input,
   Modal,
-  Row,
   Skeleton,
-  Space,
   Typography,
 } from "antd";
 import validateResponse from "../../Components/validateResponse";
 import {
   ExclamationCircleOutlined,
   CheckCircleOutlined,
+  UserOutlined,
+  SafetyOutlined,
+  EditOutlined,
+  RightOutlined,
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import OtpVerify from "./OtpVerify";
@@ -40,9 +39,9 @@ export default function Profile() {
     const response = await imsAxios.get("/profile/userDetails");
     setSkeletonLoading(false);
     if (response.success) {
-      setUserDetails(data.data);
+      setUserDetails(response.data);
     } else {
-      toast.error(errorToast(data.message));
+      toast.error(errorToast(response.message));
     }
   };
   const onFinish = async () => {
@@ -50,7 +49,7 @@ export default function Profile() {
       oldpassword: showSubmitConfirm.currentPassword,
       newpassword: showSubmitConfirm.password,
     });
-    validateResponse(data);
+    validateResponse(response?.data);
     setShowSubmitConfirm(false);
   };
   const handleOTP = () => {
@@ -74,7 +73,7 @@ export default function Profile() {
     getUserDetails();
   }, []);
   return (
-    <div style={{ padding: "40px 50px" }}>
+    <div style={{ padding: 4, minHeight: "calc(100vh - 140px)", backgroundColor: "#f5f5f5" }}>
       <Modal
         title="Confirm Password Update!"
         open={showSubmitConfirm}
@@ -97,177 +96,298 @@ export default function Profile() {
         setShowOTPVerifyModal={setShowOTPVerifyModal}
       />
 
-      <Row justify="center" gutter={[24, 0]}>
-        {skeletonLoading && (
-          <Skeleton.Avatar
-            loading={skeletonLoading}
-            active
-            size={100}
-            shape="circle"
-          />
-        )}
-
-        <Row justify="center" style={{ width: "100%" }}>
-          <Col>
-            <Skeleton
-              paragraph={false}
-              style={{ marginTop: 15, width: 200 }}
-              rows={2}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 3fr",
+          gap: 0,
+          minHeight: "calc(100vh - 115px)",
+        }}
+      >
+        {/* Left Sidebar - Profile Section */}
+        <div
+          style={{
+            backgroundColor: "#dfddddff",
+            padding: "40px 30px",
+            color: "black",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          {skeletonLoading ? (
+            <Skeleton.Avatar
               loading={skeletonLoading}
               active
+              size={100}
+              shape="circle"
             />
-          </Col>
-        </Row>
-        {/* <Skeleton loading={skeletonLoading} active /> */}
-        {!skeletonLoading && (
-          <Row justify="center" style={{ width: "100%" }}>
-            <Space direction="vertical">
-              <Col
-                style={{ display: "flex", justifyContent: "center" }}
-                span={24}
+          ) : (
+            <>
+              <Avatar
+                size={100}
+                style={{
+                  backgroundColor: "#2d7a7a",
+                  fontSize: 40,
+                  marginBottom: 20,
+                  color: "white",
+                }}
               >
-                <Avatar
-                  size={100}
-                  style={{ backgroundColor: "#87d068", fontSize: 40 }}
-                >
-                  {userDetails?.name[0]}
-                </Avatar>
-              </Col>
-              <Space direction="vertical" size="small">
-                <Col
-                  style={{ display: "flex", justifyContent: "center" }}
-                  span={24}
-                >
-                  <Typography.Title
-                    style={{ color: "rgb(60,60,60)", margin: 0, padding: 0 }}
-                    level={3}
-                  >
-                    {userDetails?.name}
-                  </Typography.Title>
-                </Col>
-                <Col
-                  style={{ display: "flex", justifyContent: "center" }}
-                  span={24}
-                >
-                  <Typography.Title
-                    style={{ color: "#245181", margin: 0, padding: 0 }}
-                    level={5}
-                  >
-                    {userDetails?.type}
-                  </Typography.Title>
-                </Col>
-              </Space>
-            </Space>
-          </Row>
-        )}
-      </Row>
-      <Row gutter={16}>
-        <Col span={16}>
-          <Card
-            title={activeTab == "1" ? "User Info" : "Update Password"}
-            extra={
-              <Button
-                onClick={() =>
-                  setActiveTab((activeTab) => (activeTab == "1" ? "2" : "1"))
-                }
-                type="link"
+                {userDetails?.name?.[0]?.toUpperCase()}
+              </Avatar>
+              <Typography.Title
+                level={2}
+                style={{
+                  color: "black",
+                  margin: "0 0 30px 0",
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
               >
-                {activeTab == "1" ? "Change Password" : "Update Details"}
-              </Button>
-            }
-            style={{
-              // width: "100%",
-              marginTop: 15,
-              height: 300,
-            }}
-          >
-            {/* details tab */}
-            {activeTab == "1" && (
-              <>
-                <Skeleton loading={skeletonLoading} active />
-                {!skeletonLoading && (
-                  <Form
-                    name="basic"
-                    labelCol={{
-                      span: 2,
+                {userDetails?.name || "Developer Account"}
+              </Typography.Title>
+
+              <div
+                style={{
+                  width: "100%",
+                  marginBottom: 30,
+                  padding: "20px 0",
+                  borderTop: "1px solid rgba(0,0,0,0.2)",
+                  borderBottom: "1px solid rgba(0,0,0,0.2)",
+                }}
+              >
+                <div style={{ marginBottom: 15 }}>
+                  <Typography.Text style={{ color: "black" }}>
+                    Department
+                  </Typography.Text>
+                  <div style={{ color: "black", fontWeight: 500 }}>
+                    {userDetails?.type || "-"}
+                  </div>
+                </div>
+                <div style={{ marginBottom: 15 }}>
+                  <Typography.Text style={{ color: "black" }}>
+                    Phone No:
+                  </Typography.Text>
+                  <div style={{ color: "black", fontWeight: 500 }}>
+                    {userDetails?.phone || "-"}
+                  </div>
+                </div>
+                <div>
+                  <Typography.Text style={{ color: "black" }}>
+                    Email
+                  </Typography.Text>
+                  <div style={{ color: "black", fontWeight: 500 }}>
+                    {userDetails?.email || "-"}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ width: "100%" }}>
+                <div
+                  onClick={() => setActiveTab("1")}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "15px 20px",
+                    marginBottom: 10,
+                    backgroundColor:
+                      activeTab == "1" ? "rgba(0,0,0,0.2)" : "transparent",
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    transition: "all 0.3s",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <UserOutlined style={{ fontSize: 18 }} />
+                    <Typography.Text style={{ color: "black", fontSize: 16 }}>
+                      Personal Information
+                    </Typography.Text>
+                  </div>
+                  <RightOutlined style={{ fontSize: 12 }} />
+                </div>
+                <div
+                  onClick={() => setActiveTab("2")}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "15px 20px",
+                    backgroundColor:
+                      activeTab == "2" ? "rgba(0,0,0,0.2)" : "transparent",
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    transition: "all 0.3s",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <SafetyOutlined style={{ fontSize: 18 }} />
+                    <Typography.Text style={{ color: "black", fontSize: 16 }}>
+                      Security Setting
+                    </Typography.Text>
+                  </div>
+                  <RightOutlined style={{ fontSize: 12 }} />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Right Content Area - Details Section */}
+        <div
+          style={{
+            backgroundColor: "white",
+            padding: "40px 50px",
+               minHeight: "calc(100vh - 140px)",
+          }}
+        >
+          {activeTab == "1" ? (
+            <>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: 20,
+                }}
+              >
+                <Typography.Title level={2} style={{ margin: 0 }}>
+                  Personal Information
+                </Typography.Title>
+                <Button
+                  type="text"
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    // Handle edit functionality
+                  }}
+                />
+              </div>
+              <Typography.Text
+                style={{
+                  color: "#666",
+                  fontSize: 14,
+                  display: "block",
+                  marginBottom: 30,
+                }}
+              >
+                Basic info, like your name and phone number, that you use on
+                BharatPay Platform.
+              </Typography.Text>
+
+              {skeletonLoading ? (
+                <Skeleton active paragraph={{ rows: 3 }} />
+              ) : (
+                <div style={{ maxWidth: 600 }}>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "150px 1fr",
+                      gap: "20px 30px",
+                      padding: "20px 0",
+                      borderBottom: "1px solid #f0f0f0",
                     }}
-                    //   onFinish={onFinish}
-                    //   onFinishFailed={onFinishFailed}
                   >
-                    <Form.Item label="Full Name">
-                      <Input value={userDetails?.name} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={
-                        <Typography.Text>
-                          <Badge
-                            count={
-                              user?.emailConfirmed == "C" ? (
-                                <CheckCircleOutlined
-                                  style={{ color: "green", marginRight: 5 }}
-                                />
-                              ) : (
-                                <ExclamationCircleOutlined
-                                  style={{ color: "red", marginRight: 5 }}
-                                />
-                              )
-                            }
-                          />
-                          Email
-                        </Typography.Text>
-                      }
+                    <Typography.Text
+                      strong
+                      style={{ color: "#666", fontSize: 14 }}
                     >
-                      <Input disabled value={userDetails?.email} />
-                    </Form.Item>
-
-                    <Form.Item
-                      label={
-                        <Typography.Text>
-                          <Badge
-                            count={
-                              user?.mobileConfirmed == "C" ? (
-                                <CheckCircleOutlined
-                                  style={{ color: "green", marginRight: 5 }}
-                                />
-                              ) : (
-                                <ExclamationCircleOutlined
-                                  onClick={handleOTP}
-                                  style={{
-                                    color: "red",
-                                    marginRight: 5,
-                                    cursor: "pointer",
-                                  }}
-                                />
-                              )
-                            }
-                          />
-                          Phone
-                        </Typography.Text>
-                      }
+                      Name
+                    </Typography.Text>
+                    <Typography.Text style={{ fontSize: 14 }}>
+                      {userDetails?.name || "-"}
+                    </Typography.Text>
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "150px 1fr",
+                      gap: "20px 30px",
+                      padding: "20px 0",
+                      borderBottom: "1px solid #f0f0f0",
+                    }}
+                  >
+                    <Typography.Text
+                      strong
+                      style={{ color: "#666", fontSize: 14 }}
                     >
-                      <Input disabled value={userDetails?.phone} />
-                    </Form.Item>
-                    <Row justify="end">
-                      <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                          Update Details
-                        </Button>
-                      </Form.Item>
-                    </Row>
-                  </Form>
-                )}
-              </>
-            )}
-            {activeTab == "2" && (
-              <>
-                <Skeleton loading={skeletonLoading} active />
-                {!skeletonLoading && (
+                      Email
+                    </Typography.Text>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <Typography.Text style={{ fontSize: 14 }}>
+                        {userDetails?.email || "-"}
+                      </Typography.Text>
+                      {user?.emailConfirmed == "C" ? (
+                        <CheckCircleOutlined
+                          style={{ color: "green", fontSize: 16 }}
+                        />
+                      ) : (
+                        <ExclamationCircleOutlined
+                          style={{ color: "red", fontSize: 16 }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "150px 1fr",
+                      gap: "20px 30px",
+                      padding: "20px 0",
+                      borderBottom: "1px solid #f0f0f0",
+                    }}
+                  >
+                    <Typography.Text
+                      strong
+                      style={{ color: "#666", fontSize: 14 }}
+                    >
+                      Phone Number
+                    </Typography.Text>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <Typography.Text style={{ fontSize: 14 }}>
+                        {userDetails?.phone || "-"}
+                      </Typography.Text>
+                      {user?.mobileConfirmed == "C" ? (
+                        <CheckCircleOutlined
+                          style={{ color: "green", fontSize: 16 }}
+                        />
+                      ) : (
+                        <ExclamationCircleOutlined
+                          onClick={handleOTP}
+                          style={{
+                            color: "red",
+                            fontSize: 16,
+                            cursor: "pointer",
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <Typography.Title level={2} style={{ margin: "0 0 20px 0" }}>
+                Security Setting
+              </Typography.Title>
+              <Typography.Text
+                style={{
+                  color: "#666",
+                  fontSize: 14,
+                  display: "block",
+                  marginBottom: 30,
+                }}
+              >
+                Update your password to keep your account secure.
+              </Typography.Text>
+
+              {skeletonLoading ? (
+                <Skeleton active paragraph={{ rows: 3 }} />
+              ) : (
+                <div style={{ maxWidth: 600 }}>
                   <Form
                     name="update password"
-                    labelCol={{
-                      span: 4,
-                    }}
+                    layout="vertical"
                     validateMessages={{
                       required: "${label} is required!",
                       types: {
@@ -279,7 +399,6 @@ export default function Profile() {
                       },
                     }}
                     onFinish={(values) => setShowSubmitConfirm(values)}
-                    //   onFinishFailed={onFinishFailed}
                   >
                     <Form.Item
                       name="currentPassword"
@@ -290,7 +409,7 @@ export default function Profile() {
                       ]}
                       label="Current Password"
                     >
-                      <Input.Password />
+                      <Input.Password size="large" />
                     </Form.Item>
                     <Form.Item
                       name="password"
@@ -302,7 +421,7 @@ export default function Profile() {
                       ]}
                       label="New Password"
                     >
-                      <Input.Password />
+                      <Input.Password size="large" />
                     </Form.Item>
                     <Form.Item
                       rules={[
@@ -326,74 +445,20 @@ export default function Profile() {
                       name="confirmPassword"
                       label="Confirm New Password"
                     >
-                      <Input.Password />
+                      <Input.Password size="large" />
                     </Form.Item>
-                    <Row justify="end">
-                      <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                          Update Password
-                        </Button>
-                      </Form.Item>
-                    </Row>
+                    <Form.Item>
+                      <Button type="primary" htmlType="submit" size="large">
+                        Update Password
+                      </Button>
+                    </Form.Item>
                   </Form>
-                )}
-              </>
-            )}
-          </Card>
-        </Col>
-        <Col span={8}>
-          <Card
-            title="Update Info"
-            style={{
-              width: "100%",
-              marginTop: 15,
-              height: 300,
-            }}
-          >
-            <Skeleton loading={skeletonLoading} active />
-            {!skeletonLoading &&
-              (activeTab == "1" ? (
-                <Row gutter={[0, 16]}>
-                  <Col span={24}>
-                    <Typography.Title level={5}>
-                      Last Name change On:
-                    </Typography.Title>
-                    <Typography.Text>
-                      {userDetails?.lastname_change}
-                    </Typography.Text>
-                  </Col>
-                  <Col span={24}>
-                    <Typography.Title level={5}>
-                      Last Email change On:
-                    </Typography.Title>
-                    <Typography.Text>
-                      {userDetails?.lastemail_change}
-                    </Typography.Text>
-                  </Col>
-                  <Col span={24}>
-                    <Typography.Title level={5}>
-                      Last Phone Number change On:
-                    </Typography.Title>
-                    <Typography.Text>
-                      {userDetails?.lastmobile_change}
-                    </Typography.Text>{" "}
-                  </Col>
-                </Row>
-              ) : (
-                <Row gutter={[0, 16]}>
-                  <Col span={24}>
-                    <Typography.Title level={5}>
-                      Last Password change On:
-                    </Typography.Title>
-                    <Typography.Text>
-                      {userDetails?.lastpassword_change}
-                    </Typography.Text>
-                  </Col>
-                </Row>
-              ))}
-          </Card>
-        </Col>
-      </Row>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
