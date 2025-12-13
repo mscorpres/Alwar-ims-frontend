@@ -126,14 +126,10 @@ const Dashboard = () => {
   ) => (
     <Box sx={{ width: "100%" }}>
       <Paper
+      elevation={0}
         sx={{
           p: 2,
-          boxShadow:
-            "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-          "&:hover": {
-            boxShadow:
-              "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-          },
+    
         }}
       >
         <Box
@@ -178,6 +174,7 @@ const Dashboard = () => {
             {items.map((it, idx) => (
               <Card
                 key={`${it.title}-${idx}`}
+
                 sx={{
                   backgroundColor: "background.paper",
                   borderRadius: 2,

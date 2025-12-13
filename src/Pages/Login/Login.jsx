@@ -67,10 +67,10 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    if (!recaptchaValue) {
-      toast.error("Please verify the reCAPTCHA");
-      return;
-    }
+    // if (!recaptchaValue) {
+    //   toast.error("Please verify the reCAPTCHA");
+    //   return;
+    // }
     const { username, password } = inpVal;
     if (username === "" && password === "") {
       toast.error("Please fill the field");

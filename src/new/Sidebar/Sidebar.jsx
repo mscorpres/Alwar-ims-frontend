@@ -23,7 +23,7 @@ const Sidebar = ({
   const [isSecondSidebarCollapsed, setIsSecondSidebarCollapsed] =
     useState(false);
   const [expandedHeading, setExpandedHeading] = useState(null);
-console.log(location.pathname, "value  value")
+
   const config = useMemo(() => {
     if (useJsonConfig) {
       return loadMenuConfig();
@@ -347,12 +347,7 @@ console.log(location.pathname, "value  value")
     setIsSecondSidebarCollapsed(!isSecondSidebarCollapsed);
   };
 
-  const closeSecondSidebar = () => {
-    setIsSecondSidebarOpen(false);
-    setActiveKey(null);
-    setIsSecondSidebarCollapsed(false);
-    setExpandedHeading(null);
-  };
+ 
 
   return (
     <>

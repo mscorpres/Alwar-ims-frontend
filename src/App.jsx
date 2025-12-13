@@ -8,7 +8,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { Box, LinearProgress } from "@mui/material";
-import Sidebar from  "./new/Sidebar/Sidebar.jsx";
+import Sidebar from "./new/Sidebar/Sidebar.jsx";
 import Rout from "./Routes/Routes";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import { toast, ToastContainer } from "react-toastify";
@@ -29,16 +29,17 @@ import {
 import UserMenu from "./Components/UserMenu";
 import Logo from "./Components/Logo";
 import socket from "./Components/socket.js";
-import Notifications from "./Components/Notifications";
-import Layout, { Content, Header } from "antd/lib/layout/layout";
-import { Badge, Row, Select, Space, Modal, Button } from "antd";
 import {
-  CustomerServiceOutlined,
-  BellFilled,
-  MenuOutlined,
-  SearchOutlined,
-  SwapOutlined,
-} from "@ant-design/icons";
+  toggleNotifications,
+  setShowNotifications,
+  setShowMessageNotifications,
+  setShowTickets,
+  setShowSetting,
+  setShowSwitchModule,
+} from "./Features/uiSlice/uiSlice.js";
+import Layout, { Content, Header } from "antd/lib/layout/layout";
+import { Select, Modal, Button } from "antd";
+import { SearchOutlined, SwapOutlined } from "@ant-design/icons";
 import { Tooltip, IconButton } from "@mui/material";
 import { SiSocketdotio } from "react-icons/si";
 import InternalNav from "./Components/InternalNav";
@@ -60,34 +61,38 @@ const App = () => {
   const { user, notifications, testPages } = useSelector(
     (state) => state.login
   );
-  const notificationButtonRef = useRef(null);
+
+  const {
+    showNotifications,
+
+    showMessageNotifications,
+
+    showTickets,
+
+    showSetting,
+
+    showSwitchModule,
+  } = useSelector((state) => state.ui);
 
   const filteredRoutes = Rout.filter((route) => {
-    // Include the route if it doesn't have a "dept" property or if showlegal is true
     return !route.dept || user?.showlegal;
   });
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showSideBar, setShowSideBar] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [loadingSwitch, setLoadingSwitch] = useState(false);
-  const [showMessageNotifications, setShowMessageNotifications] =
-    useState(false);
   const [newNotification, setNewNotification] = useState(null);
   const { pathname } = useLocation();
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
   const [modulesOptions, setModulesOptions] = useState([]);
   const [searchModule, setSearchModule] = useState("");
-  const [showTickets, setShowTickets] = useState(false);
   const [showHisList, setShowHisList] = useState([]);
   const [allModules, setAllModules] = useState([]);
   const notificationsRef = useRef();
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showSetting, setShowSetting] = useState(false);
-  const [showSwitchModule, setShowSwitchModule] = useState(false);
   const [isSwitchingModule, setIsSwitchingModule] = useState(false);
   const [switchLocation, setSwitchLocation] = useState(null);
   const [switchBranch, setSwitchBranch] = useState(null);
@@ -95,7 +100,9 @@ const App = () => {
   const [switchSuccess, setSwitchSuccess] = useState(false);
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-
+  const [showMessageDrawer, setShowMessageDrawer] = useState(false);
+  const [searchHis, setSearchHis] = useState("");
+  const [hisList, setHisList] = useState([]);
   const logoutHandler = () => {
     setShowBlackScreen(false);
     dispatch(logout());
@@ -159,6 +166,7 @@ const App = () => {
         modOpt.push(obj);
       }
     });
+    setSearchHis(modOpt);
     setModulesOptions(modOpt);
   };
   // Removed useEffect that was interfering with search results
@@ -596,17 +604,19 @@ const App = () => {
   useEffect(() => {
     if (showMessageNotifications) {
       {
-        setShowNotifications(false);
+        dispatch(setShowNotifications(false));
       }
     }
-  }, [showMessageNotifications]);
+  }, [showMessageNotifications, dispatch]);
+
   useEffect(() => {
     if (showNotifications) {
       {
-        setShowMessageNotifications(false);
+        dispatch(setShowMessageNotifications(false));
       }
     }
-  }, [showNotifications]);
+  }, [showNotifications, dispatch]);
+
   useEffect(() => {
     if (testPages) {
       let match = testPages?.filter((page) => page.url == pathname)[0];
@@ -645,6 +655,28 @@ const App = () => {
       setShowBlackScreen(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    setModulesOptions([]);
+
+    if (searchModule.length > 2) {
+      let searching = searchHis.filter((i) => i.value === searchModule);
+
+      setHisList([...hisList, searching]);
+
+      let a = hisList.push(...hisList, ...searching);
+
+      const ids = hisList.map(({ label, text }) => label || text); // Support both formats
+
+      const filtered = hisList.filter(
+        ({ label, text }, index) => !ids.includes(label || text, index + 1)
+      );
+
+      localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
+
+      navigate(searchModule);
+    }
+  }, [searchModule]);
 
   const showRecentSearch = () => {
     let obj = JSON.parse(localStorage.getItem("searchHistory"));
@@ -718,7 +750,6 @@ const App = () => {
           sx={{
             position: "sticky",
             top: 0,
-          
           }}
         />
         <Box
@@ -741,7 +772,7 @@ const App = () => {
   }
 
   return (
-    <div style={{ height:  "100vh" }}>
+    <div style={{ height: "100vh" }}>
       <ToastContainer
         position="bottom-center"
         autoClose={1500}
@@ -786,413 +817,7 @@ const App = () => {
         <Information />
         {user && user.passwordChanged === "C" && (
           <Layout style={{ height: "100%" }}>
-            {/* <Header
-              style={{
-                zIndex: 4,
-                height: 45,
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <Row style={{ width: "100%" }} justify="space-between">
-                <Space size="large">
-                  <MenuOutlined
-                    onClick={() => {
-                      setShowSideBar((open) => !open);
-                    }}
-                    style={{
-                      color: "white",
-                      marginLeft: 12,
-                      fontSize: window.innerWidth > 1600 && "1rem",
-                    }}
-                  />
-
-                  <Link to="/">
-                    <Space
-                      style={{
-                        color: "white",
-                        fontSize: "1rem",
-                      }}
-                    >
-                      <Logo />
-                      <span style={{ color: "white" }}>IMS</span>
-                    </Space>
-                  </Link>
-                  <div className="location-select">
-                    <Select
-                      style={{ width: 200, color: "white" }}
-                      options={options}
-                      variant="borderless"
-                      placeholder="Select Company Branch"
-                      onChange={(value) => handleSelectCompanyBranch(value)}
-                      value={user.company_branch || "BRALWR36"}
-                      disabled
-                    />
-                  </div>
-                  <div className="location-select">
-                    <Select
-                      style={{ width: 200, color: "white" }}
-                      options={sessionOptions}
-                      variant="borderless"
-                      placeholder="Select Session"
-                      onChange={(value) => handleSelectSession(value)}
-                      value={user.session}
-                    />
-                  </div>
-                </Space>
-                <Space>
-                  <Select
-                    showSearch
-                    placeholder="Search..."
-                    value={searchModule || undefined}
-                    onChange={(value) => {
-                      setSearchModule(value);
-                      navigate(value);
-                    }}
-                    onSearch={(value) => {
-                      if (value && value.trim().length > 0) {
-                        getModuleSearchOptions(value.toLowerCase());
-                      } else {
-                        // Show all modules when search is cleared
-                        setModulesOptions(
-                          allModules.length > 0 ? allModules : []
-                        );
-                      }
-                    }}
-                    options={
-                      modulesOptions.length > 0
-                        ? modulesOptions
-                        : allModules.length > 0
-                        ? allModules
-                        : showHisList || []
-                    }
-                    filterOption={false}
-                    notFoundContent={null}
-                    style={{
-                      width: 200,
-                    }}
-                    className="header-search-select"
-                    suffixIcon={
-                      <SearchOutlined
-                        style={{ color: "rgba(0, 0, 0, 0.45)" }}
-                      />
-                    }
-                    onFocus={() => {
-                      // Show all modules when focused if no search is active
-                      if (!searchModule && allModules.length > 0) {
-                        setModulesOptions(allModules);
-                      }
-                      // Load search history if available
-                      if (showHisList.length === 0) {
-                        showRecentSearch();
-                      }
-                    }}
-                  />
-                </Space>
-                <Space
-                  size="large"
-                  style={{
-                    position: "relative",
-                  }}
-                >
-                  <Tooltip title="Switch Module" placement="bottom">
-                    <SwapOutlined
-                      style={{
-                        fontSize: 18,
-                        color: "white",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => setShowSwitchModule(true)}
-                    />
-                  </Tooltip>
-
-                  <Tooltip
-                    title={`Socket ${
-                      isConnected ? "Connected" : "Disconnected"
-                    }`}
-                    placement="bottom"
-                  >
-                    <IconButton
-                      onClick={() => refreshConnection()}
-                      disabled={isLoading}
-                    >
-                      <SiSocketdotio
-                        style={{
-                          fontSize: "25px",
-                          color: isConnected ? "#10b981" : "#ef4444",
-                          animation: isLoading
-                            ? "spin 1s linear infinite"
-                            : "none",
-                        }}
-                      />
-                    </IconButton>
-                  </Tooltip>
-
-                  <div>
-                    <Badge
-                      size="small"
-                      style={{
-                        background: notifications.filter(
-                          (not) => not?.loading || not?.status == "pending"
-                        )[0]
-                          ? "#EAAE0F"
-                          : "green",
-                      }}
-                      count={
-                        notifications.filter((not) => not?.type != "message")
-                          ?.length
-                      }
-                    >
-                      <BellFilled
-                        onClick={() => setShowNotifications((n) => !n)}
-                        style={{
-                          fontSize: 18,
-                          color: "white",
-                          // marginRight: 8,
-                        }}
-                      />
-                    </Badge>
-                    {showNotifications && (
-                      <Notifications
-                        source={"notifications"}
-                        showNotifications={showNotifications}
-                        notifications={notifications.filter(
-                          (not) => not?.type != "message"
-                        )}
-                        deleteNotification={deleteNotification}
-                      />
-                    )}
-                  </div>
-                  <div>
-                    <Badge
-                      size="small"
-                      count={
-                        notifications.filter((not) => not?.type == "message")
-                          .length
-                      }
-                    >
-                      <CustomerServiceOutlined
-                        onClick={() => setShowTickets(true)}
-                        style={{
-                          fontSize: 18,
-                          cursor: "pointer",
-                          color: "white",
-                        }}
-                      />
-                    </Badge>
-                  </div>
-                  <UserMenu
-                    user={user}
-                    logoutHandler={logoutHandler}
-                    setShowSettings={setShowSetting}
-                  />
-                  {showSetting && (
-                    <SettingDrawer
-                      open={showSetting}
-                      hide={() => setShowSetting(false)}
-                    />
-                  )}
-              
-                  <Modal
-                    title={null}
-                    open={showSwitchModule}
-                    onCancel={() => {
-                      if (!isSwitchingModule) {
-                        setShowSwitchModule(false);
-                        setSwitchLocation(null);
-                        setSwitchBranch(null);
-                        setSwitchSession(null);
-                        setIsSwitchingModule(false);
-                        setSwitchSuccess(false);
-                      }
-                    }}
-                    footer={null}
-                    width={400}
-                    centered
-                    maskClosable={!isSwitchingModule}
-                    closable={!isSwitchingModule}
-                  >
-                    {isSwitchingModule ? (
-                      <div
-                        style={{
-                          padding: "60px 0",
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {switchSuccess ? (
-                          <>
-                            <video
-                              src="/assets/check.mp4"
-                              autoPlay
-                              muted
-                              style={{ width: 120, height: 120 }}
-                            />
-                            <p
-                              style={{
-                                marginTop: 16,
-                                color: customColor.newBgColor,
-                                fontWeight: 500,
-                              }}
-                            >
-                              Authenticated! Redirecting...
-                            </p>
-                          </>
-                        ) : (
-                          <>
-                            <div
-                              style={{
-                                width: 50,
-                                height: 50,
-                                border: "4px solid #f3f3f3",
-                                borderTop: "4px solid #047780",
-                                borderRadius: "50%",
-                                animation: "spin 1s linear infinite",
-                              }}
-                            />
-                            <style>
-                              {`
-                                @keyframes spin {
-                                  0% { transform: rotate(0deg); }
-                                  100% { transform: rotate(360deg); }
-                                }
-                              `}
-                            </style>
-                            <p style={{ marginTop: 16, color: "#666" }}>
-                              Authenticating...
-                            </p>
-                          </>
-                        )}
-                      </div>
-                    ) : (
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "center",
-                          padding: "20px 0",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: 60,
-                            height: 60,
-                            borderRadius: "50%",
-                            background: "#f5f5f5",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            marginBottom: 16,
-                          }}
-                        >
-                          <SwapOutlined
-                            style={{
-                              fontSize: 28,
-                              color: customColor.newBgColor,
-                            }}
-                          />
-                        </div>
-                        <h3 style={{ margin: "0 0 24px 0", color: "#333" }}>
-                          Switch Module
-                        </h3>
-                        <div style={{ width: "100%", maxWidth: 300 }}>
-                          <div style={{ marginBottom: 16 }}>
-                            <div
-                              style={{
-                                marginBottom: 6,
-                                fontWeight: 500,
-                                color: "#666",
-                              }}
-                            >
-                              Location
-                            </div>
-                            <Select
-                              style={{ width: "100%" }}
-                              placeholder="Select Location"
-                              options={[
-                                { label: "Alwar", value: "alwar" },
-                                { label: "Noida", value: "noida" },
-                              ]}
-                              value={switchLocation}
-                              onChange={(value) => {
-                                setSwitchLocation(value);
-                                setSwitchBranch(null);
-                              }}
-                            />
-                          </div>
-                          <div style={{ marginBottom: 16 }}>
-                            <div
-                              style={{
-                                marginBottom: 6,
-                                fontWeight: 500,
-                                color: "#666",
-                              }}
-                            >
-                              Branch
-                            </div>
-                            <Select
-                              style={{ width: "100%" }}
-                              placeholder="Select Branch"
-                              disabled={!switchLocation}
-                              options={
-                                switchLocation
-                                  ? locationBranchOptions[switchLocation]
-                                  : []
-                              }
-                              value={switchBranch}
-                              onChange={(value) => setSwitchBranch(value)}
-                            />
-                          </div>
-                          <div style={{ marginBottom: 24 }}>
-                            <div
-                              style={{
-                                marginBottom: 6,
-                                fontWeight: 500,
-                                color: "#666",
-                              }}
-                            >
-                              Session
-                            </div>
-                            <Select
-                              style={{ width: "100%" }}
-                              placeholder="Select Session"
-                              options={sessionOptions}
-                              value={switchSession || user?.session}
-                              onChange={(value) => setSwitchSession(value)}
-                            />
-                          </div>
-                          <Button
-                            type="primary"
-                            block
-                            size="large"
-                            style={{
-                              background: customColor.newBgColor,
-                              borderColor: customColor.newBgColor,
-                              height: 44,
-                            }}
-                            disabled={!switchLocation || !switchBranch}
-                            onClick={() => {
-                              handleSwitchModule(
-                                switchLocation.charAt(0).toUpperCase() +
-                                  switchLocation.slice(1),
-                                switchBranch,
-                                switchSession || user?.session
-                              );
-                            }}
-                          >
-                            Switch
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </Modal>
-                </Space>
-              </Row>
-            </Header> */}
-                <AppHeader
+            <AppHeader
               onToggleSidebar={() => setShowSideBar((open) => !open)}
               logo={<Logo />}
               title="IMS"
@@ -1250,7 +875,6 @@ const App = () => {
                   }}
                 />
               }
-            
               socketConnected={isConnected}
               socketLoading={isLoading}
               onRefreshSocket={() => refreshConnection()}
@@ -1258,7 +882,6 @@ const App = () => {
                 notifications.filter((not) => not?.type != "message")?.length
               }
               onClickNotifications={() => dispatch(toggleNotifications())}
-              notificationButtonRef={notificationButtonRef}
               messagesCount={
                 notifications.filter((not) => not?.type == "message").length
               }
@@ -1291,14 +914,14 @@ const App = () => {
                 ) : null
               }
             />
-                <NotificationDropdown
+            <NotificationDropdown
               open={showNotifications}
               onClose={() => dispatch(setShowNotifications(false))}
               notifications={notifications.filter(
                 (not) => not?.type != "message"
               )}
               deleteNotification={deleteNotification}
-              anchorRef={notificationButtonRef}
+            
             />
           </Layout>
         )}
@@ -1306,38 +929,31 @@ const App = () => {
         {/* sidebar starts */}
         <Layout
           style={{
-            height:  "100%",
+            height: "100%",
             opacity: user && !branchSelected ? 0.5 : 1,
             pointerEvents: user && !branchSelected ? "none" : "all",
           }}
         >
-           <div style={{ display: "flex", height: "100%", paddingTop: user && user.passwordChanged === "C" ? 45 : 0 }}>
-          <TicketsModal
-            open={showTickets}
-            handleClose={() => setShowTickets(false)}
-          />
-          {user && user.passwordChanged === "C" && (
-            // <Sidebar
-            //   items={items(user)}
-            //   items1={items1(user, setShowTickets)}
-            //   className="site-layout-background"
-            //   key={1}
-            //   setShowSideBar={setShowSideBar}
-            //   showSideBar={showSideBar}
-            //   isBannerVisible={isBannerVisible}
-            // />
-             <>
+          <div
+            style={{
+              display: "flex",
+              height: "100%",
+              paddingTop: user && user.passwordChanged === "C" ? 45 : 0,
+            }}
+          >
+            <TicketsModal
+              open={showTickets}
+              handleClose={() => dispatch(setShowTickets(false))}
+            />
+            {user && user.passwordChanged === "C" && (
+              <>
                 <Sidebar
                   className="site-layout-background"
                   key={1}
                   setShowSideBar={setShowSideBar}
                   showSideBar={showSideBar}
                   useJsonConfig={true}
-                  topOffset={
-                    isTestServer || isBannerVisible
-                      ? 90
-                      : 45
-                  }
+                  topOffset={isTestServer || isBannerVisible ? 90 : 45}
                   onWidthChange={(w) => {
                     const layout = document.querySelector(
                       "#app-content-left-margin"
@@ -1346,52 +962,73 @@ const App = () => {
                   }}
                 />
               </>
-          )}
-          {/* sidebar ends */}
-          <Layout
-            onClick={() => {
-              setShowNotifications(false);
-              setShowMessageNotifications(false);
-            }}
-            style={{ height: "100%" }}
-          >
-            <Content style={{ height: "100%" }}>
-              <InternalNav links={internalLinks} />
+            )}
+            {/* sidebar ends */}
+            <Layout
+              onClick={(e) => {
+                // Don't close if clicking on notification button
 
-              <div
-                style={{
-                  height: (() => {
-                    const headerHeight = 50;
-                    const bannerHeight = isBannerVisible ? 40 : 0;
-                    const testServerHeight = isTestServer ? 15 : 0;
-                    const byDefaultHeight = 55;
-                    return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
-                  })(),
-                  width: "100%",
-                  opacity: testPage ? 0.5 : 1,
-                  pointerEvents:
-                    testPage && user?.type != "developer" ? "none" : "all",
+                const target = e.target;
 
-                  overflowX: "hidden",
-                }}
-              >
-                <Routes>
-                  {filteredRoutes.map((route, index) => (
-                    <Route
-                      key={index}
-                      path={route.path}
-                      element={<route.main />}
-                    />
-                  ))}
-                </Routes>
-              </div>
-            </Content>
-          </Layout>
+                if (notificationButtonRef.current?.contains(target)) {
+                  return;
+                }
+
+                dispatch(setShowNotifications(false));
+
+                dispatch(setShowMessageNotifications(false));
+              }}
+              id="app-content-left-margin"
+              style={{
+                height: "100%",
+
+                marginLeft:
+                  user && user.passwordChanged === "C"
+                    ? showSideBar
+                      ? 230
+                      : 56
+                    : 0,
+
+                minWidth: 0,
+              }}
+            >
+              <Content style={{ height: "100%" }}>
+                <InternalNav links={internalLinks} />
+
+                <div
+                  style={{
+                    height: (() => {
+                      const headerHeight = 50;
+                      const bannerHeight = isBannerVisible ? 40 : 0;
+                      const testServerHeight = isTestServer ? 15 : 0;
+                      const byDefaultHeight = 55;
+                      return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
+                    })(),
+                    width: "100%",
+                    opacity: testPage ? 0.5 : 1,
+                    pointerEvents:
+                      testPage && user?.type != "developer" ? "none" : "all",
+
+                    overflowX: "hidden",
+                  }}
+                >
+                  <Routes>
+                    {filteredRoutes.map((route, index) => (
+                      <Route
+                        key={index}
+                        path={route.path}
+                        element={<route.main />}
+                      />
+                    ))}
+                  </Routes>
+                </div>
+              </Content>
+            </Layout>
           </div>
         </Layout>
       </Layout>
 
-         <Modal
+      <Modal
         title={null}
         open={showSwitchModule}
         onCancel={() => {

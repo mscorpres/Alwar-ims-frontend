@@ -944,7 +944,7 @@
         "key": "changelog",
         "label": "Changelog",
         "icon": "AccessTimeIcon",
-        "path": "/version/files"
+        "path": "/changelog/history"
       }
     ]
   }

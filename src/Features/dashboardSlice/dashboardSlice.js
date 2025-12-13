@@ -55,36 +55,36 @@ export const fetchMasterSummary = createAsyncThunk(
     try {
       const response = await imsAxios.post("/tranCount/master_counts");
       const { data } = response;
-      if (data?.code === 200) {
+      if (response?.success) {
         return [
           {
             title: "Components",
-            value: data.data.totalComponents,
-            date: data.data.lastComponent,
+            value: data.totalComponents,
+            date: data.lastComponent,
             link: "/material",
           },
           {
             title: "Products",
-            value: data.data.totalProducts,
-            date: data.data.lastProduct,
+            value: data.totalProducts,
+            date: data.lastProduct,
             link: "/masters/products/fg",
           },
           {
             title: "Projects",
-            date: data.data.lastProject,
-            value: data.data.totalProjects,
+            date: data.lastProject,
+            value: data.totalProjects,
             link: "/master/reports/projects",
           },
           {
             title: "Vendors",
-            date: data.data.lastVendor,
-            value: data.data.totalVendors,
+            date: data.lastVendor,
+            value: data.totalVendors,
             link: "/vendor",
           },
         ];
       }
       return rejectWithValue(
-        data?.message?.msg || "Failed to load master summary"
+        data?.message || "Failed to load master summary"
       );
     } catch (e) {
       return rejectWithValue("Failed to load master summary");
@@ -101,29 +101,29 @@ export const fetchTransactionsSummary = createAsyncThunk(
         { data: date }
       );
       const { data } = response;
-      if (data?.code === 200) {
+      if (response?.success) {
         return [
           {
             title: "Rejection",
-            value: data.data.totalRejection,
-            date: data.data.lastRejection,
+            value: data.totalRejection,
+            date: data.lastRejection,
           },
-          { title: "MFG", value: data.data.totalMFG, date: data.data.lastMFG },
+          { title: "MFG", value: data.totalMFG, date: data.lastMFG },
           {
             title: "Consumption",
-            value: data.data.totalConsumption,
-            date: data.data.lastConsumption,
+            value: data.totalConsumption,
+            date: data.lastConsumption,
           },
           {
             title: "Purchase Orders",
-            value: data.data.totalPO,
-            date: data.data.lastPO,
+            value: data.totalPO,
+            date: data.lastPO,
             link: "/manage-po",
           },
         ];
       }
       return rejectWithValue(
-        data?.message?.msg || "Failed to load transactions"
+        data?.message || "Failed to load transactions"
       );
     } catch (e) {
       return rejectWithValue("Failed to load transactions");
@@ -139,23 +139,23 @@ export const fetchGatePassSummary = createAsyncThunk(
         data: date,
       });
       const { data } = response;
-      if (data?.code === 200) {
+      if (response?.success) {
         return [
-          { title: "Gatepass", value: data.data.totalGatePass },
-          { title: "RGP", date: data.data.lastRGP, value: data.data.totalRGP },
+          { title: "Gatepass", value: data.totalGatePass },
+          { title: "RGP", date: data.lastRGP, value: data.totalRGP },
           {
             title: "NRGP",
-            date: data.data.lastNRGP,
-            value: data.data.totalNRGP,
+            date: data.lastNRGP,
+            value: data.totalNRGP,
           },
           {
             title: "Challan",
-            date: data.data.lastDCchallan,
-            value: data.data.totalRGP_DCchallan,
+            date: data.lastDCchallan,
+            value: data.totalRGP_DCchallan,
           },
         ];
       }
-      return rejectWithValue(data?.message?.msg || "Failed to load gate pass");
+      return rejectWithValue(data?.message || "Failed to load gate pass");
     } catch (e) {
       return rejectWithValue("Failed to load gate pass");
     }
@@ -171,27 +171,27 @@ export const fetchMinSummary = createAsyncThunk(
         { data: date }
       );
       const { data } = response;
-      if (data?.code === 200) {
+      if (response?.success) {
         return [
           {
             title: "PO MIN",
-            date: data.data.lastMin,
-            value: data.data.totalPOMin,
+            date: data.lastMin,
+            value: data.totalPOMin,
           },
           {
             title: "Without PO MIN",
-            date: data.data.lastNormalMin,
-            value: data.data.totalNormalMIN,
+            date: data.lastNormalMin,
+            value: data.totalNormalMIN,
           },
           {
             title: "JW MIN",
-            date: data.data.lastJWMin,
-            value: data.data.totalJWMin,
+            date: data.lastJWMin,
+            value: data.totalJWMin,
             key: "jwMin",
           },
         ];
       }
-      return rejectWithValue(data?.message?.msg || "Failed to load MIN");
+      return rejectWithValue(data?.message || "Failed to load MIN");
     } catch (e) {
       return rejectWithValue("Failed to load MIN");
     }
@@ -206,17 +206,17 @@ export const fetchPendingSummary = createAsyncThunk(
         data: date,
       });
       const { data } = response;
-      if (data?.code === 200) {
+      if (response?.success) {
         return [
-          { title: "Pending PO", value: data.data.pendingPO },
-          { title: "Pending JW PO", value: data.data.pendingJW_PO },
-          { title: "Pending PPR", value: data.data.pendingPPR },
-          { title: "Pending FG", value: data.data.pendingFG },
-          { title: "Pending MR Approval", value: data.data.pendingMRapproval },
+          { title: "Pending PO", value: data.pendingPO },
+          { title: "Pending JW PO", value: data.pendingJW_PO },
+          { title: "Pending PPR", value: data.pendingPPR },
+          { title: "Pending FG", value: data.pendingFG },
+          { title: "Pending MR Approval", value: data.pendingMRapproval },
         ];
       }
       return rejectWithValue(
-        data?.message?.msg || "Failed to load pending summary"
+        data?.message || "Failed to load pending summary"
       );
     } catch (e) {
       return rejectWithValue("Failed to load pending summary");
@@ -232,15 +232,15 @@ export const fetchMfgProducts = createAsyncThunk(
         data: date,
       });
       const { data } = response;
-      if (data?.code === 200) {
-        return (data.data.topProducts || []).map((item) => ({
+      if (response?.success) {
+        return (data.topProducts || []).map((item) => ({
           sku: item.productSku,
           qty: item.totalmfgQuantity,
           product: item.productName,
         }));
       }
       return rejectWithValue(
-        data?.message?.msg || "Failed to load mfg products"
+        data?.message || "Failed to load mfg products"
       );
     } catch (e) {
       return rejectWithValue("Failed to load mfg products");
