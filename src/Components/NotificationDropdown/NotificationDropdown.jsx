@@ -4,7 +4,8 @@ import { ConfigProvider } from "antd";
 import { Link } from "react-router-dom";
 import { CommonIcons } from "../TableActions.jsx/TableActions";
 import { socketLink as axiosLink } from "../../axiosInterceptor";
-import { ReloadOutlined } from "@ant-design/icons";
+import { DeleteFilled, MoreOutlined, ReloadOutlined } from "@ant-design/icons";
+import { Delete } from "lucide-react";
 
 const NotificationDropdown = ({
   open,
@@ -169,6 +170,13 @@ const NotificationDropdown = ({
               </span>
             )}
           </Typography.Text>
+          <div
+            className="flex justify-end items-center"
+            style={{ gap: 12, cursor: "pointer" }}
+          >
+            <DeleteFilled  style={{color:"red"}} />
+             <ReloadOutlined  style={{color:"black"}}/>
+          </div>
         </div>
         <div
           style={{
@@ -176,7 +184,7 @@ const NotificationDropdown = ({
             maxHeight: "calc(100vh - 360px)",
             minHeight: "calc(100vh - 360px)",
             backgroundColor: "#fff",
-            margin: "0px  12px",
+            margin: "0px  12px 12px 12px",
           }}
         >
           <ConfigProvider renderEmpty={EmptyList}>
@@ -286,19 +294,6 @@ const NotificationDropdown = ({
               )}
             />
           </ConfigProvider>
-        </div>
-        <div
-          className="flex justify-end items-center"
-          style={{ padding: "4px 12px", gap: 4, cursor: "pointer" }}
-        >
-          <ReloadOutlined
-            style={{ color: "#000", fontWeight: "600px", fontSize: "14px" }}
-          />
-          <Typography
-            style={{ color: "#000", fontWeight: "600", fontSize: "14px" }}
-          >
-            Reload
-          </Typography>
         </div>
       </div>
     </>

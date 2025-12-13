@@ -61,16 +61,12 @@ const App = () => {
   const { user, notifications, testPages } = useSelector(
     (state) => state.login
   );
-
+  const notificationButtonRef = useRef(null);
   const {
     showNotifications,
-
     showMessageNotifications,
-
     showTickets,
-
     showSetting,
-
     showSwitchModule,
   } = useSelector((state) => state.ui);
 
@@ -814,7 +810,7 @@ const App = () => {
             TEST SERVER
           </div>
         )}
-        <Information />
+        {/* <Information /> */}
         {user && user.passwordChanged === "C" && (
           <Layout style={{ height: "100%" }}>
             <AppHeader
@@ -882,6 +878,7 @@ const App = () => {
                 notifications.filter((not) => not?.type != "message")?.length
               }
               onClickNotifications={() => dispatch(toggleNotifications())}
+                   notificationButtonRef={notificationButtonRef}
               messagesCount={
                 notifications.filter((not) => not?.type == "message").length
               }
@@ -921,7 +918,7 @@ const App = () => {
                 (not) => not?.type != "message"
               )}
               deleteNotification={deleteNotification}
-            
+              anchorRef={notificationButtonRef}
             />
           </Layout>
         )}
@@ -1001,7 +998,8 @@ const App = () => {
                       const headerHeight = 50;
                       const bannerHeight = isBannerVisible ? 40 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
-                      const byDefaultHeight = pathname === "/myProfile" ? 0 : 55;
+                      const byDefaultHeight =
+                        pathname === "/myProfile" ? 0 : 50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",
