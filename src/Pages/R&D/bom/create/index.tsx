@@ -615,7 +615,7 @@ const BOMCreate = () => {
       {(loading("fetch") || loading("final") || loading("draft")) && (
         <Loading />
       )}
-      <Row gutter={6} justify="center" style={{ height: "100%" }}>
+      <Row gutter={6} style={{ height: "100%" }}>
         <Col span={5} style={{ height: "100%", overflow: "auto" }}>
           <Flex vertical gap={5}>
             <Card size="small" title="Header Details">

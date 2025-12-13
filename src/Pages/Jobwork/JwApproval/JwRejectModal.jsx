@@ -50,7 +50,7 @@ export default function JwRejectModal({ open, close, getRows }) {
       okText="Reject PO"
       cancelText="No"
     >
-      <Row justify="center">
+      <Row >
         <Col span={24}>
           <Row justify="center">
             <Form form={rejectForm} layout="vertical" style={{ width: "100%" }}>

@@ -56,7 +56,7 @@ const Product = () => {
   return (
     <Row
       gutter={6}
-      justify="center"
+      
       style={{ height: "90%", padding: "0px 5px" }}
     >
       <ComponentImages showImages={showImages} setShowImages={setShowImages} />

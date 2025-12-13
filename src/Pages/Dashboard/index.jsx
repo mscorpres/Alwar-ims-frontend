@@ -378,7 +378,7 @@ const Dashboard = () => {
     getMasterSummary();
   }, []);
   return (
-    <Row justify="center" style={{ padding: 20 }}>
+    <Row  style={{ padding: 20 }}>
       <Col span={22}>
         <Row gutter={[6, 12]}>
           <Col>

@@ -476,7 +476,7 @@ export default function UpdateComponent() {
         form={componentForm}
         style={{ height: "90%", width: "100%", padding: 20 }}
       >
-        <Row justify="center">
+        <Row >
           <Col
             span={16}
             style={{

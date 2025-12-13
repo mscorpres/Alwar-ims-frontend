@@ -70,8 +70,7 @@ const R6 = () => {
       style={{
         paddingTop: 50,
       }}
-      justify="center"
-      align="middle"
+
     >
       <Col span={24}>
         <Row justify="center">

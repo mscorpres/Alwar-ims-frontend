@@ -183,7 +183,7 @@ const CreatePPR = () => {
   }, [project]);
   return (
     <div style={{ height: "90%" }}>
-      <Row gutter={10} justify="center">
+      <Row gutter={10}>
         {loading === "page" && <Loading />}
         <Form
           initialValues={initialValues}

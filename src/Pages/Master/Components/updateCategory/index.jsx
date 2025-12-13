@@ -142,7 +142,7 @@ const UpdateCategory = () => {
   }, [selectedCategory]);
   return (
     <Row
-      justify="center"
+      
       style={{ height: "90%", position: "relative", marginTop: 150 }}
     >
       {loading && <Loading />}
@@ -175,7 +175,7 @@ const SelectCategory = ({
   stage,
 }) => {
   return (
-    <Row justify={"center"} style={{ maxHeight: "100%" }}>
+    <Row  style={{ maxHeight: "100%" }}>
       <Col span={24}>
         <Card
           title="Select Category"

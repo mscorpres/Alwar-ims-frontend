@@ -154,7 +154,7 @@ const PendingApproval = () => {
   }, []);
   return (
     <Row
-      justify="center"
+      
       style={{ height: "100%", padding: 15, paddingBottom: 55 }}
     >
       <Col span={14}>
