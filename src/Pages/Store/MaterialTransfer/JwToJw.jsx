@@ -8,6 +8,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import Spreadsheet from "react-spreadsheet";
+import { customColor } from "../../../utils/customColor.js";
 const { TextArea } = Input;
 
 function JwToJw() {
@@ -142,10 +143,7 @@ function JwToJw() {
   const getComponentList = async (e) => {
     if (e?.length > 2 && allData.jwPo) {
       try {
-        const response = await imsAxios.post("/godown/transfer/jw-jw/stock", {
-          part: e,
-          jw: allData.jwPo,
-        });
+        const response = await imsAxios.get(`/godown/transfer/jw-jw/stock?part=${e}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`);
         
         if (response?.success && response?.data) {
           const data = Array.isArray(response.data) ? response.data : [response.data];
@@ -207,7 +205,7 @@ function JwToJw() {
       component: components,
       to: allData.locationTo,
       qty: qtys,
-      remarks: allData.remark,
+      remark: allData.remark,
     });
 
     if (response.success) {
@@ -318,10 +316,7 @@ function JwToJw() {
       const partCodes = validRows.map((row) => row[0]?.value?.trim());
 
       // Call stock API with part codes
-      const response = await imsAxios.post("/godown/transfer/jw-jw/stock", {
-        part: partCodes,
-        jw: allData.jwPo,
-      });
+      const response = await imsAxios.get(`/godown/transfer/jw-jw/stock?part=${partCodes}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`);
 
       if (response?.success && response?.data) {
         // Handle both single and array response
