@@ -1010,11 +1010,11 @@ const App = () => {
                 <div
                   style={{
                     height: (() => {
-                      const headerHeight = 50;
+                      const headerHeight =  pathname === "/login" ? 10 : 50;
                       const bannerHeight = isBannerVisible ? 40 : 0;
-                      const testServerHeight = isTestServer ? 15 : 0;
+                      const testServerHeight = isTestServer  ? 15 : 0;
                       const byDefaultHeight =
-                        pathname === "/myProfile" ? 0 : 50;
+                        pathname === "/myProfile" || pathname === "/login" ? 0 : 50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",
