@@ -42,15 +42,15 @@ function ShippingAddress() {
     getRows();
   }, []);
   return (
-    <div style={{ height: "90%", padding: "0px 5px" }}>
-      <Row gutter={6} style={{ height: "95%" }}>
-        <Col span={4}>
+    <div style={{ height: "100%", padding: "0px 5px" }}>
+      <Row gutter={6} style={{ height: "100%" }}>
+        <Col span={6}>
           <AddShippingAddress
             getRows={getRows}
             handleCSVDownload={handleCSVDownload}
           />
         </Col>
-        <Col span={20}>
+        <Col span={18}>
           <MyDataTable
             loading={loading === "fetch"}
             columns={columns}

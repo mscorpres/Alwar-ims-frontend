@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { Card, Col, Form, Input, Row, Space, Modal, Button, message } from "antd";
+import { Card, Col, Form, Input, Row, Space, Drawer, Button, message } from "antd";
 import MyDataTable from "../../Components/MyDataTable";
 import { v4 } from "uuid";
 import { imsAxios } from "../../axiosInterceptor";
@@ -311,7 +311,7 @@ const SubGroup = () => {
             </Row>
           </Card>
         </Col>
-        <Col style={{ height: "85%" }} span={16}>
+        <Col style={{ height: "100%" }} span={16}>
           <MyDataTable
             loading={tableLoading}
             data={subGroupData}
@@ -320,15 +320,16 @@ const SubGroup = () => {
         </Col>
       </Row>
 
-      {/* Edit Modal */}
-      <Modal
+      {/* Edit Drawer */}
+      <Drawer
         title="Edit Sub Group"
         open={editModalVisible}
-        onCancel={handleModalClose}
-        footer={[
-          <Button key="cancel" onClick={handleModalClose}>
+        onClose={handleModalClose}
+         extra={
+                <Space>
+                   <Button key="cancel" onClick={handleModalClose}>
             Cancel
-          </Button>,
+          </Button>
           <Button
             key="update"
             type="primary"
@@ -336,9 +337,12 @@ const SubGroup = () => {
             onClick={handleUpdate}
           >
             Update
-          </Button>,
-        ]}
+          </Button>
+                </Space>
+              }
+      
         width={600}
+        placement="right"
       >
         <Form form={editForm} layout="vertical">
           <Form.Item
@@ -373,7 +377,7 @@ const SubGroup = () => {
             <Input.TextArea rows={4} placeholder="Enter Description..." />
           </Form.Item>
         </Form>
-      </Modal>
+      </Drawer>
     </div>
   );
 };

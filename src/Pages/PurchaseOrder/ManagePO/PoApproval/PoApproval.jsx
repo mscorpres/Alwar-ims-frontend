@@ -200,7 +200,7 @@ export default function PoApproval() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "90%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
       <PoRejectModa
         getRows={getRows}
         open={rejectPo}

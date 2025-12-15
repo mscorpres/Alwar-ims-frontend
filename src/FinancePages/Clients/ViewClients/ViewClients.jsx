@@ -178,9 +178,9 @@ function ViewClients() {
 
   return (
     <>
-      <div style={{ height: "90%", padding: 5 }}>
-        <Row justify="end"></Row>
-        <div style={{ paddingTop: 5, height: "95%" }}>
+      <div style={{ height: "100%", padding: 5 }}>
+     
+        <div style={{ paddingTop: 5, height: "100%" }}>
           <MyDataTable loading={fetchLoading} rows={rows} columns={columns} />
         </div>
       </div>

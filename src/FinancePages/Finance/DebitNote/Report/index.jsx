@@ -312,7 +312,7 @@ function DebitNoteReport() {
     getVendorOption(searchTerm);
   }, [searchTerm]);
   return (
-    <div style={{ height: "90%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
       <Row justify="space-between" style={{ padding: "0px 0px" }}>
         <Space>
           <div style={{ width: 250 }}>

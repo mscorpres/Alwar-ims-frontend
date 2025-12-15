@@ -105,7 +105,7 @@ export default function CPMReport() {
   ];
   console.log(rows);
   return (
-    <div style={{ height: "90%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
       <Row justify="space-between">
         <Col>
           <Space>

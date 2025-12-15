@@ -128,7 +128,7 @@ export default function AddClients() {
     }
   }, [selectedCountry]);
   return (
-    <div>
+    <div style={{ height: "100%" }}>
       {pageLoading && <Loading />}
       {/* submit confirm modal */}
       <Modal
@@ -190,7 +190,7 @@ export default function AddClients() {
           form={addClientForm}
           onFinish={(values) => setShowSubmitConfirm(values)}
         >
-          <Row style={{ height: "90%" }}>
+          <Row style={{ height: "100%" }}>
             <Col span={8}>
               <Row>
                 {" "}
@@ -314,7 +314,7 @@ export default function AddClients() {
               </Row>
             </Col>
             <Col span={16} style={{ paddingLeft: "0px" }}>
-              <div style={{ height: "115%" }}>
+              <div style={{ height: "100%" }}>
                 <ViewClients />
               </div>
             </Col>

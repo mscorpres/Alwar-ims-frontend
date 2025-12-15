@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { Modal, Input, Button, Form, message } from "antd";
+import { Drawer, Input, Button, Form, message } from "antd";
+//@ts-ignore
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+//@ts-ignore
 import { getBomOptions, getCostCentresOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "@/utils/general";
 import useApi from "@/hooks/useApi";
@@ -10,7 +12,7 @@ const UpdateProjectModal = ({
   setIsModalVisible, 
   isModalVisible, 
   onUpdate 
-}) => {
+}:any) => {
   const [form] = Form.useForm();
 
 
@@ -20,10 +22,10 @@ const UpdateProjectModal = ({
   const { executeFun } = useApi();
 
   // Load BOM options
-  const loadBomOptions = async (search) => {
+  const loadBomOptions = async (search:any) => {
     const response = await executeFun(() => getBomOptions(search), "select");
     if (response.success) {
-      const options = convertSelectOptions(response.data); 
+      const options:any = convertSelectOptions(response.data); 
       setBomOptions(options);
     } else {
       setBomOptions([]);
@@ -31,10 +33,10 @@ const UpdateProjectModal = ({
   };
 
   // Load Cost Center options
-  const loadCostCenterOptions = async (search) => {
+  const loadCostCenterOptions = async (search:any) => {
     const response = await executeFun(() => getCostCentresOptions(search), "select");
     if (response.success) {
-      const options = convertSelectOptions(response.data);
+      const options:any = convertSelectOptions(response.data);
       setCostCenterOptions(options);
     } else {
       setCostCenterOptions([]);
@@ -55,10 +57,10 @@ const UpdateProjectModal = ({
 
     
       if (data.bomSubject) {
-        setBomOptions([{ label: data.bomSubject, value: data.bomSubject }]);
+        setBomOptions([{ label: data.bomSubject, value: data.bomSubject } ] as any);
       }
       if (data.costcenter) {
-        setCostCenterOptions([{ label: data.costcenter, value: data.costcenter }]);
+        setCostCenterOptions([{ label: data.costcenter, value: data.costcenter }] as any);
       }
     }
   }, [data, isModalVisible, form]);
@@ -90,19 +92,22 @@ const UpdateProjectModal = ({
   };
 
   return (
-    <Modal
+    <Drawer
       title="Update Project"
       open={isModalVisible}           
-      onCancel={handleCancel}
+      onClose={handleCancel}
       width={600}
-      footer={[
-        <Button key="cancel" onClick={handleCancel}>
-          Cancel
-        </Button>,
-        <Button key="submit" type="primary" onClick={handleSubmit}>
-          Update Project
-        </Button>,
-      ]}
+      placement="right"
+      footer={
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>
+          <Button key="submit" type="primary" onClick={handleSubmit}>
+            Update Project
+          </Button>
+        </div>
+      }
     >
       <Form form={form} layout="vertical">
         <Form.Item 
@@ -147,7 +152,7 @@ const UpdateProjectModal = ({
           />
         </Form.Item>
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

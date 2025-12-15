@@ -3,6 +3,7 @@ import MySelect from "../../../../Components/MySelect";
 import { toast } from "react-toastify";
 import {
   Button,
+  Drawer,
   Modal,
   Row,
   Col,
@@ -247,12 +248,13 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   return (
     <>
       {" "}
-      <Modal
+      <Drawer
         title={`Update Vendor: ${editVendor?.vendor_code}`}
         open={editVendor}
         width={700}
-        onCancel={() => setEditVendor(false)}
-        footer={[
+        onClose={() => setEditVendor(false)}
+        placement="right"
+        footer={
           <Row style={{ width: "100%" }} align="middle" justify="space-between">
             <Col>
               <Form style={{ padding: 0, margin: 0 }}>
@@ -282,8 +284,8 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                 </Button>
               </Space>
             </Col>
-          </Row>,
-        ]}
+          </Row>
+        }
       >
         {<Skeleton active loading={skeletonLoading} />}
         {<Skeleton active loading={skeletonLoading} />}
@@ -571,7 +573,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
             </Row>
           </Form>
         )}
-      </Modal>
+      </Drawer>
       <Modal
         title={`Addding MSME for ${editVendor?.vendor_code}`}
         open={editMSME == true || isMSMEEdited == true}

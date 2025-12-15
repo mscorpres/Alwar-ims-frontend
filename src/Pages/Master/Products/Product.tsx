@@ -57,7 +57,7 @@ const Product = () => {
     <Row
       gutter={6}
       
-      style={{ height: "90%", padding: "0px 5px" }}
+      style={{ height: "calc(100vh - 160px)", padding: "0px 5px" }}
     >
       <ComponentImages showImages={showImages} setShowImages={setShowImages} />
       <Edit
@@ -80,7 +80,7 @@ const Product = () => {
           productType={productType}
         />
       </Col>
-      <Col span={10}>
+      <Col sm={16} xl={18} xxl={20}>
         <View
           rows={rows}
           loading={loading("fetch")}

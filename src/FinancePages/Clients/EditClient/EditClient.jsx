@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Row, Col, Button, Switch, Form, Space, Input } from "antd";
+import { Drawer, Row, Col, Button, Switch, Form, Space, Input } from "antd";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { toast } from "react-toastify";
@@ -115,6 +115,7 @@ function EditClient({
     const response = await imsAxios.get(
       `/client/getClient?code=${updatingClient?.code}`
     );
+   
     if (response.success) {
       let obj = {
         ...response.data[0],
@@ -138,8 +139,7 @@ function EditClient({
   const getAllTcsCall = async () => {
     setTcsOptions([]);
     const response = await imsAxios.get("/tally/tcs/getAllTcs");
-    console.log(response);
-
+   
     if (response.success) {
       let tcsArr = response.data?.map((row) => {
         return { text: row.tcsName, value: row.tcsKey };
@@ -171,8 +171,7 @@ function EditClient({
 
   const submitHandler = async () => {
     const values = await updateClientForm.validateFields();
-    console.log(values);
-    console.log(updatingClient?.code);
+   
     // console.log(clientStatus);
     let obj = {
       code: updatingClient?.code,
@@ -215,12 +214,13 @@ function EditClient({
   }, [updatingClient, addClientApi]);
 
   return (
-    <Modal
+    <Drawer
       title={`Update Client: ${updatingClient?.code}`}
       open={updatingClient}
       width={600}
-      onCancel={() => setUpdatingClient(false)}
-      footer={[
+      onClose={() => setUpdatingClient(false)}
+      placement="right"
+      footer={
         <Row style={{ width: "100%" }} align="middle" justify="space-between">
           <Col>
             <Form style={{ padding: 0, margin: 0 }}>
@@ -250,8 +250,8 @@ function EditClient({
               </Button>
             </Space>
           </Col>
-        </Row>,
-      ]}
+        </Row>
+      }
     >
       <Form layout="vertical" form={updateClientForm}>
         <Row>
@@ -323,7 +323,7 @@ function EditClient({
           </Col>
         </Row>
       </Form>
-    </Modal>
+    </Drawer>
   );
 }
 

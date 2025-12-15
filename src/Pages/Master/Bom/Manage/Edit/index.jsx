@@ -355,12 +355,12 @@ const EditModal = ({ show, close, bomType }) => {
         padding: 5,
       }}
     >
-      <Row style={{ height: "98%" }} gutter={6}>
+      <Row style={{ height: "calc(100% - 20px)" }} gutter={6}>
         {loading === "fetch" && <Loading />}
-        <Col span={4}>
+        <Col span={6}>
           <SummaryCard bomType={bomType} details={details} />
         </Col>
-        <Col span={20} style={{ overflowY: "auto", height: "100%" }}>
+        <Col span={18} style={{ overflowY: "auto", height: "100%" }}>
           <FormTable columns={columns} data={rows} />
         </Col>
       </Row>

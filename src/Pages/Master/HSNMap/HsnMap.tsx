@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Form, Input, Row } from "antd";
+//@ts-ignore
 import MyAsyncSelect from "@/Components/MyAsyncSelect.jsx";
 import { getComponentOptions, getHsnOptions } from "@/api/general";
 import useApi from "@/hooks/useApi";
 import { convertSelectOptions } from "@/utils/general";
+//@ts-ignore
 import FormTable2 from "@/Components/FormTable2.jsx";
+//@ts-ignore
 import MyButton from "../../../Components/MyButton";
 import { getHsnList, mapHsn } from "@/api/master/component";
 
@@ -20,7 +23,7 @@ const HsnMap = () => {
       () => getComponentOptions(search),
       "select"
     );
-
+    //@ts-ignore
     setAsyncOptions(convertSelectOptions(response.data ?? []));
   };
 
@@ -57,9 +60,9 @@ const HsnMap = () => {
       layout="vertical"
       initialValues={initialValues}
       form={form}
-      style={{ height: "95%" }}
+      style={{ height: "100%",margin: "0px 10px" }}
     >
-      <Row  gutter={16} style={{ height: "100%" }}>
+      <Row gutter={16} style={{ height: "100%" }}>
         <Col sm={8} xxl={4}>
           <Card size="small" title="Map HSN">
             <Form.Item
@@ -85,10 +88,10 @@ const HsnMap = () => {
           </Card>
         </Col>
         <Col
-          sm={12}
-          xxl={8}
+          sm={16}
+          xxl={20}
           className="remove-table-footer remove-cell-border"
-          style={{ height: "92%" }}
+          style={{ height: "100%" }}
         >
           <FormTable2
             form={form}
@@ -118,9 +121,13 @@ const initialValues = {
 };
 
 const columns = (
+  //@ts-ignore
   setAsyncOptions,
+  //@ts-ignore
   asyncOptions,
+  //@ts-ignore
   handleFetchHsnOptions,
+  //@ts-ignore
   loading
 ) => [
   {

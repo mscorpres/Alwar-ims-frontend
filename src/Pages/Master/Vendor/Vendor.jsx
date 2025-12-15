@@ -117,14 +117,14 @@ const Vendor = () => {
   }, []);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "calc(100vh - 160px)",  }}>
       <Row justify="end" style={{ padding: "0px 10px", paddingBottom: 5 }}>
         <CommonIcons
           action="downloadButton"
           onClick={() => downloadCSV(allVendor, coloums, "Vendor Report")}
         />
       </Row>
-      <div style={{ height: "95%", padding: "0 10px" }}>
+      <div style={{ height: "100%", padding: "0 10px" }}>
         <MyDataTable loading={loading} data={allVendor} columns={coloums} />
       </div>
 

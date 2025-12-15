@@ -137,7 +137,7 @@ const ManageBOM = () => {
     downloadCSVnested2(rows, columns, "FG BOM", actionColumns);
   };
   return (
-    <div style={{ height: "90%", padding: 10, paddingTop: 0 }}>
+    <div style={{ height: "calc(100vh - 160px)", padding: 5, paddingTop: 0 }}>
       <Row justify="end" style={{ margin: "5x 0" }}>
         <CommonIcons
           disabled={rows.length === 0}

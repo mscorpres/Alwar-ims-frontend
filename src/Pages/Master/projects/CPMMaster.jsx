@@ -151,7 +151,7 @@ function CPMMaster() {
   }, []);
 
   return (
-    <Row gutter={10} style={{ height: "90%", padding: 10 }}>
+    <Row gutter={10} style={{ height: "100%", padding: 10 }}>
       <Col span={6}>
         <Card
           size="small"

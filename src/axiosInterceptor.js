@@ -76,6 +76,11 @@ imsAxios.interceptors.response.use(
     return response;
   },
   (error) => {
+   
+    if (error?.code === "ERR_BAD_REQUEST") {
+       toast.error(error?.message || "Something went wrong, Please contact administrator");
+       return error;
+    }
     if (typeof error.response?.data === "object") {
       if (error.response.data?.data?.logout) {
         toast.error(error.response.data.message);
@@ -91,7 +96,7 @@ imsAxios.interceptors.response.use(
       return error.response.data;
     }
 
-   
+  
     if (!error.response.data?.message) {
       toast.error(error.response?.data);
     }

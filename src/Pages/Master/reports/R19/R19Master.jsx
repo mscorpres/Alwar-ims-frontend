@@ -167,7 +167,7 @@ function R19Master() {
     addSingleComponentForm.setFieldsValue({ component: "" });
   }, []);
   return (
-    <Row gutter={6} style={{ height: "90%" }}>
+    <Row gutter={6} style={{ height: "100%" }}>
       <VerifiedFilePreview
         verifiedFile={verifiedFile}
         setVerifiedFile={setVerifiedFile}

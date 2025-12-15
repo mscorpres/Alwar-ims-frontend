@@ -90,7 +90,7 @@ const Disabled = () => {
     getRows();
   }, []);
   return (
-    <div style={{ height: "90%", padding: 10, paddingTop: 0 }}>
+    <div style={{ height: "calc(100vh - 160px)", padding: 10, paddingTop: 0 }}>
       <Row style={{ paddingBottom: 5 }} justify="end">
         <CommonIcons
           action="downloadButton"

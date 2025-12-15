@@ -475,7 +475,7 @@ function Location() {
     }
   }, [location]);
   return (
-    <div style={{ height: "90%", overflow: "auto" }}>
+    <div style={{ height: "calc(100vh - 120px)", overflow: "auto" }}>
       <Modal
         open={mapCostCenterModal}
         footer={null}
@@ -513,7 +513,7 @@ function Location() {
           </Row>
         </Form>
       </Modal>
-      <Row gutter={10} style={{ margin: "10px", height: "80%" }}>
+      <Row gutter={10} style={{ margin: "10px", height: "calc(100vh - 140px)" }}>
         <Col span={8}>
           <Row gutter={[0, 6]}>
             <Col span={24}>
@@ -758,7 +758,7 @@ function Location() {
                 </div>
               </>
             ) : (
-              <div style={{ height: "95%" }}>
+              <div style={{ height: "100%" }}>
                 <MyDataTable
                   columns={coloums}
                   data={locationData}

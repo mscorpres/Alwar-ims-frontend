@@ -106,7 +106,7 @@ const Group = () => {
             </Row>
           </Card>
         </Col>
-        <Col style={{ height: "85%" }} span={16}>
+        <Col style={{ height: "100%" }} span={16}>
           <MyDataTable
             loading={tableLoading}
             data={groupData}

@@ -47,15 +47,15 @@ export default function UpdateService({ editService, setEditService, units }) {
       componentKey: editService.componentKey,
     });
     if (response.success) {
-      const res = response.data[0];
+      const res = response.data;
       setServiceDetails({
-        serviceName: res.name,
-        uom: res.uomid,
+        serviceName: res?.name,
+        uom: res?.uomid,
         isEnabled: "Y",
-        description: res.description,
+        description: res?.description,
         taxType: "L",
         taxRate: "05",
-        sac: res.sac,
+        sac: res?.sac,
       });
     } else {
       toast.error(response.message);

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 // import { toast } from "react-toastify";
 import { Card, Col, Form, Input, Row, Space } from "antd";
+//@ts-ignore
 import MyDataTable from "../../Components/MyDataTable";
+//@ts-ignore
 // import { v4 } from "uuid";
 // import { imsAxios } from "../../axiosInterceptor";
 import MyButton from "../../Components/MyButton";
+//@ts-ignore
 import useApi from "../../hooks/useApi.ts";
 import { createUOM, getUOMList } from "../../api/master/uom";
+//@ts-ignore
 import { ResponseType } from "../../types/general.ts";
 
 const Uom = () => {
@@ -108,7 +112,7 @@ const Uom = () => {
   return (
     <div style={{ height: "100%" }}>
       <Row gutter={6} style={{ padding: 10 }} >
-        <Col span={4}>
+        <Col span={8}>
           <Card size="small" title="Create UOM">
             <Form form={form} layout="vertical">
               <Form.Item name="name" label="Unit">
@@ -130,7 +134,7 @@ const Uom = () => {
             </Form>
           </Card>
         </Col>
-        <Col span={8}>
+        <Col span={16}>
           <div className="m-2" style={{ height: "100%" }}>
             <div style={{ height: "80vh" }}>
               <MyDataTable

@@ -208,7 +208,7 @@ button:disabled {
   text-decoration: none !important;
 }
 .ant-tooltip .ant-tooltip-arrow::before {
-  background-color: #d2f571 !important;
+  background-color: #0d9489 !important;
 }
 /* Tab text bold */
 .ant-tabs-tab-btn {
