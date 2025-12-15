@@ -35,6 +35,7 @@ export default function PoApproval() {
   const [rejectPo, setRejectPo] = useState(null);
   const [rows, setRows] = useState([]);
   const [approvePo, setApprovePo] = useState(null);
+  const [newPoLogs, setNewPoLogs] = useState([]);
   const [selectedPo, setSelectedPo] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
   const wiseOptions = [
@@ -118,6 +119,16 @@ export default function PoApproval() {
     setRejectPo(arr);
     // setApprovePo(arr);
   };
+
+  const getPoLogs = async (po_id) => {
+    const { data } = await imsAxios.post("/purchaseOthers/pologs", {
+      po_id,
+    });
+    if (data.code === "200" || data.code == 200) {
+      let arr = data.data;
+      setNewPoLogs(arr.reverse());
+    }
+  };
   const columns = [
     {
       headerName: "",
@@ -129,6 +140,7 @@ export default function PoApproval() {
           showInMenu
           onClick={() => {
             setViewPoDetails(row.po_transaction);
+            getPoLogs(row.po_transaction);
           }}
           label="View"
         />,
@@ -217,6 +229,7 @@ export default function PoApproval() {
       <PoDetailsView
         viewPoDetails={viewPoDetails}
         setViewPoDetails={setViewPoDetails}
+        newPoLogs={newPoLogs}
       />
       <Row justify="space-between">
         <Col span={18}>
