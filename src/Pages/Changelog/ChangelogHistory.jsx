@@ -270,7 +270,7 @@ const ChangelogHistory = () => {
         display: "flex",
         gap: 3,
         p: 3,
-        height: "calc(100vh - 100px)",
+        height: "calc(100vh - 160px)",
       }}
     >
       {/* Left Section - Timeline */}
