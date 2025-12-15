@@ -39,7 +39,6 @@ function CreateFgReturn() {
     const response = await imsAxios.post("/ppr/fetchProductData", {
       search: sku,
     });
-    console.log(response,"=====================response")
     setLoading(false);
 
     const  data  = response?.data;
@@ -53,16 +52,7 @@ function CreateFgReturn() {
       
     }
   }; 
-  const locationList = async (search) => {
-    const response = await imsAxios.post("/backend/fetchLocation", {
-      searchTerm: search,
-    });
-    let locArr = [];
-    locArr = response?.data.map((d) => {
-      return { text: d.text, value: d.id };
-    });
-    setLocationList(locArr);
-  };
+ 
   const getLocations = async () => {
     const response = await imsAxios.get("/ppr/mfg_locations");
     const arr = [];
@@ -106,7 +96,7 @@ function CreateFgReturn() {
   }, [selectedStatus]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "90%", margin:20}}>
       <Row gutter={10} >
         <Form form={fgReturn} layout="vertical">
           <Row>

@@ -182,7 +182,7 @@ const CreatePPR = () => {
     }
   }, [project]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "90%", margin:20 }}>
       <Row gutter={10}>
         {loading === "page" && <Loading />}
         <Form

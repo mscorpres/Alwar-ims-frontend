@@ -156,14 +156,41 @@ const Sidebar = ({
   }, [useJsonConfig, hoveredItem, items1]);
 
 
+  const filterItemsByIsShown = (items) => {
+    return items
+      .map((item) => {
+     
+        if (item.isShown === false) {
+          return null;
+        }
+        
+        const filteredItem = { ...item };
+
+        if (item.children && item.children.length > 0) {
+          const filteredChildren = filterItemsByIsShown(item.children);
+         
+          if (filteredChildren.length === 0 && item.isShown !== true) {
+            return null;
+          }
+          filteredItem.children = filteredChildren;
+        }
+        
+        return filteredItem;
+      })
+      .filter((item) => item !== null);
+  };
+
   const renderList = (arr, alwaysShowText = false, isSubMenu = false) => {
     const shouldShowText = isSubMenu
       ? alwaysShowText && !isSecondSidebarCollapsed
       : showSideBar;
 
+    // Filter items based on isShown property
+    const filteredArr = filterItemsByIsShown(arr);
+
     return (
       <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-        {arr.map((c) => {
+        {filteredArr.map((c) => {
           const hasChildren = c.children && c.children.length > 0;
           const isActive = activeKey === c.key;
 

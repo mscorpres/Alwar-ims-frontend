@@ -13,7 +13,7 @@ import {
   Form,
   Modal,
   Row,
-Typography,
+  Typography,
   Col,
   Card,
   Input,
@@ -384,10 +384,13 @@ const Login = () => {
         height: "100vh",
         width: "100%",
         overflow: "hidden",
-        gap:20
+        gap: 20,
       }}
     >
-      <div className="w-full h-full bg-neutral-100" style={{ height: "100vh", overflow: "hidden" }}>
+      <div
+        className="w-full h-full bg-neutral-100"
+        style={{ height: "100vh", overflow: "hidden" }}
+      >
         <Swiper
           autoplay={{
             delay: 5000,
@@ -402,8 +405,18 @@ const Login = () => {
           style={{ height: "100vh", position: "relative" }}
         >
           <SwiperSlide className="h-full">
-            <div style={{ height: "100%", width: "100%", position: "relative", backgroundColor: "#f5f5f5" }}>
-              <div className="h-[50vh] bg-[url(/assets/images/loginv2bg2.svg)] bg-cover bg-center flex items-center justify-center" style={{ position: "relative", zIndex: 1 }}>
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                position: "relative",
+                backgroundColor: "#f5f5f5",
+              }}
+            >
+              <div
+                className="h-[50vh] bg-[url(/assets/images/loginv2bg2.svg)] bg-cover bg-center flex items-center justify-center"
+                style={{ position: "relative", zIndex: 1 }}
+              >
                 <MuiTypography
                   variant="h1"
                   fontSize={50}
@@ -413,7 +426,15 @@ const Login = () => {
                   Welcome to the Future of ERP
                 </MuiTypography>
               </div>
-              <div className="h-[50vh] py-[20px] px-[50px] bg-neutral-100" style={{ overflow: "hidden", position: "relative", zIndex: 1, backgroundColor: "#f5f5f5" }}>
+              <div
+                className="h-[50vh] py-[20px] px-[50px] bg-neutral-100"
+                style={{
+                  overflow: "hidden",
+                  position: "relative",
+                  zIndex: 1,
+                  backgroundColor: "#f5f5f5",
+                }}
+              >
                 <MuiTypography
                   variant="h2"
                   fontSize={25}
@@ -448,8 +469,18 @@ const Login = () => {
             </div>
           </SwiperSlide>
           <SwiperSlide className="h-full">
-            <div style={{ height: "100%", width: "100%", position: "relative", backgroundColor: "#f5f5f5" }}>
-              <div className="h-[50vh] bg-[url(/assets/images/loginv2bg2.svg)] bg-cover bg-center flex items-center justify-center" style={{ position: "relative", zIndex: 1 }}>
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                position: "relative",
+                backgroundColor: "#f5f5f5",
+              }}
+            >
+              <div
+                className="h-[50vh] bg-[url(/assets/images/loginv2bg2.svg)] bg-cover bg-center flex items-center justify-center"
+                style={{ position: "relative", zIndex: 1 }}
+              >
                 <MuiTypography
                   variant="h1"
                   fontSize={50}
@@ -459,7 +490,15 @@ const Login = () => {
                   Powering Smarter Operations
                 </MuiTypography>
               </div>
-              <div className="h-[50vh] py-[20px] px-[50px] bg-neutral-100" style={{ overflow: "hidden", position: "relative", zIndex: 1, backgroundColor: "#f5f5f5" }}>
+              <div
+                className="h-[50vh] py-[20px] px-[50px] bg-neutral-100"
+                style={{
+                  overflow: "hidden",
+                  position: "relative",
+                  zIndex: 1,
+                  backgroundColor: "#f5f5f5",
+                }}
+              >
                 <MuiTypography
                   variant="h2"
                   fontSize={25}
@@ -485,8 +524,16 @@ const Login = () => {
                     "Secure Data Management: Ensure the safety of your data with robust security protocols.",
                   ].map((text, index) => (
                     <li key={index} className="flex items-start gap-[10px]">
-                      <DoneAllIcon color="primary" style={{ marginTop: "2px", flexShrink: 0 }} />
-                      <MuiTypography fontSize={15} style={{ wordBreak: "break-word" }}>{text}</MuiTypography>
+                      <DoneAllIcon
+                        color="primary"
+                        style={{ marginTop: "2px", flexShrink: 0 }}
+                      />
+                      <MuiTypography
+                        fontSize={15}
+                        style={{ wordBreak: "break-word" }}
+                      >
+                        {text}
+                      </MuiTypography>
                     </li>
                   ))}
                 </ul>
