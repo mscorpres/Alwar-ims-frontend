@@ -31,6 +31,7 @@ import {
   EditOutlined,
 } from "@ant-design/icons";
 import SelectEndPoint from "../SelectEndPoint";
+import { useToast } from "../../hooks/useToast.js";
 
 const Login = () => {
   document.title = "IMS Login";
@@ -48,6 +49,7 @@ const Login = () => {
   const { executeFun, loading } = useApi();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+ const {showToast} = useToast();
 
   const [inpVal, setInpVal] = useState({
     username: "",
@@ -124,7 +126,7 @@ const Login = () => {
           };
           dispatch(setUser(obj));
           if (payload.settings) dispatch(setSettings(payload.settings));
-          toast.success("Login successful!");
+          showToast("Login successful!");
           navigate("/");
         }
       } else {
@@ -347,7 +349,9 @@ const Login = () => {
         };
         dispatch(setUser(obj));
         if (payload.settings) dispatch(setSettings(payload.settings));
-        toast.success("Login successful!");
+        showToast("Login successful!");
+        
+        // toast.success("Login successful!");
         navigate("/");
         window.location.reload();
       } else {

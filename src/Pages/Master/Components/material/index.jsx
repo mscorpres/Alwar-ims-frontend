@@ -130,12 +130,11 @@ const Material = () => {
 
         setSubGroupOptions(arr);
       } else {
-           setSubGroupOptions([]);
+        setSubGroupOptions([]);
         toast.error(response.message);
       }
     } catch (error) {
       setSubGroupOptions([]);
-    
     } finally {
       setLoading(false);
     }
@@ -383,18 +382,8 @@ const Material = () => {
     getActions: ({ row }) => [
       <GridActionsCellItem
         showInMenu
-        label={
-          <Link
-            style={{
-              textDecoration: "none",
-              color: "black",
-            }}
-            to={`/master/component/${row.key}`}
-            target="_blank"
-          >
-            Update
-          </Link>
-        }
+        onClick={() => window.open(`/master/component/${row.key}`, "_blank")}
+        label="Update"
       />,
       <GridActionsCellItem
         showInMenu
@@ -889,7 +878,6 @@ const CategoryModal = ({
   var result;
   const value = Form.useWatch("value", form);
   const getCategoryFields = async (categoryKey) => {
-    
     setSelectedCategory(categoryKey);
     try {
       setLoading("fetch");
@@ -900,7 +888,6 @@ const CategoryModal = ({
           category: categoryKey.value,
         }
       );
-     
 
       if (response?.success) {
         const arr = response?.data?.map((row) => ({
@@ -941,7 +928,6 @@ const CategoryModal = ({
             },
           ]);
         }
-      
       });
     } catch (error) {}
     setLoading(false);
@@ -970,7 +956,6 @@ const CategoryModal = ({
     return num.toString().padStart(5, "0");
   }
   const getComponentValueForName = (value) => {
-  
     let componentVal;
     let categorSnip = selectedCategory?.label?.toUpperCase();
     let newSnip = categorSnip?.substr(0, 3);
@@ -1081,7 +1066,6 @@ const CategoryModal = ({
         setUniqueId(filledFields + codeValue);
       }
     } else if (newSnip == "IND") {
-
       let siUnit = values.current_SI_Unit.label.split(" ")[0];
       let siVal = values.current_SI_UnitText;
       let fqVal = values.frequencyText;
@@ -1120,8 +1104,6 @@ const CategoryModal = ({
         // console.log("codeValue ", filledFields + codeValue);
       }
     }
-   
-
   };
 
   //without decimal value functions
@@ -1163,11 +1145,9 @@ const CategoryModal = ({
     // form.setFieldValue("multiplier", alpha);
   }
   function removeAndCountTrailingZeros(number) {
-  
     const numString = number.toString();
     let count = 0;
 
-    
     if (numString === "0") {
       return {
         stringWithoutTrailingZeros: 0,

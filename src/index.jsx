@@ -8,6 +8,7 @@ import "./index.css";
 // import { unregister as unregisterServiceWorker } from "./serviceWorkerRegistration";
 import { ConfigProvider } from "antd";
 import { customColor } from "./utils/customColor";
+import { ToastContext } from "./context/ToastContext";
 
 const theme = {
   token: {
@@ -91,9 +92,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
+      <ToastContext>
       <BrowserRouter>
         <App />
       </BrowserRouter>
+      </ToastContext>
     </Provider>
   </ConfigProvider>
 );
