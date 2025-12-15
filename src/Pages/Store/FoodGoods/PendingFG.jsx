@@ -99,7 +99,7 @@ const PendingFG = () => {
   }, []);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row>
         {/* <Col span={4} className="gutter-row">
           <div>

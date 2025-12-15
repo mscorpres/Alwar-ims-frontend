@@ -290,7 +290,7 @@ function SalesORderRegister() {
           </Form>
         </>
       </Modal>
-      <div style={{ height: "90%" }}>
+      <div style={{ height: "100%" }}>
         <Row
           justify="space-between"
           style={{ padding: "10px 10px", paddingBottom: 5 }}

@@ -70,7 +70,7 @@ export default function CreateMaster() {
   return (
     <div
       style={{
-        height: "90%",
+        height: "100%",
         overflowY: "auto",
         overflowX: "hidden",
         position: "relative",

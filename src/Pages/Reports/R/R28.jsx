@@ -77,7 +77,7 @@ function R28() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row style={{ padding: 5, paddingTop: 0 }}>
         <Col span={3}>
           {/* <MyDatePicker size="default" setDateRange={setDatee} /> */}

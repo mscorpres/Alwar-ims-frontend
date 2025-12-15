@@ -82,7 +82,7 @@ export default function VendorPricingUpload() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         gutter={8}
         style={{ height: "100%", padding: "0 10px" }}

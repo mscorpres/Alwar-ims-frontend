@@ -162,7 +162,7 @@ const R7 = () => {
   }, [allData.selectProduct]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={10} style={{ margin: "0px" }}>
         <Col span={5}>
           <Row style={{ padding: "5px" }}>

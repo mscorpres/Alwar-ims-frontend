@@ -301,7 +301,7 @@ export default function ItemLocationLog() {
   ];
 
   return (
-    <Row gutter={6} style={{ padding: "0px 5px", height: "90%" }}>
+    <Row gutter={6} style={{ padding: "0px 5px", height: "100%" }}>
       <Col span={4} style={{ height: "100%", overflowY: "auto" }}>
         <Row gutter={[0, 6]}>
           <Col span={24}>

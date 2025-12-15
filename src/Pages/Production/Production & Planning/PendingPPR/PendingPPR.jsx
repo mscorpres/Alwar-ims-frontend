@@ -262,7 +262,7 @@ const PendingPPR = () => {
     }
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <ClosePPR
         setsCancelPPR={setsCancelPPR}
         cancelPPR={cancelPPR}

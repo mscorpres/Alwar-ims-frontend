@@ -114,7 +114,7 @@ const QueryQ5 = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "95%" }}>
+    <Row gutter={6} style={{ height: "100%" }}>
       <Col
         span={4}
         style={{ overflowY: "auto", overflowX: "hidden", height: "100%" }}

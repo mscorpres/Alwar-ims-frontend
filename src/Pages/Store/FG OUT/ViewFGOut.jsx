@@ -64,7 +64,7 @@ const ViewFGOut = () => {
 
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={16}>
         <Col span={4} className="gutter-row">
           <div>

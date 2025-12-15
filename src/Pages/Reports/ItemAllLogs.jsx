@@ -245,7 +245,7 @@ export default function ItemAllLogs() {
   ];
 
   return (
-    <Row gutter={6} style={{ padding: "0px 5px", height: "90%" }}>
+    <Row gutter={6} style={{ padding: "0px 5px", height: "100%" }}>
       <ComponentImages setShowImages={setShowImages} showImages={showImages} />
       <Col span={4} style={{ height: "100%", overflowY: "auto" }}>
         <Row gutter={[0, 6]}>

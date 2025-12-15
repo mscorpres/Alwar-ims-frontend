@@ -130,7 +130,7 @@ const CompletedFG = () => {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={5} style={{ margin: "5px" }}>
         <Col span={3}>
           <Select

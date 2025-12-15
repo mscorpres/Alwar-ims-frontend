@@ -476,7 +476,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
   // }, [previewdisData]);
 
   return (
-    <div style={{ height: "95%" }}>
+    <div style={{ height: "100%" }}>
       <MapVBTModal mapVBT={mapVBT} setMapVBT={setMapVBT} />
       <div
         style={{
@@ -618,7 +618,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
             </Button>
           </Space>
         </Row>
-        <div style={{ height: "90%", padding: "0px 10px" }}>
+        <div style={{ height: "calc(100% - 40px)", padding: "0px 10px" }}>
           <MyDataTable
             checkboxSelection={wise == "vendor_wise"}
             loading={searchLoading}

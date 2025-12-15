@@ -44,7 +44,7 @@ const Q4 = () => {
     downloadCSV(rows, columns, `Q4 Report `);
   };
   return (
-    <Row style={{ height: "95%", padding: 10 }} gutter={10}>
+    <Row style={{ height: "100%", padding: 10 }} gutter={10}>
       <Col span={4}>
         <Flex vertical gap={10}>
           <Card size="small">

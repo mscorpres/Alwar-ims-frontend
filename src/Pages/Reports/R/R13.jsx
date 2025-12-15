@@ -130,7 +130,7 @@ const R13 = () => {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={2} className="gutter-row">
           <Select

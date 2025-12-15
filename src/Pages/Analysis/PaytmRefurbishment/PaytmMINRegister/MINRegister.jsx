@@ -189,7 +189,7 @@ function MINRegister() {
     setImeiArr([]);
   }, [scanningMIN]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Modal
         title="Submit Confirm"
         open={submitConfirm}

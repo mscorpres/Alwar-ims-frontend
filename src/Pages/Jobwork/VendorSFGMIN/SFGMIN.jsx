@@ -104,7 +104,7 @@ function SFGMIN() {
     },
   ];
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <MINDrawer
         transactionInwarding={transactionInwarding}
         setTransactionInwarding={setTransactionInwarding}

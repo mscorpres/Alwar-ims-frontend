@@ -301,7 +301,7 @@ export default function AddDCComponents({
     },
   ];
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       {/* submit confirm modal */}
       <Modal
         title="Confirm Create Delivery Challan!"

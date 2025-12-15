@@ -199,7 +199,7 @@ function AppReport() {
   ];
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row justify="space-between" gutter={10} style={{ padding: "0px 5px" }}>
         <Col>
           <Space>

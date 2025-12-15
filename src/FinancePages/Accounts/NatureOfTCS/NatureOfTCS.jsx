@@ -199,7 +199,7 @@ function NatureofTCS() {
 
   return (
     <>
-      <div style={{ height: "90%" }}>
+      <div style={{ height: "100%" }}>
         <Row
           gutter={8}
           style={{

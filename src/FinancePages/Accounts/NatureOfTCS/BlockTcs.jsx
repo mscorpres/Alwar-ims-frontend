@@ -79,7 +79,7 @@ function BlockTCS() {
     getAllBlockTCS();
   }, []);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Col
         span={24}
         style={{ height: "100%", margin: "5px" }}

@@ -360,7 +360,7 @@ export default function CreditJournal() {
     // setJournalDate("");
   };
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         gutter={[4, 4]}
         style={{

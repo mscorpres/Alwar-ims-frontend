@@ -77,7 +77,7 @@ const Q3 = () => {
     }
   };
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "calc(100vh - 120px)", overflow: "hidden" }}>
       <Row justify="space-between" style={{ padding: 5, paddingTop: 0 }}>
         <Col>
           <Space>
@@ -110,7 +110,7 @@ const Q3 = () => {
         />
       </Row>
       <Row
-        style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}
+        style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}
         gutter={6}
       >
         <Col span={4}>

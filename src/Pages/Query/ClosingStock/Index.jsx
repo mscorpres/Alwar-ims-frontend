@@ -45,7 +45,7 @@ function Index() {
   }, []);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Row justify="space-between" style={{ padding: 5, paddingTop: 0 }}>
         <Col>
           <Space>
@@ -85,7 +85,7 @@ function Index() {
         {/* </div> */}
       </Row>
 
-      <Row style={{ marginTop: 15, height: "75vh", overflowX: "hidden" }}>
+      <Row style={{ marginTop: 15, height: "calc(100vh - 220px)", overflowX: "hidden" }}>
         <MyDataTable
           columns={columns}
           pageSize={12}

@@ -192,7 +192,7 @@ const AddVendor = () => {
   // }, [third]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Form
         initialValues={initialValues}
         layout="vertical"

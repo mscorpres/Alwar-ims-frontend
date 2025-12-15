@@ -230,7 +230,7 @@ function CashReceiptReport() {
 
   return (
     <>
-      <div style={{ height: "90%" }}>
+      <div style={{ height: "100%" }}>
         <Row gutter={10} style={{ margin: "5px" }}>
           {selectedValue?.selType == "date_wise" ? (
             <>

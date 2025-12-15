@@ -179,7 +179,7 @@ function AppVendorReport() {
   ];
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row style={{ padding: "0px 5px" }} justify="space-between" gutter={10}>
         <Col>
           <Space>

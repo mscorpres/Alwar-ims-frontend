@@ -252,7 +252,7 @@ function CashPayment() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={10} style={{ height: "100%", margin: "10px" }}>
         <Col span={6}>
           <Card title="Cash Payment" size="small">

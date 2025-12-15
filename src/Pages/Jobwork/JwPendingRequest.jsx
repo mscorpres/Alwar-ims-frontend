@@ -237,7 +237,7 @@ function JwPendingRequest() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <JWRMChallanEditMaterials
         editingJWMaterials={editingJWMaterials}
         setEditingJWMaterials={setEditingJWMaterials}

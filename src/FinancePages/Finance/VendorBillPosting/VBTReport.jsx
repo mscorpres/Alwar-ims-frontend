@@ -983,7 +983,7 @@ export default function VBTReport() {
   // }, [openModal]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       {editVbtDrawer ? (
         editvbturl === "vbt03" ? (
           <VBT02Report

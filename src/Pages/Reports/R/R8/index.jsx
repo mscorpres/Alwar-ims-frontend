@@ -100,7 +100,7 @@ function R8() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Space align="center" style={{ width: "100%", marginBottom: 8 }}>
         <Select
           placeholder="Select Type"

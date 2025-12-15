@@ -487,7 +487,7 @@ const Material = () => {
   }, [generatedCompName]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <ComponentImages setShowImages={setShowImages} showImages={showImages} />
       <AddPhoto
         updatingImage={uploadingImage}

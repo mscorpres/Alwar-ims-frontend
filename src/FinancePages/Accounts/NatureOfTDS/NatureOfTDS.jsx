@@ -173,7 +173,7 @@ export default function NatureOfTDS() {
     setFilterData(res);
   }, [search]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <EditTDSMoal
         getGLCodes={getGLCodes}
         editingTDS={editingTDS}

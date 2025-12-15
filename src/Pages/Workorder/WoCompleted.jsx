@@ -129,7 +129,7 @@ const WoCompleted = () => {
   }, [wise]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row style={{ padding: 5, paddingTop: 0 }} justify="space-between">
         <Col>
           <Space>

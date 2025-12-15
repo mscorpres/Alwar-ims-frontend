@@ -29,7 +29,7 @@ const TdsReport = () => {
     socket.emit("getTdsReport", payload);
   };
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={5}>
           <MyDatePicker setDateRange={setDateRange} />
