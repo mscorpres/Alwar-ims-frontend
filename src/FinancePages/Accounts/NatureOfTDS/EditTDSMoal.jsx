@@ -1,13 +1,13 @@
 import { Button, Col, Drawer, Form, Input, Row } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import { useToast } from "../../../hooks/useToast";
 
 export default function EditTDSMoal({ editingTDS, setEditingTDS, getTDSList }) {
+ const { showToast } = useToast();
   const [ledgerOption, setLedgerOption] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [tdsData, setTdsData] = useState({});
@@ -46,11 +46,12 @@ export default function EditTDSMoal({ editingTDS, setEditingTDS, getTDSList }) {
     );
     setLoading(false);
     if (response.success) {
-      toast.success(response.message?.msg || response.message);
+      showToast(response.message || response.message?.msg);
       setEditingTDS(null);
       getTDSList();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+   
     }
   };
   const getGLCodes = async (search) => {

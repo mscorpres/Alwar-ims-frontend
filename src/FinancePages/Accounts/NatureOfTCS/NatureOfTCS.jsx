@@ -1,18 +1,18 @@
-import { Button, Card, Col, Form, Input, Row, Select, Space } from "antd";
-import React, { useEffect, useState } from "react";
+import { Button, Card, Col, Form, Input, Row,  Space } from "antd";
+import { useEffect, useState } from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
-import { toast } from "react-toastify";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { AiFillEdit } from "react-icons/ai";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import EditTCS from "./EditTCSModal";
-import MySelect from "../../../Components/MySelect";
+import { useToast } from "../../../hooks/useToast";
 
 function NatureofTCS() {
+  const { showToast } = useToast();
   const [newTCS, setNewTCS] = useState({
     code: "",
     name: "",
@@ -71,7 +71,7 @@ function NatureofTCS() {
       });
       setTCSList(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message);
     }
 
     setLoading(false);
@@ -165,7 +165,7 @@ function NatureofTCS() {
   const createTCS = async () => {
     const { code, name, description, percentage, ledger } = newTCS;
     if (!code || !name || !description || !percentage || !ledger) {
-      toast.error("Please enter all the fields");
+      showToast("Please enter all the fields", "error");
     } else {
       setFormLoading(true);
       const response = await imsAxios.post("/tally/tcs/add", {
@@ -176,10 +176,11 @@ function NatureofTCS() {
       // console.log(data);
       if (response.success) {
         getTCSList();
-        toast.success(response.message);
+        showToast(response.message);
+
         reset();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message || response.message?.msg, "error");
       }
     }
   };

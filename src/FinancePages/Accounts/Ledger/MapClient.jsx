@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import { Card, Col, Row, Form, Input, Space, Button } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { imsAxios } from "../../../axiosInterceptor";
-import errorToast from "../../../Components/errorToast";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 function MapClient() {
+const { showToast} =  useToast();
   const [client, setClient] = useState("");
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -77,10 +76,11 @@ function MapClient() {
     });
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
+ 
       clientReset();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

@@ -4,21 +4,16 @@ import { v4 } from "uuid";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  PlusSquareFilled,
-  MinusSquareFilled,
-} from "@ant-design/icons";
-import axios from "axios";
 import moment from "moment";
-import { toast } from "react-toastify";
 import Loading from "../../../Components/Loading";
 import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../hooks/useToast";
 
 export default function DebitEdit({
   editDebit,
   setEditDebit,
 }) {
+const { showToast } =  useToast();
   const [debitTotal, setDebitTotal] = useState(0);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -92,7 +87,7 @@ export default function DebitEdit({
   //   };
   const submitHandler = async () => {
     if (!effectiveDate) {
-      return toast.error("Please select Effective date");
+      return showToast("Please select Effective date", "error"); 
     }
     let finalObj = {
       dv_key: editDebit,
@@ -146,16 +141,16 @@ export default function DebitEdit({
       setSubmitLoading(false);
       if (response.success) {
         // resetHandler();
-        toast.success(response.message);
+        showToast(response.message);
         setTimeout(() => {
           setEditDebit(null);
         }, 3000);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message, "error");
       }
     } else {
       if (problem == "gls") {
-        return toast.error("All entries should have a gls");
+        return showToast("All entries should have a gls", "error")
       }
     }
   };
@@ -300,7 +295,7 @@ export default function DebitEdit({
       console.log(moment(data.data[0].effective_date));
       setEffectiveDate(data.data[0].effective_date);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const inputHandler = (name, value, id) => {

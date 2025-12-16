@@ -3,9 +3,6 @@ import { toast } from "react-toastify";
 import { v4 as uuidv4 } from 'uuid';
 let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
 const imsLink = localStorage.getItem("currentUrl")|| import.meta.env.VITE_REACT_APP_API_BASE_URL; //for net
-const generateUniqueId = () => {
-  return uuidv4();
-};
 
 
 
@@ -20,7 +17,6 @@ const formatTimestamp = () => {
 
   return `${day}${month}${year}${hours}${minutes}${seconds}`;
 };
-const timestamp = formatTimestamp();
 const getToken = () => {
   const newToken = localStorage.getItem("newToken");
   if (newToken) {
@@ -76,8 +72,8 @@ imsAxios.interceptors.response.use(
     return response;
   },
   (error) => {
-   
-    if (error?.code === "ERR_BAD_REQUEST") {
+    
+    if (error?.code === "ERR_BAD_REQUEST" && error?.response?.status === 404) {
        toast.error(error?.message || "Something went wrong, Please contact administrator");
        return error;
     }
@@ -89,7 +85,7 @@ imsAxios.interceptors.response.use(
         return error;
       }
       if (error?.response.data.success !== undefined) {
-        console.log("this is the error response", error);
+      
         toast.error(error.response.data.message);
       }
   

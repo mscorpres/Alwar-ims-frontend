@@ -1,16 +1,14 @@
-import React, { useEffect, useState } from "react";
-import InternalNav from "../../Components/InternalNav";
+import { useEffect, useState } from "react";
 import "./accounts.css";
 import CreateSubGroup from "./CreateSubGroup";
-import axios from "axios";
-import { toast } from "react-toastify";
-import links from "./links";
 import MyDataTable from "../../Components/MyDataTable";
 import { Button, Card, Col, Form, Input, Row, Space, Typography } from "antd";
 import { v4 } from "uuid";
 import { imsAxios } from "../../axiosInterceptor";
+import { useToast } from "../../hooks/useToast";
 
 export default function CreateMaster() {
+  const { showToast } = useToast();
   const [newMasterGroup, setNewMasterGroup] = useState({
     group_name: "",
     code: "",
@@ -32,7 +30,7 @@ export default function CreateMaster() {
       });
       setMasterGroups(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
   };
@@ -43,7 +41,7 @@ export default function CreateMaster() {
   };
   const addNewMaster = async () => {
     if (newMasterGroup.group_name == "" || newMasterGroup.code == "") {
-      return toast.error("Please input both fields");
+      return showToast("Please input both fields", "error");
     }
     setFormLoading(true);
     const response = await imsAxios.post("/tally/create_master_group", {
@@ -51,10 +49,10 @@ export default function CreateMaster() {
     });
     setFormLoading(false);
     if (response.success) {
-      toast.success(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message);
       getMasterGroups();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const reset = () => {

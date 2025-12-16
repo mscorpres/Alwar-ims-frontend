@@ -11,14 +11,14 @@ import {
   Button,
   Card,
 } from "antd";
-import MySelect from "../../../Components/MySelect";
-import NavFooter from "../../../Components/NavFooter";
-import { toast } from "react-toastify";
+
 import Loading from "../../../Components/Loading";
 import ViewClients from "../ViewClients/ViewClients";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 export default function AddClients() {
+ const { showToast } = useToast();
   const [countriesOptions, setCountriesOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(83);
@@ -74,11 +74,13 @@ export default function AddClients() {
     setSubmitLoading(false);
     console.log("data", response);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
+   
       resetFunction();
       setShowSubmitConfirm(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+    
     }
   };
   const resetFunction = () => {

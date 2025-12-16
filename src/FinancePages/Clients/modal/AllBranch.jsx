@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { EditOutlined } from "@ant-design/icons";
 import EditBranchModel from "./EditBranchModel";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast";
 
 const { TextArea } = Input;
 
@@ -16,7 +16,7 @@ function AllBranch({
   setShowAllBranch,
 }) {
   const [allBranch, setAllBranch] = useState([]);
-
+const { showToast } = useToast();
   const [branchId, setBranchId] = useState(null);
 
   // const getDetailByCodeWise = async () => {
@@ -48,10 +48,12 @@ function AllBranch({
           id: v4(),
         };
       });
-      toast.success("Client Branched Fetched Successfully");
+      
+      showToast("Client Branched Fetched Successfully");
       setAllBranch(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+ 
     }
     setShowAllBranch(false);
   };

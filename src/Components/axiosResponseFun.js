@@ -1,11 +1,14 @@
-import { toast } from "react-toastify";
+import { getGlobalToast } from "../context/ToastContext";
+
 
 const axiosResponseFunction = async (func) => {
+  const showToast = getGlobalToast();
   try {
     await func();
   } catch (error) {
     console.log(error);
-    toast.error("Something went wrong, Please contact administrator");
+    showToast("Something went wrong, Please contact administrator", "error");
+   
   }
 };
 

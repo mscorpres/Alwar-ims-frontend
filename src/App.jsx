@@ -11,8 +11,6 @@ import { Box, LinearProgress } from "@mui/material";
 import Sidebar from "./new/Sidebar/Sidebar.jsx";
 import Rout from "./Routes/Routes";
 import { useSelector, useDispatch } from "react-redux/es/exports";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import "buffer";
 import AppHeader from "./new/Header/AppHeader.jsx";
 import NotificationDropdown from "./Components/NotificationDropdown/NotificationDropdown";
@@ -51,8 +49,10 @@ import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
 import { customColor } from "./utils/customColor.js";
 import Information from "./Pages/Master/Components/Information.jsx";
+import { useToast } from "./hooks/useToast.js";
 
 const App = () => {
+  const { showToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const tokenFromUrl = searchParams.get("token");
   const sessionFromUrl = searchParams.get("session");
@@ -219,12 +219,12 @@ const App = () => {
         setSearchParams({}, { replace: true });
       } else {
         setLoadingSwitch(false);
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         window.location.replace("https://oakter.mscorpres.com/");
       }
     } catch (error) {
       setLoadingSwitch(false);
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       window.location.replace("https://oakter.mscorpres.com/");
     }
   };
@@ -319,7 +319,7 @@ const App = () => {
 
       // event for starting detail
       socket.on("download_start_detail", (data) => {
-        toast.success("Your report has been started generating");
+        showToast("Your report has been started generating");
         if (data.title || data.details) {
           let arr = notificationsRef.current;
           arr = [data, ...arr];
@@ -365,7 +365,7 @@ const App = () => {
         setTestPage(pageIsTest);
       });
       socket.on("file-generate-error", (data) => {
-        toast.error(data.message);
+        showToast(data?.message, "error");
         let arr = notificationsRef.current;
         if (arr.filter((row) => row.notificationId == data.notificationId)[0]) {
           arr = arr.map((row) => {
@@ -532,7 +532,7 @@ const App = () => {
         setTestPage(pageIsTest);
       });
       socket.on("file-generate-error", (data) => {
-        toast.error(data.message);
+        showToast(data?.message, "error");
         let arr = notificationsRef.current;
         if (arr.filter((row) => row.notificationId == data.notificationId)[0]) {
           arr = arr.map((row) => {
@@ -625,29 +625,27 @@ const App = () => {
   }, [navigate, user]);
   useEffect(() => {
     window.addEventListener("offline", (e) => {
-      console.log("offline", e);
-      toast(
-        "You are no longer connected to the Internet, please check your connection and try again."
+      showToast(
+        "You are no longer connected to the Internet, please check your connection and try again.",
+        "error"
       );
     });
     window.addEventListener("online", (e) => {
-      toast(
+      showToast(
         "The internet has been restored. Kindly review your progress to ensure there is no duplication of data."
       );
       window.location.reload();
     });
   }, []);
 
-  // Show black screen after TopBanner renders for some time
   useEffect(() => {
     if (user && user.passwordChanged === "C") {
       const timer = setTimeout(() => {
         setShowBlackScreen(true);
-      }, 1500); // Show black screen after 3 seconds
+      }, 1500);
 
       return () => clearTimeout(timer);
     } else {
-      // Reset black screen when user logs out or passwordChanged is not "C"
       setShowBlackScreen(false);
     }
   }, [user]);
@@ -725,7 +723,8 @@ const App = () => {
 
     const company = location.toLowerCase() === "alwar" ? "COM0002" : "COM0001";
     if (company === existing?.comId) {
-      toast.error(`You are already On ${location} Module`);
+     
+      showToast(`You are already On ${location} Module`,"error");
       return;
     }
 
@@ -783,17 +782,6 @@ const App = () => {
 
   return (
     <div style={{ height: "100vh" }}>
-      <ToastContainer
-        position="bottom-center"
-        autoClose={1500}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        limit={1}
-        rtl={false}
-        pauseOnFocusLoss
-        pauseOnHover
-      />
 
       <Layout
         style={{
@@ -1010,11 +998,13 @@ const App = () => {
                 <div
                   style={{
                     height: (() => {
-                      const headerHeight =  pathname === "/login" ? 10 : 50;
+                      const headerHeight = pathname === "/login" ? 10 : 50;
                       const bannerHeight = isBannerVisible ? 40 : 0;
-                      const testServerHeight = isTestServer  ? 15 : 0;
+                      const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
-                        pathname === "/myProfile" || pathname === "/login" ? 0 : 50;
+                        pathname === "/myProfile" || pathname === "/login"
+                          ? 0
+                          : 50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",

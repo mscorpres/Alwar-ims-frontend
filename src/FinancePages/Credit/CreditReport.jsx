@@ -11,7 +11,6 @@ import {
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
 import MyDataTable from "../../../Components/MyDataTable";
 import printFunction, {
   downloadFunction,
@@ -20,24 +19,21 @@ import {
   CloudDownloadOutlined,
   PrinterFilled,
   EyeFilled,
-  DeleteFilled,
   EditFilled,
 } from "@ant-design/icons";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import JounralPostingView from "../jounralPosting/JounralPostingView";
-import EditJournalVoucher from "../jounralPosting/EditJournalVoucher";
 import MySelect from "../../../Components/MySelect";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import DebitView from "../Debit/DebitView";
 import CreditView from "./CreditView";
 import CreditEdit from "./CreditEdit";
-// import DebitView from "./DebitView";
-// import DebitEdit from "./DebitEdit";
+import { useToast } from "../../hooks/useToast";
+
 
 function CreditReport() {
+const { showToast} =  useToast();
   const wiseOptions = [
     { text: "Date", value: "date_wise" },
     { text: "Effective Wise", value: "eff_wise" },
@@ -81,7 +77,8 @@ function CreditReport() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+     
       setLoading(false);
     }
   };
@@ -98,10 +95,12 @@ function CreditReport() {
       setLoading(false);
       if (response.success) {
         setDeleteConfirm(null);
-        toast.success(response.message);
+        showToast(response.message);
+    
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
+     
       }
     }
   };

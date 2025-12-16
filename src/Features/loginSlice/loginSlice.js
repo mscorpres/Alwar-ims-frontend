@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
+
 import { imsAxios } from "../../axiosInterceptor";
 let fav =
   typeof JSON.parse(localStorage.getItem("loggedInUser"))?.favPages == "string"
@@ -103,7 +103,6 @@ const loginSlice = createSlice({
       localStorage.removeItem("loggedInUser");
       localStorage.removeItem("newToken");
       localStorage.setItem("branchData", JSON.stringify(branchData));
-      toast.info("User Logged Out!");
     },
     addNotification: (state, action) => {
       state.notifications = [

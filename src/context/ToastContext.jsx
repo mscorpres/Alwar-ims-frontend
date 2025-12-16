@@ -1,7 +1,14 @@
-import  { createContext, useState } from "react";
+import  { createContext, useState, useEffect } from "react";
 import ToastShow from "../Components/ToastShow";
 
 export const ToastCreateContext = createContext(undefined);
+
+
+let globalShowToast = null;
+
+export const getGlobalToast = () => {
+  return globalShowToast;
+};
 
 export const ToastContext = ({ children }) => {
   const [toastOpen, setToastOpen] = useState(false);
@@ -14,6 +21,14 @@ export const ToastContext = ({ children }) => {
     setToastType(type);
     setToastOpen(true);
   };
+
+  
+  useEffect(() => {
+    globalShowToast = showToast;
+    return () => {
+      globalShowToast = null;
+    };
+  }, []);
 
   const handleToastClose = () => {
     setToastOpen(false);

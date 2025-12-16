@@ -20,13 +20,13 @@ import {
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
 import { customColor } from "../../utils/customColor";
-
+import {useToast} from "../../hooks/useToast";
 const { TextArea } = Input;
 const axiosLink = "https://support.mscorpres.com";
 
 export default function TicketsModal({ open, handleClose }) {
+ const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
   const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
@@ -101,7 +101,7 @@ export default function TicketsModal({ open, handleClose }) {
       if (response?.success && response?.data) {
         setTickets(response.data || []);
       } else {
-        toast.error(response?.message || "Failed to fetch tickets");
+        showToast(response?.message || "Failed to fetch tickets", "error");
         setTickets([]);
       }
     } catch (error) {
@@ -152,15 +152,15 @@ export default function TicketsModal({ open, handleClose }) {
   const handleSubmit = async () => {
     // Validation
     if (!formData.topic) {
-      toast.error("Please select a topic");
+      showToast("Please select a topic", "error");
       return;
     }
     if (!formData.subject.trim()) {
-      toast.error("Please enter a subject");
+      showToast("Please enter a subject", "error");
       return;
     }
     if (!formData.concern.trim()) {
-      toast.error("Please describe your concern");
+      showToast("Please describe your concern", "error");
       return;
     }
 
@@ -197,17 +197,17 @@ export default function TicketsModal({ open, handleClose }) {
       setLoading(false);
 
       if (response?.success) {
-        toast.success("Ticket created successfully!");
+        showToast("Ticket created successfully!");
         resetForm();
         setActiveMenu("fetch");
         getTickets();
       } else {
-        toast.error(response?.message || "Failed to create ticket");
+        showToast(response?.message || "Failed to create ticket", "error");
       }
     } catch (error) {
       setLoading(false);
-      console.error("Error creating ticket:", error);
-      toast.error("Failed to create ticket");
+      showToast(error?.message || "Failed to create ticket", "error");
+      
     }
   };
 

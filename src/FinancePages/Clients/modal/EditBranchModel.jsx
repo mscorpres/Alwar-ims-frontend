@@ -12,9 +12,10 @@ import {
 import React, { useEffect, useState } from "react";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+
 
 function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
+  const { showToast } = useToast();
   const [countries, setCountries] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
   const [statusBranch, setStatusBranch] = useState();
@@ -92,11 +93,13 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
     console.log("cointry", country);
     const response = await imsAxios.put("client/updateBranch", newobj);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
+   
       setBranchId(null);
       setBranchModal(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+    
       setBranchId(null);
       setBranchModal(false);
     }

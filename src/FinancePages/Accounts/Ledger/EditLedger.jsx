@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
 import MySelect from "../../../Components/MySelect";
 import Loading from "../../../Components/Loading";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { Button, Col, Form, Input, Row, Space, Tabs, Typography } from "antd";
 import validateResponse from "../../../Components/validateResponse";
-import { useSelector } from "react-redux";
-import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../../hooks/useToast";
 
 export default function EditLedger({ getLedgerList }) {
+ const {showToast} = useToast();
   const [selectLoading, setSelectLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -33,7 +31,8 @@ export default function EditLedger({ getLedgerList }) {
       }
     } else {
       setCodeConfirmed("exist");
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message);
+     
     }
   };
 
@@ -116,7 +115,7 @@ export default function EditLedger({ getLedgerList }) {
   };
   const submitHandler = async () => {
     if (!ledgerData?.ledger_type) {
-      return toast.error("Please select a ledger type");
+      return showToast("Please select a ledger type"); 
     }
     const finalObj = {
       l_key: selectedLedger,
@@ -138,7 +137,8 @@ export default function EditLedger({ getLedgerList }) {
     validateResponse(response);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      
+      showToast(response.message);
       getLedgerList();
       resetHandler();
     }

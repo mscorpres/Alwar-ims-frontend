@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Drawer, Row, Col, Button, Switch, Form, Space, Input } from "antd";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast";
 
 function EditClient({
   updatingClient,
@@ -11,6 +11,7 @@ function EditClient({
   addClientApi,
   setAddClientApi,
 }) {
+  const { showToast } = useToast();
   const [updateClientForm] = Form.useForm();
   const [statusLoading, setStatusLoading] = useState(false);
   const [tdsOptions, setTdsOptions] = useState([]);
@@ -115,7 +116,7 @@ function EditClient({
     const response = await imsAxios.get(
       `/client/getClient?code=${updatingClient?.code}`
     );
-   
+
     if (response.success) {
       let obj = {
         ...response.data[0],
@@ -139,7 +140,7 @@ function EditClient({
   const getAllTcsCall = async () => {
     setTcsOptions([]);
     const response = await imsAxios.get("/tally/tcs/getAllTcs");
-   
+
     if (response.success) {
       let tcsArr = response.data?.map((row) => {
         return { text: row.tcsName, value: row.tcsKey };
@@ -171,7 +172,7 @@ function EditClient({
 
   const submitHandler = async () => {
     const values = await updateClientForm.validateFields();
-   
+
     // console.log(clientStatus);
     let obj = {
       code: updatingClient?.code,
@@ -190,15 +191,16 @@ function EditClient({
     if (response.success) {
       getRows();
       setUpdatingClient(null);
-      toast.success(response.message);
+      showToast(response.message);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
   const changeStatus = () => {
     setClientStatus(clientStatus == "active" ? "inactive" : "active");
-    toast.info(
+
+    showToast(
       clientStatus == "active"
         ? "Status has been Inactive"
         : "Status has been Active"

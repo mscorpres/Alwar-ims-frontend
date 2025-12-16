@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Card, Col, Form, Input, Row, Space } from "antd";
-import { toast } from "react-toastify";
 import validateResponse from "../../../Components/validateResponse";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../../hooks/useToast";
 
 function AddLedger({ getLedgerList, options, statusOptions }) {
+  const { showToast } = useToast();
   const [newLedger, setNewLedger] = useState({
     name: "",
     code: "",
@@ -52,15 +53,15 @@ function AddLedger({ getLedgerList, options, statusOptions }) {
   const createLedger = async () => {
     const { gst, tds, status, sub_group, code, name } = newLedger;
     if (!name || name == "") {
-      return toast.error("Please enter a Ledger Name");
+      return showToast("Please Enter a Ledger Name");
     } else if (!code || code == "") {
-      return toast.error("Please Enter a ledger Code");
+      return showToast("Please Enter a ledger Code");
     } else if (!sub_group || sub_group == "") {
-      return toast.error("Please Select a Sub Group");
+      return showToast("Please Select a Sub Group");
     } else if (!gst || gst == "") {
-      return toast.error("Please Select GST Apply");
+      return showToast("Please Select GST Apply");
     } else if (!tds || tds == "") {
-      return toast.error("Please Select TDS Apply");
+      return showToast("Please Select TDS Apply");
     }
     setLoading(true);
     const response = await imsAxios.post("/tally/ledger/addLedger", {
@@ -74,7 +75,7 @@ function AddLedger({ getLedgerList, options, statusOptions }) {
     setLoading(false);
     validateResponse(response);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
       getLedgerList();
       reset();
     }
@@ -93,7 +94,7 @@ function AddLedger({ getLedgerList, options, statusOptions }) {
       }
     } else {
       setCodeConfirmed("exist");
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message|| response.message?.msg);
     }
   };
   const reset = () => {

@@ -4,17 +4,16 @@ import { useState } from "react";
 import { Col } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast";
 
 function BlockTCS() {
+  const { showToast } = useToast();
   const [allBlockedData, setAllBlockedData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getAllBlockTCS = async () => {
     setLoading(true);
-    const response = await imsAxios.get(
-      "tally/tcs/list/blocked"
-    );
+    const response = await imsAxios.get("tally/tcs/list/blocked");
     if (response.success) {
       const arr = response.data.map((row) => {
         return {
@@ -24,7 +23,7 @@ function BlockTCS() {
       });
       setAllBlockedData(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
 
     setLoading(false);
@@ -80,10 +79,7 @@ function BlockTCS() {
   }, []);
   return (
     <div style={{ height: "100%" }}>
-      <Col
-        span={24}
-        style={{ height: "100%", margin: "5px" }}
-      >
+      <Col span={24} style={{ height: "100%", margin: "5px" }}>
         <MyDataTable
           loading={loading}
           columns={columns}

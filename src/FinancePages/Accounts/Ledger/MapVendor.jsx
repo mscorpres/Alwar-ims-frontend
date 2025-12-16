@@ -7,20 +7,17 @@ import {
   Input,
   Row,
   Space,
-  Tabs,
-  Typography,
 } from "antd";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import axios from "axios";
-import { toast } from "react-toastify";
-import errorToast from "../../../Components/errorToast";
 import { imsAxios } from "../../../axiosInterceptor";
 import useApi from "../../../hooks/useApi.ts";
 import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
+import { useToast } from "../../../hooks/useToast.js";
 
 function MapVendor({ options, statusOptions, getLedgerList }) {
+ const { showToast } = useToast();
   const [newVendor, setNewVendor] = useState({
     name: "",
     code: "",
@@ -80,15 +77,15 @@ function MapVendor({ options, statusOptions, getLedgerList }) {
   const addVendor = async () => {
     const { gst, tds, status, sub_group, code, name } = newVendor;
     if (!name || name == "") {
-      return toast.error("Please Select a vendor");
+      return showToast("Please Select a vendor");
     } else if (!code || code == "") {
-      return toast.error("Please Select a vendor");
+      return showToast("Please Select a vendor"); 
     } else if (!sub_group || sub_group == "") {
-      return toast.error("Please Select a Sub Group");
+      return showToast("Please Select a Sub Group"); 
     } else if (!gst || gst == "") {
-      return toast.error("Please Select GST Apply");
+      return showToast("Please Select GST Apply"); 
     } else if (!tds || tds == "") {
-      return toast.error("Please Select TDS Apply");
+      return showToast("Please Select TDS Apply"); 
     }
     setLoading(true);
     const response = await imsAxios.post("/tally/ledger/addVendorLedger", {
@@ -101,12 +98,12 @@ function MapVendor({ options, statusOptions, getLedgerList }) {
     setLoading(false);
     // console.llg(data);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
       getLedgerList();
       vendorReset();
       // reset();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const vendorReset = () => {
