@@ -13,7 +13,7 @@ import {
 } from "antd";
 import MySelect from "../../Components/MySelect";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import Loading from "../../Components/Loading";
 import { imsAxios } from "../../axiosInterceptor";
@@ -26,6 +26,7 @@ import { convertSelectOptions } from "../../utils/general.ts";
 import MyButton from "../../Components/MyButton";
 
 function Location() {
+  const { showToast } = useToast();
   const [treeData, setTreeData] = useState([]);
   const [treeLoading, setTreeLoading] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -93,7 +94,7 @@ function Location() {
        }));
        setLocationData(enriched);
      } catch (error) {
-       toast.error("Failed to load locations");
+       showToast("Failed to load locations", "error");
      } finally {
        setTreeLoading(false);
      }
@@ -170,11 +171,11 @@ function Location() {
     const response = await imsAxios.post("/location/insertLocation", obj);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       resetForm();
       getDataTree();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -206,7 +207,7 @@ function Location() {
       const status = response.data[0].status;
       disableLocationForm.setFieldValue("status", status === "ACTIVE");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -233,19 +234,19 @@ function Location() {
     );
     if (response.success) {
       getDataTree();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const mapLocSubmitHandler = async (values) => {
     const response = await imsAxios.post("/location/updatLocationCC", values);
     if (response.success) {
       getDataTree();
-      toast.success(response.message);
+      showToast(response.message, "success");
       maploc.resetFields();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const maplocValidateHandler = async () => {

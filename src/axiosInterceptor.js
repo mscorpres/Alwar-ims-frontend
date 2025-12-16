@@ -1,5 +1,5 @@
 import axios from "axios";
-import { toast } from "react-toastify";
+import { getGlobalToast } from "./context/ToastContext";
 import { v4 as uuidv4 } from 'uuid';
 let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
 const imsLink = localStorage.getItem("currentUrl")|| import.meta.env.VITE_REACT_APP_API_BASE_URL; //for net
@@ -72,21 +72,22 @@ imsAxios.interceptors.response.use(
     return response;
   },
   (error) => {
+    const showToast = getGlobalToast();
     
     if (error?.code === "ERR_BAD_REQUEST" && error?.response?.status === 404) {
-       toast.error(error?.message || "Something went wrong, Please contact administrator");
+       if (showToast) showToast(error?.message || "Something went wrong, Please contact administrator", "error");
        return error;
     }
     if (typeof error.response?.data === "object") {
       if (error.response.data?.data?.logout) {
-        toast.error(error.response.data.message);
+        if (showToast) showToast(error.response.data.message, "error");
         localStorage.clear();
         window.location.reload();
         return error;
       }
       if (error?.response.data.success !== undefined) {
       
-        toast.error(error.response.data.message);
+        if (showToast) showToast(error.response.data.message, "error");
       }
   
       return error.response.data;
@@ -94,7 +95,7 @@ imsAxios.interceptors.response.use(
 
   
     if (!error.response.data?.message) {
-      toast.error(error.response?.data);
+      if (showToast) showToast(error.response?.data, "error");
     }
     // }
     return error.response;

@@ -6,7 +6,7 @@ import MyDatePicker from "../../../../Components/MyDatePicker";
 import { useEffect } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import TableActions, {
   CommonIcons,
 } from "../../../../Components/TableActions.jsx/TableActions";
@@ -27,6 +27,7 @@ import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
 
 export default function PoApproval() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [wise, setWise] = useState("powise");
   const [searchInput, setSearchInput] = useState("");
@@ -77,7 +78,7 @@ export default function PoApproval() {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const approveSubmitHandler = async (poid, remark) => {
@@ -88,11 +89,11 @@ export default function PoApproval() {
     });
     setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       getRows();
       setApprovePo(null);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const ApproveSelectedPo = () => {

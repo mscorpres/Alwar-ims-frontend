@@ -13,7 +13,7 @@ import Dragger from "antd/lib/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import TableActions from "../../../../Components/TableActions.jsx/TableActions";
 import VerifiedFilePreview from "./VerifiedFilePreview";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
@@ -21,6 +21,7 @@ import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
 function R19Master() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [verifiedFile, setVerifiedFile] = useState(false);
@@ -54,7 +55,7 @@ function R19Master() {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const deleteComponent = async (id) => {
@@ -63,9 +64,9 @@ function R19Master() {
     });
     if (response.success) {
       getRows();
-      toast.success(response.data.message);
+      showToast(response.data.message, "success");
     } else {
-      toast.error(response.data.message.msg);
+      showToast(response.data.message.msg, "error");
     }
   };
   const columns = [
@@ -106,7 +107,7 @@ function R19Master() {
       let arr = data.response.data.map((row, index) => ({ ...row, id: index + 1 }));
       setVerifiedFile(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const submitHandler = async (type, value) => {
@@ -120,11 +121,11 @@ function R19Master() {
       );
       setLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setVerifiedFile(false);
         setUploadingFile(false);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } else if (type === "single") {
       setLoading("single");
@@ -133,11 +134,11 @@ function R19Master() {
       });
       setLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
         addSingleComponentForm.resetFields();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

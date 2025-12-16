@@ -3,8 +3,7 @@ import { Button, Form, Input, Space, Select, Upload, } from "antd";
 import { InputNumber, Divider } from "antd";
 // import api from '../config'
 import { Row, Col } from "antd";
-import {  toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useToast } from "../../../hooks/useToast.js";
 import { CheckOutlined, UploadOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../../axiosInterceptor";
 
@@ -13,6 +12,7 @@ const { Option } = Select;
 
 
 const AddBookDetails = () => {
+  const { showToast } = useToast();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [bookForm] = Form.useForm();
@@ -33,11 +33,10 @@ const AddBookDetails = () => {
     fileList,
   };
 
-  const notify = () => toast("Successfully Submitted!");
 
   const handleUpload = async () => {
     if (fileList.length === 0) {
-      toast.error('Please select a file to upload.');
+      showToast('Please select a file to upload.', "error");
       return;
     }
 
@@ -51,12 +50,12 @@ const AddBookDetails = () => {
 
       if (response.status === 201) {
         setFileList([]);
-        toast.success('Upload successful.');
+        showToast('Upload successful.', "success");
       } else {
-        toast.error('Upload failed.');
+        showToast('Upload failed.', "error");
       }
     } catch (error) {
-      toast.error('Upload failed.');
+      showToast('Upload failed.', "error");
     } finally {
       setUploading(false);
     }
@@ -85,11 +84,11 @@ const AddBookDetails = () => {
       SGST: values.SGST
      });
      if(response.status === 200){
-      toast.success('Form submitted successfully!');
+      showToast('Form submitted successfully!', "success");
       bookForm.resetFields();
      }
      else{
-      toast.error(' Error in submitted Form!');
+      showToast(' Error in submitted Form!', "error");
      }
     } catch (error) {
       console.log(error)

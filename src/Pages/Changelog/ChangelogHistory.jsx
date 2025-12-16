@@ -3,7 +3,7 @@ import { Box, Typography, CircularProgress, Paper } from "@mui/material";
 import { Select, Button, Tag } from "antd";
 import { PlayCircleOutlined, FileTextOutlined, DownOutlined, UpOutlined, SearchOutlined, ReloadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import dayjs from "dayjs";
 import { customColor } from "../../utils/customColor";
 
@@ -71,6 +71,7 @@ const ExpandableDescription = ({ description, maxLines = 3 }) => {
 };
 
 const ChangelogHistory = () => {
+  const { showToast } = useToast();
   // Project launch date: 01 Dec 2020
   const launchYear = 2020;
   const launchMonth = 11; // December (0-indexed)
@@ -135,12 +136,12 @@ const ChangelogHistory = () => {
       if (response?.success) {
         setChangelogData(response.data || []);
       } else {
-        toast.error(response?.message || "Failed to fetch changelog");
+        showToast(response?.message || "Failed to fetch changelog", "error");
         setChangelogData([]);
       }
     } catch (error) {
       console.error("Error fetching changelog:", error);
-      toast.error("Failed to fetch changelog");
+      showToast("Failed to fetch changelog", "error");
       setChangelogData([]);
     } finally {
       setLoading(false);
@@ -243,7 +244,7 @@ const ChangelogHistory = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success("Changelog downloaded successfully");
+    showToast("Changelog downloaded successfully", "success");
   };
 
   if (loading) {

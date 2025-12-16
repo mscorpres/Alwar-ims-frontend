@@ -7,10 +7,11 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import MyDataTable from "../../../Components/MyDataTable";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../Components/exportToCSV";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyButton from "../../../Components/MyButton";
 
 function Index() {
+  const { showToast } = useToast();
   const [searchInput, setSearchInput] = useState("");
   const [rows, setRows] = useState([]);
   const { executeFun, loading } = useApi();

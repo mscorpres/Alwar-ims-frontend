@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import UpdateService from "./UpdateService";
 import { v4 } from "uuid";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -13,6 +13,7 @@ import { downloadServiceMaster } from "../../../../api/master/component.ts";
 import useApi from "../../../../hooks/useApi.ts";
 
 function Services() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rows, setRows] = useState([]);
@@ -40,7 +41,7 @@ function Services() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setRows([]);
     }
   };
@@ -57,13 +58,13 @@ function Services() {
   const addService = async (e) => {
     e.preventDefault();
     if (!newService.part) {
-      return toast.error("Please enter part no.");
+      return showToast("Please enter part no.", "error");
     } else if (!newService.uom) {
-      return toast.error("please select a unit");
+      return showToast("please select a unit", "error");
     } else if (!newService.component) {
-      return toast.error("Please enter a component name");
+      return showToast("Please enter a component name", "error");
     } else if (!newService.notes) {
-      return toast.error("Please enter a note");
+      return showToast("Please enter a note", "error");
     }
     setSubmitLoading(true);
     const response = await imsAxios.post("/component/addServices", {
@@ -74,9 +75,9 @@ function Services() {
     if (response.success) {
       getServices();
       resetFun();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const resetFun = () => {

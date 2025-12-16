@@ -24,9 +24,10 @@ import MyDataTable from "../../Components/MyDataTable";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Loading from "../../Components/Loading";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 
 export default function Drive() {
+  const { showToast } = useToast();
   const [currentPath, setCurrentPath] = useState("/");
   const [currentDirectory, setCurrentDirectory] = useState("");
   const [currentItems, setCurrentItems] = useState([]);
@@ -111,7 +112,7 @@ export default function Drive() {
   const addDirectory = async () => {
     setLoading("submit");
     if (newDirName === "") {
-      return toast.error("Please provide a deparment name");
+      return showToast("Please provide a deparment name", "error");
     }
     const response = await imsAxios.post("/drive/newDirectory", {
       name: newDirName,
@@ -125,9 +126,9 @@ export default function Drive() {
   const uploadFilesHandler = async () => {
     let formData = new FormData();
     if (newFileName === "" || newFileDescription === "") {
-      return toast.error("Please provide a file name and description");
+      return showToast("Please provide a file name and description", "error");
     } else if (uploadFiles.length === 0) {
-      return toast.error("Please provide a a file to upload");
+      return showToast("Please provide a a file to upload", "error");
     }
     formData.append("name", newFileName);
     formData.append("file", uploadFiles[0]);

@@ -6,13 +6,13 @@ import { Form, Input, Space , Select, Button,
 import { useState, useEffect } from "react";
 // import axios  from "axios";
 // import api from "../config";
-import {  toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useToast } from '../../../hooks/useToast.js';
 import moment from 'moment'; 
 import { imsAxios } from "../../../axiosInterceptor";
 
 
 const GstSideBarForm = ({ onClose, selectedGstRowData }) => {
+  const { showToast } = useToast();
   const [open, setOpen] = useState(true);
   const [gstForm] = Form.useForm();
 
@@ -46,16 +46,16 @@ const GstSideBarForm = ({ onClose, selectedGstRowData }) => {
       let data = gstForm.getFieldsValue();
       const response =  await imsAxios.post(`/gst/updategst/${id}`,data);
       if(response.status === 200){
-        toast.success("updated successfully!");
+        showToast("updated successfully!");
         gstForm.resetFields();
         onClose();
       }
       else{
-        toast.error(" Error in Updating Form!");
+        showToast(" Error in Updating Form!","error");
       }
 
     } catch (error) {
-      toast.error(error)
+      showToast(error,"error");
   
     }
    

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import { Button, Col, Input, Row, Select, Skeleton } from "antd";
 import MySelect from "../../../Components/MySelect";
@@ -18,6 +18,7 @@ import useApi from "../../../hooks/useApi";
 import { getUOMList } from "../../../api/master/uom";
 
 const Material = () => {
+  const { showToast } = useToast();
   const [material, setMaterial] = useState({
     partno: "",
     new_partno: "",
@@ -153,15 +154,15 @@ const Material = () => {
     e.preventDefault();
 
     if (!material.partno) {
-      toast.error("Please enter part code");
+      showToast("Please enter part code", "error");
     } else if (!material.unit) {
-      toast.error("Please enter unit");
+      showToast("Please enter unit", "error");
     } else if (!material.comp) {
-      toast.error("Please enter component name");
+      showToast("Please enter component name", "error");
     } else if (!material.groupSel) {
-      toast.error("Please enter group name");
+      showToast("Please enter group name", "error");
     } else if (!material.selType) {
-      toast.error("Please enter category name");
+      showToast("Please enter category name", "error");
     } else {
       setLoading(true);
       let hsnArr = [];
@@ -203,9 +204,9 @@ const Material = () => {
         ]);
         allComponent();
         setLoading(false);
-        toast.success("Added Successfully");
+        showToast("Added Successfully", "success");
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }

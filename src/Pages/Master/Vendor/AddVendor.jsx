@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import {
   Row,
   Col,
@@ -21,6 +21,7 @@ import SingleDatePicker from "../../../Components/SingleDatePicker";
 import SingleProduct from "./SingleProduct";
 
 const AddVendor = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [files, setFiles] = useState([]);
@@ -78,11 +79,11 @@ const AddVendor = () => {
     );
     setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       reset();
     } else {
       setShowSubmitConfirmModal(false);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 

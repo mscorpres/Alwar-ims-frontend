@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import { toast } from "react-toastify";
 import { Card, Col, Form, Input, Row, Space } from "antd";
 //@ts-ignore
 import MyDataTable from "../../Components/MyDataTable";

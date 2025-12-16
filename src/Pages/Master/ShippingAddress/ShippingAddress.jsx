@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -8,6 +8,7 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import AddShippingAddress from "./AddShippingAddress.";
 
 function ShippingAddress() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +25,7 @@ function ShippingAddress() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const columns = [

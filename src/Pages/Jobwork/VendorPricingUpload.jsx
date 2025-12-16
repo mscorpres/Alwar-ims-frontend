@@ -1,6 +1,6 @@
 import React, { useState, useeffect } from "react";
 import { BsFillCloudArrowUpFill } from "react-icons/bs";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import MyDataTable from "../../Components/MyDataTable";
 import NavFooter from "../../Components/NavFooter";
 import { v4 } from "uuid";
@@ -10,6 +10,7 @@ import { imsAxios } from "../../axiosInterceptor";
 import useLoading from "../../hooks/useLoading";
 
 export default function VendorPricingUpload() {
+  const { showToast } = useToast();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useLoading(false);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -35,10 +36,10 @@ export default function VendorPricingUpload() {
 
         setPreviewRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message,"error");
       }
     } else {
-      toast.error("Something went wrong");
+      showToast("Something went wrong","error");
     }
   };
   const submitFunction = async () => {
@@ -55,12 +56,12 @@ export default function VendorPricingUpload() {
     // console.log(data);
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message,"error");
       }
     } else {
-      toast.error("Something went wrong");
+      showToast("Something went wrong","error");
     }
   };
   const previewColumns = [

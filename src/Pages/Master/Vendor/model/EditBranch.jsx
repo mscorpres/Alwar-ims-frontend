@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MySelect from "../../../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Drawer,
@@ -27,6 +27,7 @@ import { v4 } from "uuid";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
 
 const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
+  const { showToast } = useToast();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [skeletonLoading, setSkeletonLoading] = useState(false);
   const [vendorStatus, setVendorStatus] = useState();
@@ -131,11 +132,11 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     const response = await imsAxios.post("/vendor/updateVendor", formData);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       fetchVendor();
       setEditVendor(null);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const changeStatus = async (value) => {
@@ -146,7 +147,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     });
     setStatusLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       if (value) {
         setVendorStatus("B");
       } else {
@@ -163,7 +164,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       }));
       setLocationOptions(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLocationOptions([]);
     }
   };

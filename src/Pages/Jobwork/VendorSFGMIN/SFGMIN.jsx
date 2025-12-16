@@ -5,7 +5,7 @@ import axios from "axios";
 import MySelect from "../../../Components/MySelect";
 import MyDataTable from "../../../Components/MyDataTable";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import TableActions, {
   CommonIcons,
 } from "../../../Components/TableActions.jsx/TableActions";
@@ -15,6 +15,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 function SFGMIN() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);

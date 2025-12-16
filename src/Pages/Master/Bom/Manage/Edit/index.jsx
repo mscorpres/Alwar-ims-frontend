@@ -8,7 +8,7 @@ import FormTable from "../../../../../Components/FormTable";
 import { useEffect } from "react";
 import { CommonIcons } from "../../../../../Components/TableActions.jsx/TableActions";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../../hooks/useToast.js";
 import Loading from "../../../../../Components/Loading";
 import { v4 } from "uuid";
 import {
@@ -20,6 +20,7 @@ import AlterModal from "../../AlterModal.jsx";
 import useApi from "../../../../../hooks/useApi.ts";
 import { convertSelectOptions } from "../../../../../utils/general.ts";
 const EditModal = ({ show, close, bomType }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
@@ -46,7 +47,7 @@ const EditModal = ({ show, close, bomType }) => {
           setDetails(detailsObj);
         }
         else{
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       
     } catch (error) {
@@ -104,11 +105,11 @@ const EditModal = ({ show, close, bomType }) => {
             })
           );
         }
-        toast.success(response.message);
+        showToast(response.message, "success");
         getDetails(show.id);
     }
     else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
   };

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
@@ -74,11 +73,11 @@ const Login = () => {
     // }
     const { username, password } = inpVal;
     if (username === "" && password === "") {
-      toast.error("Please fill the field");
+      showToast("Please fill the field", "error");
     } else if (username === "") {
-      toast.error("username Field is Empty");
+      showToast("username Field is Empty", "error");
     } else if (password === "") {
-      toast.error("password fill is empty");
+      showToast("password fill is empty", "error");
     } else {
       const res = await executeFun(
         () =>
@@ -102,7 +101,7 @@ const Login = () => {
           });
           setShowOTP(true);
           setOtpTimer(600); // Reset timer to 10 minutes
-          toast.success("OTP sent to your registered email address");
+          showToast("OTP sent to your registered email address", "success");
         } else {
           // Normal login flow (no OTP)
           const payload = res?.data ?? res;
@@ -132,7 +131,7 @@ const Login = () => {
       } else {
         setRecaptchaValue(null);
         setRecaptchaKey(Math.random());
-        toast.error(res?.message);
+        showToast(res?.message, "error");
       }
       // dispatch(
       //   loginAuth({ username: inpVal.username, password: inpVal.password })
@@ -141,7 +140,7 @@ const Login = () => {
   };
   const validatecreateNewUser = async () => {
     if (!recaptchaValue) {
-      toast.error("Please verify the reCAPTCHA");
+      showToast("Please verify the reCAPTCHA", "error");
       return;
     }
     const values = await signUp.validateFields();
@@ -193,11 +192,11 @@ const Login = () => {
     });
 
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setSignUpPage("1");
       signUp.resetFields();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   // useEffect(() => {
@@ -225,7 +224,7 @@ const Login = () => {
     const { data } = response;
     if (response.success) {
       // console.log("data.message", response.message);
-      toast.success(response.message);
+      showToast(response.message, "success");
     }
   };
   const back = () => {
@@ -266,7 +265,7 @@ const Login = () => {
         setOtpTimer((timer) => timer - 1);
       }, 1000);
     } else if (otpTimer === 0) {
-      toast.error("OTP has expired. Please login again.");
+      showToast("OTP has expired. Please login again.", "error");
       setShowOTP(false);
       setOtpCode(["", "", "", "", "", ""]);
     }
@@ -300,12 +299,12 @@ const Login = () => {
   const verifyOTP = async () => {
     const otpString = otpCode.join("");
     if (otpString.length !== 6) {
-      toast.error("Please enter the complete 6-digit OTP");
+      showToast("Please enter the complete 6-digit OTP", "error");
       return;
     }
 
     if (!userCredentials?.token) {
-      toast.error("Session expired. Please login again.");
+      showToast("Session expired. Please login again.", "error");
       backToLogin();
       return;
     }
@@ -355,11 +354,11 @@ const Login = () => {
         navigate("/");
         window.location.reload();
       } else {
-        toast.error(res?.message || "Invalid OTP. Please try again.");
+        showToast(res?.message || "Invalid OTP. Please try again.", "error");
         setOtpCode(["", "", "", "", "", ""]);
       }
     } catch (error) {
-      toast.error("Invalid OTP. Please try again.");
+      showToast("Invalid OTP. Please try again.", "error");
       setOtpCode(["", "", "", "", "", ""]);
     }
   };

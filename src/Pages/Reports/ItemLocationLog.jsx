@@ -20,7 +20,7 @@ import { downloadCSV } from "../../Components/exportToCSV";
 import { getComponentOptions } from "../../api/general.ts";
 import useApi from "../../hooks/useApi.ts";
 import MyButton from "../../Components/MyButton";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 const initialSummaryData = [
   { title: "Component", description: "--" },
   { title: "Part Code", description: "--" },
@@ -41,6 +41,7 @@ const initialSummaryData = [
 ];
 
 export default function ItemLocationLog() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [bomDetails, setBomDetails] = useState([]);
@@ -109,7 +110,7 @@ export default function ItemLocationLog() {
       console.log(response)
       getDetails(values);
       if(response?.success == false){
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
         return;
       }

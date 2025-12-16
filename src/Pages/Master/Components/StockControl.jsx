@@ -4,10 +4,11 @@ import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { InboxOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { useEffect } from "react";
 
 function StockControl() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [uploadForm] = Form.useForm();
@@ -55,11 +56,11 @@ function StockControl() {
     if (data) {
       if (data.code === 200 || data.code === "200") {
         // reset();
-        toast.success(response.message);
+        showToast(response.message, "success");
         displayDataTable();
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

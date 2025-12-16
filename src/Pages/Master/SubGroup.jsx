@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { Card, Col, Form, Input, Row, Space, Drawer, Button, message } from "antd";
 import MyDataTable from "../../Components/MyDataTable";
 import { v4 } from "uuid";
@@ -9,6 +9,7 @@ import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import TableActions from "../../Components/TableActions.jsx/TableActions";
 
 const SubGroup = () => {
+  const { showToast } = useToast();
   const [form] = Form.useForm();
   const [editForm] = Form.useForm();
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -74,22 +75,22 @@ const SubGroup = () => {
     } catch (error) {
       setTableLoading(false);
       setSubGroupData([]);
-      toast.error(response?.message);
+      showToast(response?.message, "error");
     }
   };
 
   // Submit new subgroup
   const addSubGroup = async () => {
     if (!selectedGroup) {
-      toast.error("Please select a Group");
+      showToast("Please select a Group", "error");
       return;
     }
     if (!subGroupName.trim()) {
-      toast.error("Please enter Sub Group Name");
+      showToast("Please enter Sub Group Name", "error");
       return;
     }
     if (!subGroupDesc.trim()) {
-      toast.error("Please enter Description");
+      showToast("Please enter Description", "error");
       return;
     }
 
@@ -108,19 +109,19 @@ const SubGroup = () => {
       setSubmitLoading(false);
 
       if (response?.success) {
-        toast.success("Sub Group added successfully");
+        showToast("Sub Group added successfully", "success");
         reset();
         fetchSubGroup();
       } else {
-        toast.error(
-          response?.message
+        showToast(
+          response?.message, "error"
         );
       }
     } catch (error) {
       setSubmitLoading(false);
       console.error("Error adding subgroup:", error);
-      toast.error(
-        error?.response?.data?.message?.msg || "Failed to add Sub Group"
+      showToast(
+        error?.response?.data?.message?.msg || "Failed to add Sub Group", "error"
       );
     }
   };
@@ -155,15 +156,15 @@ const SubGroup = () => {
       const values = await editForm.validateFields();
 
       if (!values.group) {
-        toast.error("Please select a Group");
+        showToast("Please select a Group", "error");
         return;
       }
       if (!values.subGroupName?.trim()) {
-        toast.error("Please enter Sub Group Name");
+        showToast("Please enter Sub Group Name", "error");
         return;
       }
       if (!values.subGroupDesc?.trim()) {
-        toast.error("Please enter Description");
+        showToast("Please enter Description", "error");
         return;
       }
 
@@ -184,13 +185,13 @@ const SubGroup = () => {
       setUpdateLoading(false);
 
       if (response?.success) {
-        toast.success(response?.message);
+        showToast(response?.message, "success");
         setEditModalVisible(false);
         setEditingRow(null);
         editForm.resetFields();
         fetchSubGroup();
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
       }
     } catch (error) {
       setUpdateLoading(false);
@@ -198,8 +199,8 @@ const SubGroup = () => {
       if (error?.errorFields) {
         return;
       }
-      toast.error(
-        error?.response?.message
+      showToast(
+        error?.response?.message, "error"
       );
     }
   };

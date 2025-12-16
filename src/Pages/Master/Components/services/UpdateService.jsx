@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Col,
@@ -16,6 +16,7 @@ import MySelect from "../../../../Components/MySelect";
 import { imsAxios } from "../../../../axiosInterceptor";
 
 export default function UpdateService({ editService, setEditService, units }) {
+  const { showToast } = useToast();
   const [pageLoading, setPageLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [serviceDetails, setServiceDetails] = useState({
@@ -58,7 +59,7 @@ export default function UpdateService({ editService, setEditService, units }) {
         sac: res?.sac,
       });
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setEditService(null);
     }
     setPageLoading(false);
@@ -89,10 +90,10 @@ export default function UpdateService({ editService, setEditService, units }) {
     );
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setEditService(null);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { Button, Row, Space, Input } from "antd";
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
@@ -12,6 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 const CompletedPPR = () => {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("skuwise");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [searchInput, setSearchInput] = useState("");

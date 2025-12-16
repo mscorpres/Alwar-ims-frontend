@@ -6,7 +6,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import NewProjectForm from "./NewProjectForm";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { downloadCSVnested2 } from "../../../Components/exportToCSV";
 import TableActions, {
   CommonIcons,
@@ -14,6 +14,7 @@ import TableActions, {
 import UpdateProjectModal from "./UpdateProjectModal";
 
 function CPMMaster() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
@@ -36,7 +37,7 @@ function CPMMaster() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };
@@ -45,14 +46,14 @@ function CPMMaster() {
     try {
       const response = await imsAxios.put("/ppr/update/project", updatedData);
       if (response.success) {
-        toast.success("Project updated successfully!");
+        showToast("Project updated successfully!", "success");
         setIsModalVisible(false);
         getAllDetailFun(); // Refresh the data after successful update
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error("Failed to update the project. Please try again.");
+      showToast("Failed to update the project. Please try again.", "error");
     }
   };
 
@@ -84,9 +85,9 @@ function CPMMaster() {
       if (response.success) {
         getAllDetailFun();
         // getDataTree();
-        toast.success(response.message);
+        showToast(response.message, "success");
       } else {
-        toast.error(data.message);
+        showToast(response.message, "error");
       }
     }
   };

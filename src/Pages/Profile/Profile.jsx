@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import errorToast from "../../Components/errorToast";
 import {
   Avatar,
@@ -25,6 +25,7 @@ import { imsAxios } from "../../axiosInterceptor";
 import { setUser } from "../../Features/loginSlice/loginSlice";
 
 export default function Profile() {
+  const { showToast } = useToast();
   document.title = "Profile";
   const [userDetails, setUserDetails] = useState();
   const [activeTab, setActiveTab] = useState("1");
@@ -41,7 +42,7 @@ export default function Profile() {
     if (response.success) {
       setUserDetails(response.data);
     } else {
-      toast.error(errorToast(response.message));
+      showToast(response.message, "error");
     }
   };
   const onFinish = async () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
@@ -53,6 +53,7 @@ const Material = () => {
   const [typeOfComp, setTypeOfComp] = useState("");
   const [valFromName, setValForName] = useState("");
   const { executeFun, loading: loading1 } = useApi();
+  const { showToast } = useToast();
   const [isEnabled, setIsEnabled] = useState(false);
   const [hsnForm] = Form.useForm();
   const [headerForm] = Form.useForm();
@@ -81,7 +82,7 @@ const Material = () => {
 
         setComponents(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -105,7 +106,7 @@ const Material = () => {
 
         setGroupOptions(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
       setAsyncOptions([]);
@@ -131,7 +132,7 @@ const Material = () => {
         setSubGroupOptions(arr);
       } else {
         setSubGroupOptions([]);
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
       setSubGroupOptions([]);
@@ -169,7 +170,7 @@ const Material = () => {
         }));
         setUomOptions(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -339,7 +340,7 @@ const Material = () => {
         onCancel() {},
       });
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
     }
   };
 
@@ -353,13 +354,13 @@ const Material = () => {
       );
 
       if (response?.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setUniqueId("");
         setGeneratedCompName("");
         resetHandler();
         getRows();
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -898,7 +899,7 @@ const CategoryModal = ({
         }));
         setFields(arr);
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
       }
     } catch (error) {
     } finally {

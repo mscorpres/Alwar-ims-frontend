@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { Row, Switch } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { downloadCSV } from "../../../../Components/exportToCSV";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 
 const Disabled = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
 
@@ -25,7 +26,7 @@ const Disabled = () => {
 
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
       setRows([]);
@@ -56,11 +57,11 @@ const Disabled = () => {
             }
           })
         );
-        toast.success(response.message);
+        showToast(response.message, "success");
       }
     else {
       setLoading(false);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

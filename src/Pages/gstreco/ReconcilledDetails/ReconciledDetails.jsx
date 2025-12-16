@@ -6,14 +6,13 @@ import Button from "@mui/material/Button";
 import { Checkbox, Row, Col} from "antd";
 import { CaretRightOutlined, CaretLeftOutlined } from "@ant-design/icons";
 // import api from "../config";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "../../../hooks/useToast.js";
 import {CheckOutlined} from '@ant-design/icons';
 import MyDataTable from "../../../Components/MyDataTable";
 import { imsAxios } from "../../../axiosInterceptor";
 import './reconciledDetails.css';
 const ReconciledDetails = () => {
-
+  const { showToast } = useToast();
   const [bookData, setBookData] = useState([]);
   const [gstData, setGstData] = useState([]);
   const [selectedRowIndex, setSelectedRowIndex] = useState(null);
@@ -80,15 +79,15 @@ const ReconciledDetails = () => {
         const response =  await imsAxios.post(`/reconciliation/reconcillation`, dataToSend)
 
         if(response.status === 200){
-          toast.success("successfully Matched !");
+          showToast("successfully Matched !");
              calculate()
         }
         else{
-          toast.error(" Error in Matching! ");
+          showToast(" Error in Matching! ","error");
         }
       }
       catch(error){
-        toast.error(error)
+        showToast(error,"error");
 
       }
   };
@@ -97,7 +96,7 @@ const ReconciledDetails = () => {
     try{
       const response =  await imsAxios.get(`/search/search?index=${index}`)
       if(response.status === 200){
-        toast.success("Reset Successfully!");
+        showToast("Reset Successfully!");
         setcount(0)
         setIndex(0);
       }
@@ -121,7 +120,7 @@ const ReconciledDetails = () => {
       setcountdata((response.data));
        
      }else{
-      toast.error('Error in fetching data')
+      showToast('Error in fetching data',"error")
     }
   }
   catch(error){

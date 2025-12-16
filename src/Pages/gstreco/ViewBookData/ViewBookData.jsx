@@ -7,8 +7,7 @@ import {
   ExclamationCircleFilled,
 } from "@ant-design/icons";
 import SideForm from "../SideForm/SideForm";
-import "react-toastify/dist/ReactToastify.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import { Popconfirm, Row, Col, Button, Modal } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -16,6 +15,7 @@ import { downloadCSV } from "../../../Components/exportToCSV";
 import MyButton from "../../../Components/MyButton";
 
 const ViewBookData = () => {
+  const { showToast } = useToast();
   const [getbookdata, setBookData] = useState([]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
@@ -32,10 +32,10 @@ const ViewBookData = () => {
     try {
       const response = await imsAxios.post(`/book/deletebook/${id}`);
       if (response.status === 200) {
-        toast.success("Deleted successfully!");
+        showToast("Deleted successfully!");
         getData();
       } else {
-        toast.error("Error in deleting data!");
+        showToast("Error in deleting data!","error");
       }
     } catch (error) {
       console.log(error);
@@ -232,10 +232,10 @@ const ViewBookData = () => {
       if (response.status === 200) {
         setBookData(response.data.book);
       } else {
-        toast.error("Some error occured while in fetching data!");
+        showToast("Some error occured while in fetching data!","error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error,"error");
     } finally {
       // setLoading(false);
     }
@@ -264,12 +264,12 @@ const ViewBookData = () => {
       const response = await imsAxios.get(`/validate/validatedata`);
 
       if (response.status === 200) {
-        toast.success("Validation Successfully!");
+        showToast("Validation Successfully!");
       } else {
-        toast.error("Error in validating data");
+        showToast("Error in validating data","error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error,"error");
     }
   };
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { Button, Card, Col, Form, Input, Row, Space } from "antd";
 import MyDataTable from "../../Components/MyDataTable";
 import { v4 } from "uuid";
@@ -8,6 +8,7 @@ import { imsAxios } from "../../axiosInterceptor";
 import MyButton from "../../Components/MyButton";
 
 const Group = () => {
+  const { showToast } = useToast();
   const { pathname } = useLocation();
   const [newGroup, setNewGroup] = useState("");
   const [groupData, setGroupData] = useState([]);
@@ -25,7 +26,7 @@ const Group = () => {
   const addGroup = async (e) => {
     e.preventDefault();
     if (!newGroup) {
-      toast.error("Please Add a Group");
+      showToast("Please Add a Group", "error");
     } else {
       setSubmitLoading(true);
       const response = await imsAxios.post("/groups/insert", {
@@ -33,11 +34,11 @@ const Group = () => {
       });
       setSubmitLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         fetchGroup();
         setNewGroup("");
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -56,7 +57,7 @@ const Group = () => {
       });
       setGroupData(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 

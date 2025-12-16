@@ -5,12 +5,13 @@ import useApi from "@/hooks/useApi";
 import { sendOtp, verifyOtp, updatePassword } from "@/api/auth.js";
 import { InfoCircleFilled, InfoCircleOutlined } from "@ant-design/icons";
 import ReCAPTCHA from "react-google-recaptcha";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/useToast";
 
 interface PropTypes extends ModalType {}
 
 let defaultTimer = 60;
 const ForgotPassword = (props: PropTypes) => {
+  const { showToast } = useToast();
   const [stage, setStage] = useState<0 | 1 | 2>(0);
   const [timer, setTimer] = useState(defaultTimer);
   const [form] = Form.useForm();
@@ -21,7 +22,7 @@ const ForgotPassword = (props: PropTypes) => {
   const handleSubmit = async () => {
     if (stage === 0) {
       if (!recaptchaValue) {
-        toast.error("Please verify the reCAPTCHA");
+        showToast("Please verify the reCAPTCHA", "error");
         return;
       }
       handleSendOtp();
@@ -50,7 +51,7 @@ const ForgotPassword = (props: PropTypes) => {
 
   const handleSendOtp = async (skipCaptcha = false) => {
     if (!skipCaptcha && !recaptchaValue) {
-      toast.error("Please verify the reCAPTCHA");
+      showToast("Please verify the reCAPTCHA", "error");
       return;
     }
     const values = await form.validateFields(["email"]);
