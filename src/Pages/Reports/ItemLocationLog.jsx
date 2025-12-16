@@ -116,6 +116,8 @@ export default function ItemLocationLog() {
       if (response.data) {
         if (response.success) {
           const bomDetails = response.data.bom_details;
+          const header = response.data.header;
+          const { last_remark, last_physical_entry_dt, last_physical_entry_by } = response.data;
           const arr = response.data.body.map((row, index) => ({
             index: index + 1,
             id: v4(),
@@ -139,27 +141,27 @@ export default function ItemLocationLog() {
           setBomDetails(bomDetailsArr);
           setRows(arr);
           setSummaryData([
-            { title: "Component", description: header.component },
-            { title: "Part Code", description: header?.partno },
-            { title: "Attribute Code", description: header?.unique_id },
-            { title: "MFG Code", description: header?.mfgCode },
+            { title: "Component", description: header?.component ?? "--" },
+            { title: "Part Code", description: header?.partno ?? "--" },
+            { title: "Attribute Code", description: header?.unique_id ?? "--" },
+            { title: "MFG Code", description: header?.mfgCode ?? "--" },
             {
               title: "Opening",
-              description: header.openingBalance + " " + header.uom,
+              description: (header?.openingBalance ?? 0) + " " + (header?.uom ?? ""),
             },
             {
               title: "Closing",
-              description: header.closingqty + " " + header.uom,
+              description: (header?.closingqty ?? 0) + " " + (header?.uom ?? ""),
             },
             {
               title: "Last In (Date)",
-              description: header.last_date ?? "--",
+              description: header?.lastInDate ?? "--",
             },
-            { title: "Last Rate", description: header.lastRate },
-            { title: "Last Vendor", description: header.lastVendor },
-            { title: "Last Entry By", description: last_physical_entry_by },
-            { title: "Last Entry Date", description: last_physical_entry_dt },
-            { title: "Last Remark", description: last_remark },
+            { title: "Last Rate", description: header?.lastRate ?? "--" },
+            { title: "Last Vendor", description: header?.lastVendor ?? "--" },
+            { title: "Last Entry By", description: header?.lastEntryBy ?? last_physical_entry_by ?? "--" },
+            { title: "Last Entry Date", description: header?.lastEntryDate ?? last_physical_entry_dt ?? "--" },
+            { title: "Last Remark", description: last_remark ?? "--" },
           ]);
         } else {
           setBomDetails([]);
