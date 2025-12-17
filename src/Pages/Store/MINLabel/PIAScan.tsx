@@ -12,7 +12,7 @@ import {
   Typography,
 } from "antd";
 import { InfoCircleOutlined, ReloadOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/useToast";
 import MyButton from "@/Components/MyButton";
 import Loading from "@/Components/Loading.jsx";
 import MyAsyncSelect from "@/Components/MyAsyncSelect";
@@ -27,6 +27,7 @@ import { fetchBoxDetails, updateBoxQty } from "@/api/store/material-in.js";
 import { getComponentOptions, getComponentStock } from "@/api/general";
 
 function PIAScan() {
+  const { showToast } = useToast();
   const [ready, setReady] = useState(false);
   const [selectedPartCode, setSelectedPartCode] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState<SelectOptionType[]>([]);
@@ -59,8 +60,8 @@ function PIAScan() {
           (row) =>
             row.label === parsed["label"] && row["MIN ID"] === parsed["MIN ID"]
         )
-      ) {
-        toast.error(`BOX ${parsed["label"]}  is already scanned`);
+        ) {
+        showToast(`BOX ${parsed["label"]}  is already scanned`, "error");
         return undefined;
       }
 
@@ -68,13 +69,15 @@ function PIAScan() {
         handleFetchDetails(parsed["MIN ID"], parsed["label"]);
         return parsed;
       } else {
-        toast.error(
-          "The Part Code Does not match! Scan Again with correct Part code"
+        showToast(
+          "The Part Code Does not match! Scan Again with correct Part code",
+          "error"
         );
       }
     } catch (error) {
-      toast.error(
-        "Some Error occurred while scanning the box, please scan the last box again"
+      showToast(
+        "Some Error occurred while scanning the box, please scan the last box again",
+        "error"
       );
     }
   };
@@ -137,7 +140,7 @@ function PIAScan() {
     let values = await scan.validateFields();
     const verifiied = await handleVerify(values.part);
     if (!verifiied?.isVerified) {
-      return toast.error("Qty Entered and Stock does not matched");
+      return showToast("Qty Entered and Stock does not matched", "error");
     }
 
     setShowConfirm(true);

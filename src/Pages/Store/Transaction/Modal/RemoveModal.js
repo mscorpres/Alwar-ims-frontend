@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Col, Drawer, Input, Row, Space } from "antd";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import "../../../Master/Modal/modal.css";
 import { CloseCircleFilled, CheckCircleFilled } from "@ant-design/icons";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -16,6 +16,7 @@ const RemoveModal = ({
   mat,
   setOpen,
 }) => {
+  const { showToast } = useToast();
   const [rem, setRem] = useState("");
 
   const cancelReq = async () => {
@@ -33,7 +34,7 @@ const RemoveModal = ({
       getDataFetch();
       setRem("");
     } else {
-      toast.error(data.message?.msg || data.message);
+      showToast(data.message?.msg || data.message, "error");
       setDelModal(false);
       getDataFetch();
       setRem("");

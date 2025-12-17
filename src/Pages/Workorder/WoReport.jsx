@@ -5,13 +5,14 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
 import { getClientOptions } from "./components/api";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import printFunction, {
   downloadFunction,
 } from "../../Components/printFunction";
 import * as XLSX from "xlsx";
 import MyButton from "../../Components/MyButton";
 const WoReport = () => {
+  const { showToast } = useToast();
   const actionColumn = {
     headerName: "",
     field: "actions",
@@ -67,7 +68,7 @@ const WoReport = () => {
       );
      
       printFunction(response.data.buffer);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } catch (error) {
     
     } finally {
@@ -86,7 +87,7 @@ const WoReport = () => {
       );
       const { data } = response;
       downloadFunction(response.data.data.buffer.data);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } catch (error) {
     
     } finally {
@@ -168,7 +169,7 @@ const WoReport = () => {
         setworeportdata(response.data);
         setdisstate(true);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
       console.log("some error occured while fetching rows", error);

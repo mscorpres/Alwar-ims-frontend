@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Divider, Form, Input, Modal, Row, Typography } from "antd";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 
 const TransferModal = ({ show, hide }) => {
+  const { showToast } = useToast();
   const [current, setCurrent] = useState(null);
   const [loading, setLoading] = useState("fetch");
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -26,7 +27,7 @@ const TransferModal = ({ show, hide }) => {
 
           setCurrent(finalObj);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
           hide();
         }
       }
@@ -77,10 +78,10 @@ const TransferModal = ({ show, hide }) => {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success("Task Transfered successfully");
+          showToast("Task Transfered successfully", "success");
           hide();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

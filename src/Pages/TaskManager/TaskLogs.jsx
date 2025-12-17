@@ -14,10 +14,11 @@ import { useState } from "react";
 import { imsAxios } from "../../axiosInterceptor";
 import { useEffect } from "react";
 import MyButton from "../../Components/MyButton";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import Loading from "../../Components/Loading";
 
 const TaskLogs = ({ show, hide }) => {
+  const { showToast } = useToast();
   const [logs, setLogs] = useState([
     {
       label: "Today",
@@ -116,11 +117,11 @@ const TaskLogs = ({ show, hide }) => {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           getLogs(show);
           remarksForm.resetFields();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

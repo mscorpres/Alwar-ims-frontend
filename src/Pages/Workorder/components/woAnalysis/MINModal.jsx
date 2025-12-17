@@ -28,11 +28,12 @@ import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import UploadDocs from "../../../Store/MaterialIn/MaterialInWithPO/UploadDocs";
 import NavFooter from "../../../../Components/NavFooter";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 
 const MINModal = ({ showView, setShowView, getRows }) => {
   // ////////////////
+  const { showToast } = useToast();
   const [locationOptions, setLocationOptions] = useState([]);
   const [details, setDetails] = useState({});
   const [loading, setLoading] = useState(false);
@@ -102,7 +103,7 @@ const MINModal = ({ showView, setShowView, getRows }) => {
       );
       setFiles([]);
       if (uploadwodoc.success) {
-        toast.success(uploadwodoc.message);
+        showToast(uploadwodoc.message, "success");
 
         setLoading(false);
         if (data.success) {
@@ -111,7 +112,7 @@ const MINModal = ({ showView, setShowView, getRows }) => {
           minForm.resetFields();
         }
       } else {
-        toast.error(uploadwodoc.message);
+        showToast(uploadwodoc.message, "error");
         setLoading(false);
       }
     }

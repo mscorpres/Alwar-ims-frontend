@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import RemoveModal from "./RemoveModal";
 import { Button, Col, Drawer, Input, Row, Select, Space, Spin } from "antd";
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -16,6 +16,7 @@ export default function NewModal({
   setOpen,
   getPendingData,
 }) {
+  const { showToast } = useToast();
   const [delModal, setDelModal] = useState(false);
   const [spinLoading, setSpinLoading] = useState(false);
   const [mat, setMat] = useState([]);
@@ -87,12 +88,12 @@ export default function NewModal({
         setModalOpen(false);
         getPendingData();
       }
-    } else {
-      toast.error(data.message?.msg || data.message);
-      setOpen(false);
-      getPendingData();
-      // setLoading(false);
-    }
+      } else {
+        showToast(data.message?.msg || data.message, "error");
+        setOpen(false);
+        getPendingData();
+        // setLoading(false);
+      }
   };
 
   const getLocation = async () => {
@@ -132,7 +133,7 @@ export default function NewModal({
         setSpinLoading(false);
       }
     } else {
-      toast.error(data.message?.msg || data.message);
+      showToast(data.message?.msg || data.message, "error");
       setSpinLoading(false);
     }
   };

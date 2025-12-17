@@ -18,6 +18,7 @@ const initFilters = {
 };
 
 const Tasks = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -63,7 +64,7 @@ const Tasks = () => {
           console.log(arr);
           setTasks(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
