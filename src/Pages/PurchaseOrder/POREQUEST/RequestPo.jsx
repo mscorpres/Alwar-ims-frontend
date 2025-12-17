@@ -40,7 +40,7 @@ const RequestPo = () => {
           showInMenu
           label="Edit"
           onClick={() => getPoDetail(row.po_transaction)}
-          disabled={row.poacceptstatus === "UNDER VERIFICATION"}
+          disabled={row.poacceptstatus === "UNDER VERIFICATION" || row.poacceptstatus === "PENDING"}
         />,
         <GridActionsCellItem
           key="poLogs"
@@ -61,7 +61,7 @@ const RequestPo = () => {
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.po_transaction} copy={true} />
       ),
-      width: 150,
+      width: 180,
     },
     {
       headerName: "PO ACCEPTANCE",
@@ -247,13 +247,8 @@ const RequestPo = () => {
           index: index + 1,
         }));
         setRows(arr);
-
-        if (arr.length === 0 && !silent) {
-        }
       } else if (response.message) {
-        if (!silent) {
           toast.error(response.message);
-        }
       } else {
         if (!silent) {
           toast.error(response.message);
