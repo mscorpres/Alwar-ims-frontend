@@ -40,7 +40,7 @@ const CompletedPPR = () => {
       });
       setSelectLoading(false);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
