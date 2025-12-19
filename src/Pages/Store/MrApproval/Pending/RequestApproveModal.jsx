@@ -3,13 +3,14 @@ import { Col, Divider, Form, Input, Row, Space, Typography } from "antd/es";
 import React, { useEffect, useState } from "react";
 import MyButton from "../../../../Components/MyButton";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MySelect from "../../../../Components/MySelect";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import Loading from "../../../../Components/Loading";
 import useLoading from "../../../../hooks/useLoading";
 
 const RequestApproveModal = ({ show, hide, getRows }) => {
+  const { showToast } = useToast();
   const [form] = Form.useForm();
   const [details, setDetails] = useState([]);
   const [headers, setHeaders] = useState(null);
@@ -71,7 +72,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         setDetails(detailsData);
         setComponentOptions(compOptions);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -111,7 +112,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
           form.setFieldValue("availableQty", qty);
           form.setFieldValue("weightedRate", rate);
         } else {
-          toast.error( response.message);
+          showToast( response.message, "error");
         }
       
     } catch (error) {
@@ -165,11 +166,11 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       const { data } = response;
       if (data) {
         if (data.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           getRows();
           // hide();
         } else {
-          toast.error(data.message?.msg || data.message);
+          showToast(data.message?.msg || data.message, "error");
         }
       }
     } catch (error) {

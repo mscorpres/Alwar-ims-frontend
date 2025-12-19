@@ -15,7 +15,7 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import Exceljs from "exceljs";
 import printFunction, {
   downloadFunction,
@@ -24,6 +24,7 @@ import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
 const PartCodeConversionReport = () => {
+  const { showToast } = useToast();
   const wiseOptions = [
     {
       text: "Component Wise",
@@ -158,9 +159,9 @@ const PartCodeConversionReport = () => {
 
       if (response.success) {
         SetfetchConversion(response.data);
-        toast.success(response.data.status);
+        showToast(response.data.status, "success");
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         SetfetchConversion([]);
       }
     } catch (error) {

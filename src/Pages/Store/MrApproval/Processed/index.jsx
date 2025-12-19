@@ -7,13 +7,14 @@ import SingleDatePicker from "../../../../Components/SingleDatePicker";
 import MyButton from "../../../../Components/MyButton";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MyDataTable from "../../../../Components/MyDataTable";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import ViewMRTransaction from "../../ApprovedTransaction/ViewMRTransaction";
 import { downloadCSV } from "../../../../Components/exportToCSV";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 
 const ProccessedMrRequest = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useLoading();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [showDetails, setShowDetails] = useState(null);
@@ -62,7 +63,7 @@ const ProccessedMrRequest = () => {
 
         setRows(arr);
       } else {
-        toast.error( response?.message);
+        showToast( response?.message, "error");
       }
     } catch (error) {
     } finally {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Row, Col, Input } from "antd";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -11,6 +11,7 @@ import RequestApproveModal from "./RequestApproveModal";
 import { Form, Modal } from "antd/es";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 const PendingApproval = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState("fetch");
   const [rows, setRows] = useState([]);
   const [showApproveModal, setShowApproveModal] = useState(false);
@@ -38,7 +39,7 @@ const PendingApproval = () => {
      
         setRows(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -80,10 +81,10 @@ const PendingApproval = () => {
     });
     // console.log("response", response);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       ModalForm.resetFields();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const actionColums = {
@@ -140,7 +141,7 @@ const PendingApproval = () => {
             downloadFunction(buffer, requestId);
           }
         } else {
-          toast.error(data.message?.msg || data.message);
+          showToast(data.message?.msg || data.message, "error");
         }
       }
     } catch (error) {

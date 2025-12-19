@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Input, Row, Select } from "antd";
 import { Link } from "react-router-dom";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -23,6 +23,7 @@ const SELECT_OPTIONS = [
 
 
 function ManageDC() {
+  const { showToast } = useToast();
   const COLUMNS = [
   {
     headerName: "",
@@ -92,17 +93,17 @@ function ManageDC() {
 
   const fetchData = useCallback(async () => {
     if (!state.selType) {
-      toast.error("Please select a type");
+      showToast("Please select a type", "error");
       return;
     }
 
     if (state.selType === "datewise" && !dateRange) {
-      toast.error("Please select a date range");
+      showToast("Please select a date range", "error");
       return;
     }
 
     if (state.selType === "gpwise" && !state.gpInput.trim()) {
-      toast.error("Please enter a valid GP ID");
+      showToast("Please enter a valid GP ID", "error");
       return;
     }
 
@@ -119,12 +120,12 @@ function ManageDC() {
           id: uuidv4(),
         }));
         setTableData(formattedData);
-        toast.success("Data fetched successfully");
+        showToast("Data fetched successfully", "success");
       } else {
-        toast.error(response?.message || "Failed to fetch data");
+        showToast(response?.message || "Failed to fetch data", "error");
       }
     } catch (error) {
-      toast.error("An error occurred while fetching data");
+      showToast("An error occurred while fetching data", "error");
       console.error(error);
     } finally {
       setLoading(false);
@@ -158,7 +159,7 @@ function ManageDC() {
       const validatedData = validateResponse(response);
       printFunction(validatedData.buffer.data);
     } catch (error) {
-      toast.error("Failed to print document");
+      showToast("Failed to print document", "error");
       console.error(error);
     } finally {
       setLoading(false);
@@ -175,7 +176,7 @@ function ManageDC() {
 
       downloadFunction(validatedData.buffer?.data, id);
     } catch (error) {
-      toast.error("Failed to download document");
+      showToast("Failed to download document", "error");
       console.error(error);
     } finally {
       setLoading(false);

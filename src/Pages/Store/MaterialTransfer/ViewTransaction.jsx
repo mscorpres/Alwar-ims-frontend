@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaDownload } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, DatePicker, Row, Select, Space } from "antd";
 import {
   downloadCSV,
@@ -15,6 +15,7 @@ import MyButton from "../../../Components/MyButton";
 
 
 function ViewTransaction() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const options = [{ label: "Date Wise", value: "datewise" }];
   const [allData, setAllData] = useState({
@@ -46,9 +47,9 @@ function ViewTransaction() {
   const dateWise = async (e) => {
     e.preventDefault();
     if (!allData.selectdate) {
-      toast.error("Please Select Mode Then Proceed Next");
+      showToast("Please Select Mode Then Proceed Next", "error");
     } else if (!datee[0]) {
-      toast.error("Please Select Date");
+      showToast("Please Select Date", "error");
     } else {
       setDataComesFromDateWise([]);
       setLoading(true);
@@ -70,7 +71,7 @@ function ViewTransaction() {
         setDataComesFromDateWise(arr);
         setLoading(false);
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }

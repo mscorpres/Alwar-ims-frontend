@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Input, Row, Space } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
@@ -17,6 +17,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { downloadAttachement } from "../../../api/store/material-in";
 import { downloadFromLink } from "../../../utils/general.ts";
 const TransactionIn = () => {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("M");
   const [searchInput, setSearchInput] = useState("");
   const [rows, setRows] = useState([]);
@@ -43,7 +44,7 @@ const TransactionIn = () => {
         }));
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setRows([]);
       }
   };

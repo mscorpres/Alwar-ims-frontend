@@ -9,6 +9,7 @@ import useApi from "../../../../hooks/useApi.ts";
 const { TextArea } = Input;
 
 function ReToRej() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [allDataRej, setAllDataRej] = useState({
@@ -88,16 +89,16 @@ function ReToRej() {
 
   const saveRmToRej = async () => {
     if (!allDataRej.locationFrom)
-      return toast.error("Please select Pick Location");
+      return showToast("Please select Pick Location", "error");
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       if (!r.component)
-        return toast.error(`Row ${i + 1}: Please select Component`);
-      if (!r.qty1) return toast.error(`Row ${i + 1}: Please add Quantity`);
+        return showToast(`Row ${i + 1}: Please select Component`, "error");
+      if (!r.qty1) return showToast(`Row ${i + 1}: Please add Quantity`, "error");
       if (!r.locationTo)
-        return toast.error(`Row ${i + 1}: Please select Drop Location`);
+        return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
       if (r.locationTo == allDataRej.locationFrom)
-        return toast.error(`Row ${i + 1}: Drop Location Same`);
+        return showToast(`Row ${i + 1}: Drop Location Same`, "error");
     }
     setLoading(true);
     const components = rows.map((r) => r.component);
@@ -113,7 +114,7 @@ function ReToRej() {
       type: "RM2REJ",
     });
     if (response?.success) {
-      toast.success(response.message.toString()?.replaceAll("<br/>", ""));
+      showToast(response.message.toString()?.replaceAll("<br/>", ""), "success");
       setAllDataRej({
         locationFrom: "",
         comment: "",
@@ -133,7 +134,7 @@ function ReToRej() {
       ]);
       setLoading(false);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoading(false);
     }
   };

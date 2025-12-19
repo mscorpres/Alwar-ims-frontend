@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaDownload } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import { Button, Col, DatePicker, Row, Select } from "antd";
 import { downloadCSVCustomColumns } from "../../../../Components/exportToCSV";
@@ -12,6 +12,7 @@ import MyButton from "../../../../Components/MyButton";
 const { RangePicker } = DatePicker;
 
 function TransactionRej() {
+  const { showToast } = useToast();
   const options = [{ label: "Date Wise", value: "datewise" }];
   const [allData, setAllData] = useState({
     selectdate: "",
@@ -55,9 +56,9 @@ function TransactionRej() {
 
   const dataComesFromDBWhenClickButton = async () => {
     if (!allData.selectdate) {
-      toast.error("Please Select date wise then proceed");
+      showToast("Please Select date wise then proceed", "error");
     } else if (!datee[0]) {
-      toast.error("Please Select date ");
+      showToast("Please Select date ", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/godown/report_rm_rej", {
@@ -76,7 +77,7 @@ function TransactionRej() {
         setLoading(false);
       } else {
         setDataComesFromDateWise([]);
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }

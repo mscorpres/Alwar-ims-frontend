@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import "../Modal/viewModal.css";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { CloseCircleFilled, CheckCircleFilled } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import axios from "axios";
 import { Button, Col, Drawer, Input, Row, Space } from "antd";
 import { imsAxios } from "../../../../axiosInterceptor";
 
 function ViewModal({ viewModal, setViewModal }) {
+  const { showToast } = useToast();
   const [pendingLoading, setPendingLoading] = useState(false);
   const [allPenData, setAllPenData] = useState({
     quantity: "",
@@ -15,7 +16,7 @@ function ViewModal({ viewModal, setViewModal }) {
 
   const PendingTranfer = async () => {
     if (!allPenData.quantity) {
-      toast.error("Please Add Quantity");
+      showToast("Please Add Quantity", "error");
     } else {
       setPendingLoading(true);
       const response = await imsAxios.post("/godown/ApproveTransfer", {
@@ -26,7 +27,7 @@ function ViewModal({ viewModal, setViewModal }) {
         setViewModal(false);
         setPendingLoading(false);
       } else {
-        toast.error(data.message?.msg || data.message);
+        showToast(data.message?.msg || data.message, "error");
         setPendingLoading(false);
       }
     }
