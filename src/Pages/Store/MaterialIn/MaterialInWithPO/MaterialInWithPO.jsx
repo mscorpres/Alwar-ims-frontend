@@ -529,7 +529,7 @@ export default function MaterialInWithPO({}) {
                 : (mat?.orderqty * mat?.orderrate * percentage) / 100,
             invoiceDate: "",
             invoiceId: "",
-            location: { label: "RM021", value: "20210910142629" },
+            location: "",
             maxQty: mat?.orderqty,
             autoConsumption: 0,
             pendingqtybyorderqty: mat.orderqty + " /" + mat.po_order_qty,
