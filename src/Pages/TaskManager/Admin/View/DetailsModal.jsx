@@ -14,7 +14,7 @@ import { useState, useEffect } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MyButton from "../../../../Components/MyButton";
 import MySelect from "../../../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import TaskLogs from "../../TaskLogs";
 
 const DetailsModal = ({
@@ -24,6 +24,7 @@ const DetailsModal = ({
   fetchTasks,
   setShowTransferModal,
 }) => {
+  const { showToast } = useToast();
   const [details, setDetails] = useState({});
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState("PENDING");
@@ -72,7 +73,7 @@ const DetailsModal = ({
         if (response.success) {
           setIsAdmin(data.data.isAdmin);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
@@ -105,13 +106,13 @@ const DetailsModal = ({
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success("Task Updated Successfully");
+          showToast("Task Updated Successfully", "success");
           handleReset();
           setShowStatusConfirm(false);
           // hide();
           fetchTasks();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

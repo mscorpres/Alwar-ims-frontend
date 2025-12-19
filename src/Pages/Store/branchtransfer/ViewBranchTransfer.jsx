@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Row, Space, Tooltip, Popover, Form, Drawer } from "antd";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -20,6 +20,7 @@ import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
 
 function ViewBranchTransfer() {
+  const { showToast } = useToast();
   const [searchLoading, setSearchLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState();
   const [loading, setLoading] = useState(false);
@@ -122,7 +123,7 @@ function ViewBranchTransfer() {
         setProcessOptions(arr);
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -151,7 +152,7 @@ function ViewBranchTransfer() {
       );
       const { data } = response;
       if (data.status === "error") {
-        toast.error(data.message);
+        showToast(data.message, "error");
       } else if (response.success ) {
         if (response.success) {
           console.log("coming here");
@@ -174,7 +175,7 @@ function ViewBranchTransfer() {
         }
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -387,9 +388,9 @@ const ViewModal = ({
       }
     );
     if (response.success ) {
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else if (data.status === "error") {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
     setshow(false);

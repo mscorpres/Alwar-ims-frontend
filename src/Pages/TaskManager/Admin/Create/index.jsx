@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 
 const CreateTask = ({ show, hide, fetchTasks }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [taskForm] = Form.useForm();
@@ -74,11 +75,11 @@ const CreateTask = ({ show, hide, fetchTasks }) => {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           fetchTasks();
           hide();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

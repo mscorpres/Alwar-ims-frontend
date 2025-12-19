@@ -42,7 +42,7 @@ const Login = () => {
   const [recaptchaKey, setRecaptchaKey] = React.useState(Math.random());
   const [showOTP, setShowOTP] = useState(false);
   const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
-  const [otpTimer, setOtpTimer] = useState(600); // 10 minutes in seconds
+  const [otpTimer, setOtpTimer] = useState(600); 
   const [userCredentials, setUserCredentials] = useState(null);
   const [showCustomUrlModal, setShowCustomUrlModal] = useState(false);
   const { executeFun, loading } = useApi();
