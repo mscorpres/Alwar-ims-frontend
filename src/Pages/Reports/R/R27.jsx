@@ -14,8 +14,10 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 function R27() {
+  const { showToast } = useToast();
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateData, setDateData] = useState([]);
@@ -117,7 +119,7 @@ function R27() {
 
     if (response.success) {
       setLoading(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
       let arr = response.data.map((row, index) => {
         return {
           ...row,
@@ -127,7 +129,7 @@ function R27() {
       setDateData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };
