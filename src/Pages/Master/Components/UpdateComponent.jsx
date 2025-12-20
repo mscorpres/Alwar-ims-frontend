@@ -15,7 +15,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import MyButton from "../../../Components/MyButton";
 import CategoryDrawer from "./CategoryDrawer";
@@ -23,6 +23,7 @@ import Loading from "../../../Components/Loading";
 import { Link } from "react-router-dom";
 
 export default function UpdateComponent() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uomOptions, setuomOptions] = useState([]);
   const [groupOptions, setgroupOptions] = useState([]);
@@ -79,7 +80,7 @@ export default function UpdateComponent() {
         };
         componentForm.setFieldsValue(finalObj);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -98,7 +99,7 @@ export default function UpdateComponent() {
         }));
         setuomOptions(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -118,7 +119,7 @@ export default function UpdateComponent() {
           }));
           setgroupOptions(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
@@ -213,10 +214,10 @@ export default function UpdateComponent() {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           getDetails();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

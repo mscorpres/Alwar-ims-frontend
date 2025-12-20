@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { PlusCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
 import { Col, Row, Select, Button, Input } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -10,6 +10,7 @@ import MyButton from "../../../Components/MyButton";
 
 const { TextArea } = Input;
 const CreateFGOut = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [selLoading, setSelLoading] = useState(false);
@@ -136,7 +137,7 @@ const CreateFGOut = () => {
     // console.log(arrQty);
 
     if (!createFgOut.selectType) {
-      toast.error("Please Select Option");
+      showToast("Please Select Option", "error");
     } else {
       setLoadingUpdate(true);
       const response = await imsAxios.post("/fgout/createFgOut", {
@@ -149,10 +150,10 @@ const CreateFGOut = () => {
       if (response?.success) {
         resetFunction();
 
-        toast.success(response.message);
+        showToast(response.message, "success");
         setLoadingUpdate(false);
       } else {
-        toast.error(response?.message?.msg || response?.message);
+        showToast(response?.message?.msg || response?.message, "error");
         setLoadingUpdate(false);
       }
     }
@@ -172,7 +173,7 @@ const CreateFGOut = () => {
         remarks: "",
       },
     ]);
-    toast.success("Form Reset");
+    showToast("Form Reset", "success");
   };
 
   const columns = [

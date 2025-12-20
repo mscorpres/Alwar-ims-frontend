@@ -10,6 +10,7 @@ import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyButton from "../../../Components/MyButton";
 
 const ViewFGOut = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [localVar, setLocalVar] = useState({
     sel: "",
@@ -23,9 +24,9 @@ const ViewFGOut = () => {
     e.preventDefault();
 
     if (!localVar.sel) {
-      toast.error("Please Select Button");
+      showToast("Please Select Button", "error");
     } else if (!selectDate) {
-      toast.error("Please Select Date");
+      showToast("Please Select Date", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/fgout/fetchFgOutRpt", {
@@ -42,7 +43,7 @@ const ViewFGOut = () => {
         setFetchDataFromDate(arr);
         setLoading(false);
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }

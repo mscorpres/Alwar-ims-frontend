@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import AddComponent from "./AddComponents";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import AddVendorSideBar from "./AddVendorSideBar";
 import CreateCostModal from "./CreateCostModal";
 import AddBranch from "../../Master/Vendor/model/AddBranch";
@@ -36,6 +36,7 @@ const paymentTermOptions = [
 ];
 
 export default function CreatePo() {
+  const { showToast } = useToast();
   const [totalValues, setTotalValues] = useState([]);
   const [newPurchaseOrder, setnewPurchaseOrder] = useState({
     termscondition: "",
@@ -286,48 +287,48 @@ const [pendingPOData, setPendingPOData] = useState(null);
     let error = false;
 
     if (rowCount.length == 0) {
-      toast.error("Please add at least one component");
+      showToast("Please add at least one component", "error");
       return;
     }
 
     // Shipping validation based on ship_type
     if (!currentPurchaseOrder.ship_type) {
-      toast.error("Please select shipping address type");
+      showToast("Please select shipping address type", "error");
       return;
     }
 
     if (currentPurchaseOrder.ship_type === "saved") {
       // For saved mode, validate shipping address selection
       if (!currentPurchaseOrder.shipaddressid) {
-        toast.error("Please select shipping address");
+        showToast("Please select shipping address", "error");
         return;
       }
       if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        toast.error("Shipping address is not populated. Please select a valid shipping address");
+        showToast("Shipping address is not populated. Please select a valid shipping address", "error");
         return;
       }
     } else if (currentPurchaseOrder.ship_type === "vendor") {
       // For vendor mode, validate vendor and branch selection
       if (!currentPurchaseOrder.ship_vendor || !currentPurchaseOrder.ship_vendor_branch) {
-        toast.error("Please select shipping vendor and branch");
+        showToast("Please select shipping vendor and branch", "error");
         return;
       }
       if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        toast.error("Shipping address is not populated. Please select a valid vendor branch");
+        showToast("Shipping address is not populated. Please select a valid vendor branch", "error");
         return;
       }
     } else if (currentPurchaseOrder.ship_type === "manual") {
       // For manual mode, validate all manual fields
       if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        toast.error("Please enter shipping address in manual mode");
+        showToast("Please enter shipping address in manual mode", "error");
         return;
       }
       if (!currentPurchaseOrder.shipPan || currentPurchaseOrder.shipPan.trim() === "") {
-        toast.error("Please enter shipping PAN in manual mode");
+        showToast("Please enter shipping PAN in manual mode", "error");
         return;
       }
       if (!currentPurchaseOrder.shipGST || currentPurchaseOrder.shipGST.trim() === "") {
-        toast.error("Please enter shipping GSTIN in manual mode");
+        showToast("Please enter shipping GSTIN in manual mode", "error");
         return;
       }
     }

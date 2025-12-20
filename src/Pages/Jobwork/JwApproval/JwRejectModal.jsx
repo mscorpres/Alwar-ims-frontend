@@ -4,6 +4,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { toast } from "react-toastify";
 
 export default function JwRejectModal({ open, close, getRows }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rejectForm] = Form.useForm();
 
@@ -21,9 +22,9 @@ export default function JwRejectModal({ open, close, getRows }) {
       close();
       resetHandler();
       getRows();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

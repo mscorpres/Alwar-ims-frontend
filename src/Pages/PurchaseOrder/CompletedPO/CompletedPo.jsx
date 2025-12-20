@@ -21,6 +21,7 @@ import { getVendorOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 const CompletedPo = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showComponentSideBar, setShowComponentSideBar] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
@@ -70,17 +71,17 @@ const CompletedPo = () => {
         });
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setRows([]);
       }
     } else {
       setLoading(false);
       if (wise === "single_date_wise") {
-        toast.error("Please select start and end dates for the results");
+        showToast("Please select start and end dates for the results", "error");
       } else if (wise === "po_wise") {
-        toast.error("Please enter a PO id");
+        showToast("Please enter a PO id", "error");
       } else if (wise === "vendor_wise") {
-        toast.error("Please select a vendor");
+        showToast("Please select a vendor", "error");
       }
     }
   };
@@ -115,7 +116,7 @@ const CompletedPo = () => {
       setComponentData({ poId: poid, components: arr });
       setShowComponentSideBar(true);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const printFun = async (poid) => {
@@ -126,7 +127,7 @@ const CompletedPo = () => {
     if (response.success) {
       printFunction(response.data.buffer.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
   };
@@ -140,7 +141,7 @@ const CompletedPo = () => {
       let filename = poid;
       downloadFunction(response.data.buffer.data, filename);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

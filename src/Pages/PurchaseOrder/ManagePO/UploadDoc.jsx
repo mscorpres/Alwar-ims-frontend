@@ -22,6 +22,7 @@ export default function UploadDoc({
   showUploadDocModal2,
   setShowUploadDocModal2,
 }) {
+  const { showToast } = useToast();
   const [existingFiles, setExistinFiles] = useState([]);
   const [fileToBeDeleted, setFileToBeDeleted] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -72,10 +73,10 @@ export default function UploadDoc({
     );
     if (response.success) {
       setFileToBeDeleted(null);
-      toast.success(response.message);
+      showToast(response.message, "success");
       await getPoExistingDocuments(showUploadDocModal2?.poId);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const props = {
@@ -102,12 +103,12 @@ export default function UploadDoc({
     );
     setUploadLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       getPoExistingDocuments();
       setFileName("");
       setFileList([]);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   useEffect(() => {

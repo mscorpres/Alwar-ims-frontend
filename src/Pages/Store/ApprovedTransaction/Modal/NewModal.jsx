@@ -28,6 +28,7 @@ export default function NewModal({
   setOpen,
   getPendingData,
 }) {
+  const { showToast } = useToast();
   const [delModal, setDelModal] = useState(false);
   const [spinLoading, setSpinLoading] = useState(false);
   const [mat, setMat] = useState([]);
@@ -115,7 +116,7 @@ export default function NewModal({
         getPendingData();
       }
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setOpen(false);
       getPendingData();
       // setLoading(false);
@@ -157,16 +158,16 @@ export default function NewModal({
           return allDataComes.filter((row) => row.id != materialData?.id);
         });
         setSpinLoading(false);
-        toast.success(data.message.replaceAll("<br/>", "\n"));
+        showToast(data.message.replaceAll("<br/>", "\n"), "success");
         // setMat([]);
       } else {
         setOpen(false);
         getPendingData();
-        toast.success(data.message.replaceAll("<br/>", "\n"));
+        showToast(data.message.replaceAll("<br/>", "\n"), "success");
         setSpinLoading(false);
       }
     } else {
-      toast.error(data.message?.msg || data.message);
+      showToast(data.message?.msg || data.message, "error");
       setSpinLoading(false);
     }
     // if (response.success){

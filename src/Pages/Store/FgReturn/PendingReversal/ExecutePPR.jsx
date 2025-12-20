@@ -11,7 +11,7 @@ import {
   Tabs,
   Typography,
 } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MySelect from "../../../../Components/MySelect";
 import NavFooter from "../../../../Components/NavFooter";
@@ -22,6 +22,7 @@ import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { InfoCircleFilled, InfoCircleOutlined } from "@ant-design/icons";
 
 export default function ExecutePPR({ editPPR, setEditPPR }) {
+  const { showToast } = useToast();
   const [tabItems, setTabItems] = useState([]);
   const [tabsExist, setTabsExist] = useState(["1", "P", "PCK", "O", "PCB"]);
   const [activeKey, setActiveKey] = useState("1");
@@ -94,11 +95,11 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
       if (response.success) {
      
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setEditPPR(null);
       }
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const columns = [
@@ -216,9 +217,9 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
   };
   const validateHandler = () => {
     if (headerData.location == "") {
-      return toast.error("Please select a location");
+      return showToast("Please select a location", "error");
     } else if (headerData.mfgQty == "") {
-      return toast.error("Please enter manufacutre quantity");
+      return showToast("Please enter manufacutre quantity", "error");
     }
     let arr = [];
     arr = tabsExist.map((tab) => {
@@ -261,10 +262,10 @@ export default function ExecutePPR({ editPPR, setEditPPR }) {
     
       if (response.success) {
      
-        toast.success(response.message);
+        showToast(response.message, "success");
         setEditPPR(null);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
   
     } catch (error) {

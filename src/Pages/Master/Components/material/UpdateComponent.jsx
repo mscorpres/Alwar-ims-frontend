@@ -28,6 +28,7 @@ import CategoryDrawer from "./CategoryDrawer";
 import AlternatePartCode from "./AlternatePartCode";
 
 export default function UpdateComponent() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uomOptions, setuomOptions] = useState([]);
   const [groupOptions, setgroupOptions] = useState([]);
@@ -140,7 +141,7 @@ export default function UpdateComponent() {
         }));
         altPartCodeForm.setFieldValue("alternatePart", objects);
       } else {
-        toast.error(data.message.msg);
+        showToast(data.message.msg, "error");
       }
     } catch (error) {
     } finally {
@@ -216,7 +217,7 @@ export default function UpdateComponent() {
       } else { 
        
         setSubGroupOptions([]);
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
       setSubGroupOptions([]);
@@ -249,7 +250,7 @@ export default function UpdateComponent() {
           }));
           setuomOptions(arr);
         } else {
-          toast.error(data.message.msg);
+          showToast(data.message.msg, "error");
         }
       }
     } catch (error) {
@@ -270,7 +271,7 @@ export default function UpdateComponent() {
           }));
           setgroupOptions(arr);
         } else {
-          toast.error(data.message.msg);
+          showToast(data.message.msg, "error");
         }
       }
     } catch (error) {
@@ -350,7 +351,7 @@ export default function UpdateComponent() {
         onCancel() {},
       });
     } else {
-      toast.error(data.message.msg);
+      showToast(data.message.msg, "error");
     }
   };
   const validateHandler = async () => {
@@ -443,10 +444,10 @@ export default function UpdateComponent() {
       const { data } = response;
       if (data) {
         if (data.code === "200") {
-          toast.success(data.message);
+          showToast(data.message, "success");
           getDetails();
         } else {
-          toast.error(data.message.msg);
+          showToast(data.message.msg, "error");
         }
       }
     } catch (error) {

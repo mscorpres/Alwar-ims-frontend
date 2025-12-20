@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import NewModal from "./Modal/NewModal";
 import printFunction from "../../../Components/printFunction";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -10,6 +10,7 @@ import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 
 const ApprovedTransaction = () => {
+  const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [allPending, setAllPending] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -97,7 +98,7 @@ const ApprovedTransaction = () => {
       setAllPending(arr);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      showToast(data.message?.msg || data.message, "error");
       setLoading(false);
     }
     // }

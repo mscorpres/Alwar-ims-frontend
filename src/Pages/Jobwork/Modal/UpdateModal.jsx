@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {CloseCircleFilled } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import { Button, Col, Drawer, Row, Skeleton, Space, Input,Tooltip } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -8,6 +8,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import TableActions from "../../../Components/TableActions.jsx/TableActions";
 
 function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [view, setView] = useState([]);
@@ -37,7 +38,7 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
       setMainData(arr);
       setLoading(false);
     } else{
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Row, Space, Tooltip, Popover, Form, Drawer } from "antd";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -20,6 +20,7 @@ import printFunction, {
 import MyButton from "../../../Components/MyButton";
 
 function MesQcaReport() {
+  const { showToast } = useToast();
   const [searchLoading, setSearchLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState();
   const [loading, setLoading] = useState(false);
@@ -142,7 +143,7 @@ function MesQcaReport() {
         setProcessOptions(arr);
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -165,7 +166,7 @@ function MesQcaReport() {
       });
       const { data } = response;
       if (data.status === "error") {
-        toast.error(data.message);
+        showToast(data.message, "error");
       } else if (response.success ) {
         if (data.response.data) {
           const arr = data.response.data.map((row, index) => {
@@ -195,7 +196,7 @@ function MesQcaReport() {
         }
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }

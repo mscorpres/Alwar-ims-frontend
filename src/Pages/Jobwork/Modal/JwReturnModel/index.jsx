@@ -30,6 +30,7 @@ import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import axios from "axios";
 
 const JwReturnModel = ({ show, close }) => {
+  const { showToast } = useToast();
   const [headerDetails, setHeaderDetails] = useState([]);
   const [loading, setLoading] = useLoading();
   const [totalValue, setTotalValue] = useState(0);
@@ -176,7 +177,7 @@ const JwReturnModel = ({ show, close }) => {
       let { data } = response;
       if (response.success) {
         // console.log("data.message", data.message.msg);
-        toast.success(response.message.msg);
+        showToast(response.message.msg, "success");
         setPreview(false);
         setPreviewRows([]);
         setSelectedRows([]);
@@ -275,7 +276,7 @@ const JwReturnModel = ({ show, close }) => {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response.message.msg);
+      showToast(response.message.msg, "error");
       setPreview(false);
     }
   };

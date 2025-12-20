@@ -1,6 +1,6 @@
 import React, { useState, useeffect } from "react";
 import { BsFillCloudArrowUpFill } from "react-icons/bs";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import MyDataTable from "../../Components/MyDataTable";
 import NavFooter from "../../Components/NavFooter";
 import { v4 } from "uuid";
@@ -10,6 +10,7 @@ import { imsAxios } from "../../axiosInterceptor";
 import MyButton from "../../Components/MyButton";
 
 export default function VendorPricingUpload() {
+  const { showToast } = useToast();
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -32,7 +33,7 @@ export default function VendorPricingUpload() {
 
       setPreviewRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const submitFunction = async () => {
@@ -46,9 +47,9 @@ export default function VendorPricingUpload() {
     setLoading(false);
     // console.log(data);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const previewColumns = [

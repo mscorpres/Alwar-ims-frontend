@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Row, Select } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -13,6 +13,7 @@ import { getProductsOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 const CompletedFG = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [all, setAll] = useState({
     info: "",
@@ -57,7 +58,7 @@ const CompletedFG = () => {
       setSkuData(arr);
       setLoading(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -82,7 +83,7 @@ const CompletedFG = () => {
       setDateData(arr);
       setLoading(false);
     } else {
-      toast.error(response?.message?.msg || response?.message);
+      showToast(response?.message?.msg || response?.message, "error");
       setLoading(false);
     }
   };

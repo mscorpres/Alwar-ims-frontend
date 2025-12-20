@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import PendingFGModal from "./Modal/PendingFGModal";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
@@ -11,6 +11,7 @@ import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 
 const PendingFG = () => {
+  const { showToast } = useToast();
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(false);
   // const [search, setSearch] = useState("");
@@ -33,7 +34,7 @@ const PendingFG = () => {
         setLoading(false);
       })
       .catch((err) => {
-        toast.error(err);
+        showToast(err, "error");
         setLoading(false);
       });
   };

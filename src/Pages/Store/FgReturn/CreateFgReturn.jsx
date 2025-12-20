@@ -9,6 +9,7 @@ import MySelect from "../../../Components/MySelect";
 import { toast } from "react-toastify";
 
 function CreateFgReturn() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomOptions, setBomOptions] = useState([]);
@@ -78,7 +79,7 @@ function CreateFgReturn() {
     const response = await imsAxios.post("/fg_return/saveFG_return", payload);
     // console.log("response", response);
     if (response?.success) {
-      toast.success(response?.message);
+      showToast(response?.message, "success");
       resetFunction();
       setLoading(false);
     }

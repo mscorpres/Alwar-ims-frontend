@@ -16,6 +16,7 @@ const RemoveModal = ({
   mat,
   setOpen,
 }) => {
+  const { showToast } = useToast();
   const [rem, setRem] = useState("");
 
   const cancelReq = async () => {
@@ -33,7 +34,7 @@ const RemoveModal = ({
       getDataFetch();
       setRem("");
     } else {
-      toast.error(data.message?.msg || data.message);
+      showToast(data.message?.msg || data.message, "error");
       setDelModal(false);
       getDataFetch();
       setRem("");

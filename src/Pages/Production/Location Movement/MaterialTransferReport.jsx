@@ -12,6 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 export default function MaterialTransferReport({ type }) {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
@@ -41,7 +42,7 @@ export default function MaterialTransferReport({ type }) {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };

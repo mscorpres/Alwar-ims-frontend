@@ -26,6 +26,7 @@ import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 const ManagePO = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -58,7 +59,7 @@ const ManagePO = () => {
     if (response.success) {
       printFunction(response.data.buffer.data);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
     setLoading(false);
   };
@@ -72,7 +73,7 @@ const ManagePO = () => {
     if (response.success) {
       setShowCancelPO(poid);
     } else {
-      toast.error("PO is already cancelled");
+      showToast("PO is already cancelled", "error");
     }
   };
   const handleDownload = async (poid) => {
@@ -85,7 +86,7 @@ const ManagePO = () => {
       let filename = `PO ${poid}`;
       downloadFunction(response.data.buffer.data, filename);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -294,18 +295,18 @@ const ManagePO = () => {
         setRows(arr);
       } else {
          setSearchLoading(false);
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } else {
       if (wise == "single_date_wise" && searchDateRange == null) {
          setSearchLoading(false);
-        toast.error("Please select start and end dates for the results");
+        showToast("Please select start and end dates for the results", "error");
       } else if (wise == "po_wise") {
          setSearchLoading(false);
-        toast.error("Please enter a PO id");
+        showToast("Please enter a PO id", "error");
       } else if (wise == "vendor_wise") {
          setSearchLoading(false);
-        toast.error("Please select a vendor");
+        showToast("Please select a vendor", "error");
       }
     }
   };
@@ -345,7 +346,7 @@ const ManagePO = () => {
       setShowViewSideBar(true);
       getPoLogs(poid);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -367,7 +368,7 @@ const ManagePO = () => {
       })
       .then((res) => {
         if (!res.success) {
-          toast.error(res.message);
+          showToast(res.message, "error");
           setLoading(false);
         } else {
           return res;

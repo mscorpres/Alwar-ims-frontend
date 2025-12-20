@@ -8,6 +8,7 @@ export default function AddProjectModal({
   showAddProjectConfirm,
   setShowAddProjectConfirm,
 }) {
+  const { showToast } = useToast();
   const [addProjectConfirm, setAddProjectConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addProjectForm] = Form.useForm();
@@ -22,12 +23,12 @@ export default function AddProjectModal({
     });
     setLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setAddProjectConfirm(false);
         setShowAddProjectConfirm(false);
         resetHandler();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
   };
   const resetHandler = () => {

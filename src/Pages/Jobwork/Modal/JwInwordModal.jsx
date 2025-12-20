@@ -37,6 +37,7 @@ import SuccessPage from "../../Store/MaterialIn/SuccessPage";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import SingleProduct from "../../Master/Vendor/SingleProduct";
 export default function JwInwordModal({ editModal, setEditModal }) {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locValue, setLocValue] = useState([]);
   const [header, setHeaderData] = useState([]);
@@ -84,7 +85,7 @@ const { data } = response;
       setHeaderData(data.header);
       setModalLoad("fetch", false);
     } else if (!response.success) {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
     }
     setModalLoad("fetch", false);
   };
@@ -492,7 +493,7 @@ const { data } = response;
         setModalUploadLoad(false);
       }
       setModalUploadLoad(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
       // setEditModal(false);
       setModalUploadLoad(false);
       setShowBomList(false);
@@ -518,7 +519,7 @@ const { data } = response;
       });
     } else {
       setModalUploadLoad(false);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const getBomList = async () => {
@@ -548,7 +549,7 @@ const { data } = response;
       setLoading(false);
       setShowBomList(true);
     } else {
-      toast.error(response.data.message.msg);
+      showToast(response.data.message.msg, "error");
       setLoading(false);
     }
 

@@ -19,6 +19,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { toast } from "react-toastify";
 
 const JWUpdateRate = () => {
+  const { showToast } = useToast();
   const [previewRows, setpreviewRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -50,7 +51,7 @@ const JWUpdateRate = () => {
 
           setpreviewRows(arr);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
   
     } catch (error) {
@@ -106,7 +107,7 @@ const JWUpdateRate = () => {
       );
 
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           updateJwForm.resetFields();
           setpreviewRows([]);
         }

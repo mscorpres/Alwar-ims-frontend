@@ -9,7 +9,7 @@ import {
   Row,
   Typography,
 } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import InputMask from "react-input-mask";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -23,6 +23,7 @@ import useApi from "../../../hooks/useApi.ts";
 const { TextArea } = Input;
 
 const CreatePPR = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [bomList, setBomList] = useState([]);
@@ -85,7 +86,7 @@ const CreatePPR = () => {
           data.description
         );
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -152,10 +153,10 @@ const CreatePPR = () => {
       setLoading("submit");
       const response = await imsAxios.post("/ppr/createPPR", payload);
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           resetFunction();
         } else {
-          toast.error( response.message);
+          showToast( response.message, "error");
         }
     } catch (error) {
     } finally {
