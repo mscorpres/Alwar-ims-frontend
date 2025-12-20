@@ -12,12 +12,14 @@ import { EyeFilled } from "@ant-design/icons";
 import SFTransferDrawer from "./SFTransferDrawer";
 import { toast } from "react-toastify";
 import MyButton from "../../Components/MyButton";
+import { useToast } from "../../hooks/useToast";
 function Pending() {
   const [searchInput, setSearchInput] = useState("");
   const [rows, setRows] = useState([]);
   const [sfTransferModal, setSfTransferModal] = useState(false);
   const [drawerData, setDrawerData] = useState([]);
   const [loading, setLoading] = useState(false);
+const { showToast } =  useToast
   const getRows = async () => {
     setLoading(true);
     const response = await imsAxios.post("/sfMin/sfMinTransferList", {
@@ -35,7 +37,7 @@ function Pending() {
       setLoading(false);
     }
     if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
   };

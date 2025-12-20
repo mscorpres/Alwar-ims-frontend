@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./r.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Row } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
@@ -11,6 +11,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 const R3 = () => {
+  const { showToast } = useToast();
   const [responseData, setResponseData] = useState([]);
   const [selectDate, setSelectDate] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ const R3 = () => {
 
   const fetch = async () => {
     if (!selectDate) {
-      toast.error("Please Select Date Then Proceed Next Step");
+      showToast("Please Select Date Then Proceed Next Step", "error");
     } else {
       setResponseData([]);
       setLoading(true);
@@ -45,7 +46,7 @@ const R3 = () => {
         action: "search_r3",
       });
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         let arr = response.data.map((row) => {
           return {
             ...row,

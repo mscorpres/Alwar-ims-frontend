@@ -13,8 +13,10 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 const R2 = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -228,10 +230,10 @@ const R2 = () => {
           };
         });
         setRows(arr);
-        toast.success(response.message);
+        showToast(response.message, "success");
         setLoading(false);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
       setLoading(false);
@@ -242,7 +244,7 @@ const R2 = () => {
       });
     
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         let arr = response.data.map((row, index) => {
           return {
             ...row,
@@ -253,7 +255,7 @@ const R2 = () => {
         setRows(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
       setLoading(false);

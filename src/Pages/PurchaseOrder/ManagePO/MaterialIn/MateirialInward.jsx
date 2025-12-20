@@ -43,6 +43,7 @@ export default function MateirialInward({
   asyncOptions,
   setAsyncOptions,
 }) {
+  const { showToast } = useToast();
   const [poData, setPoData] = useState({ materials: [] });
   const [showCurrency, setShowCurrenncy] = useState(null);
   const [invoices, setInvoices] = useState([]);
@@ -139,14 +140,14 @@ export default function MateirialInward({
           true
         ) {
           validation = false;
-          return toast.error("Currency of all components should be the same");
+          return showToast("Currency of all components should be the same", "error");
         } else if (
           (componentData.gsttype.filter((v, i, a) => v === a[0]).length ===
             componentData.gsttype.length) !=
           true
         ) {
           validation = false;
-          return toast.error("gst type of all components should be the same");
+          return showToast("gst type of all components should be the same", "error");
         }
 
         setShowSubmitConfirm({
@@ -154,10 +155,10 @@ export default function MateirialInward({
           componentData: componentData,
         });
       } else {
-        toast.error("Please add at least one document");
+        showToast("Please add at least one document", "error");
       }
     } else {
-      toast.error("Please Provide all the values of all the components");
+      showToast("Please Provide all the values of all the components", "error");
     }
   };
   const submitMIN = async () => {
@@ -204,13 +205,13 @@ export default function MateirialInward({
           // let first = response.message.replaceAll("<br/>", " ").split("[")[0];
           // let second = response.message.replaceAll("<br/>", " ").split(";")[1];
           // let final = first + second;
-          // toast.success(final.replaceAll("]", ""));
+          // showToast(final.replaceAll("]", ""), "success");
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       } else {
-        toast.error(
-          "Some error occured while uploading invoices, Please try again"
+        showToast(
+          "Some error occured while uploading invoices, Please try again", "error"
         );
       }
     }

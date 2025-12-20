@@ -14,7 +14,7 @@ import Dragger from "antd/lib/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import MyDataTable from "../../../Components/MyDataTable";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import TableActions from "../../../Components/TableActions.jsx/TableActions";
 import VerifiedFilePreview from "../../Master/reports/R19/VerifiedFilePreview";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -27,6 +27,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
 const WeeklyAudit = () => {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [verifiedFile, setVerifiedFile] = useState(false);
@@ -72,14 +73,14 @@ const WeeklyAudit = () => {
         component: searchInput,
       });
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setSearchInput("");
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setFetchLoading(false);
     }
@@ -119,10 +120,10 @@ const WeeklyAudit = () => {
       //   let arr = data.response.data.map((row, index) => ({ ...row, id: index + 1 }));
       //   setVerifiedFile(arr);
 
-      toast.success(response.data.message);
+      showToast(response.data.message, "success");
       getRows();
     } else {
-      toast.error(response.message.msg);
+      showToast(response.message.msg, "error");
     }
   };
 
@@ -147,7 +148,7 @@ const WeeklyAudit = () => {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const downloadFun = () => {
@@ -156,7 +157,7 @@ const WeeklyAudit = () => {
       notificationId: newId,
       otherdata: { date: dateRange },
     };
-    toast.success("Request Sent...");
+    showToast("Request Sent...", "success");
     socket.emit("monthly_audit", obj);
   };
 
@@ -170,9 +171,9 @@ const WeeklyAudit = () => {
     });
     if (response.success) {
       getRows();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 

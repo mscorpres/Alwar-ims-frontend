@@ -11,8 +11,10 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { v4 } from "uuid";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 const R26 = () => {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filterForm] = Form.useForm();
@@ -64,7 +66,7 @@ const R26 = () => {
 
           setRows(arr);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
           throw new Error("Some error occured");
         }
       

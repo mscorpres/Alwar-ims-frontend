@@ -10,16 +10,18 @@ import MySelect from "../../../../Components/MySelect";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 import useApi from "../../../../hooks/useApi.ts";
 import {
-  cancelTheSelectedSo,
   getSalesOrders,
   printOrder,
+  cancelTheSelectedSo,
+  
 } from "../../../../api/sales/salesOrder";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import printFunction from "../../../../Components/printFunction";
 import CreateShipment from "./CreateShipment/CreateShipment";
 import MyButton from "../../../../Components/MyButton";
 function SalesORderRegister() {
+  const { showToast } = useToast();
   // const [loading, setLoading] = useState(false);
   const [componentList, setComponentList] = useState(false);
   const [showShipmentDrawer, setShowShipmentDrawer] = useState(null);
@@ -85,11 +87,11 @@ function SalesORderRegister() {
       "fetch"
     );
     if (response.code === 200) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setCancelRowSelected(false);
       form.resetFields();
     } else {
-      toast.error(response.data);
+      showToast(response.data, "error");
     }
   };
   const validate = async () => {

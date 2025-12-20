@@ -13,6 +13,7 @@ import EditPO from "../ManagePO/EditPO/EditPO.jsx";
 import ViewPORequest from "./ViewPORequest.jsx";
 
 const RequestPo = () => {
+  const { showToast } = useToast();
   const [searchLoading, setSearchLoading] = useState(false);
   const [viewPoId, setViewPoId] = useState(null);
   const [rows, setRows] = useState([]);
@@ -206,7 +207,7 @@ const RequestPo = () => {
     // If no date range is set, silently skip refresh (e.g., after approve/reject)
     if (!searchDateRange) {
       if (!silent) {
-        toast.error("Please select start and end dates for the results");
+        showToast("Please select start and end dates for the results", "error");
       }
       return;
     }
@@ -232,17 +233,17 @@ const RequestPo = () => {
         }
       } else if (response.message) {
         if (!silent) {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       } else {
         if (!silent) {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       }
     } catch (error) {
       setSearchLoading(false);
       if (!silent) {
-        toast.error("Error fetching PO list");
+        showToast("Error fetching PO list", "error");
       }
     }
   };
@@ -267,7 +268,7 @@ const RequestPo = () => {
         ...response.data.vendor[0],
       });
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 

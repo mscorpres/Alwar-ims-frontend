@@ -3,7 +3,7 @@ import axios from "axios";
 
 import moment from "moment";
 import { DatePicker, Select } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { v4 } from "uuid";
 import { Button, Modal, Row, Col, Input } from "antd";
@@ -22,6 +22,7 @@ const OpenR29Modal = ({
   setLoading,
   setFilterData,
 }) => {
+  const { showToast } = useToast();
   const [seacrh, setSearch] = useState(null);
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -89,7 +90,7 @@ const OpenR29Modal = ({
       // setShow(false);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       // setViewModal(false);
       // setShow(false);
       setLoading(false);

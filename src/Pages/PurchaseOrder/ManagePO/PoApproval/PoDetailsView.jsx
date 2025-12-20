@@ -1,6 +1,6 @@
 import React from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Drawer, Space, Typography } from "antd";
@@ -10,6 +10,7 @@ import { CommonIcons } from "../../../../Components/TableActions.jsx/TableAction
 import { downloadCSV } from "../../../../Components/exportToCSV";
 
 export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +30,7 @@ export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setViewPoDetails(false);
     }
   };

@@ -15,8 +15,10 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 //weekky report
 function R28() {
+  const { showToast } = useToast();
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateData, setDateData] = useState([]);
@@ -57,7 +59,7 @@ function R28() {
     });
     if (response.success) {
       setLoading(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
       let arr = response.data.map((row, index) => {
         return {
           ...row,
@@ -67,7 +69,7 @@ function R28() {
       setDateData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };

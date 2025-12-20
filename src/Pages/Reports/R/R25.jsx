@@ -23,8 +23,10 @@ import { set } from "lodash";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 const R25 = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
@@ -207,7 +209,7 @@ const R25 = () => {
     setLoading(false);
     const { data } = response;
     if (response.status === 200) {
-      toast.success(data.message.msg);
+      showToast(data.message.msg, "success");
       setAddedComponents([]);
       reportForm.setFieldValue("component", null);
       reportForm.setFieldValue("qty", "");

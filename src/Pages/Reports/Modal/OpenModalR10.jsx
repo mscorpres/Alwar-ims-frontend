@@ -23,6 +23,7 @@ const OpenModal10 = ({
   loading,
   setLoading,
 }) => {
+  const { showToast } = useToast();
   const [allData, setAllData] = useState({
     selectProduct: "",
     selectLocation: "",
@@ -94,7 +95,7 @@ const OpenModal10 = ({
   
     if (response.success) {
       setViewModal(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
     }
   };
 

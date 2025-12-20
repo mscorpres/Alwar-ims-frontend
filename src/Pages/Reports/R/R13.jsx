@@ -18,10 +18,12 @@ import { v4 } from "uuid";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 const { RangePicker } = DatePicker;
 
 const R13 = () => {
+  const { showToast } = useToast();
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
@@ -102,9 +104,9 @@ const R13 = () => {
 
   const fetch = async () => {
     if (!allData.selType) {
-      toast.error("Please Select Type");
+      showToast("Please Select Type", "error");
     } else if (!datee[0]) {
-      toast.error("Please Select Date First");
+      showToast("Please Select Date First", "error");
     } else {
       setLoading(true);
       setResponseData([]);
@@ -123,7 +125,7 @@ const R13 = () => {
         setResponseData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }

@@ -24,7 +24,7 @@ import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import Dragger from "antd/es/upload/Dragger";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import printFunction, {
   downloadFunction,
   downloadExcel,
@@ -32,6 +32,7 @@ import printFunction, {
 import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions } from "../../../api/general.ts";
 function R20() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [closing, setClosing] = useState("");
@@ -116,7 +117,7 @@ function R20() {
     });
   
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setShowModalData(false);
       
     }
@@ -128,7 +129,7 @@ function R20() {
       standardPrice: standardPrice,
     });
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setLoading(false);
       setIsModalOpen(false);
       setPreviewDT(true);
@@ -209,12 +210,12 @@ function R20() {
       setStdPrice(stdP);
       setmultipleUpload(true);
     } else {
-      toast.error(data.statusText);
+      showToast(data.statusText, "error");
     }
   };
 
   const downloadSampleFile = async () => {
-    toast.info("PartCode list will be downloaded shortly!");
+    showToast("PartCode list will be downloaded shortly!", "success");
     setLoading(true);
     const response = await imsAxios.get("/report20/componentList");
     if (response.success) {

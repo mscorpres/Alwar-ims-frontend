@@ -10,7 +10,7 @@ import {
   Button,
   DatePicker,
 } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { CloseCircleFilled, CheckCircleFilled } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import moment from "moment";
@@ -27,6 +27,7 @@ function PprAnallysidModal({
   setLoading,
   setAllDataComesFromDatabase,
 }) {
+  const { showToast } = useToast();
   const { executeFun, loading } = useApi();
   const [allData, setAllData] = useState({
     projectName: "",
@@ -92,7 +93,7 @@ function PprAnallysidModal({
       setPprModal(false);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(data.message);
+      showToast(data.message, "error");
       setLoading(false);
     }
     // console.log(data.response.data0);

@@ -42,6 +42,7 @@ export default function EditComponent({
   updatePoId,
   getRows,
 }) {
+  const { showToast } = useToast();
   const [asynOptions, setAsyncOptions] = useState([]);
   const [currencies, setCurrencies] = useState([]);
   const [showCurrencyModal, setShowCurrencyModal] = useState(null);
@@ -368,7 +369,7 @@ export default function EditComponent({
   });
 
   if (!validation) {
-    toast.error("Please fill all required component fields");
+    showToast("Please fill all required component fields", "error");
     return;
   }
 
@@ -402,7 +403,7 @@ export default function EditComponent({
 
  
   if ([...new Set(components.currency)].length > 1 || [...new Set(components.gsttype)].length > 1) {
-    toast.error("All items must have same Currency and GST Type");
+    showToast("All items must have same Currency and GST Type", "error");
     return;
   }
   console.log(purchaseOrder, "values")
@@ -459,13 +460,13 @@ export default function EditComponent({
       });
       setSubmitLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setUpdatePoId(null);
         if (getRows && typeof getRows === "function") {
           setTimeout(() => getRows(true), 500);
         }
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setSubmitConfirm(null);
       }
     }
@@ -498,10 +499,10 @@ export default function EditComponent({
       const response = await imsAxios.post("/purchaseOrder/removePart", obj);
       setRemovePartLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         removeRows(row.id);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } else {
       removeRows(row.id);

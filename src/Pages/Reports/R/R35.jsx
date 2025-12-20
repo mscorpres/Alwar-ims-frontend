@@ -5,7 +5,7 @@ import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { getProductsOptions } from "../../../api/general.ts";
@@ -16,6 +16,7 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses.jsx";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions.jsx";
 import { downloadCSV } from "../../../Components/exportToCSV.jsx";
 function R35() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomName, setBomName] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -146,7 +147,7 @@ function R35() {
       setRows(arr);
       setLoading(false);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };

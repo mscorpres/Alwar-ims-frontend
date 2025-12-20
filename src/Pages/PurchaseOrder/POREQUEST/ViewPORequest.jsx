@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Descriptions, Divider, Drawer, Form, Input, InputNumber, Modal, Row, Tabs, Radio, Card, message, Typography, Spin, Space } from "antd";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -13,6 +13,7 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import NavFooter from "../../../Components/NavFooter";
 
 export default function ViewPORequest({ poId, setPoId, getRows }) {
+  const { showToast } = useToast();
   const [purchaseOrder, setPurchaseOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("1");
   const [loading, setLoading] = useState(true);
@@ -258,11 +259,11 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
       setRowCount(arr);
       
     } else {
-      toast.error(response.message || "Failed to fetch PO details");
+      showToast(response.message || "Failed to fetch PO details", "error");
     }
   } catch (error) {
     console.error("Error fetching PO details:", error);
-    toast.error("Error fetching PO details");
+    showToast("Error fetching PO details", "error");
   } finally {
     setLoading(false);
   }
@@ -357,7 +358,7 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
       setRejectLoading(false);
 
       if (response.success) {
-        toast.success(status === "A" ? "PO Components Approved Successfully!" : "PO Components Rejected Successfully!", { autoClose: 3000 });
+        showToast(status === "A" ? "PO Components Approved Successfully!" : "PO Components Rejected Successfully!", "success");
 
         // Reset modals and refresh
         setShowRejectModal(false);
@@ -409,7 +410,7 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
             }
           );
         } else {
-          toast.error(response.message || "Failed to update status");
+          showToast(response.message || "Failed to update status", "error");
         }
       }
     } catch (error) {
@@ -420,7 +421,7 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
       // Better error message
       const errorMsg = error.response?.data?.message || error.message || "Network or Server Error. Please try again.";
 
-      toast.error(errorMsg, { autoClose: 5000 });
+      showToast(errorMsg, "error");
     }
   };
   const handleApprove = () => {
@@ -462,7 +463,7 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
       printFunction(response.data.buffer.data);
     }
     else{
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
     setLoading(null);
   };

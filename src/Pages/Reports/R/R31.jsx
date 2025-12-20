@@ -27,8 +27,10 @@ import { getVendorOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 function R31() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -59,7 +61,7 @@ function R31() {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setRows([]);
     }
   };

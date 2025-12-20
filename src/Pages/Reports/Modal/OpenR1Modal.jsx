@@ -14,6 +14,7 @@ const OpenR1Modal = ({
   setAllResponseData,
   setLoading,
 }) => {
+  const { showToast } = useToast();
   const [seacrh, setSearch] = useState(null);
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -77,7 +78,7 @@ const OpenR1Modal = ({
       setAllResponseData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };

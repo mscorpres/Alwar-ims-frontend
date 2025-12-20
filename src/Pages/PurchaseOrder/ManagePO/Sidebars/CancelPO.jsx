@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FaTimes } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Col, Drawer, Form, Input, Row, Modal } from "antd";
 import { imsAxios } from "../../../../axiosInterceptor";
 
@@ -12,6 +12,7 @@ export default function CancelPO({
   componentStatus,
   rows,
 }) {
+  const { showToast } = useToast();
   const [reason, setReason] = useState("");
   const [status, setStatus] = useState();
   const [payment, setPayment] = useState(false);
@@ -49,7 +50,7 @@ export default function CancelPO({
         remark: reason,
       }).then((res) => {
         if(!res.success){
-          toast.error(res.message?.msg || res.message)
+          showToast(res.message?.msg || res.message, "error")
           setLoading(false);
           setShowCancelPO(null);
         }
@@ -60,7 +61,7 @@ export default function CancelPO({
     );
       setLoading(false);
       if (response?.success) {
-        toast.success(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "success");
         setReason("");
         let arr = rows;
         getSearchResults();
@@ -77,7 +78,7 @@ export default function CancelPO({
         setRows(arr);
         setShowCancelPO(null);
       } else {
-        toast.error(response?.message?.msg || response?.message);
+        showToast(response?.message?.msg || response?.message, "error");
       }
     }
   };

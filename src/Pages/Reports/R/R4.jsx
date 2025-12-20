@@ -9,8 +9,10 @@ import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 const R4 = () => {
+  const { showToast } = useToast();
   const [responseData, setResponseData] = useState([]);
   const [selectDate, setSelectDate] = useState("");
   const [loading, setLoading] = useState(false);
@@ -60,7 +62,7 @@ const R4 = () => {
   const fetch = async () => {
     setResponseData([]);
     if (!selectDate) {
-      toast.error("Please Select Date First Then Proceed Next Step");
+      showToast("Please Select Date First Then Proceed Next Step", "error");
     } else {
       setResponseData([]);
       setLoading(true);
@@ -80,7 +82,7 @@ const R4 = () => {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }

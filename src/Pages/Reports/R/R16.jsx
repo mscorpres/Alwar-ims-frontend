@@ -12,8 +12,10 @@ import {
 } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 function R16() {
+  const { showToast } = useToast();
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateData, setDateData] = useState([]);
@@ -46,7 +48,7 @@ function R16() {
 
     if (response.success) {
       // setLoading(true);
-      toast.success(response.message);
+      showToast(response.message, "success");
       let arr = response.data.map((row) => {
         return {
           ...row,
@@ -56,7 +58,7 @@ function R16() {
       setDateData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };

@@ -5,13 +5,14 @@ import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
 function R22() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [search, setSearch] = useState("");
   const [selectDate, setSelectDate] = useState("");
@@ -46,11 +47,11 @@ function R22() {
   };
   const fetchBySearch = async () => {
     if (!allData.selectProduct) {
-      toast.error("Please select a product");
+      showToast("Please select a product", "error");
     } else if (!allData.selectBom) {
-      toast.error("Please select a bom");
+      showToast("Please select a bom", "error");
     } else if (!selectDate[0]) {
-      toast.error("Please select a valid date");
+      showToast("Please select a valid date", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/report22", {
@@ -78,7 +79,7 @@ function R22() {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }

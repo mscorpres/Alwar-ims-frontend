@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./r.css";
 import { Button, Col, Input, Row, Skeleton } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import {
   downloadCSV} from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -17,6 +17,7 @@ import MyButton from "../../../Components/MyButton";
 import { Tooltip } from "@mui/material";
 const { TextArea } = Input;
 function R9() {
+  const { showToast } = useToast();
   const [locDataTo, setloctionDataTo] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
 
@@ -60,7 +61,7 @@ function R9() {
       });
 
       if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
       } else {
         let arr = [];
         arr = response.data.map((d) => {
@@ -83,13 +84,13 @@ function R9() {
 
   const fetchBySearch = async () => {
     if (!allData.selectProduct) {
-      toast.error("Please select a product");
+      showToast("Please select a product", "error");
     } else if (!allData.selectBom) {
-      toast.error("Please select a bom");
+      showToast("Please select a bom", "error");
     } else if (!allData.selectLocation) {
-      toast.error("Please select a Location");
+      showToast("Please select a Location", "error");
     } else if (!selectDate[0]) {
-      toast.error("Please select a valid date");
+      showToast("Please select a valid date", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/report9", {
@@ -118,7 +119,7 @@ function R9() {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }

@@ -7,8 +7,10 @@ import { downloadCSV } from "../../Components/exportToCSV";
 import ToolTipEllipses from "../../Components/ToolTipEllipses";
 import { Row } from "antd";
 import { imsAxios } from "../../axiosInterceptor";
+import { useToast } from "../../hooks/useToast";
 
 export default function SKUCosting() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const getRows = async () => {
@@ -21,7 +23,7 @@ export default function SKUCosting() {
       });
       setRows(arr);
     } else {
-      toast.error(data.message);
+      showToast(data.message, "error");
     }
   };
   const columns = [

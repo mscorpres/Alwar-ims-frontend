@@ -13,8 +13,10 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 const R7 = () => {
+  const { showToast } = useToast();
   const [seacrh, setSearch] = useState(null);
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -125,13 +127,13 @@ const R7 = () => {
 
   const fetchBySearch = async () => {
     if (!allData.selectProduct) {
-      toast.error("Please select a product");
+      showToast("Please select a product", "error");
     } else if (!allData.selectBomWise) {
-      toast.error("Please select a bom");
+      showToast("Please select a bom", "error");
     } else if (!allData.selectBomWise) {
-      toast.error("Please select a bomwise");
+      showToast("Please select a bomwise", "error");
     } else if (!selectDate[0]) {
-      toast.error("Please select a valid date");
+      showToast("Please select a valid date", "error");
     } else {
       setResData([]);
       setLoading(true);
@@ -149,7 +151,7 @@ const R7 = () => {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }
