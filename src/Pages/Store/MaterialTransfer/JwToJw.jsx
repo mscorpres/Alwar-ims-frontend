@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Row, Select, Button, Input, Modal, Spin, Tooltip } from "antd";
 import { DeleteOutlined, FileExcelOutlined, CheckOutlined, ClearOutlined, PlusOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -11,6 +11,7 @@ import Spreadsheet from "react-spreadsheet";
 const { TextArea } = Input;
 
 function JwToJw() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
     jwVendor: "",
@@ -77,7 +78,7 @@ function JwToJw() {
     if (rows.length > 1) {
       setRows((prev) => prev.filter((row) => row.id !== id));
     } else {
-      toast.error("At least one row is required");
+      showToast("At least one row is required", "error");
     }
   };
 
@@ -166,31 +167,31 @@ function JwToJw() {
   const saveJwToJw = async () => {
     // Validations
     if (!allData.jwVendor) {
-      return toast.error("Please select JW Vendor");
+      return showToast("Please select JW Vendor", "error");
     }
 
     if (!allData.jwPo) {
-      return toast.error("Please select JW PO");
+      return showToast("Please select JW PO", "error");
     }
 
     if (!allData.locationFrom) {
-      return toast.error("Please select Pick Location");
+      return showToast("Please select Pick Location", "error");
     }
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const componentValue = row.component?.value || row.component;
       if (!componentValue) {
-        return toast.error(`Row ${i + 1}: Please select Component`);
+        return showToast(`Row ${i + 1}: Please select Component`, "error");
       }
       if (!row.qty1) {
-        return toast.error(`Row ${i + 1}: Please enter Qty`);
+        return showToast(`Row ${i + 1}: Please enter Qty`, "error");
       }
       if (!allData.locationTo) {
-        return toast.error("Please select Drop Location");
+        return showToast("Please select Drop Location", "error");
       }
       if (allData.locationTo == allData.locationFrom) {
-        return toast.error("Both Location Same");
+        return showToast("Both Location Same", "error");
       }
     }
 
@@ -211,7 +212,7 @@ function JwToJw() {
     });
 
     if (response.success) {
-      toast.success(response.message.toString()?.replaceAll("<br/>", ""));
+      showToast(response.message.toString()?.replaceAll("<br/>", ""), "success");
       // Reset form
       setAllData({
         jwVendor: "",
@@ -232,7 +233,7 @@ function JwToJw() {
       ]);
       setLoading(false);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoading(false);
     }
   };
@@ -283,7 +284,7 @@ function JwToJw() {
   // Delete spreadsheet row
   const deleteSpreadsheetRow = (rowIndex) => {
     if (spreadsheetData.length <= 1) {
-      toast.error("At least one row is required");
+      showToast("At least one row is required", "error");
       return;
     }
     setSpreadsheetData((prev) => prev.filter((_, idx) => idx !== rowIndex));
@@ -293,11 +294,11 @@ function JwToJw() {
   const processSpreadsheetData = async () => {
     // Validate JW Vendor and JW PO selection
     if (!allData.jwVendor) {
-      toast.error("Please select JW Vendor first");
+      showToast("Please select JW Vendor first", "error");
       return;
     }
     if (!allData.jwPo) {
-      toast.error("Please select JW PO first");
+      showToast("Please select JW PO first", "error");
       return;
     }
 
@@ -307,7 +308,7 @@ function JwToJw() {
     );
 
     if (validRows.length === 0) {
-      toast.error("No valid data found. Please enter Part Code.");
+      showToast("No valid data found. Please enter Part Code.", "error");
       return;
     }
 
@@ -330,7 +331,7 @@ function JwToJw() {
           : [response.data];
 
         if (stockData.length === 0) {
-          toast.error("No valid components found");
+          showToast("No valid components found", "error");
           setCsvUploading(false);
           return;
         }
@@ -350,13 +351,13 @@ function JwToJw() {
         setRows(newRows);
         setShowCsvModal(false);
         clearSpreadsheetData();
-        toast.success(`Successfully loaded ${newRows.length} rows`);
+        showToast(`Successfully loaded ${newRows.length} rows`, "success");
       } else {
-        toast.error(response?.message || "Failed to process part codes");
+        showToast(response?.message || "Failed to process part codes", "error");
       }
     } catch (err) {
       console.error("Error processing spreadsheet:", err);
-      toast.error("An error occurred while processing data");
+      showToast("An error occurred while processing data", "error");
     }
 
     setCsvUploading(false);

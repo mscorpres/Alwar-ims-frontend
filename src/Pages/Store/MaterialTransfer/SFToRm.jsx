@@ -11,6 +11,7 @@ import useApi from "../../../hooks/useApi.ts";
 const { TextArea } = Input;
 
 function SFToRM() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
     locationFrom: "",
@@ -73,15 +74,15 @@ function SFToRM() {
 
   const saveRmToRm = async () => {
     if (!allData.locationFrom) {
-      toast.error("Please enter location");
+      showToast("Please enter location", "error");
     } else if (!allData.component) {
-      toast.error("Please Enter component");
+      showToast("Please Enter component", "error");
     } else if (!allData.qty1) {
-      toast.error("Please Enter a qty");
+      showToast("Please Enter a qty", "error");
     } else if (!allData.locationTo) {
-      toast.error("Please enter location");
+      showToast("Please enter location", "error");
     } else if (allData.locationFrom == allData.locationTo) {
-      toast.error("Both Location Same....");
+      showToast("Both Location Same....", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/godown/transferRM2RM", {
@@ -93,7 +94,7 @@ function SFToRM() {
         type: "RM2RM",
       });
       if (response.success) {
-        toast.success(response.message.toString()?.replaceAll("<br/>", ""));
+        showToast(response.message.toString()?.replaceAll("<br/>", ""), "success");
         setAllData({
           locationFrom: "",
           companyBranch: "",
@@ -107,7 +108,7 @@ function SFToRM() {
         setQty("");
         setLoading(false);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }

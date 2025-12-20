@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Row, Select, Space } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
@@ -10,6 +10,7 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MyButton from "../../../Components/MyButton";
 
 function JwToJwViewTransaction() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const options = [{ label: "Date Wise", value: "datewise" }];
   const [allData, setAllData] = useState({
@@ -43,9 +44,9 @@ function JwToJwViewTransaction() {
   const dateWise = async (e) => {
     e.preventDefault();
     if (!allData.selectdate) {
-      toast.error("Please Select Mode Then Proceed Next");
+      showToast("Please Select Mode Then Proceed Next", "error");
     } else if (!datee[0]) {
-      toast.error("Please Select Date");
+      showToast("Please Select Date", "error");
     } else {
       setDataComesFromDateWise([]);
       setLoading(true);
@@ -65,7 +66,7 @@ function JwToJwViewTransaction() {
         setDataComesFromDateWise(arr);
         setLoading(false);
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }

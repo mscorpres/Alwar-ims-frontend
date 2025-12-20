@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
@@ -84,6 +84,7 @@ const vendorDetailsOptions = [
 ];
 
 export default function MaterialInWithoutPO() {
+  const { showToast } = useToast();
   const [showCurrency, setShowCurrenncy] = useState(null);
   const [showAddVendorModal, setShowAddVendorModal] = useState(false);
   const [showBranchModal, setShowBranchModal] = useState(null);
@@ -225,7 +226,7 @@ export default function MaterialInWithoutPO() {
         setPreviewRows([]);
         setPreview(false);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -239,9 +240,11 @@ export default function MaterialInWithoutPO() {
     if (response.success) {
       // console.log("Respomse", response);
       if (response.data[0].piaStatus == "Y") {
-        toast.info(
-          `PIA Status is enabled for ${response.data[0].newPart} Part Code.`
+        showToast(
+          `PIA Status is enabled for ${response.data[0].newPart} Part Code.`,
+          "success"
         );
+        
       }
       arr = convertSelectOptions(response.data);
     }
@@ -275,7 +278,7 @@ export default function MaterialInWithoutPO() {
       });
       setLocationOptions(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const getAutoComnsumptionOptions = async () => {
@@ -399,7 +402,7 @@ export default function MaterialInWithoutPO() {
     if (response?.success) {
       form.setFieldValue("projectName", response?.data.description);
     } else {
-      toast.error(response?.message?.msg || response.message);
+      showToast(response?.message?.msg || response.message, "error");
     }
   };
   const vendorResetFunction = () => {
@@ -894,7 +897,7 @@ export default function MaterialInWithoutPO() {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setPreview(false);
     }
   };
@@ -1008,7 +1011,7 @@ export default function MaterialInWithoutPO() {
                                 ? setShowBranchModal({
                                     vendor_code: vendorDetails.vendorName,
                                   })
-                                : toast.error("Please Select a vendor first");
+                                : showToast("Please Select a vendor first", "error");
                             }}
                             style={{
                               color: "#1890FF",

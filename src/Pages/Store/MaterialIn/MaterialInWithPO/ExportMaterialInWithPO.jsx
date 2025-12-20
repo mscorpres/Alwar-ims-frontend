@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter.jsx";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
@@ -44,6 +44,7 @@ import FormTable from "../../../../Components/FormTable.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
 
 export default function ExportMaterialInWithPO({}) {
+  const { showToast } = useToast();
   const [poData, setPoData] = useState({ materials: [] });
   const [resetPoData, setResetPoData] = useState({ materials: [] });
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -131,7 +132,7 @@ export default function ExportMaterialInWithPO({}) {
       // });
       if (a?.length) {
         if (!values2?.components[0]?.file) {
-          toast.info("Please upload Files");
+          showToast("Please upload Files", "error");
         }
         values2.components.map((comp) => {
           formData.append("files", comp.file[0]?.originFileObj);
@@ -170,10 +171,10 @@ export default function ExportMaterialInWithPO({}) {
           },
         });
       } else {
-        toast.error("Please add at least one document");
+        showToast("Please add at least one document", "error");
       }
     } else {
-      toast.error("Please Provide all the values of all the components");
+      showToast("Please Provide all the values of all the components", "error");
     }
   };
 
@@ -401,12 +402,13 @@ export default function ExportMaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       } else {
         setSubmitLoading(false);
-        toast.error(
-          "Some error occured while uploading invoices, Please try again"
+        showToast(
+          "Some error occured while uploading invoices, Please try again",
+          "error"
         );
       }
     }
@@ -564,7 +566,7 @@ export default function ExportMaterialInWithPO({}) {
       setPoData(obj);
       setResetPoData(obj);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setPoData({ materials: [] });
       //   toast.error("Some error Occurred");
     }
@@ -859,7 +861,7 @@ export default function ExportMaterialInWithPO({}) {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setPreview(false);
     }
   };
@@ -1362,7 +1364,7 @@ export default function ExportMaterialInWithPO({}) {
                           if (searchData?.poNumber) {
                             setOpen(true);
                           } else {
-                            toast.error("Please enter PO Number");
+                            showToast("Please enter PO Number", "error");
                           }
                         }}
                       >
