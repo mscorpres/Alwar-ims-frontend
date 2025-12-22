@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Input, Skeleton, Tabs, Typography } from "antd";
 import FormTable from "../../../../Components/FormTable";
 import NavFooter from "../../../../Components/NavFooter";
 import { imsAxios } from "../../../../axiosInterceptor";
 
 const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
+  const { showToast } = useToast();
   console.log(allBom);
   const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState([]);
@@ -69,7 +70,7 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
       setTableData(arr);
     }
     else{
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -254,12 +255,12 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
     );
     setsubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setTab(true);
       reset();
       setLoading(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };

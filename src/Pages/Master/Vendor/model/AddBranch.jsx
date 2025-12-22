@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../Modal/modal.css";
 import { Button, Row, Col, Input, Drawer, Skeleton, Form, Space } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import errorToast from "../../../../Components/errorToast";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -9,6 +9,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 const { TextArea } = Input;
 
 const AddBranch = ({ openBranch, setOpenBranch, getVendorBracnch }) => {
+  const { showToast } = useToast();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);

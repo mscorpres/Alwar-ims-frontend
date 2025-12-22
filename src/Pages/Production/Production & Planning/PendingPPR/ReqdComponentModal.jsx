@@ -16,7 +16,7 @@ import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MySelect from "../../../../Components/MySelect";
 import FormTable from "../../../../Components/FormTable";
 import Loading from "../../../../Components/Loading";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
@@ -33,6 +33,7 @@ export default function ReqdComponentModal({
 
   setRqdSaved,
 }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -88,7 +89,7 @@ export default function ReqdComponentModal({
             rqdQty: value.rqd_qty,
           };
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
           return {
             error: true,
           };
@@ -180,11 +181,11 @@ export default function ReqdComponentModal({
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           // setReqdKeys(false);
           setRqdSaved(true);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
@@ -500,7 +501,7 @@ const NewComponentModal = ({
           resetHandler();
           hide();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

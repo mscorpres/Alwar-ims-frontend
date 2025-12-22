@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Drawer, Form, Input, Row, Typography } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { imsAxios } from "../../../../axiosInterceptor";
 
 export default function ClosePPR({
@@ -9,6 +9,7 @@ export default function ClosePPR({
   getRows,
   //   rows,
 }) {
+  const { showToast } = useToast();
   const [remark, setRemark] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,13 +22,13 @@ export default function ClosePPR({
     });
     setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       getRows();
       setTimeout(() => {
         setsCancelPPR(null);
       }, 3000);
     } else {
-      data.error(data.message.msg);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   useEffect(() => {

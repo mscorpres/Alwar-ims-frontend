@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import CreateSubmitConfirmModal from "./CreateSubmitConfirmModal";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { useEffect } from "react";
 
 export default function EditProjectForm({
@@ -20,6 +20,7 @@ export default function EditProjectForm({
   setEditProject,
   getAllDetailFun,
 }) {
+  const { showToast } = useToast();
   const [submitConfirm, setSubmitConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editProjectForm] = Form.useForm();
@@ -38,7 +39,7 @@ export default function EditProjectForm({
           project_name: data.detail,
         });
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setEditProject(false);
       }
     }
@@ -58,11 +59,11 @@ export default function EditProjectForm({
     const { data } = response;
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setEditProject(false);
         getAllDetailFun();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

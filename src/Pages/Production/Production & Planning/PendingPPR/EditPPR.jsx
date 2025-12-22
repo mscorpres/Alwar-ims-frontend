@@ -13,7 +13,7 @@ import {
   Typography,
 } from "antd";
 import MySelect from "../../../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import InputMask from "react-input-mask";
 import NavFooter from "../../../../Components/NavFooter";
@@ -27,6 +27,7 @@ import {
 } from "../../../../api/general.ts";
 
 const EditPPR = ({ editPPR, setEditPPR }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [reqdKeys, setReqdKeys] = useState(null);
@@ -104,7 +105,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
           pprDetailsForm.setFieldsValue(obj);
         } else {
           setEditPPR(null);
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
@@ -234,11 +235,11 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setShowSubmitConfirmModal(false);
           setEditPPR(false);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
