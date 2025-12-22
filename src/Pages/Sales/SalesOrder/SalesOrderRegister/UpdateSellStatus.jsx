@@ -3,12 +3,12 @@ import { useForm } from "rc-field-form";
 import React, { useState } from "react";
 import MySelect from "../../../../Components/MySelect";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 function UpdateSellStatus({ open, setOpen, setModalVals, modalVals }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
-  console.log("here in modal");
   const statusOptions = [
     { value: "A", text: "Approve" },
     { value: "R", text: "Reject" },
@@ -31,12 +31,12 @@ function UpdateSellStatus({ open, setOpen, setModalVals, modalVals }) {
     console.log("respoomse", response);
     const { data } = response;
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
 
       setLoading(false);
       setOpen(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
 
       setLoading(false);
     }

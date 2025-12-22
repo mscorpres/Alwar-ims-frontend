@@ -11,8 +11,10 @@ import EditModal from "./Edit";
 import { downloadCSVnested2 } from "../../../../Components/exportToCSV";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { Row } from "antd";
+import { useToast } from "../../../../hooks/useToast.js";
 
 const ManageBOM = () => {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [viewBom, setViewBom] = useState(false);
@@ -81,7 +83,7 @@ const ManageBOM = () => {
     if (response.success) {
       downloadExcel(response.data.buffer.data, `BOM ${name}`);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const actionColumns = [

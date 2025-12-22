@@ -30,17 +30,17 @@ export default function CreateCostModal({
       });
       setSubmitLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setShowAddCostModal(false);
         setNewCostCenter({
           cost_center_name: "",
           cost_center_id: "",
         });
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } else {
-      toast.error("Cost Center should have a Name and ID");
+      showToast("Cost Center should have a Name and ID", "error");
     }
   };
   // log

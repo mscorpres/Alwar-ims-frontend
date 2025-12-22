@@ -78,7 +78,7 @@ const PendingPPR = () => {
         });
         setRows(arr);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setRows([]);
       }
     }
