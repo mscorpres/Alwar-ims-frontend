@@ -12,7 +12,7 @@ import {
 import { imsAxios } from "../../../axiosInterceptor";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading";
 import NavFooter from "../../../Components/NavFooter";
 import SubmitConfirmModal from "./SubmitConfirmModal";
@@ -23,6 +23,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 
 function PaytmRefurbishmentMIN() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [vendorBranchOptions, setVendorBranchOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -58,7 +59,7 @@ function PaytmRefurbishmentMIN() {
         setVendorBranchOptions(arr);
       } else {
         setVendorBranchOptions([]);
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
  
   };
@@ -78,7 +79,7 @@ function PaytmRefurbishmentMIN() {
           address.replaceAll("<br>", "\n")
         );
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -116,11 +117,11 @@ function PaytmRefurbishmentMIN() {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setSubmitConfirmModal(false);
           resetHandler();
         } else {
-          toast.error(errorToast(data.message));
+          showToast(errorToast(data.message), "error");
         }
       }
     }

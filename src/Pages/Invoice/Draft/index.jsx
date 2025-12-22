@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyDataTable from "../../../Components/MyDataTable";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import TableActions from "../../../Components/TableActions.jsx/TableActions";
 import printFunction, {
@@ -11,6 +11,7 @@ import { Modal } from "antd";
 import { useNavigate } from "react-router-dom";
 
 const DraftInvoice = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
 
@@ -77,9 +78,9 @@ const DraftInvoice = () => {
       const response = await imsAxios.delete(
         `/invoice/deleteInvoice?invoiceID=${invoiceId}`
       );
-      const { data } = response;
-      if (data) {
-        toast.success(data);
+      
+      if (response.success) {
+        showToast(response.message, "success");
         getRows();
       }
     } catch (error) {
@@ -106,7 +107,7 @@ const DraftInvoice = () => {
       const response = await imsAxios.put("/invoice/updateInvoice", {
         invoiceID: invoiceId,
       });
-      toast.success(data);
+      showToast(response.message, "success");
       getRows();
     } catch (error) {
       console.log("Some error occcured while activating this invoicce", error);

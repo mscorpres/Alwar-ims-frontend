@@ -9,10 +9,11 @@ import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyButton from "../../../Components/MyButton";
 
 function R18() {
+  const { showToast } = useToast();
   const [location, setLocation] = useState("RM");
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);

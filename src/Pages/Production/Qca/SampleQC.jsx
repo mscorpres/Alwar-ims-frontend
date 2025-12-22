@@ -4,7 +4,7 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import { DownloadOutlined } from "@ant-design/icons";
 import { downloadCSV } from "../../../Components/exportToCSV";
@@ -16,6 +16,7 @@ import { getComponentOptions, getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 function SampleQC() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -79,7 +80,7 @@ function SampleQC() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };
@@ -207,7 +208,7 @@ function SampleQC() {
     let arr = rows.filter((row) => row.sampleQty != "" && row.sampleQty != 0);
     console.log(arr.sampleQty);
     if (arr.length == 0) {
-      return toast.error("No Samples to preview");
+      return showToast("No Samples to preview", "error");
     }
     setsSamples(arr);
     // console.log(arr);
@@ -227,12 +228,12 @@ function SampleQC() {
     const response = await imsAxios.post("/qc/addSampling_stage1", finalObj);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       getRows();
       setShowConfirmModal(false);
       // setsSamples([]);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const resetFun = () => {

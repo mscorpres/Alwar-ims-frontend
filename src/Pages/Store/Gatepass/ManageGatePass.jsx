@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MySelect from "../../../Components/MySelect";
@@ -16,6 +16,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 export default function ManageGatePass() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [searchDateRange, setSearchDateRange] = useState();

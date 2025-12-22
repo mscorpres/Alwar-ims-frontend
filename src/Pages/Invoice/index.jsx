@@ -3,7 +3,7 @@ import { Button, Form, Tabs } from "antd";
 import HeaderDetails from "./HeaderDetails";
 import Products from "./Products";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import NavFooter from "../../Components/NavFooter";
 import MapModal from "./MapModal";
 import Loading from "../../Components/Loading";
@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 const currentStateCode = "9";
 
 const CreateInvoice = () => {
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState("1");
   const [showMapInvoice, setShowMapInvoice] = useState(false);
   const [tcsOptions, setTcsOptions] = useState([]);
@@ -38,8 +39,8 @@ const CreateInvoice = () => {
   };
   const submitHandler = async (obj) => {
     const response = await imsAxios.post("/invoice/create", obj);
-    if (data) {
-      toast.success(data);
+    if (response.success) {
+      showToast(response.message, "success");
       // reset();
       resetForm();
       setActiveTab("1");

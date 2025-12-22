@@ -16,7 +16,6 @@ import MyDataTable from "../../../Components/MyDataTable";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import { toast } from "react-toastify";
 import { v4 } from "uuid";
 import Loading from "../../../Components/Loading";
 import { set } from "lodash";

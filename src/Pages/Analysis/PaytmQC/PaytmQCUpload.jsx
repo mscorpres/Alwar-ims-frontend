@@ -4,9 +4,10 @@ import Dragger from "antd/lib/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../../axiosInterceptor";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 export default function PaytmQCUpload({ showUploadDoc, setShowUploadDoc }) {
+  const { showToast } = useToast();
   const [QCUploadFile, setQCUploadFile] = useState([]);
   const [uploadDate, setUploadDate] = useState("");
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
@@ -35,11 +36,11 @@ export default function PaytmQCUpload({ showUploadDoc, setShowUploadDoc }) {
     const response = await imsAxios.post("/paytmQc/uploadFile", formData);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setShowSubmitConfirm(false);
       setShowUploadDoc(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   useEffect(() => {

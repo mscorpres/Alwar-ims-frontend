@@ -56,7 +56,7 @@ function SFGMIN() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
     setFetchLoading(false);
   };

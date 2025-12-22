@@ -71,7 +71,7 @@ function JwPendingRequest() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const handlePrint = async (challan_id, refId, btn_status, invoice_id) => {
@@ -90,7 +90,7 @@ function JwPendingRequest() {
     if (response.success) {
       printFunction(data.data.buffer.data);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const handleDownload = async (challan_id, refId, btn_status, invoice_id) => {
@@ -109,7 +109,7 @@ function JwPendingRequest() {
     if (response.success) {
       downloadFunction(data.data.buffer.data, data.data.filename);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const columns = [

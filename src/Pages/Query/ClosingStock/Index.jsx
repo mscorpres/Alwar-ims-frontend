@@ -41,9 +41,7 @@ function Index() {
       setRows(arr);
     }
   };
-  useEffect(() => {
-    toast.info("Under development");
-  }, []);
+
 
   return (
     <div style={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>

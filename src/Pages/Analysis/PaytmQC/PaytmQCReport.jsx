@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Col, Row, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import TableActions, {
@@ -18,6 +18,7 @@ import { BarChartOutlined } from "@ant-design/icons";
 import MyButton from "../../../Components/MyButton";
 
 export default function PaytmQCReport() {
+  const { showToast } = useToast();
   const [searchDate, setSearchData] = useState("");
   const [rows, setRows] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -82,7 +83,7 @@ export default function PaytmQCReport() {
       console.log(chartArr);
       setChartData(chartArr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

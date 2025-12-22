@@ -1,7 +1,7 @@
 import { Card, Col, Drawer, Row, Skeleton, Typography } from "antd";
 import { useEffect } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { useState } from "react";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -9,6 +9,7 @@ import Loading from "../../../../Components/Loading";
 import SummaryCard from "../../../../Components/SummaryCard";
 
 export default function ViewComponents({ viewComponents, setViewComponents }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [summaryDetails, setSummaryDetails] = useState([]);
   const [rows, setRows] = useState([]);
@@ -29,7 +30,7 @@ export default function ViewComponents({ viewComponents, setViewComponents }) {
         }));
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

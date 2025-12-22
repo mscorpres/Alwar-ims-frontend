@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Drawer, Form, Input, Row } from "antd";
 import { imsAxios } from "../../../../axiosInterceptor";
 
@@ -7,6 +7,7 @@ export default function CreateCostModal({
   setShowAddCostModal,
   showAddCostModal,
 }) {
+  const { showToast } = useToast();
   const [newCostCenter, setNewCostCenter] = useState({
     cost_center_name: "",
     cost_center_id: "",

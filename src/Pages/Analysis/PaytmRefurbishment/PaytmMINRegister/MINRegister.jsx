@@ -15,7 +15,7 @@ import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 import MySelect from "../../../../Components/MySelect";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MyDataTable from "../../../../Components/MyDataTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import TableActions from "../../../../Components/TableActions.jsx/TableActions";
@@ -25,6 +25,7 @@ import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
 
 function MINRegister() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -64,7 +65,7 @@ function MINRegister() {
       };
       setPreviousCount(obj);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setScanningMIN(row.txn);
   };
@@ -98,7 +99,7 @@ function MINRegister() {
         setScanningMIN(false);
       } else {
         setRows([]);
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -120,13 +121,13 @@ function MINRegister() {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setSubmitConfirm(false);
           setImeiArr([]);
           setImeiInput("");
           setScanningMIN(false);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     }

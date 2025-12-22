@@ -24,6 +24,7 @@ import CancelEwayBillModal from "./CancelEwayBillModal";
 import MyButton from "../../../Components/MyButton";
 
 function JwRwChallan() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -79,7 +80,7 @@ function JwRwChallan() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const handlePrint = async (challan_id, refId, btn_status, invoice_id) => {
@@ -97,7 +98,7 @@ function JwRwChallan() {
     if (response.success) {
       printFunction(data.data.buffer.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const handleDownload = async (challan_id, refId, btn_status, invoice_id) => {
@@ -115,7 +116,7 @@ function JwRwChallan() {
     if (response.success) {
       downloadFunction(data.data.buffer.data, data.data.filename);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

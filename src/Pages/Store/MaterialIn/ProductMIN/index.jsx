@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
@@ -177,7 +177,7 @@ export default function ProductMIN() {
         !invoices.length &&
         form.getFieldValue("vendorType") == "v01"
       ) {
-        return toast.error("Please add at least one file");
+        return showToast("Please add at least one file", "error");
       }
       materialInward.map((row) => {
         componentData = {
@@ -202,14 +202,14 @@ export default function ProductMIN() {
         true
       ) {
         validation = false;
-        return toast.error("Currency of all components should be the same");
+        return showToast("Currency of all components should be the same", "error");
       } else if (
         (componentData.gst_type.filter((v, i, a) => v === a[0]).length ===
           componentData.gst_type.length) !=
         true
       ) {
         validation = false;
-        return toast.error("gst type of all components should be the same");
+        return showToast("gst type of all components should be the same", "error");
       }
       // here submit
       const vendorValues = await form.validateFields();
@@ -227,7 +227,7 @@ export default function ProductMIN() {
         },
       });
     } else {
-      toast.error("Please Provide all the values");
+      showToast("Please Provide all the values", "error");
     }
   };
   const submitMIN = async (values) => {
@@ -245,8 +245,9 @@ export default function ProductMIN() {
         fileData = response?.data;
         // form.getFieldValue("vendorType")
         if (response?.success) {
-          return toast.error(
-            "Some error occured while uploading invoices, Please try again"
+          return showToast(
+            "Some error occured while uploading invoices, Please try again",
+            "error"
           );
         } else {
           let final = {
@@ -287,11 +288,11 @@ export default function ProductMIN() {
             vendorResetFunction();
             materialResetFunction();
           } else {
-            toast.error(response.message?.msg || response.message);
+            showToast(response.message?.msg || response.message, "error");
           }
         }
       } else {
-        return toast.error("Please add at least one file!!");
+        return showToast("Please add at least one file!!", "error");
       }
     });
   };
@@ -336,7 +337,7 @@ export default function ProductMIN() {
       });
       setLocationOptions(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const getAutoComnsumptionOptions = async () => {
@@ -386,7 +387,7 @@ export default function ProductMIN() {
             }
           });
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       } else {
         arr = arr.map((row) => ({
@@ -552,7 +553,7 @@ export default function ProductMIN() {
             vendor: value.label,
           };
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       } else if (name == "vendorBranch") {
         setVendorSectionLoading(true);
@@ -569,7 +570,7 @@ export default function ProductMIN() {
             vendorAddress: data.data.address.replaceAll("<br>", "\n"),
           };
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       } else {
         obj = { ...obj, [name]: value };

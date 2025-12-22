@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "./r.css";
 import { DownloadOutlined } from "@ant-design/icons";
 import { Button, Col, Row, Spin } from "antd";
-import { toast } from "react-toastify";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";

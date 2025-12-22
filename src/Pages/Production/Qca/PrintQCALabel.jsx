@@ -3,8 +3,10 @@ import { Button, Card, Col, Form, Input, Row } from "antd";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import printFunction from "../../../Components/printFunction";
+import { useToast } from "../../../hooks/useToast.js";
 
 const PrintQCALabel = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [printLabelForm] = Form.useForm();
 
@@ -17,14 +19,14 @@ const PrintQCALabel = () => {
         totalQr: values.quantity,
       });
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         printFunction(response.data.buffer.data);
       }
       else{
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error(error.message);
+      showToast(error.message, "error");
     } finally {
       setLoading(false);
     }

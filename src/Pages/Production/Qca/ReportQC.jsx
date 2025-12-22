@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import {
   Button,
   Row,
@@ -21,6 +21,7 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import MyButton from "../../../Components/MyButton";
 
 function ReportQC() {
+  const { showToast } = useToast();
   document.title = "QC Report";
   const [searchStatus, setSearchStatus] = useState("A");
   const [searchInput, setSearchInput] = useState("");
@@ -51,7 +52,7 @@ function ReportQC() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };

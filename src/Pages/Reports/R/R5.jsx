@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import "./r.css";
-import { toast } from "react-toastify";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import { Button, Col, Row } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
@@ -55,7 +54,7 @@ const R5 = () => {
 
   const fetch = async () => {
     if (!selectDate) {
-      toast.error("Please Select Date First Then Proceed Next Step");
+      showToast("Please Select Date First Then Proceed Next Step", "error");
     } else {
       setResponseData([]);
       setLoading(true);

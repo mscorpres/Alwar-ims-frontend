@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form, Modal, Row, Typography, Col, Button, Input } from "antd";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 export default function PoRejectModa({ open, close, getRows }) {
   const { showToast } = useToast();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Row,
@@ -17,6 +17,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import UploadDocs from "../../../Store/MaterialIn/MaterialInWithPO/UploadDocs";
 
 const AddCleintSideBar = ({ setOpen, open }) => {
+  const { showToast } = useToast();
   const [addVendor, setAddVendor] = useState({
     vendor: {
       vname: "",
@@ -102,10 +103,10 @@ const AddCleintSideBar = ({ setOpen, open }) => {
     if (response.success) {
       // fetchVendor();
       reset();
-      toast.success(data.message.toString().replaceAll("<br/>", " "));
+      showToast(response.data.message.toString().replaceAll("<br/>", " "), "success");
       setOpen(null);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

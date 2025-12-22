@@ -16,7 +16,7 @@ import MyDataTable from "../../../../Components/MyDataTable";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MyButton from "../../../../Components/MyButton";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 const JWUpdateRate = () => {
   const { showToast } = useToast();

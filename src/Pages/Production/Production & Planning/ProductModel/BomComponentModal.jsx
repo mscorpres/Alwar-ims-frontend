@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Drawer, Input, Row, Space } from "antd";
 import { CloseCircleFilled } from "@ant-design/icons";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
 import MyDataTable from "../../../../Components/MyDataTable";
 import Loading from "../../../../Components/Loading";
 import { CloseCircleTwoTone } from "@ant-design/icons";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MySelect from "../../../../Components/MySelect";
+import useToast from "../../../../hooks/useToast";
 
 function BomComponentModal({
   dataModal,
@@ -15,6 +15,7 @@ function BomComponentModal({
   addRowData,
   setAddRowData,
 }) {
+  const { showToast } = useToast();
   const [allData, setAllData] = useState([]);
   const [loading, setLoading] = useState("false");
   const categoryOptions = [
@@ -47,7 +48,7 @@ function BomComponentModal({
         });
         setAllData(arr);
       } else if (!response.success) {
-        toast.error(data.message.sku);
+        showToast(data.message.sku, "error");
       }
     }
   };
@@ -234,7 +235,7 @@ function BomComponentModal({
 
         setDataModal((dm) => ({ ...dm, showModal: false }));
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

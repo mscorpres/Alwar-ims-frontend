@@ -12,7 +12,7 @@ import {
   Typography,
   Upload,
 } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/useToast.js";
 import MyButton from "@/Components/MyButton";
 import MyAsyncSelect from "@/Components/MyAsyncSelect.jsx";
 import TableActions from "@/Components/TableActions.jsx/TableActions";
@@ -185,8 +185,9 @@ const BOMCreate = () => {
     let verifyArr = [...mainComponents, ...subComponents];
     const found = verifyArr.find((row) => row.value === values.component.value);
     if (verifyArr.find((row) => row.value === values.component.value)) {
-      return toast.error(
-        `Component already added in ${found?.type} components with Qty: ${found?.qty}`
+      return showToast(
+        `Component already added in ${found?.type} components with Qty: ${found?.qty}`,
+        "error"
       );
     }
 
@@ -451,8 +452,9 @@ const BOMCreate = () => {
         form.setFieldValue("version", "1.0");
         return;
       } else if (response.data.id && !queryParams.get("sku")) {
-        toast.error(
-          "This BOM is already created! You can view it in the BOM List. and Update it."
+        showToast(
+          "This BOM is already created! You can view it in the BOM List. and Update it.",
+          "error"
         );
       } else {
         form.setFieldValue("version", response.data.version);
@@ -507,7 +509,7 @@ const BOMCreate = () => {
       const result = await uploadDocs(formData);
       form.setFieldValue("documents", result);
       // Show success toast
-      toast.success("Upload successful");
+      showToast("Upload successful", "success");
       setVisible(false); // Close the modal
       setUploadLoading(false);
     } catch (error) {

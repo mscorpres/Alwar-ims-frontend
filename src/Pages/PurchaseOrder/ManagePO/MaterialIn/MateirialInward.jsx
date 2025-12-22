@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import NavFooter from "../..//../../Components/NavFooter";
-import { toast } from "react-toastify";
 import {
   Button,
   Card,

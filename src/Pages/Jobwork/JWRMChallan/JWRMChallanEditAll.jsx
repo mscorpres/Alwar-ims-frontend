@@ -17,7 +17,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
 import FormTableDataGrid from "../../../Components/FormTableDataGrid";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import Loading from "../../../Components/Loading";
 import NavFooter from "../../../Components/NavFooter";
@@ -32,6 +32,7 @@ import { saveCreateChallan } from "../../../api/general";
 import useApi from "../../../hooks/useApi";
 
 function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useLoading();
   const [loadChallan, setLoadChallan] = useState(false);
@@ -105,7 +106,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
             }
           });
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } else {
@@ -188,14 +189,14 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
 
     setLoading("submit", false);
     if (response.success) {
-      toast.success(response.data.message);
+      showToast(response.data.message, "success");
       setEditJWAll(false);
       getRows();
     } else {
       if (response.data.message.msg) {
-        toast.error(response.data.message.msg);
+        showToast(response.data.message.msg, "error");
       } else {
-        toast.error(errorToast(response.data.message));
+        showToast(errorToast(response.data.message), "error");
       }
     }
   };
@@ -209,7 +210,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       setLocationOptions(arr);
     } else {
       setLocationOptions([]);
-      toast.error(response.data.message.msg);
+      showToast(response.data.message.msg, "error");
     }
   };
   const getBillingBranchOptions = async () => {
@@ -283,7 +284,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       };
       createJobWorkChallanForm.setFieldsValue(obj);
     } else {
-      toast.error(response.data.message.msg);
+      showToast(response.data.message.msg, "error");
     }
   };
   const getBillingAddress = async (value) => {
@@ -304,7 +305,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       };
       createJobWorkChallanForm.setFieldsValue(obj);
     } else {
-      toast.error(response.data.message.msg);
+      showToast(response.data.message.msg, "error");
     }
   };
   const columns = [
@@ -488,7 +489,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       setRows(arr);
       // getDetails();
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoadChallan(false);
     }
     // console.log(data);

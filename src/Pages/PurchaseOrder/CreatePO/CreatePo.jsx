@@ -342,21 +342,21 @@ const [pendingPOData, setPendingPOData] = useState(null);
       !currentPurchaseOrder.billaddressid ||
       !currentPurchaseOrder.billaddress
     ) {
-      toast.error("Please fill all required vendor and billing details");
+      showToast("Please fill all required vendor and billing details", "error");
       return;
     }
 
     if (currentPurchaseOrder.pocreatetype == "S" && !currentPurchaseOrder.original_po) {
-      return toast.error("Please select a PR ID in case of supplementary PR");
+      return showToast("Please select a PR ID in case of supplementary PR", "error");
     }
 
     if (currentPurchaseOrder.termscondition === "Other" && !currentPurchaseOrder.customDeliveryTerm?.trim()) {
-      toast.error("Please enter custom delivery term when 'Other' is selected");
+      showToast("Please enter custom delivery term when 'Other' is selected", "error");
       return;
     }
 
     if (currentPurchaseOrder.paymentterms === "Advance Payment" && !currentPurchaseOrder.advancePercentage) {
-      toast.error("Please enter advance payment percentage");
+      showToast("Please enter advance payment percentage", "error");
       return;
     }
 
@@ -368,7 +368,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
     });
 
     if (error) {
-      toast.error("Please enter all the values for all components");
+      showToast("Please enter all the values for all components", "error");
       return;
     }
 
@@ -446,7 +446,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
     };
     const storedPOData = pendingPOData || showSubmitConfirm;
     if (!storedPOData) {
-      toast.error("PR data missing. Please try again.");
+      showToast("PR data missing. Please try again.", "error");
       setSubmitLoading(false);
       return;
     }
@@ -578,7 +578,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
       if (response.success) {
         return data;
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
  
   };
@@ -989,7 +989,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
 
         await handleProjectCostCenter(typeof value === "object" ? value.value : value);
       } else {
-        toast.error(data.message);
+        showToast(data.message, "error");
       }
     }
   };
@@ -1014,11 +1014,11 @@ const [pendingPOData, setPendingPOData] = useState(null);
         const updatedPO = { ...newPurchaseOrder, pocostcenter: costCenterOption };
         setnewPurchaseOrder(updatedPO);
       } else {
-        toast.error(data?.message || "Failed to fetch cost center");
+        showToast(data?.message || "Failed to fetch cost center", "error");
       }
     } catch (error) {
       setPageLoading(false);
-      toast.error("Error fetching project cost center");
+      showToast("Error fetching project cost center", "error");
     }
   };
 
@@ -1372,7 +1372,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
                                       ? setShowBranchModal({
                                         vendor_code: newPurchaseOrder.vendorname.value,
                                       })
-                                      : toast.error("Please Select a vendor first");
+                                      : showToast("Please Select a vendor first", "error");
                                   }}
                                   style={{ color: "#1890FF" }}
                                 >

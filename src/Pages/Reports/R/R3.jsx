@@ -56,7 +56,7 @@ const R3 = () => {
         setResponseData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }
