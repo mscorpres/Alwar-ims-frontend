@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Button, Col, message, Divider, Popconfirm, Row, Space } from "antd";
+import React, { useState } from "react";
+import { Button, Col, Row, Space } from "antd";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import { v4 } from "uuid";
@@ -14,6 +14,7 @@ import { downloadCSV } from "../../../../Components/exportToCSV";
 import MySelect from "../../../../Components/MySelect";
 
 function AppVendorReport() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -47,8 +48,7 @@ function AppVendorReport() {
     }
     if (response.status == 200) {
       const { data } = response;
-      console.log("data ======", data);
-
+      
       const arr = data?.map((row, index) => {
         return {
           ...row,
@@ -59,7 +59,7 @@ function AppVendorReport() {
       setLoading(false);
       setRows(arr);
     } else if (response.status == 500) {
-      toast.error(response.message.msg);
+      showToast(response.message.msg, "error");
       setLoading(false);
     }
 

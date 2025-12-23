@@ -1,16 +1,16 @@
-import { Button, Col, Row, Space } from "antd";
-import React, { useState } from "react";
-import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
-import MyDataTable from "../../Components/MyDataTable";
+import { Button, Col, Row } from "antd";
+import { useState } from "react";
+
 import MyDatePicker from "../../Components/MyDatePicker";
 import socket from "../../Components/socket";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { CodeSandboxCircleFilled, DownloadOutlined } from "@ant-design/icons";
+import { useToast } from "../../hooks/useToast.js";
+
 // import MoneyRain from "../../MoneyRain/MoneyRain";
 import { v4 } from "uuid";
 
 const TdsReport = () => {
+  const { showToast } = useToast();
   const [dateRange, setDateRange] = useState("");
   const { user, notifications } = useSelector((state) => state.login);
   const emitDownloadEvent = () => {
@@ -18,7 +18,7 @@ const TdsReport = () => {
     let arr = notifications;
 
     if (!user.company_branch) {
-      toast.error("Please select a branch to download report");
+      showToast("Please select a branch to download report", "error");
       return;
     }
     const payload = {

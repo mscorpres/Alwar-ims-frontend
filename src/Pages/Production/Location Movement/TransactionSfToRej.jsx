@@ -2,7 +2,6 @@
 // import SfRejHeader from "./header/SfRejHeader";
 // import Select from "react-select";
 // import axios from "axios";
-// import { toast } from "react-toastify";
 // import DataTable from "react-data-table-component";
 //
 // import moment from "moment";

@@ -17,6 +17,7 @@ import CashReceiptModal from "./model/CashReceiptModal";
 import CashReceiptEdit from "./model/CashReceiptEdit";
 
 function CashReceiptReport() {
+  const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -86,7 +87,7 @@ function CashReceiptReport() {
         setSelectValueWhenFetch("date_wise");
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "eff_wise") {
@@ -112,7 +113,7 @@ function CashReceiptReport() {
         setEffective(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "key_wise") {
@@ -137,7 +138,7 @@ function CashReceiptReport() {
         setSelectValueWhenFetch("key_wise");
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "ledger_wise") {
@@ -162,7 +163,7 @@ function CashReceiptReport() {
         setSelectValueWhenFetch("ledger_wise");
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }

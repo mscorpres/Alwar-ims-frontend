@@ -3,7 +3,6 @@ import "../../Modal/modal.css";
 import { Button, Row, Col, Input, Drawer, Skeleton, Form, Space } from "antd";
 import { useToast } from "../../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import errorToast from "../../../../Components/errorToast";
 import { imsAxios } from "../../../../axiosInterceptor";
 
 const { TextArea } = Input;
@@ -65,19 +64,19 @@ const AddBranch = ({ openBranch, setOpenBranch, getVendorBracnch }) => {
 
   const addBranch = async () => {
     if (!addBilling.branch.branchname) {
-      toast.error("Please add Branch name");
+      showToast("Please add Branch name", "error");
     } else if (!addBilling.branch.state) {
-      toast.error("Please select state");
+      showToast("Please select state", "error");
     } else if (!addBilling.branch.city) {
-      toast.error("Please enter City");
+      showToast("Please enter City", "error");
     } else if (!addBilling.branch.gst) {
-      toast.error("Please enter GST no");
+      showToast("Please enter GST no", "error");
     } else if (!addBilling.branch.pin) {
-      toast.error("Please enter pin no..");
+      showToast("Please enter pin no..", "error");
     } else if (!addBilling.branch.mobile) {
-      toast.error("Please enter Mobile no");
+      showToast("Please enter Mobile no", "error");
     } else if (!addBilling.branch.address) {
-      toast.error("Please enter Address");
+      showToast("Please enter Address", "error");
     } else {
       setSubmitLoading(true);
       const response = await imsAxios.post("/vendor/addVendorBranch", {
@@ -98,14 +97,14 @@ const AddBranch = ({ openBranch, setOpenBranch, getVendorBracnch }) => {
       });
       setSubmitLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         if (getVendorBracnch) {
           getVendorBracnch(openBranch.vendor_code);
         }
         setOpenBranch(false);
         reset();
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };

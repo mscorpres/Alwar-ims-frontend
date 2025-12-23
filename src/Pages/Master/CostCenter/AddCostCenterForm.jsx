@@ -1,11 +1,12 @@
 import { Button, Card, Form, Input, Modal, Row, Space } from "antd";
 import { useForm } from "antd/es/form/Form";
-import React from "react";
+
 import { imsAxios } from "../../../axiosInterceptor";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 const AddCostCenterForm = ({ getRows }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [addCostCenterForm] = useForm();
 
@@ -18,11 +19,11 @@ const AddCostCenterForm = ({ getRows }) => {
       });
 
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         resetHandler();
         getRows();
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
       console.log("there is some error");

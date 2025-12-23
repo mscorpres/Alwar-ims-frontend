@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import ViewVBTReport from "./ViewVBTReport";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -18,8 +18,6 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useNavigate, Link } from "react-router-dom";
-// import EditVBTReport from "./EditVbtRecord/EditVBTReport";
-import { CheckOutlined } from "@ant-design/icons";
 import DeleteVbt from "./DeleteVbt";
 import CreateDebitNote from "../DebitNote/Create";
 import VBT01Report from "./FormVBT/VBT01/VBT01Report";
@@ -30,6 +28,7 @@ import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 export default function VBTReport() {
+  const { showToast } = useToast();
   const [searchInput, setSearchInput] = useState("MIN/25-26/");
 
   const [wise, setWise] = useState("minwise");
@@ -108,7 +107,7 @@ export default function VBTReport() {
       vbt_code: deleteConfirm,
     });
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       getSearchResults();
     }
   };
@@ -122,7 +121,7 @@ export default function VBTReport() {
     if (response.success) {
       setEditingVBT(data.message);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const setDebitNoteVbtCodesHandler = async (singleRowArr) => {
@@ -924,20 +923,20 @@ export default function VBTReport() {
         setRows(arr);
       } else {
         if (data.message.msg) {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         } else if (data.message) {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         } else {
-          toast.error("Something wrong happened");
+          showToast("Something wrong happened", "error");
         }
       }
     } else {
       if (wise == "datewise" && searchDateRange == null) {
-        toast.error("Please select start and end dates for the results");
+        showToast("Please select start and end dates for the results", "error");
       } else if (wise == "powise") {
-        toast.error("Please enter a PO id");
+        showToast("Please enter a PO id", "error");
       } else if (wise == "vendorwise") {
-        toast.error("Please select a vendor");
+        showToast("Please select a vendor", "error");
       }
     }
   };
@@ -959,11 +958,11 @@ export default function VBTReport() {
       setViewReportData(arr);
     } else {
       if (data.message.msg) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       } else if (data.message) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       } else {
-        toast.error("Something wrong happened");
+        showToast("Something wrong happened", "error");
       }
     }
   };

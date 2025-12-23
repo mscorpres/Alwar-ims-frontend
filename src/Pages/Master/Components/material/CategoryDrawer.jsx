@@ -3,7 +3,7 @@ import { Col, Divider, Drawer, Flex, Form, Input, Row, Typography } from "antd";
 import MyButton from "../../../../Components/MyButton";
 import { useParams } from "react-router";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MySelect from "../../../../Components/MySelect";
 
 export default function CategoryDrawer({
@@ -12,6 +12,7 @@ export default function CategoryDrawer({
   getDetails,
   setUniqueIdData,
 }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [fields, setFields] = useState([]);
   const [uniqueId, setUniqueId] = useState("");
@@ -45,7 +46,7 @@ export default function CategoryDrawer({
         }));
         setFields(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {}
   };
@@ -98,7 +99,7 @@ export default function CategoryDrawer({
 
           form.setFieldsValue(finalObj);
         } else {
-          toast.error(data.message);
+          showToast(data.message, "error");
         }
     
     } catch (error) {}
@@ -162,7 +163,7 @@ export default function CategoryDrawer({
         if (response?.success) {
           setCategoryOptions(data);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
    
     } catch (error) {

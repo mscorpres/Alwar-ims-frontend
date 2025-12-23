@@ -44,7 +44,7 @@ export default function ReqdComponentModal({
     { text: "PCB", value: "PCB" },
   ];
   const getDetails = async (forcefully) => {
-    console.log("reqdKeys ppr", reqdKeys);
+   
     if (sqdComponents.length === 0 || forcefully) {
       setLoading("fetch");
       const response = await imsAxios.post("/ppr/fetchRQDBom", reqdKeys);
@@ -231,9 +231,9 @@ export default function ReqdComponentModal({
       const { data } = response;
       if (response.success) {
         getDetails(true);
-        toast.success(response.message);
+        showToast(response.message, "success");
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -275,7 +275,7 @@ export default function ReqdComponentModal({
       if (response.success) {
         inputHandler("saved", true, row.id);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
       console.log("error while saving new component", error);

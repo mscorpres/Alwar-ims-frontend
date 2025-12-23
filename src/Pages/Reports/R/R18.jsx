@@ -86,11 +86,11 @@ function R18() {
         setColumns(headers);
         setRows(arr);
       } else {
-        toast.error(response.message ?? "Failed to fetch report data");
+        showToast(response.message ?? "Failed to fetch report data", "error");
       }
     } catch (error) {
       setFetchLoading(false);
-      toast.error("Error fetching report data");
+      showToast("Error fetching report data", "error");
     }
   };
 
@@ -109,9 +109,9 @@ function R18() {
 
       setReportStarted(true);
       socket.emit("generate_r18", payload); 
-      toast.success("Report generation started. You'll receive an email when complete.");
+      showToast("Report generation started. You'll receive an email when complete.", "success");
     } catch (error) {
-      toast.error("Error initiating report generation");
+      showToast("Error initiating report generation", "error");
       setButtonEnabled(true);
       setReportStarted(false);
     }
@@ -119,7 +119,7 @@ function R18() {
 
   const handleDownloadCSV = () => {
     if (rows.length === 0) {
-      toast.warning("No data to download");
+      showToast("No data to download", "warning");
       return;
     }
     downloadCSVCustomColumns(rows, "R18");

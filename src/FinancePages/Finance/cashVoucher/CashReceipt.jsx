@@ -11,10 +11,11 @@ import {
   AiOutlineMinusSquare,
   AiOutlinePlusSquare,
 } from "react-icons/ai";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 
 function CashReceipt() {
+  const { showToast } = useToast();
   const [headerCash, setHeaderCash] = useState("");
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -215,9 +216,9 @@ function CashReceipt() {
     let cash = [];
     let comment = [];
     if (headerCash == "") {
-      return toast.error("A account is required");
+      return showToast("A account is required", "error");
     } else if (effectiveDate == "") {
-      return toast.error("Effective date is required");
+      return showToast("Effective date is required", "error");
     }
     cashPaymentRows.map((row) => {
       if (row.gls == "") {
@@ -239,7 +240,7 @@ function CashReceipt() {
       }
     });
     if (validating.status == false) {
-      toast.error(validating.message);
+      showToast(validating.message, "error");
     } else if (validating.status == true) {
       setLoading(true);
       const response = await imsAxios.post(
@@ -255,7 +256,7 @@ function CashReceipt() {
       setLoading(false);
       if (response.success) {
         resetFunction();
-        toast.success(response.message);
+        showToast(response.message, "success");
       }
     }
   };

@@ -535,7 +535,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
               }),
             });
           } else {
-            toast.error(response.message);
+            showToast(response.message, "error");
           }
         }
       } catch (error) {
@@ -546,7 +546,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
             ? error.response.data.message
             : error.response.data.message?.msg || "An error occurred"
           : error?.message || "Failed to create PR";
-        toast.error(errorMessage);
+        showToast(errorMessage, "error");
       }
   };
   const getPOs = async (searchInput) => {

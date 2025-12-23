@@ -11,7 +11,7 @@ import {
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import printFunction, {
   downloadFunction,
@@ -38,6 +38,7 @@ import CreditEdit from "./CreditEdit";
 // import DebitEdit from "./DebitEdit";
 
 function CreditReport() {
+  const { showToast } = useToast();
   const wiseOptions = [
     { text: "Date", value: "date_wise" },
     { text: "Effective Wise", value: "eff_wise" },
@@ -81,7 +82,7 @@ function CreditReport() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -98,10 +99,10 @@ function CreditReport() {
       setLoading(false);
       if (response.success) {
         setDeleteConfirm(null);
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

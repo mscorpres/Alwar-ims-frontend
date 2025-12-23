@@ -3,7 +3,7 @@ import links from "../links";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 import axios from "axios";
 import "../../../../";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { AiFillEdit } from "react-icons/ai";
 import MyDataTable from "../../../../Components/MyDataTable";
 import MapVBTModal from "../Shared/MapVBTModal";
@@ -26,6 +26,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { RiProhibitedLine } from "react-icons/ri";
 const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("min_wise");
   const [searchInput, setSearchInput] = useState("MIN/25-26/");
   const [selectLoading, setSelectLoading] = useState(false);
@@ -163,7 +164,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
                   icon={
                     <RiProhibitedLine
                       style={{ color: "red" }}
-                      onClick={() => toast.info(row.remark)}
+                      onClick={() => showToast(row.remark, "error")}
                     />
                   }
                 />
@@ -293,19 +294,19 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       if (searchDateRange) {
         d = searchDateRange;
       } else {
-        toast.error("Please select a time period");
+        showToast("Please select a time period", "error");
       }
     } else if (wise === "vendor_wise") {
       if (searchInput) {
         d = searchInput;
       } else {
-        toast.error("Please select a Vendor");
+        showToast("Please select a Vendor", "error");
       }
     } else if (wise === "min_wise") {
       if (searchInput) {
         d = searchInput?.trim();
       } else {
-        toast.error("Please Enter a MIN Number");
+        showToast("Please Enter a MIN Number", "error");
       }
     }
     setSearchLoading(true);
@@ -344,7 +345,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
         // setVBTData(combinedData);
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setVBTData([]);
     }
     setSearchLoading(false);
@@ -431,10 +432,10 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       remark: values.remark,
     });
     if (response.success) {
-      toast.success(response.data.data.status);
+      showToast(response.data.data.status, "success");
       getRows();
     } else {
-      toast.error(response.data.message);
+      showToast(response.data.message, "error");
     }
   };
   // ----------------------------

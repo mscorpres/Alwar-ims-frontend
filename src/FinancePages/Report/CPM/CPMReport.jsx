@@ -5,13 +5,14 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MyDataTable from "../../../Components/MyDataTable";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 export default function CPMReport() {
+  const { showToast } = useToast();
   const [projectName, setProjectName] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -48,7 +49,7 @@ export default function CPMReport() {
         console.log(arr);
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

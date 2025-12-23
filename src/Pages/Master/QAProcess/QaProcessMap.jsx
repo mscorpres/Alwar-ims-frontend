@@ -1,7 +1,7 @@
 import { imsAxios } from "@/axiosInterceptor";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/useToast.js";
 import MySelect from "@/Components/MySelect";
 import { Card, Col, Form, Input, Row, Space, Upload } from "antd";
 import MyDataTable from "@/Components/MyDataTable";
@@ -13,6 +13,7 @@ import useApi from "@/hooks/useApi.ts";
 import { getProductsOptions } from "@/api/general.ts";
 
 const QaProcessMap = () => {
+  const { showToast } = useToast();
   //states of qaprocessMap
 
   const [qaProcessInputs, setQaProcessInput] = useState([
@@ -209,7 +210,7 @@ const QaProcessMap = () => {
     setLoading1(false);
 
     if (response?.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setQaProcessInput([
         {
           id: v4(),
@@ -228,7 +229,7 @@ const QaProcessMap = () => {
 
       setQaProcessData({ sku: "" });
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   // const fetchingSkuProcess = async() => {
@@ -507,7 +508,7 @@ const QaProcessMap = () => {
         data: arr,
       };
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 

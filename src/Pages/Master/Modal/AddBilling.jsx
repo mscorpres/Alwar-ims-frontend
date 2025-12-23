@@ -1,6 +1,6 @@
 import { Button, Col, Drawer, Form, Input, Row, Space } from "antd";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import "./modal.css";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -10,6 +10,7 @@ const AddBilling = ({
   ShowAddBillingModal,
   fetchLocation,
 }) => {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [addBilling, setAddBilling] = useState({
     name: "",
@@ -52,19 +53,19 @@ const AddBilling = ({
 
   const addLocation = async () => {
     if (!addBilling.name) {
-      return toast.error("Please Enter Your Warehouse Name");
+      return showToast("Please Enter Your Warehouse Name", "error");
     } else if (!addBilling.company) {
-      return toast.error("Please Enter Your Company Name");
+      return showToast("Please Enter Your Company Name", "error");
     } else if (!addBilling.pan) {
-      return toast.error("Please Enter Your Pan No..");
+      return showToast("Please Enter Your Pan No..", "error");
     } else if (!addBilling.gst) {
-      return toast.error("Please Enter Your GST NO...");
+      return showToast("Please Enter Your GST NO...", "error");
     } else if (!addBilling.cin) {
-      return toast.error("Please Enter Your CIN NO...");
+      return showToast("Please Enter Your CIN NO...", "error");
     } else if (!addBilling.state) {
-      return toast.error("Please Enter Your State");
+      return showToast("Please Enter Your State", "error");
     } else if (!addBilling.address) {
-      return toast.error("Please Enter Address...");
+      return showToast("Please Enter Address...", "error");
     } else {
       setSubmitLoading(true);
       const response = await imsAxios.post(
@@ -84,9 +85,9 @@ const AddBilling = ({
         fetchLocation();
         setShowAddBillingModal(false);
         resetFun();
-        toast.success(response.message);
+        showToast(response.message, "success");
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };

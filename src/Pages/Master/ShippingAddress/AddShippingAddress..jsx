@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import MyButton from "../../../Components/MyButton";
 
 function AddShippingAddress({ handleCSVDownload, getRows }) {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitConfirmModal, setSubmitConfirmModal] = useState(false);
@@ -50,12 +51,12 @@ function AddShippingAddress({ handleCSVDownload, getRows }) {
       );
       setLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         resetHandler();
         setSubmitConfirmModal(false);
         getRows();
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };

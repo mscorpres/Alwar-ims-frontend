@@ -55,9 +55,9 @@ function R19() {
 
   const fetchData = async () => {
     if (allData?.selectProduct == "") {
-      toast.error("Please Select Product");
+      showToast("Please Select Product", "error");
     } else if (allData?.selectBom == "") {
-      toast.error("Please Select Bom");
+      showToast("Please Select Bom", "error");
     } else {
       setLoading(true);
       setMainData([]);
@@ -73,7 +73,7 @@ function R19() {
         setMainData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }

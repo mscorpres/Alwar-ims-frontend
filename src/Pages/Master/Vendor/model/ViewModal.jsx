@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../../Modal/modal.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Row, Col, Input, Skeleton, Form, Drawer, Space } from "antd";
 import MySelect from "../../../../Components/MySelect";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
@@ -9,6 +9,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 const { TextArea } = Input;
 
 const ViewModal = ({ viewVendor, setViewVendor }) => {
+  const { showToast } = useToast();
   const [allField, setAllField] = useState({
     branchCode: "",
     label: "",
@@ -107,15 +108,15 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
 
   const updateBranch = async () => {
     if (allField.label == "") {
-      return toast.error("Please enter branch name");
+      return showToast("Please enter branch name", "error");
     } else if (allField.city == "") {
-      return toast.error("Please enter City name");
+      return showToast("Please enter City name", "error");
     } else if (allField.address == "") {
-      return toast.error("Please enter Complete branch address");
+      return showToast("Please enter Complete branch address", "error");
     } else if (allField.pcode == "") {
-      return toast.error("Please enter branch Pincode");
+      return showToast("Please enter branch Pincode", "error");
     } else if (allField.gst == "") {
-      return toast.error("Please enter branch GST Number");
+      return showToast("Please enter branch GST Number", "error");
     }
     setsubmitLoading(true);
     const response = await imsAxios.post("/vendor/updateBranchDetails", {
@@ -134,9 +135,9 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
     setsubmitLoading(false);
     if (response.success) {
       setViewVendor(null);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 

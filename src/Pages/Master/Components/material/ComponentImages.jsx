@@ -12,15 +12,16 @@ import {
 } from "antd";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { DeleteOutlined } from "@ant-design/icons";
 
 export default function ComponentImages({ showImages, setShowImages }) {
+  const { showToast } = useToast();
   const [skeletonLoading, setSkeletonLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [images, setImages] = useState([]);
-  const [ellipsis, setEllipsis] = useState(true);
+
 
   const getImages = async () => {
     setSkeletonLoading(true);
@@ -31,7 +32,7 @@ export default function ComponentImages({ showImages, setShowImages }) {
       setImages(data.data);
     } else {
       setImages([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setSkeletonLoading(false);
   };
@@ -44,7 +45,7 @@ export default function ComponentImages({ showImages, setShowImages }) {
     const { data } = response;
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         let arr = images;
         arr = images.filter((row) => row.image_id !== image.image_id);
         setImages(arr);

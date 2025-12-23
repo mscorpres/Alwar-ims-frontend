@@ -3,7 +3,7 @@ import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import {
   bankColumns,
@@ -15,6 +15,7 @@ import {
 import MyButton from "../../../Components/MyButton";
 
 function DayBook() {
+  const { showToast } = useToast();
   const [searchDateRange, setSearchDateRange] = useState("");
   const [loading, setLoading] = useState(0);
   const [bankRows, setBankRows] = useState([]);
@@ -35,7 +36,7 @@ function DayBook() {
     if (paymentData.code === 200) {
       paymentArr = paymentData.data;
     } else {
-      toast.error(paymentData.message.msg);
+      showToast(paymentData.message.msg, "error");
     }
     const receptResponse = await imsAxios.post("/tally/voucher/br_list", {
       wise: "date_wise",
@@ -45,7 +46,7 @@ function DayBook() {
     if (receiptData.code === 200) {
       receiptArr = receiptData.data;
     } else {
-      toast.error(receiptData.message.msg);
+      showToast(receiptData.message.msg, "error");
     }
     setLoading((loading) => loading + 1);
     let arr = [...paymentArr, ...receiptArr];
@@ -87,7 +88,7 @@ function DayBook() {
     if (paymentData.code === 200) {
       paymentArr = paymentData.data;
     } else {
-      toast.error(paymentData.message.msg);
+      showToast(paymentData.message.msg, "error");
     }
     const receptResponse = await imsAxios.post("/tally/cash/cashreceipt_list", {
       wise: "date_wise",
@@ -97,7 +98,7 @@ function DayBook() {
     if (receiptData.code === 200) {
       receiptArr = receiptData.data;
     } else {
-      toast.error(receiptData.message.msg);
+      showToast(receiptData.message.msg, "error");
     }
     setLoading((loading) => loading + 1);
     let arr = [...paymentArr, ...receiptArr];
@@ -122,7 +123,7 @@ function DayBook() {
     if (journalData.code === 200) {
       jornalArr = journalData.data;
     } else {
-      toast.error(journalData.message.msg);
+      showToast(journalData.message.msg, "error");
     }
 
     setLoading((loading) => loading + 1);
@@ -153,7 +154,7 @@ function DayBook() {
     if (contraData.code === 200) {
       contraArr = contraData.data;
     } else {
-      toast.error(contraData.message.msg);
+      showToast(contraData.message.msg, "error");
     }
 
     setLoading((loading) => loading + 1);
@@ -180,7 +181,7 @@ function DayBook() {
     if (vbtData.code === 200) {
       vbtArr = vbtData.data;
     } else {
-      toast.error(vbtData.message.msg);
+      showToast(vbtData.message.msg, "error");
       setLoading(false);
     }
 

@@ -172,7 +172,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
           data.data.description
         );
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
