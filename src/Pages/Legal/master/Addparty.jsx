@@ -5,11 +5,12 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { EditOutlined } from "@ant-design/icons";
 import MyButton from "../../../Components/MyButton";
 
 function Addparty() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState("");
@@ -71,7 +72,7 @@ function Addparty() {
       setRows(arr);
     }
     else{
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const submitForm = async () => {
@@ -91,10 +92,10 @@ function Addparty() {
       });
       if (response.status === 200) {
         form.resetFields();
-        toast.success(response.data.msg);
+        showToast(response.data.msg, "success");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -171,7 +172,7 @@ function Addparty() {
         setAsyncOptions(arr);
       } else {
         setAsyncOptions([]);
-        toast.error(data.msg);
+        showToast(data.msg, "error");
       }
       setLoading(false);
     }

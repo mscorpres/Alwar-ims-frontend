@@ -5,11 +5,12 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { EditOutlined } from "@ant-design/icons";
 import MyButton from "../../../Components/MyButton";
 
 function AddAgreementType() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState("");
@@ -57,11 +58,11 @@ function AddAgreementType() {
       });
       if (response.status === 200) {
         form.resetFields();
-        toast.success(response.data.msg);
+        showToast(response.data.msg, "success");
         getpartydetails();
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }

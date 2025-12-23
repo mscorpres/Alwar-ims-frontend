@@ -4,8 +4,8 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import SubmitConfirmModal from "./SubmitConfirmModal";
-import { toast } from "react-toastify";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 function AddShippingAddress({ handleCSVDownload, getRows }) {
   const { showToast } = useToast();

@@ -3,12 +3,13 @@ import React, { useState, useEffect } from "react";
 import ProductDetails from "./ProductDetails";
 import Components from "./Components";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MyDataTable from "../../../../Components/MyDataTable";
 import useApi from "../../../../hooks/useApi.ts";
 import { getComponentOptions } from "../../../../api/general.ts";
 const CreateBom = () => {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [projectData, setProjectData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ const CreateBom = () => {
           form.setFieldValue("productKey", productKey);
           setProductSelected(true);
         } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     
@@ -130,14 +131,14 @@ const CreateBom = () => {
             setpreviewData(arr);
           }
           if (stage === "submit") {
-            toast.success(response.message);
+            showToast(response.message, "success");
             setProductSelected(false);
             form.resetFields();
             setpreviewData([]);
           }
         }
         else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
     } catch (error) {
       console.log("error while creating  bom", error);
@@ -184,7 +185,7 @@ const CreateBom = () => {
         setProjectData(arr);
      
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setProjectData([]);
     }
   };

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button, Col, Drawer, Input, Row, Skeleton, Space, Modal } from "antd";
 import { CloseCircleFilled, DeleteTwoTone } from "@ant-design/icons";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import FormTableDataGrid from "../../../Components/FormTableDataGrid";
@@ -12,6 +12,7 @@ import useApi from "../../../hooks/useApi";
 import Loading from "../../../Components/Loading";
 
 const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useLoading();
   const [closeLoading, setCloseLoading] = useLoading();
   const [view, setView] = useState([]);
@@ -42,7 +43,7 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
       });
       setMainData(arr);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setOpenModal(false);
     }
   };

@@ -6,10 +6,11 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 
 export default function CategoryDrawer({ show, hide }) {
+  const { showToast } = useToast();
   const location = useLocation();
   const params = useParams();
   const [fields, setFields] = useState([]);
@@ -31,7 +32,7 @@ export default function CategoryDrawer({ show, hide }) {
           console.log("here are the fields", arr);
           setFields(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {}

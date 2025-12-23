@@ -11,6 +11,7 @@ import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { getAlternativePartCodes } from "../../../../api/master/component.ts";
 import TableActions from "../../../../Components/TableActions.jsx/TableActions";
 import { CheckOutlined } from "@ant-design/icons";
+import { useToast } from "../../../../hooks/useToast.js";
 
 const AlternatePartCode = ({ open, hide }) => {
   const { showToast } = useToast();

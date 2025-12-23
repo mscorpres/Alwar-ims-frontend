@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Input, Row, Select } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -16,6 +16,7 @@ import MyButton from "../../../Components/MyButton";
 // import CashEditModal from "./model/CashEditModal";
 
 function CashPaymentResister() {
+  const { showToast } = useToast();
   const [open, setOpen] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [datee, setDatee] = useState("");
@@ -74,7 +75,7 @@ function CashPaymentResister() {
         setDateData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "eff_wise") {
@@ -94,7 +95,7 @@ function CashPaymentResister() {
         setEffectiveData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "key_wise") {
@@ -114,7 +115,7 @@ function CashPaymentResister() {
         setCodeData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "ledger_wise") {
@@ -138,7 +139,7 @@ function CashPaymentResister() {
         setLedgerData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }

@@ -18,7 +18,7 @@ import MySelect from "../../Components/MySelect";
 import MyDatePicker from "../../Components/MyDatePicker";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import ToolTipEllipses from "../../Components/ToolTipEllipses";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import ViewModal from "./Modal/ViewModal";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import CloseModal from "./Modal/CloseModal";
@@ -36,6 +36,7 @@ import MyButton from "../../Components/MyButton";
 import { downloadCSV } from "../../Components/exportToCSV.jsx";
 
 const POAnalysis = () => {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);

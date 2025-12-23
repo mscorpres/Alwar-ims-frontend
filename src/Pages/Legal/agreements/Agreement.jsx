@@ -19,7 +19,7 @@ import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import NavFooter from "../../../Components/NavFooter";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import {
   ExclamationCircleOutlined,
   DownloadOutlined,
@@ -85,6 +85,7 @@ const newPurchaseOrder = {
 export default function Agreeement({}) {
   // initialize loading state
   document.title = "Add Agreement";
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [ClientBranchOptions, setclientBranchOptions] = useState([]);
@@ -138,7 +139,7 @@ export default function Agreeement({}) {
       settypeofagreementOptions(newArr1);
     }
     if (response.data.data.length === 0) {
-      toast.error("create agreement type");
+      showToast("create agreement type", "error");
     }
   };
 
@@ -163,7 +164,7 @@ export default function Agreeement({}) {
         setAsyncOptions(arr);
       } else {
         setAsyncOptions([]);
-        toast.error(data.msg);
+        showToast(data.msg, "error");
       }
       setLoading(false);
     }
@@ -201,7 +202,7 @@ export default function Agreeement({}) {
         }
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -267,10 +268,10 @@ export default function Agreeement({}) {
     const { data } = response;
     if (data) {
       if (response.status === 200) {
-        toast.success(data.msg);
+        showToast(data.msg, "success");
         addAgreementForm.resetFields();
       } else {
-        toast.error(data.msg);
+        showToast(data.msg, "error");
       }
     }
   };

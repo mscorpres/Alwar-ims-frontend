@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
@@ -12,6 +12,7 @@ export default function AddEmergingComponent({
   setAddingEmergingPart,
   next,
 }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [emergingPart, setEmergingPart] = useState("");
@@ -64,13 +65,13 @@ export default function AddEmergingComponent({
     setLoading(false);
     const { data } = response;
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setConfirm(false);
       setAddingEmergingPart(false);
       setEmergingPart("");
       next();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const handleCancel = () => {
