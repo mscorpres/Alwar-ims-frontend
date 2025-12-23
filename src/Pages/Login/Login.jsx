@@ -284,6 +284,26 @@ const Login = () => {
       }
     }
   };
+   // OTP Paste Handler
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData("text");
+    const pastedOtp = pastedText.replace(/\D/g, "").slice(0, 6);
+    
+    if (pastedOtp.length > 0) {
+      const newOtpCode = ["", "", "", "", "", ""];
+      for (let i = 0; i < pastedOtp.length; i++) {
+        newOtpCode[i] = pastedOtp[i];
+      }
+      setOtpCode(newOtpCode);
+      // Focus the next empty input or the last one
+      const nextIndex = Math.min(pastedOtp.length, 5);
+      setTimeout(() => {
+        const nextInput = document.getElementById(`otp-input-${nextIndex}`);
+        if (nextInput) nextInput.focus();
+      }, 0);
+    }
+  };
 
   // OTP Backspace Handler
   const handleOtpKeyDown = (index, e) => {
@@ -503,6 +523,7 @@ const Login = () => {
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value)}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                          onPaste={index === 0 ? handleOtpPaste : undefined}
                         maxLength={1}
                         style={{
                           width: 50,
