@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import axios from "axios";
 import MyDataTable from "../../../Components/MyDataTable";
 import VoucherView from "./VoucherView";
@@ -28,6 +28,7 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyButton from "../../../Components/MyButton";
 
 export default function VoucherReport() {
+  const { showToast } = useToast();
   const { pathname } = useLocation();
   const [wise, setWise] = useState("date_wise");
   const [rows, setRows] = useState([]);
@@ -80,7 +81,7 @@ export default function VoucherReport() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const showVoucherTable = [
@@ -255,10 +256,10 @@ export default function VoucherReport() {
       setLoading(false);
       if (response.success) {
         setDeleteConfirm(null);
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

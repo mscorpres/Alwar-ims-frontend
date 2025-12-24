@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MyDatePicker from "../../Components/MyDatePicker";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import { Button, Col, Input, Row, Select } from "antd";
 import MyDataTable from "../../Components/MyDataTable";
@@ -15,6 +15,7 @@ import useApi from "../../hooks/useApi.ts";
 import MyButton from "../../Components/MyButton";
 
 const JwrmReturn = () => {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useLoading();
   const [editModal, setEditModal] = useState(false);
@@ -68,7 +69,7 @@ const JwrmReturn = () => {
 
   const fetchDatewise = async () => {
     if (allData?.setType == "") {
-      toast.error("Please Select Option");
+      showToast("Please Select Option", "error");
     } else {
       setLoading("fetch", true);
       const response = await imsAxios.post("/jobwork/fetchJwRmReturn", {
@@ -86,7 +87,7 @@ const JwrmReturn = () => {
         setDateData(arr);
         setLoading("fetch", false);
       } else if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading("fetch", false);
       }
     }
@@ -109,7 +110,7 @@ const JwrmReturn = () => {
       setDJWData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading("fetch", false);
     }
   };
@@ -131,7 +132,7 @@ const JwrmReturn = () => {
       setSKUData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading("fetch", false);
     }
   };
@@ -152,7 +153,7 @@ const JwrmReturn = () => {
       setVendorData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading("fetch", false);
     }
   };

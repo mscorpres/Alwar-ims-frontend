@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { v4 } from "uuid";
 import NavFooter from "../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -17,6 +17,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
 
 export default function BankPayment() {
+  const { showToast } = useToast();
   const [bankPaymentRows, setBankPaymentRows] = useState([
     {
       id: v4(),
@@ -248,7 +249,7 @@ export default function BankPayment() {
       if (response.success) {
         setProjectDesc(data.data.description);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -325,7 +326,7 @@ export default function BankPayment() {
       }
     });
     if (validating.status == false) {
-      toast.error(validating.message);
+      showToast(validating.message, "error");
     } else if (validating.status == true) {
       setLoading("submit");
       const response = await imsAxios.post("/tally/voucher/insert_bp", {
@@ -344,9 +345,9 @@ export default function BankPayment() {
       if (data) {
         if (response.success) {
           resetFunction();
-          toast.success(response.message);
+          showToast(response.message, "success");
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     }

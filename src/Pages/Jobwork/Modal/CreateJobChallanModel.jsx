@@ -17,7 +17,7 @@ import {
   ToolOutlined,
   DeleteTwoTone,
 } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
 import MySelect from "../../../Components/MySelect";
@@ -26,6 +26,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 const { TextArea } = Input;
 
 function CreateJobChallanModel({ challanModal, setChallanModal }) {
+  const { showToast } = useToast();
   const [loadChallan, setLoadChallan] = useState(false);
   const [status, setStatus] = useState(1);
   const [vendorData, setVendorData] = useState([]);
@@ -74,7 +75,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       setProductData(arr);
       setVendorData(response.data.header);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -191,7 +192,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       getFetchAllData();
       setLoadChallan(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoadChallan(false);
     }
     // console.log(data);
@@ -412,7 +413,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
     if (response.success) {
       close();
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   return (

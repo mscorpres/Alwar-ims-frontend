@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Input, Row, Select } from "antd";
 import MyDatePicker from "../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
 import MyDataTable from "../../Components/MyDataTable";
@@ -15,6 +15,7 @@ import { convertSelectOptions } from "../../utils/general.ts";
 import MyButton from "../../Components/MyButton";
 
 const JwsfInward = () => {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useLoading(false);
   const [editModal, setEditModal] = useState(false);
@@ -66,7 +67,7 @@ const JwsfInward = () => {
 
   const fetchDatewise = async () => {
     if (allData?.setType == "") {
-      toast.error("Please Select Option");
+      showToast("Please Select Option", "error");
     } else {
       setLoading("fetch", true);
       const response = await imsAxios.post("/jobwork/jw_sf_inward", {
@@ -84,7 +85,7 @@ const JwsfInward = () => {
         setDateData(arr);
         setLoading("fetch", false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading("fetch", false);
       }
     }
@@ -107,7 +108,7 @@ const JwsfInward = () => {
       setDJWData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading("fetch", false);
     }
   };
@@ -129,7 +130,7 @@ const JwsfInward = () => {
       setSKUData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading("fetch", false);
     }
   };
@@ -150,7 +151,7 @@ const JwsfInward = () => {
       setVendorData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading("fetch", false);
     }
   };

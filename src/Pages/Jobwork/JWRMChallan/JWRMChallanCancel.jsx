@@ -2,11 +2,12 @@ import { Button, Col, Drawer, Form, Input, Modal, Row, Space } from "antd";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import useLoading from "../../../hooks/useLoading";
 
 function JWRMChallanCancel({ showCancel, setShowCancel, getRows }) {
+  const { showToast } = useToast();
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [loading, setLoading] = useLoading();
   const [jwChallanCancelForm] = Form.useForm();
@@ -30,12 +31,12 @@ function JWRMChallanCancel({ showCancel, setShowCancel, getRows }) {
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setShowSubmitConfirm(false);
           setShowCancel(false);
           getRows();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     }

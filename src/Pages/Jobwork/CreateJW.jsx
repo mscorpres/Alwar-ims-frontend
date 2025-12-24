@@ -15,7 +15,7 @@ import MySelect from "../../Components/MySelect";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import NavFooter from "../../Components/NavFooter";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import AddVendorSideBar from "../PurchaseOrder/CreatePO/AddVendorSideBar";
 import AddBranch from "../Master/Vendor/model/AddBranch";
@@ -89,6 +89,7 @@ const newPurchaseOrder = {
 
 export default function CreateJW({}) {
   // initialize loading state
+  const { showToast } = useToast();
   const [loading, setLoading] = useLoading();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [asyncLocationOptions, setAsyncLocationOptions] = useState([]);
@@ -143,7 +144,7 @@ export default function CreateJW({}) {
       });
       createPoForm.setFieldValue("vendorbranch", arr[0].value);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   //   getting vendor branch details
@@ -163,7 +164,7 @@ export default function CreateJW({}) {
       );
       createPoForm.setFieldValue("gstin", data?.gstid);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -221,7 +222,7 @@ export default function CreateJW({}) {
       setProjectDescription(data);
       createPoForm.setFieldValue("project_description", data?.description);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   //   get billing address options
@@ -242,7 +243,7 @@ export default function CreateJW({}) {
       setBillingAddressOptions(arr);
     } else {
       setBillingAddressOptions([]);
-      toast.error("Some error occured wile getting billing addresses");
+      showToast("Some error occured wile getting billing addresses", "error");
     }
   };
   //   gettimg billing address details
@@ -281,7 +282,7 @@ export default function CreateJW({}) {
       setShippingAddressOptions(arr);
     } else {
       setShippingAddressOptions([]);
-      toast.error("Some error occured wile getting shipping addresses");
+      showToast("Some error occured wile getting shipping addresses", "error");
     }
   };
   //   gettimg billing address details
@@ -337,7 +338,7 @@ export default function CreateJW({}) {
       }));
       setAsyncOptions(arr);
     } else {
-      toast.error("Some error occured wile getting components");
+      showToast("Some error occured wile getting components", "error");
     }
   };
   //   getting component details
@@ -357,7 +358,7 @@ export default function CreateJW({}) {
       createPoForm.setFieldValue("hsn", data?.hsn);
       createPoForm.setFieldValue("gstRate", data?.gstrate);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const inputHandler = () => {
@@ -454,11 +455,11 @@ export default function CreateJW({}) {
     );
 
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       resetHandler();
       setLoading("submitting", false);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading("submitting", false);
     }
 
@@ -678,7 +679,7 @@ export default function CreateJW({}) {
                                   createPoForm.getFieldValue("vendorname")
                                     ?.value,
                               })
-                            : toast.error("Please Select a vendor first");
+                            : showToast("Please Select a vendor first", "error");
                         }}
                         style={{ color: "#1890FF" }}
                       >

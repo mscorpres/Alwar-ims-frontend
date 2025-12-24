@@ -2,11 +2,12 @@ import { Col, Form, Input, Modal, Row } from "antd";
 import React from "react";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
-import { useState } from "react";
+import { useToast } from "../../../hooks/useToast.js";
+
 
 const CancelEwayBillModal = ({ show, hide }) => {
   //   const [loading, , setLoading] = useState(false);
+  const { showToast } = useToast();
   const [form] = Form.useForm();
 
   const validateHandler = async () => {
@@ -29,16 +30,16 @@ const CancelEwayBillModal = ({ show, hide }) => {
 
   const submitHandler = async (payload) => {
     try {
-      //   setLoading("submit");
+  
       const response = await imsAxios.post("/jwEwaybill/cancel", payload);
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           hide();
           form.resetFields();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

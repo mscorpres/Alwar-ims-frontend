@@ -16,13 +16,14 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { useParams } from "react-router";
 import { useState } from "react";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import dayjs from "dayjs";
 import MyButton from "../../../Components/MyButton";
 
 const EWayBill = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [stateOptions, setStateOptions] = useState([]);
   const [components, setComponents] = useState([]);
@@ -122,7 +123,7 @@ const EWayBill = () => {
           setComponents(arr);
           form.setFieldsValue(finalObj);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
   
     } catch (error) {
@@ -161,7 +162,7 @@ const EWayBill = () => {
         if (response.success) {
           setTransporterModeOptions(data);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
   
     } catch (error) {
@@ -241,7 +242,7 @@ const EWayBill = () => {
     } catch (error) {
       console.error(error);
       // If validation fails, show a toast with the warning message
-      toast.error("Please fill the mandatory fields.");
+      showToast("Please fill the mandatory fields.", "error");
     }
   };
 
@@ -270,10 +271,10 @@ const EWayBill = () => {
     
   
         if (response?.success) {
-          toast.success(response?.message);
+          showToast(response?.message, "success");
           setSuccessData({ ewayBillNo: response?.data?.ewayBillNo });
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
    
     } catch (error) {

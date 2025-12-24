@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { Col, Input, Row, Card } from "antd";
@@ -9,6 +9,7 @@ import FormTable from "../../../Components/FormTable";
 import { imsAxios } from "../../../axiosInterceptor";
 
 export default function Contra4() {
+  const { showToast } = useToast();
   const [contraDate, setContraDate] = useState("");
   const [debitTotal, setDebitTotal] = useState(0);
   const [creditTotal, setCreditTotal] = useState(0);
@@ -157,7 +158,7 @@ export default function Contra4() {
       });
       setAsyncOptions(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const inputHandler = (name, value, id) => {
@@ -213,7 +214,7 @@ export default function Contra4() {
   };
   const submitHandler = async () => {
     if (!contraDate) {
-      return toast.error("Please select date");
+      return showToast("Please select date", "error");
     }
     let finalObj = {
       effective_date: contraDate,
@@ -274,19 +275,19 @@ export default function Contra4() {
       if (response.success) {
         resetHandler();
         if (data.message.msg.includes("completed")) {
-          return toast.success("Contra Created");
+          return showToast("Contra Created", "success");
         }
-        toast.success(data.message.msg);
+        showToast(data.message.msg, "success");
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } else {
       if (problem == "account") {
-        return toast.error("All entries should have a account selected");
+        return showToast("All entries should have a account selected", "error");
       } else if (problem == "amount") {
-        return toast.error("All entries should have a credit or debit amount");
+        return showToast("All entries should have a credit or debit amount", "error");
       } else if (problem == "total") {
-        return toast.error("Debit total and Credit total does not match");
+        return showToast("Debit total and Credit total does not match", "error");
       }
     }
   };

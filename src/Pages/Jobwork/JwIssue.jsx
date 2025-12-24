@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Col, Row, Select, Button, Input, Popover } from "antd";
 import MyDataTable from "../../Components/MyDataTable";
 import MyDatePicker from "../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { ArrowRightOutlined } from "@ant-design/icons";
@@ -15,6 +15,7 @@ import { convertSelectOptions } from "../../utils/general.ts";
 import MyButton from "../../Components/MyButton";
 
 const JwIssue = () => {
+  const { showToast } = useToast();
   const [openModal, setOpenModal] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [datee, setDatee] = useState("");
@@ -66,7 +67,7 @@ const JwIssue = () => {
 
   const datewiseFetchData = async () => {
     if (allData.setType == "") {
-      toast.error("Please Select Option");
+      showToast("Please Select Option", "error");
     } else {
       setLoading("fetch", true);
       setDateData([]);
@@ -86,7 +87,7 @@ const JwIssue = () => {
         setDateData(arr);
         setLoading("fetch", false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading("fetch", false);
       }
     }
@@ -112,7 +113,7 @@ const JwIssue = () => {
       setJWData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading("fetch", false);
     }
   };
@@ -137,7 +138,7 @@ const JwIssue = () => {
       setSFGData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading("fetch", false);
     }
   };
@@ -160,7 +161,7 @@ const JwIssue = () => {
       setVendorData(arr);
       setLoading("fetch", false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading("fetch", false);
     }
   };
