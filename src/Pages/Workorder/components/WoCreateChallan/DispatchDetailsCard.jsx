@@ -1,25 +1,18 @@
 import { Card, Form, Input, Col, Row } from "antd";
-import React, { useState, useEffect } from "react";
-import { imsAxios } from "../../../../axiosInterceptor";
-import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+
 import MySelect from "../../../../Components/MySelect";
 
 const DispatchDetailsCard = ({
   form,
-  code,
   setaddid,
   addoptions,
-  rtnchallan,
 }) => {
-  const [loading, setLoading] = useState([]);
 
   const handleaddress = (e) => {
-    console.log(e);
+
     setaddid(true);
     addoptions.map((item) => {
       if (item.value === e) {
-        // console.log("dispatchaddrid", item);
         form.setFieldValue("shippingaddress", item.address);
         form.setFieldValue("dispatchfrompincode", item.pincode);
         form.setFieldValue("dispatchfromgst", item.gst);

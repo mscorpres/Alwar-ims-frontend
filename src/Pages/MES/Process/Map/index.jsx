@@ -3,9 +3,10 @@ import { Col, Form, Modal, Row } from "antd";
 import HeaderDetails from "./HeaderDetails";
 import ProcessTable from "./ProcessTable";
 import { processApi } from "../../api";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 const MapProcesses = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [skuBomOptions, setSkuBomOptions] = useState([]);
@@ -57,7 +58,7 @@ const MapProcesses = () => {
   const submitHandler = async (values) => {
     const { success, message } = await processApi.mapProcess(values);
     if (success) {
-      toast.success(message);
+      showToast(message, "success");
       mapProcessForm.resetFields();
     }
   };

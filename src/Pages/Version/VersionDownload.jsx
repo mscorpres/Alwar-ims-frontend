@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import {
   CircularProgress,
   Box,
@@ -18,6 +18,7 @@ import {
 } from "@mui/icons-material";
 
 const VersionDownload = () => {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [versionFiles, setVersionFiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -37,9 +38,9 @@ const VersionDownload = () => {
           const files = response.data || [];
           console.log("Setting version files:", files);
           setVersionFiles(files);
-          toast.success("Version files loaded successfully!");
+          showToast("Version files loaded successfully!", "success");
         } else {
-          toast.error("Failed to fetch version files");
+          showToast("Failed to fetch version files", "error");
         }
       } catch (error) {
         console.error("Error fetching version files:", error);
@@ -54,11 +55,11 @@ const VersionDownload = () => {
   const handleViewFile = (file) => {
     try {
       setViewing(file.doc_id);
-      toast.info(`Loading ${file.doc_name}...`);
-      toast.success(`${file.doc_name} loaded successfully!`);
+     
+      showToast(`${file.doc_name} loaded successfully!`, "success");
     } catch (error) {
       console.error("Error loading file:", error);
-      toast.error(`Failed to load ${file.doc_name}. Please try again.`);
+      showToast(`Failed to load ${file.doc_name}. Please try again.`, "error");
     } finally {
       setViewing(null);
     }
@@ -91,13 +92,13 @@ const VersionDownload = () => {
       if (response.data) {
         const files = response.data || [];
         setVersionFiles(files);
-        toast.success("Version files loaded successfully!");
+        showToast("Version files loaded successfully!", "success");
       } else {
-        toast.error("Failed to fetch version files");
+        showToast("Failed to fetch version files", "error");
       }
     } catch (error) {
       console.error("Error fetching version files:", error);
-      toast.error("Failed to fetch version files. Please try again.");
+        showToast("Failed to fetch version files. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -210,8 +211,9 @@ const VersionDownload = () => {
                     "Failed to load PDF:",
                     file.file_url || file.doc_url
                   );
-                  toast.error(
-                    `Failed to load ${file.doc_name}. Please check the file URL.`
+                  showToast(
+                    `Failed to load ${file.doc_name}. Please check the file URL.`,
+                    "error"
                   );
                 }}
               />

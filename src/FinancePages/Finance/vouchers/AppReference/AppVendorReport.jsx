@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button, Col, Row, Space } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Col, message, Divider, Popconfirm, Row, Space } from "antd";
 import axios from "axios";
 import { useToast } from "../../../../hooks/useToast.js";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -48,7 +48,8 @@ function AppVendorReport() {
     }
     if (response.status == 200) {
       const { data } = response;
-      
+      console.log("data ======", data);
+
       const arr = data?.map((row, index) => {
         return {
           ...row,

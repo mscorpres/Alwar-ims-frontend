@@ -12,11 +12,8 @@ import {
   message,
 } from "antd";
 import Loading from "../../../../../Components/Loading";
-import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
 import MySelect from "../../../../../Components/MySelect";
-import { imsAxios } from "../../../../../axiosInterceptor";
-import { toast } from "react-toastify";
-import { CodeSandboxCircleFilled, CalculatorOutlined } from "@ant-design/icons";
+import { useToast } from "../../../../../hooks/useToast.js";
 
 export default function SingleComponent({
   index,
@@ -47,6 +44,7 @@ export default function SingleComponent({
   setAllRowSws,
   allRowSws,
   loading,
+
   isCreate,
   setglState,
   glstate,
@@ -72,7 +70,7 @@ export default function SingleComponent({
     gl: "",
     glN: "",
   });
-  var partArr = [];
+    const { showToast } = useToast();
   // lastOpVals.forEach((element) => {
   //   partArr.push(element.c_part_no);
   // });
@@ -484,7 +482,7 @@ export default function SingleComponent({
     if (addInsurCalc || allRowInsurance || isCreate) {
       if (totalInsurance) {
         if (totalbillAmmount === 0 || totalbillAmmount === "") {
-          toast.error("Please Enter the Bill Amount");
+          showToast("Please Enter the Bill Amount", "error");
         }
 
         insurance = (totalInsurance * totalVenAm) / totalbillAmmount;

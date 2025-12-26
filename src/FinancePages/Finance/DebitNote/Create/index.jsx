@@ -3,11 +3,12 @@ import { Form, Row, Col, Modal, Drawer } from "antd";
 import HeaderDetails from "../HeaderDetails";
 import Components from "../Components";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import NavFooter from "../../../../Components/NavFooter";
 import Loading from "../../../../Components/Loading";
 
 const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
+  const { showToast } = useToast();
   const [vendorDetails, setVendorDetails] = useState({});
   const [roundOffSign, setRoundOffSign] = useState("+");
   const [roundOffValue, setRoundOffValue] = useState(0);
@@ -99,11 +100,11 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
 
           setVendorDetails(vendorObj);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
-      toast.error("Some error occured while fetching the data");
+      showToast("Some error occured while fetching the data", "error");
       console.log(error);
     } finally {
       setLoading(false);
@@ -128,7 +129,7 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
         setFreightGlOptions(arr);
       }
     } catch (error) {
-      toast.error("Some error occured while fetching freight Gls");
+      showToast("Some error occured while fetching freight Gls", "error");
       console.log("Some error occured while fetching freight Gls", error);
     } finally {
       setLoading(false);
@@ -238,17 +239,17 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
       const { data } = respose;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setDebitNoteDrawer(null);
           setRoundOffValue(0);
           setRoundOffSign("+");
         } else {
           setLoading(false);
-          toast.error(data.message.msg ?? data);
+          showToast(data.message.msg ?? data, "error");
         }
       }
     } catch (error) {
-      toast.error("Some error occured while creating this debit note");
+      showToast("Some error occured while creating this debit note", "error");
       console.log("Some error occured while creating this debit note", error);
     }
     // finally {

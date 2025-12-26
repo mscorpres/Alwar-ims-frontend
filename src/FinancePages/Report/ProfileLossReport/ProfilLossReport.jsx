@@ -1,6 +1,6 @@
 import { Button, Card, Col, Row, Space, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios, socketLink } from "../../../axiosInterceptor";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
@@ -13,6 +13,7 @@ import socket from "../../../Components/socket";
 import MyButton from "../../../Components/MyButton";
 
 function ProfilLossReport() {
+  const { showToast } = useToast();
   let arr = [];
   let flatArr = [];
 
@@ -128,13 +129,9 @@ function ProfilLossReport() {
         setGrossLoss(+Number(GL).toFixed(2));
         setNetProfit(+Number(NP).toFixed(2));
         setNetLoss(+Number(NL).toFixed(2));
-        console.log("gross profit is => ", GP);
-        console.log("gross loss is => ", GL);
-        console.log("net profit is => ", NP);
-        console.log("net loss is => ", NL);
         setTotal(totalObj);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setIncomeRows([]);
         setExpenseRows([]);
       }

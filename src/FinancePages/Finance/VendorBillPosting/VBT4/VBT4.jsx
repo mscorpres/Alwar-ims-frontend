@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 import "../../../Accounts/accounts.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { AiFillEdit } from "react-icons/ai";
 import CreateVBT4 from "./CreateVBT4";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -124,7 +124,7 @@ export default function VBT4() {
     if (response.success) {
       setEditingVBT(data.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     setLoading(false);
@@ -149,7 +149,7 @@ export default function VBT4() {
   //        console.log("lets create");
   //      }
   //    } else {
-  //      toast.error(response.message?.msg || response.message);
+  //      showToast(response.message?.msg || response.message, "error");
   //      setEditingVBT(null);
   //    }
   //  };
@@ -172,7 +172,7 @@ export default function VBT4() {
       // setCheckInvoiceId(arr[0].invoice_id);
       // checkInvoice(checkInvoiceId, arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     setLoading(false);
@@ -183,19 +183,19 @@ export default function VBT4() {
       if (searchDateRange) {
         d = searchDateRange;
       } else {
-        toast.error("Please select a time period");
+        showToast("Please select a time period", "error");
       }
     } else if (wise === "vendor_wise") {
       if (searchInput) {
         d = searchInput;
       } else {
-        toast.error("Please select a Vendor");
+        showToast("Please select a Vendor", "error");
       }
     } else if (wise === "min_wise") {
       if (searchInput) {
         d = searchInput?.trim();
       } else {
-        toast.error("Please Enter a MIN Number");
+        showToast("Please Enter a MIN Number", "error");
       }
     }
     setSearchLoading(true);
@@ -212,7 +212,7 @@ export default function VBT4() {
       });
       setVBTData(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setVBTData([]);
     }
     setSearchLoading(false);

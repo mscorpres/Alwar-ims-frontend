@@ -1,12 +1,17 @@
-import { Col, Row, Space, Input, Button, Modal } from "antd";
+import { Col, Form, Row, Space, Input, Button, Modal } from "antd";
+import React from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
 
 import { useState } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { useEffect } from "react";
+import { imsAxios } from "../../../axiosInterceptor";
+import { CodeSandboxCircleFilled } from "@ant-design/icons";
 import { useToast } from "../../../hooks/useToast.js";
-
+import { downloadExcel } from "../../../Components/printFunction";
+import { v4 } from "uuid";
+import Loading from "../../../Components/Loading";
 import { useDispatch, useSelector } from "react-redux";
 import socket from "../../../Components/socket";
 import { getVendorOptions } from "../../../api/general.ts";
@@ -45,7 +50,10 @@ function VBTRecords() {
     { text: "VBT7", value: "VBT07" },
   ];
   const emitDownloadEvent = () => {
-  
+    // let newId = v4();
+    // let arr = notifications;
+
+    console.log("this is the arr", searchDateRange);
     if (!user.company_branch) {
       showToast("Please select a branch to download report", "error");
       return;

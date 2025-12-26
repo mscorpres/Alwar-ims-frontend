@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 import moment from "moment";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading";
 import { imsAxios } from "../../../axiosInterceptor";
 
@@ -19,6 +19,7 @@ export default function CreditEdit({
   editDebit,
   setEditDebit,
 }) {
+  const { showToast } = useToast();
   const [debitTotal, setDebitTotal] = useState(0);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -45,7 +46,7 @@ export default function CreditEdit({
   ]);
   const submitHandler = async () => {
     if (!effectiveDate) {
-      return toast.error("Please select Effective date");
+      return showToast("Please select Effective date", "error");
     }
     let finalObj = {
       cn_key: editDebit,
@@ -99,16 +100,16 @@ export default function CreditEdit({
       setSubmitLoading(false);
       if (response.success) {
         // resetHandler();
-        toast.success(response.message);
+        showToast(response.message, "success");
         setTimeout(() => {
           setEditDebit(null);
         }, 3000);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } else {
       if (problem == "gls") {
-        return toast.error("All entries should have a gls");
+        return showToast("All entries should have a gls", "error");
       }
     }
   };
@@ -253,7 +254,7 @@ export default function CreditEdit({
       console.log(moment(data.data[0].effective_date));
       setEffectiveDate(data.data[0].effective_date);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const inputHandler = (name, value, id) => {

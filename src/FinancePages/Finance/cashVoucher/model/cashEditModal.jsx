@@ -15,7 +15,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { useEffect } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import FormTable from "../../../../Components/FormTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
@@ -23,6 +23,7 @@ import { useLocation } from "react-router-dom";
 import Loading from "../../../../Components/Loading";
 
 export default function CashEditModal({ cashEdit, setCashEdit }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [headerDetails, setHeaderDetails] = useState({});
   const [resetData, setResetData] = useState(false);
@@ -68,7 +69,7 @@ export default function CashEditModal({ cashEdit, setCashEdit }) {
           rows: rowsArr,
         });
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setCashEdit(false);
       }
     }
@@ -152,10 +153,10 @@ export default function CashEditModal({ cashEdit, setCashEdit }) {
     const { data } = response;
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setCashEdit(false);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

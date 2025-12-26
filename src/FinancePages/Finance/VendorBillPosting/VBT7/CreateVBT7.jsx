@@ -6,14 +6,15 @@ import Loading from "../../../../Components/Loading";
 import { v4 } from "uuid";
 import VBT7DataTable from "./VBT7DataTable";
 import TaxModal from "../../../../Components/TaxModal";
-import { toast } from "react-toastify";
 import { Button, Col, Drawer, Modal, Row, Typography } from "antd";
 import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
 import HeaderDetails from "./HeaderDetails";
+import { useToast } from "../../../../hooks/useToast";
 
 export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
   const [glCodes, setGlCodes] = useState([]);
+  const { showToast } = useToast();
   const [vendorData, setVendorData] = useState({});
   const [vbt, setVBT] = useState(null);
   const [rows, setRows] = useState([]);
@@ -58,7 +59,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
         });
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       // setEditingVBT(null);
     }
   };
@@ -189,7 +190,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
     rows.map((row) => {
       if (!row.glCodeValue) {
         validation = false;
-        return toast.error("Please select a GL for all of the components");
+        return showToast("Please select a GL for all of the components", "error");
       }
       let a = Number(row.vendorAmount);
       let totalVendor = 0;
@@ -256,7 +257,7 @@ export default function CreateVBT1({ editingVBT, setEditingVBT, setVBTData }) {
       });
       setLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setTimeout(() => {
           setEditingVBT(null);
         }, 2000);

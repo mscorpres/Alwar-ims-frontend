@@ -1,12 +1,11 @@
-import { Button, Col, Row } from "antd";
-import { useState } from "react";
+import { Button, Col, Row, Space } from "antd";
+import React, { useState } from "react";
 
 import MyDatePicker from "../../Components/MyDatePicker";
 import socket from "../../Components/socket";
 import { useSelector } from "react-redux";
 import { useToast } from "../../hooks/useToast.js";
 
-// import MoneyRain from "../../MoneyRain/MoneyRain";
 import { v4 } from "uuid";
 
 const TdsReport = () => {
@@ -15,7 +14,7 @@ const TdsReport = () => {
   const { user, notifications } = useSelector((state) => state.login);
   const emitDownloadEvent = () => {
     let newId = v4();
-    let arr = notifications;
+  
 
     if (!user.company_branch) {
       showToast("Please select a branch to download report", "error");
@@ -25,7 +24,7 @@ const TdsReport = () => {
       date: dateRange,
       notificationId: newId,
     };
-    console.log("payload", payload);
+  
     socket.emit("getTdsReport", payload);
   };
   return (

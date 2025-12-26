@@ -1,11 +1,12 @@
 import { Col, Drawer, Input, Row, Skeleton, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 
 function EditSheet({ editingSheet, setEditingSheet }) {
+  const { showToast } = useToast();
   const [editingData, setEditingData] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,9 +82,9 @@ function EditSheet({ editingSheet, setEditingSheet }) {
     const { data } = response;
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

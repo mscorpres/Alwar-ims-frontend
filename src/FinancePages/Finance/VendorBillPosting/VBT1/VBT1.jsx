@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import links from "../links";
+
 import MyDatePicker from "../../../../Components/MyDatePicker";
-import axios from "axios";
+
 import "../../../Accounts/accounts.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { AiFillEdit } from "react-icons/ai";
 import CreateVBT1 from "./CreateVBT1";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -14,17 +14,15 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Button, Input, Row, Space } from "antd";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../../axiosInterceptor";
-import ConfirmModal from "../Shared/ConfirmModal";
-import { useSelector } from "react-redux";
-import { responseImmutable } from "@rc-component/context/lib/Immutable";
+
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import { getVendorOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 
 export default function VBT1() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("min_wise");
   const [searchInput, setSearchInput] = useState("MIN/23-24/");
-  const [selectLoading, setSelectLoading] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
   const [vbtData, setVBTData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -34,7 +32,7 @@ export default function VBT1() {
   const [editingVBT, setEditingVBT] = useState(null);
   const [mapVBT, setMapVBT] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  //////// confirm modal
+
   const [checkInvoiceId, setCheckInvoiceId] = useState("");
   const [confirmModal, setConfirmModal] = useState(false);
   const [open, setOpen] = useState(false);
@@ -49,7 +47,7 @@ export default function VBT1() {
       flex: 1,
       id: "serial-no",
       width: "8vw",
-      // style: { backgroundColor: "transparent" },
+      
     },
     {
       headerName: "Vendor Code",
@@ -185,7 +183,7 @@ export default function VBT1() {
 
       setEditingVBT(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     setLoading(false);
@@ -196,19 +194,19 @@ export default function VBT1() {
       if (searchDateRange) {
         d = searchDateRange;
       } else {
-        toast.error("Please select a time period");
+        showToast("Please select a time period", "error");
       }
     } else if (wise === "vendor_wise") {
       if (searchInput) {
         d = searchInput;
       } else {
-        toast.error("Please select a Vendor");
+        showToast("Please select a Vendor", "error");
       }
     } else if (wise === "min_wise") {
       if (searchInput) {
         d = searchInput?.trim();
       } else {
-        toast.error("Please Enter a MIN Number");
+        showToast("Please Enter a MIN Number", "error");
       }
     }
     setSearchLoading(true);
@@ -225,7 +223,7 @@ export default function VBT1() {
       });
       setVBTData(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setVBTData([]);
     }
     setSearchLoading(false);

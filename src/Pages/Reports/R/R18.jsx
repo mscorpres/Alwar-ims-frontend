@@ -119,7 +119,7 @@ function R18() {
 
   const handleDownloadCSV = () => {
     if (rows.length === 0) {
-      showToast("No data to download", "warning");
+      showToast("No data to download", "error");
       return;
     }
     downloadCSVCustomColumns(rows, "R18");

@@ -1,21 +1,22 @@
 import { Button, Card, Form, Input, Row, Space } from "antd";
-import React from "react";
+
 import { processApi } from "../../api";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 const AddProcessForm = ({ loading, setLoading, getRows }) => {
+  const { showToast } = useToast();
   const [addProcessForm] = Form.useForm();
 
   const submitHandler = async () => {
     setLoading("submit");
     const values = await addProcessForm.validateFields();
-    const { data, error, success, message } = processApi.createProcess(values);
+    const {  success, message } = processApi.createProcess(values);
     setLoading(false);
     if (success) {
       getRows();
-      toast.success(message);
+      showToast(message, "success");
     } else {
-      toast.error(message);
+      showToast(message, "error");
     }
   };
 

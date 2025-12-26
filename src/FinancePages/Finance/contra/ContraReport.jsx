@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import axios from "axios";
 import { BsDownload, BsEyeFill } from "react-icons/bs";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -22,6 +22,7 @@ import ContraEdit from "./ContraEdit";
 import MyButton from "../../../Components/MyButton";
 
 export default function ContraReport() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("date");
   const [searchDateRange, setSearchDateRange] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -46,25 +47,25 @@ export default function ContraReport() {
       if (searchDateRange) {
         d = searchDateRange;
       } else {
-        toast.error("Please select a time period");
+        showToast("Please select a time period", "error");
       }
     } else if (wise == "number") {
       if (searchInput) {
         d = searchInput?.trim();
       } else {
-        toast.error("Please Enter a Contra ID");
+        showToast("Please Enter a Contra ID", "error");
       }
     } else if (wise == "ledger") {
       if (searchInput) {
         d = searchInput?.trim();
       } else {
-        toast.error("Please Enter a Contra ID");
+        showToast("Please Enter a Contra ID", "error");
       }
     } else if (wise == "effective") {
       if (searchDateRange) {
         d = searchDateRange;
       } else {
-        toast.error("Please select a time period");
+        showToast("Please select a time period", "error");
       }
     }
 
@@ -85,7 +86,7 @@ export default function ContraReport() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
     setLoading(false);
@@ -119,10 +120,10 @@ export default function ContraReport() {
       setLoading(false);
       if (response.success) {
         setDeleteConfirm(null);
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Input, Row, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -18,6 +18,7 @@ import MyButton from "../../../Components/MyButton";
 import socket from "../../../Components/socket";
 
 const R37 = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -157,18 +158,18 @@ const R37 = () => {
         setRows(arr);
       } else {
         if (message) {
-          toast.error(message);
+          showToast(message, "error");
         } else {
-          toast.error(message);
+          showToast(message, "error");
         }
       }
     } else {
       if (wise == "date" && searchDateRange == null) {
-        toast.error("Please select start and end dates for the results");
+        showToast("Please select start and end dates for the results", "error");
       } else if (wise == "jwid") {
-        toast.error("Please enter a Job work ID");
+        showToast("Please enter a Job work ID", "error");
       } else if (vendor == null) {
-        toast.error("Please select a vendor");
+        showToast("Please select a vendor", "error");
       }
     }
   };

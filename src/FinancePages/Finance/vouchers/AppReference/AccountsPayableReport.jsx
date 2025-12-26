@@ -7,24 +7,14 @@ import {
   Input,
   Typography,
   Modal,
-  Popover,
-  Space,
-  Switch,
-  Card,
-  Dropdown,
+
 } from "antd";
 import { imsAxios } from "../../../../axiosInterceptor";
-import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { v4 } from "uuid";
-import MyDataTable from "../../../../Components/MyDataTable";
+
 import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { InfoCircleOutlined } from "@ant-design/icons";
-import SelectedModal from "./SelectedModal";
-import { set } from "lodash";
-import { useLayoutEffect } from "react";
-import FormTable from "../../../../Components/FormTable";
+import { useToast } from "../../../../hooks/useToast.js";
+
 import MySelect from "../../../../Components/MySelect";
 import { downloadCSV } from "../../../../Components/exportToCSV";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
@@ -33,6 +23,7 @@ import confirm from "antd/es/modal/confirm";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 
 export default function AccountsPayableReport() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [selectOptions, setSelectOptions] = useState([]);
   const [rows, setRows] = useState(false);
@@ -59,7 +50,7 @@ export default function AccountsPayableReport() {
 
       setLoading(false);
     } else if (response.status == 500) {
-      toast.error(response.message.msg);
+      showToast(response.message.msg, "error");
       setLoading(false);
     }
 
@@ -83,7 +74,7 @@ export default function AccountsPayableReport() {
       setRows(arr);
       setLoading(false);
     } else {
-      toast.error(response.message.msg);
+      showToast(response.message.msg, "error");
       setLoading(false);
     }
   };
@@ -256,16 +247,16 @@ export default function AccountsPayableReport() {
   const InvoiceWise = () => {
     setSocketValue("invoiceWise");
     handleCancel();
-    toast.info("Kindly check your mail after sometime.");
+    showToast("Kindly check your mail after sometime.", "error");
   };
   const effectiveWise = () => {
     setSocketValue("effectiveWise");
     handleCancel();
-    toast.info("Kindly check your mail after sometime.");
+    showToast("Kindly check your mail after sometime.", "error");
   };
   useEffect(() => {
     if (subgroup) {
-      console.log("subgroup", subgroup);
+    
       setSubgroup(subgroup);
     }
   }, [subgroup]);
@@ -274,7 +265,7 @@ export default function AccountsPayableReport() {
   };
   useEffect(() => {
     if (socketValue.length > 0) {
-      console.log("socketValue", socketValue);
+    
       emitDownloadEvent(socketValue);
     }
   }, [socketValue]);

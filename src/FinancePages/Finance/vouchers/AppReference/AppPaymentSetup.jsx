@@ -16,10 +16,11 @@ import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { v4 } from "uuid";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { InfoCircleOutlined } from "@ant-design/icons";
 
 export default function AppPaymentSetup() {
+  const { showToast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -157,11 +158,11 @@ export default function AppPaymentSetup() {
     const { data } = response;
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         setShowSubmitConfirm(false);
         getVBTRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

@@ -12,13 +12,8 @@ import {
 import { useState } from "react";
 import { imsAxios } from "../../../../../axiosInterceptor";
 import { useEffect } from "react";
-import SingleComponent from "./SingleProduct";
-// import SingleProduc
-import VBTHeaders from "./VBTHeaders";
-// import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
-import dayjs from "dayjs";
-import NavFooter from "../../../../../Components/NavFooter";
+import { useToast } from "../../../../../hooks/useToast.js";
+
 import validateResponse from "../../../../../Components/validateResponse";
 import { v4 } from "uuid";
 
@@ -28,11 +23,9 @@ function VBT02Report({
   setVBTData,
   apiUrl,
   setApiUrl,
-  editVbtDrawer,
-  isFromEdit,
-  setEditVbtDrawer,
-}) {
+})  {
   const [Vbt01] = Form.useForm();
+    const { showToast } = useToast();
   const [vbtComponent, setVbtComponent] = useState([]);
   const [taxDetails, setTaxDetails] = useState([]);
   const [roundOffSign, setRoundOffSign] = useState("+");
@@ -413,7 +406,7 @@ function VBT02Report({
     const { data } = response;
     // console.log("response", response);
     if (response.status == 200) {
-      toast.success(data);
+      showToast(data, "success");
       setTimeout(() => {
         setEditingVBT(null);
       }, 2000);
@@ -435,11 +428,11 @@ function VBT02Report({
     const { data } = response;
     // console.log("data", response);
     if (response.status === 200) {
-      toast.success(response.data);
+      showToast(response.data, "success");
       setEditVbtDrawer(null);
       setLoading(false);
     } else {
-      toast.error(response.data);
+      showToast(response.data, "error");
       setLoading(false);
     }
   };
@@ -809,7 +802,7 @@ function VBT02Report({
       // setmainArrs(arr);
       setSingleArr(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     // setLoading(false);

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import MyDatePicker from "../../../../Components/MyDatePicker";
-import axios from "axios";
+
 import "../../../Accounts/accounts.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { AiFillEdit } from "react-icons/ai";
 import CreateVBT5 from "./CreateVBT5";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -19,6 +19,7 @@ import { convertSelectOptions } from "../../../../utils/general.ts";
 // import ConfirmModal from "../Shared/ConfirmModal";
 
 export default function VBT5() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("min_wise");
   const [searchInput, setSearchInput] = useState("MIN/23-24/");
   const [selectLoading, setSelectLoading] = useState(false);
@@ -163,7 +164,7 @@ export default function VBT5() {
       // setCheckInvoiceId(arr[0].invoice_id);
       // checkInvoice(checkInvoiceId, arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     setLoading(false);
@@ -174,19 +175,19 @@ export default function VBT5() {
       if (searchDateRange) {
         d = searchDateRange;
       } else {
-        toast.error("Please select a time period");
+        showToast("Please select a time period", "error");
       }
     } else if (wise === "vendor_wise") {
       if (searchInput) {
         d = searchInput;
       } else {
-        toast.error("Please select a Vendor");
+        showToast("Please select a Vendor", "error");
       }
     } else if (wise === "min_wise") {
       if (searchInput) {
         d = searchInput?.trim();
       } else {
-        toast.error("Please Enter a MIN Number");
+        showToast("Please Enter a MIN Number", "error");
       }
     }
     setSearchLoading(true);
@@ -203,7 +204,7 @@ export default function VBT5() {
       });
       setVBTData(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setVBTData([]);
     }
     setSearchLoading(false);
