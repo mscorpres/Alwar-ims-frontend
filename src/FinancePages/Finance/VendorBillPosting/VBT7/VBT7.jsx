@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import links from "../links";
 import MyDatePicker from "../../../../Components/MyDatePicker";
-import axios from "axios";
 import "../../../Accounts/accounts.css";
-import { toast } from "react-toastify";
 import { AiFillEdit } from "react-icons/ai";
 import CreateVBT7 from "./CreateVBT7";
 import MyDataTable from "../../../../Components/MyDataTable";
@@ -17,11 +14,12 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import useApi from "../../../../hooks/useApi.ts";
 import { getVendorOptions } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
+import { useToast } from "../../../../hooks/useToast.js";
 
 export default function VBT1() {
+  const {showToast} = useToast();
   const [wise, setWise] = useState("min_wise");
   const [searchInput, setSearchInput] = useState("MIN/23-24/");
-  const [selectLoading, setSelectLoading] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
   const [vbtData, setVBTData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
@@ -91,7 +89,7 @@ export default function VBT1() {
       // style: { backgroundColor: "transparent" },
     },
   ];
-  //getting vendors list for filter by vendors
+
   const getVendors = async (search) => {
     const response = await executeFun(() => getVendorOptions(search), "select");
     let arr = [];
@@ -108,7 +106,7 @@ export default function VBT1() {
     if (response.success) {
       setEditingVBT(data.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast( response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     setLoading(false);
@@ -130,7 +128,7 @@ export default function VBT1() {
       }));
       setEditingVBT(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     setLoading(false);
@@ -141,20 +139,19 @@ export default function VBT1() {
       if (searchDateRange) {
         d = searchDateRange;
       } else {
-        toast.error("Please select a time period");
+        showToast( "Please select a time period", "error");
       }
     } else if (wise === "vendor_wise") {
       if (searchInput) {
         d = searchInput;
       } else {
-        toast.error("Please select a Vendor");
+        showToast("Please select a vendor","error")
       }
     } else if (wise === "min_wise") {
       if (searchInput) {
         d = searchInput?.trim();
       } else {
-        toast.error("Please Enter a MIN Number");
-      }
+        showToast("Please Enter a MIN Number", "error");
     }
     setSearchLoading(true);
     const response = await imsAxios.post("/tally/vbt07/fetch_vbt07", {
@@ -170,7 +167,7 @@ export default function VBT1() {
       });
       setVBTData(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setVBTData([]);
     }
     setSearchLoading(false);
@@ -312,4 +309,4 @@ export default function VBT1() {
       </div>
     </div>
   );
-}
+}}

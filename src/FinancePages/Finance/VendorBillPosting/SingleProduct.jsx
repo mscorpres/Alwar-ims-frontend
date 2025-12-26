@@ -2,11 +2,8 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Row, Col, Typography, Space } from "antd";
 import Loading from "../../../Components/Loading";
-import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
-import { CodeSandboxCircleFilled } from "@ant-design/icons";
+
 
 export default function SingleComponent({
   index,
@@ -15,10 +12,7 @@ export default function SingleComponent({
   add,
   remove,
   form,
-  // allTdsOptions,
-  // tdsArray,
-  // optionState,
-  // setOptionState,
+
 }) {
   const [loading, setLoading] = useState(false);
   const [glCodes, setGlCodes] = useState([]);
@@ -26,8 +20,7 @@ export default function SingleComponent({
   console.log("hellllll0");
   const component =
     Form.useWatch(["components", field.name, "component"], form) ?? 0;
-  console.log("component---------", form);
-  // console.log("component---------", viewVbt);
+
   const qty =
     Form.useWatch(["components", field.name, "vbtBillQty"], form) ?? 0;
   const rate =

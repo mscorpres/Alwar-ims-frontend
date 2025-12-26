@@ -14,9 +14,7 @@ import {
 import Loading from "../../../../../Components/Loading";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
 import MySelect from "../../../../../Components/MySelect";
-import { imsAxios } from "../../../../../axiosInterceptor";
-import { toast } from "react-toastify";
-import { CodeSandboxCircleFilled } from "@ant-design/icons";
+
 
 export default function SingleComponent({
   index,
