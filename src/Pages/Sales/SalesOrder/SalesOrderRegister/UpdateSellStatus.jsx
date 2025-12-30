@@ -1,4 +1,4 @@
-import { Form, Input, Modal } from "antd/es";
+import { Form, Input, Drawer, Button, Space } from "antd/es";
 import { useForm } from "rc-field-form";
 import React, { useState } from "react";
 import MySelect from "../../../../Components/MySelect";
@@ -44,14 +44,26 @@ function UpdateSellStatus({ open, setOpen, setModalVals, modalVals }) {
   };
   return (
     <div>
-      <Modal
+      <Drawer
         title="Update Status"
         open={open}
-        onOk={() => setStatus(modalVals)}
-        onCancel={() => setOpen(false)}
-        okText="Set Status"
-        cancelText="Back"
-        loading={loading}
+        onClose={() => setOpen(false)}
+        width={400}
+        placement="right"
+        extra={
+          <Space>
+            <Button onClick={() => setOpen(false)}>
+              Back
+            </Button>
+            <Button
+              type="primary"
+              loading={loading}
+              onClick={() => setStatus(modalVals)}
+            >
+              Set Status
+            </Button>
+          </Space>
+        }
       >
         <Form form={form} layout="vertical">
           <Form.Item name="status" label="Status">
@@ -61,7 +73,7 @@ function UpdateSellStatus({ open, setOpen, setModalVals, modalVals }) {
             <Input.TextArea rows={3} placeholder="Type here" />
           </Form.Item>
         </Form>
-      </Modal>
+      </Drawer>
     </div>
   );
 }

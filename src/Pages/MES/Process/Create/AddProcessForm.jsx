@@ -1,7 +1,7 @@
 import { Button, Card, Form, Input, Row, Space } from "antd";
 
 import { processApi } from "../../api";
-import { useToast } from "../../../hooks/useToast.js";
+import { useToast } from "../../../../hooks/useToast";
 
 const AddProcessForm = ({ loading, setLoading, getRows }) => {
   const { showToast } = useToast();

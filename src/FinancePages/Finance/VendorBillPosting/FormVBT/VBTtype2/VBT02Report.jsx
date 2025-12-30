@@ -16,6 +16,9 @@ import { useToast } from "../../../../../hooks/useToast.js";
 
 import validateResponse from "../../../../../Components/validateResponse";
 import { v4 } from "uuid";
+import VBTHeaders from "../VBT01/VBTHeaders.jsx";
+import NavFooter from "../../../../../Components/NavFooter.jsx";
+import SingleComponent from "../../SingleProduct.jsx";
 
 function VBT02Report({
   editingVBT,
@@ -23,6 +26,7 @@ function VBT02Report({
   setVBTData,
   apiUrl,
   setApiUrl,
+  editVbtDrawer,
 })  {
   const [Vbt01] = Form.useForm();
     const { showToast } = useToast();

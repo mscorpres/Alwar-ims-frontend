@@ -24,7 +24,8 @@ const PendingFG = () => {
     imsAxios
       .post("/fgIN/pending")
       .then((response) => {
-        let arr = response?.data.map((row) => {
+        if (response?.success) {
+            let arr = response?.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -32,6 +33,11 @@ const PendingFG = () => {
         });
         setPending(arr);
         setLoading(false);
+        } else {
+        showToast(response?.message, "error");
+        setLoading(false);
+        }
+      
       })
       .catch((err) => {
         showToast(err, "error");

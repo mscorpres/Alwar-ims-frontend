@@ -8,6 +8,7 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import EditSheet from "./EditSheet";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 function BalanceSheet() {
   let arr = [];
@@ -15,6 +16,7 @@ function BalanceSheet() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingSheet, setEditingSheet] = useState(false);
+  const { showToast } = useToast();
 
   const getRows = async () => {
     setRows([]);
@@ -24,13 +26,14 @@ function BalanceSheet() {
       date: dateRange,
     });
     setLoading(false);
-    if (response.data) {
-      let arr1 = response.data.data;
+    if (response.success) {
+      let arr1 = response.data;
       arr1 = customFlatArray(arr1);
       setRows(arr1);
-      // console.log("balance sheet", typeof arr1[0].credit);
-      // let m = convertToNumber(arr1[0].credit);
-      // console.log("balance sheet aftter convert fn", typeof m);
+    
+    } else {
+      setLoading(false);
+      showToast(response.message, "error");
     }
   };
   const columns = [

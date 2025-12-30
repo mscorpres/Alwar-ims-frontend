@@ -43,29 +43,29 @@ export default function ChartOfAccounts() {
       date: dateRange,
     });
     setLoading(false);
-    let data = response.data;
-    if (data) {
-      setCharts(flatArray(data.data));
+    const { data , summary, success} = response;
+    if (success) {
+      setCharts(flatArray(data));
 
       let summaryData = [
         { title: "From - To", description: dateRange },
         {
           title: "Closing",
-          description: Number(data.summary[0].closing),
+          description: Number(summary[0].closing),
         },
         {
           title: "Opening",
-          description: Number(data.summary[0].opening),
+          description: Number(summary[0].opening),
         },
         {
           title: "Total Credit",
           // description: Number(data.summary[0].total_credit)
 
-          description: Number(data.summary[0].total_credit),
+          description: Number(summary[0].total_credit),
         },
         {
           title: "Total Debit",
-          description: Number(data.summary[0].total_debit),
+          description: Number(summary[0].total_debit),
         },
       ];
       setSummary(summaryData);

@@ -18,7 +18,6 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useNavigate, Link } from "react-router-dom";
-// import EditVBTReport from "./EditVbtRecord/EditVBTReport";
 import { CheckOutlined } from "@ant-design/icons";
 import DeleteVbt from "./DeleteVbt";
 import CreateDebitNote from "../DebitNote/Create";
@@ -62,7 +61,6 @@ export default function VBTReport() {
     if (editVbtDrawer) {
       var checkapi = getApiUrl(editVbtDrawer);
       setEditVbtUrl(checkapi);
-      console.log("editVbtDrawer------", checkapi);
     }
   }, [editVbtDrawer]);
 
@@ -916,7 +914,7 @@ export default function VBTReport() {
           return {
             ...row,
             id: v4(),
-            index: data.data.indexOf(row) + 1,
+            index: response.data.indexOf(row) + 1,
             status: row.status == "D" ? "Deleted" : "--",
             taxableValue: row.vbp_inqty * row.vbp_inrate,
           };
@@ -924,13 +922,7 @@ export default function VBTReport() {
 
         setRows(arr);
       } else {
-        if (data.message.msg) {
-          showToast(response.message?.msg || response.message, "error");
-        } else if (data.message) {
-          showToast(response.message?.msg || response.message, "error");
-        } else {
-          showToast("Something wrong happened", "error");
-        }
+        showToast(response.message, "error");
       }
     } else {
       if (wise == "datewise" && searchDateRange == null) {

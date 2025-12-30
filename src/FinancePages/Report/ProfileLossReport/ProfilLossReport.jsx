@@ -41,11 +41,11 @@ function ProfilLossReport() {
     const response = await imsAxios.post("/tally/reports/plReport", {
       date: dateRange,
     });
-    setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        let incomeMaster = data.data.income_master;
+   
+    const { data, success } = response;
+ 
+      if (success) {
+        let incomeMaster = data.income_master;
         let indirectIncomes = incomeMaster[0].children.filter(
           (row) => row.code === "8030000"
         );
@@ -53,7 +53,7 @@ function ProfilLossReport() {
           (row) => row.code !== "8030000"
         );
 
-        let expensesMaster = data.data.expenses_master;
+        let expensesMaster = data.expenses_master;
         let indirectExpenses = expensesMaster[0].children.filter(
           (row) => row.code === "6040000"
         );
@@ -130,12 +130,13 @@ function ProfilLossReport() {
         setNetProfit(+Number(NP).toFixed(2));
         setNetLoss(+Number(NL).toFixed(2));
         setTotal(totalObj);
+         setLoading(false);
       } else {
-        showToast(response.message?.msg || response.message, "error");
+        showToast(response.message, "error");
         setIncomeRows([]);
         setExpenseRows([]);
       }
-    }
+
   };
   const customFlatArray = (array) => {
     array?.map((row) => {

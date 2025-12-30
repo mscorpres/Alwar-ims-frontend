@@ -1,5 +1,5 @@
-import { Card, Flex, Modal, Popover, Radio, Skeleton } from "antd";
-import { Col, Divider, Form, Input, Row, Space, Typography } from "antd/es";
+import { Card, Flex, Drawer, Modal, Popover, Radio, Skeleton, Button, Space } from "antd";
+import { Col, Divider, Form, Input, Row, Typography } from "antd/es";
 import React, { useEffect, useState } from "react";
 import MyButton from "../../../../Components/MyButton";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -216,19 +216,25 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
     }
   }, [pickLocation, selectedComponent]);
   return (
-    <Modal
+    <Drawer
       title="Process Request"
       open={show}
-      width="70vw"
-      centered={true}
-      okButtonProps={{
-        disabled: !action,
-      }}
-      okText="Submit"
-      cancelText="Back"
-      onOk={validateHandler}
-      confirmLoading={loading("submit")}
-      onCancel={hide}
+      width="100vw"
+      placement="right"
+      onClose={hide}
+      footer={
+        <Space style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button onClick={hide}>Back</Button>
+          <Button
+            type="primary"
+            onClick={validateHandler}
+            loading={loading("submit")}
+            disabled={!action}
+          >
+            Submit
+          </Button>
+        </Space>
+      }
     >
       <Form layout="vertical" form={form} initialValues={initialValues}>
         <Row gutter={6}>
@@ -296,7 +302,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                 <div>
                   <Input
                     placeholder="Filter Components"
-                    valye={filterString}
+                    value={filterString}
                     onChange={(e) => setFilterString(e.target.value)}
                   />
                 </div>
@@ -455,7 +461,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
           </Col>
         </Row>
       </Form>
-    </Modal>
+    </Drawer>
   );
 };
 

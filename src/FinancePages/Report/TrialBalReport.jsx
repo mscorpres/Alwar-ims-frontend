@@ -11,12 +11,14 @@ import {
 } from "@mui/material";
 import { Button, Card, Form, Row, Space, Col, Skeleton } from "antd";
 import { v4 } from "uuid";
-import Loading from "../../Components/Loading";
+
 import { DownloadOutlined } from "@ant-design/icons";
 import { downloadCSVCustomColumns } from "../../Components/exportToCSV";
 import MyButton from "../../Components/MyButton";
+import { useToast } from "../../hooks/useToast";
 
 function TrialBalReport() {
+  const {showToast} = useToast();
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState([]);
@@ -28,8 +30,14 @@ function TrialBalReport() {
     const response = await imsAxios.post("/tally/reports/trailBalanaceReport", {
       date: date,
     });
-    setLoading(false);
-    setAllData(flatArray(data.data));
+    if (response?.success) {
+          setLoading(false);
+    setAllData(flatArray(response.data));
+    } else {
+      setLoading(false);
+      showToast(response.message, "error");
+    }
+
   };
 
   const handleDownloadCSV = () => {

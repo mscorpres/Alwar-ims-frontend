@@ -71,7 +71,7 @@ function NatureofTCS() {
       });
       setTCSList(arr);
     } else {
-      showToast(response.message);
+      showToast(response.message,"error");
     }
 
     setLoading(false);

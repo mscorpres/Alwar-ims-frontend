@@ -156,9 +156,9 @@ const PendingApproval = () => {
   return (
     <Row
       
-      style={{ height: "100%", padding: 15, paddingBottom: 55 }}
+      style={{ height: "100%", padding: 15 }}
     >
-      <Col span={14}>
+      <Col span={24}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

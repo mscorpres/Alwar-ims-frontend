@@ -87,7 +87,7 @@ export default function EditTDSMoal({ editingTDS, setEditingTDS, getTDSList }) {
           Submit
         </Button>
       }
-      placement="left"
+      placement="right"
       onClose={() => setEditingTDS(null)}
       open={editingTDS}
     >

@@ -189,7 +189,6 @@ export default function MaterialInWithoutPO() {
         "submit"
       );
     }
-  
 
     if (fileResponse?.success || vendorType == "p01") {
       fileName = fileResponse?.data;
@@ -201,10 +200,10 @@ export default function MaterialInWithoutPO() {
 
       if (response?.success) {
         const { data } = response;
-        console.log(response, "full response during min");
-        console.log(data, "data during min");
+
         // The transaction ID is nested: response.data.data.txn
-        const transactionId = data?.data?.txn || response?.data?.data?.txn || data?.txn;
+        const transactionId =
+          data?.data?.txn || response?.data?.data?.txn || data?.txn;
         console.log("Transaction ID:", transactionId);
         setShowSuccessPage({
           materialInId: transactionId,
@@ -244,7 +243,6 @@ export default function MaterialInWithoutPO() {
           `PIA Status is enabled for ${response.data[0].newPart} Part Code.`,
           "success"
         );
-        
       }
       arr = convertSelectOptions(response.data);
     }
@@ -311,7 +309,7 @@ export default function MaterialInWithoutPO() {
     );
     if (response.success) {
       const data = response?.data;
-      console.log("data,", data, rowId);
+
       form.setFieldValue(["components", rowId, "gstRate"], data.gstrate);
       form.setFieldValue(["components", rowId, "hsn"], data.hsn);
       form.setFieldValue(["components", rowId, "rate"], data.rate);
@@ -365,6 +363,7 @@ export default function MaterialInWithoutPO() {
 
   const handleFetchVendorBranchDetails = async (branchCode) => {
     const vendorCode = form.getFieldValue("vendorName");
+
     const response = await executeFun(
       () => getVendorBranchDetails(vendorCode.value, branchCode),
       "fetch"
@@ -456,7 +455,7 @@ export default function MaterialInWithoutPO() {
       currency === "364907247" ? 0 : foreignValue
     );
   };
- 
+
   const successColumns = [
     {
       headerName: "Component",
@@ -520,6 +519,9 @@ export default function MaterialInWithoutPO() {
   }, [vendorType]);
 
   useEffect(() => {
+    if (!vendorBranch) {
+      return;
+    }
     handleFetchVendorBranchDetails(vendorBranch);
   }, [vendorBranch]);
   const columns = ({
@@ -849,7 +851,6 @@ export default function MaterialInWithoutPO() {
       "fetch"
     );
     if (response?.success) {
-    
       let data = response?.data;
       // const formattedRows = data.data.rows.map((row) => {
       //   let rowObject = {};
@@ -1011,7 +1012,10 @@ export default function MaterialInWithoutPO() {
                                 ? setShowBranchModal({
                                     vendor_code: vendorDetails.vendorName,
                                   })
-                                : showToast("Please Select a vendor first", "error");
+                                : showToast(
+                                    "Please Select a vendor first",
+                                    "error"
+                                  );
                             }}
                             style={{
                               color: "#1890FF",

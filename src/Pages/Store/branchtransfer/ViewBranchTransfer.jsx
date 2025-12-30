@@ -42,7 +42,7 @@ function ViewBranchTransfer() {
       {
         trans_id: trans_id,
       }
-    )
+    );
     let arr = response.data.map((row, index) => ({
       id: index,
       index: index + 1,
@@ -112,7 +112,7 @@ function ViewBranchTransfer() {
           sku,
         }
       );
-      console.log(processResponse,"pro res")
+      console.log(processResponse, "pro res");
       const { data: processData } = processResponse;
       if (processData) {
         const arr = processData.data.map((row) => ({
@@ -132,7 +132,7 @@ function ViewBranchTransfer() {
     try {
       setRows([]);
       const values = await qcReportForm.validateFields();
-      console.log(values);
+
       let fetchdata = "";
       if (values.status === "date") {
         fetchdata = {
@@ -150,29 +150,25 @@ function ViewBranchTransfer() {
         "/branchTransfer/getBranchTransfer",
         fetchdata
       );
-      const { data } = response;
-      if (data.status === "error") {
-        showToast(data.message, "error");
-      } else if (response.success ) {
-        if (response.success) {
-          console.log("coming here");
-          console.log(data);
-          const arr = response.data.map((row, index) => {
-            return {
-              key: index,
-              id: index,
-              index: index + 1,
-              trans_id: row.trans_id,
-              vendor: row.vendor,
-              from_location: row.from_location,
-              to_location: row.to_location,
-              vendor_code: row.vendor_code,
-              vehicle_no: row.vehicle_no,
-              narration: row.narration,
-            };
-          });
-          setRows(arr);
-        }
+      const { data, success, message } = response;
+      if (response.status === "error") {
+        showToast(message, "error");
+      } else if (success) {
+        const arr = data.map((row, index) => {
+          return {
+            key: index,
+            id: index,
+            index: index + 1,
+            trans_id: row.trans_id,
+            vendor: row.vendor,
+            from_location: row.from_location,
+            to_location: row.to_location,
+            vendor_code: row.vendor_code,
+            vehicle_no: row.vehicle_no,
+            narration: row.narration,
+          };
+        });
+        setRows(arr);
       }
     } catch (error) {
       showToast(error, "error");
@@ -387,7 +383,7 @@ const ViewModal = ({
         trans_id: detaildata[0].trans_id,
       }
     );
-    if (response.success ) {
+    if (response.success) {
       showToast(response.message, "success");
     } else if (data.status === "error") {
       showToast(response.message?.msg || response.message, "error");

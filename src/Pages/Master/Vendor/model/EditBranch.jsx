@@ -575,44 +575,34 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
           </Form>
         )}
       </Drawer>
-      <Modal
-        title={`Addding MSME for ${editVendor?.vendor_code}`}
+      <Drawer
+        title={`Adding MSME for ${editVendor?.vendor_code}`}
         open={editMSME == true || isMSMEEdited == true}
         width={600}
-        height={600}
-        onCancel={() => setEditMSME(false)}
-        footer={[
-          <Row style={{ width: "100%" }} align="middle" justify="space-between">
-            <Divider />
-            <Col>
-              <Space>
-                <Button key="back" onClick={close}>
-                  Back
-                </Button>
-
-                <Button
-                  key="submit"
-                  type="primary"
-                  loading={submitLoading}
-                  onClick={saveMSMEEntry}
-                >
-                  Save
-                </Button>
-              </Space>
-            </Col>
-          </Row>,
-        ]}
+        placement="right"
+        onClose={close}
+        extra={
+          <Space>
+            <Button onClick={close}>
+              Back
+            </Button>
+            <Button
+              type="primary"
+              loading={submitLoading}
+              onClick={saveMSMEEntry}
+            >
+              Save
+            </Button>
+          </Space>
+        }
       >
-        {" "}
         <Form
           form={updateMSMEForm}
           // initialValues={initialValues}
           layout="vertical"
         >
-          {" "}
           <Divider />
           <Row gutter={[10, 10]}>
-            {" "}
             <Col span={8}>
               <Form.Item
                 label="MSME Year"
@@ -662,7 +652,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
             </Col>
           </Row>
         </Form>
-      </Modal>
+      </Drawer>
     </>
   );
 };

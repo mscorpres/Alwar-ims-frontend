@@ -3,7 +3,7 @@ import { Col, Form, Modal, Row } from "antd";
 import HeaderDetails from "./HeaderDetails";
 import ProcessTable from "./ProcessTable";
 import { processApi } from "../../api";
-import { useToast } from "../../../hooks/useToast.js";
+import { useToast } from "../../../../hooks/useToast";
 
 const MapProcesses = () => {
   const { showToast } = useToast();
