@@ -32,7 +32,7 @@ const Q3 = () => {
         search,
       });
       setLoading(false);
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -52,7 +52,7 @@ const Q3 = () => {
         sku_code: searchInput,
       });
       if (response.success) {
-        const { skuData, data } = data.response;
+        const {  data:skuData } = response;
         const detailsObj = {
           stock: skuData.closingqty,
           product: skuData.product,
@@ -69,6 +69,8 @@ const Q3 = () => {
         setRows(arr);
 
         setDetails(detailsObj);
+      } else {
+        
       }
     } catch (error) {
       console.log("Some error occured while fetching rows", error);

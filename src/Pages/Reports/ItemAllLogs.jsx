@@ -1,4 +1,4 @@
-//updated code 
+//updated code
 import { useState } from "react";
 import { Button, Card, Col, Form, Row, Space, Pagination } from "antd"; // CHANGE: Added Pagination
 import ToolTipEllipses from "../../Components/ToolTipEllipses";
@@ -16,8 +16,10 @@ import ComponentImages from "../Master/Components/material/ComponentImages";
 import useApi from "../../hooks/useApi.ts";
 import { getComponentOptions } from "../../api/general.ts";
 import MyButton from "../../Components/MyButton";
+import { useToast } from "../../hooks/useToast.js";
 
 export default function ItemAllLogs() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -29,7 +31,7 @@ export default function ItemAllLogs() {
   ]);
   const [showImages, setShowImages] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
-  
+
   // CHANGE: Added pagination state variables
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
@@ -46,22 +48,22 @@ export default function ItemAllLogs() {
       () => getComponentOptions(search),
       "select"
     );
-    const { data } = response;
-    getData(response);
+    const { data, success, message } = response;
+    if (success) {
+      getData(data);
+    } else {
+      showToast(message, "error");
+    }
   };
 
-  // getting data from response for setting async options for async select
   const getData = (response) => {
-    const { data } = response;
-    if (data) {
-      if (data.length) {
-        const arr = data.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
+    if (response.length > 0) {
+      const arr = response.map((row) => ({
+        text: row.text,
+        value: row.id,
+      }));
 
-        setAsyncOptions(arr);
-      }
+      setAsyncOptions(arr);
     }
   };
 
@@ -75,7 +77,7 @@ export default function ItemAllLogs() {
       { title: "Last Rate", description: "" },
     ]);
     setRows([]);
-    
+
     // CHANGE: Removed date range from API call, added page and limit
     const response = await imsAxios.post("/itemQueryA/fetchRM_logs", {
       // range: values.date, // REMOVED
@@ -84,39 +86,40 @@ export default function ItemAllLogs() {
       page: page, // ADDED
       limit: limit, // ADDED
     });
-    
+
     setLoading(false);
     if (response.success) {
-        // CHANGE: Updated to use serial_no from backend instead of index
-        const arr = response.data.data2.map((row) => ({
-          index: row.serial_no, // CHANGED: Use serial_no from backend
-          id: v4(),
-          ...row,
-        }));
-        setRows(arr);
-        
-        // CHANGE: Updated pagination state from response
-        if (response.data.pagination) {
-          setCurrentPage(response.data.pagination.currentPage);
-          setTotalRecords(response.data.pagination.totalRecords);
-          setTotalPages(response.data.pagination.totalPages);
-        }
-        setSummaryData([
-          { title: "Component", description: response.data.data1.component },
-          { title: "Part Code", description: response.data.data1.partno },
-          { title: "Unique Id", description: response.data.data1.unique_id },
-          // {
-          //   title: "Closing",
-          //   description:
-          //     data.response.data1.closingqty + " " + data.response.data1.uom,
-          // },
-          {
-            title: "Last In (Date)",
-            description: response.data.data1.last_date ?? "--",
-          },
-          { title: "Last Rate", description: response.data.data1.lastRate },
-        ]);
-      
+      // CHANGE: Updated to use serial_no from backend instead of index
+      const arr = response.data.data2.map((row) => ({
+        index: row.serial_no, // CHANGED: Use serial_no from backend
+        id: v4(),
+        ...row,
+      }));
+      setRows(arr);
+
+      // CHANGE: Updated pagination state from response
+      if (response.data.pagination) {
+        setCurrentPage(response.data.pagination.currentPage);
+        setTotalRecords(response.data.pagination.totalRecords);
+        setTotalPages(response.data.pagination.totalPages);
+      }
+      setSummaryData([
+        { title: "Component", description: response.data.data1.component },
+        { title: "Part Code", description: response.data.data1.partno },
+        { title: "Unique Id", description: response.data.data1.unique_id },
+        // {
+        //   title: "Closing",
+        //   description:
+        //     data.response.data1.closingqty + " " + data.response.data1.uom,
+        // },
+        {
+          title: "Last In (Date)",
+          description: response.data.data1.last_date ?? "--",
+        },
+        { title: "Last Rate", description: response.data.data1.lastRate },
+      ]);
+    }else {
+      showToast(response.message, "error");
     }
   };
 
@@ -273,7 +276,7 @@ export default function ItemAllLogs() {
                       />
                     </Form.Item>
                   </Col>
-                  
+
                   {/* CHANGE: Removed Date Range Field */}
                   {/* <Col span={24}>
                     <Form.Item
@@ -289,7 +292,7 @@ export default function ItemAllLogs() {
                       />
                     </Form.Item>
                   </Col> */}
-                  
+
                   <Col span={24}>
                     <Row gutter={6}>
                       <Space>
@@ -339,7 +342,9 @@ export default function ItemAllLogs() {
       </Col>
       <Col span={20}>
         {/* CHANGE: Wrapped MyDataTable with pagination */}
-        <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+        <div
+          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+        >
           <div style={{ flex: 1, overflow: "auto" }}>
             <MyDataTable
               loading={loading === "fetch"}
@@ -347,10 +352,16 @@ export default function ItemAllLogs() {
               columns={columns}
             />
           </div>
-          
+
           {/* CHANGE: Added Pagination Component */}
           {rows.length > 0 && (
-            <div style={{ padding: "16px", textAlign: "right", borderTop: "1px solid #f0f0f0" }}>
+            <div
+              style={{
+                padding: "16px",
+                textAlign: "right",
+                borderTop: "1px solid #f0f0f0",
+              }}
+            >
               <Pagination
                 current={currentPage}
                 pageSize={pageSize}
@@ -358,7 +369,7 @@ export default function ItemAllLogs() {
                 onChange={handlePageChange}
                 onShowSizeChange={handlePageChange}
                 showSizeChanger
-                showTotal={(total, range) => 
+                showTotal={(total, range) =>
                   `${range[0]}-${range[1]} of ${total} items`
                 }
                 pageSizeOptions={[10, 25, 50, 100, 200]}
