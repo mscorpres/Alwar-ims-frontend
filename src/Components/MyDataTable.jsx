@@ -278,6 +278,34 @@ export default function MyDataTable(props) {
         }}
         componentsProps={{
           footer: { rows: props.data },
+          basePopper: {
+            placement: "bottom-start",
+            modifiers: [
+              {
+                name: "flip",
+                enabled: false,
+              },
+              {
+                name: "preventOverflow",
+                enabled: true,
+                options: {
+                  altBoundary: true,
+                  rootBoundary: "viewport",
+                  padding: 8,
+                },
+              },
+            ],
+          },
+          menu: {
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "left",
+            },
+            transformOrigin: {
+              vertical: "top",
+              horizontal: "left",
+            },
+          },
         }}
         pageSize={100}
         rowsPerPageOptions={[25, 50, 100, 1000]}
@@ -287,7 +315,18 @@ export default function MyDataTable(props) {
           "& .MuiDataGrid-root": {
             border: "none",
           },
-        
+          // Global menu/popper styling to ensure downward opening
+          "& .MuiPopper-root": {
+            zIndex: 1300,
+            "& .MuiPaper-root": {
+              borderRadius: (theme) => theme.shape.borderRadius,
+              boxShadow: (theme) =>
+                theme.palette.mode === "light"
+                  ? "0 4px 16px rgba(0,0,0,0.15)"
+                  : "0 4px 16px rgba(0,0,0,0.5)",
+              marginTop: (theme) => theme.spacing(0.5),
+            },
+          },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: (theme) =>
               alpha(theme.palette.primary.main, 0.06),
@@ -355,6 +394,73 @@ export default function MyDataTable(props) {
           "& .MuiDataGrid-overlayWrapper": {
             backgroundColor: (theme) =>
               alpha(theme.palette.background.default, 0.8),
+          },
+          // Action menu styling - ensure it opens downward
+          "& .MuiDataGrid-menuIcon": {
+            "& .MuiSvgIcon-root": {
+              transition: "transform 0.2s ease-in-out",
+            },
+          },
+          "& .MuiDataGrid-menuList": {
+            borderRadius: (theme) => theme.shape.borderRadius,
+            boxShadow: (theme) =>
+              theme.palette.mode === "light"
+                ? "0 4px 16px rgba(0,0,0,0.15)"
+                : "0 4px 16px rgba(0,0,0,0.5)",
+            padding: (theme) => theme.spacing(0.5),
+            "& .MuiMenuItem-root": {
+              borderRadius: (theme) => theme.shape.borderRadius,
+              padding: (theme) => theme.spacing(1, 1.5),
+              margin: (theme) => theme.spacing(0.25, 0),
+              transition: "all 0.2s ease-in-out",
+              "&:hover": {
+                backgroundColor: (theme) =>
+                  alpha(theme.palette.primary.main, 0.08),
+              },
+              "&.Mui-disabled": {
+                opacity: 0.5,
+              },
+            },
+          },
+          // Action cell menu (GridActionsCellItem with showInMenu)
+          "& .MuiDataGrid-actionsCell": {
+            "& .MuiIconButton-root": {
+              "&:hover": {
+                backgroundColor: (theme) =>
+                  alpha(theme.palette.action.hover, 0.04),
+              },
+            },
+          },
+          // Menu component styling for action menus
+          "& .MuiMenu-paper": {
+            marginTop: (theme) => theme.spacing(0.5),
+            borderRadius: (theme) => theme.shape.borderRadius,
+            boxShadow: (theme) =>
+              theme.palette.mode === "light"
+                ? "0 4px 16px rgba(0,0,0,0.15)"
+                : "0 4px 16px rgba(0,0,0,0.5)",
+            "& .MuiList-root": {
+              padding: (theme) => theme.spacing(0.5),
+              "& .MuiMenuItem-root": {
+                borderRadius: (theme) => theme.shape.borderRadius,
+                padding: (theme) => theme.spacing(1, 1.5),
+                margin: (theme) => theme.spacing(0.25, 0),
+                transition: "all 0.2s ease-in-out",
+                "&:hover": {
+                  backgroundColor: (theme) =>
+                    alpha(theme.palette.primary.main, 0.08),
+                },
+              },
+            },
+          },
+          // Ensure column menu opens downward
+          "& .MuiDataGrid-columnHeader": {
+            "& .MuiDataGrid-menuIcon": {
+              "&:hover": {
+                backgroundColor: (theme) =>
+                  alpha(theme.palette.action.hover, 0.04),
+              },
+            },
           },
         }}
         loading={props.loading}
