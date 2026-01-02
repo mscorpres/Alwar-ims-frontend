@@ -3,7 +3,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { useToast } from "../../../../hooks/useToast.js";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Drawer, Space, Typography } from "antd";
+import { Drawer, Space, Typography, Row, Col, Card, Timeline } from "antd";
 import MyDataTable from "../../../../Components/MyDataTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
@@ -63,13 +63,14 @@ export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
       width: 100,
     },
     {
-      headerName: "Comp. Status",
-      field: "po_part_status",
-      width: 120,
+      headerName: "Item Description",
+      field: "poItemDescription",
+      width: 300,
     },
     {
       headerName: "Approval Remark",
       field: "approval_remark",
+      width: 300,
       renderCell: ({ row }) => (
         <div
           style={{
@@ -97,7 +98,7 @@ export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
         </div>
       ),
       // width: "100%",
-      flex: 1,
+      // flex: 1,
     },
   ];
   useEffect(() => {
@@ -125,13 +126,44 @@ export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
         </Space>
       }
     >
-      <div style={{ height: "100%", overflowX: "auto", width: "100%" }}>
-        <MyDataTable
-          loading={loading === "fetch"}
-          columns={columns}
-          rows={rows}
-        />
-      </div>
+      <Row gutter={20} style={{ height: "95%" }}>
+        <Col span={16}>
+          <div style={{ height: "100%", overflowX: "auto", width: "100%" }}>
+            <MyDataTable
+              loading={loading === "fetch"}
+              columns={columns}
+              rows={rows}
+            />
+          </div>
+        </Col>
+        <Col span={8}>
+          <Card
+            title="PO logs"
+            size="small"
+            style={{ maxHeight: "100%" }}
+            bodyStyle={{ height: "95%" }}
+          >
+            <Timeline
+              items={newPoLogs.map((row) => ({
+                children: (
+                  <>
+                    <strong>{row.po_log_status}</strong>
+                    <div style={{ fontSize: "10px" }}>
+                      By {row.user_name} on {row.date} {row.time}
+                    </div>
+                    <div style={{ fontSize: "13px" }}>
+                      Remark:{" "}
+                      {row.po_log_remark.length === 0
+                        ? "--"
+                        : row.po_log_remark}
+                    </div>
+                  </>
+                ),
+              }))}
+            />
+          </Card>
+        </Col>
+      </Row>
     </Drawer>
   );
 }

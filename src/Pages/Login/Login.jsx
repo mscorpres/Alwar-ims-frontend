@@ -87,10 +87,8 @@ const Login = () => {
           }),
         "submit"
       );
-      const { success } = res || {};
-
-      if (success) {
-        const isTwoStep = res?.isTwoStep ?? res?.data?.isTwoStep;
+      if (res?.success) {
+        const isTwoStep = res?.data?.isTwoStep;
         if (isTwoStep === "Y") {
           // Two-step login, show OTP screen
           setUserCredentials({
@@ -286,8 +284,8 @@ const Login = () => {
       }
     }
   };
-
-    const handleOtpPaste = (e) => {
+   // OTP Paste Handler
+  const handleOtpPaste = (e) => {
     e.preventDefault();
     const pastedText = e.clipboardData.getData("text");
     const pastedOtp = pastedText.replace(/\D/g, "").slice(0, 6);
@@ -306,6 +304,7 @@ const Login = () => {
       }, 0);
     }
   };
+
 
 
   // OTP Backspace Handler

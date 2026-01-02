@@ -7,10 +7,15 @@ import { useEffect } from "react";
 import { useToast } from "../../hooks/useToast.js";
 import MINSummary from "./MINSummary";
 import MyDatePicker from "../../Components/MyDatePicker";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
   const { showToast } = useToast();
   const [summaryDate, setSummaryDate] = useState("");
+ const { user } = useSelector(
+    (state) => state.login
+  );
+  
 
   const [transactionSummary, setTransactionSummary] = useState([
     {
@@ -376,8 +381,11 @@ const Dashboard = () => {
   }, [summaryDate]);
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     getMasterSummary();
-  }, []);
+  }, [user]);
   return (
     <Row  style={{ padding: 20 }}>
       <Col span={22}>
