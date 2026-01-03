@@ -143,7 +143,7 @@ export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
             style={{ maxHeight: "100%" }}
             bodyStyle={{ height: "95%" }}
           >
-            <Timeline
+            {/* <Timeline
               items={newPoLogs.map((row) => ({
                 children: (
                   <>
@@ -160,7 +160,7 @@ export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
                   </>
                 ),
               }))}
-            />
+            /> */}
           </Card>
         </Col>
       </Row>

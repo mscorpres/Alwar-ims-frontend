@@ -93,7 +93,7 @@ const ProccessedMrRequest = () => {
 
   return (
     <Row gutter={6} style={{ height: "95%", padding: 10 }}>
-      <Col span={4}>
+      <Col span={6}>
         <Card size="small" title="Filters">
           <Form form={filterForm} layout="vertical">
             <Form.Item name="user" label="User">
@@ -123,7 +123,7 @@ const ProccessedMrRequest = () => {
           </Form>
         </Card>
       </Col>
-      <Col span={10}>
+      <Col span={18}>
         <MyDataTable data={rows} columns={[actionColumn, ...columns]} />
       </Col>
       {showDetails && (
