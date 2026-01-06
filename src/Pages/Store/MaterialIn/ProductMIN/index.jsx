@@ -510,7 +510,7 @@ export default function ProductMIN() {
           } else {
             obj = { ...obj, [name]: value };
             return obj;
-          }j
+          }
         } else {
           return row;
         }
