@@ -83,17 +83,18 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     fontWeight: 500,
     transition: "all 0.2s ease-in-out",
+  
     "&:hover": {
       backgroundColor: alpha(theme.palette.primary.main, 0.1),
       transform: "scale(1.05)",
     },
     "&.Mui-selected": {
-      backgroundColor: theme.palette.primary.main,
+        backgroundColor: "#0f766e",
       color: theme.palette.primary.contrastText,
       boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.3)}`,
       "&:hover": {
-        backgroundColor: theme.palette.primary.dark,
-        transform: "scale(1.05)",
+        // backgroundColor: theme.palette.primary.dark,
+        transform: "scale(1.01)",
       },
     },
   },
@@ -277,24 +278,7 @@ export default function MyDataTable(props) {
         }}
         componentsProps={{
           footer: { rows: props.data },
-          basePopper: {
-            placement: "bottom-start",
-            modifiers: [
-              {
-                name: "flip",
-                enabled: false,
-              },
-              {
-                name: "preventOverflow",
-                enabled: true,
-                options: {
-                  altBoundary: true,
-                  rootBoundary: "viewport",
-                  padding: 8,
-                },
-              },
-            ],
-          },
+         
           menu: {
             anchorOrigin: {
               vertical: "bottom",
