@@ -1,20 +1,18 @@
-import { toast } from "react-toastify";
-import errorToast from "./errorToast";
+import { useToast } from "../hooks/useToast";
 
 const validateResponse = (data, showToast) => {
+  const { showToast: show } = useToast();
   if (data?.success) {
     if (showToast) {
-      toast.success(data.message);
+      show(data.message);
     }
     return data?.data;
   } else {
-
-      if (data.message) {
-        return toast.error(data.message);
-      } else {
-        return toast.error(errorToast(data.message));
-      }
-   
+    if (data.message) {
+      return show(data.message, "error");
+    } else {
+      return show(data?.message || "Something went wrong", "error");
+    }
   }
 };
 

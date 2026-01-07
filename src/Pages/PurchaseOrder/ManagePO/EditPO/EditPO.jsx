@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import EditComponents from "./EditComponents";
 import NavFooter from "../../../../Components/NavFooter";
 import {
@@ -31,6 +31,7 @@ import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 
 export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
+  const { showToast } = useToast();
   const [purchaseOrder, setPurchaseOrder] = useState(null);
   const [activeTab, setActiveTab] = useState("1");
   const [vendorBranches, setVendorBranches] = useState([]);
@@ -106,7 +107,7 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
             vendoraddress: response1.data.address.replaceAll("<br>", "\n"),
           };
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       } else if (name == "vendorbranch") {
         const response = await imsAxios.post("backend/vendorAddress", {
@@ -121,7 +122,7 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
             vendoraddress: response.data.address.replaceAll("<br>", "\n"),
           };
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       } else if (name == "costcenter") {
         obj = {
@@ -414,7 +415,7 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
 
         await handleProjectCostCenter(typeof value === "object" ? value.value : value);
       } else {
-        toast.error(data.message);
+        showToast(data.message, "error");
       }
     }
   };
@@ -441,11 +442,11 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
           costcenter: costCenterOption,
         }));
       } else {
-        toast.error(responseData?.message || "Failed to fetch cost center");
+        showToast(responseData?.message || "Failed to fetch cost center", "error");
       }
     } catch (error) {
       setPageLoading(false);
-      toast.error("Error fetching project cost center");
+      showToast("Error fetching project cost center", "error");
     }
   };
 

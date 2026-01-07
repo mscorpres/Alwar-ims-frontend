@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Select,Modal, Row, Col  } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -14,6 +14,7 @@ const OpenR1Modal = ({
   setAllResponseData,
   setLoading,
 }) => {
+  const { showToast } = useToast();
   const [seacrh, setSearch] = useState(null);
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -77,7 +78,7 @@ const OpenR1Modal = ({
       setAllResponseData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };
@@ -99,7 +100,7 @@ const OpenR1Modal = ({
         onCancel={() => setViewModal(false)}
         width={800}
       >
-        <Row justify="center" gutter={16}>
+        <Row  gutter={16}>
           <Col span={12}>
             <MyAsyncSelect
               selectLoading={selectLoading}

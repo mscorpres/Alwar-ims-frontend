@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MySelect from "../../../Components/MySelect";
@@ -16,6 +16,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 export default function ManageGatePass() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [searchDateRange, setSearchDateRange] = useState();
@@ -81,7 +82,7 @@ export default function ManageGatePass() {
       console.log(response,"rseponse=========================")
       downloadFunction(response?.data.buffer.data, filename);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const printFun = async (id) => {
@@ -93,7 +94,7 @@ export default function ManageGatePass() {
     if (response?.success) {
       printFunction(response?.data.buffer.data);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
     }
   };
   const getRows = async () => {
@@ -113,7 +114,7 @@ export default function ManageGatePass() {
       });
       setRows(arr);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
     }
   };
   const additional = () => (

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { Col, Row, Space } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -13,8 +12,10 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 const R2 = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -228,10 +229,10 @@ const R2 = () => {
           };
         });
         setRows(arr);
-        toast.success(response.message);
+        showToast(response.message, "success");
         setLoading(false);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
       setLoading(false);
@@ -242,7 +243,7 @@ const R2 = () => {
       });
     
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         let arr = response.data.map((row, index) => {
           return {
             ...row,
@@ -253,7 +254,7 @@ const R2 = () => {
         setRows(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
       setLoading(false);
@@ -281,7 +282,7 @@ const R2 = () => {
   }, [type]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row justify="space-between" style={{ padding: "0 5px" }}>
         <Space>
           <div style={{ width: 200 }}>

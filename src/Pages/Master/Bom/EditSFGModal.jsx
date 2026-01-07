@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import Alter from "./Alter";
 import {
   Col,
@@ -23,6 +23,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions } from "../../../api/general.ts";
 
 const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
+  const { showToast } = useToast();
   const [fetchData, setFetchData] = useState([]);
   const [secondData, setSecondData] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
@@ -131,10 +132,11 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
     let b = secondData.filter((a) => a.id == id)[0];
 
     if (b.component == "") {
-      return toast.error("Please select a component");
+      return showToast("Please select a component", "error");
     } else if (b.requiredQty == 0 || b.requiredQty == "" || b.requiredQty < 0) {
-      return toast.error(
-        "Required Quanity can not be blank and should be more than 0"
+      return showToast(
+        "Required Quanity can not be blank and should be more than 0",
+        "error"
       );
     }
     setAddUpdateLoading(id);
@@ -162,18 +164,19 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
         }
       });
       setSecondData(arr);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
   const clickOnUpdata = async (a) => {
     if (a.component == "") {
-      return toast.error("Please select a component");
+      return showToast("Please select a component", "error");
     } else if (a.requiredQty == 0 || a.requiredQty == "" || a.requiredQty < 0) {
-      return toast.error(
-        "Required Quanity can not be blank and should be more than 0"
+      return showToast(
+        "Required Quanity can not be blank and should be more than 0",
+        "error"
       );
     }
     setUpdateRowLoading(a.id);
@@ -189,9 +192,9 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
     setUpdateRowLoading(false);
     if (response.success) {
       // next();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(errorToast(response.message));
+      showToast(errorToast(response.message), "error");
     }
   };
   const handlerEmergingMogal = (row) => {

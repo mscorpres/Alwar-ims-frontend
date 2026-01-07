@@ -44,10 +44,11 @@ import {
   getOrderDetails,
   updateOrder,
 } from "../../../api/sales/salesOrder";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import ClientBranchAdd from "../../../FinancePages/Clients/modal/ClientBranchAdd";
 
 const SalesOrderForm = () => {
+  const { showToast } = useToast();
   const [successData, setSuccessData] = useState(false);
   const [showBranchModal, setShowBranchModal] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
@@ -385,10 +386,10 @@ const SalesOrderForm = () => {
         setSelectLoading(false);
         setSelectLoading(false);
         setConfirmSubmit(false);
-        toast.success(response.message.msg);
+        showToast(response.message.msg, "success");
       } else {
         // console.log("response.data", response.data);
-        toast.error(response.data.message);
+        showToast(response.data.message, "error");
         setConfirmSubmit(false);
 
         setSelectLoading(false);
@@ -459,7 +460,7 @@ const SalesOrderForm = () => {
         form.setFieldValue("shipaddress", address);
         form.setFieldValue("shipaddressid", client.label);
       } else {
-        toast.info("Please Fill in the client details.");
+        showToast("Please Fill in the client details.", "error");
         // setCopyInfo(false);
       }
     }
@@ -641,8 +642,8 @@ const SalesOrderForm = () => {
                                           name: client?.label,
                                           code: client?.key,
                                         })
-                                      : toast.error(
-                                          "Please Select a Client first"
+                                      : showToast(
+                                          "Please Select a Client first", "error"
                                         );
                                   }}
                                   style={{ color: "#1890FF" }}

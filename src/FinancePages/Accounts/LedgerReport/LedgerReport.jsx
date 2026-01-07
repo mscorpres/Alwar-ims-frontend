@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import { toast } from "react-toastify";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import links from "./links";
@@ -16,7 +15,6 @@ import {
   Form,
   Divider,
 } from "antd";
-import { v4 } from "uuid";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import { useDispatch } from "react-redux/es/exports";
 import { useEffect } from "react";
@@ -27,20 +25,18 @@ import { useLocation, useParams } from "react-router-dom";
 import useApi from "../../../hooks/useApi.ts";
 import { getLedgerReport } from "../../../api/ledger";
 import MyButton from "../../../Components/MyButton/index.jsx";
-import { getLedgerOptions } from "../../../api/ledger";
 import { getRecoReport } from "../../../api/finance/vendor-reco.js";
 import Loading from "../../../Components/Loading.jsx";
 import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../../hooks/useToast.js";
 
 export default function LedgerReport() {
   const [asyncOptions, setAsyncOptions] = useState([]);
-
+  const { showToast } = useToast();
   const [selectLoading, setSelectLoading] = useState(false);
   const [rows, setRows] = useState({ rows: [] });
   const [summary, setSummary] = useState({});
   const [searchLedger, setSearchLedger] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [searchLoading, setSearchLoading] = useState(false);
   const [recoRows, setRecoRows] = useState([]);
 
   const [filterForm] = Form.useForm();
@@ -96,12 +92,10 @@ export default function LedgerReport() {
           setRows([]);
         }
         setSummary(data?.data.summary);
-      } else {
-        toast.error();
       }
     }
 
-    console.log("ledger report response", response);
+
     // if (searchLedger && searchDateRange) {
     //   setLoading(true);
     //   setSearchLoading(true);
@@ -222,7 +216,7 @@ export default function LedgerReport() {
         datetitle: "Date Range",
         Date: values.date,
       },
-    {
+      {
         Opening: "Opening: " + summary?.opening?.replaceAll(",", ""),
         "Current Total Debit":
           "Current Total Debit: " + summary?.debitTotal?.replaceAll(",", ""),
@@ -248,7 +242,7 @@ export default function LedgerReport() {
       // setSearchLedger(obj);
       filterForm.setFieldValue("vendor", obj);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   useEffect(() => {
@@ -260,8 +254,8 @@ export default function LedgerReport() {
     }
   }, [params]);
   return (
-    <Row gutter={6} style={{ height: "95%", padding: 10, overflow: "hidden" }}>
-      <Col span={4} style={{ height: "100%", overflow: "auto" }}>
+    <Row gutter={6} style={{ height: "calc(100vh - 120px)", padding: 10, overflow: "hidden" }}>
+      <Col span={6} style={{ height: "100%", overflow: "auto" }}>
         <Flex vertical gap={6}>
           <Card size="small">
             <Form form={filterForm} layout="vertical">
@@ -445,7 +439,7 @@ export default function LedgerReport() {
           </Card>
         </Flex>
       </Col>
-      <Col style={{ height: "100%" }} span={20}>
+      <Col style={{ height: "calc(100vh - 140px)" }} span={18}>
         <MyDataTable
           columns={ledgerReportColumns}
           data={rows}

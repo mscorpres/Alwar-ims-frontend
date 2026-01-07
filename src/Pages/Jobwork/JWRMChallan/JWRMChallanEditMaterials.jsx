@@ -17,7 +17,7 @@ import { v4 } from "uuid";
 import FormTableDataGrid from "../../../Components/FormTableDataGrid";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import errorToast from "../../../Components/errorToast";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import NavFooter from "../../../Components/NavFooter";
@@ -28,6 +28,7 @@ function JWRMChallanEditMaterials({
   setEditingJWMaterials,
   getRows,
 }) {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [vendorData, setVendorData] = useState(null);
   const [loading, setLoading] = useLoading();
@@ -114,14 +115,14 @@ function JWRMChallanEditMaterials({
     setLoading("submit", false);
     console.log(response);
     if (response.success) {
-      toast.success(response.data.message);
+      showToast(response.data.message, "success");
       setEditingJWMaterials(false);
       getRows();
     } else {
       if (response.data.message.msg) {
-        toast.error(response.data.message.msg);
+        showToast(response.data.message.msg, "error");
       } else {
-        toast.error(errorToast(response.data.message));
+        showToast(errorToast(response.data.message), "error");
       }
     }
   };
@@ -165,7 +166,7 @@ function JWRMChallanEditMaterials({
         }));
         setVendorBranchOptions(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
 
   };
@@ -189,7 +190,7 @@ function JWRMChallanEditMaterials({
         createJobWorkChallanForm.setFieldsValue(obj);
         return obj;
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -210,7 +211,7 @@ function JWRMChallanEditMaterials({
         }));
         setBillingAddressOptions(arr);
       } else {
-        toast.error(billingData.message.msg);
+        showToast(billingData.message.msg, "error");
       }
     }
     if (dispatchData) {
@@ -221,7 +222,7 @@ function JWRMChallanEditMaterials({
         }));
         setDispatchAddressOptions(arr);
       } else {
-        toast.error(dispatchData.message.msg);
+        showToast(dispatchData.message.msg, "error");
       }
     }
   };
@@ -244,7 +245,7 @@ function JWRMChallanEditMaterials({
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -267,7 +268,7 @@ function JWRMChallanEditMaterials({
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
 
   };

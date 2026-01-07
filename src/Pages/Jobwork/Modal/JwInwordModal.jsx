@@ -20,7 +20,7 @@ import { CloseCircleFilled, InboxOutlined } from "@ant-design/icons";
 import MySelect from "../../../Components/MySelect";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import FormTable from "../../../Components/FormTable";
 import useLoading from "../../../hooks/useLoading";
@@ -38,6 +38,7 @@ import SuccessPage from "../../Store/MaterialIn/SuccessPage";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import SingleProduct from "../../Master/Vendor/SingleProduct";
 export default function JwInwordModal({ editModal, setEditModal }) {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locValue, setLocValue] = useState([]);
   const [header, setHeaderData] = useState([]);
@@ -86,8 +87,8 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       setMainData(arr);
       setHeaderData(response.data.header);
       setModalLoad("fetch", false);
-    } else {
-      toast.error(response.message);
+    } else if (!response.success) {
+      showToast(response?.message, "error");
     }
     setModalLoad("fetch", false);
   };
@@ -518,7 +519,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         setModalUploadLoad(false);
       }
       setModalUploadLoad(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
       // setEditModal(false);
       setModalUploadLoad(false);
       setShowBomList(false);
@@ -544,7 +545,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       });
     } else {
       setModalUploadLoad(false);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const getBomList = async () => {
@@ -574,7 +575,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       setLoading(false);
       setShowBomList(true);
     } else {
-      toast.error(response.data.message.msg);
+      showToast(response.data.message.msg, "error");
       setLoading(false);
     }
 

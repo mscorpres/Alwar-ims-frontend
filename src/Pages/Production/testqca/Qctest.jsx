@@ -5,11 +5,12 @@ import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import printFunction from "../../../Components/printFunction";
 
 const Qctest = () => {
+  const { showToast } = useToast();
   //COMPONENET FUNCTIONS AND STATES
   const passbutton = useRef();
   const [modaltype, setModalType] = useState("");
@@ -156,7 +157,7 @@ const Qctest = () => {
       sku: skucode,
     });
     if (data.status === "error") {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setProcessOptions([]);
       return;
     }
@@ -211,7 +212,7 @@ const Qctest = () => {
     setbuttonstyle("pointer");
     if (response.success ) {
       setScanData([...ScanData, scaannn]);
-      toast.success(data.message.msg);
+      showToast(data.message.msg, "success");
       setCurrentScan(currentscan + 1);
       setPassedScan(passedscan + 1);
       var x = passedscan + 1;
@@ -263,7 +264,7 @@ const Qctest = () => {
     setbuttonstyle("pointer");
     if (response.success ) {
       setScanData([...ScanData, scaannn]);
-      toast.success(data.message.msg);
+      showToast(data.message.msg, "success");
       setFailedScan(failedscan + 1);
       var x = failedscan + 1;
       setCurrentScan(currentscan + 1);
@@ -335,9 +336,9 @@ const Qctest = () => {
       setIsModalOpen(false);
       setclosetype(true);
       setLotStatus(true);
-      toast.success(data.message.msg);
+      showToast(data.message.msg, "success");
     } else if (response.status === 403) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

@@ -18,7 +18,7 @@ import {
 } from "./components/api";
 import { imsAxios } from "../../axiosInterceptor";
 import {  ExclamationCircleOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import printFunction, {
   downloadExcel,
   downloadFunction,
@@ -27,6 +27,7 @@ import { Drawer } from "antd/es";
 import MyButton from "../../Components/MyButton";
 import {  useNavigate } from "react-router";
 const WoViewChallan = () => {
+  const { showToast } = useToast();
   const [wise, setWise] = useState(wiseOptions[1].value);
   const [showCreateChallanModal, setShowCreateChallanModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -154,12 +155,12 @@ const WoViewChallan = () => {
        
       );
    
-      toast.success(response.message);
+      showToast(response.message, "success");
       cancelform.resetFields();
       getAllRows();
  
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -451,7 +452,7 @@ const WoViewChallan = () => {
       setLoading(false);
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
 
       setLoading(false);
     }

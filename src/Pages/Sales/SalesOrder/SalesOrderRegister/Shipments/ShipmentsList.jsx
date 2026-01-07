@@ -15,7 +15,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import ShipmentDetails from "./ShipmentDetails";
 import { downloadCSV } from "../../../../../Components/exportToCSV";
 import { CommonIcons } from "../../../../../Components/TableActions.jsx/TableActions";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../../hooks/useToast.js";
 import MySelect from "../../../../../Components/MySelect";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
 import { convertSelectOptions } from "../../../../../utils/general.ts";
@@ -89,7 +89,7 @@ function ShipmentsList() {
         }));
         setRows(arr);
       } else {
-        toast.error(data.message);
+        showToast(data.message, "error");
       }
     }
   };

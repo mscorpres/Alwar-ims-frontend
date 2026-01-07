@@ -3,7 +3,7 @@ import { Button, Col, Input, Row, Tooltip, Popconfirm, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import printFunction, {
   downloadFunction,
@@ -26,6 +26,7 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyButton from "../../../Components/MyButton";
 
 function JVReport() {
+  const { showToast } = useToast();
   const wiseOptions = [
     { text: "Effective Date Wise", value: "eff_wise" },
     { text: "Created Date Wise", value: "date_wise" },
@@ -62,7 +63,7 @@ function JVReport() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const deleteFun = async () => {
@@ -74,10 +75,10 @@ function JVReport() {
       setLoading(false);
       if (response.success) {
         setDeleteConfirm(null);
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -249,7 +250,7 @@ function JVReport() {
     setSearchTerm("");
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row justify="space-between" style={{ padding: 5, paddingTop: 5 }}>
         <Col>
           <Space>
@@ -302,7 +303,7 @@ function JVReport() {
           />
         </Space>
       </Row>
-      <div style={{ height: "95%", padding: "0px 5px" }}>
+      <div style={{ height: "calc(100% - 50px)", padding: "0px 5px" }}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

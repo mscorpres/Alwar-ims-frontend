@@ -20,7 +20,7 @@ import { downloadCSV } from "../../Components/exportToCSV";
 import { getComponentOptions } from "../../api/general.ts";
 import useApi from "../../hooks/useApi.ts";
 import MyButton from "../../Components/MyButton";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 const initialSummaryData = [
   { title: "Component", description: "--" },
   { title: "Part Code", description: "--" },
@@ -41,6 +41,7 @@ const initialSummaryData = [
 ];
 
 export default function ItemLocationLog() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [bomDetails, setBomDetails] = useState([]);
@@ -71,9 +72,9 @@ export default function ItemLocationLog() {
 
   // getting data from response for setting async options for async select
   const getData = (response) => {
-    const { data } = response;
-    if (data) {
-      if (data.length) {
+    const { data, success, message } = response;
+    if (success) {
+      if (data.length> 0) {
         const arr = data.map((row) => ({
           text: row.text,
           value: row.id,
@@ -81,6 +82,8 @@ export default function ItemLocationLog() {
 
         setAsyncOptions(arr);
       }
+    } else {
+      showToast(message, "error");
     }
   };
   const getDetails = async (values) => {
@@ -106,10 +109,10 @@ export default function ItemLocationLog() {
         location: values.location,
         part_code: values.component,
       });
-      console.log(response)
+    
       getDetails(values);
       if(response?.success == false){
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
         return;
       }
@@ -303,7 +306,7 @@ export default function ItemLocationLog() {
   ];
 
   return (
-    <Row gutter={6} style={{ padding: "0px 5px", height: "90%" }}>
+    <Row gutter={6} style={{ padding: "0px 5px", height: "100%" }}>
       <Col span={4} style={{ height: "100%", overflowY: "auto" }}>
         <Row gutter={[0, 6]}>
           <Col span={24}>

@@ -1,6 +1,6 @@
 import { Button, Col, Input, Row, Space } from "antd";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 // import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../Components/exportToCSV";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
@@ -23,6 +23,7 @@ import MyButton from "../../Components/MyButton";
 // import JWRMChallanEditMaterials from "./JWRMChallanEditMaterials";
 
 function JwPendingRequest() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("issuedtwise");
   const [searchInput, setSearchInput] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -70,7 +71,7 @@ function JwPendingRequest() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const handlePrint = async (challan_id, refId, btn_status, invoice_id) => {
@@ -89,7 +90,7 @@ function JwPendingRequest() {
     if (response.success) {
       printFunction(data.data.buffer.data);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const handleDownload = async (challan_id, refId, btn_status, invoice_id) => {
@@ -108,7 +109,7 @@ function JwPendingRequest() {
     if (response.success) {
       downloadFunction(data.data.buffer.data, data.data.filename);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const columns = [
@@ -237,7 +238,7 @@ function JwPendingRequest() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <JWRMChallanEditMaterials
         editingJWMaterials={editingJWMaterials}
         setEditingJWMaterials={setEditingJWMaterials}

@@ -1,6 +1,6 @@
 import React from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Drawer, Space, Typography, Row, Col, Card, Timeline } from "antd";
@@ -9,11 +9,8 @@ import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../../Components/exportToCSV";
 
-export default function PoDetailsView({
-  viewPoDetails,
-  setViewPoDetails,
-  newPoLogs,
-}) {
+export default function PoDetailsView({ viewPoDetails, setViewPoDetails }) {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -33,7 +30,7 @@ export default function PoDetailsView({
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setViewPoDetails(false);
     }
   };
@@ -146,7 +143,7 @@ export default function PoDetailsView({
             style={{ maxHeight: "100%" }}
             bodyStyle={{ height: "95%" }}
           >
-            <Timeline
+            {/* <Timeline
               items={newPoLogs.map((row) => ({
                 children: (
                   <>
@@ -163,7 +160,7 @@ export default function PoDetailsView({
                   </>
                 ),
               }))}
-            />
+            /> */}
           </Card>
         </Col>
       </Row>

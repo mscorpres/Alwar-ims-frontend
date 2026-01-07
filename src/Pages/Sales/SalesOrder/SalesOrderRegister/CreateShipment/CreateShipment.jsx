@@ -37,7 +37,7 @@ import {
   getClientBranches,
 } from "../../../../../api/finance/clients";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../../hooks/useToast.js";
 
 function CreateShipment({
   open,
@@ -45,6 +45,7 @@ function CreateShipment({
   updateShipmentRow,
   setUpdateShipmentRow,
 }) {
+  const { showToast } = useToast();
   const [gstType, setgstType] = useState([]);
   const [billingOptions, setBillingOptions] = useState([]);
   const [shippingOptions, setShippinOptions] = useState([]);

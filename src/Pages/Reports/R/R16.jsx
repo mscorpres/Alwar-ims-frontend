@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button, Col, Row } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -12,8 +11,10 @@ import {
 } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 function R16() {
+  const { showToast } = useToast();
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateData, setDateData] = useState([]);
@@ -46,7 +47,7 @@ function R16() {
 
     if (response.success) {
       // setLoading(true);
-      toast.success(response.message);
+      showToast(response.message, "success");
       let arr = response.data.map((row) => {
         return {
           ...row,
@@ -56,7 +57,7 @@ function R16() {
       setDateData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -66,7 +67,7 @@ function R16() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={4}>
           <MyDatePicker size="default" setDateRange={setDatee} />

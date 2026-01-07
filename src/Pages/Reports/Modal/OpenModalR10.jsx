@@ -5,7 +5,7 @@ import AsyncSelect from "react-select/async";
 
 import moment from "moment";
 import { DatePicker } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import waiting from "../../../animation/waiting.json";
 import makeAnimated from "react-select/animated";
 import Loading from "../../../Components/Loading";
@@ -23,6 +23,7 @@ const OpenModal10 = ({
   loading,
   setLoading,
 }) => {
+  const { showToast } = useToast();
   const [allData, setAllData] = useState({
     selectProduct: "",
     selectLocation: "",
@@ -94,7 +95,7 @@ const OpenModal10 = ({
   
     if (response.success) {
       setViewModal(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
     }
   };
 

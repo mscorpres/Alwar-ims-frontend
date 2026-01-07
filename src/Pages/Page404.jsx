@@ -1,4 +1,4 @@
-import { Empty } from "antd";
+import { Button, Empty } from "antd";
 import React from "react";
 
 export default function Page404() {
@@ -12,14 +12,29 @@ export default function Page404() {
       }}
     >
       <Empty
-        image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+        image="/assets/images/404image.png"
         imageStyle={{
           height: 200,
         }}
         description={
-          <span style={{ fontSize: 30, color: "rgba(0,0,0,0.5)" }}>
-            404 Page Not Found
-          </span>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              maxWidth: 800,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ fontSize: 30, fontWeight:"bold",color: "rgba(0,0,0,0.7)" }}>
+              Page Not Found
+            </span>
+            <span style={{ fontSize: 20, color: "rgba(0,0,0,0.5)" }}>
+              The page you are trying to access doesn't exist. please check if
+              the URL is correct.
+            </span>
+   
+          </div>
         }
       ></Empty>
     </div>

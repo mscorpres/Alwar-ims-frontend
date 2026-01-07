@@ -11,7 +11,7 @@ import { v4 } from "uuid";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../../Components/exportToCSV";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import errorToast from "../../../../Components/errorToast";
 import printFunction, {
   downloadFunction,
@@ -23,6 +23,7 @@ import { getVendorOptions } from "../../../../api/general.ts";
 import MyButton from "../../../../Components/MyButton";
 
 function DebitNoteReport() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("effectivewise");
   const [searchTerm, setSearchTerm] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -55,7 +56,7 @@ function DebitNoteReport() {
         setRows(arr);
       } else {
         // toast.error(response.message?.msg || response.message);
-        toast.error(errorToast(data.message));
+        showToast(errorToast(data.message), "error");
         setRows([]);
       }
     }
@@ -312,7 +313,7 @@ function DebitNoteReport() {
     getVendorOption(searchTerm);
   }, [searchTerm]);
   return (
-    <div style={{ height: "90%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
       <Row justify="space-between" style={{ padding: "0px 0px" }}>
         <Space>
           <div style={{ width: 250 }}>

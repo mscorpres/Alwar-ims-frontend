@@ -15,10 +15,10 @@ import React, { useEffect, useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import MySelect from "../../../Components/MySelect";
 import NavFooter from "../../../Components/NavFooter";
-import { toast } from "react-toastify";
-const { TextArea } = Input;
+import { useToast } from "../../../hooks/useToast";
 
 function ClientBranchAdd({ branchAddOpen, setBranchAddOpen }) {
+  const { showToast } = useToast();
   const [countriesOptions, setCountriesOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(83);
@@ -72,12 +72,14 @@ function ClientBranchAdd({ branchAddOpen, setBranchAddOpen }) {
     const response = await imsAxios.post("/client/addBranch", newObj);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
+      
       resetFunction();
       setBranchAddOpen(false);
       setShowSubmitConfirm(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+     
     }
   };
   const resetFunction = () => {

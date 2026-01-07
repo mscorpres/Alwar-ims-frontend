@@ -84,7 +84,7 @@ export default function ComponentImages({
       <Skeleton active loading={skeletonLoading} />
       <Skeleton active loading={skeletonLoading} /> */}
       {!loading("fetch") && images.length === 0 && (
-        <Row justify="center" style={{ paddingTop: 200 }}>
+        <Row  style={{ paddingTop: 200 }}>
           <Typography.Text strong type="secondary">
             No images found
           </Typography.Text>

@@ -1,13 +1,14 @@
 import { Button, Drawer, Space, Divider } from "antd";
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { imsAxios } from "../../../../axiosInterceptor";
 import Loading from "../../../../Components/Loading";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MySelect from "../../../../Components/MySelect";
 
 export default function MapVBTModal({ mapVBT, setMapVBT }) {
+  const { showToast } = useToast();
   const [selectedVBT, setSelectedVBT] = useState();
   const [selectedGroup, setSelectedGroup] = useState("");
   const [groups, setGroups] = useState([]);
@@ -93,14 +94,14 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
     setGstSubmitLoading(false);
     if (response.success) {
       if (data.message.msg.toLowerCase().includes("updated")) {
-        toast.success("VBT Updated");
+        showToast("VBT Updated", "success");
       } else {
-        toast.info(data.message.msg);
+        showToast(data.message.msg, "error");
       }
       setSelectedGroup(null);
       setMapVBT(null);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const submitFunction = async () => {
@@ -115,18 +116,18 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
     setLoading(false);
     if (response.success) {
       if (data.message.msg.toLowerCase().includes("updated")) {
-        toast.success("VBT Updated");
+        showToast("VBT Updated", "success");
       } else {
-        toast.info(data.message.msg);
+        showToast(data.message.msg, "error");
       }
       setSelectedGroup(null);
       setMapVBT(null);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   useEffect(() => {
-    console.log(selectedVBT);
+
     getGroups();
     setSelectedGroup([]);
   }, [selectedVBT]);

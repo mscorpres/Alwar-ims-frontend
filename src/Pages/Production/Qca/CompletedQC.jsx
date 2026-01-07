@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Input, Popconfirm, Row, Space, Popover } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -24,6 +24,7 @@ import { getComponentOptions, getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 function CompletedQC() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -93,7 +94,7 @@ function CompletedQC() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };
@@ -110,7 +111,7 @@ function CompletedQC() {
     });
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       let arr = rows;
       arr = arr.map((tableRow) => {
         if (tableRow.id === row.id) {
@@ -124,7 +125,7 @@ function CompletedQC() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -140,7 +141,7 @@ function CompletedQC() {
     });
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       let arr = rows;
       arr = arr.map((tableRow) => {
         if (tableRow.id === row.id) {
@@ -154,7 +155,7 @@ function CompletedQC() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

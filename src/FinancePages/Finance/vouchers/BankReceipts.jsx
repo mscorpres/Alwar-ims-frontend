@@ -3,7 +3,7 @@ import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
 import { Card, Col, DatePicker, Form, Input, Modal, Row } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -19,6 +19,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
 
 export default function BankReceits() {
+  const { showToast } = useToast();
   const [bankPaymentRows, setBankPaymentRows] = useState([
     {
       id: v4(),
@@ -253,7 +254,7 @@ export default function BankReceits() {
       if (response.success) {
         setProjectDesc(data.data.description);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -325,7 +326,7 @@ export default function BankReceits() {
         }
       });
       if (validating.status == false) {
-        toast.error(validating.message);
+        showToast(validating.message, "error");
       } else if (validating.status == true) {
         setLoading("submit");
         const response = await imsAxios.post("/tally/voucher/insert_br", {
@@ -344,9 +345,9 @@ export default function BankReceits() {
         if (data) {
           if (response.success) {
             resetFunction();
-            toast.success(response.message);
+            showToast(response.message, "success");
           } else {
-            toast.error(response.message?.msg || response.message);
+            showToast(response.message?.msg || response.message, "error");
           }
         }
       }
@@ -404,7 +405,7 @@ export default function BankReceits() {
     });
   }, [bankPaymentRows]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Modal
         title="Create Bank Receipt Confirm!"
         open={showSubmitConfirmModal}

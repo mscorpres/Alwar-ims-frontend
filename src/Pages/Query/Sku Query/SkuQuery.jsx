@@ -32,7 +32,7 @@ const Q3 = () => {
         search,
       });
       setLoading(false);
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -52,7 +52,7 @@ const Q3 = () => {
         sku_code: searchInput,
       });
       if (response.success) {
-        const { skuData, data } = data.response;
+        const {  data:skuData } = response;
         const detailsObj = {
           stock: skuData.closingqty,
           product: skuData.product,
@@ -69,6 +69,8 @@ const Q3 = () => {
         setRows(arr);
 
         setDetails(detailsObj);
+      } else {
+        
       }
     } catch (error) {
       console.log("Some error occured while fetching rows", error);
@@ -77,7 +79,7 @@ const Q3 = () => {
     }
   };
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "calc(100vh - 120px)", overflow: "hidden" }}>
       <Row justify="space-between" style={{ padding: 5, paddingTop: 0 }}>
         <Col>
           <Space>
@@ -110,7 +112,7 @@ const Q3 = () => {
         />
       </Row>
       <Row
-        style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}
+        style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}
         gutter={6}
       >
         <Col span={4}>

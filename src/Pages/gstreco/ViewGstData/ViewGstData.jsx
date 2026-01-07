@@ -11,13 +11,13 @@ import {
 import GstSideBarForm from "../GstSideBarForm/GstSideBarForm";
 import MyDataTable from "../../../Components/MyDataTable";
 import { Popconfirm, Row, Col, Button, Modal } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
-import "react-toastify/dist/ReactToastify.css";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyButton from "../../../Components/MyButton";
 
 const ViewGstData = () => {
+  const { showToast } = useToast();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [gstData, setGstData] = useState([]);
   const [selectedGstRowData, setSelectedGstRowData] = useState(null);
@@ -33,10 +33,10 @@ const ViewGstData = () => {
       const id = selectedGstRowData;
       const response = await imsAxios.post(`/gst/deletegstdata/${id}`);
       if (response.status === 200) {
-        toast.success("Deleted successfully!");
+        showToast("Deleted successfully!");
         getgstData();
       } else {
-        toast.error("Error in deleting data!");
+        showToast("Error in deleting data!","error");
       }
     } catch (error) {
       console.log(error);
@@ -196,7 +196,7 @@ const ViewGstData = () => {
       const response = await imsAxios.get(`/gst/getgstdata`);
 
       if (response.data.code === 500) {
-        toast.error(response?.data?.message?.msg);
+        showToast(response?.data?.message?.msg,"error");
       } else {
         setGstData(response?.data?.gst);
       }
@@ -226,12 +226,12 @@ const ViewGstData = () => {
       const response = await imsAxios.get(`/validate/validatedata`);
 
       if (response.status === 200) {
-        toast.success("Validation Successfully!");
+        showToast("Validation Successfully!");
       } else {
-        toast.error("Error in validating data");
+        showToast("Error in validating data","error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error,"error");
     }
   };
 

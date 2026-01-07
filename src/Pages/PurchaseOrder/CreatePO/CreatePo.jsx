@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import AddComponent from "./AddComponents";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import AddVendorSideBar from "./AddVendorSideBar";
 import CreateCostModal from "./CreateCostModal";
 import AddBranch from "../../Master/Vendor/model/AddBranch";
@@ -36,6 +36,7 @@ const paymentTermOptions = [
 ];
 
 export default function CreatePo() {
+  const { showToast } = useToast();
   const [totalValues, setTotalValues] = useState([]);
   const [newPurchaseOrder, setnewPurchaseOrder] = useState({
     termscondition: "",
@@ -286,48 +287,48 @@ const [pendingPOData, setPendingPOData] = useState(null);
     let error = false;
 
     if (rowCount.length == 0) {
-      toast.error("Please add at least one component");
+      showToast("Please add at least one component", "error");
       return;
     }
 
     // Shipping validation based on ship_type
     if (!currentPurchaseOrder.ship_type) {
-      toast.error("Please select shipping address type");
+      showToast("Please select shipping address type", "error");
       return;
     }
 
     if (currentPurchaseOrder.ship_type === "saved") {
       // For saved mode, validate shipping address selection
       if (!currentPurchaseOrder.shipaddressid) {
-        toast.error("Please select shipping address");
+        showToast("Please select shipping address", "error");
         return;
       }
       if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        toast.error("Shipping address is not populated. Please select a valid shipping address");
+        showToast("Shipping address is not populated. Please select a valid shipping address", "error");
         return;
       }
     } else if (currentPurchaseOrder.ship_type === "vendor") {
       // For vendor mode, validate vendor and branch selection
       if (!currentPurchaseOrder.ship_vendor || !currentPurchaseOrder.ship_vendor_branch) {
-        toast.error("Please select shipping vendor and branch");
+        showToast("Please select shipping vendor and branch", "error");
         return;
       }
       if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        toast.error("Shipping address is not populated. Please select a valid vendor branch");
+        showToast("Shipping address is not populated. Please select a valid vendor branch", "error");
         return;
       }
     } else if (currentPurchaseOrder.ship_type === "manual") {
       // For manual mode, validate all manual fields
       if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        toast.error("Please enter shipping address in manual mode");
+        showToast("Please enter shipping address in manual mode", "error");
         return;
       }
       if (!currentPurchaseOrder.shipPan || currentPurchaseOrder.shipPan.trim() === "") {
-        toast.error("Please enter shipping PAN in manual mode");
+        showToast("Please enter shipping PAN in manual mode", "error");
         return;
       }
       if (!currentPurchaseOrder.shipGST || currentPurchaseOrder.shipGST.trim() === "") {
-        toast.error("Please enter shipping GSTIN in manual mode");
+        showToast("Please enter shipping GSTIN in manual mode", "error");
         return;
       }
     }
@@ -341,21 +342,21 @@ const [pendingPOData, setPendingPOData] = useState(null);
       !currentPurchaseOrder.billaddressid ||
       !currentPurchaseOrder.billaddress
     ) {
-      toast.error("Please fill all required vendor and billing details");
+      showToast("Please fill all required vendor and billing details", "error");
       return;
     }
 
     if (currentPurchaseOrder.pocreatetype == "S" && !currentPurchaseOrder.original_po) {
-      return toast.error("Please select a PR ID in case of supplementary PR");
+      return showToast("Please select a PR ID in case of supplementary PR", "error");
     }
 
     if (currentPurchaseOrder.termscondition === "Other" && !currentPurchaseOrder.customDeliveryTerm?.trim()) {
-      toast.error("Please enter custom delivery term when 'Other' is selected");
+      showToast("Please enter custom delivery term when 'Other' is selected", "error");
       return;
     }
 
     if (currentPurchaseOrder.paymentterms === "Advance Payment" && !currentPurchaseOrder.advancePercentage) {
-      toast.error("Please enter advance payment percentage");
+      showToast("Please enter advance payment percentage", "error");
       return;
     }
 
@@ -367,7 +368,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
     });
 
     if (error) {
-      toast.error("Please enter all the values for all components");
+      showToast("Please enter all the values for all components", "error");
       return;
     }
 
@@ -445,7 +446,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
     };
     const storedPOData = pendingPOData || showSubmitConfirm;
     if (!storedPOData) {
-      toast.error("PR data missing. Please try again.");
+      showToast("PR data missing. Please try again.", "error");
       setSubmitLoading(false);
       return;
     }
@@ -534,7 +535,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
               }),
             });
           } else {
-            toast.error(response.message);
+            showToast(response.message, "error");
           }
         }
       } catch (error) {
@@ -545,7 +546,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
             ? error.response.data.message
             : error.response.data.message?.msg || "An error occurred"
           : error?.message || "Failed to create PR";
-        toast.error(errorMessage);
+        showToast(errorMessage, "error");
       }
   };
   const getPOs = async (searchInput) => {
@@ -577,7 +578,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
       if (response.success) {
         return data;
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
  
   };
@@ -988,7 +989,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
 
         await handleProjectCostCenter(typeof value === "object" ? value.value : value);
       } else {
-        toast.error(data.message);
+        showToast(data.message, "error");
       }
     }
   };
@@ -1013,11 +1014,11 @@ const [pendingPOData, setPendingPOData] = useState(null);
         const updatedPO = { ...newPurchaseOrder, pocostcenter: costCenterOption };
         setnewPurchaseOrder(updatedPO);
       } else {
-        toast.error(data?.message || "Failed to fetch cost center");
+        showToast(data?.message || "Failed to fetch cost center", "error");
       }
     } catch (error) {
       setPageLoading(false);
-      toast.error("Error fetching project cost center");
+      showToast("Error fetching project cost center", "error");
     }
   };
 
@@ -1371,7 +1372,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
                                       ? setShowBranchModal({
                                         vendor_code: newPurchaseOrder.vendorname.value,
                                       })
-                                      : toast.error("Please Select a vendor first");
+                                      : showToast("Please Select a vendor first", "error");
                                   }}
                                   style={{ color: "#1890FF" }}
                                 >

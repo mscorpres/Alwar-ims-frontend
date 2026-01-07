@@ -12,9 +12,10 @@ import { v4 } from "uuid";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import { Button, Col, Row, Typography } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 const R11 = () => {
+  const { showToast } = useToast();
   const [allData, setAllData] = useState([]);
   const [filter, setfilter] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -81,7 +82,7 @@ const R11 = () => {
       setAllData(arr);
       setPendingCount(data.response.totalError);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

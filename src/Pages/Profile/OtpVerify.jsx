@@ -3,13 +3,14 @@ import { Button, Col, Input, Modal, Row, Typography } from "antd";
 import "../../index.css";
 import validateResponse from "../../Components/validateResponse";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 
 function OtpVerify({
   showOTPVerifyModal,
   setShowOTPVerifyModal,
   updateUserState,
 }) {
+  const { showToast } = useToast();
   const [timer, setTimer] = useState(60);
   const [numberCompleted, setNumberCompleted] = useState(false);
   const [OTPSent, setOTPSent] = useState(false);
@@ -188,10 +189,10 @@ function OtpVerify({
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setOTPSent(true);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message,"error");
         }
       }
     }
@@ -228,11 +229,11 @@ function OtpVerify({
     setLoading(false);
     const { data } = response;
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setShowOTPVerifyModal(false);
       updateUserState("mobileConfirmed");
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message,"error");
     }
   };
   useEffect(() => {

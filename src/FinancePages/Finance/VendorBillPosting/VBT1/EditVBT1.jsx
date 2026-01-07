@@ -8,7 +8,7 @@ import axios from "axios";
 import { v4 } from "uuid";
 import VBT1DataTable from "./VBT1DataTable";
 import TaxModal from "../../../../Components/TaxModal";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MySelect from "../../../../Components/MySelect";
 import { Col, Drawer, Form, Input, Row, Tabs } from "antd";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { useNavigate } from "react-router-dom";
 export default function EditVBT1({ editingVBT, setEditingVBT }) {
+  const { showToast } = useToast();
   const [glCodes, setGlCodes] = useState([]);
   const [vendorData, setVendorData] = useState({});
   const [vbt, setVBT] = useState(null);
@@ -106,7 +107,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
     totalValidatingData = Number(totalValidatingData).toFixed(2);
     totalValidatingData = Number(totalValidatingData).toFixed(2);
     if (Number(vendorData.bill_amount).toFixed(2) != totalValidatingData) {
-      return toast.error("Bill Amount and total Vendor Amount are not equal");
+      return showToast("Bill Amount and total Vendor Amount are not equal", "error");
     }
 
     let finalObj = {
@@ -167,7 +168,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
     };
     rows.map((row) => {
       if (!row.glCodeValue) {
-        return toast.error("Please select a GL for all of the components");
+        return showToast("Please select a GL for all of the components", "error");
       }
       let a = Number(row.vendorAmount);
       let totalVendor = 0;
@@ -223,7 +224,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
     });
     setLoading(false);
     if (response.success) {
-      toast.success(data.message.msg);
+      showToast(data.message.msg, "success");
       setTimeout(() => {
         setEditingVBT(null);
       }, 2000);
@@ -232,7 +233,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
       setLoading(false);
       for (const key in data.message) {
         if (data.message.hasOwnProperty(key)) {
-          return toast.error(data.message[key][0]);
+          return showToast(data.message[key][0], "error");
         }
       }
     }

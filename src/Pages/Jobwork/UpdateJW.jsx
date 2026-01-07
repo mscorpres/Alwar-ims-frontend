@@ -19,12 +19,13 @@ import FormTable2 from "../../Components/FormTable2";
 import Loading from "../../Components/Loading";
 import FormTable3 from "../../Components/FormTable3";
 import { validateTable } from "../../Components/FormTable3";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import useLoading from "../../hooks/useLoading";
 import { getComponentOptions } from "../../api/general.ts";
 import useApi from "../../hooks/useApi.ts";
 
 const UpdateJW = () => {
+  const { showToast } = useToast();
   const [jwUpdateForm] = Form.useForm();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useLoading();
@@ -149,7 +150,7 @@ const UpdateJW = () => {
     const values = await jwUpdateForm.validateFields();
     const { errors, arr } = validateTable(tableRules, components);
     if (errors) {
-      toast.error(errors);
+      showToast(errors, "error");
       setComponents(arr);
       return;
     }
@@ -180,9 +181,9 @@ const UpdateJW = () => {
     const { data } = response;
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

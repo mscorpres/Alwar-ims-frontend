@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Input, Row, Select } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
@@ -16,6 +16,7 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 
 function ManageDC() {
+  const { showToast } = useToast();
   const [allData, setAlldata] = useState({
     selType: "",
     gpValue: "",
@@ -34,7 +35,7 @@ function ManageDC() {
 
   const datewiseGP = async () => {
     if (allData.selType == "") {
-      toast.error("Please select type");
+      showToast("Please select type", "error");
     } else {
       setLoading(true);
 
@@ -53,7 +54,7 @@ function ManageDC() {
         // toast(data.status);
         setLoading(false);
       } else if (!response.success) {
-        toast(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }
@@ -75,7 +76,7 @@ function ManageDC() {
       setDateData1(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast(response?.message);
+      showToast(response?.message, "error");
       setLoading(false);
     }
   };
@@ -146,7 +147,7 @@ function ManageDC() {
     },
   ];
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <EditDC updatedDCId={updatedDCId} setUpdateDCId={setUpdateDCId} />
       <Row gutter={16} style={{ padding: "0px 10px", paddingBottom: 5 }}>
         <Col span={4}>

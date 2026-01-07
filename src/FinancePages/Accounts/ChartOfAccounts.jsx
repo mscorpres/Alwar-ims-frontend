@@ -43,29 +43,29 @@ export default function ChartOfAccounts() {
       date: dateRange,
     });
     setLoading(false);
-    let data = response.data;
-    if (data) {
-      setCharts(flatArray(data.data));
+    const { data , summary, success} = response;
+    if (success) {
+      setCharts(flatArray(data));
 
       let summaryData = [
         { title: "From - To", description: dateRange },
         {
           title: "Closing",
-          description: Number(data.summary[0].closing),
+          description: Number(summary[0].closing),
         },
         {
           title: "Opening",
-          description: Number(data.summary[0].opening),
+          description: Number(summary[0].opening),
         },
         {
           title: "Total Credit",
           // description: Number(data.summary[0].total_credit)
 
-          description: Number(data.summary[0].total_credit),
+          description: Number(summary[0].total_credit),
         },
         {
           title: "Total Debit",
-          description: Number(data.summary[0].total_debit),
+          description: Number(summary[0].total_debit),
         },
       ];
       setSummary(summaryData);
@@ -178,7 +178,7 @@ export default function ChartOfAccounts() {
         style={{
           position: "relative",
           width: "100%",
-          height: "90%",
+          height: "100%",
           padding: "0 10px",
           overflow: "hidden",
         }}
@@ -209,8 +209,8 @@ export default function ChartOfAccounts() {
             <SummaryCard summary={summary} title="Summary" loading={loading} />
           </Col>
           <Col span={20}>
-            <Card size="small" style={{ height: "92%" }}>
-              <TableContainer sx={{ maxHeight: "75vh" }}>
+            <Card size="small" style={{ height: "100%" }}>
+              <TableContainer sx={{ maxHeight: "calc(100vh - 210px)" }}>
                 {loading && <Loading size="large" />}
                 <Table
                   stickyHeader

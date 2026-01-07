@@ -10,7 +10,7 @@ import {
   Space,
   message,
 } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -25,6 +25,7 @@ import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
 export default function ReqWithoutBom() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [pickLocationOptions, setPickLocationOptions] = useState([]);
   const [headerLocationOptionsm, setHeaderLocationOptions] = useState([]);
@@ -91,7 +92,7 @@ export default function ReqWithoutBom() {
       }));
       setHeaderLocationOptions(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setHeaderLocationOptions([]);
     }
   };
@@ -251,7 +252,7 @@ export default function ReqWithoutBom() {
     if (response.success) {
       requestForm.setFieldValue("description", response.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       requestForm.setFieldValue("description", "");
       return {};
     }
@@ -267,7 +268,7 @@ export default function ReqWithoutBom() {
     if (response.success) {
       return response.data;
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       // return {};
     }
   };
@@ -310,11 +311,11 @@ export default function ReqWithoutBom() {
     );
     // setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       resetHandler();
       setLoading(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
     setLoading(false);

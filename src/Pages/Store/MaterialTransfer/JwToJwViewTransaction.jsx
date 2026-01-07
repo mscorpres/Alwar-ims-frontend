@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Row, Select, Space } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
@@ -11,6 +11,7 @@ import MyButton from "../../../Components/MyButton";
 import dayjs from "dayjs";
 
 function JwToJwViewTransaction() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const options = [{ label: "Date Wise", value: "datewise" }];
   const [allData, setAllData] = useState({
@@ -72,9 +73,9 @@ function JwToJwViewTransaction() {
   const dateWise = async (e) => {
     e.preventDefault();
     if (!allData.selectdate) {
-      toast.error("Please Select Mode Then Proceed Next");
-    } else if (!datee) {
-      toast.error("Please Select Date");
+      showToast("Please Select Mode Then Proceed Next", "error");
+    } else if (!datee[0]) {
+      showToast("Please Select Date", "error");
     } else {
       setDataComesFromDateWise([]);
       setLoading(true);
@@ -101,15 +102,15 @@ function JwToJwViewTransaction() {
         setDataComesFromDateWise(arr);
         setLoading(false);
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }
   };
 
   return (
-    <div style={{ height: "90%" }}>
-      <Row gutter={16} justify="space-between" style={{ margin: "10px" }}>
+    <div style={{ height: "100%" }}>
+      <Row gutter={16} justify="space-between">
         <Space>
           <div style={{ width: 120 }}>
             <Select

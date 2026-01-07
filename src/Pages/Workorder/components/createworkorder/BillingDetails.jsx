@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../../Master/Modal/modal.css";
 import { Button, Row, Col, Input, Drawer, Skeleton, Form, Space } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import errorToast from "../../../../Components/errorToast";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -9,6 +9,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 const { TextArea } = Input;
 
 const BillingDetails = ({ openBranch, setOpenBranch, id, clientcode,getclientDetials }) => {
+    const { showToast } = useToast();
     const [submitLoading, setSubmitLoading] = useState(false);
     const [selectLoading, setSelectLoading] = useState(false);
     const [asyncOptions, setAsyncOptions] = useState([]);
@@ -60,16 +61,16 @@ const BillingDetails = ({ openBranch, setOpenBranch, id, clientcode,getclientDet
             const response = await imsAxios.post(addtype === "Billing" ? 'client/addbillingaddress' : 'client/addshippingaddress', submitdata)
             console.log(response)
             if(response.success){
-            toast.success(response.message);
+            showToast(response.message, "success");
             setOpenBranch(false)
             billingForm.resetFields()
             setOpenBranch(false)
             getclientDetials(clientcode,response.message)
             } else {
-            toast.error(response.message?.msg || response.message)
+            showToast(response.message?.msg || response.message, "error")
             }
         } catch (error) {
-            toast.error(error)
+            showToast(error, "error")
         } finally {
             setSubmitLoading(false);
         }

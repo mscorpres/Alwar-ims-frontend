@@ -19,12 +19,14 @@ import SuccessPage from "../SuccessPage";
 import Loading from "../../../../Components/Loading";
 import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+
 import { getVendorOptions } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
+import { useToast } from "../../../../hooks/useToast.js";
 
 export default function CreateBranchTransferChallan() {
+  const { showToast } = useToast();
   const [newGatePass, setNewGatePass] = useState({
     passType: "",
     pickupbranch: "",
@@ -80,7 +82,7 @@ export default function CreateBranchTransferChallan() {
       setpickuplocation(pickuparr);
       setdroplocation(droparr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -428,7 +430,7 @@ export default function CreateBranchTransferChallan() {
                             ? setShowBranchModal({
                                 vendor_code: newGatePass.vendorname.value,
                               })
-                            : toast.error("Please Select a vendor first");
+                            : showToast("Please Select a vendor first", "error");
                         }}
                         style={{ color: "#1890FF" }}
                       >

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import MyDataTable from "../../../Components/MyDataTable";
+
 import { PrinterFilled } from "@ant-design/icons";
 import axios from "axios";
 import printFunction from "../../../Components/printFunction";
 import { Button, Col, Drawer, Form, Modal, Row, Space, Typography } from "antd";
-import TaxModal from "../../../Components/TaxModal";
+
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import SingleProduct from "./SingleProduct";
 import { v4 } from "uuid";
 export default function ViewVBTReport({
@@ -15,6 +15,7 @@ export default function ViewVBTReport({
   setViewReportData,
   getSearchResults,
 }) {
+  const { showToast } = useToast();
   const [viewVbt] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
@@ -92,11 +93,11 @@ export default function ViewVBTReport({
       // console.log("componets", components);
     } else {
       if (data.message.msg) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       } else if (data.message) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       } else {
-        toast.error("Something wrong happened");
+        showToast("Something wrong happened", "error");
       }
     }
   };
@@ -410,7 +411,7 @@ export default function ViewVBTReport({
       getSearchResults();
       backFunction(null);
       const { data } = response;
-      toast.success(response.data);
+      showToast(response.data, "success");
     }
   };
   const submitUnVerifyHandler = async (viewReportData) => {
@@ -426,7 +427,7 @@ export default function ViewVBTReport({
     if (response.status === 200) {
       const { data } = response;
       getSearchResults();
-      toast.success("VBT marked as incorrect");
+      showToast("VBT marked as incorrect", "success");
       backFunction(null);
     }
   };

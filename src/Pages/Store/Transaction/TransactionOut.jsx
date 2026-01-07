@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux/es/exports";
-import { toast } from "react-toastify";
-
 import { Button, Col, Popover, Row, Space } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
@@ -17,8 +15,10 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { DownloadOutlined } from "@ant-design/icons";
 import MyButton from "../../../Components/MyButton/index.jsx";
+import { useToast } from "../../../hooks/useToast.js";
 
 const TransactionOut = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [datee, setDatee] = useState("");
   const [dateData, setDateData] = useState([]);
@@ -87,7 +87,7 @@ const TransactionOut = () => {
     e.preventDefault();
 
     if (!datee[0] || !datee[1]) {
-      toast.error("a");
+      showToast("a", "error");
     } else {
       setLoading(true);
       setDateData([]);
@@ -105,7 +105,7 @@ const TransactionOut = () => {
         setDateData(arr);
         setLoading(false);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }

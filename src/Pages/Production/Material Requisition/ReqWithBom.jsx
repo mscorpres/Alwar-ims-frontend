@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReqWithBomModal from "./Modal/ReqWithBomModal";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Descriptions, Divider, Form, Input, Row, Typography } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
@@ -10,6 +10,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import Loading from "../../../Components/Loading";
 
 const ReqWithBom = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(true);
   const [location, setLocation] = useState([]);
@@ -101,13 +102,14 @@ const ReqWithBom = () => {
 
   const nextPage = () => {
     if (!allBom.locValue) {
-      toast.error("Please Select Shifting Location first");
+      
+       showToast("Please Select Shifting Location first", "error");
     } else if (!allBom.proSku) {
-      toast.error("Please Select Product SKU first");
+      showToast("Please Select Product SKU first", "error");
     } else if (!allBom.proBom) {
-      toast.error("Please Select Product BOM first");
+      showToast("Please Select Product BOM first", "error");
     } else if (!allBom.qty) {
-      toast.error("Please Enter Quantity first");
+      showToast("Please Enter Quantity first", "error");
     } else {
       setTab(!true);
     }

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Modal } from "antd";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 const Information = () => {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [currentColorIndex, setCurrentColorIndex] = useState(0);
+  const { user } = useSelector((state) => state.login);
   const { pathname } = useLocation();
 
   const colors = [
@@ -30,107 +33,68 @@ const Information = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // List of exact master page paths (not starting with /master/ or /masters/)
-  const exactMasterPagePaths = [
-    "/uom",
-    "/material",
-    "/services",
-    "/group",
-    "/location",
-    "/billingAddress",
-    "/shippingAddress",
-    "/vendor",
-    "/add-vendor",
-    "/hsn-map",
-    "/cost-center",
-    "/stockControl",
-    "/master/reports/r19",
-    "/tally/clients/add"
-  ];
+  // Show modal when user comes to dashboard after login (only once per session)
+  useEffect(() => {
+    if (user && user.token && pathname === "/") {
+      const hasShownModal = sessionStorage.getItem("masterInfoModalShown");
+      if (!hasShownModal) {
+        // Small delay to ensure dashboard is loaded
+        const timer = setTimeout(() => {
+          setVisible(true);
+          sessionStorage.setItem("masterInfoModalShown", "true");
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [user, pathname]);
 
-  // Check if current pathname is a master page
-  const isMasterPage =
-    pathname.startsWith("/master/") ||
-    pathname.startsWith("/masters/") ||
-    exactMasterPagePaths.includes(pathname);
+  const handleOk = () => {
+    setVisible(false);
+  };
 
-  if (!visible || !isMasterPage) return null;
+  // Auto-close modal after 5 seconds
+  useEffect(() => {
+    if (visible) {
+      const timer = setTimeout(() => {
+        setVisible(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [visible]);
 
   return (
-    <div
+    <Modal
+      open={visible}
+      onCancel={handleOk}
+      closable={false}
+      footer={null}
+      width={600}
+      centered
+      maskClosable={true}
       style={{
-        width: "100%",
+        padding: 0,
+      }}
+      bodyStyle={{
         background: colors[currentColorIndex],
         color: currentTextColor,
-        // padding: "6px 16px",
+        padding: "24px",
+        borderRadius: "8px",
+        transition: "background-color 0.5s ease-in-out",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        gap: "12px",
         fontWeight: 500,
-        fontSize: "13px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
-        transition: "background-color 0.5s ease-in-out",
-        borderBottom: "2px solid rgba(255,255,255,0.2)",
+        fontSize: "15px",
+        textAlign: "center",
       }}
     >
-      <div
-        style={{
-          flex: 1,
-          textAlign: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "8px",
-        }}
-      >
-        <span style={{ fontSize: "14px" }}>ℹ️</span>
-        <span>
-          Master data is integrated with Oakter branch. Therefore, any data created in
-          this system will automatically reflect in the Oakter branch.
-        </span>
-      </div>
-      <button
-        onClick={() => setVisible(false)}
-        aria-label="Dismiss announcement"
-        style={{
-          background:
-            currentTextColor === "white"
-              ? "rgba(255,255,255,0.2)"
-              : "rgba(0,0,0,0.1)",
-          border: "none",
-          color: currentTextColor,
-          fontSize: "16px",
-          fontWeight: "bold",
-          marginLeft: 12,
-          cursor: "pointer",
-          lineHeight: 1,
-          padding: "4px 8px",
-          borderRadius: "50%",
-          width: "24px",
-          height: "24px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "all 0.3s ease",
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.background =
-            currentTextColor === "white"
-              ? "rgba(255,255,255,0.3)"
-              : "rgba(0,0,0,0.2)";
-          e.target.style.transform = "scale(1.1)";
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.background =
-            currentTextColor === "white"
-              ? "rgba(255,255,255,0.2)"
-              : "rgba(0,0,0,0.1)";
-          e.target.style.transform = "scale(1)";
-        }}
-      >
-        ✕
-      </button>
-    </div>
+      <span style={{ fontSize: "20px" }}>ℹ️</span>
+      <span>
+        Master data is integrated with Oakter branch. Therefore, any data created in
+        this system will automatically reflect in the Oakter branch.
+      </span>
+    </Modal>
   );
 };
 

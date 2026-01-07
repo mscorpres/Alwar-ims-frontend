@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { v4 } from "uuid";
 import { Col, Input, Row } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/useToast.js";
 import MyDataTable from "@/Components/MyDataTable";
 import { PlusCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
 import MyAsyncSelect from "@/Components/MyAsyncSelect";
@@ -14,6 +14,7 @@ import { fetchLocations } from "@/api/general.ts";
 import { convertSelectOptions } from "@/utils/general";
 
 function CreatePhysicalProduction() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locationOpitons, setLocationOptions] = useState([]);
@@ -196,9 +197,9 @@ function CreatePhysicalProduction() {
           rem: "",
         },
       ]);
-      toast.success("Success");
+      showToast("Success", "success");
     } else if (!response.success) {
-      toast.error("Something Went Wrong");
+      showToast("Something Went Wrong", "error");
       setLoading(false);
     }
   };

@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { v4 } from "uuid";
-import MyDataTable from "../../../Components/MyDataTable";
-import axios from "axios";
+
 import {
   Button,
   Col,
@@ -15,15 +13,12 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import { PrinterFilled, DownloadOutlined } from "@ant-design/icons";
-import printFunction, {
-  downloadFunction,
-} from "../../../Components/printFunction";
+
 import { imsAxios } from "../../../axiosInterceptor";
 import DescriptionsItem from "antd/es/descriptions/Item";
 import { useForm } from "rc-field-form";
 import { values } from "lodash";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 function DeleteVbt({
   openModal,
@@ -31,6 +26,7 @@ function DeleteVbt({
   getVBTDetails,
   getSearchResults,
 }) {
+  const { showToast } = useToast();
   //   console.log("edit", openModal.vbt_code);
   const [comments, setComments] = useState([]);
   const [panel, setPanel] = useState("1");
@@ -52,7 +48,7 @@ function DeleteVbt({
       getSearchResults();
       setOpenModal(null);
       backfunction()
-      toast.success(data);
+      showToast(data, "success");
     } else {
       setOpenModal(null);
       getSearchResults();

@@ -397,7 +397,7 @@ function SalesRegister() {
     setSearchTerm("");
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "calc(100vh - 140px)" }}>
       <Row
         justify="space-between"
         style={{ padding: "0px 10px", paddingBottom: 5 }}
@@ -408,7 +408,7 @@ function SalesRegister() {
           width={1800}
           onClose={() => setOpen(false)}
         >
-          <div style={{ height: "95%", padding: "0px 5px" }}>
+          <div style={{ height: "calc(100vh - 180px)", padding: "0px 5px" }}>
             <MyDataTable
               // loading={loading === "fetch"}
               data={modalVals}

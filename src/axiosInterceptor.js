@@ -1,13 +1,8 @@
 import axios from "axios";
-import { toast } from "react-toastify";
-import { v4 as uuidv4 } from "uuid";
-let socketLink = localStorage.getItem("currentSocketUrl") || import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
-const imsLink =
-  localStorage.getItem("currentUrl") ||
-  import.meta.env.VITE_REACT_APP_API_BASE_URL; //for net
-const generateUniqueId = () => {
-  return uuidv4();
-};
+import { getGlobalToast } from "./context/ToastContext";
+import { v4 as uuidv4 } from 'uuid';
+let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
+const imsLink = localStorage.getItem("currentUrl")|| import.meta.env.VITE_REACT_APP_API_BASE_URL; //for net
 
 
 
@@ -22,7 +17,6 @@ const formatTimestamp = () => {
 
   return `${day}${month}${year}${hours}${minutes}${seconds}`;
 };
-const timestamp = formatTimestamp();
 const getToken = () => {
   const newToken = localStorage.getItem("newToken");
   if (newToken) {
@@ -78,24 +72,30 @@ imsAxios.interceptors.response.use(
     return response;
   },
   (error) => {
+    const showToast = getGlobalToast();
+    
+    if (error?.code === "ERR_BAD_REQUEST" && error?.response?.status === 404) {
+       if (showToast) showToast(error?.message || "Something went wrong, Please contact administrator", "error");
+       return error;
+    }
     if (typeof error.response?.data === "object") {
       if (error.response.data?.data?.logout) {
-        toast.error(error.response.data.message);
+        if (showToast) showToast(error.response.data.message, "error");
         localStorage.clear();
         window.location.reload();
         return error;
       }
       if (error?.response.data.success !== undefined) {
-        console.log("this is the error response", error);
-        toast.error(error.response.data.message);
+      
+        if (showToast) showToast(error.response.data.message, "error");
       }
   
       return error.response.data;
     }
 
-   
+  
     if (!error.response.data?.message) {
-      toast.error(error.response?.data);
+      if (showToast) showToast(error.response?.data, "error");
     }
     // }
     return error.response;

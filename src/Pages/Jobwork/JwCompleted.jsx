@@ -3,7 +3,7 @@ import { Col, Input, Row, Select } from "antd";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import MyDataTable from "../../Components/MyDataTable";
 import MyDatePicker from "../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import CompletedModal from "./Modal/CompletedModal";
 import { imsAxios } from "../../axiosInterceptor";
@@ -18,6 +18,7 @@ import useApi from "../../hooks/useApi.ts";
 import MyButton from "../../Components/MyButton";
 
 const JwCompleted = () => {
+  const { showToast } = useToast();
   const [viewModalOpen, setViewModalOpen] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,7 @@ const JwCompleted = () => {
 
   const fetchDatewise = async () => {
     if (allData?.setType == "") {
-      toast.error("Please Select Option");
+      showToast("Please Select Option", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("jobwork/fetch_jw_completed_list", {
@@ -106,7 +107,7 @@ const JwCompleted = () => {
         setDateData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }
@@ -129,7 +130,7 @@ const JwCompleted = () => {
       setDJWData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };
@@ -151,7 +152,7 @@ const JwCompleted = () => {
       setSKUData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };
@@ -173,7 +174,7 @@ const JwCompleted = () => {
       setVendorData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };

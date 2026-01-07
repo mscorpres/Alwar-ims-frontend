@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import "../../common.css";
 import { v4 } from "uuid";
 import { Button, Col, Input, Row, Select, Skeleton } from "antd";
@@ -12,6 +12,7 @@ import MyButton from "../../../Components/MyButton";
 const { TextArea } = Input;
 
 const Rejection = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingRejection, setLoadingRejection] = useState(false);
   const [rejectedValue, setRejectedvalue] = useState({
@@ -67,8 +68,9 @@ const Rejection = () => {
       setAllDataComes(arr);
       setLoading(false);
     } else {
-      toast.error(
-        response?.message
+      showToast(
+        response?.message,
+        "error"
       );
       setLoading(false);
     }
@@ -183,12 +185,12 @@ const Rejection = () => {
     });
 
     if (response?.success) {
-      toast.success(response?.message);
+      showToast(response?.message, "success");
       setAllDataComes([]);
       setLoadingRejection(false);
     } else {
       // allDataComes([]);
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoadingRejection(false);
     }
   };

@@ -6,13 +6,14 @@ import {
   MailOutlined,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import { imsAxios } from "../../axiosInterceptor";
 import FormTable from "../../Components/FormTable";
 import MyButton from "../../Components/MyButton";
 
 function UpdateRM() {
+  const { showToast } = useToast();
   const [updteModal, setUpdteModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selLoading, setSelLoading] = useState(false);
@@ -56,7 +57,7 @@ function UpdateRM() {
       setHeaderData(response?.data.header);
       setLoading(false);
     } else {
-      toast.error(response?.message?.msg || response?.message);
+      showToast(response?.message?.msg || response?.message, "error");
       setLoading(false);
     }
   };
@@ -203,7 +204,7 @@ function UpdateRM() {
       setUpdteModal(false);
       resetFun();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setUpdteModal(false);
     }
 

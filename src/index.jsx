@@ -8,6 +8,7 @@ import "./index.css";
 // import { unregister as unregisterServiceWorker } from "./serviceWorkerRegistration";
 import { ConfigProvider } from "antd";
 import { customColor } from "./utils/customColor";
+import { ToastContext } from "./context/ToastContext";
 
 const theme = {
   token: {
@@ -19,15 +20,15 @@ const theme = {
   },
   components: {
     Button: {
-      colorText: "#12120E",
+      colorText: "#fff",
       colorPrimary: customColor.btnColor,
-      colorPrimaryHover: "#bde649",
-      colorPrimaryActive: "#bde649",
-      primaryColor: "#12120E",
-      defaultBg: customColor.btnColor,
-      defaultColor: "#12120E",
-      defaultHoverBg: "#bde649",
-      defaultActiveBg: "#bde649",
+      colorPrimaryHover: "#0d9489cd",
+      colorPrimaryActive: "#0d9489",
+      primaryColor: "#fff",
+      // defaultBg: "",
+      defaultColor: "#000",
+      // defaultHoverBg: "#0d9489",
+      // defaultActiveBg: "#0d9489",
       fontWeight: 550,
     },
     Tabs: {
@@ -69,8 +70,8 @@ const theme = {
       margin: 4,
     },
     Tooltip: {
-      colorBgSpotlight: "#d2f571",
-      colorTextLightSolid: "#12120E",
+      colorBgSpotlight: "#0d9489",
+      colorTextLightSolid: "#fff",
     },
     Card: {
       headerFontSizeSM: 16,
@@ -91,9 +92,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
+      <ToastContext>
       <BrowserRouter>
         <App />
       </BrowserRouter>
+      </ToastContext>
     </Provider>
   </ConfigProvider>
 );

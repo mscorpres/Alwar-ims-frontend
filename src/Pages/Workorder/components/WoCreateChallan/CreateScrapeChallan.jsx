@@ -17,7 +17,7 @@ import  { useEffect, useState } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import FormTable2 from "../../../../Components/FormTable2";
 import MySelect from "../../../../Components/MySelect";
 import { submitScrapreChallan } from "../api";
@@ -32,6 +32,7 @@ import { convertSelectOptions } from "../../../../utils/general.ts";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const CreateScrapeChallan = () => {
+  const { showToast } = useToast();
   const [uplaodType, setUploadType] = useState("table");
   const [addOptions, setAddOptions] = useState([]);
   const [ClientBranchOptions, setclientBranchOptions] = useState([]);
@@ -94,10 +95,10 @@ const CreateScrapeChallan = () => {
         setAsyncOptions(arr);
       
       } else {
-        toast.error("Some error occured wile getting vendors");
+        showToast("Some error occured wile getting vendors", "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -121,10 +122,10 @@ const CreateScrapeChallan = () => {
       });
       if (response.success) {
         challanForm.setFieldValue("address", data.data.address);
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -160,11 +161,11 @@ const CreateScrapeChallan = () => {
             challanForm.setFieldValue("address", "");
           }
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
     
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -328,12 +329,12 @@ const CreateScrapeChallan = () => {
       console.log("response of edit ", response);
       let { data } = response;
       if (response.success ) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         challanForm.resetFields();
         setLoading(true);
         navigate("/woviewchallan");
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(true);
       }
     } else {
@@ -347,7 +348,7 @@ const CreateScrapeChallan = () => {
       setLoading(true);
       challanForm.resetFields();
     } else {
-      toast.error(response.data.error);
+      showToast(response.data.error, "error");
     }
     setLoading(true);
   };

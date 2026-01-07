@@ -4,7 +4,7 @@ import { Button, Col, Input, Row, Select, Skeleton } from "antd";
 // import JobworkUpdate from "../links/JobworkUpdate";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import UpdateViewModal from "../../Modal/UpdateViewModal";
 import { EyeTwoTone, OrderedListOutlined } from "@ant-design/icons";
 import { v4 } from "uuid";
@@ -16,6 +16,7 @@ import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 
 function UpdateJW() {
+  const { showToast } = useToast();
   const [updateData, setUpdateData] = useState({
     selectType: "",
     poType: "",
@@ -133,7 +134,7 @@ function UpdateJW() {
       setComponent(arr);
       setLoadingUpdate(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoadingUpdate(false);
     }
   };
@@ -488,7 +489,7 @@ function UpdateJW() {
 
   const addUpdate = async () => {
     if (!updateData.comment) {
-      toast.error("Please Fill comment");
+      showToast("Please Fill comment", "error");
     } else {
       setLoadingUpdate(true);
       let rowArray1 = [];
@@ -543,10 +544,10 @@ function UpdateJW() {
           comment: "",
         });
   
-        toast.success(response.message);
+        showToast(response.message, "success");
         setLoadingUpdate(false);
       } else if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoadingUpdate(false);
       }
     }

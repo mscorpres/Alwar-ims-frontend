@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import FormTable from "../../../Components/FormTable";
 import Loading from "../../../Components/Loading";
 import SummaryCard from "../../../Components/SummaryCard";
@@ -21,6 +21,7 @@ import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 
 function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
+  const { showToast } = useToast();
   const [fetchLoading, setFetchLoading] = useState(true);
   const [rows, setRows] = useState([]);
   const [showConfirmSubmit, setShowConfirmSubmit] = useState(false);
@@ -124,7 +125,7 @@ function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
       }
     });
     if (validation === "qty") {
-      return toast.error("All Component should have quantity more than 0");
+      return showToast("All Component should have quantity more than 0", "error");
     }
     let finalObj = {
       qty: rows.map((row) => row.qty),
@@ -145,11 +146,11 @@ function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
     );
     if (response.success) {
       setShowConfirmSubmit(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
       setSubmitLoading(false);
       setTransactionInwarding(false);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   useEffect(() => {

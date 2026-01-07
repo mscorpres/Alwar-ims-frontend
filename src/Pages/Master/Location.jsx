@@ -13,19 +13,19 @@ import {
 } from "antd";
 import MySelect from "../../Components/MySelect";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import Loading from "../../Components/Loading";
 import { imsAxios } from "../../axiosInterceptor";
 import useApi from "../../hooks/useApi.ts";
 import { getCostCentresOptions } from "../../api/general.ts";
-import MyDataTable from "../gstreco/myDataTable";
-import TableActions from "../../Components/TableActions.jsx/TableActions";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { convertSelectOptions } from "../../utils/general.ts";
 import MyButton from "../../Components/MyButton";
+import MyDataTable from "../../Components/MyDataTable.jsx";
 
 function Location() {
+  const { showToast } = useToast();
   const [treeData, setTreeData] = useState([]);
   const [treeLoading, setTreeLoading] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -93,7 +93,7 @@ function Location() {
        }));
        setLocationData(enriched);
      } catch (error) {
-       toast.error("Failed to load locations");
+       showToast("Failed to load locations", "error");
      } finally {
        setTreeLoading(false);
      }
@@ -170,11 +170,11 @@ function Location() {
     const response = await imsAxios.post("/location/insertLocation", obj);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       resetForm();
       getDataTree();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -206,7 +206,7 @@ function Location() {
       const status = response.data[0].status;
       disableLocationForm.setFieldValue("status", status === "ACTIVE");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -233,19 +233,19 @@ function Location() {
     );
     if (response.success) {
       getDataTree();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const mapLocSubmitHandler = async (values) => {
     const response = await imsAxios.post("/location/updatLocationCC", values);
     if (response.success) {
       getDataTree();
-      toast.success(response.message);
+      showToast(response.message, "success");
       maploc.resetFields();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const maplocValidateHandler = async () => {
@@ -475,7 +475,7 @@ function Location() {
     }
   }, [location]);
   return (
-    <div style={{ height: "90%", overflow: "auto" }}>
+    <div style={{ height: "calc(100vh - 120px)", overflow: "auto" }}>
       <Modal
         open={mapCostCenterModal}
         footer={null}
@@ -513,7 +513,7 @@ function Location() {
           </Row>
         </Form>
       </Modal>
-      <Row gutter={10} style={{ margin: "10px", height: "80%" }}>
+      <Row gutter={10} style={{ margin: "10px", height: "calc(100vh - 140px)" }}>
         <Col span={8}>
           <Row gutter={[0, 6]}>
             <Col span={24}>
@@ -740,8 +740,7 @@ function Location() {
             size="small"
           > */}
           {treeLoading && <Loading />}
-          {/* <Tree showLine={true} treeData={treeData} /> */}
-          <Card style={{ height: "100%" }} bodyStyle={{ height: "100%" }}>
+       
             {viewData ? (
               <>
                 <MyButton
@@ -758,7 +757,7 @@ function Location() {
                 </div>
               </>
             ) : (
-              <div style={{ height: "95%" }}>
+              <div style={{ height: "100%" }}>
                 <MyDataTable
                   columns={coloums}
                   data={locationData}
@@ -766,12 +765,8 @@ function Location() {
                 />
               </div>
             )}
-          </Card>
+         
 
-          {/* <div style={{ height: "95%" }}>
-            <MyDataTable columns={coloums} data={locationData} />
-          </div> */}
-          {/* </Card> */}
         </Col>
       </Row>
     </div>

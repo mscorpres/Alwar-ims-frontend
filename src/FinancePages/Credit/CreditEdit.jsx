@@ -4,21 +4,13 @@ import { v4 } from "uuid";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  PlusSquareFilled,
-  MinusSquareFilled,
-} from "@ant-design/icons";
-import axios from "axios";
 import moment from "moment";
-import { toast } from "react-toastify";
 import Loading from "../../../Components/Loading";
 import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../hooks/useToast";
 
-export default function CreditEdit({
-  editDebit,
-  setEditDebit,
-}) {
+export default function CreditEdit({ editDebit, setEditDebit }) {
+  const { showToast } = useToast();
   const [debitTotal, setDebitTotal] = useState(0);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -45,7 +37,7 @@ export default function CreditEdit({
   ]);
   const submitHandler = async () => {
     if (!effectiveDate) {
-      return toast.error("Please select Effective date");
+      return showToast("Please select Effective date", "error");
     }
     let finalObj = {
       cn_key: editDebit,
@@ -66,18 +58,10 @@ export default function CreditEdit({
             ...finalObj,
             gls: [
               ...finalObj.gls,
-              row.glCode.value
-                ? row.glCode.value
-                : row.glCode,
+              row.glCode.value ? row.glCode.value : row.glCode,
             ],
-            credit: [
-              ...finalObj.credit,
-              row.credit == "" ? 0 : row.credit,
-            ],
-            debit: [
-              ...finalObj.debit,
-              row.debit == "" ? 0 : row.debit,
-            ],
+            credit: [...finalObj.credit, row.credit == "" ? 0 : row.credit],
+            debit: [...finalObj.debit, row.debit == "" ? 0 : row.debit],
             comment: [...finalObj.comment, row.comment],
             trans_id: [
               ...finalObj.trans_id,
@@ -90,36 +74,30 @@ export default function CreditEdit({
     if (!problem) {
       //   console.log(finalObj);
       setSubmitLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cn/updateCreditVoucher",
-        {
-          ...finalObj,
-        }
-      );
+      const response = await imsAxios.post("/tally/cn/updateCreditVoucher", {
+        ...finalObj,
+      });
       setSubmitLoading(false);
       if (response.success) {
         // resetHandler();
-        toast.success(response.message);
+        showToast(response.message || response.message?.msg);
         setTimeout(() => {
           setEditDebit(null);
         }, 3000);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message || response.message?.msg, "error");
       }
     } else {
       if (problem == "gls") {
-        return toast.error("All entries should have a gls");
+        return showToast("All entries should have a gls", "error");
       }
     }
   };
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const response = await imsAxios.post(
-      "/tally/ledger/ledger_options",
-      {
-        search: search,
-      }
-    );
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
+      search: search,
+    });
     setSelectLoading(false);
     let arr = [];
     if (response.success) {
@@ -170,12 +148,8 @@ export default function CreditEdit({
       renderCell: ({ row }) => (
         <>
           <Input
-            value={
-              row.total ? debitTotal.toFixed(2) : row.debit
-            }
-            onChange={(e) =>
-              inputHandler("debit", e.target.value, row.id)
-            }
+            value={row.total ? debitTotal.toFixed(2) : row.debit}
+            onChange={(e) => inputHandler("debit", e.target.value, row.id)}
             disabled={row.total || Number(row.credit) > 0}
           />
         </>
@@ -192,12 +166,8 @@ export default function CreditEdit({
       renderCell: ({ row }) => (
         <Input
           // size="small"
-          value={
-            row.total ? creditTotal.toFixed(2) : row.credit
-          }
-          onChange={(e) =>
-            inputHandler("credit", e.target.value, row.id)
-          }
+          value={row.total ? creditTotal.toFixed(2) : row.credit}
+          onChange={(e) => inputHandler("credit", e.target.value, row.id)}
           disabled={row.total || Number(row.debit) > 0}
         />
       ),
@@ -212,11 +182,7 @@ export default function CreditEdit({
         !row.total && (
           <Input
             onChange={(e) => {
-              inputHandler(
-                "comment",
-                e.target.value,
-                row.id
-              );
+              inputHandler("comment", e.target.value, row.id);
             }}
             value={row?.comment}
             name="comment"
@@ -227,12 +193,9 @@ export default function CreditEdit({
   ];
   const getVoucherDetails = async () => {
     setLoading(true);
-    const response = await imsAxios.post(
-      "/tally/cn/editCreditVoucher",
-      {
-        cn_key: editDebit,
-      }
-    );
+    const response = await imsAxios.post("/tally/cn/editCreditVoucher", {
+      cn_key: editDebit,
+    });
     setLoading(false);
     if (response.success) {
       let arr = response.data.map((row) => {
@@ -245,15 +208,12 @@ export default function CreditEdit({
           transactionId: row.trans_id,
         };
       });
-      arr = [
-        ...arr,
-        { id: v4(), total: true, debit: 0, credit: 0 },
-      ];
+      arr = [...arr, { id: v4(), total: true, debit: 0, credit: 0 }];
       setJounralRows(arr);
-      console.log(moment(response.data[0].effective_date));
+
       setEffectiveDate(response.data[0].effective_date);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message || response.message?.msg, "error");
     }
   };
   const inputHandler = (name, value, id) => {
@@ -312,11 +272,7 @@ export default function CreditEdit({
       }}
       open={editDebit}
       extra={
-        <Button
-          type="primary"
-          loading={submitLoading}
-          onClick={submitHandler}
-        >
+        <Button type="primary" loading={submitLoading} onClick={submitHandler}>
           Submit
         </Button>
       }
@@ -324,10 +280,7 @@ export default function CreditEdit({
       {loading ? (
         <Loading />
       ) : (
-        <Row
-          gutter={[0, 4]}
-          style={{ paddingBottom: 10, height: "100%" }}
-        >
+        <Row gutter={[0, 4]} style={{ paddingBottom: 10, height: "100%" }}>
           <Col span={24} style={{ height: "5%" }}>
             <Col span={6}>
               <SingleDatePicker

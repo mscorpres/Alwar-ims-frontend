@@ -5,10 +5,11 @@ import { useEffect } from "react";
 import SingleProduct from "./SingleProduct";
 import VBTHeaders from "./VBTHeaders";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
-import dayjs from "dayjs";
+import { useToast } from "../../../../hooks/useToast.js";
+
 
 function EditVBTReport({ editVbtDrawer, setEditVbtDrawer }) {
+  const { showToast } = useToast();
   const [editVbt] = Form.useForm();
   const [vbtComponent, setVbtComponent] = useState([]);
   const [taxDetails, setTaxDetails] = useState([]);
@@ -92,7 +93,7 @@ function EditVBTReport({ editVbtDrawer, setEditVbtDrawer }) {
       });
       setTdsArray(tdsC);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const getGl = async () => {
@@ -192,10 +193,10 @@ function EditVBTReport({ editVbtDrawer, setEditVbtDrawer }) {
     const { data } = response;
     console.log("data", response);
     if (response.status === 200) {
-      toast.success(response.data);
+      showToast(response.data, "success");
       setEditVbtDrawer(null);
     } else {
-      toast.error(response.data);
+      showToast(response.data, "error");
     }
   };
   const resetForm = () => {

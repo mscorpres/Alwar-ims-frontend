@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { getGlobalToast } from "../../../context/ToastContext";
 import { imsAxios } from "../../../axiosInterceptor";
 import printFunction, {
   downloadFunction,
@@ -100,17 +100,19 @@ const getWorkOrderAnalysis = async (wise, searchInput) => {
       }));
       return arr;
     } else {
-      toast.error(response?.message);
+      const showToast = getGlobalToast();
+      if (showToast) showToast(response?.message, "error");
       return [];
     }
 
 };
 const postUpdatedWo = async (datas) => {
   const response = await imsAxios.post("/wo_challan/updateWO_Shipment", datas);
+  const showToast = getGlobalToast();
   if (response.success) {
-    toast.success(response.message);
+    if (showToast) showToast(response.message, "success");
   } else {
-    toast.error(response.message);
+    if (showToast) showToast(response.message, "error");
   }
 };
 const getWorkOrderShipment = async (wise, searchInput) => {
@@ -144,7 +146,8 @@ const getWorkOrderShipment = async (wise, searchInput) => {
       }));
       return arr;
     } else {
-      toast.error(data.message?.msg || data.message);
+      const showToast = getGlobalToast();
+      if (showToast) showToast(data.message?.msg || data.message, "error");
       return [];
     }
 
@@ -188,7 +191,8 @@ const getWorkOrderRC = async (wise, searchInput) => {
       }));
       return arr;
     } else {
-      toast.error(data.message?.msg || data.message);
+      const showToast = getGlobalToast();
+      if (showToast) showToast(data.message?.msg || data.message, "error");
       return [];
     }
   }
@@ -204,7 +208,8 @@ const getdetailsOfReturnChallan = async (shipWoid) => {
     }));
     return arr;
   } else {
-    toast.error(response.message?.msg || response.message);
+    const showToast = getGlobalToast();
+    if (showToast) showToast(response.message?.msg || response.message, "error");
     return [];
   }
 };
@@ -222,7 +227,8 @@ const fetchReturnChallanDetails = async (challanID) => {
     }));
     return arr;
   } else {
-    toast.error(response.message?.msg || response.message);
+    const showToast = getGlobalToast();
+    if (showToast) showToast(response.message?.msg || response.message, "error");
     return [];
   }
 };
@@ -242,7 +248,8 @@ const getReturnRowsInViewChallan = async (wise, searchInput) => {
     }));
     return arr;
   } else {
-    toast.error(response.message?.msg || response.message);
+    const showToast = getGlobalToast();
+    if (showToast) showToast(response.message?.msg || response.message, "error");
     return [];
   }
 };
@@ -258,7 +265,8 @@ const getScrapeInViewChallan = async (wise, searchInput) => {
     }));
     return arr;
   } else {
-    toast.error(response.message?.msg || response.message);
+    const showToast = getGlobalToast();
+    if (showToast) showToast(response.message?.msg || response.message, "error");
     return [];
   }
 };
@@ -290,7 +298,8 @@ const getViewChallan = async (challantype, wise, searchInput) => {
     }));
     return arr;
   } else {
-    toast.error(response.message);
+    const showToast = getGlobalToast();
+    if (showToast) showToast(response.message, "error");
     return [];
   }
 };
@@ -322,11 +331,12 @@ const createWorkOrderShipmentChallan = async (payload) => {
     payload
   );
   console.log("data", data);
+  const showToast = getGlobalToast();
   if (data) {
     if (data.success) {
-      toast.success(response.message);
+      if (showToast) showToast(response.message, "success");
     } else {
-      toast.error(data.message?.msg || data.message);
+      if (showToast) showToast(data.message?.msg || data.message, "error");
     }
   }
 };
@@ -344,11 +354,12 @@ const createWorkOrderReturnChallan = async (payload) => {
     "/wo_challan/createDeliveryReturnChallan",
     payload
   );
+  const showToast = getGlobalToast();
   if (response) {
     if (response.success) {
-      toast.success(response.message);
+      if (showToast) showToast(response.message, "success");
     } else {
-      toast.error(response.message?.msg || response.message);
+      if (showToast) showToast(response.message?.msg || response.message, "error");
     }
   }
 };
@@ -428,11 +439,12 @@ const createMIN = async (values, showView) => {
   // return;
   const response = await imsAxios.post("/createwo/woMIN", finalObj);
   // console.log("data", response);
+  const showToast = getGlobalToast();
   if (response.success) {
-    toast.success(response.message);
+    if (showToast) showToast(response.message, "success");
     return response;
   } else {
-    toast.error(response.message);
+    if (showToast) showToast(response.message, "error");
   }
 };
 
@@ -530,14 +542,15 @@ const finalizeOrder = async (values, woId) => {
     finalObj
   );
 
+  const showToast = getGlobalToast();
   if (response) {
     if (response.success) {
-      toast.success(response.message);
+      if (showToast) showToast(response.message, "success");
       return {
         error: false,
       };
     } else {
-      toast.error(response.message?.msg || response.message);
+      if (showToast) showToast(response.message?.msg || response.message, "error");
       return {
         error: true,
       };

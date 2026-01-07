@@ -8,7 +8,7 @@ import {
 import { useState } from "react";
 import CreateSubmitConfirmModal from "./CreateSubmitConfirmModal";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyButton from "../../../Components/MyButton";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { getBomOptions, getCostCentresOptions } from "../../../api/general.ts";
@@ -16,6 +16,7 @@ import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 
 export default function NewProjectForm() {
+  const { showToast } = useToast();
   const [submitConfirm, setSubmitConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [newProjectForm] = Form.useForm();
@@ -52,10 +53,10 @@ export default function NewProjectForm() {
     setSubmitConfirm(false);
 
       if (response?.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         resetHandler();
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
 
   };

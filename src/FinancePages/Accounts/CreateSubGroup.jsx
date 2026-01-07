@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./accounts.css";
 import Tree from "../../Components/Tree";
-import axios from "axios";
-import { toast } from "react-toastify";
+
 import Loading from "../../Components/Loading";
 import {
   Button,
@@ -17,8 +16,10 @@ import {
 } from "antd";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { imsAxios } from "../../axiosInterceptor";
+import { useToast } from "../../hooks/useToast";
 
 export default function CreateSubGroup() {
+ const {showToast}= useToast();
   const [newsubGroup, setNewSubGroup] = useState({
     group_name: "",
     code: "",
@@ -70,11 +71,11 @@ export default function CreateSubGroup() {
   };
   const createNewSubGroup = async () => {
     if (!newsubGroup.parent || newsubGroup.parent == "") {
-      return toast.error("Please select a parent");
+      return showToast("Please select a parent");
     } else if (!newsubGroup.group_name || newsubGroup.group_name == "") {
-      return toast.error("Please Enter a Sub group Name");
+      return showToast("Please enter a sub group name"); 
     } else if (!newsubGroup.code || newsubGroup.code == "") {
-      return toast.error("Please Enter a Code");
+      return showToast("Please enter a code"); 
     }
     setFormLoading(true);
     const response = await imsAxios.post("/tally/create_sub_group", {
@@ -85,9 +86,11 @@ export default function CreateSubGroup() {
     getSubGroupsTree();
     reset();
     if (response.success) {
-      toast.success("Sub Group added succesfully");
+      showToast(response.message?.msg || response.message);
+      
     } else {
-      toast.error(response.message?.msg || response.message);
+     
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const reset = () => {

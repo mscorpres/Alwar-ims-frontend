@@ -9,7 +9,7 @@ import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
 import axios from "axios";
 import MySelect from "../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import useApi from "../../hooks/useApi.ts";
 import { getCostCentresOptions, getProjectOptions } from "../../api/general.ts";
 import { convertSelectOptions } from "../../utils/general.ts";
@@ -21,6 +21,7 @@ function SFTransferDrawer({
   //
   setDrawerData,
 }) {
+  const { showToast } = useToast();
   const [sftransfer] = Form.useForm();
 
   const [locationOptions, setLocationOptions] = useState([]);
@@ -153,7 +154,7 @@ function SFTransferDrawer({
       });
       setLocationOptions(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const getdrawerData = async (id) => {
@@ -212,11 +213,11 @@ function SFTransferDrawer({
     let response = await imsAxios.post("/sfMin/sfMinInward", payload);
     let { data } = response;
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setLoading(true);
       setDrawerData([]);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
   };

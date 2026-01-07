@@ -15,7 +15,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
 import FormTable from "../../../../Components/FormTable";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 function CashReceiptEdit({
   edit,
@@ -23,6 +23,7 @@ function CashReceiptEdit({
   fetchData,
   selectValueWhenFetch,
 }) {
+  const { showToast } = useToast();
   // conso/le.log(selectValueWhenFetch);
   const [allData, setAllData] = useState([]);
   const [header, setHeader] = useState([]);
@@ -75,7 +76,7 @@ function CashReceiptEdit({
       // console.log(arr);
       setAllData(arr);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
 
     // response.data.map((aa) => setCash(aa.particulars));
@@ -242,7 +243,7 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("date_wise");
-        toast.success(data.code);
+        showToast(data.code, "success");
         setEdit(false);
       } else if (!response.success) {
         console.log(data.message.msg);
@@ -271,7 +272,7 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("eff_wise");
-        toast.success(data.code);
+        showToast(data.code, "success");
         setEdit(false);
       } else if (!response.success) {
         console.log(data.message.msg);
@@ -300,7 +301,7 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("key_wise");
-        toast.success(data.code);
+        showToast(data.code, "success");
         setEdit(false);
       } else if (!response.success) {
         console.log(data.message.msg);
@@ -329,7 +330,7 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("ledger_wise");
-        toast.success(data.code);
+        showToast(data.code, "success");
         setEdit(false);
       } else if (!response.success) {
         console.log(data.message.msg);

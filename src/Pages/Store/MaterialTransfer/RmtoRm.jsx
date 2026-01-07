@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MySelect from "../../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Row, Select, Button, Input } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -13,6 +13,7 @@ import { v4 } from "uuid";
 const { TextArea } = Input;
 
 function RmtoRm() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
     locationFrom: "",
@@ -63,7 +64,7 @@ function RmtoRm() {
     if (rows.length > 1) {
       setRows((prev) => prev.filter((row) => row.id !== id));
     } else {
-      toast.error("At least one row is required");
+      showToast("At least one row is required", "error");
     }
   };
 
@@ -132,22 +133,22 @@ function RmtoRm() {
   const saveRmToRm = async () => {
     // Validations
     if (!allData.locationFrom) {
-      return toast.error("Please select a Pick Location");
+      return showToast("Please select a Pick Location", "error");
     }
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (!row.component) {
-        return toast.error(`Row ${i + 1}: Please select Component`);
+        return showToast(`Row ${i + 1}: Please select Component`, "error");
       }
       if (!row.qty1) {
-        return toast.error(`Row ${i + 1}: Please enter Qty`);
+        return showToast(`Row ${i + 1}: Please enter Qty`, "error");
       }
       if (!row.locationTo) {
-        return toast.error(`Row ${i + 1}: Please select Drop Location`);
+        return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
       }
       if (row.locationTo == allData.locationFrom) {
-        return toast.error(`Row ${i + 1}: Both Location Same`);
+        return showToast(`Row ${i + 1}: Both Location Same`, "error");
       }
     }
 
@@ -169,7 +170,7 @@ function RmtoRm() {
     });
 
     if (response.success) {
-      toast.success(response.message.toString()?.replaceAll("<br/>", ""));
+      showToast(response.message.toString()?.replaceAll("<br/>", ""), "success");
       // Reset form
       setAllData({
         locationFrom: "",
@@ -191,7 +192,7 @@ function RmtoRm() {
       setbBanchName("");
       setLoading(false);
     } else {
-      toast.error( response?.message);
+      showToast( response?.message, "error");
       setLoading(false);
     }
   };
@@ -217,7 +218,7 @@ function RmtoRm() {
       );
     } catch (error) {
 
-      toast.error("Failed to fetch drop locations for selected branch");
+      showToast("Failed to fetch drop locations for selected branch", "error");
     }
   };
 

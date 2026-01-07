@@ -3,7 +3,7 @@ import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
 import links from "./links";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -15,6 +15,7 @@ import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 
 export default function JournalPosting() {
+  const { showToast } = useToast();
   const [journalDate, setJournalDate] = useState("");
   const [debitTotal, setDebitTotal] = useState(0);
   const [creditTotal, setCreditTotal] = useState(0);
@@ -291,13 +292,13 @@ export default function JournalPosting() {
       setLoading(false);
       if (response.success) {
         resetHandler();
-        toast.success(data.message.msg);
+        showToast(data.message.msg, "success");
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } else {
       if (problem == "gls") {
-        return toast.error("All entries should have a gls");
+        return showToast("All entries should have a gls", "error");
       }
     }
   };
@@ -332,7 +333,7 @@ export default function JournalPosting() {
     }
   }, [loading]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         gutter={[4, 4]}
         style={{

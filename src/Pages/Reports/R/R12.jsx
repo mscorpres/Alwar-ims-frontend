@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./r.css";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import {
   downloadCSV,
   downloadCSVCustomColumns,
@@ -19,6 +19,7 @@ import { getProductsOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 const R12 = () => {
+  const { showToast } = useToast();
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -93,11 +94,11 @@ const R12 = () => {
 
   const fetchBySearch = async () => {
     if (!allData.selectProduct) {
-      toast.error("Please select a product");
+      showToast("Please select a product", "error");
     } else if (!allData.selectBom) {
-      toast.error("Please select a bom");
+      showToast("Please select a bom", "error");
     } else if (!allData.fgQty) {
-      toast.error("Please select add Qty");
+      showToast("Please select add Qty", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/report12", {
@@ -114,7 +115,7 @@ const R12 = () => {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }

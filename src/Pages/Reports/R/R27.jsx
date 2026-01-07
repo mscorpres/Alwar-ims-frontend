@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button, Col, Row, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -14,8 +13,10 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 function R27() {
+  const { showToast } = useToast();
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateData, setDateData] = useState([]);
@@ -117,7 +118,7 @@ function R27() {
 
     if (response.success) {
       setLoading(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
       let arr = response.data.map((row, index) => {
         return {
           ...row,
@@ -127,7 +128,7 @@ function R27() {
       setDateData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };
@@ -137,7 +138,7 @@ function R27() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row style={{ padding: 5, paddingTop: 0 }}>
         <Col span={5}>
           <MyDatePicker size="default" setDateRange={setDatee} />

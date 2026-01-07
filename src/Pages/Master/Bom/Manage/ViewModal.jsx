@@ -2,11 +2,12 @@ import { Drawer } from "antd";
 import { useState, useEffect } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MyDataTable from "../../../../Components/MyDataTable";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../../Components/exportToCSV";
 
 const ViewModal = ({ show, close }) => {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +35,7 @@ const ViewModal = ({ show, close }) => {
           setRows(arr);
         }
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
       console.log("error while fetching bom components", error);

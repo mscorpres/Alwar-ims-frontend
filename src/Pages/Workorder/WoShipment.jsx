@@ -23,13 +23,14 @@ import {
 } from "./components/api";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import Loading from "../../Components/Loading";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { Form, Modal } from "antd/es";
 import { imsAxios } from "../../axiosInterceptor";
 import CreateChallanModal from "./components/WoCreateChallan/CreateChallanModal";
 import CostCenter from "../Master/CostCenter";
 import MyButton from "../../Components/MyButton";
 const WoShipment = () => {
+  const { showToast } = useToast();
   const [wise, setWise] = useState(wiseOptions[0].value);
   const [showTypeSelect, setShowTypeSelect] = useState(false);
   const [showCreateChallanModal, setShowCreateChallanModal] = useState(false);
@@ -107,10 +108,10 @@ const WoShipment = () => {
     }
     const response = await imsAxios.post(link, obj);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setCancelRemark("");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
     setCancelRemark("");
     getRows();

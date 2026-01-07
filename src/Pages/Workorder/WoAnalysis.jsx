@@ -15,11 +15,12 @@ import {
   printWorkOrder,
 } from "./components/api";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import FinalizeModal from "./components/woAnalysis/FinalizeModal";
 import MyButton from "../../Components/MyButton";
 
 const WoAnalysis = () => {
+  const { showToast } = useToast();
   const [wise, setWise] = useState(wiseOptions[0].value);
   const [searchInput, setSearchInput] = useState("");
   const [showView, setShowView] = useState(false);
@@ -110,9 +111,9 @@ const WoAnalysis = () => {
     setLoading(false);
     setLoading(false);
     if (status === "success") {
-      toast.success(message);
+      showToast(message, "success");
     } else {
-      toast.error(message);
+      showToast(message, "error");
     }
   };
   const actionColumn = {

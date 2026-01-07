@@ -16,7 +16,7 @@ import {
   InfoCircleTwoTone,
 } from "@ant-design/icons";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import TableActions from "../../../Components/TableActions.jsx/TableActions";
@@ -25,6 +25,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 // import TableActions from "../../Components/TableActions.jsx/TableActions";
 
 function ChallanModal({ challanModal, setChallanModal }) {
+  const { showToast } = useToast();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [spinLoading, setSpinLoading] = useState(false);
@@ -60,7 +61,7 @@ function ChallanModal({ challanModal, setChallanModal }) {
       setData(arr);
       setSpinLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setSpinLoading(false);
     }
   };
@@ -211,7 +212,7 @@ function ChallanModal({ challanModal, setChallanModal }) {
     if (response.success) {
       setSpinLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setSpinLoading(false);
     }
   };

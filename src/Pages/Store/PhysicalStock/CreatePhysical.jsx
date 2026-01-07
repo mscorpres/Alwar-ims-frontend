@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { v4 } from "uuid";
 import { Button, Col, DatePicker, Input, Row, Tabs } from "antd";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import { PlusCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -42,6 +42,7 @@ function CreatePhysical() {
 export default CreatePhysical;
 
 const Manual = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [datee, setDatee] = useState([]);
@@ -185,10 +186,10 @@ const Manual = () => {
           rem: "",
         },
       ]);
-      toast.success(response.message || "Success");
+      showToast(response.message || "Success", "success");
       setLoading(false);
     } else {
-      toast.error(response.message || "Something Went Wrong");
+      showToast(response.message || "Something Went Wrong", "error");
       setLoading(false);
     }
   };

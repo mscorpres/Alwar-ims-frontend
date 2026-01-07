@@ -26,7 +26,7 @@ const BannerButton = ({ onClick, children, style = {} }) => {
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
       style={{
-        background: isHovered || isActive ? "#bde649" : "transparent",
+        background: isHovered || isActive ? "#0d9489" : "transparent",
         border: "none",
         color: "#555",
         cursor: "pointer",
@@ -109,7 +109,7 @@ const TopBanner = ({
       ref={bannerRef}
       style={{
         width: "100%",
-        background: "#d2f571",
+        background: "#fff59d",
         color: "#12120E",
         padding: "8px 16px",
         display: "flex",
@@ -122,7 +122,7 @@ const TopBanner = ({
         zIndex: 1000,
         fontWeight: 400,
         fontSize: "13px",
-        borderBottom: "1px solid #b8d95f",
+        borderBottom: "1px solid #fff59d",
       }}
     >
       <div

@@ -37,7 +37,7 @@ function R32() {
       <Row style={{ margin: "1em" }} justify="end">
         <CommonIcons action="downloadButton" onClick={handleDownloadingCSV} />
       </Row>
-      <div style={{ height: "90%" }}>
+      <div style={{ height: "100%" }}>
         {" "}
         <MyDataTable
           // checkboxSelection={true}

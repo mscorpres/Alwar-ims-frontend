@@ -104,7 +104,6 @@ import {
   ViewandEditClient,
   PartCodeConversion,
   ProductMIN,
-  Dashboard,
   JWUpdateRate,
   CreateBranchTransferChallan,
   ViewBranchTransfer,
@@ -126,8 +125,10 @@ import {
   ViewAgreement,
   AddAgreementType,
   JobworkApproval,
+  //@ts-ignore
 } from "../Pages/index.jsx";
-
+//@ts-ignore
+import Dashboard from "../new/dashboard/Dashboard.jsx";
 import {
   CreateMaster,
   Ledger,
@@ -137,11 +138,6 @@ import {
   BlockTCS,
   LedgerReport,
   VBTReport,
-  VBT1,
-  VBT2,
-  VBT3,
-  VBT4,
-  VBT5,
   JournalPosting,
   JVReport,
   BankReceipts,
@@ -236,13 +232,10 @@ import RejectedPhysicalStock from "../Pages/Store/PhysicalStock/Rejected.jsx";
 import EditSalesOrder from "../Pages/Sales/SalesOrder/edit/index.jsx";
 import ShipmentsList from "../Pages/Sales/SalesOrder/SalesOrderRegister/Shipments/ShipmentsList.jsx";
 import Challan from "../Pages/Sales/SalesOrder/SalesOrderRegister/Challan/Challan.jsx";
-
 import R32 from "../Pages/Reports/R/R32.jsx";
 import Index from "../Pages/Query/ClosingStock/Index.jsx";
 import routeConstants from "./routeConstants.js";
 import CreateScrapeChallan from "../Pages/Workorder/components/WoCreateChallan/CreateScrapeChallan.jsx";
-// import ProcurementDashboard from "../Pages/Dashboard/ProcurementDashboard.jsx";
-//
 import ProductionMIS from "../Pages/Production/ProductionMIS/ProductionMIS";
 import R33 from "../Pages/Reports/R/R33";
 import ChangelogHistory from "../Pages/Changelog/ChangelogHistory.jsx";
@@ -256,18 +249,12 @@ import FARUpload from "@/Pages/far/index.js";
 import R35 from "@/Pages/Reports/R/R35.jsx";
 import R37 from "@/Pages/Reports/R/R37.jsx";
 import QcScan from "@/Pages/Production/mes/qca/scan/index.js";
-import CreatePhysicalProduction from "@/Pages/Production/PhysicalStock/CreatePhysical.jsx";
-import PendingPhysicalProduction from "@/Pages/Production/PhysicalStock/Pending.jsx";
-import RejectedPhysicalProduction from "@/Pages/Production/PhysicalStock/Rejected.jsx";
-import ViewPhysicalProduction from "@/Pages/Production/PhysicalStock/ViewPhysical.jsx";
 import Products from "@/Pages/R&D/products/index.js";
 import ApprovalList from "@/Pages/R&D/products/approvalList.js";
 import BOMCreate from "@/Pages/R&D/bom/create/index.js";
 import BOMList from "@/Pages/R&D/bom/list/index.js";
 import VersionDownload from "@/Pages/Version/VersionDownload.jsx";
-// import CreateAsset from "../Pages/fixeassetmodule/CreateAsset/CreateAsset";
-// import ViewAsset from "../Pages/fixeassetmodule/ViewAsset";
-// import Depreciation from "../Pages/fixeassetmodule/Depreciation";
+
 
 const Routes = [
   {
@@ -302,10 +289,10 @@ const Routes = [
     path: "/services",
     main: () => <Services />,
   },
-  {
-    path: "/stockControl",
-    main: () => <StockControl />,
-  },
+  // {
+  //   path: "/stockControl",
+  //   main: () => <StockControl />,
+  // },
   {
     path: "/uom",
     main: () => <Uom />,
@@ -1432,18 +1419,18 @@ const Routes = [
     path: "/weeklyaudit",
     main: () => <WeeklyAudit />,
   },
-  {
-    path: "/assets/create",
-    main: () => <CreateAsset />,
-  },
-  {
-    path: "/assets/view",
-    main: () => <ViewAsset />,
-  },
-  {
-    path: "/assets/depreciation",
-    main: () => <Depreciation />,
-  },
+  // {
+  //   path: "/assets/create",
+  //   main: () => <CreateAsset />,
+  // },
+  // {
+  //   path: "/assets/view",
+  //   main: () => <ViewAsset />,
+  // },
+  // {
+  //   path: "/assets/depreciation",
+  //   main: () => <Depreciation />,
+  // },
 
   // far upload
   {

@@ -6,7 +6,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 // import { CSVLink} from "react-csv";
 import axios from "axios";
 import "./summary.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyButton from "../../../Components/MyButton";
@@ -78,6 +78,7 @@ const columns = [
 ];
 
 const Summary = () => {
+  const { showToast } = useToast();
   const [summaryData, setGstData] = useState([]);
   useEffect(() => {
     getData();
@@ -89,10 +90,10 @@ const Summary = () => {
       if (response.status === 200) {
         setGstData(response.data);
       } else {
-        toast.error("error in getting data!");
+        showToast("error in getting data!", "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     }
   };
 

@@ -3,15 +3,16 @@ import { Button, Col, Row, Select } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { DownloadOutlined } from "@ant-design/icons";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 function R15() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
     selType: "",
@@ -43,9 +44,9 @@ function R15() {
   const fetch = async () => {
     // console.log(c)
     if (!allData.selType) {
-      toast.error("Please Select Type");
+      showToast("Please Select Type", "error");
     } else if (!datee[0]) {
-      toast.error("Please Select Date First");
+      showToast("Please Select Date First", "error");
     } else {
       setResponseData([]);
       setLoading(true);
@@ -56,7 +57,7 @@ function R15() {
       // console.log(data.data);
       if (response.success) {
         // setLoading(true);
-        toast.success(response.message);
+        showToast(response.message, "success");
         let arr = response.data.map((row) => {
           return {
             ...row,
@@ -66,7 +67,7 @@ function R15() {
         setResponseData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }
@@ -91,7 +92,7 @@ function R15() {
       setResponsePoData(arr);
       setLoading(false);
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -166,7 +167,7 @@ function R15() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={3}>
           <Select

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Col, Row, Space, Tooltip } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker.jsx";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable.jsx";
 import { downloadCSV } from "../../../Components/exportToCSV.jsx";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions.jsx";
@@ -14,6 +14,7 @@ import EditPO from "../ManagePO/EditPO/EditPO.jsx";
 import ViewPOLogs from "./ViewPOLogs";
 
 const RequestPo = () => {
+  const { showToast } = useToast();
   const [searchLoading, setSearchLoading] = useState(false);
   const [viewPoId, setViewPoId] = useState(null);
   const [rows, setRows] = useState([]);
@@ -227,7 +228,7 @@ const RequestPo = () => {
   const getSearchResults = async (silent = false) => {
     if (!searchDateRange) {
       if (!silent) {
-        toast.error("Please select start and end dates for the results");
+        showToast("Please select start and end dates for the results", "error");
       }
       return;
     }
@@ -248,16 +249,18 @@ const RequestPo = () => {
         }));
         setRows(arr);
       } else if (response.message) {
-          toast.error(response.message);
+        if (!silent) {
+          showToast(response.message, "error");
+        }
       } else {
         if (!silent) {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       }
     } catch (error) {
       setSearchLoading(false);
       if (!silent) {
-        toast.error("Error fetching PO list");
+        showToast("Error fetching PO list", "error");
       }
     }
   };
@@ -282,7 +285,7 @@ const RequestPo = () => {
         ...response.data.vendor[0],
       });
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -327,7 +330,7 @@ const RequestPo = () => {
 
       <div
         style={{
-          height: "85%",
+          height: "calc(100% - 40px)",
           padding: "0 10px",
         }}
       >

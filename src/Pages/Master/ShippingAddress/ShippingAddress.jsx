@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -8,6 +8,7 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import AddShippingAddress from "./AddShippingAddress.";
 
 function ShippingAddress() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -24,7 +25,7 @@ function ShippingAddress() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const columns = [
@@ -42,15 +43,15 @@ function ShippingAddress() {
     getRows();
   }, []);
   return (
-    <div style={{ height: "90%", padding: "0px 5px" }}>
-      <Row gutter={6} style={{ height: "95%" }}>
-        <Col span={4}>
+    <div style={{ height: "100%", padding: "0px 5px" }}>
+      <Row gutter={6} style={{ height: "100%" }}>
+        <Col span={6}>
           <AddShippingAddress
             getRows={getRows}
             handleCSVDownload={handleCSVDownload}
           />
         </Col>
-        <Col span={20}>
+        <Col span={18}>
           <MyDataTable
             loading={loading === "fetch"}
             columns={columns}

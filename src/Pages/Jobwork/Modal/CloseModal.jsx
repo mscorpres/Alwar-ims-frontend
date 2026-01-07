@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Col, Drawer, Input, Modal, Row, Space } from "antd";
-import { EyeFilled, CloseCircleFilled } from "@ant-design/icons";
+
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { useEffect } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 
 function CloseModal({ closeModalOpen, setCloseModalOpen, getRows }) {
+  const { showToast } = useToast();
   const [remark, setRemark] = useState("");
   const { seltype, row } = closeModalOpen;
   // console.log(row);
@@ -23,7 +24,7 @@ function CloseModal({ closeModalOpen, setCloseModalOpen, getRows }) {
 
       getRows();
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

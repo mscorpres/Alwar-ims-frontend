@@ -8,7 +8,7 @@ import {
 import { v4 } from "uuid";
 import FormTable from "../../../../Components/FormTable";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Modal } from "antd";
 import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -23,6 +23,7 @@ export default function EditDCComponents({
   setPageLoading,
   updatedDCId,
 }) {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   console.log(rows);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -121,15 +122,15 @@ export default function EditDCComponents({
   const validateData = () => {
     let validate = false;
     if (newGatePass.passType == "") {
-      return toast.error("Please select Pass Type");
+      return showToast("Please select Pass Type", "error");
     } else if (newGatePass.vendorName == "") {
-      return toast.error("Please select a Vendor");
+      return showToast("Please select a Vendor", "error");
     } else if (newGatePass.vendorBranch == "") {
-      return toast.error("Please select a Vendor Branch");
+      return showToast("Please select a Vendor Branch", "error");
     } else if (newGatePass.billingId == "") {
-      return toast.error("Please select a Billing Address");
+      return showToast("Please select a Billing Address", "error");
     } else if (newGatePass.vehicleNumber == "") {
-      return toast.error("Please enter a Vehicle Number");
+      return showToast("Please enter a Vehicle Number", "error");
     }
     rows.map((row) => {
       if (row.component == "") {
@@ -141,7 +142,7 @@ export default function EditDCComponents({
       }
     });
     if (validate) {
-      return toast.error(validate);
+      return showToast(validate, "error");
     }
     let final = {
       gp: updatedDCId,
@@ -197,9 +198,9 @@ export default function EditDCComponents({
         // };
         setShowSubmitConfirm(false);
         setActiveTab("1");
-        toast.success(response.message);
+        showToast(response.message, "success");
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
     setShowSubmitConfirm(false);

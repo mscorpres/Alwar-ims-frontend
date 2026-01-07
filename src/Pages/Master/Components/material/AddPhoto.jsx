@@ -1,13 +1,13 @@
 import { Button, Col, Drawer, Form, Input, Row, Space, Typography } from "antd";
 import Dragger from "antd/lib/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
-import React from "react";
 import { useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 function AddPhoto({ updatingImage, setUpdatingImage }) {
+  const { showToast } = useToast();
   const [previousImages, setImagePreview] = useState([]);
   const [caption, setCaption] = useState("");
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -31,11 +31,11 @@ function AddPhoto({ updatingImage, setUpdatingImage }) {
     );
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setCaption("");
       setUpdatingImage(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const props = {

@@ -5,9 +5,10 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import MyButton from "../../../Components/MyButton";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 function QaProcess() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -15,12 +16,12 @@ function QaProcess() {
     setLoading(true);
     const response = await imsAxios.post("/qaProcessmaster/insert_Process", values);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       getRows();
       form.resetFields();
     }
     else{
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
     setLoading(false);
   };

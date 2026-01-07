@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Col, Drawer, Form, Modal, Row, Typography } from "antd";
 import { imsAxios } from "../../../../../axiosInterceptor";
 import VBTHeaders from "./VBTHeaders";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../../hooks/useToast.js";
 import NavFooter from "../../../../../Components/NavFooter";
 import validateResponse from "../../../../../Components/validateResponse";
 import Loading from "../../../../../Components/Loading";
@@ -15,6 +15,7 @@ function VBT01Report({
   editVbtDrawer,
   setEditVbtDrawer,
 }) {
+  const { showToast } = useToast();
   const [Vbt01] = Form.useForm();
   const [vbtComponent, setVbtComponent] = useState([]);
   const [taxDetails, setTaxDetails] = useState([]);
@@ -73,7 +74,7 @@ function VBT01Report({
         });
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       // setEditingVBT(null);
     }
   };
@@ -211,7 +212,7 @@ function VBT01Report({
         checkInvoice(arr[0].invoice_id, arr[0].ven_code);
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     setLoading(false);
@@ -259,7 +260,7 @@ function VBT01Report({
       });
       setTdsArray(tdsC);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const getFreightGlOptions = async (vbtCode) => {
@@ -614,11 +615,11 @@ function VBT01Report({
     const { data } = response;
     // console.log("data", response);
     if (response.status === 200) {
-      toast.success(response.data);
+      showToast(response.data, "success");
       setEditVbtDrawer(null);
       setLoading(false);
     } else {
-      toast.error(response.data);
+      showToast(response.data, "error");
       setLoading(false);
     }
   };
@@ -630,7 +631,7 @@ function VBT01Report({
     );
     const { data } = response;
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       // setTimeout(() => {
 
       setEditingVBT(null);

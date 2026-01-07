@@ -5,7 +5,7 @@ import Loading from "../../../../Components/Loading";
 import { v4 } from "uuid";
 import VBT5DataTable from "./VBT5DataTable";
 import TaxModal from "../../../../Components/TaxModal";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Col, Drawer, Modal, Row, Typography } from "antd";
 import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -53,8 +53,8 @@ export default function CreateVBT5({ editingVBT, setEditingVBT, setVBTData }) {
         });
       }
     } else {
-      toast.error(response.message?.msg || response.message);
-      // setEditingVBT(null);
+      showToast(response.message?.msg || response.message, "error");
+    
     }
   };
   const removeRows = (id) => {
@@ -188,7 +188,7 @@ export default function CreateVBT5({ editingVBT, setEditingVBT, setVBTData }) {
     rows.map((row) => {
       if (!row.glCodeValue) {
         validation = false;
-        return toast.error("Please select a GL for all of the components");
+        return showToast("Please select a GL for all of the components", "error");
       }
       let a = Number(row.vendorAmount);
       let totalVendor = 0;
@@ -252,7 +252,7 @@ export default function CreateVBT5({ editingVBT, setEditingVBT, setVBTData }) {
     });
     setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setTimeout(() => {
         setEditingVBT(null);
       }, 2000);
