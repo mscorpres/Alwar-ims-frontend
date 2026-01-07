@@ -29,18 +29,11 @@ function CashReceiptEdit({
   const [header, setHeader] = useState([]);
   const [effectiveDate, setEffectiveDate] = useState("");
   const [cash, setCash] = useState(null);
-  // console.log(cash);
   const [insertDate, setInsertDate] = useState("");
   const [selectLoading, setSelectLoading] = useState(false);
-  const [search, setSearch] = useState(false);
-  const [loading, setLoading] = useState(false);
+
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [submitLoading, setSubmitLoading] = useState(false);
-
-  // // console.log("All", allData);
-  // console.log("Cash Account", cash);
-  // //   console.log("Header", header.ref_date);
-  // // allData.map((a) => console.log(a.particulars.text));
 
   const callFunction = async () => {
     setEffectiveDate("");
@@ -50,9 +43,7 @@ function CashReceiptEdit({
         v_code: edit?.module_used,
       }
     );
-    // console.log(data);
     if (response.success) {
-      // setHeader(data.header[0].account);
       setInsertDate(data.header[0].insert_date);
       setEffectiveDate(data.header[0].ref_date);
 
@@ -73,7 +64,6 @@ function CashReceiptEdit({
           particular: particularyObj,
         };
       });
-      // console.log(arr);
       setAllData(arr);
     } else if (!response.success) {
       showToast(response.message?.msg || response.message, "error");
@@ -124,7 +114,6 @@ function CashReceiptEdit({
       const arr = response.data.map((row) => {
         return { text: row.text, value: row.id };
       });
-      // console.log(arr);
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
@@ -132,7 +121,6 @@ function CashReceiptEdit({
   };
 
   const inputHandler = (name, value, id) => {
-    console.log(name, value, id);
     let arr = allData;
     arr = arr.map((row) => {
       if (row.id == id) {
@@ -158,10 +146,8 @@ function CashReceiptEdit({
         return row;
       }
     });
-    console.log("this is the array", arr);
     setAllData(arr);
   };
-  // console.log(allData);
 
   const columns = [
     {
@@ -245,9 +231,7 @@ function CashReceiptEdit({
         fetchData("date_wise");
         showToast(data.code, "success");
         setEdit(false);
-      } else if (!response.success) {
-        console.log(data.message.msg);
-      }
+      }  
     } else if (selectValueWhenFetch == "eff_wise") {
       const uniqueID = [];
       const par = [];
@@ -274,9 +258,7 @@ function CashReceiptEdit({
         fetchData("eff_wise");
         showToast(data.code, "success");
         setEdit(false);
-      } else if (!response.success) {
-        console.log(data.message.msg);
-      }
+      } 
     } else if (selectValueWhenFetch == "key_wise") {
       const uniqueID = [];
       const par = [];
@@ -303,9 +285,7 @@ function CashReceiptEdit({
         fetchData("key_wise");
         showToast(data.code, "success");
         setEdit(false);
-      } else if (!response.success) {
-        console.log(data.message.msg);
-      }
+      } 
     } else if (selectValueWhenFetch == "ledger_wise") {
       const uniqueID = [];
       const par = [];
@@ -332,8 +312,6 @@ function CashReceiptEdit({
         fetchData("ledger_wise");
         showToast(data.code, "success");
         setEdit(false);
-      } else if (!response.success) {
-        console.log(data.message.msg);
       }
     }
   };
@@ -343,10 +321,6 @@ function CashReceiptEdit({
       callFunction();
     }
   }, [edit?.module_used]);
-
-  // useEffect(() => {
-  //   console.log("All", allData);
-  // }, [allData]);
 
   return (
     <Space>

@@ -249,6 +249,7 @@ export default function MyDataTable(props) {
         width: "100%",
         position: "relative",
         overflow: "hidden",
+        borderRadius: "0px",
         boxShadow: (theme) =>
           theme.palette.mode === "light"
             ? "0 2px 8px rgba(0,0,0,0.08)"
@@ -293,20 +294,25 @@ export default function MyDataTable(props) {
         density="compact"
         sx={{
           border: "none",
+          borderRadius: 0,
           "& .MuiDataGrid-root": {
             border: "none",
           },
           // Global menu/popper styling to ensure downward opening
           "& .MuiPopper-root": {
             zIndex: 1300,
+            borderRadius: 0,
             "& .MuiPaper-root": {
-              borderRadius: (theme) => theme.shape.borderRadius,
+              borderRadius: 0,
               boxShadow: (theme) =>
                 theme.palette.mode === "light"
                   ? "0 4px 16px rgba(0,0,0,0.15)"
                   : "0 4px 16px rgba(0,0,0,0.5)",
               marginTop: (theme) => theme.spacing(0.5),
             },
+          },
+          "& *": {
+            borderRadius: "0 !important",
           },
           "& .MuiDataGrid-columnHeaders": {
             backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),

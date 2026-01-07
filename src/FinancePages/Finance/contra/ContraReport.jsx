@@ -41,7 +41,6 @@ export default function ContraReport() {
     { text: "Ledger Wise", value: "ledger" },
   ];
   const getRows = async () => {
-    // console.log(searchDateRange);
     let d;
     if (wise == "date") {
       if (searchDateRange) {
@@ -90,7 +89,6 @@ export default function ContraReport() {
       setRows([]);
     }
     setLoading(false);
-    // console.log(data);
   };
   const printFun = async (id) => {
     setLoading(true);

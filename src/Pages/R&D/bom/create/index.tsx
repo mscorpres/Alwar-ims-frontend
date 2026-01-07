@@ -781,7 +781,7 @@ const BOMCreate = () => {
           </Row>
         </Col>
       </Row>
-      ;
+ 
     </Form>
   );
 };

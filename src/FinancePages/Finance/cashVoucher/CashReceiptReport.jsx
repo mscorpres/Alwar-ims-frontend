@@ -54,7 +54,6 @@ function CashReceiptReport() {
   };
 
   const fetchData = async (e) => {
-    // console.log(selectedValue.selType);
     if (e == "date_wise") {
       setDateData([]);
       setLoading(true);
@@ -62,7 +61,6 @@ function CashReceiptReport() {
         wise: selectedValue.selType,
         data: datee,
       });
-      //  console.log(data);
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -84,7 +82,6 @@ function CashReceiptReport() {
         wise: selectedValue.selType,
         data: datee,
       });
-      console.log(data);
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -92,7 +89,6 @@ function CashReceiptReport() {
             id: v4(),
           };
         });
-        // console.log(arr);
         setSelectValueWhenFetch("eff_wise");
         setEffective(arr);
         setLoading(false);
@@ -106,8 +102,7 @@ function CashReceiptReport() {
       const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
         wise: selectedValue.selType,
         data: selectedValue?.code,
-      });
-      //  console.log(data);
+      });;
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -129,7 +124,6 @@ function CashReceiptReport() {
         wise: selectedValue.selType,
         data: selectedValue?.pick,
       });
-      //  console.log(data);
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -160,7 +154,6 @@ function CashReceiptReport() {
         <GridActionsCellItem
           icon={
             <EditFilled
-              // onClick={() => console.log(row?.ID)}
               onClick={() => setEdit(row)}
             />
           }

@@ -13,8 +13,6 @@ function CashPaymentModal({ setOpen, open }) {
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState([]);
   const [header, setHeader] = useState([]);
-  // console.log("DATA", allData);
-  // console.log("HEADER", header);
   const getFetchData = async () => {
     setLoading(true);
     const response = await imsAxios.post(
@@ -31,7 +29,6 @@ function CashPaymentModal({ setOpen, open }) {
           id: v4(),
         };
       });
-      console.log(arr);
       setAllData(arr);
     }
   };

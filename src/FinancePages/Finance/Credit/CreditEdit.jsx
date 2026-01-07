@@ -89,7 +89,6 @@ export default function CreditEdit({
       }
     });
     if (!problem) {
-      //   console.log(finalObj);
       setSubmitLoading(true);
       const response = await imsAxios.post(
         "/tally/cn/updateCreditVoucher",
@@ -250,8 +249,7 @@ export default function CreditEdit({
         ...arr,
         { id: v4(), total: true, debit: 0, credit: 0 },
       ];
-      setJounralRows(arr);
-      console.log(moment(data.data[0].effective_date));
+      setJounralRows(arr);    
       setEffectiveDate(data.data[0].effective_date);
     } else {
       showToast(response.message?.msg || response.message, "error");
