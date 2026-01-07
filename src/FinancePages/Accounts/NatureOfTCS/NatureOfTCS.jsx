@@ -200,12 +200,13 @@ function NatureofTCS() {
 
   return (
     <>
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "100%", overflow: "hidden" }}>
         <Row
           gutter={8}
           style={{
             height: "100%",
             margin: "5px",
+            overflow:"hidden"
           }}
         >
           <Col span={8}>
@@ -322,7 +323,7 @@ function NatureofTCS() {
           <Col
             span={16}
             className="remove-table-footer"
-            style={{ height: "100%" }}
+            style={{ height: "calc(100% - 10px)" }}
           >
             <MyDataTable loading={loading} columns={columns} data={TCSList} />
           </Col>

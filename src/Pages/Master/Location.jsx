@@ -19,11 +19,10 @@ import Loading from "../../Components/Loading";
 import { imsAxios } from "../../axiosInterceptor";
 import useApi from "../../hooks/useApi.ts";
 import { getCostCentresOptions } from "../../api/general.ts";
-import MyDataTable from "../gstreco/myDataTable";
-import TableActions from "../../Components/TableActions.jsx/TableActions";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { convertSelectOptions } from "../../utils/general.ts";
 import MyButton from "../../Components/MyButton";
+import MyDataTable from "../../Components/MyDataTable.jsx";
 
 function Location() {
   const { showToast } = useToast();
@@ -741,8 +740,7 @@ function Location() {
             size="small"
           > */}
           {treeLoading && <Loading />}
-          {/* <Tree showLine={true} treeData={treeData} /> */}
-          <Card style={{ height: "100%" }} bodyStyle={{ height: "100%" }}>
+       
             {viewData ? (
               <>
                 <MyButton
@@ -767,12 +765,8 @@ function Location() {
                 />
               </div>
             )}
-          </Card>
+         
 
-          {/* <div style={{ height: "95%" }}>
-            <MyDataTable columns={coloums} data={locationData} />
-          </div> */}
-          {/* </Card> */}
         </Col>
       </Row>
     </div>

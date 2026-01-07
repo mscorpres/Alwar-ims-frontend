@@ -209,8 +209,8 @@ export default function ChartOfAccounts() {
             <SummaryCard summary={summary} title="Summary" loading={loading} />
           </Col>
           <Col span={20}>
-            <Card size="small" style={{ height: "92%" }}>
-              <TableContainer sx={{ maxHeight: "75vh" }}>
+            <Card size="small" style={{ height: "100%" }}>
+              <TableContainer sx={{ maxHeight: "calc(100vh - 210px)" }}>
                 {loading && <Loading size="large" />}
                 <Table
                   stickyHeader

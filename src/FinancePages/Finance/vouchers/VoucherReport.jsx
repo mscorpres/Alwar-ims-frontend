@@ -420,7 +420,7 @@ export default function VoucherReport() {
         </Space>
       </Row>
 
-      <div style={{ height: "85%", padding: "0 10px" }}>
+      <div style={{ height:"calc(100% - 40px)", padding: "0 10px" }}>
         <MyDataTable
           // export={true}
           loading={loading}

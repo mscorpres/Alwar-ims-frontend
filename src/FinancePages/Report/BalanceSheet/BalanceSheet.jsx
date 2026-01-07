@@ -215,9 +215,9 @@ function BalanceSheet() {
           />
         </Space>
       </Row>
-      <Row style={{ marginTop: 10, height: "100%" }}>
+      <Row style={{ marginTop: 10, height: "calc(100% - 40px)" }}>
         <Table
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", overflow: "auto" }}
           columns={columns}
           expandable={{
             defaultExpandedRowKeys: ["2010000"],
@@ -225,7 +225,7 @@ function BalanceSheet() {
           bordered={false}
           pagination={false}
           size="small"
-          scroll={{ y: "75vh" }}
+        
           dataSource={rows}
         />
       </Row>

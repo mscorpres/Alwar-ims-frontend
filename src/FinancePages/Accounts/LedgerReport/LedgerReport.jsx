@@ -95,7 +95,7 @@ export default function LedgerReport() {
       }
     }
 
-    console.log("ledger report response", response);
+
     // if (searchLedger && searchDateRange) {
     //   setLoading(true);
     //   setSearchLoading(true);
@@ -254,8 +254,8 @@ export default function LedgerReport() {
     }
   }, [params]);
   return (
-    <Row gutter={6} style={{ height: "95%", padding: 10, overflow: "hidden" }}>
-      <Col span={4} style={{ height: "100%", overflow: "auto" }}>
+    <Row gutter={6} style={{ height: "calc(100vh - 120px)", padding: 10, overflow: "hidden" }}>
+      <Col span={6} style={{ height: "100%", overflow: "auto" }}>
         <Flex vertical gap={6}>
           <Card size="small">
             <Form form={filterForm} layout="vertical">
@@ -439,7 +439,7 @@ export default function LedgerReport() {
           </Card>
         </Flex>
       </Col>
-      <Col style={{ height: "100%" }} span={20}>
+      <Col style={{ height: "calc(100vh - 140px)" }} span={18}>
         <MyDataTable
           columns={ledgerReportColumns}
           data={rows}

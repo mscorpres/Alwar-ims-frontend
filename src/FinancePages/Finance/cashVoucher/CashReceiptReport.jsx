@@ -6,11 +6,7 @@ import { v4 } from "uuid";
 import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  EyeFilled,
-  CloseCircleFilled,
-  EditFilled,
-} from "@ant-design/icons";
+import { EyeFilled, CloseCircleFilled, EditFilled } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import CashPaymentModal from "./model/CashPaymentModal";
 import CashReceiptModal from "./model/CashReceiptModal";
@@ -27,8 +23,7 @@ function CashReceiptReport() {
   const [effective, setEffective] = useState([]);
   const [codeData, setCodeData] = useState([]);
   const [ledgerData, setLedgerData] = useState([]);
-  const [selectValueWhenFetch, setSelectValueWhenFetch] =
-    useState("");
+  const [selectValueWhenFetch, setSelectValueWhenFetch] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectedValue, setSelectedValue] = useState({
     selType: "",
@@ -47,12 +42,9 @@ function CashReceiptReport() {
   const getLedgerFunction = async (e) => {
     if (e?.length > 1) {
       setSelectLoading(true);
-      const response = await imsAxios.post(
-        "/tally/ledger/ledger_options",
-        {
-          seacrh: e,
-        }
-      );
+      const response = await imsAxios.post("/tally/ledger/ledger_options", {
+        seacrh: e,
+      });
       setSelectLoading(false);
       // console.log(data.data);
       let arr = [];
@@ -68,13 +60,10 @@ function CashReceiptReport() {
     if (e == "date_wise") {
       setDateData([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: datee,
-        }
-      );
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: datee,
+      });
       //  console.log(data);
       if (response.success) {
         let arr = data?.data?.map((row) => {
@@ -93,13 +82,10 @@ function CashReceiptReport() {
     } else if (e == "eff_wise") {
       setEffective([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: datee,
-        }
-      );
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: datee,
+      });
       console.log(data);
       if (response.success) {
         let arr = data?.data?.map((row) => {
@@ -119,13 +105,10 @@ function CashReceiptReport() {
     } else if (e == "key_wise") {
       setCodeData([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: selectedValue?.code,
-        }
-      );
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: selectedValue?.code,
+      });
       //  console.log(data);
       if (response.success) {
         let arr = data?.data?.map((row) => {
@@ -144,13 +127,10 @@ function CashReceiptReport() {
     } else if (e == "ledger_wise") {
       setLedgerData([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: selectedValue?.pick,
-        }
-      );
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: selectedValue?.pick,
+      });
       //  console.log(data);
       if (response.success) {
         let arr = data?.data?.map((row) => {
@@ -177,11 +157,7 @@ function CashReceiptReport() {
       type: "actions",
       getActions: ({ row }) => [
         <GridActionsCellItem
-          icon={
-            <EyeFilled
-              onClick={() => setOpen(row?.module_used)}
-            />
-          }
+          icon={<EyeFilled onClick={() => setOpen(row?.module_used)} />}
         />,
         <GridActionsCellItem
           icon={
@@ -231,7 +207,7 @@ function CashReceiptReport() {
 
   return (
     <>
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "calc(100vh - 220px)" }}>
         <Row gutter={10} style={{ margin: "5px" }}>
           {selectedValue?.selType == "date_wise" ? (
             <>
@@ -252,10 +228,7 @@ function CashReceiptReport() {
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker
-                  setDateRange={setDatee}
-                  size="default"
-                />
+                <MyDatePicker setDateRange={setDatee} size="default" />
               </Col>
               <Col span={1}>
                 <Button
@@ -286,10 +259,7 @@ function CashReceiptReport() {
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker
-                  setDateRange={setDatee}
-                  size="default"
-                />
+                <MyDatePicker setDateRange={setDatee} size="default" />
               </Col>
               <Col span={1}>
                 <Button
@@ -408,10 +378,7 @@ function CashReceiptReport() {
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker
-                  setDateRange={setDatee}
-                  size="default"
-                />
+                <MyDatePicker setDateRange={setDatee} size="default" />
               </Col>
               <Col span={1}>
                 <Button
@@ -425,25 +392,13 @@ function CashReceiptReport() {
             </>
           )}
         </Row>
-        <div style={{ height: "87%", margin: "10px" }}>
+        <div style={{ height: "calc(100vh - 200px)", margin: "10px" }}>
           {selectedValue?.selType == "date_wise" ? (
-            <MyDataTable
-              loading={loading}
-              data={dateData}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={dateData} columns={columns} />
           ) : selectedValue?.selType == "eff_wise" ? (
-            <MyDataTable
-              loading={loading}
-              data={effective}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={effective} columns={columns} />
           ) : selectedValue?.selType == "key_wise" ? (
-            <MyDataTable
-              loading={loading}
-              data={codeData}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={codeData} columns={columns} />
           ) : selectedValue?.selType == "ledger_wise" ? (
             <MyDataTable
               loading={loading}
@@ -451,11 +406,7 @@ function CashReceiptReport() {
               columns={columns}
             />
           ) : (
-            <MyDataTable
-              loading={loading}
-              data={dateData}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={dateData} columns={columns} />
           )}
         </div>
       </div>

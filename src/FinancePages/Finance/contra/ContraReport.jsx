@@ -327,7 +327,7 @@ export default function ContraReport() {
           />
         </Space>
       </Row>
-      <div className="" style={{ height: "85%", padding: "0 10px" }}>
+      <div className="" style={{ height: "calc(100% - 40px)", padding: "0 10px" }}>
         <MyDataTable
           loading={loading}
           pagination={true}

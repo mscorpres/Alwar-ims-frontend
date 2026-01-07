@@ -239,7 +239,7 @@ function Services() {
             </Form>
           </Card>
         </Col>
-        <Col span={16} style={{ height: "100%" }}>
+        <Col span={16} style={{ height: "calc(100% - 10px)" }}>
           <MyDataTable loading={loading} rows={rows} columns={columns} />
         </Col>
       </Row>

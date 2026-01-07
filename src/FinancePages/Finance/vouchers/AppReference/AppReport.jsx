@@ -7,7 +7,6 @@ import { PlusOutlined } from "@ant-design/icons";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import { DeleteTwoTone } from "@ant-design/icons";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../../Components/exportToCSV";
@@ -248,7 +247,7 @@ function AppReport() {
         {/* <Divider /> */}
       </Row>
 
-      <div style={{ height: "95%", margin: 5 }}>
+      <div style={{ height: "calc(100% - 50px)", margin: 5 }}>
         <MyDataTable
           loading={loading}
           data={rows}

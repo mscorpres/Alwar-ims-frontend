@@ -10,7 +10,6 @@ import ClientBranchAdd from "../modal/ClientBranchAdd";
 import AllBranch from "../modal/AllBranch";
 import { useToast } from "../../../hooks/useToast";
 
-
 function ViewClients() {
   const { showToast } = useToast();
   const [rows, setRows] = useState([]);
@@ -35,7 +34,7 @@ function ViewClients() {
       setRows(arr);
     } else {
       showToast(response.message?.msg || response.message, "error");
-    
+
       setRows([]);
       setShowAllBranch(false);
     }
@@ -177,12 +176,10 @@ function ViewClients() {
 
   return (
     <>
-      <div style={{ height: "100%", padding: 5 }}>
-     
-        <div style={{ paddingTop: 5, height: "100%" }}>
-          <MyDataTable loading={fetchLoading} rows={rows} columns={columns} />
-        </div>
+      <div style={{  height: "calc(100vh - 120px)", }}>
+        <MyDataTable loading={fetchLoading} rows={rows} columns={columns} />
       </div>
+
       <ClientBranchAdd
         branchAddOpen={branchAddOpen}
         setBranchAddOpen={setBranchAddOpen}

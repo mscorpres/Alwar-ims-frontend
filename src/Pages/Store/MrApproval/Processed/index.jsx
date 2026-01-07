@@ -92,7 +92,7 @@ const ProccessedMrRequest = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "95%", padding: 10 }}>
+    <Row gutter={6} style={{ height: "calc(100vh - 120px)", padding: 10 }}>
       <Col span={6}>
         <Card size="small" title="Filters">
           <Form form={filterForm} layout="vertical">

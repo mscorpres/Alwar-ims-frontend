@@ -398,7 +398,7 @@ function CashPaymentResister() {
             )
           )}
         </Row>
-        <div style={{ height: "87%", marginTop: "5px" }}>
+        <div style={{ height: "calc(100vh - 210px)", marginTop: "5px" }}>
           {selectedValue?.selType == "date_wise" ? (
             <MyDataTable loading={loading} data={dateData} columns={columns} />
           ) : selectedValue?.selType == "eff_wise" ? (

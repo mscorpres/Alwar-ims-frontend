@@ -18,7 +18,7 @@ import MyButton from "../../../Components/MyButton";
 import { useToast } from "../../../hooks/useToast";
 
 export default function AddClients() {
- const { showToast } = useToast();
+  const { showToast } = useToast();
   const [countriesOptions, setCountriesOptions] = useState([]);
   const [stateOptions, setStateOptions] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState(83);
@@ -75,12 +75,11 @@ export default function AddClients() {
     console.log("data", response);
     if (response.success) {
       showToast(response.message);
-   
+
       resetFunction();
       setShowSubmitConfirm(false);
     } else {
       showToast(response.message?.msg || response.message, "error");
-    
     }
   };
   const resetFunction = () => {
@@ -130,7 +129,7 @@ export default function AddClients() {
     }
   }, [selectedCountry]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding: "0px 5px" }}>
       {pageLoading && <Loading />}
       {/* submit confirm modal */}
       <Modal
@@ -185,144 +184,141 @@ export default function AddClients() {
       >
         Are you sure you want to want to reset the entered Info?
       </Modal>
-      <div style={{ height: "100%" }}>
-        <Form
-          layout="vertical"
-          size="small"
-          form={addClientForm}
-          onFinish={(values) => setShowSubmitConfirm(values)}
-        >
-          <Row style={{ height: "100%" }}>
-            <Col span={8}>
-              <Row>
-                {" "}
-                <Col span={20}>
-                  <Card style={{ height: "100%" }}>
-                    {/* <Row gutter={16}>Client Name</Row> */}
-                    <Col span={24}>
+
+      <Form
+        layout="vertical"
+        size="small"
+        form={addClientForm}
+        onFinish={(values) => setShowSubmitConfirm(values)}
+        style={{ height: "100%" }}
+      >
+        <Row style={{ height: "100%" }}>
+          <Col span={6}>
+            <Row>
+              {" "}
+              <Col span={20}>
+                <Card style={{ height: "100%" }}>
+                  {/* <Row gutter={16}>Client Name</Row> */}
+                  <Col span={24}>
+                    <Form.Item
+                      name="name"
+                      label="Client Name"
+                      rules={rules.name}
+                    >
+                      <Input size="default" />
+                    </Form.Item>
+                  </Col>
+
+                  {/* Client sales person */}
+                  <Col span={24}>
+                    <Form.Item
+                      name="salesperson"
+                      label="Sales Person Name"
+                      rules={rules.salesperson}
+                    >
+                      <Input size="default" />
+                    </Form.Item>
+                  </Col>
+
+                  {/* GST Number */}
+                  {/* <Col> */}
+                  <Row gutter={2}>
+                    <Col span={12}>
                       <Form.Item
-                        name="name"
-                        label="Client Name"
-                        rules={rules.name}
+                        name="gst"
+                        label="GST Number"
+                        rules={rules.gst}
                       >
                         <Input size="default" />
                       </Form.Item>
                     </Col>
 
-                    {/* Client sales person */}
-                    <Col span={24}>
+                    {/* Pan Number */}
+                    <Col span={12}>
                       <Form.Item
-                        name="salesperson"
-                        label="Sales Person Name"
-                        rules={rules.salesperson}
+                        name="panNo"
+                        label="PAN Number"
+                        rules={rules.panNo}
+                      >
+                        <Input size="default" />
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                  {/* </Col> */}
+                  <Col span={24}>
+                    <Form.Item name="email" label="Email" rules={rules.email}>
+                      <Input size="default" />
+                    </Form.Item>
+                  </Col>
+                  <Row gutter={2}>
+                    <Col span={12}>
+                      <Form.Item
+                        name="phone"
+                        label="Phone Number"
+                        rules={rules.phone}
                       >
                         <Input size="default" />
                       </Form.Item>
                     </Col>
 
-                    {/* GST Number */}
-                    {/* <Col> */}
-                    <Row gutter={2}>
-                      <Col span={12}>
-                        <Form.Item
-                          name="gst"
-                          label="GST Number"
-                          rules={rules.gst}
-                        >
-                          <Input size="default" />
-                        </Form.Item>
-                      </Col>
-
-                      {/* Pan Number */}
-                      <Col span={12}>
-                        <Form.Item
-                          name="panNo"
-                          label="PAN Number"
-                          rules={rules.panNo}
-                        >
-                          <Input size="default" />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    {/* </Col> */}
-                    <Col span={24}>
-                      <Form.Item name="email" label="Email" rules={rules.email}>
-                        <Input size="default" />
-                      </Form.Item>
-                    </Col>
-                    <Row gutter={2}>
-                      <Col span={12}>
-                        <Form.Item
-                          name="phone"
-                          label="Phone Number"
-                          rules={rules.phone}
-                        >
-                          <Input size="default" />
-                        </Form.Item>
-                      </Col>
-
-                      {/* Client mobile */}
-                      <Col span={12}>
-                        <Form.Item
-                          name="mobileNo"
-                          label="Mobile Number"
-                          rules={rules.mobileNo}
-                        >
-                          <Input size="default" />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                    {/* Client number */}
-
-                    {/* Client website */}
-                    <Col span={24}>
+                    {/* Client mobile */}
+                    <Col span={12}>
                       <Form.Item
-                        name="website"
-                        label="Website"
-                        rules={rules.website}
+                        name="mobileNo"
+                        label="Mobile Number"
+                        rules={rules.mobileNo}
                       >
                         <Input size="default" />
                       </Form.Item>
                     </Col>
-                    {/* <Row gutter={16}>Client email</Row> */}
-                    <Row justify="end">
-                      <Col span={5}>
-                        <MyButton
-                          onClick={() => setShowResetConfirm(true)}
-                          variant="reset"
-                        >
-                          Reset
-                        </MyButton>
-                      </Col>
-                      <Col span={5}>
-                        <MyButton
-                          onClick={() => setShowSubmitConfirm(true)}
-                          type="primary"
-                          variant="add"
-                        >
-                          Submit
-                        </MyButton>
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-                {/* <NavFooter
+                  </Row>
+                  {/* Client number */}
+
+                  {/* Client website */}
+                  <Col span={24}>
+                    <Form.Item
+                      name="website"
+                      label="Website"
+                      rules={rules.website}
+                    >
+                      <Input size="default" />
+                    </Form.Item>
+                  </Col>
+                  <Row justify="end">
+                    <Col span={5} style={{ marginRight: 20 }}>
+                      <MyButton
+                        onClick={() => setShowResetConfirm(true)}
+                        variant="reset"
+                      >
+                        Reset
+                      </MyButton>
+                    </Col>
+                    <Col span={5}>
+                      <MyButton
+                        onClick={() => setShowSubmitConfirm(true)}
+                        type="primary"
+                        variant="add"
+                      >
+                        Submit
+                      </MyButton>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
+              {/* <NavFooter
                 submithtmlType="submit"
                 submitButton={true}
                 nextLabel="Submit"
                 formName="add-client"
                 resetFunction={setShowResetConfirm}
               /> */}
-              </Row>
-            </Col>
-            <Col span={16} style={{ paddingLeft: "0px" }}>
-              <div style={{ height: "100%" }}>
-                <ViewClients />
-              </div>
-            </Col>
-          </Row>
-        </Form>
-      </div>
+            </Row>
+          </Col>
+          <Col span={18}>
+            <ViewClients />
+          </Col>
+        </Row>
+      </Form>
     </div>
   );
 }

@@ -118,7 +118,7 @@ export default function CreateMaster() {
           </Tabs>
         </Col>
         {/* add form column ends */}
-        <Col style={{ padding: "10px 0px", height: "95%" }} span={12}>
+        <Col style={{ padding: "10px 0px", height: "calc(100% - 35px)" }} span={12}>
           <Row justify="end" style={{ marginBottom: 10 }}>
             <CommonIcons
               action="downloadButton"

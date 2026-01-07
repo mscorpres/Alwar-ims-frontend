@@ -287,7 +287,7 @@ export default function NatureOfTDS() {
         <Col
           span={16}
           className="remove-table-footer"
-          style={{ height: "100%" }}
+          style={{ height: "calc(100% - 5px)" }}
         >
           <MyDataTable loading={loading} columns={columns} data={TDSList} />
         </Col>

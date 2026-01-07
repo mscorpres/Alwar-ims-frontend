@@ -1137,7 +1137,7 @@ export default function VBTReport() {
 
       {/* data table here */}
 
-      <div style={{ height: "95%", padding: "0 10px" }}>
+      <div style={{ height: "calc(100vh - 200px)", padding: "0 10px" }}>
         <MyDataTable
           // initialState={{
           //   columns: {

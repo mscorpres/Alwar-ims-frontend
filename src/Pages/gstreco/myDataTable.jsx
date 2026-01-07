@@ -101,10 +101,7 @@ function CustomNoRowsOverlay() {
   );
 }
 export default function MyDataTable(props) {
-  const [rows, setRows] = useState([]);
   function CustomToolbar() {
-    let arr = [];
-
     return (
       <GridToolbarContainer>
         {props.filterIcon && <GridToolbarFilterButton />}

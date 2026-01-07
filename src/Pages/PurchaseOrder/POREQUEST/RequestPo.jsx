@@ -330,7 +330,7 @@ const RequestPo = () => {
 
       <div
         style={{
-          height: "85%",
+          height: "calc(100% - 40px)",
           padding: "0 10px",
         }}
       >

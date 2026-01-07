@@ -77,7 +77,7 @@ export default function CreateMaster() {
       <Row
         gutter={4}
         style={{
-          height: "40vh",
+          height: "calc(100% - 40px)",
           marginBottom: 5,
           padding: "0px 5px",
           // overflowY: "auto",

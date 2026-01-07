@@ -303,7 +303,7 @@ function JVReport() {
           />
         </Space>
       </Row>
-      <div style={{ height: "95%", padding: "0px 5px" }}>
+      <div style={{ height: "calc(100% - 50px)", padding: "0px 5px" }}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}
