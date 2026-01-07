@@ -687,7 +687,7 @@ const App = () => {
     } else if (isTestServer) {
       return 60;
     } else if (isBannerVisible) {
-      return 90;
+      return 70;
     } else {
       return 40;
     }
