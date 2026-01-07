@@ -1424,18 +1424,18 @@ const Routes = [
     path: "/weeklyaudit",
     main: () => <WeeklyAudit />,
   },
-  {
-    path: "/assets/create",
-    main: () => <CreateAsset />,
-  },
-  {
-    path: "/assets/view",
-    main: () => <ViewAsset />,
-  },
-  {
-    path: "/assets/depreciation",
-    main: () => <Depreciation />,
-  },
+  // {
+  //   path: "/assets/create",
+  //   main: () => <CreateAsset />,
+  // },
+  // {
+  //   path: "/assets/view",
+  //   main: () => <ViewAsset />,
+  // },
+  // {
+  //   path: "/assets/depreciation",
+  //   main: () => <Depreciation />,
+  // },
 
   // far upload
   {
