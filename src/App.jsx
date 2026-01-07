@@ -689,7 +689,7 @@ const App = () => {
     } else if (isBannerVisible) {
       return 90;
     } else {
-      return 0;
+      return 100;
     }
   };
 
