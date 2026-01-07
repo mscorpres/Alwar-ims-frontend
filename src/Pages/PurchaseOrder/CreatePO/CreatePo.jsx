@@ -1218,7 +1218,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
             activeKey={activeTab}
             size="small"
           >
-            <Tabs.TabPane tab="Purchase Order Details" key="1">
+            <Tabs.TabPane tab="Purchase Request Details" key="1">
               <div
                 style={{
                   height: "100%",

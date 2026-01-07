@@ -623,9 +623,16 @@
             "children": [
               {
                 "key": "B21",
-                "label": "Create PO",
+                "label": "Create PR",
                 "icon": "AddShoppingCartIcon",
                 "path": "/create-po",
+                "isShown": true
+              },
+                {
+                "key": "B22",
+                "label": "Requested PR",
+                "icon": "ManageAccountsIcon",
+                "path": "/request-po",
                 "isShown": true
               },
               {
@@ -635,13 +642,7 @@
                 "path": "/manage-po",
                 "isShown": true
               },
-              {
-                "key": "B22",
-                "label": "Requested PO",
-                "icon": "ManageAccountsIcon",
-                "path": "/request-po",
-                "isShown": true
-              },
+            
               {
                 "key": "B23",
                 "label": "Completed PO",

@@ -57,7 +57,7 @@ const RequestPo = () => {
       width: 30,
     },
     {
-      headerName: "PO ID",
+      headerName: "PR ID",
       field: "po_transaction",
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.po_transaction} copy={true} />
@@ -65,7 +65,7 @@ const RequestPo = () => {
       width: 180,
     },
     {
-      headerName: "PO ACCEPTANCE",
+      headerName: "PR ACCEPTANCE",
       field: "poacceptstatus",
       renderCell: ({ row }) => {
         const status = (row.poacceptstatus || "").toUpperCase().trim();

@@ -169,9 +169,6 @@ function CustomNoRowsOverlay() {
             viewBox="0 0 184 152"
             aria-hidden
             focusable="false"
-            style={{
-              filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.1))",
-            }}
           >
             <g fill="none" fillRule="evenodd">
               <g transform="translate(24 31.67)">
@@ -214,7 +211,7 @@ function CustomNoRowsOverlay() {
           sx={{
             color: "text.secondary",
             fontWeight: 500,
-            mt: 1,
+            mt: 0.5,
           }}
         >
           No Data Available
@@ -365,7 +362,7 @@ export default function MyDataTable(props) {
             minHeight: "56px",
           },
           "& .MuiDataGrid-toolbarContainer": {
-            padding: (theme) => theme.spacing(1.5, 2),
+            padding: (theme) => theme.spacing(0, 2),
           },
           "& .MuiLinearProgress-root": {
             backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1),
