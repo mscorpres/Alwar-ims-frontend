@@ -83,13 +83,13 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
     fontWeight: 500,
     transition: "all 0.2s ease-in-out",
-  
+
     "&:hover": {
       backgroundColor: alpha(theme.palette.primary.main, 0.1),
       transform: "scale(1.05)",
     },
     "&.Mui-selected": {
-        backgroundColor: "#0f766e",
+      backgroundColor: "#0f766e",
       color: theme.palette.primary.contrastText,
       boxShadow: `0 2px 8px ${alpha(theme.palette.primary.main, 0.3)}`,
       "&:hover": {
@@ -105,7 +105,7 @@ const CustomPagination = () => {
   const page = useGridSelector(apiRef, gridPageSelector);
   const pageCount = useGridSelector(apiRef, gridPageCountSelector);
   const rowCount = apiRef.current.getAllRowIds().length;
-  
+
   return (
     <Box
       sx={{
@@ -199,7 +199,10 @@ function CustomNoRowsOverlay() {
                 className="ant-empty-img-3"
                 d="M149.121 33.292l-6.83 2.65a1 1 0 0 1-1.317-1.23l1.937-6.207c-2.589-2.944-4.109-6.534-4.109-10.408C138.802 8.102 148.92 0 161.402 0 173.881 0 184 8.102 184 18.097c0 9.995-10.118 18.097-22.599 18.097-4.528 0-8.744-1.066-12.28-2.902z"
               />
-              <g className="ant-empty-img-4" transform="translate(149.65 15.383)">
+              <g
+                className="ant-empty-img-4"
+                transform="translate(149.65 15.383)"
+              >
                 <ellipse cx="20.654" cy="3.167" rx="2.849" ry="2.815" />
                 <path d="M5.698 5.63H0L2.898.704zM9.259.704h4.985V5.63H9.259z" />
               </g>
@@ -232,7 +235,6 @@ function CustomNoRowsOverlay() {
 }
 
 export default function MyDataTable(props) {
-
   function CustomToolbar() {
     return (
       <StyledToolbarContainer>
@@ -249,7 +251,6 @@ export default function MyDataTable(props) {
         height: "100%",
         width: "100%",
         position: "relative",
-        borderRadius: (theme) => theme.shape.borderRadius,
         overflow: "hidden",
         boxShadow: (theme) =>
           theme.palette.mode === "light"
@@ -278,7 +279,7 @@ export default function MyDataTable(props) {
         }}
         componentsProps={{
           footer: { rows: props.data },
-         
+
           menu: {
             anchorOrigin: {
               vertical: "bottom",
@@ -311,8 +312,7 @@ export default function MyDataTable(props) {
             },
           },
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: (theme) =>
-              alpha(theme.palette.primary.main, 0.06),
+            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.06),
             borderBottom: (theme) =>
               `2px solid ${alpha(theme.palette.primary.main, 0.2)}`,
             fontWeight: 600,
@@ -368,8 +368,7 @@ export default function MyDataTable(props) {
             padding: (theme) => theme.spacing(1.5, 2),
           },
           "& .MuiLinearProgress-root": {
-            backgroundColor: (theme) =>
-              alpha(theme.palette.primary.main, 0.1),
+            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1),
             "& .MuiLinearProgress-bar": {
               backgroundColor: (theme) => theme.palette.primary.main,
             },
