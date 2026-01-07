@@ -680,10 +680,10 @@ const App = () => {
   };
 
   const getOffsetLeft = () => {
-    isTestServer ? 60 : isBannerVisible && isTestServer ? 120 : 0;
+  
 
     if (isTestServer && isBannerVisible) {
-      return 90;
+      return 92;
     } else if (isTestServer) {
       return 60;
     } else if (isBannerVisible) {
