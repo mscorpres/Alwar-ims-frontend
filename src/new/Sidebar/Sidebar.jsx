@@ -4,8 +4,8 @@ import "../../index.css";
 import { loadMenuConfig } from "./menuLoader";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import { ContainerOutlined } from "@ant-design/icons";
-import { Link } from "@mui/material";
+import logo from "../../../public/assets/images/ms.png"
+import logoFull from "../../../public/assets/images/mscorpres_auto_logo.png"
 
 const Sidebar = ({
   showSideBar,
@@ -442,10 +442,10 @@ const Sidebar = ({
          
             }}
           >
-            {/* Show two different logos depending on sidebar open/close */}
+            
             {showSideBar ? (
               <img
-                src="/assets/images/ms.png"
+                src={logo}
                 alt="IMS Full Logo"
                 style={{
                   height: 32,
@@ -458,7 +458,7 @@ const Sidebar = ({
               />
             ) : (
               <img
-                src="/assets/images/mscorpres_auto_logo.png"
+                src={logoFull}
                 alt="IMS Icon Logo"
                 style={{
                   height: 32,
