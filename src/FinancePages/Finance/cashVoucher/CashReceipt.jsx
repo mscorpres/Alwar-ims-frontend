@@ -30,7 +30,6 @@ function CashReceipt() {
       comment: "",
     },
   ]);
-  // console.log(cashPaymentRows);
 
   const getCash = async (search) => {
     setSelectLoading(true);

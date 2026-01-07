@@ -27,7 +27,6 @@ function CashPayment() {
       comment: "",
     },
   ]);
-  // console.log(cashPaymentRows);
 
   const getCash = async (search) => {
     setSelectLoading(true);

@@ -51,7 +51,6 @@ const { showToast } =  useToast();
   //     let arr = journalRows;
   //     arr = arr.filter((row) => row.id != rowId);
   //     let creditArr = arr.map((row, index) => {
-  //       // console.log(index);
   //       if (index < arr.length - 1) {
   //         if (row.credit != "") {
   //           return row.credit;
@@ -130,7 +129,6 @@ const { showToast } =  useToast();
       }
     });
     if (!problem) {
-      //   console.log(finalObj);
       setSubmitLoading(true);
       const response = await imsAxios.post(
         "/tally/dv/updateDebitVoucher",
@@ -292,7 +290,6 @@ const { showToast } =  useToast();
         { id: v4(), total: true, debit: 0, credit: 0 },
       ];
       setJounralRows(arr);
-      console.log(moment(data.data[0].effective_date));
       setEffectiveDate(data.data[0].effective_date);
     } else {
       showToast(response.message?.msg || response.message, "error");
@@ -300,7 +297,6 @@ const { showToast } =  useToast();
   };
   const inputHandler = (name, value, id) => {
     let arr = journalRows;
-    console.log(name, value, id);
     arr = arr.map((row) => {
       let obj = row;
       if (obj.id == id) {
@@ -341,7 +337,6 @@ const { showToast } =  useToast();
         return partialSum + Number(a);
       }, 0)
     );
-    console.log(journalRows);
   }, [journalRows]);
   return (
     <Drawer

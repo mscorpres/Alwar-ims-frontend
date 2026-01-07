@@ -90,8 +90,7 @@ export const materialInWithoutPo = async (values, fileName, vendorType) => {
     location: values.components.map((row) => row.location.value),
     out_location: values.components.map((row) => row.autoConsumption),
   };
-  // console.log("payload",payload)
-  // return
+
   const response = await imsAxios.post("/transaction/min_transaction", payload);
 
   return response;
@@ -236,7 +235,6 @@ export const fetchBoxDetails = async (minId, boxLabel) => {
 };
 
 export const updateBoxQty = async (componentKey, values, stock) => {
-  console.log("values are ", values);
 
   const payload = {
     minId: values.components.map((row) => row["MIN ID"]),

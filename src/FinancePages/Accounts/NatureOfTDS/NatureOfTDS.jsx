@@ -124,7 +124,7 @@ export default function NatureOfTDS() {
         ledger: newTDS.ledger,
       });
       setFormLoading(false);
-      // console.log(data);
+   
       if (response.success) {
         showToast(response.message || response.message?.msg);
        
@@ -161,7 +161,7 @@ export default function NatureOfTDS() {
     }
 
     setLoading(false);
-    // console.log(data);
+ 
   };
 
   useEffect(() => {

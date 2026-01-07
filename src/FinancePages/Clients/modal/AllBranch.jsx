@@ -40,7 +40,6 @@ const { showToast } = useToast();
     const response = await imsAxios.get(
       `client/branches?clientCode=${branchModal?.code}`
     );
-    // console.log(response);
     if (response.success) {
       let arr = response.data.map((row) => {
         return {

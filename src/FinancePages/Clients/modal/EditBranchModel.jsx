@@ -24,7 +24,7 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
   const [stateOptions, setStateOptions] = useState([]);
   const [country, setCountry] = useState("");
   updateBranchForm.setFieldsValue(branchId);
-  console.log("branchid", branchId);
+ 
   let obj = {
     address: branchId?.address,
     addressID: branchId?.addressID,
@@ -91,7 +91,7 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
       // stateName: values?.state,
       email: values?.email,
     };
-    console.log("cointry", country);
+  
     const response = await imsAxios.put("client/updateBranch", newobj);
     if (response.success) {
       showToast(response.message);
@@ -118,9 +118,7 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
   };
   // useEffect(() => {
   //   const values = updateBranchForm.validateFields();
-  //   console.log(values);
   //   if (values.country == "83") {
-  //     console.log("first");
   //   }
   // }, [newobj.country]);
 

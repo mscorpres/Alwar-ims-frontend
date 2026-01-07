@@ -43,7 +43,6 @@ function ViewClients() {
   //   const response = await imsAxios.get(
   //     `client/branches?clientCode=${branchCode}`
   //   );
-  //   // console.log(data);
   //   const { data } = response;
   //   if (response.success) {
   //     let arr = response.data.map((row) => {
@@ -167,7 +166,6 @@ function ViewClients() {
   // useEffect(() => {
   //   if (branchModal) {
   //     if (branchModal?.code) {
-  //       console.log("branchModal", branchModal);
   //       setBranchCode(branchModal.code);
   //       getDetailByCodeWise();
   //     }

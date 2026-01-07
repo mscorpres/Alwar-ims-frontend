@@ -44,7 +44,6 @@ function DebitRegister() {
   ];
   const [rows, setRows] = useState([]);
   const [wise, setWise] = useState("date_wise");
-  // console.log("Wise", wise);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewDebitDetail, setViewDebitDetail] =
@@ -184,7 +183,6 @@ function DebitRegister() {
           disabled={loading}
           icon={<EyeFilled className="view-icon" />}
           onClick={() => {
-            // console.log(row);
             setViewDebitDetail(row?.module_used);
           }}
           label="view"
@@ -214,7 +212,6 @@ function DebitRegister() {
           disabled={loading}
           icon={<EditFilled className="view-icon" />}
           onClick={() => {
-            // console.log(row);
             setEditDebit(row.module_used);
           }}
           label="download"
@@ -262,7 +259,6 @@ function DebitRegister() {
     // module_used
   };
   const handleDownload = async (id) => {
-    console.log(id);
     setLoading(true);
     let link = "/tally/dv/printDebitVoucher";
     let filename = "Debit Voucher " + id;
@@ -289,7 +285,6 @@ function DebitRegister() {
           value: row.id,
         };
       });
-      console.log(data.data);
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);

@@ -203,7 +203,6 @@ export function CommonIcons({
         />
       );
     } else if (action === "checkButton") {
-      // console.log(size);
       return (
         <Button
           size={size}
@@ -216,7 +215,6 @@ export function CommonIcons({
         />
       );
     } else if (action === "closeButton") {
-      // console.log(size);
       return (
         <Button
           size={size}
@@ -229,7 +227,6 @@ export function CommonIcons({
         />
       );
     } else if (action == "searchButton") {
-      // console.log(size);
       return (
         <Button
           size={size}
@@ -242,7 +239,6 @@ export function CommonIcons({
         />
       );
     } else if (action == "viewButton") {
-      // console.log(size);
       return (
         <Button
           size={size}
@@ -255,7 +251,6 @@ export function CommonIcons({
         />
       );
     } else if (action == "editButton") {
-      // console.log(size);
       return (
         <Button
           size={size}
@@ -268,7 +263,6 @@ export function CommonIcons({
         />
       );
     } else if (action == "deleteButton") {
-      // console.log(size);
       return loading ? (
         <LoadingOutlined
           style={{ cursor: "pointer", fontSize: "1rem", color: "grey" }}

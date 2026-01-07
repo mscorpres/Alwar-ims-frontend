@@ -193,7 +193,7 @@ export default function LedgerReport() {
     },
   ];
   const downloadFun = async () => {
-    console.log("this are the rows", summary);
+
 
     const values = await filterForm.validateFields();
     let csvData = rows.map((row, index) => {

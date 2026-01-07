@@ -72,7 +72,6 @@ export default function AddClients() {
     setSubmitLoading(true);
     const response = await imsAxios.post("/client/add", newObj);
     setSubmitLoading(false);
-    console.log("data", response);
     if (response.success) {
       showToast(response.message);
 

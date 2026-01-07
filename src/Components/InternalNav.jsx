@@ -28,7 +28,6 @@ export default function InternalNav({
 
     setCurrent(key);
   }, [linksList]);
-  // console.log(links);
   // useEffect(() => {
   //   if (links) {
   //     let arr = links?.map((link, index) => {
@@ -62,8 +61,6 @@ export default function InternalNav({
       };
     });
     setLinksList(arr);
-
-    // console.log(arr);
   }, [navigate]);
   return (
     <Menu

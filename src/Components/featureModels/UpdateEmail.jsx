@@ -10,8 +10,7 @@ const UpdateEmail = ({ open, handleClose }) => {
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
-  // Handle email update logic here
-    console.log("Email update:", values);
+
     handleClose();
     form.resetFields();
   };

@@ -6,7 +6,6 @@ const axiosResponseFunction = async (func) => {
   try {
     await func();
   } catch (error) {
-    console.log(error);
     showToast("Something went wrong, Please contact administrator", "error");
    
   }

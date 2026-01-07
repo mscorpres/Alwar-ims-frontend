@@ -28,7 +28,6 @@ function CashPaymentResister() {
     pick: "",
   });
   const [cashEdit, setCashEdit] = useState(false);
-  // console.log(selectedValue);
 
   const getSelectOption = [
     { label: "Date Wise", value: "date_wise" },
@@ -48,7 +47,6 @@ function CashPaymentResister() {
         seacrh: e,
       });
       setSelectLoading(false);
-      // console.log(data.data);
       let arr = [];
       arr = response.data.map((d) => {
         return { text: d.text, value: d.id };

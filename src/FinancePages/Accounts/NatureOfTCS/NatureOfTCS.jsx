@@ -20,7 +20,6 @@ function NatureofTCS() {
     percentage: "",
     ledger: "",
   });
-  // console.log(newTCS);
   const [loading, setLoading] = useState(false);
   const [allGLDataa, setAllGLData] = useState([]);
   const [formLoading, setFormLoading] = useState(false);
@@ -75,7 +74,7 @@ function NatureofTCS() {
     }
 
     setLoading(false);
-    // console.log(data);
+   
   };
 
   // const
@@ -173,7 +172,7 @@ function NatureofTCS() {
         ledger: newTCS.ledger,
       });
       setFormLoading(false);
-      // console.log(data);
+     
       if (response.success) {
         getTCSList();
         showToast(response.message);

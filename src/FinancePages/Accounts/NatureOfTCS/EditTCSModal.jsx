@@ -47,7 +47,6 @@ function EditTCS({
     const response = await imsAxios.get(
       `/tally/tcs/tcsLedgerOptions?search=${search}`
     );
-    // console.log(data.data);
     setSelectLoading(false);
     let arr = [];
     if (response.success) {

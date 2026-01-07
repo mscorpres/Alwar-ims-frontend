@@ -42,7 +42,6 @@ const { showToast} =  useToast();
   ];
   const [rows, setRows] = useState([]);
   const [wise, setWise] = useState("date_wise");
-  // console.log("Wise", wise);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewDebitDetail, setViewDebitDetail] =
@@ -185,7 +184,6 @@ const { showToast} =  useToast();
           disabled={loading}
           icon={<EyeFilled className="view-icon" />}
           onClick={() => {
-            // console.log(row);
             setViewDebitDetail(row?.module_used);
           }}
           label="view"
@@ -215,7 +213,6 @@ const { showToast} =  useToast();
           disabled={loading}
           icon={<EditFilled className="view-icon" />}
           onClick={() => {
-            // console.log(row);
             setEditDebit(row.module_used);
           }}
           label="download"
@@ -239,7 +236,6 @@ const { showToast} =  useToast();
     // module_used
   };
   const handleDownload = async (id) => {
-    console.log(id);
     setLoading(true);
     let link = "/tally/cn/printCreditVoucher";
     let filename = "Debit Voucher " + id;
@@ -268,7 +264,6 @@ const { showToast} =  useToast();
           value: row.id,
         };
       });
-      console.log(response.data);
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);

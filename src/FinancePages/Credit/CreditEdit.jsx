@@ -72,7 +72,6 @@ export default function CreditEdit({ editDebit, setEditDebit }) {
       }
     });
     if (!problem) {
-      //   console.log(finalObj);
       setSubmitLoading(true);
       const response = await imsAxios.post("/tally/cn/updateCreditVoucher", {
         ...finalObj,
@@ -218,7 +217,6 @@ export default function CreditEdit({ editDebit, setEditDebit }) {
   };
   const inputHandler = (name, value, id) => {
     let arr = journalRows;
-    console.log(name, value, id);
     arr = arr.map((row) => {
       let obj = row;
       if (obj.id == id) {
@@ -259,7 +257,6 @@ export default function CreditEdit({ editDebit, setEditDebit }) {
         return partialSum + Number(a);
       }, 0)
     );
-    console.log(journalRows);
   }, [journalRows]);
   return (
     <Drawer

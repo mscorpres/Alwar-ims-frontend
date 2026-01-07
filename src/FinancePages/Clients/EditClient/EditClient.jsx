@@ -18,7 +18,6 @@ function EditClient({
   const [tcsOptions, setTcsOptions] = useState([]);
   const [clientStatus, setClientStatus] = useState();
 
-  // console.log(clientStatus);
 
   // const getMatchById = async () => {
   //   const { data: tdsData } = await imsAxios.get(
@@ -44,7 +43,6 @@ function EditClient({
   //     ...clientData,
   //   };
 
-  //   console.log(obj);
   //   updateClientForm.setFieldsValue(obj);
 
   //   setClientStatus(obj.status);
@@ -74,9 +72,6 @@ function EditClient({
 
   // const submitHandler = async () => {
   //   const values = await updateClientForm.validateFields();
-  //   console.log(values);
-  //   console.log(updatingClient?.code);
-  //   // console.log(clientStatus);
   //   let obj = {
   //     code: updatingClient?.code,
   //     clientName: values?.name,
@@ -145,7 +140,6 @@ function EditClient({
       let tcsArr = response.data?.map((row) => {
         return { text: row.tcsName, value: row.tcsKey };
       });
-      console.log(tcsArr);
       setTcsOptions(tcsArr);
     }
   };
@@ -173,7 +167,6 @@ function EditClient({
   const submitHandler = async () => {
     const values = await updateClientForm.validateFields();
 
-    // console.log(clientStatus);
     let obj = {
       code: updatingClient?.code,
       clientName: values?.name,

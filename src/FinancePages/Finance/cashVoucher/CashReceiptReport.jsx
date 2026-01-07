@@ -30,7 +30,6 @@ function CashReceiptReport() {
     code: "",
     pick: "",
   });
-  // console.log(selectedValue);
 
   const getSelectOption = [
     { label: "Date Wise", value: "date_wise" },
@@ -46,7 +45,6 @@ function CashReceiptReport() {
         seacrh: e,
       });
       setSelectLoading(false);
-      // console.log(data.data);
       let arr = [];
       arr = response.data.map((d) => {
         return { text: d.text, value: d.id };

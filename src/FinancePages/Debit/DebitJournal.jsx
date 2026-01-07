@@ -33,7 +33,6 @@ export default function JournalPosting() {
     },
     { id: v4(), total: true, debit: 0, credit: 0 },
   ]);
-  console.log(journalRows);
   const [loading, setLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
 
@@ -56,7 +55,6 @@ export default function JournalPosting() {
     let arr = journalRows;
     arr = arr.filter((row) => row.id != rowId);
     let creditArr = arr.map((row, index) => {
-      // console.log(index);
       if (index < arr.length - 1) {
         if (row.credit != "") {
           return row.credit;

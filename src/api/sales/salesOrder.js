@@ -103,13 +103,11 @@ export const createChallanFromSo = async (shipments, remark) => {
   return response;
 };
 export const cancelChallanFromSo = async (singleRow, remark) => {
-  console.log("singlerwo", singleRow);
   let payload = {
     so_shipment_id: singleRow.shipment_id,
     remark: remark,
   };
 
-  console.log("payload", remark);
   const response = await imsAxios.post(
     "/so_challan_shipment/cancelSOshipment",
     payload
@@ -145,7 +143,7 @@ export const createShipment = async (values, open, details) => {
     payload
   );
   return response;
-  // console.log("this is the values", payload);
+
 };
 
 export const fetchShipmentDetails = async (shipmentId) => {
@@ -251,5 +249,4 @@ export const updateShipment = async (
     payload
   );
   return response;
-  // console.log("this is the values", payload);
 };

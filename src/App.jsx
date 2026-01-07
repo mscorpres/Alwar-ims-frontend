@@ -165,10 +165,8 @@ const App = () => {
     setSearchHis(modOpt);
     setModulesOptions(modOpt);
   };
-  // Removed useEffect that was interfering with search results
   // notifications recieve handlers
   socket.on("connect", () => {
-    console.log("WebSocket connected!!!!");
     setIsConnected(true);
     setIsLoading(false);
   });
