@@ -268,7 +268,7 @@ const CreateInvoice = () => {
             </Button>
           }
         >
-          <Tabs.TabPane tab="Billing Details" key="1" style={{ height: "95%" }}>
+          <Tabs.TabPane tab="Billing Details" key="1" style={{ height: "100%" }}>
             <HeaderDetails
               setTcsOptions={setTcsOptions}
               form={invoiceForm}
@@ -276,7 +276,7 @@ const CreateInvoice = () => {
               setLoading={setLoading}
             />
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Product Details" style={{ height: "95%" }} key="2">
+          <Tabs.TabPane tab="Product Details" style={{ height: "100%" }} key="2">
             <Products
               gstType={gstType}
               form={invoiceForm}

@@ -85,7 +85,7 @@ function FinalInvoice() {
     getFinalInvoice();
   }, []);
   return (
-    <div className="hide-select" style={{ height: "87%", margin: "10px" }}>
+    <div className="hide-select" style={{ height: "calc(100vh - 140px)", margin: "10px" }}>
       <MyDataTable data={finalData} columns={columns} loading={loading} />
     </div>
   );

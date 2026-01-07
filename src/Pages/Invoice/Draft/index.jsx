@@ -163,7 +163,7 @@ const DraftInvoice = () => {
   return (
     <div
       style={{
-        height: "90%",
+        height: "calc(100vh - 120px)",
         padding: "0px 10px 0px 10px",
       }}
     >
