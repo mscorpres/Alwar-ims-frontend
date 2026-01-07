@@ -246,7 +246,7 @@ const R7 = () => {
               <Spin />
             </div>
           ) : (
-            <div className="hide-select" style={{ height: "85vh" }}>
+            <div className="hide-select" style={{ height:"calc(100vh - 120px)" }}>
               <MyDataTable
                 checkboxSelection={true}
                 data={resData}

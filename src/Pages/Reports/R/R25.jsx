@@ -237,7 +237,7 @@ const R25 = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "90%", padding: 10, paddingTop: 0 }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10, paddingTop: 0 }}>
       <Col span={5} style={{ height: "100%", overflow: "auto" }}>
         <Row gutter={[0, 6]}>
           <Col span={24}>

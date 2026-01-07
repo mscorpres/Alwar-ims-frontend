@@ -168,7 +168,7 @@ function R31() {
 
   return (
     <div style={{ height: "100%" }}>
-      <Row gutter={4} style={{ height: "95%", padding: "0px 5px" }}>
+      <Row gutter={4} style={{ height: "100%", padding: "0px 5px" }}>
         <Col
           style={{ overflowY: "auto", height: "100%", paddingBottom: 50 }}
           span={6}

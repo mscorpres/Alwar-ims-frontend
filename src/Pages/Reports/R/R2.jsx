@@ -340,7 +340,7 @@ const R2 = () => {
 
       <div
         className="hide-select"
-        style={{ height: "95%", margin: "5px", marginBottom: 0 }}
+        style={{ height: "calc(100% - 50px)", margin: "5px", marginBottom: 0 }}
       >
         <MyDataTable
           loading={loading}

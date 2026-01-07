@@ -152,7 +152,7 @@ function R27() {
           Fetch
         </MyButton>
       </Row>
-      <div style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "calc(100% - 50px)", paddingRight: 5, paddingLeft: 5 }}>
         <MyDataTable loading={loading} columns={columns} data={dateData} />
       </div>
     </div>

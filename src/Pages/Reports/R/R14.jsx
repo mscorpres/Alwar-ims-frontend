@@ -83,7 +83,7 @@ const R14 = () => {
   };
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "calc(100vh - 170px)",  }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <>
           <Col span={4}>
@@ -120,15 +120,15 @@ const R14 = () => {
         </>
       </Row>
 
-      <div className="m-2" style={{ height: "100%" }}>
-        <div className="hide-select" style={{ height: "80%", margin: "10px" }}>
+    
+        <div className="hide-select" style={{ height: "calc(100vh - 210px)", margin: "10px" }}>
           <MyDataTable
             loading={loading}
             data={responseData}
             columns={columns}
             checkboxSelection={true}
           />
-        </div>
+      
       </div>
     </div>
   );

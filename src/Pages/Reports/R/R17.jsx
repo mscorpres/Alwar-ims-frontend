@@ -163,7 +163,7 @@ function R17() {
   }, [searchForm.getFieldsValue().vendor]);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "calc(100vh - 165px)" }}>
       <Row gutter={4} style={{ height: "100%", padding: "0px 5px" }}>
         <Col
           style={{ overflowY: "auto", height: "100%", paddingBottom: 50 }}

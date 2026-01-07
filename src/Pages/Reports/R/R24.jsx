@@ -195,8 +195,8 @@ const R24 = () => {
     }
   }, []);
   return (
-    <Row gutter={6} style={{ height: "90%", padding: 10, paddingTop: 0 }}>
-      <Col span={4} style={{ height: "100%", overflow: "hidden" }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10, paddingTop: 0 }}>
+      <Col span={6} style={{ height: "100%", overflow: "hidden" }}>
         <Row gutter={[0, 6]} style={{ height: "100%", overflow: "hidden" }}>
           <Col span={24}>
             <Card size="small" title="Filters">
@@ -330,7 +330,7 @@ const R24 = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={20}>
+      <Col span={18}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

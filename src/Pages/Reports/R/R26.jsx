@@ -113,7 +113,7 @@ const R26 = () => {
   }, [wiseOption, filterForm]);
 
   return (
-    <Row gutter={6} style={{ height: "90%", padding: "0px 5px" }}>
+    <Row gutter={6} style={{ height: "100%", padding: "0px 5px" }}>
       <Col span={5}>
         <Card title="Filters" size="small">
           <Form

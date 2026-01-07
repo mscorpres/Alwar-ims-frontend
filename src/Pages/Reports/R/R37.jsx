@@ -289,7 +289,7 @@ const R37 = () => {
       </Row>
       <div
         style={{
-          height: "85%",
+          height: "92%",
           padding: "0 10px",
         }}
       >

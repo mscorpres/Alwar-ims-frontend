@@ -131,7 +131,7 @@ const R13 = () => {
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "calc(100vh - 170px)",  }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={2} className="gutter-row">
           <Select
@@ -165,7 +165,7 @@ const R13 = () => {
         )}
       </Row>
 
-      <div className="hide-select" style={{ height: "95%", margin: "10px" }}>
+      <div className="hide-select" style={{ height: "calc(100% - 40px)", margin: "10px" }}>
         <MyDataTable
           loading={loading}
           data={responseData}

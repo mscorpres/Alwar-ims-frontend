@@ -26,6 +26,10 @@ function R18() {
   const getRows = async () => {
     try {
       const values = await form.validateFields();
+      if (!values.date) {
+        return showToast("Please select a date", "error");
+        
+      }
       const finalObj = {
         for_location: values.location,
         date: values.date,

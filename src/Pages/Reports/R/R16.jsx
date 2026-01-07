@@ -67,7 +67,7 @@ function R16() {
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "calc(100% - 50px)" }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={4}>
           <MyDatePicker size="default" setDateRange={setDatee} />
@@ -92,7 +92,7 @@ function R16() {
         )}
       </Row>
 
-      <div className="hide-select" style={{ height: "95%", margin: "10px" }}>
+      <div className="hide-select" style={{ height: "calc(100% - 0px)", margin: "10px" }}>
         <MyDataTable
           checkboxSelection={true}
           loading={loading}

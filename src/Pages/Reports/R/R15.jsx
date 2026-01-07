@@ -18,7 +18,6 @@ function R15() {
     selType: "",
     part: "",
   });
-  // console.log(allData);
   const [datee, setDatee] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [responseData, setResponseData] = useState([]);
@@ -42,7 +41,6 @@ function R15() {
   };
 
   const fetch = async () => {
-    // console.log(c)
     if (!allData.selType) {
       showToast("Please Select Type", "error");
     } else if (!datee[0]) {
@@ -54,9 +52,7 @@ function R15() {
         data: datee,
         min_types: allData?.selType,
       });
-      // console.log(data.data);
       if (response.success) {
-        // setLoading(true);
         showToast(response.message, "success");
         let arr = response.data.map((row) => {
           return {
@@ -80,9 +76,7 @@ function R15() {
       data: allData.part,
       min_types: allData?.selType,
     });
-    // console.log(data);
     if (response.success) {
-      // toast.success(response.message);
       let arr = response.data.map((row) => {
         return {
           ...row,
@@ -167,7 +161,7 @@ function R15() {
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "calc(100vh - 170px)" }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={3}>
           <Select
@@ -251,7 +245,7 @@ function R15() {
         )}
       </Row>
 
-      <div className="hide-select" style={{ height: "95%", margin: "10px" }}>
+      <div className="hide-select" style={{ height: "calc(100% - 40px)", margin: "10px" }}>
         {allData.selType == "M" ? (
           <MyDataTable
             loading={loading}

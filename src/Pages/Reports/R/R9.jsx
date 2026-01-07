@@ -198,7 +198,7 @@ function R9() {
   }, []);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "calc(100vh - 200px)",  }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={5}>
           <Row gutter={16}>
@@ -293,7 +293,7 @@ function R9() {
             )}
             <Col span={24}>
               <Skeleton loading={loading} active>
-                <div className="hide-select" style={{ height: "75vh" }}>
+                <div className="hide-select" style={{ height: "calc(100vh - 130px)" }}>
                   <MyDataTable
                     checkboxSelection={true}
                     loading={loading}

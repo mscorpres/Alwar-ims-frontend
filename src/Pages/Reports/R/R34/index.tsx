@@ -44,12 +44,12 @@ function R34() {
     },
   ];
   return (
-    <Row style={{ height: "95%", padding: 10 }} gutter={6}>
+    <Row style={{ height: "100%", padding: 10 }} gutter={6}>
       <Details
         selectedTransaction={selectedTransaction}
         setSelectedTransaction={setSelectedTransaction}
       />
-      <Col span={4}>
+      <Col span={6}>
         <Card size="small">
           <Form form={form} layout="vertical">
             <Form.Item name="date" label="Date">
@@ -81,7 +81,7 @@ function R34() {
           </Form>
         </Card>
       </Col>
-      <Col span={20}>
+      <Col span={18}>
         <MyDataTable columns={[...actionColumn, ...columns]} data={rows} />
       </Col>
     </Row>

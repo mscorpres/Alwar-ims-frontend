@@ -206,7 +206,7 @@ const R12 = () => {
         )}
       </Row>
 
-      <div className="hide-select" style={{ height: "90%", margin: "10px" }}>
+      <div className="hide-select" style={{ height: "calc(100% - 20px)", margin: "10px" }}>
         <MyDataTable
           checkboxSelection={true}
           loading={loading}
