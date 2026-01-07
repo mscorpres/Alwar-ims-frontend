@@ -120,7 +120,7 @@ const TransactionOut = () => {
 
   // console.log(dateData);
   return (
-    <div style={{ height: "95%" }}>
+    <div style={{ height: "calc(100vh - 120px)", }}>
       <Row gutter={10} style={{ margin: "5px" }} justify="space-between">
         <Col>
           <Space>
@@ -156,7 +156,7 @@ const TransactionOut = () => {
         </Col>
         {/* // )} */}
       </Row>
-      <div style={{ height: "87%", margin: "10px" }}>
+      <div style={{ height:"calc(100vh - 180px)", margin: "10px" }}>
         <MyDataTable loading={loading} data={dateData} columns={columns} />
       </div>
     </div>

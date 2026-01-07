@@ -134,7 +134,7 @@ const TransactionIn = () => {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "90%", padding: "5px", paddingTop: 0 }}>
+    <div style={{ height: "calc(100vh - 150px)", padding: "5px", paddingTop: 0 }}>
       <Row justify="space-between">
         <Space>
           <div style={{ width: 150 }}>
@@ -185,7 +185,7 @@ const TransactionIn = () => {
           />
         </Space>
       </Row>
-      <div style={{ height: "95%", paddingTop: 5 }}>
+      <div style={{ height: "calc(100% - 10px)", paddingTop: 5 }}>
         <MyDataTable
           loading={loading === "fetch" || loading1("download")}
           rows={rows}

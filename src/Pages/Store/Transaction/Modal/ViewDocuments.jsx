@@ -115,7 +115,7 @@ function ViewDocuments() {
         ></MyButton>
         {/* </Col> */}
       </Row>
-      <div style={{ height: "90%", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 20px)", padding: "0px 10px" }}>
         <MyDataTable columns={columns} data={rows} loading={loading} />
       </div>
     </div>

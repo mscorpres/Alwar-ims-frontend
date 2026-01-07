@@ -7,7 +7,6 @@
         "label": "Dashboard",
         "icon": "MdDashboard",
         "path": "/"
-       
       },
       {
         "key": "D",
@@ -1109,48 +1108,49 @@
                 "path": "/warehouse/print-view-min",
                 "isShown": true
               },
-              {
-                "key": "B41",
-                "label": "Inventory Reports",
-                "icon": "AssessmentIcon",
-                "isHeading": true,
-                "children": [
-                  {
-                    "key": "B411",
-                    "label": "MIN Register",
-                    "icon": "ListIcon",
-                    "path": "/transaction-In",
-                    "isShown": true
-                  },
-                  {
-                    "key": "B414",
-                    "label": "Weekly Audit",
-                    "icon": "AuditIcon",
-                    "path": "/weeklyAudit",
-                    "isShown": true
-                  },
-                  {
-                    "key": "B412",
-                    "label": "RM Issue Register",
-                    "icon": "OutputIcon",
-                    "path": "/transaction-Out",
-                    "isShown": true
-                  },
-                  {
-                    "key": "B413",
-                    "label": "Reports R1 - R37",
-                    "icon": "DescriptionIcon",
-                    "path": "/r1",
-                    "isShown": true
-                  }
-                ]
-              },
 
               {
                 "key": "B43",
                 "label": "E-Way Bill Report",
                 "icon": "DescriptionIcon",
                 "path": "/warehouse/eway-bill/report",
+                "isShown": true
+              }
+            ]
+          },
+          {
+            "key": "B59",
+            "label": "Reports",
+            "icon": "MdQueryStats",
+            "isHeading": true,
+
+            "children": [
+              {
+                "key": "B411",
+                "label": "MIN Register",
+                "icon": "ListIcon",
+                "path": "/transaction-In",
+                "isShown": true
+              },
+              {
+                "key": "B414",
+                "label": "Weekly Audit",
+                "icon": "AuditIcon",
+                "path": "/weeklyAudit",
+                "isShown": true
+              },
+              {
+                "key": "B412",
+                "label": "RM Issue Register",
+                "icon": "OutputIcon",
+                "path": "/transaction-Out",
+                "isShown": true
+              },
+              {
+                "key": "B413",
+                "label": "Reports R1 - R37",
+                "icon": "DescriptionIcon",
+                "path": "/r1",
                 "isShown": true
               }
             ]
@@ -1443,42 +1443,41 @@
           }
         ]
       },
-      
+
       {
         "key": "/invoice/create",
         "label": "Sales & Distribution",
         "icon": "UnorderedListOutlined",
-         "children": [
-              {
-                "key": "D31323",
-                "label": "Create Invoice",
-                "icon": "UnorderedListOutlined",
-                "path": "/invoice/create",
-                "isShown": true
-              },
-              {
-                "key": "D31324",
-                "label": "Sales Register",
-                "icon": "UnorderedListOutlined",
-                "path": "/sales-register",
-                "isShown": false
-              },
-              {
-                "key": "D31325",
-                "label": "Draft Invoices",
-                "icon": "UnorderedListOutlined",
-                "path": "/draft-invoices",
-                "isShown": false
-              },
-                 {
-                "key": "D31326",
-                "label": "Final Invoices",
-                "icon": "UnorderedListOutlined",
-                "path": "/final-invoices",
-                "isShown": false
-              }
-            ]
-     
+        "children": [
+          {
+            "key": "D31323",
+            "label": "Create Invoice",
+            "icon": "UnorderedListOutlined",
+            "path": "/invoice/create",
+            "isShown": true
+          },
+          {
+            "key": "D31324",
+            "label": "Sales Register",
+            "icon": "UnorderedListOutlined",
+            "path": "/sales-register",
+            "isShown": false
+          },
+          {
+            "key": "D31325",
+            "label": "Draft Invoices",
+            "icon": "UnorderedListOutlined",
+            "path": "/draft-invoices",
+            "isShown": false
+          },
+          {
+            "key": "D31326",
+            "label": "Final Invoices",
+            "icon": "UnorderedListOutlined",
+            "path": "/final-invoices",
+            "isShown": false
+          }
+        ]
       },
       {
         "key": "Research and Development",
