@@ -448,18 +448,18 @@ export const items = (user) => [
         ),
       ]),
       getItem("Work Order", "B7", <MdQueryStats />, [
-        getItem(<Link to="/createwo">Create Work-order</Link>, "B71"),
-        getItem(<Link to="/woanalysis">WO Analysis</Link>, "B72"),
-        getItem(<Link to="/wocreatechallan">WO Create Challan</Link>, "B73"),
+        getItem(<Link to="/createwo">Create</Link>, "B71"),
+        getItem(<Link to="/woanalysis">Analysis</Link>, "B72"),
+        getItem(<Link to="/wocreatechallan">Create Challan</Link>, "B73"),
         //
         getItem(
-          <Link to="/wocreatescrapechallan">WO SCRAPE Challan</Link>,
+          <Link to="/wocreatescrapechallan">SCRAPE Challan</Link>,
           "B74"
         ),
-        getItem(<Link to="/woShipment">WO Shipment</Link>, "B75"),
-        getItem(<Link to="/woviewchallan">WO View Challan</Link>, "B76"),
-        getItem(<Link to="/wocompleted">WO Completed</Link>, "B77"),
-        getItem(<Link to="/woreport">WO Report</Link>, "B78"),
+        getItem(<Link to="/woShipment">Shipment</Link>, "B75"),
+        getItem(<Link to="/woviewchallan">View Challan</Link>, "B76"),
+        getItem(<Link to="/wocompleted">Completed</Link>, "B77"),
+        getItem(<Link to="/woreport">Report</Link>, "B78"),
       ]),
       getItem(
         <Link to="/create-dc">RGP - DC</Link>,

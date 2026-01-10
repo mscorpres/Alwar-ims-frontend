@@ -260,7 +260,7 @@ const WoAnalysis = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={24} style={{ height: "95%" }}>
+      <Col span={24} style={{ height: "calc(100% - 0px)",marginTop:10 }}>
         <MyDataTable
           loading={
             loading === "fetch" || loading === "print" || loading === "cancel"

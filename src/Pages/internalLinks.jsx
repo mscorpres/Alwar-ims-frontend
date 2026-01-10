@@ -555,16 +555,16 @@ const links = [
   ],
   // workorder links
   [
-    { routeName: "CREATE WO", routePath: "/createwo" },
-    { routeName: "WO ANALYSIS", routePath: "/woanalysis" },
-    { routeName: "WO CREATE CHALLAN", routePath: "/wocreatechallan" },
+    { routeName: "CREATE", routePath: "/createwo" },
+    { routeName: "ANALYSIS", routePath: "/woanalysis" },
+    { routeName: "CREATE CHALLAN", routePath: "/wocreatechallan" },
     //
-    { routeName: "WO SCRAPE CHALLAN", routePath: "/wocreatescrapechallan" },
-    { routeName: "WO SHIPMENT", routePath: "/woShipment" },
-    { routeName: "WO VIEW CHALLAN", routePath: "/woviewchallan" },
-    { routeName: "WO COMPLETED", routePath: "/wocompleted" },
+    { routeName: "SCRAPE CHALLAN", routePath: "/wocreatescrapechallan" },
+    { routeName: "SHIPMENT", routePath: "/woShipment" },
+    { routeName: "VIEW CHALLAN", routePath: "/woviewchallan" },
+    { routeName: "COMPLETED", routePath: "/wocompleted" },
     //
-    { routeName: "WO REPORT", routePath: "/woreport" },
+    { routeName: "REPORT", routePath: "/woreport" },
   ],
   //branch transfer link
   [

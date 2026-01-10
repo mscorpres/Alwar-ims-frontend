@@ -750,7 +750,7 @@ const WoViewChallan = () => {
             </Col>
           </Row>
         </Col>
-        <div style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}>
+        <div style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}>
           {/* {challantype === "Scrape Challan" ? (
             <MyDataTable
               loading={loading === "fetch"}

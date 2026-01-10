@@ -278,7 +278,7 @@ const WoReport = () => {
   }, [wise]);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "90%" }}>
       <Row style={{ padding: 5, paddingTop: 0 }} justify="space-between">
         <Col>
           <Space>
@@ -307,7 +307,7 @@ const WoReport = () => {
           onClick={exportToExcel}
         />
       </Row>
-      <div style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}>
         <Table
           columns={columns}
           expandedRowRender={expandedRowRender}
@@ -321,6 +321,7 @@ const WoReport = () => {
           rowKey={(record, index) => record.id || `row-${index}`}
           scroll={{ x: 500, y: 1000 }}
           bordered
+         
         />
       </div>
     </div>

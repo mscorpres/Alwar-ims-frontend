@@ -28,8 +28,8 @@ const CreateBom = () => {
       const response = await imsAxios.get(`products/bySku?sku=${values.sku}`);
       const {data} = response
       if (response.success) {
-          const product = data.p_name;
-          const productKey = data.product_key;
+          const product = data.productName;
+          const productKey = data.productKey;
           form.setFieldValue("product", product);
           form.setFieldValue("productKey", productKey);
           setProductSelected(true);
@@ -77,7 +77,7 @@ const CreateBom = () => {
       formData.append("mapped_sfg", obj.mapped_sfg);
       formData.append("sku", obj.sku);
       formData.append("bom_level", obj.bom_level);
-      formData.append("bom_project",obj.project)
+      formData.append("bom_project", obj.bom_project);
 
       finalObj = formData;
     }

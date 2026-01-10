@@ -959,56 +959,56 @@
             "children": [
               {
                 "key": "B71",
-                "label": "Create Work-order",
+                "label": "Create",
                 "icon": "AddIcon",
                 "path": "/createwo",
                 "isShown": true
               },
               {
                 "key": "B72",
-                "label": "WO Analysis",
+                "label": "Analysis",
                 "icon": "AnalyticsIcon",
                 "path": "/woanalysis",
                 "isShown": true
               },
               {
                 "key": "B73",
-                "label": "WO Create Challan",
+                "label": "Create Challan",
                 "icon": "ReceiptIcon",
                 "path": "/wocreatechallan",
                 "isShown": true
               },
               {
                 "key": "B74",
-                "label": "WO SCRAPE Challan",
+                "label": "SCRAPE Challan",
                 "icon": "DeleteIcon",
                 "path": "/wocreatescrapechallan",
                 "isShown": true
               },
               {
                 "key": "B75",
-                "label": "WO Shipment",
+                "label": "Shipment",
                 "icon": "LocalShippingIcon",
                 "path": "/woShipment",
                 "isShown": true
               },
               {
                 "key": "B76",
-                "label": "WO View Challan",
+                "label": "View Challan",
                 "icon": "VisibilityIcon",
                 "path": "/woviewchallan",
                 "isShown": true
               },
               {
                 "key": "B77",
-                "label": "WO Completed",
+                "label": "Completed",
                 "icon": "CheckCircleIcon",
                 "path": "/wocompleted",
                 "isShown": true
               },
               {
                 "key": "B78",
-                "label": "WO Report",
+                "label": "Report",
                 "icon": "AssessmentIcon",
                 "path": "/woreport",
                 "isShown": true
