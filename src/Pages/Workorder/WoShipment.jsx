@@ -400,7 +400,7 @@ const WoShipment = () => {
           </Col>
         </Row>
       </Col>
-      <div style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}>
         <MyDataTable
           data={rows}
           columns={
