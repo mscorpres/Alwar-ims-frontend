@@ -50,10 +50,7 @@ function VBTRecords() {
     { text: "VBT7", value: "VBT07" },
   ];
   const emitDownloadEvent = () => {
-    // let newId = v4();
-    // let arr = notifications;
-
-    console.log("this is the arr", searchDateRange);
+  
     if (!user.company_branch) {
       showToast("Please select a branch to download report", "error");
       return;

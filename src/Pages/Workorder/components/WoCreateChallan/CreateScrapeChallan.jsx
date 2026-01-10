@@ -596,7 +596,7 @@ const CreateScrapeChallan = () => {
           </Col>
 
           <Col span={18}>
-            <Card style={{ height: "10rem" }}>
+            <Card style={{ height: "100%", overflow: "hidden" }}>
               <FormTable2
                 removableRows={true}
                 nonRemovableColumns={1}

@@ -78,7 +78,7 @@ function BlockTCS() {
     getAllBlockTCS();
   }, []);
   return (
-    <div style={{ height: "calc(100vh - 170px)", margin: "5px" }}>
+    <div style={{ height: "calc(100vh - 130px)", margin: "5px" }}>
       {/* <Col span={24} style={{ height: "100%", margin: "5px" }}> */}
         <MyDataTable
           loading={loading}
