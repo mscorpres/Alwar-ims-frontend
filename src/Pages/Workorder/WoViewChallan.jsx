@@ -167,7 +167,7 @@ const WoViewChallan = () => {
   };
   useEffect(() => {
     if (scrapeChallan) {
-      navigate(`/wocreatescrapechallan?challan=${scrapeChallan}`);
+      navigate(`/wo/create-scrape-challan?challan=${scrapeChallan}`);
     }
   }, [scrapeChallan]);
 

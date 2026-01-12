@@ -74,11 +74,11 @@ const Sidebar = ({
       if (activeMenuItem.parentKey) {
         setActiveKey(activeMenuItem.parentKey);
 
-        if (showSideBar) {
-          setIsSecondSidebarOpen(true);
-          // Collapse second sidebar when module is active/open
-          setIsSecondSidebarCollapsed(true);
+        if (!showSideBar) {
+          setShowSideBar(true);
         }
+        setIsSecondSidebarOpen(true);
+        setIsSecondSidebarCollapsed(true);
 
         if (activeMenuItem.headingKey) {
           setExpandedHeading(activeMenuItem.headingKey);
@@ -92,7 +92,7 @@ const Sidebar = ({
       setIsSecondSidebarOpen(false);
       setExpandedHeading(null);
     }
-  }, [location.pathname, sidebar1Items, showSideBar]);
+  }, [location.pathname, sidebar1Items, showSideBar, setShowSideBar]);
 
   useEffect(() => {
     if (showSideBar && activeKey) {

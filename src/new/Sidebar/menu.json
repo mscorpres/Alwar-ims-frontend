@@ -23,7 +23,7 @@
                 "key": "D31",
                 "label": "Create Master",
                 "icon": "MdAccountBox",
-                "path": "/tally/create_master",
+                "path": "/tally/create-master",
                 "isShown": false
               },
               {
@@ -37,7 +37,7 @@
                 "key": "D11",
                 "label": "Chart of Accounts",
                 "icon": "MdAccountBox",
-                "path": "/tally/ChartOfAccounts",
+                "path": "/tally/chart-accounts",
                 "isShown": true
               }
             ]
@@ -52,14 +52,14 @@
                 "key": "D21",
                 "label": "TDS Config",
                 "icon": "SettingsIcon",
-                "path": "/tally/nature_of_tds",
+                "path": "/tally/nature-tds",
                 "isShown": true
               },
               {
                 "key": "D22",
                 "label": "TCS Config",
                 "icon": "SettingsIcon",
-                "path": "/tally/nature_of_tcs",
+                "path": "/tally/nature-tcs",
                 "isShown": true
               },
               {
@@ -81,63 +81,63 @@
                 "key": "D31",
                 "label": "Vendor Bill Posting",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/VB1",
+                "path": "/tally/vendor-bill-posting/vb-1",
                 "isShown": true
               },
               {
                 "key": "D311",
                 "label": "VBT2",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/VB2",
+                "path": "/tally/vendor-bill-posting/vb-2",
                 "isShown": false
               },
               {
                 "key": "D312",
                 "label": "VBT3",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/VB3",
+                "path": "/tally/vendor-bill-posting/vb-3",
                 "isShown": false
               },
               {
                 "key": "D313",
                 "label": "VBT4",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/VB4",
+                "path": "/tally/vendor-bill-posting/vb-4",
                 "isShown": false
               },
               {
                 "key": "D314",
                 "label": "VBT5",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/VB5",
+                "path": "/tally/vendor-bill-posting/vb-5",
                 "isShown": false
               },
               {
                 "key": "D315",
                 "label": "VBT6",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/VB6",
+                "path": "/tally/vendor-bill-posting/vb-6",
                 "isShown": false
               },
               {
                 "key": "D316",
                 "label": "VBT7",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/VB7",
+                "path": "/tally/vendor-bill-posting/vb-7",
                 "isShown": false
               },
               {
                 "key": "D317",
                 "label": "Purchase Register",
                 "icon": "ReceiptIcon",
-                "path": "/tally/vendorbillposting/report",
+                "path": "/tally/vendor-bill-posting/report",
                 "isShown": false
               },
               {
                 "key": "D32",
                 "label": "VBT Records",
                 "icon": "ListAltIcon",
-                "path": "/tally/vendorbillposting/vendor_bill_records",
+                "path": "/tally/vendor-bill-posting/vendor-bill-records",
                 "isShown": true
               }
             ]
@@ -215,7 +215,7 @@
                 "key": "D431",
                 "label": "Bank Payments report",
                 "icon": "PaymentIcon",
-                "path": "/tally/vouchers/bank_payment/report",
+                "path": "/tally/vouchers/bank-payment/report",
                 "isShown": false
               },
               {
@@ -229,7 +229,7 @@
                 "key": "D441",
                 "label": "Bank Receipts Report",
                 "icon": "AccountBalanceIcon",
-                "path": "/tally/vouchers/bank_receipts/report",
+                "path": "/tally/vouchers/bank-receipts/report",
                 "isShown": false
               },
               {
@@ -243,7 +243,7 @@
                 "key": "D451",
                 "label": "Cash Payments Report",
                 "icon": "AttachMoneyIcon",
-                "path": "/tally/vouchers/cash_payment/report",
+                "path": "/tally/vouchers/cash-payment/report",
                 "isShown": false
               },
               {
@@ -257,7 +257,7 @@
                 "key": "D461",
                 "label": "Cash Receipts Registor",
                 "icon": "MonetizationOnIcon",
-                "path": "/tally/vouchers/cash_receipts/report",
+                "path": "/tally/vouchers/cash-receipts/report",
                 "isShown": false
               },
               {
@@ -293,7 +293,7 @@
                 "key": "D12",
                 "label": "Ledger Report",
                 "icon": "AssessmentIcon",
-                "path": "/tally/ledger_report",
+                "path": "/tally/ledger-report",
                 "isShown": true
               },
               {
@@ -328,28 +328,28 @@
                 "key": "reports/ageing",
                 "label": "Ageing Report",
                 "icon": "ScheduleIcon",
-                "path": "/tally/vouchers/reference/payableReport",
+                "path": "/tally/vouchers/reference/payable-report",
                 "isShown": true
               },
               {
                 "key": "reports/tdsReport",
                 "label": "TDS Report",
                 "icon": "DescriptionIcon",
-                "path": "/tally/vouchers/reference/tdsReport",
+                "path": "/tally/vouchers/reference/tds-report",
                 "isShown": true
               },
               {
                 "key": "reports/misReport",
                 "label": "MIS Report",
                 "icon": "AnalyticsIcon",
-                "path": "/tally/vouchers/reference/misReport",
+                "path": "/tally/vouchers/reference/mis-report",
                 "isShown": true
               },
               {
                 "key": "/gst/gstReport1",
                 "label": "GSTR1",
                 "icon": "ReceiptLongIcon",
-                "path": "/tally/vouchers/reference/gst/gstReport1",
+                "path": "/tally/vouchers/reference/gst/report",
                 "isShown": true
               }
             ]
@@ -399,42 +399,42 @@
                 "key": "D811",
                 "label": "GST RECO",
                 "icon": "GavelIcon",
-                "path": "/addgstdetails",
+                "path": "/add-gst-details",
                 "isShown": true
               },
               {
                 "key": "D911",
                 "label": "Add Book Data",
                 "icon": "GavelIcon",
-                "path": "/addbookdetails",
+                "path": "/add-book-details",
                 "isShown": false
               },
               {
                 "key": "D1011",
                 "label": "Reco Details",
                 "icon": "GavelIcon",
-                "path": "/viewreconciled",
+                "path": "/view-reconciled",
                 "isShown": false
               },
               {
                 "key": "D1111",
                 "label": "Summary",
                 "icon": "GavelIcon",
-                "path": "/viewsummary",
+                "path": "/view-summary",
                 "isShown": false
               },
               {
                 "key": "D8111",
                 "label": "View GST Data",
                 "icon": "GavelIcon",
-                "path": "/viewgstdata",
+                "path": "/view-gst-data",
                 "isShown": false
               },
               {
                 "key": "D811122",
                 "label": "View Book Data",
                 "icon": "GavelIcon",
-                "path": "/viewbookdata",
+                "path": "/view-book-data",
                 "isShown": false
               }
             ]
@@ -534,14 +534,14 @@
                 "key": "B16",
                 "label": "Billing Address",
                 "icon": "HomeIcon",
-                "path": "/billingAddress",
+                "path": "/billing-address",
                 "isShown": true
               },
               {
                 "key": "B17",
                 "label": "Shipping Address",
                 "icon": "LocalShippingIcon",
-                "path": "/shippingAddress",
+                "path": "/shipping-address",
                 "isShown": true
               },
               {
@@ -549,7 +549,7 @@
                 "label": "Bill Of Material",
                 "icon": "ListIcon",
 
-                "path": "/master/bom/create",
+                "path": "/master/bom/create-bom",
                 "isShown": true
               },
               {
@@ -557,7 +557,7 @@
                 "label": "FG BOM",
                 "icon": "ListIcon",
 
-                "path": "/master/bom/manage/fg",
+                "path": "/master/bom/manage-fg-bom",
                 "isShown": false
               },
               {
@@ -565,7 +565,7 @@
                 "label": "SFG BOM",
                 "icon": "ListIcon",
 
-                "path": "/master/bom/manage/sfg",
+                "path": "/master/bom/manage-sfg-bom",
                 "isShown": false
               },
               {
@@ -573,7 +573,7 @@
                 "label": "Disabled",
                 "icon": "ListIcon",
 
-                "path": "/master/bom/disabled",
+                "path": "/master/bom/bom-disable-list",
                 "isShown": false
               },
               {
@@ -589,7 +589,7 @@
                 "label": "Add Vendor",
                 "icon": "BusinessIcon",
 
-                "path": "/add-vendor",
+                "path": "/create-vendor",
                 "isShown": false
               },
               {
@@ -676,7 +676,7 @@
                 "key": "B31",
                 "label": "MR Approval",
                 "icon": "ApprovalIcon",
-                "path": "/approved-transaction",
+                "path": "/transaction/approved-transaction",
                 "isShown": true
               },
               {
@@ -734,7 +734,7 @@
                 "label": "FG (s) Inwarding",
                 "icon": "InventoryIcon",
 
-                "path": "/completedFG",
+                "path": "/list/complete-fg",
                 "isShown": true
               },
               {
@@ -742,7 +742,7 @@
                 "label": "FG (s) Pending",
                 "icon": "InventoryIcon",
 
-                "path": "/PendingFG",
+                "path": "/list/pending-fg",
                 "isShown": false
               },
               {
@@ -750,7 +750,7 @@
                 "label": "FG(s) Out",
                 "icon": "OutputIcon",
 
-                "path": "/create-fgOut",
+                "path": "/fg-out/create-fg",
                 "isShown": true
               },
               {
@@ -758,7 +758,7 @@
                 "label": "View FG(s) Out",
                 "icon": "OutputIcon",
 
-                "path": "/view-fgOut",
+                "path": "/fg-out/fg-out-list",
                 "isShown": false
               },
               {
@@ -766,7 +766,7 @@
                 "label": "FG(s) Return",
                 "icon": "ReturnIcon",
 
-                "path": "/createFgReturn",
+                "path": "/return/create-fg",
                 "isShown": true
               },
               {
@@ -774,7 +774,7 @@
                 "label": "FG(s) Pending",
                 "icon": "ReturnIcon",
 
-                "path": "/pendingFgReturn",
+                "path": "/return/pending-fg-list",
                 "isShown": false
               },
               {
@@ -782,7 +782,7 @@
                 "label": "FG(s) Completed",
                 "icon": "ReturnIcon",
 
-                "path": "/completedFgReturn",
+                "path": "/return/complete-fg-list",
                 "isShown": false
               },
 
@@ -790,35 +790,35 @@
                 "key": "B37",
                 "label": "Rejection Out",
                 "icon": "BlockIcon",
-                "path": "/rejection",
+                "path": "/warehouse/rejection",
                 "isShown": true
               },
               {
                 "key": "B34",
                 "label": "RGP - DC",
                 "icon": "DescriptionIcon",
-                "path": "/create-dc",
+                "path": "/warehouse/dc/create-dc",
                 "isShown": true
               },
               {
                 "key": "B341",
                 "label": "Manage DC",
                 "icon": "DescriptionIcon",
-                "path": "/manage-dc",
+                "path": "/warehouse/dc/manage-dc",
                 "isShown": false
               },
               {
                 "key": "B36",
                 "label": "Branch Transfer Challan",
                 "icon": "SwapHorizIcon",
-                "path": "/branchtransferchallan",
+                "path": "/branch-transfer-challan",
                 "isShown": true
               },
               {
                 "key": "B361",
                 "label": "Branch Transfer View",
                 "icon": "SwapHorizIcon",
-                "path": "/viewbranchtransfer",
+                "path": "/view-branch-transfer",
                 "isShown": false
               },
               {
@@ -846,14 +846,14 @@
                 "key": "B39",
                 "label": "Gatepass (RGP / NRGP)",
                 "icon": "SecurityIcon",
-                "path": "/create-gp",
+                "path": "/warehouse/gp/create-gp",
                 "isShown": true
               },
               {
                 "key": "B391",
                 "label": "Manage GP",
                 "icon": "SecurityIcon",
-                "path": "/manage-gp",
+                "path": "/warehouse/gp/manage-gp",
                 "isShown": false
               }
             ]
@@ -946,7 +946,7 @@
                 "key": "B62",
                 "label": "Vendor SFG MIN",
                 "icon": "BusinessIcon",
-                "path": "/jobwork/vendor/sfg/min",
+                "path": "/job-work/vendor/sfg/min",
                 "isShown": true
               }
             ]
@@ -961,42 +961,42 @@
                 "key": "B71",
                 "label": "Create",
                 "icon": "AddIcon",
-                "path": "/createwo",
+                "path": "/wo/create",
                 "isShown": true
               },
               {
                 "key": "B72",
                 "label": "Analysis",
                 "icon": "AnalyticsIcon",
-                "path": "/woanalysis",
+                "path": "/wo/analysis",
                 "isShown": true
               },
               {
                 "key": "B73",
                 "label": "Create Challan",
                 "icon": "ReceiptIcon",
-                "path": "/wocreatechallan",
+                "path": "/wo/create-challan",
                 "isShown": true
               },
               {
                 "key": "B74",
                 "label": "SCRAPE Challan",
                 "icon": "DeleteIcon",
-                "path": "/wocreatescrapechallan",
+                "path": "/wo/create-scrape-challan",
                 "isShown": true
               },
               {
                 "key": "B75",
                 "label": "Shipment",
                 "icon": "LocalShippingIcon",
-                "path": "/woShipment",
+                "path": "/wo/shipment",
                 "isShown": true
               },
               {
                 "key": "B76",
                 "label": "View Challan",
                 "icon": "VisibilityIcon",
-                "path": "/woviewchallan",
+                "path": "/wo/view-challan",
                 "isShown": true
               },
               {
@@ -1026,36 +1026,49 @@
                 "key": "B361",
                 "label": "RM To RM",
                 "icon": "SwapHorizIcon",
-                "path": "/rm-to-rm",
+                "path": "/material-transfer/rm-to-rm",
                 "isShown": true
               },
               {
                 "key": "B3611",
                 "label": "View Transaction",
                 "icon": "SwapHorizIcon",
-                "path": "/view-transaction",
+                "path": "/material-transfer/rm-to-rm/view-transaction",
                 "isShown": false
               },
               {
                 "key": "B363",
                 "label": "RM To REJ",
                 "icon": "BlockIcon",
-                "path": "/re-to-rej",
+                "path": "/material-transfer/re-to-rej",
                 "isShown": true
               },
               {
                 "key": "B3631",
                 "label": "View Transaction",
                 "icon": "BlockIcon",
-                "path": "/trans-rej",
+                "path": "/material-transfer/re-to-rej/view-transation",
                 "isShown": false
               },
               {
                 "key": "B364",
                 "label": "Pending Transfer(s)",
                 "icon": "PendingIcon",
-                "path": "/pending-transfer",
+                "path": "/material-transfer/pending-transfer",
                 "isShown": true
+              }, {
+                "key": "B3636",
+                "label": "JW To JW",
+                "icon": "BlockIcon",
+                "path": "/material-transfer/jw-to-jw",
+                "isShown": true
+              },
+              {
+                "key": "B3637",
+                "label": "View Transaction",
+                "icon": "BlockIcon",
+                "path": "/material-transfer/jw-to-jw/view",
+                "isShown": false
               }
             ]
           },
@@ -1130,7 +1143,7 @@
                 "key": "B411",
                 "label": "MIN Register",
                 "icon": "ListIcon",
-                "path": "/transaction-In",
+                "path": "/transaction/transaction-in",
                 "isShown": true
               },
               {
@@ -1144,7 +1157,7 @@
                 "key": "B412",
                 "label": "RM Issue Register",
                 "icon": "OutputIcon",
-                "path": "/transaction-Out",
+                "path": "/transaction/transaction-out",
                 "isShown": true
               },
               {
@@ -1180,28 +1193,28 @@
                 "key": "C512",
                 "label": "Q3",
                 "icon": "HelpIcon",
-                "path": "/sku-query",
+                "path": "/query/q3/sku-query",
                 "isShown": false
               },
               {
                 "key": "C513",
                 "label": "Q4",
                 "icon": "HelpIcon",
-                "path": "/q4-query",
+                "path": "/query/q4-query",
                 "isShown": false
               },
               {
                 "key": "C514",
                 "label": "Q5",
                 "icon": "HelpIcon",
-                "path": "/q5",
+                "path": "/query/q5-query",
                 "isShown": false
               },
               {
                 "key": "C515",
                 "label": "Q6",
                 "icon": "HelpIcon",
-                "path": "/q6",
+                "path": "/query/q6-query",
                 "isShown": false
               }
             ]
@@ -1224,7 +1237,7 @@
                 "label": "Material Requisition",
                 "icon": "RequestQuoteIcon",
 
-                "path": "/reqWithBom",
+                "path": "/req-with-bom",
                 "isShown": true
               },
               {
@@ -1232,7 +1245,7 @@
                 "label": "Material Requisition Without Bom",
                 "icon": "RequestQuoteIcon",
 
-                "path": "/reqWithoutBom",
+                "path": "/req-with-out-bom",
                 "isShown": false
               },
               {
@@ -1263,7 +1276,7 @@
                 "key": "D1",
                 "label": "Production MIS",
                 "icon": "MdAccountBox",
-                "path": "/production/prodMis",
+                "path": "/production/ppc",
                 "isShown": true
               },
               {
@@ -1393,14 +1406,14 @@
                 "key": "Z22",
                 "label": "QC Check",
                 "icon": "CheckCircleIcon",
-                "path": "/qccheck",
+                "path": "/qc-check",
                 "isShown": true
               },
               {
                 "key": "Z23",
                 "label": "QC Report",
                 "icon": "AssessmentIcon",
-                "path": "/mes-report-qc",
+                "path": "/qca/report",
                 "isShown": true
               }
             ]

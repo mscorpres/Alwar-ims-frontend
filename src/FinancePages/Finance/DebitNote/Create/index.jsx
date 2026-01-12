@@ -254,7 +254,7 @@ const CreateDebitNote = ({ setDebitNoteDrawer, debitNoteDrawer }) => {
     }
     // finally {
     //   setLoading(false);
-    //   navigate("/tally/vendorbillposting/report");
+    //   navigate("/tally/vendor-bill-posting/report");
     // }
   };
 

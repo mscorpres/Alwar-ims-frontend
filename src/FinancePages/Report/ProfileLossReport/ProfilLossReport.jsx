@@ -169,7 +169,7 @@ function ProfilLossReport() {
           <Link
             style={{ marginLeft: 110 }}
             target="_blank"
-            to={`/tally/ledger_report/${record.code}`}
+            to={`/tally/ledger-report/${record.code}`}
             state={{ code: record }}
           >
             <ToolTipEllipses text={record.name} color="#1890ff" />

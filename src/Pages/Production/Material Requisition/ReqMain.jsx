@@ -30,10 +30,10 @@ const ReqMain = () => {
               </li>
               <li
                 className={`nav-item ${
-                  pathname == "/reqWithoutBom" && "active"
+                  pathname == "/req-with-out-bom" && "active"
                 }`}
               >
-                <Link className="nav-link" to="/reqWithoutBom">
+                <Link className="nav-link" to="/req-with-out-bom">
                   <span>Material Requisition Without BOM</span>
                 </Link>
                 <b className="sub-arrow"></b>

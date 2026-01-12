@@ -9,8 +9,8 @@ const ReportCommonPart = [
     routePath: "/item-location-logs",
     placeholder: "Item Query (Loc Wise)",
   },
-  { routeName: "Q3", routePath: "/sku-query", placeholder: "SKU Query" },
-  { routeName: "Q4", routePath: "/q4-query", placeholder: "Ledger's Query" },
+  { routeName: "Q3", routePath: "/query/q3/sku-query", placeholder: "SKU Query" },
+  { routeName: "Q4", routePath: "/query/q4-query", placeholder: "Ledger's Query" },
 ];
 
 export default ReportCommonPart;

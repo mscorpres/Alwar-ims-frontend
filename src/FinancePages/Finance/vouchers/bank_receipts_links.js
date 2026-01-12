@@ -1,7 +1,7 @@
 const links = [
   {
     routeName: "Bank Receipts Register",
-    routePath: "/tally/vouchers/bank_receipts/report",
+    routePath: "/tally/vouchers/bank-receipts/report",
     key: 0,
   },
 

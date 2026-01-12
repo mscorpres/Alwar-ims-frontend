@@ -50,7 +50,7 @@ const links = [
   [
     {
       routeName: "Create Master",
-      routePath: "/tally/create_master",
+      routePath: "/tally/create-master",
       key: 0,
     },
     {
@@ -60,7 +60,7 @@ const links = [
     },
     {
       routeName: "Chart Of Accounts",
-      routePath: "/tally/ChartOfAccounts",
+      routePath: "/tally/chart-accounts",
       key: 2,
     },
   ],
@@ -68,7 +68,7 @@ const links = [
   [
     {
       routeName: "Add New TDS",
-      routePath: "/tally/nature_of_tds",
+      routePath: "/tally/nature-tds",
       key: 0,
     },
   ],
@@ -77,7 +77,7 @@ const links = [
   [
     {
       routeName: "Add New TCS",
-      routePath: "/tally/nature_of_tcs",
+      routePath: "/tally/nature-tcs",
       key: 0,
     },
     {
@@ -87,60 +87,54 @@ const links = [
     },
   ],
   // ledger report links
-  [
-    {
-      routeName: "Ledger Report",
-      routePath: "/tally/ledger_report",
-      key: 0,
-    },
-  ],
+ 
   // VBT links
   [
     {
       routeName: "Purchase Register",
-      routePath: "/tally/vendorbillposting/report",
+      routePath: "/tally/vendor-bill-posting/report",
       key: 0,
     },
     {
       routeName: "VBT1",
-      routePath: "/tally/vendorbillposting/VB1",
+      routePath: "/tally/vendor-bill-posting/vb-1",
       key: 1,
       placeholder: "Purchase - Goods",
     },
     {
       routeName: "VBT2",
-      routePath: "/tally/vendorbillposting/VB2",
+      routePath: "/tally/vendor-bill-posting/vb-2",
       key: 2,
       placeholder: "Services",
     },
     {
       routeName: "VBT3",
-      routePath: "/tally/vendorbillposting/VB3",
+      routePath: "/tally/vendor-bill-posting/vb-3",
       key: 3,
       placeholder: "Import",
     },
     {
       routeName: "VBT4",
-      routePath: "/tally/vendorbillposting/VB4",
+      routePath: "/tally/vendor-bill-posting/vb-4",
       key: 4,
       placeholder: "Fixed Assets",
     },
     {
       routeName: "VBT5",
-      routePath: "/tally/vendorbillposting/VB5",
+      routePath: "/tally/vendor-bill-posting/vb-5",
       key: 5,
       placeholder: "Expenses",
     },
     {
       routeName: "VBT6",
       placeholder: "JobWork",
-      routePath: "/tally/vendorbillposting/VB6",
+      routePath: "/tally/vendor-bill-posting/vb-6",
       key: 6,
     },
     {
       routeName: "VBT7",
       placeholder: "RCM",
-      routePath: "/tally/vendorbillposting/VB7",
+      routePath: "/tally/vendor-bill-posting/vb-7",
       key: 6,
     },
   ],
@@ -198,7 +192,7 @@ const links = [
   [
     {
       routeName: "Bank Payment Register",
-      routePath: "/tally/vouchers/bank_payment/report",
+      routePath: "/tally/vouchers/bank-payment/report",
       key: 0,
     },
     {
@@ -211,7 +205,7 @@ const links = [
   [
     {
       routeName: "Bank Receipts Register",
-      routePath: "/tally/vouchers/bank_receipts/report",
+      routePath: "/tally/vouchers/bank-receipts/report",
       key: 0,
     },
 
@@ -225,7 +219,7 @@ const links = [
   [
     {
       routeName: "Cash Payment Register",
-      routePath: "/tally/vouchers/cash_payment/report",
+      routePath: "/tally/vouchers/cash-payment/report",
       key: 0,
     },
     {
@@ -238,7 +232,7 @@ const links = [
   [
     {
       routeName: "Cash Receipts Register",
-      routePath: "/tally/vouchers/cash_receipts/report",
+      routePath: "/tally/vouchers/cash-receipts/report",
       key: 0,
     },
 
@@ -275,21 +269,21 @@ const links = [
   [
     {
       routeName: "Add Agreement",
-      routePath: "/legal/createagreement",
+      routePath: "/legal/create-agreement",
     },
     {
       routeName: "View Agreement",
-      routePath: "/legal/viewagreement",
+      routePath: "/legal/view-agreement",
     },
   ],
   [
     {
       routeName: "Add Party",
-      routePath: "/legal/addparty",
+      routePath: "/legal/create-party",
     },
     {
       routeName: "Add Type of Agreement",
-      routePath: "/legal/addagreementtype",
+      routePath: "/legal/add-agreement-type",
     },
   ],
   // credit without vbt
@@ -308,7 +302,7 @@ const links = [
   [
     {
       routeName: "VBT records",
-      routePath: "/tally/vendorbillposting/vendor_bill_records",
+      routePath: "/tally/vendor-bill-posting/vendor-bill-records",
     },
   ],
   // SKU costing
@@ -361,39 +355,39 @@ const links = [
   [
     {
       routeName: "Billing Address",
-      routePath: "/billingAddress",
+      routePath: "/billing-address",
     },
     {
       routeName: "Shipping Address",
-      routePath: "/shippingAddress",
+      routePath: "/shipping-address",
     },
   ],
   // create and manage BOM links
   [
     {
       routeName: "Create Bill of Material",
-      routePath: "/master/bom/create",
+      routePath: "/master/bom/create-bom",
     },
-    { routeName: "FG BOM", routePath: "/master/bom/manage/fg" },
+    { routeName: "FG BOM", routePath: "/master/bom/manage-fg-bom" },
     {
       routeName: "SFG BOM",
-      routePath: "/master/bom/manage/sfg",
+      routePath: "/master/bom/manage-sfg-bom",
     },
     {
       routeName: "Disabled",
-      routePath: "/master/bom/disabled",
+      routePath: "/master/bom/bom-disable-list",
     },
   ],
   // vendor master links
   [
-    { routeName: "Add Vendor", routePath: "/add-vendor" },
+    { routeName: "Add Vendor", routePath: "/create-vendor" },
     { routeName: "Vendor", routePath: "/vendor" },
   ],
   // MR approved transactionlinks
   [
     {
       routeName: "Pending MR(Approval)",
-      routePath: "/approved-transaction",
+      routePath: "/transaction/approved-transaction",
     },
     {
       routeName: "Material Requisition Request",
@@ -433,66 +427,66 @@ const links = [
   [
     {
       routeName: "Pending FG (s)",
-      routePath: "/PendingFG",
+      routePath: "/list/pending-fg",
     },
     {
       routeName: "Completed FG (s)",
-      routePath: "/completedFG",
+      routePath: "/list/complete-fg",
     },
   ],
   // FG Out links
   [
     {
       routeName: "Create FG OUT",
-      routePath: "/create-fgOut",
+      routePath: "/fg-out/create-fg",
     },
-    { routeName: "VIEW FG OUT", routePath: "/view-fgOut" },
+    { routeName: "VIEW FG OUT", routePath: "/fg-out/fg-out-list" },
   ],
   [
     {
       routeName: "Create FG Return",
-      routePath: "/createFgReturn",
+      routePath: "/return/create-fg",
     },
-    { routeName: "Pending FG Return", routePath: "/pendingFgReturn" },
-    { routeName: "Completed FG Return", routePath: "/completedFgReturn" },
+    { routeName: "Pending FG Return", routePath: "/return/pending-fg-list" },
+    { routeName: "Completed FG Return", routePath: "/return/complete-fg-list" },
   ],
   // RM to RM transfer links
   [
-    { routeName: "RM To RM", routePath: "/rm-to-rm" },
+    { routeName: "RM To RM", routePath: "/material-transfer/rm-to-rm" },
     // { routeName: "SF to Rej", routePath: "/sf-to-rm" },
     {
       routeName: "View Transaction",
-      routePath: "/view-transaction",
+      routePath: "/material-transfer/rm-to-rm/view-transaction",
     },
   ],
   // JW to JW transfer links
   [
-    { routeName: "JW To JW", routePath: "/warehouse/material-transfer/jw-to-jw" },
+    { routeName: "JW To JW", routePath: "/material-transfer/jw-to-jw" },
     {
       routeName: "View Transaction",
-      routePath: "/warehouse/material-transfer/jw-to-jw/view",
+      routePath: "/material-transfer/jw-to-jw/view",
     },
   ],
   // RM to REJ links
   [
-    { routeName: "RM To REJ", routePath: "/re-to-rej" },
+    { routeName: "RM To REJ", routePath: "/material-transfer/re-to-rej" },
     {
       routeName: "View Transaction",
-      routePath: "/trans-rej",
+      routePath: "/material-transfer/re-to-rej/view-transation",
     },
   ],
   // pending transfer links
   [
     {
       routeName: "Pending Transfer",
-      routePath: "/pending-transfer",
+      routePath: "/material-transfer/pending-transfer",
     },
   ],
   // rejection links
   [
     {
       routeName: "Create Rejection",
-      routePath: "/rejection",
+      routePath: "/warehouse/rejection",
     },
   ],
   [
@@ -550,18 +544,18 @@ const links = [
   [
     {
       routeName: "Jobwork SFG MIN",
-      routePath: "/jobwork/vendor/sfg/min",
+      routePath: "/job-work/vendor/sfg/min",
     },
   ],
   // workorder links
   [
-    { routeName: "CREATE", routePath: "/createwo" },
-    { routeName: "ANALYSIS", routePath: "/woanalysis" },
-    { routeName: "CREATE CHALLAN", routePath: "/wocreatechallan" },
+    { routeName: "CREATE", routePath: "/wo/create" },
+    { routeName: "ANALYSIS", routePath: "/wo/analysis" },
+    { routeName: "CREATE CHALLAN", routePath: "/wo/create-challan" },
     //
-    { routeName: "SCRAPE CHALLAN", routePath: "/wocreatescrapechallan" },
-    { routeName: "SHIPMENT", routePath: "/woShipment" },
-    { routeName: "VIEW CHALLAN", routePath: "/woviewchallan" },
+    { routeName: "SCRAPE CHALLAN", routePath: "/wo/create-scrape-challan" },
+    { routeName: "SHIPMENT", routePath: "/wo/shipment" },
+    { routeName: "VIEW CHALLAN", routePath: "/wo/view-challan" },
     { routeName: "COMPLETED", routePath: "/wocompleted" },
     //
     { routeName: "REPORT", routePath: "/woreport" },
@@ -570,30 +564,30 @@ const links = [
   [
     {
       routeName: "Branch Transfer",
-      routePath: "/branchtransferchallan",
+      routePath: "/branch-transfer-challan",
     },
     {
       routeName: "View Branch Transfer",
-      routePath: "/viewbranchtransfer",
+      routePath: "/view-branch-transfer",
     },
   ],
   // DC Links
   [
     {
       routeName: "Create DC",
-      routePath: "/create-dc",
+      routePath: "/warehouse/dc/create-dc",
       key: "0",
     },
     {
       routeName: "Manage DC",
-      routePath: "/manage-dc",
+      routePath: "/warehouse/dc/manage-dc",
       key: "1",
     },
   ],
   // gatepass links
   [
-    { routeName: "Create GP", routePath: "/create-gp" },
-    { routeName: "Manage GP", routePath: "/manage-gp" },
+    { routeName: "Create GP", routePath: "/warehouse/gp/create-gp" },
+    { routeName: "Manage GP", routePath: "/warehouse/gp/manage-gp" },
   ],
   // physical stock
   // [
@@ -651,15 +645,15 @@ const links = [
   [
     {
       routeName: "MIN Register",
-      routePath: "/transaction-In",
+      routePath: "/transaction/transaction-in",
     },
     {
       routeName: "RM Issue Register",
-      routePath: "/transaction-Out",
+      routePath: "/transaction/transaction-out",
     },
     {
       routeName: "View Documents",
-      routePath: "/uploaded-documents",
+      routePath: "/document/upload-document",
     },
   ],
   // reports r1-r14 links
@@ -871,22 +865,22 @@ const links = [
     },
     {
       routeName: "Q3",
-      routePath: "/sku-query",
+      routePath: "/query/q3/sku-query",
       placeholder: "SKU Query",
     },
     {
       routeName: "Q4",
-      routePath: "/q4-query",
+      routePath: "/query/q4-query",
       placeholder: "Ledger's Query",
     },
     {
       routeName: "Q5",
-      routePath: "/q5",
+      routePath: "/query/q5-query",
       placeholder: "Component wise stock",
     },
     {
       routeName: "Q6",
-      routePath: "/q6",
+      routePath: "/query/q6-query",
       placeholder: "Closing stock",
     },
   ],
@@ -935,11 +929,11 @@ const links = [
   [
     {
       routeName: "Material Requisition with BOM",
-      routePath: "/reqWithBom",
+      routePath: "/req-with-bom",
     },
     {
       routeName: "Material Requisition without BOM",
-      routePath: "/reqWithoutBom",
+      routePath: "/req-with-out-bom",
     },
   ],
   // SF To REJ links
@@ -962,8 +956,8 @@ const links = [
   // Create QC ALl
   [
     { routeName: "Print QCA Label", routePath: "/print-qc-label" },
-    { routeName: "QC Check", routePath: "/qccheck" },
-    { routeName: "QC Report", routePath: "/mes-report-qc" },
+    { routeName: "QC Check", routePath: "/qc-check" },
+    { routeName: "QC Report", routePath: "/qca/report" },
   ],
   // Create QC ALl
   [
@@ -1026,11 +1020,11 @@ const links = [
     },
     // {
     //   routeName: "Ap Vendor Report",
-    //   routePath: "/tally/vouchers/reference/vendorReport",
+    //   routePath: "/tally/vouchers/reference/vendor-report",
     // },
     // {
     //   routeName: "Accounts Payable",
-    //   routePath: "/tally/vouchers/reference/payableReport",
+    //   routePath: "/tally/vouchers/reference/payable-report",
     // },
   ],
   //  Finance Reports
@@ -1053,23 +1047,23 @@ const links = [
     },
     {
       routeName: "Ageing Report",
-      routePath: "/tally/vouchers/reference/payableReport",
+      routePath: "/tally/vouchers/reference/payable-report",
     },
     {
       routeName: "TDS Report",
-      routePath: "/tally/vouchers/reference/tdsReport",
+      routePath: "/tally/vouchers/reference/tds-report",
     },
     {
       routeName: "GSTR Reports",
-      routePath: "/tally/vouchers/reference/gst/gstReport1",
+      routePath: "/tally/vouchers/reference/gst/report",
     },
     {
       routeName: "MIS Report",
-      routePath: "/tally/vouchers/reference/misReport",
+      routePath: "/tally/vouchers/reference/mis-report",
     },
     {
       routeName: "Ledger Report",
-      routePath: "/tally/ledger_report",
+      routePath: "/tally/ledger-report",
     },
   ],
   // // debit note
@@ -1142,27 +1136,27 @@ const links = [
   [
     {
       routeName: "Add GST Data",
-      routePath: "/addgstdetails",
+      routePath: "/add-gst-details",
     },
     {
       routeName: "Add Book Data",
-      routePath: "/addbookdetails",
+      routePath: "/add-book-details",
     },
     {
       routeName: "Reconciled Details",
-      routePath: "/viewreconciled",
+      routePath: "/view-reconciled",
     },
     {
       routeName: "Summary",
-      routePath: "/viewsummary",
+      routePath: "/view-summary",
     },
     {
       routeName: "View Book Data",
-      routePath: "/viewbookdata",
+      routePath: "/view-book-data",
     },
     {
       routeName: "View GST Data",
-      routePath: "/viewgstdata",
+      routePath: "/view-gst-data",
     },
   ],
   // vendor reco
@@ -1230,7 +1224,7 @@ const links = [
   [
     {
       routeName: "Production MIS",
-      routePath: "/production/prodMis",
+      routePath: "/production/ppc",
     },
   ],
   // Version & Changelog

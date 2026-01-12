@@ -51,7 +51,7 @@ export { default as StockControl } from "../Pages/Master/Components/stockControl
 export { default as TransactionIn } from "./Store/Transaction/TransactionIn";
 export { default as TransactionOut } from "./Store/Transaction/TransactionOut";
 export { default as CompletedFG } from "./Store/FoodGoods/CompletedFG";
-export { default as PendingFG } from "./Store/FoodGoods/PendingFG";
+export { default as PendingFG } from "./Store/FoodGoods/PendingFG.jsx";
 export { default as CreatePhysical } from "./Store/PhysicalStock/CreatePhysical";
 export { default as ViewPhysical } from "./Store/PhysicalStock/ViewPhysical";
 

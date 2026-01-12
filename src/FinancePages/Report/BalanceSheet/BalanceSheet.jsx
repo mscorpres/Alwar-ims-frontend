@@ -46,7 +46,7 @@ function BalanceSheet() {
           <Link
             style={{ marginLeft: 110 }}
             target="_blank"
-            to={`/tally/ledger_report/${record.code}`}
+            to={`/tally/ledger-report/${record.code}`}
             state={{ code: record }}
           >
             {record.name}

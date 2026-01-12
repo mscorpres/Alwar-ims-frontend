@@ -318,7 +318,7 @@ const CreateScrapeChallan = () => {
       },
     };
     console.log("editPayload", editPayload);
-    // navigate("/woviewchallan");
+    // navigate("/wo/view-challan");
     // return;
     if (editScrapeChallan === "edit") {
       // console.log("her");
@@ -332,7 +332,7 @@ const CreateScrapeChallan = () => {
         showToast(response.message, "success");
         challanForm.resetFields();
         setLoading(true);
-        navigate("/woviewchallan");
+        navigate("/wo/view-challan");
       } else {
         showToast(response.message, "error");
         setLoading(true);

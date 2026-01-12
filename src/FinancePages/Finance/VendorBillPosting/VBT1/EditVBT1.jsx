@@ -239,7 +239,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
     }
   };
   const routeChange = () => {
-    let path = `/tally/vendorbillposting/report`;
+    let path = `/tally/vendor-bill-posting/report`;
     navigate(path);
   };
 
