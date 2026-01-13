@@ -253,8 +253,7 @@ const Dashboard = () => {
     </Box>
   );
 
-
-   const renderSummaryGridThree = (title, items, loadingFlag, subtitle) => (
+  const renderSummaryGridThree = (title, items, loadingFlag, subtitle) => (
     <Box sx={{ width: "100%" }}>
       <Paper
         elevation={0}
@@ -391,7 +390,7 @@ const Dashboard = () => {
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {getGreetingTime()}, {user.userName}
+            {getGreetingTime()}, {user?.userName || ""}
           </Typography>
           <Box sx={{ minWidth: 260 }}>
             <MyDatePicker
