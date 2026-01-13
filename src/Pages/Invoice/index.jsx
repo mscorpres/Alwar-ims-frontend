@@ -3,7 +3,7 @@ import { Button, Form, Tabs } from "antd";
 import HeaderDetails from "./HeaderDetails";
 import Products from "./Products";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import NavFooter from "../../Components/NavFooter";
 import MapModal from "./MapModal";
 import Loading from "../../Components/Loading";
@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 const currentStateCode = "9";
 
 const CreateInvoice = () => {
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState("1");
   const [showMapInvoice, setShowMapInvoice] = useState(false);
   const [tcsOptions, setTcsOptions] = useState([]);
@@ -38,8 +39,8 @@ const CreateInvoice = () => {
   };
   const submitHandler = async (obj) => {
     const response = await imsAxios.post("/invoice/create", obj);
-    if (data) {
-      toast.success(data);
+    if (response.success) {
+      showToast(response.message, "success");
       // reset();
       resetForm();
       setActiveTab("1");
@@ -53,11 +54,10 @@ const CreateInvoice = () => {
     );
 
     const obj = {
-      clientBranch: values.location,
+      clientBranch: values.location.value,
       clientID: values.client.value,
       buyerOrderDate: values.buyerOrderDate,
       buyerOrderNo: values.buyerOrderNo,
-      clientBranch: values.location.value,
       deliveryNote: values.deliveryNote,
       deliveryNoteDate: values.deliveryNoteDate,
       deliveryTerms: values.termsDelivery,
@@ -71,8 +71,7 @@ const CreateInvoice = () => {
       roadPermit: values.roadPermit,
       salesperson: values.salesPerson,
       shippingAddress: values.shippingAddress,
-      shippingCity: values,
-      shippingCity,
+      shippingCity: values.shippingCity,
       shippingGst: values.shippingGst,
       shippingName: values.shippingName,
       shippingPanNo: values.shippingPan,
@@ -269,7 +268,7 @@ const CreateInvoice = () => {
             </Button>
           }
         >
-          <Tabs.TabPane tab="Billing Details" key="1" style={{ height: "95%" }}>
+          <Tabs.TabPane tab="Billing Details" key="1" style={{ height: "100%" }}>
             <HeaderDetails
               setTcsOptions={setTcsOptions}
               form={invoiceForm}
@@ -277,7 +276,7 @@ const CreateInvoice = () => {
               setLoading={setLoading}
             />
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Product Details" style={{ height: "95%" }} key="2">
+          <Tabs.TabPane tab="Product Details" style={{ height: "100%" }} key="2">
             <Products
               gstType={gstType}
               form={invoiceForm}

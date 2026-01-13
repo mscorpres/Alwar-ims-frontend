@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Drawer, Form, Row, Skeleton, Space } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import MySelect from "../../../Components/MySelect";
@@ -15,6 +15,7 @@ const Alter = ({
   fetchData,
   sfgEditModal,
 }) => {
+  const { showToast } = useToast();
   const [allData, setAllData] = useState([]);
   const [skeletonLoading, setSkeletonLoading] = useState(false);
   const [minusLoading, setMinusLoading] = useState(false);
@@ -60,7 +61,7 @@ const Alter = ({
         selOptionVale: "",
       });
     } else {
-      toast.error("Something Went Wrong");
+      showToast("Something Went Wrong", "error");
     }
   };
 
@@ -83,7 +84,7 @@ const Alter = ({
       setAllData(arr);
     } else {
       setAllData([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -99,9 +100,9 @@ const Alter = ({
     setMinusLoading(false);
     if (response.success) {
       fetchMappningComponent();
-      toast.success("Data Deteled Successfullt");
+      showToast("Data Deteled Successfullt", "success");
     } else {
-      toast.error("Something went wrong");
+      showToast("Something went wrong", "error");
     }
   };
   const columns = [

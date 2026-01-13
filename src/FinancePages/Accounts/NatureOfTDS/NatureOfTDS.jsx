@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { AiFillEdit } from "react-icons/ai";
 import EditTDSMoal from "./EditTDSMoal";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -23,9 +21,10 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../../hooks/useToast";
 
 export default function NatureOfTDS() {
-  // const [searchInput, setSearchInput] = useState("");
+ const { showToast } = useToast();
   const [editingTDS, setEditingTDS] = useState(null);
   const [loading, setLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
@@ -116,7 +115,8 @@ export default function NatureOfTDS() {
   const createTDS = async () => {
     const { code, name, description, percentage, ledger } = newTDS;
     if (!code || !name || !description || !percentage || !ledger) {
-      toast.error("Please enter all the fields");
+      showToast("Please enter all the fields", "error");
+    
     } else {
       setFormLoading(true);
       const response = await imsAxios.post("/tally/tds/add_new_nature_of_tds", {
@@ -124,12 +124,14 @@ export default function NatureOfTDS() {
         ledger: newTDS.ledger,
       });
       setFormLoading(false);
-      // console.log(data);
+   
       if (response.success) {
-        toast.success(response.message?.msg || response.message);
+        showToast(response.message || response.message?.msg);
+       
         reset();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message || response.message?.msg, "error");
+    
       }
     }
   };
@@ -154,11 +156,12 @@ export default function NatureOfTDS() {
       });
       setTDSList(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message || response.message?.msg, "error");
+     
     }
 
     setLoading(false);
-    // console.log(data);
+ 
   };
 
   useEffect(() => {
@@ -173,7 +176,7 @@ export default function NatureOfTDS() {
     setFilterData(res);
   }, [search]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <EditTDSMoal
         getGLCodes={getGLCodes}
         editingTDS={editingTDS}
@@ -284,7 +287,7 @@ export default function NatureOfTDS() {
         <Col
           span={16}
           className="remove-table-footer"
-          style={{ height: "100%" }}
+          style={{ height: "calc(100% - 5px)" }}
         >
           <MyDataTable loading={loading} columns={columns} data={TDSList} />
         </Col>

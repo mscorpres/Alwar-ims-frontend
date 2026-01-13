@@ -23,12 +23,8 @@ import {
 } from "antd";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { v4 } from "uuid";
-import { toast } from "react-toastify";
-import socket from "../../Components/socket";
-import ToolTipEllipses from "../../Components/ToolTipEllipses";
+
 import { imsAxios } from "../../axiosInterceptor";
-import Item from "antd/es/list/Item";
 import { GridExpandMoreIcon } from "@mui/x-data-grid";
 import MuiAccordion from "@mui/material/Accordion";
 import MuiAccordionSummary from "@mui/material/AccordionSummary";
@@ -36,12 +32,9 @@ import MuiAccordionDetails from "@mui/material/AccordionDetails";
 import { styled } from "@mui/material/styles";
 import {
   downloadCSV,
-  downloadCSVCustomColumns,
 } from "../../Components/exportToCSV";
 import { useEffect } from "react";
 import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
-// import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
-// import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const initColumns = [
   { headerName: "Name", field: "name", width: 100 },
@@ -65,24 +58,29 @@ function MisReport() {
   const fetchMisReport = async () => {
     setLoading(true);
     const response = await imsAxios.get(`/mis/generate?date=${dateRange}`);
-    // console.log("All DATA->", response);
-    const { data } = response;
-    setMonths(data.totalMonths);
-    // console.log("data->", data);
-    setLoading(false);
-    let flatExpense = flattenArray(data.expenses_master);
-    // flatExpense.filter((item) => item.ytd !== "0");
-    console.log("data flatExpense", flatExpense);
-    setAllData(flatExpense);
-    arr = [];
-    let flatIncomes = flattenArray(data.income_master);
-    // let fianl = flatIncomes.filter((item) => );
-    // arr = [...allData, flatIncomes];
-    setIncomeData(flatIncomes);
-    console.log("arrb->", flatIncomes);
-    // let indirectIncomes = incomeMaster[0].children.filter(
-    //   (row) => row.code === "8030000"
-    // );
+
+    const { data, success, msg } = response;
+    if (success) {
+      setMonths(data.totalMonths);
+      // console.log("data->", data);
+      setLoading(false);
+      let flatExpense = flattenArray(data.expenses_master);
+      // flatExpense.filter((item) => item.ytd !== "0");
+
+      setAllData(flatExpense);
+      arr = [];
+      let flatIncomes = flattenArray(data.income_master);
+      // let fianl = flatIncomes.filter((item) => );
+      // arr = [...allData, flatIncomes];
+      setIncomeData(flatIncomes);
+
+      // let indirectIncomes = incomeMaster[0].children.filter(
+      //   (row) => row.code === "8030000"
+      // );
+    } else {
+      setLoading(false);
+      showToast(msg, "error");
+    }
   };
 
   const handleDownloadCSV = () => {

@@ -100,7 +100,7 @@ function R8() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Space align="center" style={{ width: "100%", marginBottom: 8 }}>
         <Select
           placeholder="Select Type"
@@ -148,7 +148,7 @@ function R8() {
           action="downloadButton"
         />
       </Space>
-      <div style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "calc(100% - 60px)", paddingRight: 5, paddingLeft: 5 }}>
         <MyDataTable
           loading={loading === "fetch"}
           columns={[actionMenuItem, ...columns]}

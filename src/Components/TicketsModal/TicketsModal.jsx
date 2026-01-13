@@ -20,12 +20,13 @@ import {
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
-
+import { customColor } from "../../utils/customColor";
+import {useToast} from "../../hooks/useToast";
 const { TextArea } = Input;
 const axiosLink = "https://support.mscorpres.com";
 
 export default function TicketsModal({ open, handleClose }) {
+ const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
   const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
@@ -100,7 +101,7 @@ export default function TicketsModal({ open, handleClose }) {
       if (response?.success && response?.data) {
         setTickets(response.data || []);
       } else {
-        toast.error(response?.message || "Failed to fetch tickets");
+        showToast(response?.message || "Failed to fetch tickets", "error");
         setTickets([]);
       }
     } catch (error) {
@@ -147,71 +148,66 @@ export default function TicketsModal({ open, handleClose }) {
     setFileList([]);
   };
 
-  // Helper function to convert file to base64 data URL
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
   // Handle submit ticket
   const handleSubmit = async () => {
     // Validation
     if (!formData.topic) {
-      toast.error("Please select a topic");
+      showToast("Please select a topic", "error");
       return;
     }
     if (!formData.subject.trim()) {
-      toast.error("Please enter a subject");
+      showToast("Please enter a subject", "error");
       return;
     }
     if (!formData.concern.trim()) {
-      toast.error("Please describe your concern");
+      showToast("Please describe your concern", "error");
       return;
     }
 
     try {
       setLoading("submitting");
 
-      // Build JSON payload
-      const submitData = {
-        email: user.email,
-        name: user.user_name || user.name,
-        topic: formData.topic,
-        subject: formData.subject,
-        message: formData.concern,
-        priority: formData.priority || "",
-        language: formData.language || "",
-        attachments: [],
-      };
-
-      // Convert attachment to base64 if present
-      if (formData.attachment) {
-        const base64 = await fileToBase64(formData.attachment);
-        submitData.attachments.push({
-          [formData.attachment.name]: base64,
-        });
+      // Build FormData payload
+      const submitFormData = new FormData();
+      submitFormData.append("name", user.userName || user.name || "");
+      submitFormData.append("email", user.email || "");
+      submitFormData.append("phone", user.phone || "");
+      submitFormData.append("subject", formData.subject);
+      submitFormData.append("message", formData.concern);
+      submitFormData.append("topic", formData.topic);
+      
+      if (formData.priority) {
+        submitFormData.append("priority", formData.priority);
+      }
+      
+      if (formData.language) {
+        submitFormData.append("language", formData.language);
       }
 
-      const response = await imsAxios.post("/ticket/create", submitData);
+      // Add attachment if present
+      if (formData.attachment) {
+        submitFormData.append("attachment[]", formData.attachment);
+      } else {
+        // Add empty attachment array if no file
+        submitFormData.append("attachment[]", "");
+      }
+
+      const response = await imsAxios.post("/ticket/create", submitFormData);
 
       setLoading(false);
 
       if (response?.success) {
-        toast.success("Ticket created successfully!");
+        showToast("Ticket created successfully!");
         resetForm();
         setActiveMenu("fetch");
         getTickets();
       } else {
-        toast.error(response?.message || "Failed to create ticket");
+        showToast(response?.message || "Failed to create ticket", "error");
       }
     } catch (error) {
       setLoading(false);
-      console.error("Error creating ticket:", error);
-      toast.error("Failed to create ticket");
+      showToast(error?.message || "Failed to create ticket", "error");
+      
     }
   };
 
@@ -265,7 +261,7 @@ export default function TicketsModal({ open, handleClose }) {
               justifyContent: "center",
               borderRadius: 6,
               cursor: "pointer",
-              backgroundColor: activeMenu === "create" ? "#047780" : "transparent",
+              backgroundColor: activeMenu === "create" ? customColor.newBgColor : "transparent",
               color: activeMenu === "create" ? "#fff" : "#666",
               transition: "all 0.2s ease",
             }}
@@ -288,7 +284,7 @@ export default function TicketsModal({ open, handleClose }) {
               justifyContent: "center",
               borderRadius: 6,
               cursor: "pointer",
-              backgroundColor: activeMenu === "fetch" ? "#047780" : "transparent",
+              backgroundColor: activeMenu === "fetch" ? customColor.newBgColor : "transparent",
               color: activeMenu === "fetch" ? "#fff" : "#666",
               transition: "all 0.2s ease",
             }}
@@ -417,7 +413,7 @@ export default function TicketsModal({ open, handleClose }) {
                   type="primary"
                   onClick={handleSubmit}
                   loading={loading === "submitting"}
-                  style={{ backgroundColor: "#047780", borderColor: "#047780" }}
+                  style={{ backgroundColor: customColor.newBgColor, borderColor: customColor.newBgColor }}
                 >
                   Submit
                 </Button>
@@ -499,7 +495,7 @@ export default function TicketsModal({ open, handleClose }) {
                   href={`${axiosLink}/view.php?e=${user.email}&t=${ticket.ticket}`}
                 >
                           <Typography.Text
-                            style={{ color: "#047780" }}
+                            style={{ color: customColor.newBgColor }}
                             copyable
                           >
                     {ticket.ticket}

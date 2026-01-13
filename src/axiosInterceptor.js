@@ -1,11 +1,8 @@
 import axios from "axios";
-import { toast } from "react-toastify";
+import { getGlobalToast } from "./context/ToastContext";
 import { v4 as uuidv4 } from 'uuid';
 let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
 const imsLink = localStorage.getItem("currentUrl")|| import.meta.env.VITE_REACT_APP_API_BASE_URL; //for net
-const generateUniqueId = () => {
-  return uuidv4();
-};
 
 const formatTimestamp = () => {
   const now = new Date();
@@ -18,11 +15,17 @@ const formatTimestamp = () => {
 
   return `${day}${month}${year}${hours}${minutes}${seconds}`;
 };
-const timestamp = formatTimestamp();
+const getToken = () => {
+  const newToken = localStorage.getItem("newToken");
+  if (newToken) {
+    return newToken;
+  }
+  return JSON.parse(localStorage.getItem("loggedInUser"))?.token;
+};
 const imsAxios = axios.create({
   baseURL: imsLink,
   headers: {
-    "x-csrf-token": JSON.parse(localStorage.getItem("loggedInUser"))?.token,    
+ "x-csrf-token": getToken(),
   
   },
 });
@@ -36,9 +39,18 @@ imsAxios.interceptors.request.use(
     config.headers["timeStamp"] = timestamp;
     config.headers["newId"] = newId;
 
+    // Use newToken if available, otherwise use loggedInUser token
+    const token = getToken();
+    if (token) {
+      config.headers["x-csrf-token"] = token;
+    }
+
     // Optionally add branch and session
-    let branch = JSON.parse(localStorage.getItem("otherData"))?.company_branch ?? "BRMSC012";
-    let session = JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";
+    let branch =
+      JSON.parse(localStorage.getItem("branchData"))?.company_branch ??
+      "BRALWR36";
+    let session =
+      JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26";
     config.headers["Company-Branch"] = branch;
     config.headers["Session"] = session;
     config.headers["x-window-url"] = window.location.href;
@@ -58,24 +70,30 @@ imsAxios.interceptors.response.use(
     return response;
   },
   (error) => {
+    const showToast = getGlobalToast();
+    
+    if (error?.code === "ERR_BAD_REQUEST" && error?.response?.status === 404) {
+       if (showToast) showToast(error?.message || "Something went wrong, Please contact administrator", "error");
+       return error;
+    }
     if (typeof error.response?.data === "object") {
       if (error.response.data?.data?.logout) {
-        toast.error(error.response.data.message);
+        if (showToast) showToast(error.response.data.message, "error");
         localStorage.clear();
         window.location.reload();
         return error;
       }
       if (error?.response.data.success !== undefined) {
-        console.log("this is the error response", error);
-        toast.error(error.response.data.message);
+      
+        if (showToast) showToast(error.response.data.message, "error");
       }
   
       return error.response.data;
     }
 
-   
+  
     if (!error.response.data?.message) {
-      toast.error(error.response?.data);
+      if (showToast) showToast(error.response?.data, "error");
     }
     // }
     return error.response;
@@ -83,8 +101,9 @@ imsAxios.interceptors.response.use(
 );
 
 let branch =
-  JSON.parse(localStorage.getItem("otherData"))?.company_branch ?? "BRMSC012";
-let session = JSON.parse(localStorage.getItem("otherData"))?.session ?? "25-26";
+  JSON.parse(localStorage.getItem("branchData"))?.company_branch ?? "BRALWR36";
+let session =
+  JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26";
 
 imsAxios.defaults.headers["Company-Branch"] = branch;
 imsAxios.defaults.headers["Session"] = session;

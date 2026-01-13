@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, Input, Row, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import printFunction, {
   downloadFunction,
 } from "../../../Components/printFunction";
@@ -26,6 +26,7 @@ import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 const ManagePO = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -47,6 +48,7 @@ const ManagePO = () => {
     { value: "single_date_wise", text: "Date Wise" },
     { value: "po_wise", text: "PO ID Wise" },
     { value: "vendor_wise", text: "Vendor Wise" },
+    {value: "requestPo", text:"Requested PR"},
   ];
   const printFun = async (poid) => {
     setLoading(true);
@@ -57,7 +59,7 @@ const ManagePO = () => {
     if (response.success) {
       printFunction(response.data.buffer.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message, "error");
     }
     setLoading(false);
   };
@@ -71,7 +73,7 @@ const ManagePO = () => {
     if (response.success) {
       setShowCancelPO(poid);
     } else {
-      toast.error("PO is already cancelled");
+      showToast("PO is already cancelled", "error");
     }
   };
   const handleDownload = async (poid) => {
@@ -84,7 +86,7 @@ const ManagePO = () => {
       let filename = `PO ${poid}`;
       downloadFunction(response.data.buffer.data, filename);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -164,6 +166,15 @@ const ManagePO = () => {
       renderCell: ({ row }) => <ToolTipEllipses text={row.cost_center} />,
       flex: 1,
       minWidth: 150,
+    },
+    {
+      headerName:"PO ACCEPTANCE",
+      field:"poacceptstatus",
+      renderCell:({row})=>(
+        <ToolTipEllipses text={row.poacceptstatus} />
+      ),
+      flex:1,
+      minWidth:150
     },
 
     {
@@ -273,8 +284,9 @@ const ManagePO = () => {
           wise: wise,
         }
       );
-      setSearchLoading(false);
+    
       if (response.success) {
+          setSearchLoading(false);
         let arr = response?.data?.map((row, index) => ({
           ...row,
           id: row.po_transaction,
@@ -282,15 +294,19 @@ const ManagePO = () => {
         }));
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+         setSearchLoading(false);
+        showToast(response.message, "error");
       }
     } else {
       if (wise == "single_date_wise" && searchDateRange == null) {
-        toast.error("Please select start and end dates for the results");
+         setSearchLoading(false);
+        showToast("Please select start and end dates for the results", "error");
       } else if (wise == "po_wise") {
-        toast.error("Please enter a PO id");
+         setSearchLoading(false);
+        showToast("Please enter a PO id", "error");
       } else if (wise == "vendor_wise") {
-        toast.error("Please select a vendor");
+         setSearchLoading(false);
+        showToast("Please select a vendor", "error");
       }
     }
   };
@@ -330,7 +346,7 @@ const ManagePO = () => {
       setShowViewSideBar(true);
       getPoLogs(poid);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -352,7 +368,7 @@ const ManagePO = () => {
       })
       .then((res) => {
         if (!res.success) {
-          toast.error(res.message?.msg || res.message);
+          showToast(res.message, "error");
           setLoading(false);
         } else {
           return res;
@@ -367,12 +383,11 @@ const ManagePO = () => {
         ...response.data.vendor[0],
       });
     } else {
-      toast.error(response?.message?.msg || response?.message);
+        setLoading(false);
+      showToast(response?.message, "error");
     }
   };
-  useEffect(() => {
-    console.log("this is the wise in po", wise);
-  }, [wise]);
+
 
   return (
     <div className="manage-po" style={{ position: "relative", height: "100%" }}>
@@ -468,10 +483,12 @@ const ManagePO = () => {
         setAsyncOptions={setAsyncOptions}
       />
       <div
-        style={{
-          height: "85%",
-          padding: "0 10px",
-        }}
+       style={{
+        height: "calc(100vh - 160px)",
+        overflowY: "auto",
+        overflowX: "hidden",
+        padding: "0 10px",
+      }}
       >
         <MyDataTable
           loading={loading || viewLoading || searchLoading}

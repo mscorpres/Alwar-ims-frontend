@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import MySelect from "../../../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
+  Drawer,
   Modal,
   Row,
   Col,
@@ -26,6 +27,7 @@ import { v4 } from "uuid";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
 
 const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
+  const { showToast } = useToast();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [skeletonLoading, setSkeletonLoading] = useState(false);
   const [vendorStatus, setVendorStatus] = useState();
@@ -130,11 +132,11 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     const response = await imsAxios.post("/vendor/updateVendor", formData);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       fetchVendor();
       setEditVendor(null);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const changeStatus = async (value) => {
@@ -145,7 +147,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     });
     setStatusLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       if (value) {
         setVendorStatus("B");
       } else {
@@ -162,7 +164,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       }));
       setLocationOptions(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLocationOptions([]);
     }
   };
@@ -247,12 +249,13 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   return (
     <>
       {" "}
-      <Modal
+      <Drawer
         title={`Update Vendor: ${editVendor?.vendor_code}`}
         open={editVendor}
         width={700}
-        onCancel={() => setEditVendor(false)}
-        footer={[
+        onClose={() => setEditVendor(false)}
+        placement="right"
+        footer={
           <Row style={{ width: "100%" }} align="middle" justify="space-between">
             <Col>
               <Form style={{ padding: 0, margin: 0 }}>
@@ -282,8 +285,8 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                 </Button>
               </Space>
             </Col>
-          </Row>,
-        ]}
+          </Row>
+        }
       >
         {<Skeleton active loading={skeletonLoading} />}
         {<Skeleton active loading={skeletonLoading} />}
@@ -571,45 +574,35 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
             </Row>
           </Form>
         )}
-      </Modal>
-      <Modal
-        title={`Addding MSME for ${editVendor?.vendor_code}`}
+      </Drawer>
+      <Drawer
+        title={`Adding MSME for ${editVendor?.vendor_code}`}
         open={editMSME == true || isMSMEEdited == true}
         width={600}
-        height={600}
-        onCancel={() => setEditMSME(false)}
-        footer={[
-          <Row style={{ width: "100%" }} align="middle" justify="space-between">
-            <Divider />
-            <Col>
-              <Space>
-                <Button key="back" onClick={close}>
-                  Back
-                </Button>
-
-                <Button
-                  key="submit"
-                  type="primary"
-                  loading={submitLoading}
-                  onClick={saveMSMEEntry}
-                >
-                  Save
-                </Button>
-              </Space>
-            </Col>
-          </Row>,
-        ]}
+        placement="right"
+        onClose={close}
+        extra={
+          <Space>
+            <Button onClick={close}>
+              Back
+            </Button>
+            <Button
+              type="primary"
+              loading={submitLoading}
+              onClick={saveMSMEEntry}
+            >
+              Save
+            </Button>
+          </Space>
+        }
       >
-        {" "}
         <Form
           form={updateMSMEForm}
           // initialValues={initialValues}
           layout="vertical"
         >
-          {" "}
           <Divider />
           <Row gutter={[10, 10]}>
-            {" "}
             <Col span={8}>
               <Form.Item
                 label="MSME Year"
@@ -659,7 +652,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
             </Col>
           </Row>
         </Form>
-      </Modal>
+      </Drawer>
     </>
   );
 };

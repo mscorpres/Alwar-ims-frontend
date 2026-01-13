@@ -186,7 +186,7 @@ const R29 = () => {
         </Col>
       </Row>
 
-      <div className="hide-select" style={{ height: "87%", margin: "10px" }}>
+      <div className="hide-select" style={{ height: "calc(100% - 20px)", margin: "10px" }}>
         {loading ? (
           <div
             style={{

@@ -89,7 +89,7 @@ export default function CreateMaster() {
     getLedgerList();
   }, []);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={8} style={{ height: "100%", padding: "0px 10px" }}>
         <Col span={12}>
           <Tabs type="card" size="small">
@@ -118,7 +118,7 @@ export default function CreateMaster() {
           </Tabs>
         </Col>
         {/* add form column ends */}
-        <Col style={{ padding: "10px 0px", height: "95%" }} span={12}>
+        <Col style={{ padding: "10px 0px", height: "calc(100% - 35px)" }} span={12}>
           <Row justify="end" style={{ marginBottom: 10 }}>
             <CommonIcons
               action="downloadButton"

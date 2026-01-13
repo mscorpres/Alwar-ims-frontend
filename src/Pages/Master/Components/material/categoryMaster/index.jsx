@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { imsAxios } from "../../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../../hooks/useToast.js";
 import {
   Col,
   Divider,
@@ -15,6 +15,7 @@ import {
 import MyButton from "../../../../../Components/MyButton";
 
 const CategoryMaster = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState("fetch");
   const [fields, setFields] = useState([]);
   const [fieldSelectOptions, setFieldSelectOptions] = useState([]);
@@ -35,7 +36,7 @@ const CategoryMaster = () => {
           }));
         setFields(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -241,12 +242,12 @@ const AddOptionModal = ({ show, hide, getSingleFieldSelectOptions }) => {
         payload
       );
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         hide();
         getSingleFieldSelectOptions(payload.attribute);
         form.resetFields();
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {

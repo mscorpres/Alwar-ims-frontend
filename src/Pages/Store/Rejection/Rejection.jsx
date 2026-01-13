@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import "../../common.css";
 import { v4 } from "uuid";
 import { Button, Col, Input, Row, Select, Skeleton } from "antd";
@@ -12,6 +12,7 @@ import MyButton from "../../../Components/MyButton";
 const { TextArea } = Input;
 
 const Rejection = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingRejection, setLoadingRejection] = useState(false);
   const [rejectedValue, setRejectedvalue] = useState({
@@ -67,8 +68,9 @@ const Rejection = () => {
       setAllDataComes(arr);
       setLoading(false);
     } else {
-      toast.error(
-        response?.message
+      showToast(
+        response?.message,
+        "error"
       );
       setLoading(false);
     }
@@ -174,7 +176,7 @@ const Rejection = () => {
     allDataComes.map((aa) => qtyArry.push(aa?.inward_qty));
     allDataComes.map((aa) => locArry.push(aa?.loc));
     const response = await imsAxios.post("/rejection/saveRejection", {
-      branch: "BRMSC012",
+      branch: "BRALWR36",
       component: compArry,
       qty: qtyArry,
       loc_to: locArry,
@@ -183,12 +185,12 @@ const Rejection = () => {
     });
 
     if (response?.success) {
-      toast.success(response?.message);
+      showToast(response?.message, "success");
       setAllDataComes([]);
       setLoadingRejection(false);
     } else {
       // allDataComes([]);
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoadingRejection(false);
     }
   };
@@ -196,7 +198,7 @@ const Rejection = () => {
 
   return (
     <>
-      <Row gutter={10} style={{ margin: "10px" }}>
+      <Row gutter={10} >
         <Col span={4}>
           <MyAsyncSelect
             style={{ width: "100%" }}
@@ -237,7 +239,7 @@ const Rejection = () => {
       </Skeleton>
 
       {allDataComes.length > 0 && (
-        <Row gutter={16} style={{ margin: "10px" }}>
+        <Row gutter={16} >
           <Col span={24}>
             <div style={{ textAlign: "end" }}>
               <Button onClick={reset} style={{ marginRight: "5px" }}>

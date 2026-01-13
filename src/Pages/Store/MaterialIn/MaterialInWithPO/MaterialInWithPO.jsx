@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import NavFooter from "../..//../../Components/NavFooter";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
@@ -54,6 +54,7 @@ import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
 
 export default function MaterialInWithPO({}) {
+  const { showToast } = useToast();
   const [poData, setPoData] = useState({ materials: [] });
   const [resetPoData, setResetPoData] = useState({ materials: [] });
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -129,12 +130,10 @@ export default function MaterialInWithPO({}) {
       let formData = new FormData();
       let values = await form.validateFields();
       let a = values.components;
-      // let a = values.components.map((comp) => {
-      //   formData.append("files", comp.file[0]?.originFileObj);
-      // });
+
       if (a?.length) {
         if (!values?.components[0]?.file) {
-          toast.info("Please upload Files");
+          showToast("Please upload Files", "error");
         }
         values.components.map((comp) => {
           formData.append("files", comp.file[0]?.originFileObj);
@@ -171,14 +170,14 @@ export default function MaterialInWithPO({}) {
           true
         ) {
           validation = false;
-          return toast.error("Currency of all components should be the same");
+          return showToast("Currency of all components should be the same", "error");
         } else if (
           (componentData.gsttype.filter((v, i, a) => v === a[0]).length ===
             componentData.gsttype.length) !=
           true
         ) {
           validation = false;
-          return toast.error("gst type of all components should be the same");
+          return showToast("gst type of all components should be the same", "error");
         }
 
         Modal.confirm({
@@ -193,10 +192,10 @@ export default function MaterialInWithPO({}) {
           },
         });
       } else {
-        toast.error("Please add at least one document");
+        showToast("Please add at least one document", "error");
       }
     } else {
-      toast.error("Please Provide all the values of all the components");
+      showToast("Please Provide all the values of all the components", "error");
     }
   };
   const validateInvoices = async (values) => {
@@ -242,11 +241,12 @@ export default function MaterialInWithPO({}) {
         "/transaction/upload-invoice",
         values.formData
       );
+     const {data} = response
 
-      if (response?.success) {
+      if (response?.success && data) {
         let final = {
-          companybranch: "BRMSC012",
-          invoices: response?.data,
+          companybranch: "BRALWR36",
+          invoices: data,
           poid: poData.headers.transaction,
           manual_mfg_code: poData.materials.map((row) => row.mfgCode),
         };
@@ -254,6 +254,8 @@ export default function MaterialInWithPO({}) {
         const response = await executeFun(() => poMINforMIN(final), "select");
 
         if (response?.success) {
+          const { data } = response;
+          console.log(data, "data during min");
           setSearchData({
             vendor: "",
             poNumber: "",
@@ -261,7 +263,7 @@ export default function MaterialInWithPO({}) {
           setInvoices([]);
           setSubmitLoading(false);
           setMaterialInSuccess({
-            materialInId: response?.data.transaction_id,
+            materialInId: data?.txn || data?.transaction_id,
             poId: poData.headers.transaction,
             vendor: poData.headers.vendorcode,
             components: poData.materials.map((row) => {
@@ -280,12 +282,12 @@ export default function MaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       } else {
         setSubmitLoading(false);
-        toast.error(
-          "Some error occured while uploading invoices, Please try again"
+        showToast(
+          "Some error occured while uploading invoices, Please try again", "error"
         );
       }
     }
@@ -528,7 +530,7 @@ export default function MaterialInWithPO({}) {
                 : (mat?.orderqty * mat?.orderrate * percentage) / 100,
             invoiceDate: "",
             invoiceId: "",
-            location: { label: "RM021", value: "20210910142629" },
+            location: "",
             maxQty: mat?.orderqty,
             autoConsumption: 0,
             pendingqtybyorderqty: mat.orderqty + " /" + mat.po_order_qty,
@@ -543,7 +545,7 @@ export default function MaterialInWithPO({}) {
       setPoData(obj);
       setResetPoData(obj);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setPoData({ materials: [] });
     }
   };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
@@ -58,7 +58,7 @@ const defaultValues = {
   gstin: "",
   vendorAddress: "",
   ewaybill: "",
-  companybranch: "BRMSC012",
+  companybranch: "BRALWR36",
   projectID: "",
   costCenter: "",
   components: [
@@ -84,6 +84,7 @@ const vendorDetailsOptions = [
 ];
 
 export default function MaterialInWithoutPO() {
+  const { showToast } = useToast();
   const [showCurrency, setShowCurrenncy] = useState(null);
   const [showAddVendorModal, setShowAddVendorModal] = useState(false);
   const [showBranchModal, setShowBranchModal] = useState(null);
@@ -107,7 +108,7 @@ export default function MaterialInWithoutPO() {
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
-  const [showSuccessPage, setShowSuccessPage] = useState(false);
+  const [showSuccessPage, setShowSuccessPage] = useState(null);
   const [preview, setPreview] = useState(false);
   const [previewRows, setPreviewRows] = useState([]);
   const [form] = Form.useForm();
@@ -125,7 +126,7 @@ export default function MaterialInWithoutPO() {
       QTY: 12,
       RATE: "--",
       HSN: "123456",
-      LOCATION: "RM021",
+      LOCATION: "--",
       AUTO_CONSUMP: "N",
       REMARK: "test",
       GST_TYPE: "LOCAL",
@@ -151,7 +152,7 @@ export default function MaterialInWithoutPO() {
     const response = await executeFun(() => validateInvoice(values), "submit");
 
     if (response?.success) {
-      if (response?.data.invoicesFound) {
+      if (response?.data.invoicesFound.length > 0) {
         return Modal.confirm({
           title:
             "Following invoices are already found in our records, Do you still wish to continue?",
@@ -188,7 +189,6 @@ export default function MaterialInWithoutPO() {
         "submit"
       );
     }
-  
 
     if (fileResponse?.success || vendorType == "p01") {
       fileName = fileResponse?.data;
@@ -198,10 +198,15 @@ export default function MaterialInWithoutPO() {
         "submit"
       );
 
-      if (response.success) {
-        // const { data } = response.data;
+      if (response?.success) {
+        const { data } = response;
+
+        // The transaction ID is nested: response.data.data.txn
+        const transactionId =
+          data?.data?.txn || response?.data?.data?.txn || data?.txn;
+        console.log("Transaction ID:", transactionId);
         setShowSuccessPage({
-          materialInId: response.data.txn,
+          materialInId: transactionId,
           vendor: { vendorname: values.vendorName.label },
           components: values.components.map((row, index) => {
             return {
@@ -220,7 +225,7 @@ export default function MaterialInWithoutPO() {
         setPreviewRows([]);
         setPreview(false);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -234,8 +239,9 @@ export default function MaterialInWithoutPO() {
     if (response.success) {
       // console.log("Respomse", response);
       if (response.data[0].piaStatus == "Y") {
-        toast.info(
-          `PIA Status is enabled for ${response.data[0].newPart} Part Code.`
+        showToast(
+          `PIA Status is enabled for ${response.data[0].newPart} Part Code.`,
+          "success"
         );
       }
       arr = convertSelectOptions(response.data);
@@ -270,7 +276,7 @@ export default function MaterialInWithoutPO() {
       });
       setLocationOptions(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const getAutoComnsumptionOptions = async () => {
@@ -303,7 +309,7 @@ export default function MaterialInWithoutPO() {
     );
     if (response.success) {
       const data = response?.data;
-      console.log("data,", data, rowId);
+
       form.setFieldValue(["components", rowId, "gstRate"], data.gstrate);
       form.setFieldValue(["components", rowId, "hsn"], data.hsn);
       form.setFieldValue(["components", rowId, "rate"], data.rate);
@@ -357,6 +363,7 @@ export default function MaterialInWithoutPO() {
 
   const handleFetchVendorBranchDetails = async (branchCode) => {
     const vendorCode = form.getFieldValue("vendorName");
+
     const response = await executeFun(
       () => getVendorBranchDetails(vendorCode.value, branchCode),
       "fetch"
@@ -394,7 +401,7 @@ export default function MaterialInWithoutPO() {
     if (response?.success) {
       form.setFieldValue("projectName", response?.data.description);
     } else {
-      toast.error(response?.message?.msg || response.message);
+      showToast(response?.message?.msg || response.message, "error");
     }
   };
   const vendorResetFunction = () => {
@@ -408,6 +415,20 @@ export default function MaterialInWithoutPO() {
     // // setVendorDetails(obj);
     // setShowResetConfirm(false);
     // form.setFieldsValue(obj);
+  };
+  const materialResetFunction = () => {
+    form.setFieldsValue({
+      components: [
+        {
+          gstType: "L",
+          location: "",
+          autoConsumption: 0,
+          currency: "364907247",
+          exchangeRate: 1,
+        },
+      ],
+    });
+    setShowResetConfirm(false);
   };
   const calculation = (rowId, obj) => {
     const { gstRate, gstType, qty, rate, exchangeRate, currency } = obj;
@@ -434,7 +455,7 @@ export default function MaterialInWithoutPO() {
       currency === "364907247" ? 0 : foreignValue
     );
   };
- 
+
   const successColumns = [
     {
       headerName: "Component",
@@ -498,6 +519,9 @@ export default function MaterialInWithoutPO() {
   }, [vendorType]);
 
   useEffect(() => {
+    if (!vendorBranch) {
+      return;
+    }
     handleFetchVendorBranchDetails(vendorBranch);
   }, [vendorBranch]);
   const columns = ({
@@ -827,7 +851,6 @@ export default function MaterialInWithoutPO() {
       "fetch"
     );
     if (response?.success) {
-    
       let data = response?.data;
       // const formattedRows = data.data.rows.map((row) => {
       //   let rowObject = {};
@@ -875,7 +898,7 @@ export default function MaterialInWithoutPO() {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setPreview(false);
     }
   };
@@ -913,7 +936,7 @@ export default function MaterialInWithoutPO() {
         openBranch={showBranchModal}
       />
 
-      {!showSuccessPage && (
+      {showSuccessPage === null && (
         <Form
           style={{ height: "100%" }}
           initialValues={defaultValues}
@@ -989,7 +1012,10 @@ export default function MaterialInWithoutPO() {
                                 ? setShowBranchModal({
                                     vendor_code: vendorDetails.vendorName,
                                   })
-                                : toast.error("Please Select a vendor first");
+                                : showToast(
+                                    "Please Select a vendor first",
+                                    "error"
+                                  );
                             }}
                             style={{
                               color: "#1890FF",
@@ -1419,9 +1445,9 @@ export default function MaterialInWithoutPO() {
         nextLabel="Submit"
         loading={submitLoading}
       />
-      {showSuccessPage && (
+      {showSuccessPage !== null && (
         <SuccessPage
-          newMinFunction={() => setShowSuccessPage(false)}
+          newMinFunction={() => setShowSuccessPage(null)}
           successColumns={successColumns}
           po={showSuccessPage}
         />

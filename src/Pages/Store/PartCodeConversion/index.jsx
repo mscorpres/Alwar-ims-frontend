@@ -18,13 +18,14 @@ import TableActions, {
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { EditFilled, DeleteFilled } from "@ant-design/icons";
 import MyButton from "../../../Components/MyButton";
 import Loading from "../../../Components/Loading";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 const PartCodeConversion = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [addedComponents, setAddedComponents] = useState({
@@ -111,7 +112,7 @@ const PartCodeConversion = () => {
       if (response?.success) {
         setComponentStock(`${data.closingStock} ${data.uom ?? ""}`);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
     } finally {
@@ -338,7 +339,7 @@ const PartCodeConversion = () => {
       const { data } = response;
      
         if (response?.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setAddedComponents({
             in: [],
             qty: {},
@@ -347,7 +348,7 @@ const PartCodeConversion = () => {
 
           setRemarks("");
         } else {
-          toast.error(response?.message);
+          showToast(response?.message, "error");
         }
    
     } catch (error) {

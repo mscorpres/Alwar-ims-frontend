@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import Select from "react-select";
 import { IoClose } from "react-icons/io5";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -12,6 +12,7 @@ export default function PendingModal({
   loading,
   setLoading,
 }) {
+  const { showToast } = useToast();
   const [sendData, setSenData] = useState({
     locSend: "",
     reqSend: "",
@@ -288,9 +289,9 @@ export default function PendingModal({
     const allpart = [...partPart, ...parkingPart, ...otherPart];
 
     if (!sendData.locSend.value) {
-      toast.error("Please Enter Location");
+      showToast("Please Enter Location", "error");
     } else if (!sendData.reqSend) {
-      toast.error("Please add quantity");
+      showToast("Please add quantity", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/ppr/addBomOutData", {
@@ -309,10 +310,10 @@ export default function PendingModal({
         comment: sendData.repSend,
       });
       if (response.success) {
-        toast.success("ad");
+        showToast(response.message || "Success", "success");
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }

@@ -7,13 +7,14 @@ import SingleDatePicker from "../../../../Components/SingleDatePicker";
 import MyButton from "../../../../Components/MyButton";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MyDataTable from "../../../../Components/MyDataTable";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import ViewMRTransaction from "../../ApprovedTransaction/ViewMRTransaction";
 import { downloadCSV } from "../../../../Components/exportToCSV";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 
 const ProccessedMrRequest = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useLoading();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [showDetails, setShowDetails] = useState(null);
@@ -62,7 +63,7 @@ const ProccessedMrRequest = () => {
 
         setRows(arr);
       } else {
-        toast.error( response?.message);
+        showToast( response?.message, "error");
       }
     } catch (error) {
     } finally {
@@ -91,8 +92,8 @@ const ProccessedMrRequest = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "95%", padding: 10 }}>
-      <Col span={4}>
+    <Row gutter={6} style={{ height: "calc(100vh - 120px)", padding: 10 }}>
+      <Col span={6}>
         <Card size="small" title="Filters">
           <Form form={filterForm} layout="vertical">
             <Form.Item name="user" label="User">
@@ -122,7 +123,7 @@ const ProccessedMrRequest = () => {
           </Form>
         </Card>
       </Col>
-      <Col span={10}>
+      <Col span={18}>
         <MyDataTable data={rows} columns={[actionColumn, ...columns]} />
       </Col>
       {showDetails && (

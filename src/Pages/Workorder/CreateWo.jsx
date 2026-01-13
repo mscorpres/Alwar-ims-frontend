@@ -14,7 +14,7 @@ import MySelect from "../../Components/MySelect";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import NavFooter from "../../Components/NavFooter";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import AddClientBranch from "./components/createworkorder/AddClientBranch";
 import AddClientModal from "./components/createworkorder/AddClientModal";
@@ -80,6 +80,7 @@ const newPurchaseOrder = {
 
 export default function CreateWO({}) {
   // initialize loading state
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [ClientBranchOptions, setclientBranchOptions] = useState([]);
@@ -119,10 +120,10 @@ export default function CreateWO({}) {
         }));
         setAsyncOptions(arr);
       } else {
-        toast.error("Some error occured wile getting vendors");
+        showToast("Some error occured wile getting vendors", "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -142,20 +143,21 @@ export default function CreateWO({}) {
           text: row.text,
           value: row.id,
           address: row.address,
+          gst: row.gst,
         }));
         setclientBranchOptions(arr);
         setAddOptions(arr);
-        setClientData(response?.data?.client);
+        setClientData(response?.data);
         if (dm === undefined) {
           createWoForm.setFieldValue("clientbranch", "");
           createWoForm.setFieldValue("gstin", "");
           createWoForm.setFieldValue("caddress", "");
         }
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -176,7 +178,7 @@ export default function CreateWO({}) {
       }));
       setAsyncOptions(arr);
     } else {
-      toast.error("Some error occured wile getting components");
+      showToast("Some error occured wile getting components", "error");
     }
   };
   //   getting component details
@@ -195,7 +197,7 @@ export default function CreateWO({}) {
       createWoForm.setFieldValue("hsn", response.data?.hsn);
       createWoForm.setFieldValue("gstRate", response.data?.gstrate);
     } else {
-      toast.error(response.message || "Some error occured wile getting component details");
+      showToast(response.message || "Some error occured wile getting component details", "error");
     }
   };
 
@@ -203,7 +205,7 @@ export default function CreateWO({}) {
     const response = await imsAxios.post("backend/fetchBomProduct", {
       search: search,
     });
-    let arr = response?.data.map((row) => ({
+    let arr = response?.data?.data.map((row) => ({
       text: row.bomname,
       value: row.bomid,
     }));
@@ -222,6 +224,7 @@ export default function CreateWO({}) {
   };
 
   const handlebilladress = (e) => {
+    console.log(clientData)
     clientData.branchList.map((item) => {
       if (item.id === e) {
         createWoForm.setFieldValue("billPan", clientData.client.pan_no);
@@ -299,10 +302,10 @@ export default function CreateWO({}) {
         createWoForm.setFieldValue("gstin", response.data.gst);
         createWoForm.setFieldValue("caddress", response.data.address);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -347,10 +350,10 @@ export default function CreateWO({}) {
     );
     setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       resetHandler();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -370,7 +373,7 @@ export default function CreateWO({}) {
     if (response.success) {
       setProjectDesc(response.data.description);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const handleFetchCostCenterOptions = async (search) => {
@@ -410,7 +413,7 @@ export default function CreateWO({}) {
         height: "93%",
         overflowY: "scroll",
         overflowX: "hidden",
-        padding: "0vh 20px",
+        padding: "0vh 20px 10px",
       }}
     >
       {/* vendor */}
@@ -541,7 +544,7 @@ export default function CreateWO({}) {
                                   createWoForm.getFieldValue("clientname")
                                     ?.value,
                               })
-                            : toast.error("Please Select a Client first");
+                            : showToast("Please Select a Client first", "error");
                         }}
                         style={{ color: "#1890FF" }}
                       >
@@ -786,7 +789,7 @@ export default function CreateWO({}) {
                               setId(true)
                               setShowBillingModal(true)
                           }else{
-                            toast.error("Please Select a Client first");
+                            showToast("Please Select a Client first", "error");
                           }
                         }}
                         style={{
@@ -903,7 +906,7 @@ export default function CreateWO({}) {
                             setId(false)
                             setShowBillingModal(true)
                         }else{
-                          toast.error("Please Select a Client first");
+                          showToast("Please Select a Client first", "error");
                         }
                       }}
                       style={{

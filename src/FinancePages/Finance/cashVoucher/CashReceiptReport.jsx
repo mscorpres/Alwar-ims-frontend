@@ -3,20 +3,17 @@ import React, { useState, useEffect } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  EyeFilled,
-  CloseCircleFilled,
-  EditFilled,
-} from "@ant-design/icons";
+import { EyeFilled, CloseCircleFilled, EditFilled } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import CashPaymentModal from "./model/CashPaymentModal";
 import CashReceiptModal from "./model/CashReceiptModal";
 import CashReceiptEdit from "./model/CashReceiptEdit";
 
 function CashReceiptReport() {
+  const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [edit, setEdit] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -26,15 +23,13 @@ function CashReceiptReport() {
   const [effective, setEffective] = useState([]);
   const [codeData, setCodeData] = useState([]);
   const [ledgerData, setLedgerData] = useState([]);
-  const [selectValueWhenFetch, setSelectValueWhenFetch] =
-    useState("");
+  const [selectValueWhenFetch, setSelectValueWhenFetch] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectedValue, setSelectedValue] = useState({
     selType: "",
     code: "",
     pick: "",
   });
-  // console.log(selectedValue);
 
   const getSelectOption = [
     { label: "Date Wise", value: "date_wise" },
@@ -46,14 +41,10 @@ function CashReceiptReport() {
   const getLedgerFunction = async (e) => {
     if (e?.length > 1) {
       setSelectLoading(true);
-      const response = await imsAxios.post(
-        "/tally/ledger/ledger_options",
-        {
-          seacrh: e,
-        }
-      );
+      const response = await imsAxios.post("/tally/ledger/ledger_options", {
+        seacrh: e,
+      });
       setSelectLoading(false);
-      // console.log(data.data);
       let arr = [];
       arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
@@ -63,18 +54,13 @@ function CashReceiptReport() {
   };
 
   const fetchData = async (e) => {
-    // console.log(selectedValue.selType);
     if (e == "date_wise") {
       setDateData([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: datee,
-        }
-      );
-      //  console.log(data);
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: datee,
+      });
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -86,20 +72,16 @@ function CashReceiptReport() {
         setSelectValueWhenFetch("date_wise");
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "eff_wise") {
       setEffective([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: datee,
-        }
-      );
-      console.log(data);
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: datee,
+      });
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -107,25 +89,20 @@ function CashReceiptReport() {
             id: v4(),
           };
         });
-        // console.log(arr);
         setSelectValueWhenFetch("eff_wise");
         setEffective(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "key_wise") {
       setCodeData([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: selectedValue?.code,
-        }
-      );
-      //  console.log(data);
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: selectedValue?.code,
+      });;
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -137,20 +114,16 @@ function CashReceiptReport() {
         setSelectValueWhenFetch("key_wise");
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "ledger_wise") {
       setLedgerData([]);
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/cashreceipt_list",
-        {
-          wise: selectedValue.selType,
-          data: selectedValue?.pick,
-        }
-      );
-      //  console.log(data);
+      const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
+        wise: selectedValue.selType,
+        data: selectedValue?.pick,
+      });
       if (response.success) {
         let arr = data?.data?.map((row) => {
           return {
@@ -162,7 +135,7 @@ function CashReceiptReport() {
         setSelectValueWhenFetch("ledger_wise");
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }
@@ -176,16 +149,11 @@ function CashReceiptReport() {
       type: "actions",
       getActions: ({ row }) => [
         <GridActionsCellItem
-          icon={
-            <EyeFilled
-              onClick={() => setOpen(row?.module_used)}
-            />
-          }
+          icon={<EyeFilled onClick={() => setOpen(row?.module_used)} />}
         />,
         <GridActionsCellItem
           icon={
             <EditFilled
-              // onClick={() => console.log(row?.ID)}
               onClick={() => setEdit(row)}
             />
           }
@@ -230,7 +198,7 @@ function CashReceiptReport() {
 
   return (
     <>
-      <div style={{ height: "90%" }}>
+      <div style={{ height: "calc(100vh - 220px)" }}>
         <Row gutter={10} style={{ margin: "5px" }}>
           {selectedValue?.selType == "date_wise" ? (
             <>
@@ -251,10 +219,7 @@ function CashReceiptReport() {
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker
-                  setDateRange={setDatee}
-                  size="default"
-                />
+                <MyDatePicker setDateRange={setDatee} size="default" />
               </Col>
               <Col span={1}>
                 <Button
@@ -285,10 +250,7 @@ function CashReceiptReport() {
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker
-                  setDateRange={setDatee}
-                  size="default"
-                />
+                <MyDatePicker setDateRange={setDatee} size="default" />
               </Col>
               <Col span={1}>
                 <Button
@@ -407,10 +369,7 @@ function CashReceiptReport() {
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker
-                  setDateRange={setDatee}
-                  size="default"
-                />
+                <MyDatePicker setDateRange={setDatee} size="default" />
               </Col>
               <Col span={1}>
                 <Button
@@ -424,25 +383,13 @@ function CashReceiptReport() {
             </>
           )}
         </Row>
-        <div style={{ height: "87%", margin: "10px" }}>
+        <div style={{ height: "calc(100vh - 200px)", margin: "10px" }}>
           {selectedValue?.selType == "date_wise" ? (
-            <MyDataTable
-              loading={loading}
-              data={dateData}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={dateData} columns={columns} />
           ) : selectedValue?.selType == "eff_wise" ? (
-            <MyDataTable
-              loading={loading}
-              data={effective}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={effective} columns={columns} />
           ) : selectedValue?.selType == "key_wise" ? (
-            <MyDataTable
-              loading={loading}
-              data={codeData}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={codeData} columns={columns} />
           ) : selectedValue?.selType == "ledger_wise" ? (
             <MyDataTable
               loading={loading}
@@ -450,11 +397,7 @@ function CashReceiptReport() {
               columns={columns}
             />
           ) : (
-            <MyDataTable
-              loading={loading}
-              data={dateData}
-              columns={columns}
-            />
+            <MyDataTable loading={loading} data={dateData} columns={columns} />
           )}
         </div>
       </div>

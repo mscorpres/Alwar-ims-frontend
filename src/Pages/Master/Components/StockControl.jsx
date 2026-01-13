@@ -4,10 +4,11 @@ import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { InboxOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { useEffect } from "react";
 
 function StockControl() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const [uploadForm] = Form.useForm();
@@ -55,11 +56,11 @@ function StockControl() {
     if (data) {
       if (data.code === 200 || data.code === "200") {
         // reset();
-        toast.success(response.message);
+        showToast(response.message, "success");
         displayDataTable();
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -89,7 +90,7 @@ function StockControl() {
   }, []);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={8} style={{ height: "100%", padding: "0 10px" }}>
         <Col span={10}>
           <Form initialValues={initialValues} form={uploadForm}>

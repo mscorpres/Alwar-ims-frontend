@@ -8,6 +8,7 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import EditSheet from "./EditSheet";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast";
 
 function BalanceSheet() {
   let arr = [];
@@ -15,6 +16,7 @@ function BalanceSheet() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingSheet, setEditingSheet] = useState(false);
+  const { showToast } = useToast();
 
   const getRows = async () => {
     setRows([]);
@@ -24,13 +26,14 @@ function BalanceSheet() {
       date: dateRange,
     });
     setLoading(false);
-    if (response.data) {
-      let arr1 = response.data.data;
+    if (response.success) {
+      let arr1 = response.data;
       arr1 = customFlatArray(arr1);
       setRows(arr1);
-      // console.log("balance sheet", typeof arr1[0].credit);
-      // let m = convertToNumber(arr1[0].credit);
-      // console.log("balance sheet aftter convert fn", typeof m);
+    
+    } else {
+      setLoading(false);
+      showToast(response.message, "error");
     }
   };
   const columns = [
@@ -43,7 +46,7 @@ function BalanceSheet() {
           <Link
             style={{ marginLeft: 110 }}
             target="_blank"
-            to={`/tally/ledger_report/${record.code}`}
+            to={`/tally/ledger-report/${record.code}`}
             state={{ code: record }}
           >
             {record.name}
@@ -181,7 +184,7 @@ function BalanceSheet() {
     return debitNumber;
   };
   return (
-    <div style={{ height: "90%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
       <EditSheet
         editingSheet={editingSheet}
         setEditingSheet={setEditingSheet}
@@ -212,9 +215,9 @@ function BalanceSheet() {
           />
         </Space>
       </Row>
-      <Row style={{ marginTop: 10, height: "100%" }}>
+      <Row style={{ marginTop: 10, height: "calc(100% - 40px)" }}>
         <Table
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", overflow: "auto" }}
           columns={columns}
           expandable={{
             defaultExpandedRowKeys: ["2010000"],
@@ -222,7 +225,7 @@ function BalanceSheet() {
           bordered={false}
           pagination={false}
           size="small"
-          scroll={{ y: "75vh" }}
+        
           dataSource={rows}
         />
       </Row>

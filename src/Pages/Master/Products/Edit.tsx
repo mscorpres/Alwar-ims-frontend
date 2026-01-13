@@ -10,6 +10,7 @@ import {
   Skeleton,
   Space,
 } from "antd";
+//@ts-ignore
 import MySelect from "../../../Components/MySelect";
 import useApi from "../../../hooks/useApi";
 import {
@@ -41,7 +42,7 @@ const Edit = ({
   productType,
   uomOptions,
   getProductRows,
-}) => {
+}:any) => {
   const [productName, setProductName] = useState("");
 
   const { executeFun, loading } = useApi();
@@ -246,6 +247,7 @@ const Edit = ({
         <Row>
           <Col span={24}>
             {loading("fetch") && (
+              //@ts-ignore
               <Skeleton.Input block active loading={loading("fetch")} />
             )}
             <Form.Item name="description" label="Description">

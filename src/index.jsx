@@ -7,17 +7,34 @@ import { Store } from "./Features/Store";
 import "./index.css";
 // import { unregister as unregisterServiceWorker } from "./serviceWorkerRegistration";
 import { ConfigProvider } from "antd";
+import { customColor } from "./utils/customColor";
+import { ToastContext } from "./context/ToastContext";
 
 const theme = {
   token: {
-    colorPrimary: "#04b0a8",
-    colorInfo: "#04b0a8",
-    colorSuccess: "#04b0a8",
+    colorPrimary: "#203624",
+    colorInfo: "#203624",
+    colorSuccess: "#203624",
     fontSizeHeading5: 16,
+    // colorTextLightSolid: "#12120E",
   },
   components: {
     Button: {
-      // colorText: "rgba(255, 255, 255, 0.88)",
+      colorText: "#fff",
+      colorPrimary: customColor.btnColor,
+      colorPrimaryHover: "#0d9489cd",
+      colorPrimaryActive: "#0d9489",
+      primaryColor: "#fff",
+      // defaultBg: "",
+      defaultColor: "#000",
+      // defaultHoverBg: "#0d9489",
+      // defaultActiveBg: "#0d9489",
+      fontWeight: 550,
+    },
+    Tabs: {
+      colorText: "#12120E",
+      itemSelectedColor: "#203624",
+      inkBarColor: "#203624",
     },
     Divider: {
       verticalMarginInline: 4,
@@ -53,12 +70,19 @@ const theme = {
       margin: 4,
     },
     Tooltip: {
-      colorBgSpotlight: "rgb(4, 176, 168)",
+      colorBgSpotlight: "#0d9489",
+      colorTextLightSolid: "#fff",
     },
     Card: {
       headerFontSizeSM: 16,
       headerFontSize: 18,
-      colorBgContainer: "rgba(247, 249, 254,1)",
+      colorBgContainer: "#f5f5f2",
+    },
+    DatePicker: {
+      cellHoverBg: "#d2f571",
+      cellActiveWithRangeBg: "rgba(210, 245, 113, 0.3)",
+      cellHoverWithRangeBg: "rgba(210, 245, 113, 0.3)",
+      presetsWidth: 120,
     },
   },
 };
@@ -68,9 +92,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
+      <ToastContext>
       <BrowserRouter>
         <App />
       </BrowserRouter>
+      </ToastContext>
     </Provider>
   </ConfigProvider>
 );

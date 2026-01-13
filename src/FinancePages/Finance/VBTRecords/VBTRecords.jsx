@@ -8,7 +8,7 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import { useEffect } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import { CodeSandboxCircleFilled } from "@ant-design/icons";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { downloadExcel } from "../../../Components/printFunction";
 import { v4 } from "uuid";
 import Loading from "../../../Components/Loading";
@@ -18,6 +18,7 @@ import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 function VBTRecords() {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [rows, setRows] = useState([]);
 
@@ -49,12 +50,9 @@ function VBTRecords() {
     { text: "VBT7", value: "VBT07" },
   ];
   const emitDownloadEvent = () => {
-    // let newId = v4();
-    // let arr = notifications;
-
-    console.log("this is the arr", searchDateRange);
+  
     if (!user.company_branch) {
-      toast.error("Please select a branch to download report");
+      showToast("Please select a branch to download report", "error");
       return;
     }
     socket.emit("vbtReport", {
@@ -166,7 +164,7 @@ function VBTRecords() {
     setSearchDateRange("");
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         justify="space-between"
         style={{ padding: "0px 10px", paddingBottom: 5 }}

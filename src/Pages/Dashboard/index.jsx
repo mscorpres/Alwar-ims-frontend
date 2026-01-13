@@ -4,16 +4,18 @@ import SummarySection from "./SummarySection";
 import Section3 from "./Section3";
 import { imsAxios } from "../../axiosInterceptor";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import MINSummary from "./MINSummary";
 import MyDatePicker from "../../Components/MyDatePicker";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
+  const { showToast } = useToast();
   const [summaryDate, setSummaryDate] = useState("");
-  // const [gatePassDate, setGatePassDate] = useState("");
-  // const [pendingTransactionsDate, setpendingTransactionDate] = useState("");
-  // const [minDate, setMINDate] = useState("");
-  // const [mfgProductsDate, setMfgProductDate] = useState("");
+ const { user } = useSelector(
+    (state) => state.login
+  );
+  
 
   const [transactionSummary, setTransactionSummary] = useState([
     {
@@ -158,7 +160,7 @@ const Dashboard = () => {
         }
       );
       const  data  = response?.data;
-      if (data) {
+     
         if (response.success) {
           if (transactionType === "transactions") {
             setTransactionSummary([
@@ -230,9 +232,7 @@ const Dashboard = () => {
             ]);
           }
         }
-      } else {
-        toast.error(response.message || response.message);
-      }
+   
     } catch (error) {
     } finally {
       setLoading((curr) => ({
@@ -278,7 +278,7 @@ const Dashboard = () => {
             },
           ]);
         } else {
-          toast.error(response.message || response.message);
+          showToast(response.message || response.message, "error");
         }
       }
     } catch (error) {
@@ -310,7 +310,7 @@ const Dashboard = () => {
 
           setMfgProductSummary(arr);
         } else {
-          toast.error(response.message || response.message);
+          showToast(response.message || response.message, "error");
         }
       }
     } catch (error) {
@@ -359,7 +359,7 @@ const Dashboard = () => {
             },
           ]);
         } else {
-          toast.error(response.message || response.message);
+          showToast(response.message || response.message, "error");
         }
       }
     } catch (error) {
@@ -381,10 +381,13 @@ const Dashboard = () => {
   }, [summaryDate]);
 
   useEffect(() => {
+    if (!user) {
+      return;
+    }
     getMasterSummary();
-  }, []);
+  }, [user]);
   return (
-    <Row justify="center" style={{ padding: 50 }}>
+    <Row  style={{ padding: 20 }}>
       <Col span={22}>
         <Row gutter={[6, 12]}>
           <Col>

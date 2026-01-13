@@ -3,8 +3,10 @@ import { Button, Card, Col, Form, Input, Row } from "antd";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import printFunction from "../../../Components/printFunction";
+import { useToast } from "../../../hooks/useToast.js";
 
 const PrintQCALabel = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [printLabelForm] = Form.useForm();
 
@@ -16,19 +18,22 @@ const PrintQCALabel = () => {
         skuType: values.type,
         totalQr: values.quantity,
       });
-      const { data } = response;
-      if (data) {
-        printFunction(data.data.buffer.data);
+      if (response.success) {
+        showToast(response.message, "success");
+        printFunction(response.data.buffer.data);
+      }
+      else{
+        showToast(response.message, "error");
       }
     } catch (error) {
-      console.log("error while printing labels", error);
+      showToast(error.message, "error");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Row style={{ height: "90%" }} justify="center">
+    <Row style={{ height: "90%" }}>
       <Col span={6}>
         <Card>
           <Form

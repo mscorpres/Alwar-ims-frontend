@@ -6,14 +6,16 @@ import Loading from "../../../../Components/Loading";
 import { v4 } from "uuid";
 import VBT6DataTable from "./VBT6DataTable";
 import TaxModal from "../../../../Components/TaxModal";
-import { toast } from "react-toastify";
+
 import { Button, Col, Drawer, Modal, Row, Typography } from "antd";
 import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
 import HeaderDetails from "./HeaderDetails";
+import { useToast } from "../../../../hooks/useToast";
 
 export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
   const [glCodes, setGlCodes] = useState([]);
+ const {showToast}= useToast();
   const [vendorData, setVendorData] = useState({});
   const [vbt, setVBT] = useState(null);
   const [rows, setRows] = useState([]);
@@ -58,7 +60,8 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
         });
       }
     } else {
-      toast.error(response.message?.msg || response.message);
+    
+      showToast(response.message?.msg || response.message, "error");
       // setEditingVBT(null);
     }
   };
@@ -118,9 +121,7 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
     }
     totalValidatingData = Number(totalValidatingData).toFixed(3);
     totalValidatingData = Number(totalValidatingData).toFixed(3);
-    // if (Number(vendorData.bill_amount).toFixed(3) != totalValidatingData) {
-    //   return toast.error("Bill Amount and total Vendor Amount are not equal");
-    // }
+   
 
     let finalObj = {
       ven_code: vbt?.ven_code,
@@ -188,7 +189,7 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
     let arr = rows;
     arr.map((row) => {
       if (!row.glCodeValue) {
-        return toast.error("Please select a GL for all of the components");
+        return showToast("Please select a GL for all of the components","error") ;
       }
       let a = Number(row.vendorAmount);
       let totalVendor = 0;
@@ -255,6 +256,7 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
     setLoading(false);
     if (response.success) {
       toast.success(response.message);
+      showToast( response.message || "VBT Updated", "success");
       setTimeout(() => {
         setEditingVBT(null);
       }, 2000);
@@ -435,7 +437,6 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
           tdsData: row.ven_tds,
           tdsGL: { label: "", value: "" },
           value: row.value,
-          comp_unit: row.comp_unit,
           item_description: row.item_description,
         };
       });
@@ -446,7 +447,7 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
         uom: 0,
         maxQty: 1,
         c_part_no: "Ser002",
-        comp_unit: 0,
+        comp_unit: "",
         in_gst_cgst: 0,
         in_gst_igst: 0,
         in_gst_sgst: 0,
@@ -454,7 +455,7 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
         in_gst_type: editingVBT[0].in_gst_type,
         in_hsn_code: 0,
         in_po_rate: 0,
-        freight: 0,
+        freight: true,
         bill_qty: 1,
         freightGl: "(Freight Inward)800105",
         gstAssetValue: 0, // value + freight
@@ -473,8 +474,6 @@ export default function CreateVBT6({ editingVBT, setEditingVBT, setVBTData }) {
         tdsData: editingVBT[0].ven_tds,
         tdsGL: { label: "", value: "" },
         value: 0,
-        comp_unit: "",
-        freight: true,
       };
       arr = [...arr, freightRow];
       setRows(arr);

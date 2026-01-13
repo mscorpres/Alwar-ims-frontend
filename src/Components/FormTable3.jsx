@@ -3,7 +3,8 @@ import { Form, Row, Typography } from "antd";
 import TableActions, { CommonIcons } from "./TableActions.jsx/TableActions";
 import { v4 } from "uuid";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../hooks/useToast";
+
 
 const validateTable = (rules, rows) => {
   let errors = false;
@@ -39,6 +40,7 @@ const FormTable3 = ({
 }) => {
   const [editing, setEditing] = useState(false);
   const [editingRow, setEditingRow] = useState({});
+ const { showToast } = useToast();
   const addRows = (newRow) => {
     let newRowObj = {
       id: v4(),
@@ -80,7 +82,6 @@ const FormTable3 = ({
     } else {
       // let newObj = data.find((row) => row.id === id);
       let newObj = editingRow;
-      console.log("this is the newobj", newObj);
       setEditingRow({ ...newObj, [name]: value });
     }
   };
@@ -90,7 +91,7 @@ const FormTable3 = ({
     const { errors, obj: validatedObj } = validate(rules, obj);
 
     if (errors) {
-      toast.error(errors);
+      showToast(errors, "error");
     }
     obj = validatedObj;
     rows = rows.map((row) => {

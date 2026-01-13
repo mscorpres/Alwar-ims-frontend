@@ -76,7 +76,7 @@ function R33() {
   }, [wise]);
 
   return (
-    <Row style={{ height: "95%", padding: 10 }} gutter={6}>
+    <Row style={{ height: "100%", padding: 10 }} gutter={6}>
       <Col span={4}>
         <Card size="small">
           <Form form={form} layout="vertical" initialValues={initialValues}>
@@ -103,7 +103,7 @@ function R33() {
             )}
             <Form.Item name="date" label="Date">
               <MyDatePicker
-                setDateRange={(value) => form.setFieldValue("date", value)}
+                setDateRange={(value:any) => form.setFieldValue("date", value)}
               />
             </Form.Item>
             <Row justify="end">

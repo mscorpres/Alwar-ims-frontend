@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import {
   Button,
   Row,
@@ -20,6 +20,7 @@ import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 
 const AddVendorSideBar = ({ setOpen, open }) => {
+  const { showToast } = useToast();
   const [addVendor, setAddVendor] = useState({
     vendor: {
       vname: "",
@@ -120,11 +121,11 @@ const AddVendorSideBar = ({ setOpen, open }) => {
     if (response.success) {
       // fetchVendor();
       reset();
-      toast.success(response.message?.toString().replaceAll("<br/>", " ") || response.message);
+      showToast(response.message?.toString().replaceAll("<br/>", " ") || response.message, "success");
       setOpen(null);
       // setShowAddVendorModal(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setSubmitLoading(false);
     }
     setSubmitLoading(false);

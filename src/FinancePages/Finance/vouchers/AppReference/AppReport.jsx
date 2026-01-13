@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, message, Divider, Popconfirm, Row, Space } from "antd";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { PlusOutlined } from "@ant-design/icons";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
-import { DeleteTwoTone } from "@ant-design/icons";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../../Components/exportToCSV";
 import MyButton from "../../../../Components/MyButton";
 
 function AppReport() {
+  const { showToast } = useToast();
   // const description = "Anuj";
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -84,7 +84,7 @@ function AppReport() {
 
     const { data } = response;
     if (data) {
-      toast.success(data);
+      showToast(data, "success");
       fetchReport();
     }
 
@@ -199,7 +199,7 @@ function AppReport() {
   ];
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row justify="space-between" gutter={10} style={{ padding: "0px 5px" }}>
         <Col>
           <Space>
@@ -247,7 +247,7 @@ function AppReport() {
         {/* <Divider /> */}
       </Row>
 
-      <div style={{ height: "95%", margin: 5 }}>
+      <div style={{ height: "calc(100% - 50px)", margin: 5 }}>
         <MyDataTable
           loading={loading}
           data={rows}

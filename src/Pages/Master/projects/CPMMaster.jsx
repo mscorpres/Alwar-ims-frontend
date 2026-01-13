@@ -6,7 +6,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import NewProjectForm from "./NewProjectForm";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { downloadCSVnested2 } from "../../../Components/exportToCSV";
 import TableActions, {
   CommonIcons,
@@ -14,6 +14,7 @@ import TableActions, {
 import UpdateProjectModal from "./UpdateProjectModal";
 
 function CPMMaster() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
@@ -36,7 +37,7 @@ function CPMMaster() {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };
@@ -45,14 +46,14 @@ function CPMMaster() {
     try {
       const response = await imsAxios.put("/ppr/update/project", updatedData);
       if (response.success) {
-        toast.success("Project updated successfully!");
+        showToast("Project updated successfully!", "success");
         setIsModalVisible(false);
         getAllDetailFun(); // Refresh the data after successful update
       } else {
-        toast.error(response.data.message.msg);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error("Failed to update the project. Please try again.");
+      showToast("Failed to update the project. Please try again.", "error");
     }
   };
 
@@ -60,7 +61,7 @@ function CPMMaster() {
     downloadCSVnested2(rows, columns, "All Projects");
   };
 
-  const disableValidateHandler = async (row, status) => {
+  const disableValidateHandler = async (row,status) => {
     const payload = {
       project: row.project,
       status: status ? "1" : "0",
@@ -84,9 +85,9 @@ function CPMMaster() {
       if (response.success) {
         getAllDetailFun();
         // getDataTree();
-        toast.success(response.message);
+        showToast(response.message, "success");
       } else {
-        toast.error(data.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -95,6 +96,9 @@ function CPMMaster() {
     { field: "index", headerName: "Sr. No", width: 80 },
     { field: "project", headerName: "Project Id", width: 180 },
     { field: "description", headerName: "Project Name", flex: 1 },
+    {field:"qty",headerName:"Quantity",width:180,flex:1},
+    { field: "costcenter", headerName: "Cost Center", width: 180, flex: 1 },
+    {field:"bomSubject",headerName:"BOM",width:180,flex:1},
     { field: "insert_dt", headerName: "Insert Date", flex: 1 },
     {
       headerName: "Status",
@@ -148,7 +152,7 @@ function CPMMaster() {
   }, []);
 
   return (
-    <Row gutter={10} style={{ height: "90%", padding: 10 }}>
+    <Row gutter={10} style={{ height: "100%", padding: 10 }}>
       <Col span={6}>
         <Card
           size="small"

@@ -55,9 +55,6 @@ export const createBOM = async (
       : +Number(values.latestVersion).toFixed(2);
 
   if (isUpdating) {
-    console.log("updateType", updateType);
-    console.log("version", version);
-
     if (updateType === "ecn") {
       version = version + 0.01;
       if (values.name !== ogName) {
@@ -73,15 +70,9 @@ export const createBOM = async (
     version = version + ".0";
     version = Number(version).toFixed(1);
   }
-  console.log("version", version);
-
-  console.log("values", values);
-  console.log("isBomRej", isBomRej);
   // return;
   let arr1: CreateBOMType["approvalMetrics"] = approvals.map((row) => {
     let obj: CreateBOMType["approvalMetrics"][0] = row;
-    console.log("row in create bom", row);
-    // return;
     obj.stage = `L${obj.stage}`;
     obj.approvers = obj.approvers.map((app) => ({
       ...app,
@@ -99,7 +90,6 @@ export const createBOM = async (
   //parsing approvers
   let arr: CreateBOMType["approvalMetrics"] = approvals.map((row) => {
     let obj: CreateBOMType["approvalMetrics"][0] = row;
-    console.log("row in create bom", row);
     // return;
     obj.stage = `${obj.stage}`;
     obj.approvers = obj.approvers.map((app) => ({
@@ -142,9 +132,6 @@ export const createBOM = async (
     approvalMetrics: arr1,
   };
 
-  console.log("payload", payload);
-
-  // return;
   const formData = new FormData();
   for (let key in payload) {
     if (key === "components" || key === "approvalMetrics") {
@@ -366,8 +353,7 @@ export const getLogs = async (bomKey: string) => {
   let arr: BOMApprovalType | {} = {};
 
   if (response.success) {
-    const values = response.data.approvers; // Assuming the new approvers structure is in response.data.approvers
-    console.log(values, "Approver values");
+    const values = response.data.approvers; 
 
     // Create a grouped structure by line
     const groupedLogs = values.reduce((acc, row) => {
@@ -423,8 +409,6 @@ export const getRejLogs = async (bomKey: string) => {
     `/bom/fetchRejection?bomID=${bomKey}`
   );
   let arr: BOMApprovalType | {} = {};
-  console.log("response rej bom ", response);
-  // return;
   if (response.success) {
     // const values: GetLogsType = response.data;
     // arr = {
@@ -519,7 +503,6 @@ interface GetExistingBom {
   }[];
 }
 // export const getExistingBom = async (sku: string, version: string) => {
-//   console.log("version", version);
 //   let v;
 //   if (version == "1.0") {
 //     v = "1.00";
@@ -527,11 +510,9 @@ interface GetExistingBom {
 //   const response: ResponseType = await imsAxios.get(
 //     `/bomRnd/validProduct/${sku}`
 //   );
-// console.log(response)
 //   if (response.success) {
 //     if (response.data) {
 //       let values: GetExistingBom = response.data.bomHeaderDetails;
-//       console.log(values,"vvaall")
 //       if (values) {
 //         let obj: BOMTypeExtended = {
 //           // name: values.name + "00.00",
@@ -574,7 +555,6 @@ interface GetExistingBom {
 // };
 
 export const getExistingBom = async (sku: string, version: string) => {
-  console.log("version", version);
   let v;
   if (version === "1.0") {
     v = "1.00"; // Update version if needed

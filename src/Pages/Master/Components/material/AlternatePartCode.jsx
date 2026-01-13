@@ -8,13 +8,13 @@ import { useEffect, useState } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../gstreco/myDataTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import { imsAxios } from "../../../../axiosInterceptor";
 import { getAlternativePartCodes } from "../../../../api/master/component.ts";
 import TableActions from "../../../../Components/TableActions.jsx/TableActions";
-import { toast } from "react-toastify";
 import { CheckOutlined } from "@ant-design/icons";
+import { useToast } from "../../../../hooks/useToast.js";
 
 const AlternatePartCode = ({ open, hide }) => {
+  const { showToast } = useToast();
   const [addedPartCodes, setAddedPartCodes] = useState([]);
   const [newPartCodes, setNewPartCodes] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -110,31 +110,23 @@ const AlternatePartCode = ({ open, hide }) => {
         component: newComponent.label,
         componentKey: newComponent.value,
       };
-      // console.log("newPart", newPart);
-      // console.log("newPartCodes", newPartCodes);
-      // console.log("addedPartCodes", addedPartCodes);
-      // console.log("newComponent", newComponent);
+  
       let arr = [...newPartCodes, ...addedPartCodes];
-      // console.log("arr", arr);
+     
       const newComponentKey = newPart.componentKey;
       const isDuplicate = arr.some(
         (obj) => obj.componentKey === newComponentKey
       );
-      // console.log("is", isDuplicate);
+
       if (!isDuplicate) {
         setNewPartCodes((curr) => [newPart, ...curr]);
         setAsyncOptions([]);
         // console.log("New object added successfully.");
       } else {
-        toast.info("Component already pressent!");
+        showToast("Component already pressent!", "info");
       }
       form.resetFields();
-      // if (newPart.componentKey in arr) {
-      //   console.log("here");
-      // } else {
-      //   setNewPartCodes((curr) => [newPart, ...curr]);
-      //   console.log("here");
-      // }
+      
     }
   }, [newComponent]);
 
@@ -218,7 +210,7 @@ const columns = [
         //   style={{
         //     width: 10,
         //     height: 10,
-        //     background: "#047780",
+        //     background: customColor.newBgColor,
         //     borderRadius: "100%",
         //   }}
         // ></div>

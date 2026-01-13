@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { Form, Modal, Row, Typography, Col, Button, Input } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 export default function JwRejectModal({ open, close, getRows }) {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rejectForm] = Form.useForm();
 
@@ -21,9 +22,9 @@ export default function JwRejectModal({ open, close, getRows }) {
       close();
       resetHandler();
       getRows();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -50,7 +51,7 @@ export default function JwRejectModal({ open, close, getRows }) {
       okText="Reject PO"
       cancelText="No"
     >
-      <Row justify="center">
+      <Row >
         <Col span={24}>
           <Row justify="center">
             <Form form={rejectForm} layout="vertical" style={{ width: "100%" }}>

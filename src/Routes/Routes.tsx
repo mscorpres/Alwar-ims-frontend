@@ -20,6 +20,7 @@ import {
   CreatePPR,
   PendingPPR,
   CreatePo,
+  POrequest,
   ManagePO,
   CompletedPo,
   Uom,
@@ -103,7 +104,6 @@ import {
   ViewandEditClient,
   PartCodeConversion,
   ProductMIN,
-  Dashboard,
   JWUpdateRate,
   CreateBranchTransferChallan,
   ViewBranchTransfer,
@@ -125,8 +125,10 @@ import {
   ViewAgreement,
   AddAgreementType,
   JobworkApproval,
+  //@ts-ignore
 } from "../Pages/index.jsx";
-
+//@ts-ignore
+import Dashboard from "../new/dashboard/Dashboard.jsx";
 import {
   CreateMaster,
   Ledger,
@@ -136,11 +138,6 @@ import {
   BlockTCS,
   LedgerReport,
   VBTReport,
-  VBT1,
-  VBT2,
-  VBT3,
-  VBT4,
-  VBT5,
   JournalPosting,
   JVReport,
   BankReceipts,
@@ -235,13 +232,10 @@ import RejectedPhysicalStock from "../Pages/Store/PhysicalStock/Rejected.jsx";
 import EditSalesOrder from "../Pages/Sales/SalesOrder/edit/index.jsx";
 import ShipmentsList from "../Pages/Sales/SalesOrder/SalesOrderRegister/Shipments/ShipmentsList.jsx";
 import Challan from "../Pages/Sales/SalesOrder/SalesOrderRegister/Challan/Challan.jsx";
-
 import R32 from "../Pages/Reports/R/R32.jsx";
 import Index from "../Pages/Query/ClosingStock/Index.jsx";
 import routeConstants from "./routeConstants.js";
 import CreateScrapeChallan from "../Pages/Workorder/components/WoCreateChallan/CreateScrapeChallan.jsx";
-// import ProcurementDashboard from "../Pages/Dashboard/ProcurementDashboard.jsx";
-//
 import ProductionMIS from "../Pages/Production/ProductionMIS/ProductionMIS";
 import R33 from "../Pages/Reports/R/R33";
 import ChangelogHistory from "../Pages/Changelog/ChangelogHistory.jsx";
@@ -255,18 +249,12 @@ import FARUpload from "@/Pages/far/index.js";
 import R35 from "@/Pages/Reports/R/R35.jsx";
 import R37 from "@/Pages/Reports/R/R37.jsx";
 import QcScan from "@/Pages/Production/mes/qca/scan/index.js";
-import CreatePhysicalProduction from "@/Pages/Production/PhysicalStock/CreatePhysical.jsx";
-import PendingPhysicalProduction from "@/Pages/Production/PhysicalStock/Pending.jsx";
-import RejectedPhysicalProduction from "@/Pages/Production/PhysicalStock/Rejected.jsx";
-import ViewPhysicalProduction from "@/Pages/Production/PhysicalStock/ViewPhysical.jsx";
 import Products from "@/Pages/R&D/products/index.js";
 import ApprovalList from "@/Pages/R&D/products/approvalList.js";
 import BOMCreate from "@/Pages/R&D/bom/create/index.js";
 import BOMList from "@/Pages/R&D/bom/list/index.js";
 import VersionDownload from "@/Pages/Version/VersionDownload.jsx";
-// import CreateAsset from "../Pages/fixeassetmodule/CreateAsset/CreateAsset";
-// import ViewAsset from "../Pages/fixeassetmodule/ViewAsset";
-// import Depreciation from "../Pages/fixeassetmodule/Depreciation";
+
 
 const Routes = [
   {
@@ -301,10 +289,10 @@ const Routes = [
     path: "/services",
     main: () => <Services />,
   },
-  {
-    path: "/stockControl",
-    main: () => <StockControl />,
-  },
+  // {
+  //   path: "/stockControl",
+  //   main: () => <StockControl />,
+  // },
   {
     path: "/uom",
     main: () => <Uom />,
@@ -330,11 +318,11 @@ const Routes = [
     main: () => <Location />,
   },
   {
-    path: "/billingAddress",
+    path: "/billing-address",
     main: () => <BillingAddress />,
   },
   {
-    path: "/ShippingAddress",
+    path: "/shipping-address",
     main: () => <ShippingAddress />,
   },
   {
@@ -342,7 +330,7 @@ const Routes = [
     main: () => <Vendor />,
   },
   {
-    path: "/add-vendor",
+    path: "/create-vendor",
     main: () => <AddVendor />,
   },
   // {
@@ -359,25 +347,25 @@ const Routes = [
   //   main: () => <DocNumbering />,
   // },
   {
-    path: "/master/bom/create",
+    path: "/master/bom/create-bom",
     main: () => <CreateBom />,
   },
 
   {
-    path: "/master/bom/manage/fg",
+    path: "/master/bom/manage-fg-bom",
     main: () => <ManageBom />,
   },
   {
-    path: "/master/bom/manage/sfg",
+    path: "/master/bom/manage-sfg-bom",
     main: () => <ManageBom />,
   },
   {
-    path: "/master/bom/disabled",
+    path: "/master/bom/bom-disable-list",
     main: () => <DisabledBom />,
   },
 
   {
-    path: "/approved-transaction",
+    path: "/transaction/approved-transaction",
     main: () => <PendingApproval />,
   },
   // {
@@ -385,58 +373,58 @@ const Routes = [
   //   main: () => <MaterialTransaction />,
   // },
   {
-    path: "/uploaded-documents",
+    path: "/document/upload-document",
     main: () => <ViewDocuments />,
   },
   {
-    path: "/transaction-In",
+    path: "/transaction/transaction-in",
     main: () => <TransactionIn />,
   },
   {
-    path: "/transaction-Out",
+    path: "/transaction/transaction-out",
     main: () => <TransactionOut />,
   },
   {
-    path: "/completedFG",
+    path: "/list/complete-fg",
     main: () => <CompletedFG />,
   },
   {
-    path: "/pendingFG",
+    path: "/list/pending-fg",
     main: () => <PendingFG />,
   },
   {
-    path: "/createFgReturn",
+    path: "/return/create-fg",
     main: () => <CreateFgReturn />,
   },
   {
-    path: "/pendingFgReturn",
+    path: "/return/pending-fg-list",
     main: () => <PendingReversal />,
   },
   {
-    path: "/completedFgReturn",
+    path: "/return/complete-fg-list",
     main: () => <CompletedFgReturn />,
   },
   {
-    path: "/create-fgOut",
+    path: "/fg-out/create-fg",
     main: () => <CreateFGOut />,
   },
   {
-    path: "/view-fgOut",
+    path: "/fg-out/fg-out-list",
     main: () => <ViewFGOut />,
   },
 
   {
-    path: "/rm-to-rm",
+    path: "/material-transfer/rm-to-rm",
     exact: true,
     main: () => <RmtoRm />,
   },
   {
-    path: "/warehouse/material-transfer/jw-to-jw",
+    path: "/material-transfer/jw-to-jw",
     exact: true,
     main: () => <JwToJw />,
   },
   {
-    path: "/warehouse/material-transfer/jw-to-jw/view",
+    path: "/material-transfer/jw-to-jw/view",
     exact: true,
     main: () => <JwToJwViewTransaction />,
   },
@@ -446,94 +434,94 @@ const Routes = [
   //   main: () => <RmtoRm />,
   // },
   {
-    path: "/view-transaction",
+    path: "/material-transfer/rm-to-rm/view-transaction",
     exact: true,
     main: () => <ViewTransaction />,
   },
   {
-    path: "/re-to-rej",
+    path: "/material-transfer/re-to-rej",
     exact: true,
     main: () => <ReToRej />,
   },
   {
-    path: "/trans-rej",
+    path: "/material-transfer/re-to-rej/view-transation",
     exact: true,
     main: () => <TransactionRej />,
   },
   {
-    path: "/pending-transfer",
+    path: "/material-transfer/pending-transfer",
     exact: true,
     main: () => <PendingTransfer />,
   },
   {
-    path: "/rejection",
+    path: "/warehouse/rejection",
     exact: true,
     main: () => <Rejection />,
   },
   {
-    path: "/create-dc",
+    path: "/warehouse/dc/create-dc",
     exact: true,
     main: () => <CreateDC />,
   },
   {
-    path: "/manage-dc",
+    path: "/warehouse/dc/manage-dc",
     exact: true,
     main: () => <ManageDC />,
   },
   {
-    path: "/create-gp",
+    path: "/warehouse/gp/create-gp",
     exact: true,
     main: () => <CreateGP />,
   },
   {
-    path: "/manage-gp",
+    path: "/warehouse/gp/manage-gp",
     exact: true,
     main: () => <ManageGatePass />,
   },
   {
-    path: "/sku-query",
+    path: "/query/q3/sku-query",
     exact: true,
     main: () => <SkuQuery />,
   },
   {
-    path: "/q4-query",
+    path: "/query/q4-query",
     exact: true,
     main: () => <Q4 />,
   },
   {
-    path: "/q5",
+    path: "/query/q5-query",
     main: () => <QueryQ5 />,
   },
   {
-    path: "/q6",
+    path: "/query/q6-query",
     main: () => <Index />,
   },
   // production MIS
   {
-    path: "/production/prodMis",
+    path: "/production/ppc",
     main: () => <ProductionMIS />,
   },
 
   //production physical stock
-  {
-    path: "/production/physical-stock/create",
-    main: () => <CreatePhysicalProduction />,
-  },
-  {
-    path: "/production/physical-stock/pending",
-    main: () => <PendingPhysicalProduction />,
-  },
-  {
-    path: "/production/physical-stock/rejected",
-    main: () => <RejectedPhysicalProduction />,
-  },
-  {
-    path: "/production/physical-stock/view",
-    main: () => <ViewPhysicalProduction />,
-  },
+  // {
+  //   path: "/production/physical-stock/create",
+  //   main: () => <CreatePhysicalProduction />,
+  // },
+  // {
+  //   path: "/production/physical-stock/pending",
+  //   main: () => <PendingPhysicalProduction />,
+  // },
+  // {
+  //   path: "/production/physical-stock/rejected",
+  //   main: () => <RejectedPhysicalProduction />,
+  // },
+  // {
+  //   path: "/production/physical-stock/view",
+  //   main: () => <ViewPhysicalProduction />,
+  // },
   // MES QCA
   {
-    path: "/mes-report-qc",
+    path: "/qca/report",
     exact: true,
     main: () => <MesQcaReport />,
   },
@@ -542,7 +530,7 @@ const Routes = [
     main: () => <PrintQCALabel />,
   },
   {
-    path: "/qccheck",
+    path: "/qc-check",
     exact: true,
     main: () => <QcScan />,
   },
@@ -567,11 +555,11 @@ const Routes = [
     exact: true,
     main: () => <ReportQC />,
   },
-  {
-    path: "/warehouse/physical/create",
-    exact: true,
-    main: () => <CreatePhysical />,
-  },
+  // {
+  //   path: "/warehouse/physical/create",
+  //   exact: true,
+  //   main: () => <CreatePhysical />,
+  // },
   {
     path: "/warehouse/physical/pending",
     exact: true,
@@ -610,7 +598,6 @@ const Routes = [
     main: () => <MaterialTransferReport type="sftorej" />,
   },
   // qc process
-  //qa process
   {
     path: "/master/qa-process",
     exact: true,
@@ -781,11 +768,11 @@ const Routes = [
     main: () => <R37 />,
   },
   {
-    path: "/reqWithBom",
+    path: "/req-with-bom",
     main: () => <ReqWithBom />,
   },
   {
-    path: "/reqWithoutBom",
+    path: "/req-with-out-bom",
     main: () => <ReqWithoutBom />,
   },
   {
@@ -805,7 +792,10 @@ const Routes = [
     path: "/create-po",
     main: () => <CreatePo />,
   },
-
+ {
+    path: "/request-po",
+    main: () => <POrequest />,
+  },
   {
     path: "/manage-po",
     main: () => <ManagePO />,
@@ -856,7 +846,7 @@ const Routes = [
     main: () => <R19Master />,
   },
   {
-    path: "/myProfile",
+    path: "/auth/profile",
     main: () => <Profile />,
   },
   // CPM
@@ -945,13 +935,13 @@ const Routes = [
   },
   // Vendor Jobwork modules
   {
-    path: "/jobwork/vendor/sfg/min",
+    path: "/job-work/vendor/sfg/min",
     main: () => <SFGMIN />,
   },
   //Work Order
 
   {
-    path: "/createwo",
+    path: "/wo/create",
     main: () => <CreateWO />,
   },
 
@@ -960,7 +950,7 @@ const Routes = [
     main: () => <Pending />,
   },
   {
-    path: "/woanalysis",
+    path: "/wo/analysis",
     main: () => <WoAnalysis />,
   },
   {
@@ -973,20 +963,20 @@ const Routes = [
     main: () => <WoReport />,
   },
   {
-    path: "/wocreatechallan",
+    path: "/wo/create-challan",
     main: () => <WoCreateChallan />,
   },
   {
-    path: "/woShipment",
+    path: "/wo/shipment",
     main: () => <WoShipment />,
   },
   //
   {
-    path: "/wocreatescrapechallan",
+    path: "/wo/create-scrape-challan",
     main: () => <CreateScrapeChallan />,
   },
   {
-    path: "/woviewchallan",
+    path: "/wo/view-challan",
     main: () => <WoViewChallan />,
   },
   // {
@@ -995,17 +985,17 @@ const Routes = [
   //   main: () => <AddClientInfo />,
   // },
   {
-    path: "/clientView",
+    path: "/client-View",
     exact: true,
     main: () => <ViewandEditClient />,
   },
   // finance start here
   {
-    path: "/tally/create_master",
+    path: "/tally/create-master",
     main: () => <CreateMaster />,
   },
   {
-    path: "/tally/vouchers/reference/gst/gstReport1",
+    path: "/tally/vouchers/reference/gst/report",
     main: () => <GstReport />,
   },
   {
@@ -1013,15 +1003,15 @@ const Routes = [
     main: () => <Ledger />,
   },
   {
-    path: "/tally/ChartOfAccounts",
+    path: "/tally/chart-accounts",
     main: () => <ChartOfAccounts />,
   },
   {
-    path: "/tally/nature_of_tds",
+    path: "/tally/nature-tds",
     main: () => <NatureOfTDS />,
   },
   {
-    path: "/tally/nature_of_tcs",
+    path: "/tally/nature-tcs",
     main: () => <NatureOfTCS />,
   },
   {
@@ -1029,54 +1019,50 @@ const Routes = [
     main: () => <BlockTCS />,
   },
   {
-    path: "/tally/ledger_report",
+    path: "/tally/ledger-report",
     main: () => <LedgerReport />,
   },
   {
-    path: "/tally/ledger_report/:code",
+    path: "/tally/ledger-report/:code",
     main: () => <LedgerReport />,
   },
   {
-    path: "/tally/vendorbillposting/VB1",
+    path: "/tally/vendor-bill-posting/vb-1",
     main: () => <VBTMainTable />,
   },
   {
-    path: "/tally/vendorbillposting/VB2",
-    main: () => <VBTMainTable />,
-  },
-
-  {
-    path: "/tally/vendorbillposting/VB3",
-    main: () => <VBTMainTable />,
-  },
-  // {
-  //   path: "/tally/vendorbillposting/VB3",
-  //   main: () => <VBT3 />,
-  // },
-  {
-    path: "/tally/vendorbillposting/VB4",
-    main: () => <VBTMainTable />,
-  },
-  {
-    path: "/tally/vendorbillposting/VB5",
+    path: "/tally/vendor-bill-posting/vb-2",
     main: () => <VBTMainTable />,
   },
 
   {
-    path: "/tally/vendorbillposting/VB6",
+    path: "/tally/vendor-bill-posting/vb-3",
+    main: () => <VBTMainTable />,
+  },
+  {
+    path: "/tally/vendor-bill-posting/vb-4",
+    main: () => <VBTMainTable />,
+  },
+  {
+    path: "/tally/vendor-bill-posting/vb-5",
     main: () => <VBTMainTable />,
   },
 
   {
-    path: "/tally/vendorbillposting/VB7",
+    path: "/tally/vendor-bill-posting/vb-6",
+    main: () => <VBTMainTable />,
+  },
+
+  {
+    path: "/tally/vendor-bill-posting/vb-7",
     main: () => <VBTMainTable />,
   },
   {
-    path: "/tally/vendorbillposting/vendor_bill_records",
+    path: "/tally/vendor-bill-posting/vendor-bill-records",
     main: () => <VBTRecords />,
   },
   {
-    path: "/tally/vendorbillposting/report",
+    path: "/tally/vendor-bill-posting/report",
     main: () => <VBTReport />,
   },
   {
@@ -1109,11 +1095,11 @@ const Routes = [
     main: () => <BankReceipts />,
   },
   {
-    path: "/tally/vouchers/bank_payment/report",
+    path: "/tally/vouchers/bank-payment/report",
     main: () => <VoucherReport />,
   },
   {
-    path: "/tally/vouchers/bank_receipts/report",
+    path: "/tally/vouchers/bank-receipts/report",
     main: () => <VoucherReport />,
   },
   {
@@ -1137,7 +1123,7 @@ const Routes = [
     main: () => <ContraReport />,
   },
   {
-    path: "/tally/vouchers/cash_payment/report",
+    path: "/tally/vouchers/cash-payment/report",
     main: () => <CashPaymentResister />,
   },
   {
@@ -1145,7 +1131,7 @@ const Routes = [
     main: () => <CashPayment />,
   },
   {
-    path: "/tally/vouchers/cash_receipts/report",
+    path: "/tally/vouchers/cash-receipts/report",
     main: () => <CashReceiptReport />,
   },
   {
@@ -1173,20 +1159,20 @@ const Routes = [
     main: () => <AppReport />,
   },
   {
-    path: "/tally/vouchers/reference/vendorReport",
+    path: "/tally/vouchers/reference/vendor-report",
     main: () => <AppVendorReport />,
   },
   {
-    path: "/tally/vouchers/reference/tdsReport",
+    path: "/tally/vouchers/reference/tds-report",
     main: () => <TdsReport />,
   },
   //mis report
   {
-    path: "/tally/vouchers/reference/misReport",
+    path: "/tally/vouchers/reference/mis-report",
     main: () => <MisReport />,
   },
   {
-    path: "/tally/vouchers/reference/payableReport",
+    path: "/tally/vouchers/reference/payable-report",
     main: () => <AccountsPayableReport />,
   },
   {
@@ -1221,13 +1207,13 @@ const Routes = [
   },
   //legal
   {
-    path: "/legal/createagreement",
+    path: "/legal/create-agreement",
     // exact: true,
     // dept: "legal",
     main: () => <Agreement />,
   },
   {
-    path: "/legal/viewagreement",
+    path: "/legal/view-agreement",
     // exact: true,
     // dept: "legal",
     main: () => <ViewAgreement />,
@@ -1245,13 +1231,13 @@ const Routes = [
     main: () => <ViewRnC />,
   },
   {
-    path: "/legal/addparty",
+    path: "/legal/create-party",
     // exact: true,
     // dept: "legal",
     main: () => <Addparty />,
   },
   {
-    path: "/legal/addagreementtype",
+    path: "/legal/add-agreement-type",
     // exact: true,
     // dept: "legal",
     main: () => <AddAgreementType />,
@@ -1290,7 +1276,7 @@ const Routes = [
     main: () => <Invoice />,
   },
   {
-    path: "/viewbranchtransfer",
+    path: "/view-branch-transfer",
     main: () => <ViewBranchTransfer />,
   },
   {
@@ -1319,7 +1305,7 @@ const Routes = [
     main: () => <MapProcesses />,
   },
   {
-    path: "/branchtransferchallan",
+    path: "/branch-transfer-challan",
     main: () => <CreateBranchTransferChallan />,
   },
   {
@@ -1401,27 +1387,27 @@ const Routes = [
   },
   //gst reco
   {
-    path: "/addgstdetails",
+    path: "/add-gst-details",
     main: () => <AddGstDetails />,
   },
   {
-    path: "/addbookdetails",
+    path: "/add-book-details",
     main: () => <AddBookDetails />,
   },
   {
-    path: "/viewreconciled",
+    path: "/view-reconciled",
     main: () => <ReconciledDetails />,
   },
   {
-    path: "/viewsummary",
+    path: "/view-summary",
     main: () => <Summary />,
   },
   {
-    path: "/viewbookdata",
+    path: "/view-book-data",
     main: () => <ViewBookData />,
   },
   {
-    path: "/viewgstdata",
+    path: "/view-gst-data",
     main: () => <ViewGstData />,
   },
   //
@@ -1429,18 +1415,18 @@ const Routes = [
     path: "/weeklyaudit",
     main: () => <WeeklyAudit />,
   },
-  {
-    path: "/assets/create",
-    main: () => <CreateAsset />,
-  },
-  {
-    path: "/assets/view",
-    main: () => <ViewAsset />,
-  },
-  {
-    path: "/assets/depreciation",
-    main: () => <Depreciation />,
-  },
+  // {
+  //   path: "/assets/create",
+  //   main: () => <CreateAsset />,
+  // },
+  // {
+  //   path: "/assets/view",
+  //   main: () => <ViewAsset />,
+  // },
+  // {
+  //   path: "/assets/depreciation",
+  //   main: () => <Depreciation />,
+  // },
 
   // far upload
   {

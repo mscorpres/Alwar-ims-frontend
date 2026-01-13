@@ -11,7 +11,7 @@ import {
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import printFunction, {
   downloadFunction,
@@ -35,6 +35,7 @@ import DebitView from "./DebitView";
 import DebitEdit from "./DebitEdit";
 
 function DebitRegister() {
+  const { showToast } = useToast();
   const wiseOptions = [
     { text: "Date", value: "date_wise" },
     { text: "Effective Wise", value: "eff_wise" },
@@ -43,7 +44,6 @@ function DebitRegister() {
   ];
   const [rows, setRows] = useState([]);
   const [wise, setWise] = useState("date_wise");
-  // console.log("Wise", wise);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [viewDebitDetail, setViewDebitDetail] =
@@ -78,7 +78,7 @@ function DebitRegister() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -95,10 +95,10 @@ function DebitRegister() {
       setLoading(false);
       if (response.success) {
         setDeleteConfirm(null);
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -183,7 +183,6 @@ function DebitRegister() {
           disabled={loading}
           icon={<EyeFilled className="view-icon" />}
           onClick={() => {
-            // console.log(row);
             setViewDebitDetail(row?.module_used);
           }}
           label="view"
@@ -213,7 +212,6 @@ function DebitRegister() {
           disabled={loading}
           icon={<EditFilled className="view-icon" />}
           onClick={() => {
-            // console.log(row);
             setEditDebit(row.module_used);
           }}
           label="download"
@@ -261,7 +259,6 @@ function DebitRegister() {
     // module_used
   };
   const handleDownload = async (id) => {
-    console.log(id);
     setLoading(true);
     let link = "/tally/dv/printDebitVoucher";
     let filename = "Debit Voucher " + id;
@@ -288,7 +285,6 @@ function DebitRegister() {
           value: row.id,
         };
       });
-      console.log(data.data);
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
@@ -298,7 +294,7 @@ function DebitRegister() {
     setSearchTerm("");
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         justify="space-between"
         style={{ padding: 5, paddingTop: 5 }}

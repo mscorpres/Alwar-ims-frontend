@@ -3,13 +3,14 @@ import { useForm } from "antd/lib/form/Form";
 import React from "react";
 import { imsAxios } from "../../axiosInterceptor";
 import { useNavigate, useLocation } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import { useEffect } from "react";
 import { setUser } from "../../Features/loginSlice/loginSlice";
 import { useState } from "react";
 
 function FirstLogin() {
+  const { showToast } = useToast();
   const [changePasswordForm] = useForm();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -25,18 +26,18 @@ function FirstLogin() {
         oldpassword: values.oldPassword,
         newpassword: values.newPassword,
       },
-      { "Company-Branch": "BRMSC012" }
+      { "Company-Branch": "BRALWR36" }
     );
     setLoading(false);
     const { data } = response;
     if (data) {
       if (response.success) {
         dispatch(setUser({ passwordChanged: "C" }));
-        toast.success(response.message);
+        showToast(response.message, "success");
 
         navigate("/r1");
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
     console.log(values);
@@ -49,7 +50,7 @@ function FirstLogin() {
   return (
     <div style={{ height: "100%" }}>
       <Row
-        justify="center"
+        
         style={{ width: "100%", height: "100%" }}
         align="middle"
       >

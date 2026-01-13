@@ -16,9 +16,10 @@ import MyDataTable from "../../../../Components/MyDataTable";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MyButton from "../../../../Components/MyButton";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 const JWUpdateRate = () => {
+  const { showToast } = useToast();
   const [previewRows, setpreviewRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -50,7 +51,7 @@ const JWUpdateRate = () => {
 
           setpreviewRows(arr);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
   
     } catch (error) {
@@ -106,7 +107,7 @@ const JWUpdateRate = () => {
       );
 
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           updateJwForm.resetFields();
           setpreviewRows([]);
         }
@@ -158,7 +159,7 @@ const JWUpdateRate = () => {
     }
   }, [file]);
   return (
-    <Row justify="center" gutter={6} style={{ padding: 10, height: "90%" }}>
+    <Row gutter={6} style={{ height: "90%" }}>
       <Col span={4}>
         <Card>
           <Form

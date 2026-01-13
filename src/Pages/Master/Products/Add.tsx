@@ -32,7 +32,7 @@ const Add = ({ uomOptions, productType, getProductRows }) => {
   };
   useEffect(() => {}, []);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Card
         size="small"
         title={productType === "sfg" ? "Add New SFG" : "Add New FG"}

@@ -1,7 +1,7 @@
 import { Button, Col, Modal, Popconfirm, Row, Space, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import TableActions from "../../../Components/TableActions.jsx/TableActions";
 import SummaryCard from "../../../Components/SummaryCard";
 import { DeleteFilled } from "@ant-design/icons";
@@ -12,6 +12,7 @@ export default function ViewEmergingComponent({
   setViewEmergingPart,
   next,
 }) {
+  const { showToast } = useToast();
   const [mergedComponent, setMergedComponent] = useState(null);
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState([
@@ -83,7 +84,7 @@ export default function ViewEmergingComponent({
           ];
           setSummary(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
           setMergedComponent(false);
           setViewEmergingPart(false);
         }
@@ -103,12 +104,12 @@ export default function ViewEmergingComponent({
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           setMergedComponent(false);
           setViewEmergingPart(false);
           next();
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     }

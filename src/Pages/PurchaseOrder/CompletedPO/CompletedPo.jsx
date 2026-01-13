@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import ViewComponentSideBar from "./ViewComponentSideBar";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -21,6 +21,7 @@ import { getVendorOptions } from "../../../api/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 const CompletedPo = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showComponentSideBar, setShowComponentSideBar] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
@@ -64,23 +65,23 @@ const CompletedPo = () => {
       setLoading(false);
       // console.log(response.data);
       if (response.success) {
-        let arr = response.data;
+        let arr = response.data?.final_data;
         arr = arr.map((row, index) => {
           return { ...row, id: row.po_transaction_code, index: index + 1 };
         });
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setRows([]);
       }
     } else {
       setLoading(false);
       if (wise === "single_date_wise") {
-        toast.error("Please select start and end dates for the results");
+        showToast("Please select start and end dates for the results", "error");
       } else if (wise === "po_wise") {
-        toast.error("Please enter a PO id");
+        showToast("Please enter a PO id", "error");
       } else if (wise === "vendor_wise") {
-        toast.error("Please select a vendor");
+        showToast("Please select a vendor", "error");
       }
     }
   };
@@ -115,7 +116,7 @@ const CompletedPo = () => {
       setComponentData({ poId: poid, components: arr });
       setShowComponentSideBar(true);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const printFun = async (poid) => {
@@ -126,7 +127,7 @@ const CompletedPo = () => {
     if (response.success) {
       printFunction(response.data.buffer.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
   };
@@ -140,7 +141,7 @@ const CompletedPo = () => {
       let filename = poid;
       downloadFunction(response.data.buffer.data, filename);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -387,7 +388,13 @@ const CompletedPo = () => {
           </Space>
         </Col>
       </Row>
-      <div style={{ height: "85%", padding: "0px 10px" }}>
+      <div style={{
+          height: "calc(100vh - 160px)",
+          overflowY: "auto",
+          overflowX: "hidden",
+          padding: "0 10px",
+        }}
+        >
         <MyDataTable
           loading={loading || viewLoading}
           data={rows}

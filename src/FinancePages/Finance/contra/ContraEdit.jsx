@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, Col, DatePicker, Drawer, Form, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import FormTable from "../../../Components/FormTable";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import dayjs from "dayjs";
 
 export default function ContraEdit({ contra, close }) {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,7 @@ export default function ContraEdit({ contra, close }) {
         });
         setRows(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -66,7 +67,7 @@ export default function ContraEdit({ contra, close }) {
         });
         setAsyncOptions(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -74,7 +75,7 @@ export default function ContraEdit({ contra, close }) {
     const debitTotal = sum(rows.map((row) => row.debit));
     const creditTotal = sum(rows.map((row) => row.credit));
     if (debitTotal !== creditTotal) {
-      return toast.error("Debit and Credit total should be equal");
+      return showToast("Debit and Credit total should be equal", "error");
     }
     const finalObj = {
       effective_date: dayjs(
@@ -95,10 +96,10 @@ export default function ContraEdit({ contra, close }) {
     const { data } = response;
     if (data) {
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         close();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

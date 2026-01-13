@@ -18,7 +18,7 @@ import { v4 } from "uuid";
 import axios from "axios";
 import InfoModal from "./InfoModal";
 import MyDataTable from "../../../Components/MyDataTable";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
@@ -26,6 +26,7 @@ import Loading from "../../../Components/Loading";
 import { Tooltip } from "@mui/material";
 
 const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [view, setView] = useState([]);
   const [mainData, setMainData] = useState([]);
@@ -52,7 +53,7 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
       });
       setMainData(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setViewModalOpen(false);
     }
   };

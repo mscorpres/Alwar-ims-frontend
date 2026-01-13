@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MySelect from "../../../../Components/MySelect";
 import MyButton from "../../../../Components/MyButton";
 
@@ -28,10 +28,11 @@ import CategoryDrawer from "./CategoryDrawer";
 import AlternatePartCode from "./AlternatePartCode";
 
 export default function UpdateComponent() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [uomOptions, setuomOptions] = useState([]);
   const [groupOptions, setgroupOptions] = useState([]);
-  const [subGroupOptions, setSubGroupOptions] = useState([]); 
+  const [subGroupOptions, setSubGroupOptions] = useState([]);
   const [attr_raw, setUniqueIdData] = useState("");
   const [tooldata, setTooldata] = useState({});
   const [categoryData, setCategoryData] = useState(null);
@@ -67,88 +68,80 @@ export default function UpdateComponent() {
         componentKey,
       });
       const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          const value = data.data[0];
-          // console.log("data...............", value);
-          let catType = value.attr_category;
-          // console.log("data...............", catType);
-          if (value.attr_category === "R") {
-            catType = "Resistor";
-          } else if (value.attr_category === "C") {
-            catType = "Capacitor";
-          } else {
-            catType = "Other";
-          }
-          const finalObj = {
-            partCode: value.partcode,
-            newPartCode: value.new_partcode,
-            // altPartCode: value.map((r) => {
-            //   return {
-            //     altPartCodeName: r.alternate_part_codes,
-            //     altPartKeyCode: r.alternate_part_keys,
-            //   };
-            // }),
 
-            component: value.name,
-            uom: {
-              label: value.uomname,
-              value: value.uomid,
-            },
-            mrp: value.mrp,
-            group: value.groupid,
-            subgroup: value.subgroup,
-            isEnabled: value.enable_status,
-            jobWork: value.jobwork_rate,
-            qcStatus: value.qc_status,
-            description: value.description,
-            piaStatus: value.pia_status == "Y" && setIsEnabled(true),
-            taxType: value.tax_type,
-            taxRate: value.gst_rate,
-            brand: value.brand,
-            ean: value.ean,
-            weight: value.weight,
-            height: value.height,
-            width: value.width,
-            volumetricWeight: value.vweight,
-            minStock: value.minqty,
-            maxStock: value.maxqty,
-            minOrder: value.minorderqty,
-            leadTime: value.leadtime,
-            enableAlert: value.alert_status,
-            purchaseCost: value.pocost,
-            otherCost: value.othercost,
-            catType: catType,
-            alternate_part_codes: value.alternate_part_codes,
-            alternate_part_keys: value.alternate_part_keys,
-            alternate_part_name: value.alternate_part_name,
-            attrCategory: {
-              text: value.attr_category.text,
-              value: value.attr_category.value,
-            },
-            // componentcategory: value.attr_raw.matType,
-            category: value.category,
-            toolLabel: value.attr_raw,
-          };
-          setCategoryData({
-            // text: value.attr_category.text,
-            // value: value.attr_category.value,
-            text: value.attr_code,
-            value: value.attr_code,
-          });
-          setTooldata(finalObj.toolLabel);
-          componentForm.setFieldsValue(finalObj);
+      if (response.success) {
+        const value = data;
 
-          setFetchPartCode(finalObj);
-          const objects = finalObj.alternate_part_codes.map((code, index) => ({
-            value: finalObj.alternate_part_keys[index],
-            text: code,
-            label: code,
-          }));
-          altPartCodeForm.setFieldValue("alternatePart", objects);
+        let catType = value.attr_category;
+
+        if (value.attr_category === "R") {
+          catType = "Resistor";
+        } else if (value.attr_category === "C") {
+          catType = "Capacitor";
         } else {
-          toast.error(data.message.msg);
+          catType = "Other";
         }
+        const finalObj = {
+          partCode: value.partcode,
+          newPartCode: value.new_partcode,
+          component: value.name,
+          uom: {
+            label: value.uomname,
+            value: value.uomid,
+          },
+          mrp: value.mrp,
+          group: value.groupid,
+          subgroup: value.subgroup,
+          isEnabled: value.enable_status,
+          jobWork: value.jobwork_rate,
+          qcStatus: value.qc_status,
+          description: value.description,
+          piaStatus: value.pia_status == "Y" && setIsEnabled(true),
+          taxType: value.tax_type,
+          taxRate: value.gst_rate,
+          brand: value.brand,
+          ean: value.ean,
+          weight: value.weight,
+          height: value.height,
+          width: value.width,
+          volumetricWeight: value.vweight,
+          minStock: value.minqty,
+          maxStock: value.maxqty,
+          minOrder: value.minorderqty,
+          leadTime: value.leadtime,
+          enableAlert: value.alert_status,
+          purchaseCost: value.pocost,
+          otherCost: value.othercost,
+          catType: catType,
+          alternate_part_codes: value.alternate_part_codes,
+          alternate_part_keys: value.alternate_part_keys,
+          alternate_part_name: value.alternate_part_name,
+          attrCategory: {
+            text: value.attr_category.text,
+            value: value.attr_category.value,
+          },
+          // componentcategory: value.attr_raw.matType,
+          category: value.category,
+          toolLabel: value.attr_raw,
+        };
+        setCategoryData({
+          // text: value.attr_category.text,
+          // value: value.attr_category.value,
+          text: value.attr_code,
+          value: value.attr_code,
+        });
+        setTooldata(finalObj.toolLabel);
+        componentForm.setFieldsValue(finalObj);
+
+        setFetchPartCode(finalObj);
+        const objects = finalObj.alternate_part_codes.map((code, index) => ({
+          value: finalObj.alternate_part_keys[index],
+          text: code,
+          label: code,
+        }));
+        altPartCodeForm.setFieldValue("alternatePart", objects);
+      } else {
+        showToast(data.message.msg, "error");
       }
     } catch (error) {
     } finally {
@@ -221,8 +214,10 @@ export default function UpdateComponent() {
         }));
 
         setSubGroupOptions(arr);
-      } else {
-        toast.error(response.message);
+      } else { 
+       
+        setSubGroupOptions([]);
+        showToast(response.message, "error");
       }
     } catch (error) {
       setSubGroupOptions([]);
@@ -255,7 +250,7 @@ export default function UpdateComponent() {
           }));
           setuomOptions(arr);
         } else {
-          toast.error(data.message.msg);
+          showToast(data.message.msg, "error");
         }
       }
     } catch (error) {
@@ -276,7 +271,7 @@ export default function UpdateComponent() {
           }));
           setgroupOptions(arr);
         } else {
-          toast.error(data.message.msg);
+          showToast(data.message.msg, "error");
         }
       }
     } catch (error) {
@@ -333,7 +328,7 @@ export default function UpdateComponent() {
       pocost: values.purchaseCost,
       othercost: values.otherCost,
       attr_code: attr_raw?.attributeCode ?? "--",
-      attr_raw: attr_raw?.attr_raw?attr_raw?.attr_raw:tooldata ?? "",
+      attr_raw: attr_raw?.attr_raw ? attr_raw?.attr_raw : tooldata ?? "",
       attr_category: attrCat,
       componentcategory: "--",
       manufacturing_code: attr_raw?.attr_raw?.manufacturing_code,
@@ -356,7 +351,7 @@ export default function UpdateComponent() {
         onCancel() {},
       });
     } else {
-      toast.error(data.message.msg);
+      showToast(data.message.msg, "error");
     }
   };
   const validateHandler = async () => {
@@ -449,10 +444,10 @@ export default function UpdateComponent() {
       const { data } = response;
       if (data) {
         if (data.code === "200") {
-          toast.success(data.message);
+          showToast(data.message, "success");
           getDetails();
         } else {
-          toast.error(data.message.msg);
+          showToast(data.message.msg, "error");
         }
       }
     } catch (error) {
@@ -482,7 +477,7 @@ export default function UpdateComponent() {
         form={componentForm}
         style={{ height: "90%", width: "100%", padding: 20 }}
       >
-        <Row justify="center">
+        <Row >
           <Col
             span={16}
             style={{

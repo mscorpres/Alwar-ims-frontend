@@ -13,19 +13,19 @@ import {
 } from "antd";
 import MySelect from "../../Components/MySelect";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import Loading from "../../Components/Loading";
 import { imsAxios } from "../../axiosInterceptor";
 import useApi from "../../hooks/useApi.ts";
 import { getCostCentresOptions } from "../../api/general.ts";
-import MyDataTable from "../gstreco/myDataTable";
-import TableActions from "../../Components/TableActions.jsx/TableActions";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { convertSelectOptions } from "../../utils/general.ts";
 import MyButton from "../../Components/MyButton";
+import MyDataTable from "../../Components/MyDataTable.jsx";
 
 function Location() {
+  const { showToast } = useToast();
   const [treeData, setTreeData] = useState([]);
   const [treeLoading, setTreeLoading] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -54,63 +54,91 @@ function Location() {
   const resetForm = () => {
     addLocationForm.resetFields();
   };
-  const getDataTree = async () => {
-    setTreeLoading(true);
-    const response = await imsAxios.post("/location/fetchLocationTree");
-    setTreeLoading(false);
-    if (response.success) {
-      let a = customFlatArray(response.data);
-      let arr = a.map((r, id) => {
-        return { id: id + 1, ...r };
+
+  const customFlatArray = (array, parent = null) => {
+    const result = [];
+
+    const traverse = (nodes, parentNode) => {
+      nodes.forEach((node) => {
+        const { children, ...rest } = node;
+        const current = {
+          ...rest,
+          parentLocation: parentNode ? parentNode.name : "--",
+          label: node.id, // backend key for actions
+        };
+        result.push(current);
+
+        if (children && children.length > 0) {
+          traverse(children, current);
+        }
       });
-      // console.log("arr", arr);
-      setLocationData(arr);
-      // console.log("final arr", arr);
-      // setLocationData(a);
-      setTreeData(response.data);
-    }
+    };
+
+    if (array) traverse(array, parent);
+    return result;
   };
+   const getDataTree = async () => {
+     setTreeLoading(true);
+     try {
+       const response = await imsAxios.post("/location/fetchLocationTree");
+       const tree = response.data || [];
+ 
+       setTreeData(tree);
+ 
+       // [FIXED] Flatten tree + add UI id
+       const flat = customFlatArray(tree);
+       const enriched = flat.map((item, index) => ({
+         ...item,
+         id: index + 1,
+       }));
+       setLocationData(enriched);
+     } catch (error) {
+       showToast("Failed to load locations", "error");
+     } finally {
+       setTreeLoading(false);
+     }
+   };
 
   let arr = [];
-  const customFlatArray = (array, prev) => {
-    array?.map((row) => {
-      let parent = "--";
-      let obj = row;
-      if (!row.children) {
-        if (prev) {
-          obj["parentLocation"] = prev.name;
-        } else {
-          obj["parentLocation"] = "--";
-        }
-      }
-      if (row.children) {
-        if (prev) {
-          obj["parentLocation"] = prev.name;
-        } else {
-          obj["parentLocation"] = "--";
-        }
-        let children = row.children;
+  // const customFlatArray = (array, prev) => {
+  //   array?.map((row) => {
+  //     let parent = "--";
+  //     let obj = row;
+  //     if (!row.children) {
+  //       if (prev) {
+  //         obj["parentLocation"] = prev.name;
+  //       } else {
+  //         obj["parentLocation"] = "--";
+  //       }
+  //     }
+  //     if (row.children) {
+  //       if (prev) {
+  //         obj["parentLocation"] = prev.name;
+  //       } else {
+  //         obj["parentLocation"] = "--";
+  //       }
+  //       let children = row.children;
 
-        delete obj["children"];
-        arr = [...arr, obj];
-        customFlatArray(children, obj);
-        arr = [...arr, ...children];
-        // }
-      }
-      //  else {
-      //   let obj = row;
+  //       delete obj["children"];
+  //       arr = [...arr, obj];
+  //       customFlatArray(children, obj);
+  //       arr = [...arr, ...children];
+  //       // }
+  //     }
+  //     //  else {
+  //     //   let obj = row;
 
-      //   if (prev) {
-      //     obj["parentLocation"] = prev.name;
-      //   } else {
-      //     obj["parentLocation"] = "--";
-      //   }
-      //   arr = [...arr, obj];
-      // }
-    });
+  //     //   if (prev) {
+  //     //     obj["parentLocation"] = prev.name;
+  //     //   } else {
+  //     //     obj["parentLocation"] = "--";
+  //     //   }
+  //     //   arr = [...arr, obj];
+  //     // }
+  //   });
 
-    return arr;
-  };
+  //   return arr;
+  // };
 
   const getParentLocationOptions = async (search) => {
     setSelectLoading(true);
@@ -142,11 +170,11 @@ function Location() {
     const response = await imsAxios.post("/location/insertLocation", obj);
     setSubmitLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       resetForm();
       getDataTree();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -178,7 +206,7 @@ function Location() {
       const status = response.data[0].status;
       disableLocationForm.setFieldValue("status", status === "ACTIVE");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 
@@ -205,19 +233,19 @@ function Location() {
     );
     if (response.success) {
       getDataTree();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const mapLocSubmitHandler = async (values) => {
     const response = await imsAxios.post("/location/updatLocationCC", values);
     if (response.success) {
       getDataTree();
-      toast.success(response.message);
+      showToast(response.message, "success");
       maploc.resetFields();
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   const maplocValidateHandler = async () => {
@@ -447,7 +475,7 @@ function Location() {
     }
   }, [location]);
   return (
-    <div style={{ height: "90%", overflow: "auto" }}>
+    <div style={{ height: "calc(100vh - 120px)", overflow: "auto" }}>
       <Modal
         open={mapCostCenterModal}
         footer={null}
@@ -485,7 +513,7 @@ function Location() {
           </Row>
         </Form>
       </Modal>
-      <Row gutter={10} style={{ margin: "10px", height: "80%" }}>
+      <Row gutter={10} style={{ margin: "10px", height: "calc(100vh - 140px)" }}>
         <Col span={8}>
           <Row gutter={[0, 6]}>
             <Col span={24}>
@@ -712,8 +740,7 @@ function Location() {
             size="small"
           > */}
           {treeLoading && <Loading />}
-          {/* <Tree showLine={true} treeData={treeData} /> */}
-          <Card style={{ height: "100%" }} bodyStyle={{ height: "100%" }}>
+       
             {viewData ? (
               <>
                 <MyButton
@@ -730,7 +757,7 @@ function Location() {
                 </div>
               </>
             ) : (
-              <div style={{ height: "95%" }}>
+              <div style={{ height: "100%" }}>
                 <MyDataTable
                   columns={coloums}
                   data={locationData}
@@ -738,12 +765,8 @@ function Location() {
                 />
               </div>
             )}
-          </Card>
+         
 
-          {/* <div style={{ height: "95%" }}>
-            <MyDataTable columns={coloums} data={locationData} />
-          </div> */}
-          {/* </Card> */}
         </Col>
       </Row>
     </div>

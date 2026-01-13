@@ -224,7 +224,7 @@ export default function CreateDC() {
                   style={{
                     overflowY: "scroll",
                     overflowX: "hidden",
-                    padding: "0vh 20px",
+                    padding: "0vh 20px 10px",
                   }}
                 >
                   {/* reset confirm modal */}

@@ -8,7 +8,7 @@ import FormTable from "../../../../../Components/FormTable";
 import { useEffect } from "react";
 import { CommonIcons } from "../../../../../Components/TableActions.jsx/TableActions";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../../hooks/useToast.js";
 import Loading from "../../../../../Components/Loading";
 import { v4 } from "uuid";
 import {
@@ -20,6 +20,7 @@ import AlterModal from "../../AlterModal.jsx";
 import useApi from "../../../../../hooks/useApi.ts";
 import { convertSelectOptions } from "../../../../../utils/general.ts";
 const EditModal = ({ show, close, bomType }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
@@ -46,7 +47,7 @@ const EditModal = ({ show, close, bomType }) => {
           setDetails(detailsObj);
         }
         else{
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       
     } catch (error) {
@@ -104,11 +105,11 @@ const EditModal = ({ show, close, bomType }) => {
             })
           );
         }
-        toast.success(response.message);
+        showToast(response.message, "success");
         getDetails(show.id);
     }
     else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     setLoading(false);
   };
@@ -355,12 +356,12 @@ const EditModal = ({ show, close, bomType }) => {
         padding: 5,
       }}
     >
-      <Row style={{ height: "98%" }} gutter={6}>
+      <Row style={{ height: "calc(100% - 20px)" }} gutter={6}>
         {loading === "fetch" && <Loading />}
-        <Col span={4}>
+        <Col span={6}>
           <SummaryCard bomType={bomType} details={details} />
         </Col>
-        <Col span={20} style={{ overflowY: "auto", height: "100%" }}>
+        <Col span={18} style={{ overflowY: "auto", height: "100%" }}>
           <FormTable columns={columns} data={rows} />
         </Col>
       </Row>

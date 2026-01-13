@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./r.css";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import { Button, Col, DatePicker, Row } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
@@ -13,6 +13,7 @@ import MyButton from "../../../Components/MyButton";
 const { RangePicker } = DatePicker;
 
 const R14 = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
     selType: "",
@@ -59,7 +60,7 @@ const R14 = () => {
 
   const fetch = async () => {
     if (!allData.selType) {
-      toast.error("Please Select Type");
+      showToast("Please Select Type", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/audit/fetchAuditReport", {
@@ -75,14 +76,14 @@ const R14 = () => {
         setResponseData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }
   };
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "calc(100vh - 170px)",  }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <>
           <Col span={4}>
@@ -119,15 +120,15 @@ const R14 = () => {
         </>
       </Row>
 
-      <div className="m-2" style={{ height: "100%" }}>
-        <div className="hide-select" style={{ height: "80%", margin: "10px" }}>
+    
+        <div className="hide-select" style={{ height: "calc(100vh - 210px)", margin: "10px" }}>
           <MyDataTable
             loading={loading}
             data={responseData}
             columns={columns}
             checkboxSelection={true}
           />
-        </div>
+      
       </div>
     </div>
   );

@@ -6,9 +6,10 @@ import useApi from "../../../hooks/useApi.ts";
 import { getProductsOptions } from "../../../api/general.ts";
 import { imsAxios } from "../../../axiosInterceptor";
 import MySelect from "../../../Components/MySelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 
 function CreateFgReturn() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomOptions, setBomOptions] = useState([]);
@@ -39,7 +40,6 @@ function CreateFgReturn() {
     const response = await imsAxios.post("/ppr/fetchProductData", {
       search: sku,
     });
-    console.log(response,"=====================response")
     setLoading(false);
 
     const  data  = response?.data;
@@ -53,16 +53,7 @@ function CreateFgReturn() {
       
     }
   }; 
-  const locationList = async (search) => {
-    const response = await imsAxios.post("/backend/fetchLocation", {
-      searchTerm: search,
-    });
-    let locArr = [];
-    locArr = response?.data.map((d) => {
-      return { text: d.text, value: d.id };
-    });
-    setLocationList(locArr);
-  };
+ 
   const getLocations = async () => {
     const response = await imsAxios.get("/ppr/mfg_locations");
     const arr = [];
@@ -88,7 +79,7 @@ function CreateFgReturn() {
     const response = await imsAxios.post("/fg_return/saveFG_return", payload);
     // console.log("response", response);
     if (response?.success) {
-      toast.success(response?.message);
+      showToast(response?.message, "success");
       resetFunction();
       setLoading(false);
     }
@@ -106,8 +97,8 @@ function CreateFgReturn() {
   }, [selectedStatus]);
 
   return (
-    <div style={{ height: "90%" }}>
-      <Row gutter={10} style={{ margin: "10px" }} justify="center">
+    <div style={{ height: "90%", margin:20}}>
+      <Row gutter={10} >
         <Form form={fgReturn} layout="vertical">
           <Row>
             <Col span={6}>

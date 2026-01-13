@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaGreaterThan } from "react-icons/fa";
 import { CgCloseO } from "react-icons/cg";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Col,
@@ -24,6 +24,7 @@ import {
 import { imsAxios } from "../../../../axiosInterceptor";
 
 function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
+  const { showToast } = useToast();
   const [loadingModal, setLoadingModal] = useState(false);
   const [allPendingData, setAllPendingData] = useState({
     qty: "",
@@ -46,7 +47,7 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
       setLoadingModal(false);
       setFGModal(false);
     } else {
-      toast.error(response?.message?.msg || response?.message);
+      showToast(response?.message?.msg || response?.message, "error");
       setAllPendingData({
         qty: "",
       });

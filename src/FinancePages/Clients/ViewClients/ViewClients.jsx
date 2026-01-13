@@ -1,20 +1,17 @@
-import { Col, Layout, Row } from "antd";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import TableActions, {
-  CommonIcons,
-} from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import EditClient from "../EditClient/EditClient";
 import ClientBranchAdd from "../modal/ClientBranchAdd";
 import AllBranch from "../modal/AllBranch";
-import { v4 } from "uuid";
+import { useToast } from "../../../hooks/useToast";
 
 function ViewClients() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [fetchLoading, setFetchLoading] = useState(false);
   const [branchAddOpen, setBranchAddOpen] = useState(null);
@@ -36,7 +33,8 @@ function ViewClients() {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+
       setRows([]);
       setShowAllBranch(false);
     }
@@ -45,7 +43,6 @@ function ViewClients() {
   //   const response = await imsAxios.get(
   //     `client/branches?clientCode=${branchCode}`
   //   );
-  //   // console.log(data);
   //   const { data } = response;
   //   if (response.success) {
   //     let arr = response.data.map((row) => {
@@ -169,7 +166,6 @@ function ViewClients() {
   // useEffect(() => {
   //   if (branchModal) {
   //     if (branchModal?.code) {
-  //       console.log("branchModal", branchModal);
   //       setBranchCode(branchModal.code);
   //       getDetailByCodeWise();
   //     }
@@ -178,12 +174,10 @@ function ViewClients() {
 
   return (
     <>
-      <div style={{ height: "90%", padding: 5 }}>
-        <Row justify="end"></Row>
-        <div style={{ paddingTop: 5, height: "95%" }}>
-          <MyDataTable loading={fetchLoading} rows={rows} columns={columns} />
-        </div>
+      <div style={{  height: "calc(100vh - 120px)", }}>
+        <MyDataTable loading={fetchLoading} rows={rows} columns={columns} />
       </div>
+
       <ClientBranchAdd
         branchAddOpen={branchAddOpen}
         setBranchAddOpen={setBranchAddOpen}

@@ -3,7 +3,7 @@ import { Button, Card, Col, Divider, Row, Space, Typography } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import {
   bankColumns,
@@ -15,8 +15,9 @@ import {
 import MyButton from "../../../Components/MyButton";
 
 function DayBook() {
+  const { showToast } = useToast();
   const [searchDateRange, setSearchDateRange] = useState("");
-  const [loading, setLoading] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [bankRows, setBankRows] = useState([]);
   const [cashRows, setCashRows] = useState([]);
   const [journalRows, setJournalRows] = useState([]);
@@ -26,28 +27,33 @@ function DayBook() {
   const getBankRows = async () => {
     let paymentArr = [];
     let receiptArr = [];
-    setLoading((loading) => loading + 1);
+    setLoading(true);
     const paymentResponse = await imsAxios.post("/tally/voucher/bp_list", {
       wise: "date_wise",
       data: searchDateRange,
     });
-    const { data: paymentData } = paymentResponse;
-    if (paymentData.code === 200) {
-      paymentArr = paymentData.data;
+    const { data: paymentData, success, message } = paymentResponse;
+    if (success) {
+
+      paymentArr = paymentData;
+      setLoading(false)
     } else {
-      toast.error(paymentData.message.msg);
+      showToast(message, "error");
+      setLoading(false)
     }
     const receptResponse = await imsAxios.post("/tally/voucher/br_list", {
       wise: "date_wise",
       data: searchDateRange,
     });
-    const { data: receiptData } = receptResponse;
-    if (receiptData.code === 200) {
-      receiptArr = receiptData.data;
+    const { data: receiptData, success: receiptSuccess, message: receiptMessage } = receptResponse;
+    if (receiptSuccess) {
+      receiptArr = receiptData;
+      setLoading(false)
     } else {
-      toast.error(receiptData.message.msg);
+      showToast(receiptMessage, "error");
+      setLoading(false)
     }
-    setLoading((loading) => loading + 1);
+   setLoading(false)
     let arr = [...paymentArr, ...receiptArr];
     let bankPayments = arr.map((row) => {
       if (row.payment) {
@@ -58,6 +64,7 @@ function DayBook() {
       }
     });
     setBankRows(bankPayments);
+    
   };
   const convertToNumber = (debitString) => {
     const cleanedDebit = parseFloat(debitString.replace(/,/g, ""));
@@ -83,23 +90,26 @@ function DayBook() {
         data: searchDateRange,
       }
     );
-    const { data: paymentData } = paymentResponse;
-    if (paymentData.code === 200) {
-      paymentArr = paymentData.data;
+    const { data: paymentData, success: paymentSuccess, message: paymentMessage } = paymentResponse;
+    if (paymentSuccess) {
+      paymentArr = paymentData;
+
     } else {
-      toast.error(paymentData.message.msg);
+      showToast(paymentMessage, "error");
     }
     const receptResponse = await imsAxios.post("/tally/cash/cashreceipt_list", {
       wise: "date_wise",
       data: searchDateRange,
     });
-    const { data: receiptData } = receptResponse;
-    if (receiptData.code === 200) {
-      receiptArr = receiptData.data;
+    const { data: receiptData, success: receiptSuccess, message: receiptMessage } = receptResponse;
+    if (receiptSuccess) {
+      setLoading(false)
+      receiptArr = receiptData;
     } else {
-      toast.error(receiptData.message.msg);
+      showToast(receiptMessage, "error");
+       setLoading(false)
     }
-    setLoading((loading) => loading + 1);
+    setLoading(false);
     let arr = [...paymentArr, ...receiptArr];
     // console.log("arrr", arr);
     let cashRows = arr.map((row) => {
@@ -118,18 +128,18 @@ function DayBook() {
       wise: "date_wise",
       data: searchDateRange,
     });
-    const { data: journalData } = journalReponse;
-    if (journalData.code === 200) {
-      jornalArr = journalData.data;
+    const { data: journalData, success: journalSuccess, message: journalMessage } = journalReponse;
+    if (journalSuccess) {
+      jornalArr = journalData;
     } else {
-      toast.error(journalData.message.msg);
+      showToast(journalMessage, "error");
     }
 
-    setLoading((loading) => loading + 1);
+    setLoading(false);
     let arr = [...jornalArr];
-    // console.log("arrr", arr);
+
     let journalRows = arr.map((row) => {
-      // if (row.credit) {
+
       return {
         ...row,
         credit: convertToNumberForWithOutComma(row.credit),
@@ -137,7 +147,7 @@ function DayBook() {
       };
       // }
     });
-    // console.log("journalRows", journalRows);
+  
     setJournalRows(journalRows);
   };
   const getContraRows = async () => {
@@ -149,14 +159,14 @@ function DayBook() {
         data: searchDateRange,
       }
     );
-    const { data: contraData } = contraResponse;
-    if (contraData.code === 200) {
-      contraArr = contraData.data;
+    const { data: contraData, success: contraSuccess, message: contraMessage } = contraResponse;
+    if (contraSuccess) {
+      contraArr = contraData;
     } else {
-      toast.error(contraData.message.msg);
+      showToast(contraMessage, "error");
     }
 
-    setLoading((loading) => loading + 1);
+    setLoading(false);
     let arr = [...contraArr];
 
     let contraRows = arr.map((row) => {
@@ -176,15 +186,15 @@ function DayBook() {
       data: searchDateRange,
       vbt_type: "ALL",
     });
-    const { data: vbtData } = vbtReponse;
-    if (vbtData.code === 200) {
-      vbtArr = vbtData.data;
+    const { data: vbtData, success: vbtSuccess, message: vbtMessage } = vbtReponse;
+    if (vbtSuccess) {
+      vbtArr = vbtData;
     } else {
-      toast.error(vbtData.message.msg);
+      showToast(vbtMessage, "error");
       setLoading(false);
     }
 
-    setLoading((loading) => loading + 1);
+     setLoading(false);
     let arr = [...vbtArr];
     setVbtRows(arr);
   };
@@ -195,7 +205,7 @@ function DayBook() {
     await getJournalRows();
     await getContraRows();
     await getVBTReport();
-    setLoading(0);
+    setLoading(false);
   };
   const resetHandler = () => {
     setBankRows([]);
@@ -206,7 +216,7 @@ function DayBook() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         style={{ padding: "0px 10px", paddingBottom: 5 }}
         justify="space-between"

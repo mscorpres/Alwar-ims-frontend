@@ -1,4 +1,5 @@
-import { toast } from "react-toastify";
+//@ts-ignore
+import { getGlobalToast } from "../context/ToastContext";
 //@ts-ignore
 import useLoading from "./useLoadingUpdated";
 
@@ -11,7 +12,8 @@ const useApi = () => {
       setLoading(loadingLabel, true);
       const response = await fun();
       if(response.status==false){
-        toast.error(response.message);
+        const showToast = getGlobalToast();
+        if (showToast) showToast(response.message, "error");
         return {
           data: null,
           error: true,
@@ -19,10 +21,11 @@ const useApi = () => {
       }
 
       if (response.success !== undefined) {
+        const showToast = getGlobalToast();
         if (response.success && response.message) {
-          toast.success(response?.message ?? response.data?.message);
+          if (showToast) showToast(response?.message ?? response.data?.message, "success");
         } else if (!response.success && response.message) {
-          toast.error(response.message);
+          if (showToast) showToast(response.message, "error");
         }
         return response;
       }
@@ -37,8 +40,9 @@ const useApi = () => {
       // }
 
       if (typeof response?.data === "string") {
+        const showToast = getGlobalToast();
         if (response?.status === 200) {
-          toast.success(response?.data);
+          if (showToast) showToast(response?.data, "success");
           return {
             data: null,
             success: true,
@@ -46,7 +50,7 @@ const useApi = () => {
             message: null,
           };
         } else {
-          toast.error(response?.data);
+          if (showToast) showToast(response?.data, "error");
           return {
             data: null,
             error: true,
@@ -73,7 +77,8 @@ const useApi = () => {
         (response?.data?.success && response?.data.message !== "")
       ) {
         message = response?.data.message;
-        toast.success(message);
+        const showToast = getGlobalToast();
+        if (showToast) showToast(message, "success");
       }
 
       return {
@@ -90,7 +95,8 @@ const useApi = () => {
         message = error.message;
       }
       console.log("Some error occured in the api", error);
-      toast.error(message);
+      const showToast = getGlobalToast();
+      if (showToast) showToast(message, "error");
 
       return {
         data: null,

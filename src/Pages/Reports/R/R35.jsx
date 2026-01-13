@@ -5,7 +5,7 @@ import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { getProductsOptions } from "../../../api/general.ts";
@@ -16,6 +16,7 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses.jsx";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions.jsx";
 import { downloadCSV } from "../../../Components/exportToCSV.jsx";
 function R35() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomName, setBomName] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -23,7 +24,7 @@ function R35() {
   const [form] = Form.useForm();
   const prod = Form.useWatch("product", form);
   const bomVal = Form.useWatch("bom", form);
-  
+
   const columns = [
     { field: "id", headerName: "Sr. No.", width: 8 },
     {
@@ -146,7 +147,7 @@ function R35() {
       setRows(arr);
       setLoading(false);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setLoading(false);
     }
   };
@@ -166,15 +167,19 @@ function R35() {
   }, [prod]);
 
   return (
-    <div>
+    <div
+      style={{
+        height: "calc(100vh - 120px)",
+        padding: "3px 25px",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
       {" "}
-      <Row justify="center" style={{ height: "100%" }}>
-        <Col span={23} style={{ height: "100%" }}>
-          <Form
-            layout="vertical "
-            form={form}
-            style={{ marginTop: 8, marginLeft: -15 }}
-          >
+      <Row style={{ flexShrink: 0 }}>
+        <Col span={24}>
+          <Form layout="vertical" form={form}>
             <Row gutter={[10, 0]}>
               <Col span={5}>
                 <Form.Item
@@ -188,7 +193,6 @@ function R35() {
                   label="Product"
                 >
                   <MyAsyncSelect
-                    style={{ width: "300px" }}
                     onBlur={() => setAsyncOptions([])}
                     optionsState={asyncOptions}
                     placeholder="Select Product"
@@ -261,13 +265,11 @@ function R35() {
             </Row>
           </Form>{" "}
         </Col>
-      </Row>{" "}
-      <Row>
-        <Col span={24}>
-          <div
-            className="hide-select"
-            style={{ height: "75vh", margin: " 0px 10px 5px" }}
-          >
+      </Row>
+      
+      <Row style={{ flex: 1, minHeight: 0, marginTop: "16px" }}>
+        <Col span={24} style={{ height: "100%", display: "flex" }}>
+          <div style={{ width: "100%", height: "100%" }}>
             <MyDataTable
               checkboxSelection={true}
               loading={loading}

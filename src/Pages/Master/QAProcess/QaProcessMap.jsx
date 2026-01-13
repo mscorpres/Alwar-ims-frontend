@@ -1,7 +1,7 @@
 import { imsAxios } from "@/axiosInterceptor";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/useToast.js";
 import MySelect from "@/Components/MySelect";
 import { Card, Col, Form, Input, Row, Space, Upload } from "antd";
 import MyDataTable from "@/Components/MyDataTable";
@@ -13,6 +13,7 @@ import useApi from "@/hooks/useApi.ts";
 import { getProductsOptions } from "@/api/general.ts";
 
 const QaProcessMap = () => {
+  const { showToast } = useToast();
   //states of qaprocessMap
 
   const [qaProcessInputs, setQaProcessInput] = useState([
@@ -150,7 +151,6 @@ const QaProcessMap = () => {
     });
     let newQaprocessInput = [];
     newQaprocessInput.push(...updatedQaProcessInputs);
-    console.log(newQaprocessInput);
     setQaProcessInput(newQaprocessInput);
   };
 
@@ -202,17 +202,15 @@ const QaProcessMap = () => {
     qaProcessData.process = process;
     qaProcessData.sfg_sku = sku;
     qaProcessData.qa_process_key = qa_process_key;
-    console.log(qaProcessData);
     setLoading1("submit");
     const response = await imsAxios.post(
       "/qaProcessmaster/updateMappedQAProcess",
       qaProcessData
     );
     setLoading1(false);
-    console.log("response", response);
 
     if (response?.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       setQaProcessInput([
         {
           id: v4(),
@@ -231,7 +229,7 @@ const QaProcessMap = () => {
 
       setQaProcessData({ sku: "" });
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
   // const fetchingSkuProcess = async() => {
@@ -468,7 +466,6 @@ const QaProcessMap = () => {
     const response = await imsAxios.post("/qaProcessmaster/fetchQAProcess", {
       sku: qaProcessData.sku,
     });
-    console.log("process response", response);
     setLoading1(false);
     let arr = [];
     if (response?.success) {
@@ -504,7 +501,6 @@ const QaProcessMap = () => {
         lot_size: row.qa_lot_size,
         processRemark: row.qa_process_remark,
       }));
-      console.log("arr", arr);
 
       setQaProcessInput(arr);
       return {
@@ -512,7 +508,7 @@ const QaProcessMap = () => {
         data: arr,
       };
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
   };
 

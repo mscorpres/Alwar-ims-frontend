@@ -4,7 +4,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import ViewTasks from "./View";
 import MyButton from "../../../Components/MyButton";
 import CreateTask from "./Create";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import DetailsModal from "./View/DetailsModal";
 import TransferModal from "../TransferModal";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -18,6 +18,7 @@ const initFilters = {
 };
 
 const Tasks = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -63,7 +64,7 @@ const Tasks = () => {
           console.log(arr);
           setTasks(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

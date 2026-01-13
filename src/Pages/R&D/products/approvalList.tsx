@@ -69,7 +69,7 @@ const ApprovalList = (props: Props) => {
   }, []);
 
   return (
-    <Row justify="center" style={{ padding: 10, height: "95%" }}>
+    <Row  style={{ height: "calc(100vh - 120px)", padding:"0px 10px" }}>
       {selectedProduct && (
         <Approval
           show={showApprovalLogs}
@@ -97,7 +97,7 @@ const ApprovalList = (props: Props) => {
           // bom={selectedBOM}
         />
       )}
-      <Col sm={24} md={22} xl={20}>
+      <Col span={24}>
         <MyDataTable
           columns={[...actionColumns, ...columns]}
           data={rows}

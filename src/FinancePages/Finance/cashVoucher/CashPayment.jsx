@@ -8,10 +8,11 @@ import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 
 function CashPayment() {
+  const { showToast } = useToast();
   const [headerCash, setHeaderCash] = useState("");
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -26,7 +27,6 @@ function CashPayment() {
       comment: "",
     },
   ]);
-  // console.log(cashPaymentRows);
 
   const getCash = async (search) => {
     setSelectLoading(true);
@@ -197,9 +197,9 @@ function CashPayment() {
     let cash = [];
     let comment = [];
     if (headerCash == "") {
-      return toast.error("A account is required");
+      return showToast("A account is required", "error");
     } else if (effectiveDate == "") {
-      return toast.error("Effective date is required");
+      return showToast("Effective date is required", "error");
     }
     cashPaymentRows.map((row) => {
       if (row.gls == "") {
@@ -221,7 +221,7 @@ function CashPayment() {
       }
     });
     if (validating.status == false) {
-      toast.error(validating.message);
+      showToast(validating.message, "error");
     } else if (validating.status == true) {
       setLoading(true);
       const response = await imsAxios.post("/tally/cash/insert_cp", {
@@ -234,7 +234,7 @@ function CashPayment() {
       setLoading(false);
       if (response.success) {
         resetFunction();
-        toast.success(response.message);
+        showToast(response.message, "success");
       }
     }
   };
@@ -252,7 +252,7 @@ function CashPayment() {
   };
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "calc(100vh - 210px)", }}>
       <Row gutter={10} style={{ height: "100%", margin: "10px" }}>
         <Col span={6}>
           <Card title="Cash Payment" size="small">

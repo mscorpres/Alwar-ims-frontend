@@ -79,7 +79,7 @@ export default function MaterialRequisitionRequest() {
     },
   ];
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         justify="space-between"
         style={{ padding: "0px 10px", paddingBottom: 5 }}

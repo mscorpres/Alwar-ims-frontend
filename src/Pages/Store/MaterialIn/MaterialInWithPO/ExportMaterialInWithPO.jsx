@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter.jsx";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
@@ -19,7 +19,7 @@ import {
   Drawer,
   DatePicker,
 } from "antd";
-import { locationCell, remarkCell } from "./TableCollumns.jsx";
+import { remarkCell, manualMFGCode, HSNCell } from "./TableCollumns.jsx";
 import SingleProduct from "../../../Master/Vendor/SingleProduct.jsx";
 import CurrenceModal from "../CurrenceModal.jsx";
 import UploadDocs from "./UploadDocs.jsx";
@@ -42,8 +42,10 @@ import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton/index.jsx";
 import FormTable from "../../../../Components/FormTable.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
+import { v4 } from "uuid";
 
 export default function ExportMaterialInWithPO({}) {
+  const { showToast } = useToast();
   const [poData, setPoData] = useState({ materials: [] });
   const [resetPoData, setResetPoData] = useState({ materials: [] });
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -131,7 +133,7 @@ export default function ExportMaterialInWithPO({}) {
       // });
       if (a?.length) {
         if (!values2?.components[0]?.file) {
-          toast.info("Please upload Files");
+          showToast("Please upload Files", "error");
         }
         values2.components.map((comp) => {
           formData.append("files", comp.file[0]?.originFileObj);
@@ -170,10 +172,10 @@ export default function ExportMaterialInWithPO({}) {
           },
         });
       } else {
-        toast.error("Please add at least one document");
+        showToast("Please add at least one document", "error");
       }
     } else {
-      toast.error("Please Provide all the values of all the components");
+      showToast("Please Provide all the values of all the components", "error");
     }
   };
 
@@ -225,14 +227,11 @@ export default function ExportMaterialInWithPO({}) {
         () => checkInvoiceforMIN(payload),
         "select"
       );
-      // const response = await imsAxios.post("/backend/checkInvoice", {
-      //   invoice: invoices,
-      //   vendor: searchData.vendor,
-      // });
+
       let data  = response?.data;
       if (response?.success) {
         setSubmitLoading(false);
-        if (response?.invoicesFound) {
+        if (data?.invoicesFound) {
           return Modal.confirm({
             title:
               "Following invoices are already found in our records, Do you still wish to continue?",
@@ -363,7 +362,7 @@ export default function ExportMaterialInWithPO({}) {
       );
       if (response?.success) {
         let final = {
-          companybranch: "BRMSC012",
+          companybranch: "BRALWR36",
           invoices: response?.data,
           poid: searchData.poNumber,
           manual_mfg_code: poData.materials.map((row) => row.manualMfgCode),
@@ -404,12 +403,13 @@ export default function ExportMaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message, "error");
         }
       } else {
         setSubmitLoading(false);
-        toast.error(
-          "Some error occured while uploading invoices, Please try again"
+        showToast(
+          "Some error occured while uploading invoices, Please try again",
+          "error"
         );
       }
     }
@@ -435,9 +435,9 @@ export default function ExportMaterialInWithPO({}) {
       cost_center: costCode,
     });
     setPageLoading(false);
-    let arr = response?.data;
+    let arr = [];
     if (response.success) {
-      let arr = response.data.map((d) => {
+       arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
@@ -480,27 +480,124 @@ export default function ExportMaterialInWithPO({}) {
     arr = arr.map((row) => {
       let obj = row;
       if (id == row.id) {
-        if (name == "orderqty") {
-          if (value <= row.maxQty) {
-            obj = {
-              ...obj,
-              [name]: value,
-              inrValue: value * row.orderrate,
-              usdValue: value * row.orderrate * row.exchange_rate,
-              igst:
-                row.gsttype == "L"
-                  ? 0
-                  : (value * row.orderrate * row.gstrate) / 100,
-              sgst:
-                row.gsttype == "I"
-                  ? 0
-                  : (value * row.orderrate * row.gstrate) / 200,
-              cgst:
-                row.gsttype == "I"
-                  ? 0
-                  : (value * row.orderrate * row.gstrate) / 200,
-            };
-          }
+        if (name == "orderQty" || name == "orderqty") {
+          const qty = Number(value) || 0;
+          const rate = Number(row.rate) || 0;
+          const exchangeRate = Number(row.exchangeRate) || 0;
+          const customDuty = Number(row.customDuty) || 0;
+          const freightValue = Number(row.freightValue) || 0;
+
+          const taxableValue = qty * rate;
+          const foreignValue = taxableValue * exchangeRate;
+          const total = taxableValue + customDuty + freightValue;
+          const finalRate =
+            qty > 0 ? rate + customDuty / qty + freightValue / qty : rate;
+
+          obj = {
+            ...obj,
+            orderQty: qty,
+            taxableValue: taxableValue,
+            foreignValue: foreignValue,
+            total: total,
+            finalRate: finalRate,
+          };
+          return obj;
+        } else if (name == "rate") {
+          const qty = Number(row.orderQty) || 0;
+          const rate = Number(value) || 0;
+          const exchangeRate = Number(row.exchangeRate) || 0;
+          const customDuty = Number(row.customDuty) || 0;
+          const freightValue = Number(row.freightValue) || 0;
+
+          const taxableValue = qty * rate;
+          const foreignValue = taxableValue * exchangeRate;
+          const total = taxableValue + customDuty + freightValue;
+          const finalRate =
+            qty > 0 ? rate + customDuty / qty + freightValue / qty : rate;
+
+          obj = {
+            ...obj,
+            rate: rate,
+            taxableValue: taxableValue,
+            foreignValue: foreignValue,
+            total: total,
+            finalRate: finalRate,
+          };
+          return obj;
+        } else if (name == "exchangeRate") {
+          const qty = Number(row.orderQty) || 0;
+          const rate = Number(row.rate) || 0;
+          const exchangeRate = Number(value) || 0;
+          const customDuty = Number(row.customDuty) || 0;
+          const freightValue = Number(row.freightValue) || 0;
+
+          const taxableValue = qty * rate;
+          const foreignValue = taxableValue * exchangeRate;
+          const total = taxableValue + customDuty + freightValue;
+          const finalRate =
+            qty > 0 ? rate + customDuty / qty + freightValue / qty : rate;
+
+          obj = {
+            ...obj,
+            exchangeRate: exchangeRate,
+            foreignValue: foreignValue,
+            total: total,
+            finalRate: finalRate,
+          };
+          return obj;
+        } else if (name == "customDuty") {
+          const qty = Number(row.orderQty) || 0;
+          const rate = Number(row.rate) || 0;
+          const exchangeRate = Number(row.exchangeRate) || 0;
+          const customDuty = Number(value) || 0;
+          const freightValue = Number(row.freightValue) || 0;
+
+          const taxableValue = qty * rate;
+          const foreignValue = taxableValue * exchangeRate;
+          const total = taxableValue + customDuty + freightValue;
+          const finalRate =
+            qty > 0 ? rate + customDuty / qty + freightValue / qty : rate;
+
+          obj = {
+            ...obj,
+            customDuty: customDuty,
+            total: total,
+            finalRate: finalRate,
+          };
+          return obj;
+        } else if (name == "freightValue") {
+          const qty = Number(row.orderQty) || 0;
+          const rate = Number(row.rate) || 0;
+          const exchangeRate = Number(row.exchangeRate) || 0;
+          const customDuty = Number(row.customDuty) || 0;
+          const freightValue = Number(value) || 0;
+
+          const taxableValue = qty * rate;
+          const foreignValue = taxableValue * exchangeRate;
+          const total = taxableValue + customDuty + freightValue;
+          const finalRate =
+            qty > 0 ? rate + customDuty / qty + freightValue / qty : rate;
+
+          obj = {
+            ...obj,
+            freightValue: freightValue,
+            total: total,
+            finalRate: finalRate,
+          };
+          return obj;
+        } else if (name == "mfgCode") {
+          obj = {
+            ...obj,
+            mfgCode: value,
+            manualMfgCode: value, // Keep both in sync
+          };
+          return obj;
+        } else if (name == "hsncode" || name == "hsn") {
+          obj = {
+            ...obj,
+            hsncode: value,
+            hsn: value, // Keep both in sync
+          };
           return obj;
         } else if (name == "location") {
           obj = {
@@ -558,8 +655,56 @@ export default function ExportMaterialInWithPO({}) {
       let obj = response?.data;
       obj = {
         ...obj,
-
         poId: searchData.poNumber,
+        materials: obj.materials.map((mat, index) => {
+          // Calculate values
+          const orderQty = mat.orderqty || 0;
+          const orderRate = mat.orderrate || 0;
+          const exchangeRate = mat.exchange_rate || 0;
+          const taxableValue = mat.totalValue || orderQty * orderRate;
+          const foreignValue = mat.usdValue || taxableValue * exchangeRate;
+          const customDuty = mat.custom_duty || 0;
+          const freightValue = mat.freight_value || 0;
+          const total = taxableValue + customDuty + freightValue;
+          // Calculate finalRate, handle division by zero
+          const finalRate =
+            orderQty > 0
+              ? orderRate + customDuty / orderQty + freightValue / orderQty
+              : orderRate;
+
+          return {
+            ...mat,
+            id: v4(),
+            // Map field names to match column expectations
+            partCode: mat.partcode || mat.c_partno || "",
+            manualMfgCode: mat.mfgCode || "--",
+            mfgCode: mat.mfgCode || "--", // Also add for manualMFGCode cell component
+            orderQty: orderQty,
+            poOrderQty: mat.po_order_qty || 0,
+            pendingQty: Math.max(0, (mat.po_order_qty || 0) - orderQty),
+            rate: orderRate,
+            exchangeRate: exchangeRate,
+            hsn: mat.hsncode || "--",
+            hsncode: mat.hsncode || "--", // Also add for HSNCell component
+            // Add component object for rendering
+            component: {
+              label: mat.component_fullname || "",
+              value: mat.componentKey || "",
+            },
+            componentKey: mat.componentKey || "",
+            // Add calculated values
+            taxableValue: taxableValue,
+            foreignValue: foreignValue,
+            customDuty: customDuty,
+            freightValue: freightValue,
+            finalRate: finalRate,
+            total: total,
+            // Keep original fields for reference
+            orderremark: mat.orderremark || "",
+            gsttype: mat.gsttype || "I",
+            gstrate: mat.gstrate || "0",
+          };
+        }),
       };
       costCode = obj.headers.cost_center_key;
       setCodeCostCenter(costCode);
@@ -567,7 +712,7 @@ export default function ExportMaterialInWithPO({}) {
       setPoData(obj);
       setResetPoData(obj);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message, "error");
       setPoData({ materials: [] });
       //   toast.error("Some error Occurred");
     }
@@ -614,7 +759,7 @@ export default function ExportMaterialInWithPO({}) {
     {
       headerName: "MFG Code ",
       field: "manualMfgCode",
-      renderCell: ({ row }) => <ToolTipEllipses text={row.manualMfgCode} />,
+      renderCell: (params) => manualMFGCode(params, inputHandler),
       sortable: false,
       width: 100,
     },
@@ -623,7 +768,14 @@ export default function ExportMaterialInWithPO({}) {
       headerName: "QTY",
       field: "orderQty",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.orderQty} />,
+      renderCell: (params) => (
+        <Input
+          value={params.row.orderQty}
+          onChange={(e) =>
+            inputHandler("orderQty", e.target.value, params.row.id)
+          }
+        />
+      ),
       width: 120,
     },
     {
@@ -644,63 +796,93 @@ export default function ExportMaterialInWithPO({}) {
       headerName: "Rate",
       field: "rate",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.rate} />,
+      renderCell: (params) => (
+        <Input
+          value={params.row.rate}
+          onChange={(e) => inputHandler("rate", e.target.value, params.row.id)}
+        />
+      ),
       width: 100,
     },
     {
       headerName: "Custom Duty",
       field: "customDuty",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.customDuty} />,
+      renderCell: (params) => (
+        <Input
+          value={params.row.customDuty}
+          onChange={(e) =>
+            inputHandler("customDuty", e.target.value, params.row.id)
+          }
+        />
+      ),
       width: 100,
     },
     {
       headerName: "Freight Charge",
       field: "freightValue",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.freightValue} />,
+      renderCell: (params) => (
+        <Input
+          value={params.row.freightValue}
+          onChange={(e) =>
+            inputHandler("freightValue", e.target.value, params.row.id)
+          }
+        />
+      ),
       width: 100,
     },
     {
       headerName: "Exchange Rate",
       field: "exchangeRate",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.exchangeRate} />,
+      renderCell: (params) => (
+        <Input
+          value={params.row.exchangeRate}
+          onChange={(e) =>
+            inputHandler("exchangeRate", e.target.value, params.row.id)
+          }
+        />
+      ),
       width: 100,
     },
     {
       headerName: "Taxable Value",
       field: "taxableValue",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.taxableValue} />,
+      renderCell: ({ row }) => (
+        <Input disabled={true} value={row.taxableValue} />
+      ),
       width: 120,
     },
     {
       headerName: "Foreign Value",
       field: "foreignValue",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.foreignValue} />,
+      renderCell: ({ row }) => (
+        <Input disabled={true} value={row.foreignValue} />
+      ),
       width: 120,
     },
     {
       headerName: "Final Rate",
       field: "finalRate",
       flex: 1,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.finalRate} />,
+      renderCell: ({ row }) => <Input disabled={true} value={row.finalRate} />,
       width: 100,
     },
     {
       headerName: "Total",
       field: "total",
       flex: 1,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.total} />,
+      renderCell: ({ row }) => <Input disabled={true} value={row.total} />,
       width: 100,
     },
     {
       headerName: "HSN Code",
       field: "hsn",
       sortable: false,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.hsn} />,
+      renderCell: (params) => HSNCell(params, inputHandler),
       width: 150,
     },
     {
@@ -819,11 +1001,11 @@ export default function ExportMaterialInWithPO({}) {
       "fetch"
     );
 
-    if (response?.data?.status === "success") {
+    if (response?.success) {
       let { data } = response;
 
       // Flatten the new data structure to extract part details and other fields
-      const formattedRows = data?.data?.map((item) => {
+      const formattedRows = data?.map((item) => {
         const part = item.part;
         return {
           partCode: part.part_code,
@@ -843,7 +1025,7 @@ export default function ExportMaterialInWithPO({}) {
           finalRate: item.final_rate,
           pendingQty: item.pending_qty,
           poOrderQty: item.po_order_qty,
-          value: (item.order_qty * item.import_rate).toFixed(3), // You may want to adjust the calculation for the value
+          value: (item.order_qty * item.import_rate).toFixed(3), 
         };
       });
       // Optional: map formatted rows to final structure
@@ -862,7 +1044,7 @@ export default function ExportMaterialInWithPO({}) {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response?.data?.message);
+      showToast(response?.message, "error");
       setPreview(false);
     }
   };
@@ -1365,7 +1547,7 @@ export default function ExportMaterialInWithPO({}) {
                           if (searchData?.poNumber) {
                             setOpen(true);
                           } else {
-                            toast.error("Please enter PO Number");
+                            showToast("Please enter PO Number", "error");
                           }
                         }}
                       >

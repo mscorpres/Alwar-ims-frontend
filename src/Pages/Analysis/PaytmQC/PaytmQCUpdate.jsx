@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import Input from "antd/lib/input/Input";
 import { Button, Col, Drawer, Form, Modal, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import validateResponse from "../../../Components/validateResponse";
 
 export default function PaytmQCUpdate({ setUpdatingQC, updatingQC, getRows }) {
+  const { showToast } = useToast();
   const [imeiNumber, setImeiNumber] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [qcData, setQCData] = useState({});
@@ -108,20 +109,20 @@ export default function PaytmQCUpdate({ setUpdatingQC, updatingQC, getRows }) {
       setQCData(data.data);
       setResetQCData(data.data);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const validateData = () => {
     if (!qcData.imei_no || qcData.imei_no == "") {
-      return toast.error("Please Provide IMEI Number");
+      return showToast("Please Provide IMEI Number", "error");
     } else if (!qcData.defects_type || qcData.defects_type == "") {
-      return toast.error("Please select a defect type");
+      return showToast("Please select a defect type", "error");
     } else if (!qcData.actual_problems || qcData.actual_problems == "") {
-      return toast.error("Please select the actual problem");
+      return showToast("Please select the actual problem", "error");
     } else if (!qcData.correction_by || qcData.correction_by == "") {
-      return toast.error("Please select the correction action performed");
+      return showToast("Please select the correction action performed", "error");
     } else if (!qcData.correction_by || qcData.correction_by == "") {
-      return toast.error("Please select the status after correction");
+      return showToast("Please select the status after correction", "error");
     }
     let final = {
       imei_no: qcData.imei_no,
@@ -143,7 +144,7 @@ export default function PaytmQCUpdate({ setUpdatingQC, updatingQC, getRows }) {
       setSubmitLoading(false);
       setShowSubmitConfirm(false);
       const validateData = validateResponse(data);
-      toast.success(validateData.message);
+      showToast(validateData.message, "success");
       setUpdatingQC(false);
       getRows();
     }

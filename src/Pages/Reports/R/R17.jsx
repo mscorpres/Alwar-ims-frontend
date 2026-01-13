@@ -1,7 +1,7 @@
 import { Button, Card, Col, Form, Row, Space, Typography } from "antd";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components//exportToCSV";
 import Loading from "../../../Components/Loading";
@@ -16,6 +16,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 function R17() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -54,7 +55,7 @@ function R17() {
       ];
       setSummaryData(summaryArr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };
@@ -143,9 +144,7 @@ function R17() {
     let vendor = searchForm.getFieldsValue().vendor;
     if (vendor) {
       setFormLoading(true);
-      const response = await imsAxios.post("/backend/fetchVendorJWLocation", {
-        search: vendor,
-      });
+      const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendor}`);
       setFormLoading(false);
       if (response.success) {
         let arr = [];
@@ -155,7 +154,7 @@ function R17() {
         }));
         setLocationOptions(arr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -164,7 +163,7 @@ function R17() {
   }, [searchForm.getFieldsValue().vendor]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "calc(100vh - 165px)" }}>
       <Row gutter={4} style={{ height: "100%", padding: "0px 5px" }}>
         <Col
           style={{ overflowY: "auto", height: "100%", paddingBottom: 50 }}

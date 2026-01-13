@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import PendingFGModal from "./Modal/PendingFGModal";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
@@ -11,6 +11,7 @@ import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 
 const PendingFG = () => {
+  const { showToast } = useToast();
   const [pending, setPending] = useState([]);
   const [loading, setLoading] = useState(false);
   // const [search, setSearch] = useState("");
@@ -23,7 +24,8 @@ const PendingFG = () => {
     imsAxios
       .post("/fgIN/pending")
       .then((response) => {
-        let arr = response?.data.map((row) => {
+        if (response?.success) {
+            let arr = response?.data.map((row) => {
           return {
             ...row,
             id: v4(),
@@ -31,9 +33,14 @@ const PendingFG = () => {
         });
         setPending(arr);
         setLoading(false);
+        } else {
+        showToast(response?.message, "error");
+        setLoading(false);
+        }
+      
       })
       .catch((err) => {
-        toast.error(err);
+        showToast(err, "error");
         setLoading(false);
       });
   };
@@ -99,8 +106,8 @@ const PendingFG = () => {
   }, []);
 
   return (
-    <div style={{ height: "90%" }}>
-      <Row style={{ margin: "10px" }}>
+    <div style={{ height: "100%" }}>
+      <Row>
         {/* <Col span={4} className="gutter-row">
           <div>
             <Select options={options} placeholder="Pending" style={{ width: "100%" }} />

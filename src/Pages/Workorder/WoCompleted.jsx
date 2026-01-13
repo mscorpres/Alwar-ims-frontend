@@ -11,7 +11,7 @@ import { downloadCSV } from "../../Components/exportToCSV";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { getClientOptions } from "./components/api";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import printFunction, {
   downloadFunction,
 } from "../../Components/printFunction";
@@ -45,6 +45,7 @@ const WoCompleted = () => {
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
+ const { showToast } = useToast();
 
   const handleClientOptions = async (search) => {
     try {
@@ -68,7 +69,7 @@ const WoCompleted = () => {
       );
       const { data } = response;
       printFunction(response.data.data.buffer.data);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } catch (error) {
       console.log("some error occured while fetching rows", error);
     } finally {
@@ -87,7 +88,7 @@ const WoCompleted = () => {
       );
       const { data } = response;
       downloadFunction(response.data.data.buffer.data);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } catch (error) {
       console.log("some error occured while fetching rows", error);
     } finally {
@@ -129,7 +130,7 @@ const WoCompleted = () => {
   }, [wise]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row style={{ padding: 5, paddingTop: 0 }} justify="space-between">
         <Col>
           <Space>
@@ -187,7 +188,7 @@ const WoCompleted = () => {
           }}
         />
       </Row>
-      <div style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "90%", paddingRight: 5, paddingLeft: 5 }}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Col, Modal, Row, Select } from "antd";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 
 function ModalR19({ modalOpen, setModalOpen, allData, fetchData }) {
+  const { showToast } = useToast();
   const [allSelectedValue, setAllSelectedValue] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -38,7 +39,7 @@ function ModalR19({ modalOpen, setModalOpen, allData, fetchData }) {
       }));
       setAsyncOptions(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -49,7 +50,7 @@ function ModalR19({ modalOpen, setModalOpen, allData, fetchData }) {
     if (response.success) {
       fetchData();
       setModalOpen(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
     }
   };
 

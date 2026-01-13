@@ -44,18 +44,12 @@ const R10 = () => {
     });
     setTableLoading(false);
     // getting selected value
-    const { data: selectedData } = await imsAxios.post(
-      "/report10/getSelectedValue",
-      {
-        user_id: selectedUser.value,
-      }
-    );
+    const res = await imsAxios.post("/report10/getSelectedValue", {
+      user_id: selectedUser.value,
+    });
     setPageLoading(false);
-    const validatedSelectedData = validateResponse(selectedData);
-
-    // const validatedData = validateResponse(data);
     let arr = [];
-    if (!response.success) {
+    if (!response.success || !response.data) {
       setColumns([]);
       setrows([]);
       setUpdateData({
@@ -64,28 +58,41 @@ const R10 = () => {
       });
       return;
     }
-    data.data.forEach((element) => {
-      let obj;
-      let a;
-      for (let prop in element) {
-        a = element[prop];
-      }
 
-      obj = {
-        name: Object.keys(element)[0],
-        // total: Objeelement[1],
-        ...a,
-      };
-      // console.log(obj);
-      arr.push(obj);
-    });
+    const data = response.data;
 
+    // Process the data array from response
+    if (data.data && Array.isArray(data.data)) {
+      data.data.forEach((element) => {
+        let obj;
+        let locationData = {};
+        // Each element is an object with part name as key and location data as value
+        for (let partName in element) {
+          locationData = element[partName];
+          obj = {
+            name: partName,
+            ...locationData,
+          };
+        }
+        if (obj) {
+          arr.push(obj);
+        }
+      });
+    }
+
+    // Calculate totals for each row
     arr = arr.map((row) => {
       let values = [];
       for (let prop in row) {
-        prop !== "name" && values.push(row[prop]);
+        if (
+          prop !== "name" &&
+          prop !== "parts_codes" &&
+          prop !== "new_partnos" &&
+          typeof row[prop] === "number"
+        ) {
+          values.push(row[prop]);
+        }
       }
-      // console.log("hereeeeeeeeeeeeeeeeeeeeeeeee", values);
 
       return {
         ...row,
@@ -94,14 +101,17 @@ const R10 = () => {
         }, 0),
       };
     });
-    // console.log(arr);
-    let cols = {};
-    cols = data.head.map((row) => ({
-      headerName: row,
-      field: row,
-      // renderCell: ({ row: rowData }) => <ToolTipEllipses text={rowData} />,
-      width: 100,
-    }));
+
+    // Create columns from head array
+    let cols = [];
+    if (data.head && Array.isArray(data.head)) {
+      cols = data.head.map((row) => ({
+        headerName: row,
+        field: row,
+        width: 100,
+      }));
+    }
+
     cols = [
       {
         headerName: "Sr. No.",
@@ -133,24 +143,34 @@ const R10 = () => {
         width: 100,
       },
     ];
+
+    // Map parts_codes and new_partnos to rows
     arr = arr.map((row, index) => ({
       ...row,
       id: index + 1,
-      parts_codes: data.parts_codes[index],
+      parts_codes:
+        data.parts_codes && data.parts_codes[index]
+          ? data.parts_codes[index]
+          : "",
+      new_partnos:
+        data.new_partnos && data.new_partnos[index]
+          ? data.new_partnos[index]
+          : "",
     }));
+
     setColumns(cols);
     setrows(arr);
 
     // selected data
-    if (validatedSelectedData.code == 200) {
+    if (res.success) {
       let i;
       let partsArr = [];
       let locationArr = [];
-      partsArr = validatedSelectedData.data.part_options.map((row) => ({
+      partsArr = res.data.part_options.map((row) => ({
         label: row.text,
         value: row.id,
       }));
-      locationArr = validatedSelectedData.data.loc_options.map((row) => ({
+      locationArr = res.data.loc_options.map((row) => ({
         label: row.text,
         value: row.id,
       }));
@@ -183,7 +203,7 @@ const R10 = () => {
   const getLocation = async () => {
     setPageLoading(true);
     const response = await imsAxios.post("/backend/fetchLocation");
-    let arr = data.map((row) => ({ value: row.id, text: row.text }));
+    let arr = response.data.map((row) => ({ value: row.id, text: row.text }));
     setLocationOptions(arr);
     setPageLoading(false);
   };
@@ -191,7 +211,7 @@ const R10 = () => {
     const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: search,
     });
-    let arr = data.map((row) => ({ text: row.text, value: row.id }));
+    let arr = response?.data.map((row) => ({ text: row.text, value: row.id }));
     setAsyncOptions(arr);
   };
   const getUsers = async (search) => {
@@ -200,12 +220,12 @@ const R10 = () => {
       search: search,
     });
     setSelectLoading(false);
-    let arr = data.map((row) => ({ text: row.text, value: row.id }));
+    let arr = response.data.map((row) => ({ text: row.text, value: row.id }));
     setAsyncOptions(arr);
   };
   const updateDataTable = async (userId) => {
     // true;
-    console.log(updateData);
+  
     if (updateData.locations.length > 0) {
       const response = await imsAxios.post("report10/update", {
         component_part: updateData.components.map((row) =>
@@ -217,32 +237,28 @@ const R10 = () => {
         user_id: selectedUser.value,
       });
       setUpdateLoading(false);
-      const validateData = validateResponse(data);
-      if (validateData.code == 200) {
+
+      if (response.success) {
         getDataOnLoad();
       }
     }
-    // setShowUpdateModal(false);
+    setShowUpdateModal(false);
   };
   const getSelectedValue = async () => {
     setModalLoading(true);
-    const { data: selectedData } = await imsAxios.post(
-      "/report10/getSelectedValue",
-      {
-        user_id: selectedUser.value,
-      }
-    );
+    const res = await imsAxios.post("/report10/getSelectedValue", {
+      user_id: selectedUser.value,
+    });
     setModalLoading(false);
-    const validatedSelectedData = validateResponse(selectedData);
-    if (validatedSelectedData.code == 200) {
+    if (res.success) {
       let i;
       let partsArr = [];
       let locationArr = [];
-      partsArr = validatedSelectedData.data.part_options.map((row) => ({
+      partsArr = res.data.part_options.map((row) => ({
         label: row.text,
         value: row.id,
       }));
-      locationArr = validatedSelectedData.data.loc_options.map((row) => ({
+      locationArr = res.data.loc_options.map((row) => ({
         label: row.text,
         value: row.id,
       }));
@@ -279,7 +295,7 @@ const R10 = () => {
     </Space>
   );
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         justify="space-between"
         style={{ padding: "0px 10px", paddingBottom: 5 }}
@@ -358,10 +374,13 @@ const R10 = () => {
                   labelInValue
                   onBlur={() => setAsyncOptions([])}
                   onChange={(value) =>
+                  {
+                   
                     setUpdateData((data) => ({
                       ...data,
-                      locations: value,
+                      locations: value?.[0]?.value,
                     }))
+                  }
                   }
                   value={updateData.locations}
                   // defaultValue={[]}

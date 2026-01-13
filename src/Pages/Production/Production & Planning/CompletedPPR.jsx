@@ -1,6 +1,6 @@
 import { Button, Row, Space, Input } from "antd";
 import React, { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
@@ -12,6 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 const CompletedPPR = () => {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("skuwise");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -40,7 +41,7 @@ const CompletedPPR = () => {
       });
       setSelectLoading(false);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -64,7 +65,7 @@ const CompletedPPR = () => {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 
@@ -95,7 +96,7 @@ const CompletedPPR = () => {
     }
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         justify="space-between"
         style={{ padding: "0px 10px", paddingBottom: 5 }}

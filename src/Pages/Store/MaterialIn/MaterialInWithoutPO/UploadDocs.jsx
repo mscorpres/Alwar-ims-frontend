@@ -6,7 +6,7 @@ import { AiOutlineFileWord } from "react-icons/ai";
 import { v4 } from "uuid";
 // import Loading from "./Loading";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import printJS from "print-js";
 import { AiFillPrinter } from "react-icons/ai";
 import { Button, Col, Drawer, Row } from "antd";
@@ -21,6 +21,7 @@ export default function UploadDocs({
   showExistingFiles,
   // poId,
 }) {
+  const { showToast } = useToast();
   // const getExistingFiles = async () => {
   //   // console.log("showing");
   //   setLoading(true);

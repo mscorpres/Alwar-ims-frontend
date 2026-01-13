@@ -7,10 +7,11 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import MyDataTable from "../../../Components/MyDataTable";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../Components/exportToCSV";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyButton from "../../../Components/MyButton";
 
 function Index() {
+  const { showToast } = useToast();
   const [searchInput, setSearchInput] = useState("");
   const [rows, setRows] = useState([]);
   const { executeFun, loading } = useApi();
@@ -40,12 +41,10 @@ function Index() {
       setRows(arr);
     }
   };
-  useEffect(() => {
-    toast.info("Under development");
-  }, []);
+
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
       <Row justify="space-between" style={{ padding: 5, paddingTop: 0 }}>
         <Col>
           <Space>
@@ -85,7 +84,7 @@ function Index() {
         {/* </div> */}
       </Row>
 
-      <Row style={{ marginTop: 15, height: "75vh", overflowX: "hidden" }}>
+      <Row style={{ marginTop: 15, height: "calc(100vh - 220px)", overflowX: "hidden" }}>
         <MyDataTable
           columns={columns}
           pageSize={12}

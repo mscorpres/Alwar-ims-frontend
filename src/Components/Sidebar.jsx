@@ -2,11 +2,13 @@ import React from "react";
 import "../index.css";
 import Sider from "antd/lib/layout/Sider";
 import { Menu } from "antd";
+
 const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
+  const {isBannerVisible} = props
   return (
     <Sider
       style={{
-        height: "100vh",
+        height: isBannerVisible ? "calc(100vh - 50px)" : "100vh",
         zIndex: 99,
         overflowY: "auto",
       }}
@@ -18,7 +20,7 @@ const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
       <Menu
         theme="dark"
         // forceSubMenuRender
-        style={{ height: "70%", background: "#047780", overflowY: "auto" }}
+        style={{ height: "70%", background: "transparent", overflowY: "auto" }}
         defaultSelectedKeys={["1"]}
         mode="inline"
         triggerSubMenuAction="hover"
@@ -31,8 +33,8 @@ const Sidebar = ({ showSideBar, setShowSideBar, items, items1, ...props }) => {
         // forceSubMenuRender
         style={{
           height: "30%",
-          // background: "#047780",
-          background: " #047780",
+          background: "transparent",
+       
           display: "flex",
           flexDirection: "column",
           paddingBottom: 50,

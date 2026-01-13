@@ -4,9 +4,10 @@ import HeaderDetails from "../HeaderDetails";
 import Components from "../Components";
 import { useLocation } from "react-router-dom";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 export const CreateDebitNote = () => {
+  const { showToast } = useToast();
   const location = useLocation();
   const [allTdsOptions, setAllTdsOptions] = useState([]);
   const [tdsArray, setTdsArray] = useState([]);
@@ -24,7 +25,7 @@ export const CreateDebitNote = () => {
 
         return arr;
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -55,7 +56,7 @@ export const CreateDebitNote = () => {
       });
       setTdsArray(tdsC);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const getDetails = async (vbtCodes) => {
@@ -111,7 +112,7 @@ export const CreateDebitNote = () => {
         //   ];
         // setSummaryDetails(summaryDetailsArr);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

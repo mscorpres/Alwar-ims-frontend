@@ -22,7 +22,7 @@ export default function SuccessPage({
       transaction: successInfo.id,
     });
     setPringLoading(false);
-    printFunction(data.data.buffer.data);
+    printFunction(response.data.buffer.data);
   };
   const handleDownload = async () => {
     setDownloadLoading(true);
@@ -31,7 +31,7 @@ export default function SuccessPage({
     });
     setDownloadLoading(false);
     let filename = successInfo.id;
-    downloadFunction(data.data.buffer.data, filename);
+    downloadFunction(response.data.buffer.data, filename);
   };
   const columns = [
     {
@@ -77,7 +77,7 @@ export default function SuccessPage({
           successInfo?.components.length
         } component${successInfo?.components.length > 1 ? "s" : ""}) `}
         extra={[
-          <Row justify="center" gutter={16}>
+          <Row  gutter={16}>
             <Col>
               <CommonIcons action={"refreshButton"} onClick={createNewDC} />
             </Col>

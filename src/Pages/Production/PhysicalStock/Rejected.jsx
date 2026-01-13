@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import useApi from "@/hooks/useApi.ts";
-import { Col, Divider, Flex, Form, Input, Modal, Row, Typography } from "antd";
+import { Col, Divider, Flex, Form, Input, Drawer, Row, Typography, Button, Space } from "antd";
 import {
   getPhysicalStockWithStatus,
   updateAudit,
@@ -84,7 +84,7 @@ const RejectedPhysicalProduction = () => {
         updateHandler={handleUpdateAudit}
         loading={loading("submit")}
       />
-      <Row style={{ height: "100%" }} justify="center">
+      <Row style={{ height: "100%" }} >
         <Col span={20}>
           <MyDataTable
             loading={loading("fetch") || loading("updateStatus")}
@@ -157,19 +157,31 @@ const UpdateModal = ({ open, hide, selectedAudit, updateHandler, loading }) => {
     }
   }, [selectedAudit]);
   return (
-    <Modal
-      size="small"
+    <Drawer
       title="Update Audit Qty"
       open={open}
-      onCancel={hide}
-      okText="Submit"
-      confirmLoading={loading}
-      onOk={() =>
-        updateHandler(
-          selectedAudit?.componentKey,
-          selectedAudit?.auditKey,
-          form.getFieldValue("qty")
-        )
+      onClose={hide}
+      width={500}
+      placement="right"
+      extra={
+        <Space>
+          <Button onClick={hide}>
+            Cancel
+          </Button>
+          <Button
+            type="primary"
+            loading={loading}
+            onClick={() =>
+              updateHandler(
+                selectedAudit?.componentKey,
+                selectedAudit?.auditKey,
+                form.getFieldValue("qty")
+              )
+            }
+          >
+            Submit
+          </Button>
+        </Space>
       }
     >
       <Row>
@@ -249,6 +261,6 @@ const UpdateModal = ({ open, hide, selectedAudit, updateHandler, loading }) => {
           </Form>
         </Col>
       </Row>
-    </Modal>
+    </Drawer>
   );
 };

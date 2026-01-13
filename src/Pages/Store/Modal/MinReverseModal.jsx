@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, Input } from "antd";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 
 function MinReverseModal({
@@ -10,6 +10,7 @@ function MinReverseModal({
   inputStore,
   mainData,
 }) {
+  const { showToast } = useToast();
   const [remark, setRemark] = useState("");
   const [reverseLoading, setReverseLoading] = useState(false);
 
@@ -22,22 +23,22 @@ function MinReverseModal({
     mainData.map((aa) => compArray.push(aa.componentKey));
 
     const response = await imsAxios.post("/reversal/saveMINReversal", {
-      branch: "BRMSC012",
+      branch: "BRALWR36",
       authentication: authArray,
       component: compArray,
       remark: remark,
       transaction: inputStore,
     });
-    if (data.success) {
+    if (response?.success) {
       setRemark("");
       setReverseModal(false);
       setReverseLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      showToast(response?.message, "error");
       setReverseModal(false);
       setReverseLoading(false);
     }
-    console.log(data);
+
   };
 
   return (

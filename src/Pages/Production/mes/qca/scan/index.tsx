@@ -309,7 +309,7 @@ const QcScan = (props: Props) => {
     setCurrentScanDetails(getCurrentScanDetails(rows ?? []));
   }, [rows]);
   return (
-    <Row style={{ padding: 10, height: "95%" }} justify={"center"} gutter={6}>
+    <Row style={{ height: "95%" }} justify={"center"} gutter={6}>
       <TransferModal
         show={showTransferModal}
         hide={() => setShowInsertModal(false)}

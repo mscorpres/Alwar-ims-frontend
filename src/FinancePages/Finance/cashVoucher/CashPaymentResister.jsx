@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Col, Input, Row, Select } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -16,6 +16,7 @@ import MyButton from "../../../Components/MyButton";
 // import CashEditModal from "./model/CashEditModal";
 
 function CashPaymentResister() {
+  const { showToast } = useToast();
   const [open, setOpen] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [datee, setDatee] = useState("");
@@ -27,7 +28,6 @@ function CashPaymentResister() {
     pick: "",
   });
   const [cashEdit, setCashEdit] = useState(false);
-  // console.log(selectedValue);
 
   const getSelectOption = [
     { label: "Date Wise", value: "date_wise" },
@@ -47,7 +47,6 @@ function CashPaymentResister() {
         seacrh: e,
       });
       setSelectLoading(false);
-      // console.log(data.data);
       let arr = [];
       arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
@@ -74,7 +73,7 @@ function CashPaymentResister() {
         setDateData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "eff_wise") {
@@ -94,7 +93,7 @@ function CashPaymentResister() {
         setEffectiveData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "key_wise") {
@@ -114,7 +113,7 @@ function CashPaymentResister() {
         setCodeData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     } else if (e == "ledger_wise") {
@@ -138,7 +137,7 @@ function CashPaymentResister() {
         setLedgerData(arr);
         setLoading(false);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setLoading(false);
       }
     }
@@ -397,7 +396,7 @@ function CashPaymentResister() {
             )
           )}
         </Row>
-        <div style={{ height: "87%", marginTop: "5px" }}>
+        <div style={{ height: "calc(100vh - 210px)", marginTop: "5px" }}>
           {selectedValue?.selType == "date_wise" ? (
             <MyDataTable loading={loading} data={dateData} columns={columns} />
           ) : selectedValue?.selType == "eff_wise" ? (

@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from "react";
+import  { useState } from "react";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
-import axios from "axios";
-import { toast } from "react-toastify";
 import NavFooter from "../../../Components/NavFooter";
-import links from "../jounralPosting/links";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import FormTable from "../../../Components/FormTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Card, Col, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../hooks/useToast";
 
 export default function JournalPosting() {
+ const { showToast } = useToast();
   const [journalDate, setJournalDate] = useState("");
   const [debitTotal, setDebitTotal] = useState(0);
   const [creditTotal, setCreditTotal] = useState(0);
@@ -34,7 +33,6 @@ export default function JournalPosting() {
     },
     { id: v4(), total: true, debit: 0, credit: 0 },
   ]);
-  console.log(journalRows);
   const [loading, setLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
 
@@ -57,7 +55,6 @@ export default function JournalPosting() {
     let arr = journalRows;
     arr = arr.filter((row) => row.id != rowId);
     let creditArr = arr.map((row, index) => {
-      // console.log(index);
       if (index < arr.length - 1) {
         if (row.credit != "") {
           return row.credit;
@@ -294,7 +291,7 @@ export default function JournalPosting() {
   ];
   const submitHandler = async () => {
     if (!journalDate) {
-      return toast.error("Please select Effective date");
+      return showToast("Please select Effective date", "error");
     }
     let finalObj = {
       effective_date: journalDate,
@@ -327,13 +324,15 @@ export default function JournalPosting() {
       setLoading(false);
       if (response.success) {
         resetHandler();
-        toast.success(data.message.msg);
+        showToast( data.message.msg || "Debit Voucher created successfully",);
+
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
+  
       }
     } else {
       if (problem == "gl_code") {
-        return toast.error("All entries should have a gl_code");
+        return showToast("All entries should have a gl_code", "error")
       }
     }
   };
@@ -360,7 +359,7 @@ export default function JournalPosting() {
     // setJournalDate("");
   };
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         gutter={[4, 4]}
         style={{

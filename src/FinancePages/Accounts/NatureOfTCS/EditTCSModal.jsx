@@ -10,8 +10,8 @@ import {
 } from "antd";
 import { useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import {useToast} from "../../../hooks/useToast";
 
 const { TextArea } = Input;
 
@@ -20,6 +20,7 @@ function EditTCS({
   setEditingTCS,
   getTCSList,
 }) {
+ const { showToast } = useToast()
   const status = [
     { label: "Open", value: "open" },
     { label: "Close", value: "closed" },
@@ -46,7 +47,6 @@ function EditTCS({
     const response = await imsAxios.get(
       `/tally/tcs/tcsLedgerOptions?search=${search}`
     );
-    // console.log(data.data);
     setSelectLoading(false);
     let arr = [];
     if (response.success) {
@@ -86,11 +86,12 @@ function EditTCS({
     );
     setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
       setEditingTCS(null);
       getTCSList();
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+   
     }
   };
 
@@ -98,12 +99,6 @@ function EditTCS({
     setTCSData(editingTCS);
   }, [editingTCS]);
 
-  // useEffect(() => {
-  //   console.log("Before Edit TCS-> ", editingTCS);
-  // }, [editingTCS]);
-  // useEffect(() => {
-  //   console.log("Afterv Edit TCS-> ", tcsData);
-  // }, [tcsData]);
 
   return (
     <Drawer

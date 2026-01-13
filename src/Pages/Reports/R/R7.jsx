@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "./r.css";
 import { DownloadOutlined } from "@ant-design/icons";
 import { Button, Col, Row, Spin } from "antd";
-import { toast } from "react-toastify";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
@@ -13,8 +12,10 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 const R7 = () => {
+  const { showToast } = useToast();
   const [seacrh, setSearch] = useState(null);
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -125,13 +126,13 @@ const R7 = () => {
 
   const fetchBySearch = async () => {
     if (!allData.selectProduct) {
-      toast.error("Please select a product");
+      showToast("Please select a product", "error");
     } else if (!allData.selectBomWise) {
-      toast.error("Please select a bom");
+      showToast("Please select a bom", "error");
     } else if (!allData.selectBomWise) {
-      toast.error("Please select a bomwise");
+      showToast("Please select a bomwise", "error");
     } else if (!selectDate[0]) {
-      toast.error("Please select a valid date");
+      showToast("Please select a valid date", "error");
     } else {
       setResData([]);
       setLoading(true);
@@ -149,7 +150,7 @@ const R7 = () => {
         setLoading(false);
       } else if (!response.success) {
         setLoading(true);
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     }
@@ -162,7 +163,7 @@ const R7 = () => {
   }, [allData.selectProduct]);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={10} style={{ margin: "0px" }}>
         <Col span={5}>
           <Row style={{ padding: "5px" }}>
@@ -245,7 +246,7 @@ const R7 = () => {
               <Spin />
             </div>
           ) : (
-            <div className="hide-select" style={{ height: "85vh" }}>
+            <div className="hide-select" style={{ height:"calc(100vh - 120px)" }}>
               <MyDataTable
                 checkboxSelection={true}
                 data={resData}

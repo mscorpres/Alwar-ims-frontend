@@ -12,9 +12,11 @@ import {
 import React, { useEffect, useState } from "react";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast";
+
 
 function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
+  const { showToast } = useToast();
   const [countries, setCountries] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
   const [statusBranch, setStatusBranch] = useState();
@@ -22,7 +24,7 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
   const [stateOptions, setStateOptions] = useState([]);
   const [country, setCountry] = useState("");
   updateBranchForm.setFieldsValue(branchId);
-  console.log("branchid", branchId);
+ 
   let obj = {
     address: branchId?.address,
     addressID: branchId?.addressID,
@@ -89,14 +91,16 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
       // stateName: values?.state,
       email: values?.email,
     };
-    console.log("cointry", country);
+  
     const response = await imsAxios.put("client/updateBranch", newobj);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message);
+   
       setBranchId(null);
       setBranchModal(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
+    
       setBranchId(null);
       setBranchModal(false);
     }
@@ -114,9 +118,7 @@ function EditBranchModel({ setBranchId, branchId, setBranchModal, allBranch }) {
   };
   // useEffect(() => {
   //   const values = updateBranchForm.validateFields();
-  //   console.log(values);
   //   if (values.country == "83") {
-  //     console.log("first");
   //   }
   // }, [newobj.country]);
 

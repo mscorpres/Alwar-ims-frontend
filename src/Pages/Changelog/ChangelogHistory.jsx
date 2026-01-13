@@ -3,8 +3,9 @@ import { Box, Typography, CircularProgress, Paper } from "@mui/material";
 import { Select, Button, Tag } from "antd";
 import { PlayCircleOutlined, FileTextOutlined, DownOutlined, UpOutlined, SearchOutlined, ReloadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import dayjs from "dayjs";
+import { customColor } from "../../utils/customColor";
 
 // Component for expandable description
 const ExpandableDescription = ({ description, maxLines = 3 }) => {
@@ -45,7 +46,7 @@ const ExpandableDescription = ({ description, maxLines = 3 }) => {
             alignItems: "center",
             gap: 0.5,
             mt: 1,
-            color: "#047780",
+            color: customColor.newBgColor,
             cursor: "pointer",
             fontSize: 13,
             fontWeight: 500,
@@ -70,6 +71,7 @@ const ExpandableDescription = ({ description, maxLines = 3 }) => {
 };
 
 const ChangelogHistory = () => {
+  const { showToast } = useToast();
   // Project launch date: 01 Dec 2020
   const launchYear = 2020;
   const launchMonth = 11; // December (0-indexed)
@@ -92,18 +94,18 @@ const ChangelogHistory = () => {
 
   // Month options - all months
   const allMonths = [
-    { label: "January", value: 0 },
-    { label: "February", value: 1 },
-    { label: "March", value: 2 },
-    { label: "April", value: 3 },
-    { label: "May", value: 4 },
-    { label: "June", value: 5 },
-    { label: "July", value: 6 },
-    { label: "August", value: 7 },
-    { label: "September", value: 8 },
-    { label: "October", value: 9 },
-    { label: "November", value: 10 },
-    { label: "December", value: 11 },
+    { label: "January", value: 1 },
+    { label: "February", value: 2 },
+    { label: "March", value: 3 },
+    { label: "April", value: 4 },
+    { label: "May", value: 5 },
+    { label: "June", value: 6 },
+    { label: "July", value: 7 },
+    { label: "August", value: 8 },
+    { label: "September", value: 9 },
+    { label: "October", value: 10 },
+    { label: "November", value: 11 },
+    { label: "December", value: 12 },
   ];
 
   // Get month options based on selected year (only show valid months)
@@ -134,12 +136,12 @@ const ChangelogHistory = () => {
       if (response?.success) {
         setChangelogData(response.data || []);
       } else {
-        toast.error(response?.message || "Failed to fetch changelog");
+        showToast(response?.message || "Failed to fetch changelog", "error");
         setChangelogData([]);
       }
     } catch (error) {
       console.error("Error fetching changelog:", error);
-      toast.error("Failed to fetch changelog");
+      showToast("Failed to fetch changelog", "error");
       setChangelogData([]);
     } finally {
       setLoading(false);
@@ -242,7 +244,7 @@ const ChangelogHistory = () => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success("Changelog downloaded successfully");
+    showToast("Changelog downloaded successfully", "success");
   };
 
   if (loading) {
@@ -255,7 +257,7 @@ const ChangelogHistory = () => {
         minHeight="50vh"
         gap={2}
       >
-        <CircularProgress size={60} sx={{ color: "#047780" }} />
+        <CircularProgress size={60} sx={{ color: customColor.newBgColor }} />
         <Typography variant="h6" color="textSecondary">
           Loading changelog history...
         </Typography>
@@ -269,7 +271,7 @@ const ChangelogHistory = () => {
         display: "flex",
         gap: 3,
         p: 3,
-        height: "calc(100vh - 100px)",
+        height: "calc(100vh - 160px)",
       }}
     >
       {/* Left Section - Timeline */}
@@ -293,7 +295,7 @@ const ChangelogHistory = () => {
             variant="h4"
             sx={{
               fontWeight: "bold",
-              color: "#047780",
+              color: customColor.newBgColor,
             }}
           >
             Changelog History
@@ -304,8 +306,6 @@ const ChangelogHistory = () => {
               icon={<DownloadOutlined />}
               onClick={handleDownload}
               style={{
-                backgroundColor: "#047780",
-                borderColor: "#047780",
                 height: 36,
               }}
             >
@@ -351,7 +351,7 @@ const ChangelogHistory = () => {
                     sx={{
                       fontWeight: "bold",
                       fontSize: 28,
-                      color: "#047780",
+                      color: customColor.newBgColor,
                       transform: "rotate(-90deg)",
                       transformOrigin: "center center",
                       whiteSpace: "nowrap",
@@ -384,7 +384,7 @@ const ChangelogHistory = () => {
                           variant="h6"
                           sx={{
                             fontWeight: 600,
-                            color: "#047780",
+                            color: customColor.newBgColor,
                           }}
                         >
                           {month}
@@ -401,7 +401,7 @@ const ChangelogHistory = () => {
                             top: 0,
                             bottom: 0,
                             width: 3,
-                            backgroundColor: "#047780",
+                            backgroundColor: customColor.newBgColor,
                             zIndex: 0,
                           }}
                         />
@@ -460,7 +460,7 @@ const ChangelogHistory = () => {
                                   sx={{
                                     fontWeight: 500,
                                     fontSize: 12,
-                                    color: "#047780",
+                                    color: customColor.newBgColor,
                                   }}
                                 >
                                   {dateInfo.year}
@@ -537,7 +537,7 @@ const ChangelogHistory = () => {
                                           gap: 0.5,
                                           px: 1.5,
                                           py: 0.5,
-                                          backgroundColor: "#047780",
+                                          backgroundColor: "#d2f571",
                                           color: "#fff",
                                           borderRadius: 1,
                                           fontSize: 13,
@@ -642,7 +642,7 @@ const ChangelogHistory = () => {
           </Typography>
           <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
             <Tag
-              color={filterHaving.includes("doc") ? "#047780" : "default"}
+              color={filterHaving.includes("doc") ? customColor.newBgColor : "default"}
               style={{
                 cursor: "pointer",
                 padding: "4px 12px",
@@ -678,6 +678,7 @@ const ChangelogHistory = () => {
             style={{
               flex: 1,
               height: 36,
+            
             }}
           >
             Reset
@@ -689,8 +690,6 @@ const ChangelogHistory = () => {
             style={{
               flex: 1,
               height: 36,
-              backgroundColor: "#047780",
-              borderColor: "#047780",
             }}
           >
             Search

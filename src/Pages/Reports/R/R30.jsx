@@ -1,7 +1,6 @@
 import { Button, Card, Col, Drawer, Form, Row, Space, Typography } from "antd";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components//exportToCSV";
 import Loading from "../../../Components/Loading";
@@ -16,8 +15,10 @@ import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 function R30() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
@@ -42,7 +43,7 @@ function R30() {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message);
+      showToast(response.message, "error");
       setRows([]);
     }
   };
@@ -158,9 +159,7 @@ function R30() {
     let vendor = searchForm.getFieldsValue().vendor;
     if (vendor) {
       setFormLoading(true);
-      const response = await imsAxios.post("/backend/fetchVendorJWLocation", {
-        search: vendor,
-      });
+      const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendor}`);
 
       setFormLoading(false);
       if (response.success) {
@@ -171,7 +170,7 @@ function R30() {
         }));
         setLocationOptions(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -184,7 +183,7 @@ function R30() {
   }, []);
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row gutter={4} style={{ height: "100%", padding: "0px 5px" }}>
         <Col
           style={{ overflowY: "auto", height: "100%", paddingBottom: 50 }}

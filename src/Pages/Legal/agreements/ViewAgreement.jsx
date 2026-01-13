@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import {
   Button,
   Upload,
@@ -44,6 +44,7 @@ import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 
 function ViewAgreement() {
+  const { showToast } = useToast();
   const [searchLoading, setSearchLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState();
   const [loading, setLoading] = useState(false);
@@ -162,7 +163,7 @@ function ViewAgreement() {
         setProcessOptions(arr);
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -191,7 +192,7 @@ function ViewAgreement() {
       );
       const { data } = response;
       if (data.status === "error") {
-        toast.error(data.message);
+        showToast(data.message, "error");
       } else if (response.status === 200) {
         const arr = response.data.map((row, index) => {
           return {
@@ -212,7 +213,7 @@ function ViewAgreement() {
         setRows(arr);
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -464,7 +465,7 @@ const AddAddendumModal = ({
     const response = await imsAxios.post("agreement/addaddendum", formdata);
     addaddendumform.resetFields();
     setFileList([]);
-    toast.success(response.data.msg);
+    showToast(response.data.msg, "success");
     setshow(false);
     setLoading(false);
   };

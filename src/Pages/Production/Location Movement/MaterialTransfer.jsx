@@ -4,7 +4,7 @@ import MySelect from "../../../Components/MySelect";
 import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { useSelector } from "react-redux";
 import { getComponentOptions } from "../../../api/general.ts";
@@ -13,6 +13,7 @@ const { paragraph } = Typography;
 
 const { TextArea } = Input;
 function MaterialTransfer({ type }) {
+  const { showToast } = useToast();
   // console.log(type)
   type == "sftorej"
     ? (document.title = "SF to REJ")
@@ -20,7 +21,6 @@ function MaterialTransfer({ type }) {
 
   const [allData, setAllData] = useState({
     locationSel: "",
-    dropBranch: "",
   });
   const { executeFun, loading: loading1 } = useApi();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -132,22 +132,19 @@ function MaterialTransfer({ type }) {
   const submitHandler = async () => {
     // validations
     if (!allData?.locationSel)
-      return toast.error("Please select a Pick Location");
-    if (!allData?.dropBranch) return toast.error("Please select Drop Branch");
+      return showToast("Please select a Pick Location", "error");
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       if (!r.componentName)
-        return toast.error(`Row ${i + 1}: Please select Component`);
-      if (!r.qty) return toast.error(`Row ${i + 1}: Please enter Qty`);
+        return showToast(`Row ${i + 1}: Please select Component`, "error");
+      if (!r.qty) return showToast(`Row ${i + 1}: Please enter Qty`, "error");
       if (!r.rejLoc)
-        return toast.error(`Row ${i + 1}: Please select Drop Location`);
+        return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
       if (
-        r.rejLoc == allData.locationSel &&
-        allData.dropBranch ==
-          JSON.parse(localStorage.getItem("otherData"))?.company_branch
+        r.rejLoc == allData.locationSel
       )
-        return toast.error(`Row ${i + 1}: Both Location Same`);
+        return showToast(`Row ${i + 1}: Both Location Same`, "error");
     }
 
     const components = rows.map((r) => r.componentName);
@@ -165,14 +162,12 @@ function MaterialTransfer({ type }) {
         tolocation: tolocations,
         qty: qtys,
         type: type == "sftorej" ? "SF2REJ" : "SF2SF",
-        tobranch: allData.dropBranch,
       }
     );
 
     if (response.success) {
       setAllData({
         locationSel: "",
-        dropBranch: "",
       });
       setRows([
         {
@@ -186,9 +181,9 @@ function MaterialTransfer({ type }) {
       ]);
       setLocDetail("");
       setLoading(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -196,7 +191,6 @@ function MaterialTransfer({ type }) {
   const reset = () => {
     setAllData({
       locationSel: "",
-      dropBranch: "",
     });
     setRows([
       {
@@ -244,7 +238,7 @@ function MaterialTransfer({ type }) {
       );
     } catch (error) {
       console.error("Error fetching locations for branch", error);
-      toast.error("Failed to fetch drop locations for selected branch");
+      showToast("Failed to fetch drop locations for selected branch", "error");
     }
   };
 
@@ -272,7 +266,7 @@ function MaterialTransfer({ type }) {
   }, [allData?.locationSel]);
   return (
     <div style={{ height: "90vh" }}>
-      <Row gutter={10} style={{ margin: "10px" }}>
+      <Row gutter={10}>
         <Col span={6}>
           <Card>
             <Row>
@@ -291,23 +285,6 @@ function MaterialTransfer({ type }) {
               </Col>
               <Col span={24} style={{ padding: "5px" }}>
                 <TextArea disabled value={locDetail} />
-              </Col>
-              <Col span={24} style={{ padding: "5px" }}>
-                <span>DROP BRANCH</span>
-                <MySelect
-                  options={[
-                    { text: "A-21 [BRMSC012]", value: "BRMSC012" },
-                    { text: "B-29 [BRMSC029]", value: "BRMSC029" },
-                    { text: "B-36 Alwar [BRBA036]", value: "BRBA036" },
-                    { text: "D-160 [BRBAD116]", value: "BRBAD116" },
-                  ]}
-                  placeholder="Select Drop Branch"
-                  value={allData.dropBranch}
-                  onChange={async (e) => {
-                    setAllData((prev) => ({ ...prev, dropBranch: e }));
-                    await handleBranchSelection(e);
-                  }}
-                />
               </Col>
             </Row>
           </Card>

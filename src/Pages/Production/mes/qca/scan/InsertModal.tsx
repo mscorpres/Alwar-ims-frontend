@@ -38,7 +38,7 @@ const InsertModal = ({
   return (
     <Modal title="Insert QCA Entry" open={show} onCancel={hide} footer={<></>}>
       <Flex gap={10} align="center" justify="space-between">
-        <Flex style={{ flex: 1 }} justify="center">
+        <Flex style={{ flex: 1 }} >
           <MyButton
             loading={loading("singleScan-PASS")}
             onClick={() => handleSubmit("PASS")}

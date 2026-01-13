@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Row,
@@ -16,6 +16,7 @@ import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
 
 const AddClientModal = ({ setOpen, open }) => {
+  const { showToast } = useToast();
   const [addVendor, setAddVendor] = useState({
     vendor: {
       vname: "",
@@ -87,14 +88,14 @@ const AddClientModal = ({ setOpen, open }) => {
     if (response.success) {
       // fetchVendor();
       reset()
-      toast.success(response.message);
+      showToast(response.message, "success");
       setOpen(null);
       // setShowAddVendorModal(false);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
     } catch (error) {
-    toast.error(error)
+    showToast(error, "error")
     } finally {
       setSubmitLoading(false);
     }

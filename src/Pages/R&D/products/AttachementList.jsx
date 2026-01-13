@@ -1,17 +1,15 @@
-import { Button, Card, Divider, Drawer, Flex, Modal, Typography } from "antd";
-import { CommonIcons } from "@/Components/TableActions.jsx/TableActions";
 import React, { useEffect, useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyDataTable from "../../../Components/MyDataTable";
 import TableActions from "../../../Components/TableActions.jsx/TableActions";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 const AttachementList = ({
+  
   attachlist,
   setAttachLsit,
-  showDocs,
-  setShowDocs,
 }) => {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [documentRow, setDocumentRow] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -46,10 +44,10 @@ const AttachementList = ({
       let rowing = [...a, ...b];
       console.log("rows", rowing);
       setRows(rowing);
-      toast.success(response.message);
+      showToast(response.message, "success");
       setLoading(false);
     } else {
-      toast.success(response.message.msg);
+      showToast(response.message.msg, "success");
       setLoading(false);
     }
     setLoading(false);

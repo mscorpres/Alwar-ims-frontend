@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Input, Row, Space } from "antd";
 import MySelect from "../../../../Components/MySelect";
 import MyDatePicker from "../../../../Components/MyDatePicker";
@@ -19,6 +19,7 @@ import ViewComponents from "./ViewComponents";
 import MyButton from "../../../../Components/MyButton";
 
 const PendingPPR = () => {
+  const { showToast } = useToast();
   const [cancelPPR, setsCancelPPR] = useState(null);
   const [executePPR, setExcecutePPR] = useState(null);
   const [editPPR, setEditPPR] = useState(null);
@@ -51,7 +52,7 @@ const PendingPPR = () => {
       });
       setSelectLoading(true);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -77,7 +78,7 @@ const PendingPPR = () => {
         });
         setRows(arr);
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
         setRows([]);
       }
     }
@@ -262,7 +263,7 @@ const PendingPPR = () => {
     }
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <ClosePPR
         setsCancelPPR={setsCancelPPR}
         cancelPPR={cancelPPR}

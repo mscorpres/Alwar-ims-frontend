@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import MyDataTable from "../../gstreco/myDataTable";
+import { useEffect, useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import { Row } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
+import MyDataTable from "../../../Components/MyDataTable";
 
 function R32() {
   const [rows, setRows] = useState([]);
@@ -37,7 +37,7 @@ function R32() {
       <Row style={{ margin: "1em" }} justify="end">
         <CommonIcons action="downloadButton" onClick={handleDownloadingCSV} />
       </Row>
-      <div style={{ height: "90%" }}>
+      <div style={{ height: "100%" }}>
         {" "}
         <MyDataTable
           // checkboxSelection={true}

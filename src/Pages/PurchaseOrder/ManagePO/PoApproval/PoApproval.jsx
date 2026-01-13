@@ -6,7 +6,7 @@ import MyDatePicker from "../../../../Components/MyDatePicker";
 import { useEffect } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import TableActions, {
   CommonIcons,
 } from "../../../../Components/TableActions.jsx/TableActions";
@@ -27,6 +27,7 @@ import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
 
 export default function PoApproval() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [wise, setWise] = useState("powise");
   const [searchInput, setSearchInput] = useState("");
@@ -35,6 +36,7 @@ export default function PoApproval() {
   const [rejectPo, setRejectPo] = useState(null);
   const [rows, setRows] = useState([]);
   const [approvePo, setApprovePo] = useState(null);
+  const [newPoLogs, setNewPoLogs] = useState([]);
   const [selectedPo, setSelectedPo] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
   const wiseOptions = [
@@ -77,7 +79,7 @@ export default function PoApproval() {
       }));
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const approveSubmitHandler = async (poid, remark) => {
@@ -88,11 +90,11 @@ export default function PoApproval() {
     });
     setLoading(false);
     if (response.success) {
-      toast.success(response.message);
+      showToast(response.message, "success");
       getRows();
       setApprovePo(null);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const ApproveSelectedPo = () => {
@@ -118,6 +120,16 @@ export default function PoApproval() {
     setRejectPo(arr);
     // setApprovePo(arr);
   };
+
+  const getPoLogs = async (po_id) => {
+    const { data } = await imsAxios.post("/purchaseOthers/pologs", {
+      po_id,
+    });
+    if (data.code === "200" || data.code == 200) {
+      let arr = data.data;
+      setNewPoLogs(arr.reverse());
+    }
+  };
   const columns = [
     {
       headerName: "",
@@ -129,6 +141,7 @@ export default function PoApproval() {
           showInMenu
           onClick={() => {
             setViewPoDetails(row.po_transaction);
+            getPoLogs(row.po_transaction);
           }}
           label="View"
         />,
@@ -200,7 +213,7 @@ export default function PoApproval() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "90%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
       <PoRejectModa
         getRows={getRows}
         open={rejectPo}
@@ -217,6 +230,7 @@ export default function PoApproval() {
       <PoDetailsView
         viewPoDetails={viewPoDetails}
         setViewPoDetails={setViewPoDetails}
+        newPoLogs={newPoLogs}
       />
       <Row justify="space-between">
         <Col span={18}>
@@ -298,7 +312,13 @@ export default function PoApproval() {
           />
         </Col>
       </Row>
-      <div style={{ height: "100%", paddingTop: 5 }}>
+      <div style={{
+          height: "calc(100vh - 160px)",
+          overflowY: "auto",
+          overflowX: "hidden",
+          padding: "0 10px",
+        }}
+        >
         <MyDataTable
           loading={loading === "fetch"}
           columns={columns}

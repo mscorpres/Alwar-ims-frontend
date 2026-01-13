@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Row, Select, Button, Input, Modal, Spin, Tooltip } from "antd";
 import { DeleteOutlined, FileExcelOutlined, CheckOutlined, ClearOutlined, PlusOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -8,14 +8,17 @@ import { imsAxios } from "../../../axiosInterceptor";
 import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import Spreadsheet from "react-spreadsheet";
+import { customColor } from "../../../utils/customColor.js";
 const { TextArea } = Input;
 
 function JwToJw() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
     jwVendor: "",
     jwPo: "",
     locationFrom: "202102201753",
+    locationTo: "",
     remark: "",
   });
 
@@ -24,13 +27,11 @@ function JwToJw() {
       id: v4(),
       component: null,
       qty1: "",
-      locationTo: "",
       stockQty: "",
       unit: "",
     },
   ]);
 
-  const [jwVendorOptions, setJwVendorOptions] = useState([]);
   const [jwPoOptions, setJwPoOptions] = useState([]);
   const [locData, setloctionData] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -66,7 +67,6 @@ function JwToJw() {
         id: v4(),
         component: null,
         qty1: "",
-        locationTo: "",
         stockQty: "",
         unit: "",
       },
@@ -79,7 +79,7 @@ function JwToJw() {
     if (rows.length > 1) {
       setRows((prev) => prev.filter((row) => row.id !== id));
     } else {
-      toast.error("At least one row is required");
+      showToast("At least one row is required", "error");
     }
   };
 
@@ -132,8 +132,8 @@ function JwToJw() {
     setloctionData([{ label: "JW001", value: "202102201753" }]);
   };
 
-  const getLocationFunctionTo = async () => {
-    const response = await imsAxios.post("/godown/fetchLocationForJW2JW_to");
+  const getLocationFunctionTo = async (vendorId) => {
+    const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendorId}`);
     let v = [];
     if (response?.data && Array.isArray(response.data)) {
       response.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
@@ -144,10 +144,7 @@ function JwToJw() {
   const getComponentList = async (e) => {
     if (e?.length > 2 && allData.jwPo) {
       try {
-        const response = await imsAxios.post("/godown/transfer/jw-jw/stock", {
-          part: e,
-          jw: allData.jwPo,
-        });
+        const response = await imsAxios.get(`/godown/transfer/jw-jw/stock?part=${e}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`);
         
         if (response?.success && response?.data) {
           const data = Array.isArray(response.data) ? response.data : [response.data];
@@ -168,31 +165,31 @@ function JwToJw() {
   const saveJwToJw = async () => {
     // Validations
     if (!allData.jwVendor) {
-      return toast.error("Please select JW Vendor");
+      return showToast("Please select JW Vendor", "error");
     }
 
     if (!allData.jwPo) {
-      return toast.error("Please select JW PO");
+      return showToast("Please select JW PO", "error");
     }
 
     if (!allData.locationFrom) {
-      return toast.error("Please select Pick Location");
+      return showToast("Please select Pick Location", "error");
     }
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const componentValue = row.component?.value || row.component;
       if (!componentValue) {
-        return toast.error(`Row ${i + 1}: Please select Component`);
+        return showToast(`Row ${i + 1}: Please select Component`, "error");
       }
       if (!row.qty1) {
-        return toast.error(`Row ${i + 1}: Please enter Qty`);
+        return showToast(`Row ${i + 1}: Please enter Qty`, "error");
       }
-      if (!row.locationTo) {
-        return toast.error(`Row ${i + 1}: Please select Drop Location`);
+      if (!allData.locationTo) {
+        return showToast("Please select Drop Location", "error");
       }
-      if (row.locationTo == allData.locationFrom) {
-        return toast.error(`Row ${i + 1}: Both Location Same`);
+      if (allData.locationTo == allData.locationFrom) {
+        return showToast("Both Location Same", "error");
       }
     }
 
@@ -200,27 +197,26 @@ function JwToJw() {
 
     // Prepare arrays for payload - extract value from object if needed
     const components = rows.map((row) => row.component?.value || row.component);
-    const tolocations = rows.map((row) => row.locationTo);
     const qtys = rows.map((row) => row.qty1);
 
-    const response = await imsAxios.post("/godown/transferJW2JW", {
-      jw_vendor: allData.jwVendor,
-      jw_po: allData.jwPo,
-      fromlocation: allData.locationFrom,
+    const response = await imsAxios.post("/godown/transfer/jw-jw/transfer", {
+      vendor: allData.jwVendor,
+      jw: allData.jwPo,
+      from: allData.locationFrom,
       component: components,
-      tolocation: tolocations,
+      to: allData.locationTo,
       qty: qtys,
       remark: allData.remark,
-      type: "JW2JW",
     });
 
     if (response.success) {
-      toast.success(response.message.toString()?.replaceAll("<br/>", ""));
+      showToast(response.message.toString()?.replaceAll("<br/>", ""), "success");
       // Reset form
       setAllData({
         jwVendor: "",
         jwPo: "",
         locationFrom: "202102201753",
+        locationTo: "",
         remark: "",
       });
       setJwPoOptions([]);
@@ -229,14 +225,13 @@ function JwToJw() {
           id: v4(),
           component: null,
           qty1: "",
-          locationTo: "",
           stockQty: "",
           unit: "",
         },
       ]);
       setLoading(false);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoading(false);
     }
   };
@@ -264,7 +259,7 @@ function JwToJw() {
 
   useEffect(() => {
     getLocationFunction();
-    getLocationFunctionTo();
+    // getLocationFunctionTo();
   }, []);
 
   // Add more rows to spreadsheet
@@ -287,7 +282,7 @@ function JwToJw() {
   // Delete spreadsheet row
   const deleteSpreadsheetRow = (rowIndex) => {
     if (spreadsheetData.length <= 1) {
-      toast.error("At least one row is required");
+      showToast("At least one row is required", "error");
       return;
     }
     setSpreadsheetData((prev) => prev.filter((_, idx) => idx !== rowIndex));
@@ -297,11 +292,11 @@ function JwToJw() {
   const processSpreadsheetData = async () => {
     // Validate JW Vendor and JW PO selection
     if (!allData.jwVendor) {
-      toast.error("Please select JW Vendor first");
+      showToast("Please select JW Vendor first", "error");
       return;
     }
     if (!allData.jwPo) {
-      toast.error("Please select JW PO first");
+      showToast("Please select JW PO first", "error");
       return;
     }
 
@@ -311,7 +306,7 @@ function JwToJw() {
     );
 
     if (validRows.length === 0) {
-      toast.error("No valid data found. Please enter Part Code.");
+      showToast("No valid data found. Please enter Part Code.", "error");
       return;
     }
 
@@ -322,10 +317,7 @@ function JwToJw() {
       const partCodes = validRows.map((row) => row[0]?.value?.trim());
 
       // Call stock API with part codes
-      const response = await imsAxios.post("/godown/transfer/jw-jw/stock", {
-        part: partCodes,
-        jw: allData.jwPo,
-      });
+      const response = await imsAxios.get(`/godown/transfer/jw-jw/stock?part=${partCodes}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`);
 
       if (response?.success && response?.data) {
         // Handle both single and array response
@@ -334,7 +326,7 @@ function JwToJw() {
           : [response.data];
 
         if (stockData.length === 0) {
-          toast.error("No valid components found");
+          showToast("No valid components found", "error");
           setCsvUploading(false);
           return;
         }
@@ -347,7 +339,6 @@ function JwToJw() {
             label: `(${item.component_name}) ${item.part_no}`,
           },
           qty1: "",
-          locationTo: "",
           stockQty: item.pending_with_jw || "0",
           unit: item.uom || "",
         }));
@@ -355,13 +346,13 @@ function JwToJw() {
         setRows(newRows);
         setShowCsvModal(false);
         clearSpreadsheetData();
-        toast.success(`Successfully loaded ${newRows.length} rows`);
+        showToast(`Successfully loaded ${newRows.length} rows`, "success");
       } else {
-        toast.error(response?.message || "Failed to process part codes");
+        showToast(response?.message || "Failed to process part codes", "error");
       }
     } catch (err) {
       console.error("Error processing spreadsheet:", err);
-      toast.error("An error occurred while processing data");
+      showToast("An error occurred while processing data", "error");
     }
 
     setCsvUploading(false);
@@ -386,7 +377,7 @@ function JwToJw() {
           }}
         >
           <Spin size="large" />
-          <p style={{ marginTop: 16, color: "#047780", fontWeight: 500 }}>
+          <p style={{ marginTop: 16, color: customColor.newBgColor, fontWeight: 500 }}>
             Processing data...
           </p>
         </div>
@@ -412,6 +403,7 @@ function JwToJw() {
                         return { ...allData, jwVendor: e, jwPo: "" };
                       });
                       getJwPoOptions(e);
+                      getLocationFunctionTo(e);
                     }}
                   />
                 </Col>
@@ -474,6 +466,26 @@ function JwToJw() {
                     }
                   />
                 </Col>
+                <Col span={24} style={{ marginTop: "15px", marginBottom: "10px" }}>
+                  <span>SELECT DROP LOCATION</span>
+                </Col>
+                <Col span={24}>
+                  <Select
+                    style={{ width: "100%" }}
+                    options={locDataTo}
+                    value={allData.locationTo || undefined}
+                    placeholder="Select Location"
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+                    }
+                    onChange={(e) => {
+                      setAllData((allData) => {
+                        return { ...allData, locationTo: e };
+                      });
+                    }}
+                  />
+                </Col>
               </Row>
             </Col>
 
@@ -523,9 +535,6 @@ function JwToJw() {
                           <th className="an" style={{ width: "15vw" }}>
                             TRANSFERING QTY
                           </th>
-                          <th className="an" style={{ width: "20vw" }}>
-                            DROP LOCATION
-                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -551,7 +560,7 @@ function JwToJw() {
                                       size="small"
                                       icon={<PlusOutlined />}
                                       onClick={addRow}
-                                      style={{ color: "#047780" }}
+                                      style={{ color: customColor.newBgColor }}
                                     />
                                   </Tooltip>
                                 </div>
@@ -628,28 +637,6 @@ function JwToJw() {
                                 }}
                               />
                             </td>
-                            <td style={{ width: "20vw" }}>
-                              <Select
-                                style={{ width: "100%" }}
-                                options={locDataTo}
-                                value={row.locationTo || undefined}
-                                placeholder="Select Location"
-                                showSearch
-                                filterOption={(input, option) =>
-                                  (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                                }
-                                onChange={(e) => {
-                                  setRows((prev) => {
-                                    const updated = [...prev];
-                                    updated[index] = {
-                                      ...updated[index],
-                                      locationTo: e,
-                                    };
-                                    return updated;
-                                  });
-                                }}
-                              />
-                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -684,7 +671,7 @@ function JwToJw() {
           <Button
             key="yes"
             type="primary"
-            style={{ background: "#047780" }}
+            style={{ background: customColor.newBgColor }}
             onClick={() => {
               setShowExcelWarning(false);
               setShowCsvModal(true);
@@ -762,7 +749,7 @@ function JwToJw() {
                 icon={<CheckOutlined />}
                 onClick={processSpreadsheetData}
                 disabled={!allData.jwVendor || !allData.jwPo}
-                style={{ background: "#047780" }}
+                style={{ background: customColor.newBgColor }}
               >
                 Process Data
               </Button>
@@ -781,7 +768,7 @@ function JwToJw() {
             }}
           >
             <Spin size="large" />
-            <p style={{ marginTop: 16, color: "#047780", fontWeight: 500 }}>
+            <p style={{ marginTop: 16, color: customColor.newBgColor, fontWeight: 500 }}>
               Processing Part Codes...
             </p>
           </div>
@@ -825,7 +812,7 @@ function JwToJw() {
                     <span style={{ color: "#ccc" }}>|</span>
                     <Tooltip title="Add Row">
                       <PlusOutlined
-                        style={{ color: "#047780", fontSize: 12, cursor: "pointer" }}
+                        style={{ color: customColor.newBgColor, fontSize: 12, cursor: "pointer" }}
                         onClick={() => addSpreadsheetRows()}
                       />
                     </Tooltip>

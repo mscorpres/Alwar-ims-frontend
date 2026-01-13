@@ -37,7 +37,7 @@ import {
   getClientBranches,
 } from "../../../../../api/finance/clients";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../../hooks/useToast.js";
 
 function CreateShipment({
   open,
@@ -45,6 +45,7 @@ function CreateShipment({
   updateShipmentRow,
   setUpdateShipmentRow,
 }) {
+  const { showToast } = useToast();
   const [gstType, setgstType] = useState([]);
   const [billingOptions, setBillingOptions] = useState([]);
   const [shippingOptions, setShippinOptions] = useState([]);
@@ -279,7 +280,6 @@ function CreateShipment({
           // foreignValueCombined: m.currency_symbol + " " + m.taxablevalue,
           foreignValue:
             +Number(m.item_qty).toFixed(2) * +Number(m.item_rate).toFixed(2),
-          pickLocation: m.item_pick_location.loc_key,
           gstTypeLabel: m.item_gst_type,
           cgst: m.cgst,
           sgst: m.sgst,

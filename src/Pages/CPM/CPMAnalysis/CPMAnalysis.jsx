@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Space, Table, Row, Col, Select, Tooltip } from "antd";
-import { toast } from "react-toastify";
+import { Button, Input, Space, Table, Row, Col,  Tooltip } from "antd";
+import { useToast } from "../../../hooks/useToast.js";
 import { downloadCSVAntTable } from "../../../Components/exportToCSV";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { imsAxios } from "../../../axiosInterceptor";
 import { InfoCircleFilled } from "@ant-design/icons";
@@ -12,6 +11,7 @@ import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
 
 export default function CPMAnalysis() {
+  const { showToast } = useToast();
   const [fileInfo, setFileInfo] = useState("");
   const [projectId, setProjectId] = useState("");
   const [dateSearch, setDateSearch] = useState("");
@@ -72,7 +72,7 @@ export default function CPMAnalysis() {
       setFilteredRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
 

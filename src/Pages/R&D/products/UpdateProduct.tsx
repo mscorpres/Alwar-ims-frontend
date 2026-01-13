@@ -11,7 +11,7 @@ import { convertSelectOptions } from "@/utils/general";
 import { getProductdata, updateProduct } from "@/api/r&d/products";
 import Loading from "../../../Components/Loading";
 import { imsAxios } from "../../../axiosInterceptor";
-import { toast } from "react-toastify";
+import { useToast } from "@/hooks/useToast";
 import useLoading from "../../../hooks/useLoading";
 
 
@@ -22,6 +22,7 @@ interface DrawerProps extends ModalType {
   handleFetchProductList: () => void;
 }
 const ProductDocuments = (props: DrawerProps) => {
+  const { showToast } = useToast();
   const [form] = Form.useForm();
   const [asyncOptions, setAsyncOptions] = useState<SelectOptionType[]>([]);
   const { executeFun, loading } = useApi();
@@ -52,7 +53,7 @@ const ProductDocuments = (props: DrawerProps) => {
   const fetchProductData = async () => {
     const response = await executeFun(() => getProductdata(props?.id), "fetch");
     if(response.success){
-      const data = response.data.data[0];
+      const data = response.data[0];
       form.setFieldsValue({
         name: data.productname,
         costCenter: { value: data.costcenter.value, label: data.costcenter.text },
@@ -84,13 +85,13 @@ const ProductDocuments = (props: DrawerProps) => {
     //   ...payload,
     // });
     if(response.success){
-      toast.success(response?.message||"Product Updated Successfully");
+      showToast(response?.message||"Product Updated Successfully", "success");
       props.hide();
       form.resetFields();
       props.handleFetchProductList();
     }
     else{
-      toast.error(response?.message);
+      showToast(response?.message, "error");
     }
     form.resetFields();
     setLoading(false);

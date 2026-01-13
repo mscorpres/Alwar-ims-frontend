@@ -16,15 +16,16 @@ import MyDataTable from "../../../Components/MyDataTable";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import { toast } from "react-toastify";
 import { v4 } from "uuid";
 import Loading from "../../../Components/Loading";
 import { set } from "lodash";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 
 const R25 = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
@@ -207,7 +208,7 @@ const R25 = () => {
     setLoading(false);
     const { data } = response;
     if (response.status === 200) {
-      toast.success(data.message.msg);
+      showToast(data.message.msg, "success");
       setAddedComponents([]);
       reportForm.setFieldValue("component", null);
       reportForm.setFieldValue("qty", "");
@@ -236,7 +237,7 @@ const R25 = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "90%", padding: 10, paddingTop: 0 }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10, paddingTop: 0 }}>
       <Col span={5} style={{ height: "100%", overflow: "auto" }}>
         <Row gutter={[0, 6]}>
           <Col span={24}>

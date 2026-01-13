@@ -19,7 +19,7 @@ import BillingDetailsCard from "./BillingDetailsCard";
 import DispatchAddress from "./DispatchDetailsCard";
 import { imsAxios } from "../../../../axiosInterceptor";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import Loading from "../../../../Components/Loading";
 import FormTable2 from "../../../../Components/FormTable2";
@@ -39,6 +39,7 @@ const CreateChallanModal = ({
   rtnchallan,
   setRtnChallan,
 }) => {
+  const { showToast } = useToast();
   const [challanForm] = Form.useForm();
   const [locationlist, setlocationlist] = useState([]);
   const [updatechallan, setupdatechallan] = useState("");
@@ -257,7 +258,7 @@ const CreateChallanModal = ({
         challanForm.setFieldsValue(fields);
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -306,16 +307,16 @@ const CreateChallanModal = ({
         cddata
       );
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         challanForm.resetFields();
         close();
         setLoading(false);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -375,16 +376,16 @@ const CreateChallanModal = ({
         cddata
       );
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         challanForm.resetFields();
         setLoading(false);
         close();
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -688,7 +689,7 @@ const CreateChallanModal = ({
       challanForm.setFieldsValue(fields);
       setLoading(false);
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -716,8 +717,9 @@ const CreateChallanModal = ({
       // challanForm.setFieldsValue()
       challanForm.setFieldValue("components", [obj]);
     } else {
-      toast.error(
-        response.message || "Some error occured wile getting component details"
+      showToast(
+        response.message || "Some error occured wile getting component details",
+        "error"
       );
     }
   };
@@ -794,10 +796,10 @@ const CreateChallanModal = ({
         }));
         setaddoptions(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -837,7 +839,7 @@ const CreateChallanModal = ({
       setRows([]);
       close();
     } else {
-      toast.error(res.message?.msg || res.message);
+      showToast(res.message?.msg || res.message, "error");
     }
   };
   const createDeliveryChallan = async () => {
@@ -960,16 +962,16 @@ const CreateChallanModal = ({
           );
           // console.log("response", response);
           if (response.success) {
-            toast.success(response.message);
+            showToast(response.message, "success");
             challanForm.resetFields();
             close();
             setLoading(false);
           } else {
-            toast.error(response.message);
+            showToast(response.message, "error");
             setLoading(false);
           }
         } catch (error) {
-          toast.error(error);
+          showToast(error, "error");
         } finally {
           setLoading(false);
         }
@@ -990,7 +992,7 @@ const CreateChallanModal = ({
       }));
       setAsyncOptions(arr);
     } else {
-      toast.error("Some error occured wile getting components");
+      showToast("Some error occured wile getting components", "error");
     }
   };
   const createRMChallan = async () => {
@@ -1092,7 +1094,7 @@ const CreateChallanModal = ({
       if (response.success) {
         // console.log("response", response);
         close();
-        toast.success(response.message);
+        showToast(response.message, "success");
         challanForm.resetFields();
         setLoading(false);
         setRtnChallan(false);
@@ -1100,12 +1102,12 @@ const CreateChallanModal = ({
         // console.log("showCreateChallanModal-----");
         // setDetailData("");
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(false);
       }
     } catch (error) {
       // return;
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       // return;
       setLoading(false);

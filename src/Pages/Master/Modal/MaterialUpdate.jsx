@@ -10,8 +10,8 @@ import {
   Upload,
   Select,
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import { toast } from "react-toastify";
+
+import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import MySelect from "../../../Components/MySelect";
@@ -24,10 +24,10 @@ export default function MaterialUpdate({
   setMaterialModal,
   allComponent,
 }) {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [imageModal, setImageModal] = useState(false);
   const [allUpdateData, setAllUpdataData] = useState([]);
-  console.log(allUpdateData);
+ 
   const [allData, setAllData] = useState({
     partno: "",
     name: "",
@@ -163,7 +163,7 @@ export default function MaterialUpdate({
     // console.log(allUpdateData?.uomname);
     // console.log(allUpdateData?.uomid);
     if (!allUpdateData.uomname) {
-      toast.error("Please Select UoM");
+      showToast("Please Select UoM", "error");
     } else {
       setLoading("submit");
 
@@ -200,7 +200,7 @@ export default function MaterialUpdate({
         setMaterialModal(false);
         allComponent();
       } else if (!response.success) {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };

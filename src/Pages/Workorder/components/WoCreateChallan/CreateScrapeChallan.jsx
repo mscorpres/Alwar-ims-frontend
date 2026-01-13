@@ -17,7 +17,7 @@ import  { useEffect, useState } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import FormTable2 from "../../../../Components/FormTable2";
 import MySelect from "../../../../Components/MySelect";
 import { submitScrapreChallan } from "../api";
@@ -32,6 +32,7 @@ import { convertSelectOptions } from "../../../../utils/general.ts";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 const CreateScrapeChallan = () => {
+  const { showToast } = useToast();
   const [uplaodType, setUploadType] = useState("table");
   const [addOptions, setAddOptions] = useState([]);
   const [ClientBranchOptions, setclientBranchOptions] = useState([]);
@@ -53,7 +54,7 @@ const CreateScrapeChallan = () => {
     gstin: "",
     vendorAddress: "",
     ewaybill: "",
-    companybranch: "BRMSC012",
+    companybranch: "BRALWR36", 
     projectID: "",
     costCenter: "",
     components: [
@@ -94,10 +95,10 @@ const CreateScrapeChallan = () => {
         setAsyncOptions(arr);
       
       } else {
-        toast.error("Some error occured wile getting vendors");
+        showToast("Some error occured wile getting vendors", "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -121,10 +122,10 @@ const CreateScrapeChallan = () => {
       });
       if (response.success) {
         challanForm.setFieldValue("address", data.data.address);
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -160,11 +161,11 @@ const CreateScrapeChallan = () => {
             challanForm.setFieldValue("address", "");
           }
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
     
     } catch (error) {
-      toast.error(error);
+      showToast(error, "error");
     } finally {
       setLoading(false);
     }
@@ -309,7 +310,6 @@ const CreateScrapeChallan = () => {
       },
       material: {
         id: values.components.map((r) => r.rowID),
-        id: values.components.map((r) => r.rowID),
         component: values.components.map((r) => r.componentKey),
         qty: values.components.map((r) => r.qty),
         rate: values.components.map((r) => r.rate),
@@ -318,7 +318,7 @@ const CreateScrapeChallan = () => {
       },
     };
     console.log("editPayload", editPayload);
-    // navigate("/woviewchallan");
+    // navigate("/wo/view-challan");
     // return;
     if (editScrapeChallan === "edit") {
       // console.log("her");
@@ -329,12 +329,12 @@ const CreateScrapeChallan = () => {
       console.log("response of edit ", response);
       let { data } = response;
       if (response.success ) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         challanForm.resetFields();
         setLoading(true);
-        navigate("/woviewchallan");
+        navigate("/wo/view-challan");
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
         setLoading(true);
       }
     } else {
@@ -348,7 +348,7 @@ const CreateScrapeChallan = () => {
       setLoading(true);
       challanForm.resetFields();
     } else {
-      toast.error(response.data.error);
+      showToast(response.data.error, "error");
     }
     setLoading(true);
   };
@@ -596,7 +596,7 @@ const CreateScrapeChallan = () => {
           </Col>
 
           <Col span={18}>
-            <Card style={{ height: "10rem" }}>
+            <Card style={{ height: "100%", overflow: "hidden" }}>
               <FormTable2
                 removableRows={true}
                 nonRemovableColumns={1}

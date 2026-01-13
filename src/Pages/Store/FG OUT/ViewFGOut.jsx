@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import moment from "moment";
 import { Button, Col, DatePicker, Row, Select } from "antd";
@@ -10,6 +10,7 @@ import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyButton from "../../../Components/MyButton";
 
 const ViewFGOut = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [localVar, setLocalVar] = useState({
     sel: "",
@@ -23,9 +24,9 @@ const ViewFGOut = () => {
     e.preventDefault();
 
     if (!localVar.sel) {
-      toast.error("Please Select Button");
+      showToast("Please Select Button", "error");
     } else if (!selectDate) {
-      toast.error("Please Select Date");
+      showToast("Please Select Date", "error");
     } else {
       setLoading(true);
       const response = await imsAxios.post("/fgout/fetchFgOutRpt", {
@@ -42,7 +43,7 @@ const ViewFGOut = () => {
         setFetchDataFromDate(arr);
         setLoading(false);
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }
@@ -64,8 +65,8 @@ const ViewFGOut = () => {
 
 
   return (
-    <div style={{ height: "90%" }}>
-      <Row gutter={16} style={{ margin: "10px" }}>
+    <div style={{ height: "100%" }}>
+      <Row gutter={16}>
         <Col span={4} className="gutter-row">
           <div>
             <Select

@@ -96,7 +96,7 @@ function R21() {
     // downloadCSV(rows, columns, "R21 Report");
   };
   return (
-    <Row style={{ height: "90%", padding: "0px 10px" }}>
+    <Row style={{ height: "calc(100vh - 140px)", padding: "0px 10px" }}>
       <Col span={24}>
         <Row justify="space-between">
           <Button loading={fetchLoading} onClick={getRows} type="primary">

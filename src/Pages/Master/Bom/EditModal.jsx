@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import Alter from "./Alter";
 import {
   Col,
@@ -25,6 +25,7 @@ import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
 const EditBranch = ({ modalEditOpen, setModalEditOpen }) => {
+  const { showToast } = useToast();
   const [fetchData, setFetchData] = useState([]);
   const [secondData, setSecondData] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
@@ -138,10 +139,11 @@ const EditBranch = ({ modalEditOpen, setModalEditOpen }) => {
     let b = secondData.filter((a) => a.id == id)[0];
 
     if (b.component == "") {
-      return toast.error("Please select a component");
+      return showToast("Please select a component", "error");
     } else if (b.requiredQty == 0 || b.requiredQty == "" || b.requiredQty < 0) {
-      return toast.error(
-        "Required Quanity can not be blank and should be more than 0"
+      return showToast(
+        "Required Quanity can not be blank and should be more than 0",
+        "error"
       );
     }
     setAddUpdateLoading(id);
@@ -171,18 +173,19 @@ const EditBranch = ({ modalEditOpen, setModalEditOpen }) => {
         }
       });
       setSecondData(arr);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(errorToast(data.message));
+      showToast(errorToast(data.message), "error");
     }
   };
 
   const clickOnUpdata = async (a) => {
     if (a.component == "") {
-      return toast.error("Please select a component");
+      return showToast("Please select a component", "error");
     } else if (a.requiredQty == 0 || a.requiredQty == "" || a.requiredQty < 0) {
-      return toast.error(
-        "Required Quantity can not be blank and should be more than 0"
+      return showToast(
+        "Required Quantity can not be blank and should be more than 0",
+        "error"
       );
     }
     setUpdateRowLoading(a.id);
@@ -198,9 +201,9 @@ const EditBranch = ({ modalEditOpen, setModalEditOpen }) => {
     setUpdateRowLoading(false);
     if (response.success) {
       // next();
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   const handlerEmergingMogal = (row) => {

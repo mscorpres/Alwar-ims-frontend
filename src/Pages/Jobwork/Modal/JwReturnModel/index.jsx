@@ -16,7 +16,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { useEffect } from "react";
 import Components from "./Components";
 import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import Loading from "../../../../Components/Loading";
 import useLoading from "../../../../hooks/useLoading";
 import { v4 } from "uuid";
@@ -30,6 +30,7 @@ import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import axios from "axios";
 
 const JwReturnModel = ({ show, close }) => {
+  const { showToast } = useToast();
   const [headerDetails, setHeaderDetails] = useState([]);
   const [loading, setLoading] = useLoading();
   const [totalValue, setTotalValue] = useState(0);
@@ -51,7 +52,7 @@ const JwReturnModel = ({ show, close }) => {
       RATE: "12",
       HSN: "123456",
       INVOICE: "1",
-      LOCATION: "RM021",
+      LOCATION: "--",
       AUTO_CONSUMP: "N",
       REMARK: "test",
     },
@@ -176,7 +177,7 @@ const JwReturnModel = ({ show, close }) => {
       let { data } = response;
       if (response.success) {
         // console.log("data.message", data.message.msg);
-        toast.success(response.message.msg);
+        showToast(response.message.msg, "success");
         setPreview(false);
         setPreviewRows([]);
         setSelectedRows([]);
@@ -275,7 +276,7 @@ const JwReturnModel = ({ show, close }) => {
       }));
       setPreviewRows(arr);
     } else {
-      toast.error(response.message.msg);
+      showToast(response.message.msg, "error");
       setPreview(false);
     }
   };
@@ -413,7 +414,7 @@ const JwReturnModel = ({ show, close }) => {
                       </Col>
                       <Col>
                         <Typography.Text>
-                          {!totalValue || totalValue === NaN ? 0 : totalValue}
+                          {!totalValue || Number.isNaN(totalValue) ? 0 : totalValue}
                         </Typography.Text>
                       </Col>
                     </Row>

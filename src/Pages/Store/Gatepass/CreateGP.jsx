@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import FormTable from "../../../Components/FormTable";
 import NavFooter from "../../../Components/NavFooter";
 import Loading from "../../../Components/Loading";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Descriptions, Divider, Form, Input, Row } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
@@ -14,11 +14,11 @@ import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
 export default function CreateGP() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([
     { id: v4(), item: "", qty: 0, uom: "", remark: "" },
   ]);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [fetchDetailsLoading, setFetchDetailsLoading] = useState(false);
   const [otherData, setOtherData] = useState({
     name: "",
@@ -128,7 +128,7 @@ export default function CreateGP() {
     const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
       search: searchInputText,
     });
-    let arr = data;
+    let arr = response?.data;
     arr = arr.map((row) => {
       return {
         text: row.text,
@@ -224,7 +224,7 @@ export default function CreateGP() {
       }
     });
     if (problem) {
-      toast.error("Please provide " + problem);
+      showToast("Please provide " + problem, "error");
     } else {
       let mat = {
         component: rows.map((row) => row.component),
@@ -253,10 +253,10 @@ export default function CreateGP() {
       });
       setLoading(false);
       if (response.success) {
-        toast.success(response.message);
+        showToast(response.message, "success");
         resetFunction();
       } else {
-        toast.error(response.message || "Some Error Occurred");
+        showToast(response.message || "Some Error Occurred", "error");
       }
     }
   };

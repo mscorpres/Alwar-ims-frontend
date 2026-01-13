@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form, Input, Space, Select, Upload } from "antd";
 import {  Divider } from "antd";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useToast } from "../../../hooks/useToast.js";
 import axios from "axios";
 import { Row, Col } from "antd";
 import { CheckOutlined, UploadOutlined } from "@ant-design/icons";
@@ -11,6 +10,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 const { Option } = Select;
 
 const AddGstDetails = () => {
+  const { showToast } = useToast();
   const [fileList, setFileList] = useState([]);
   const [uploading, setUploading] = useState(false);
 
@@ -25,12 +25,12 @@ const AddGstDetails = () => {
 
       if (response.status === 201) {
         setFileList([]);
-        toast.success("Upload successful.");
+        showToast("Upload successful.");
       } else {
-        toast.error("Upload failed.");
+        showToast("Upload failed.","error");
       }
     } catch (error) {
-      toast.error("Upload failed.");
+      showToast("Upload failed.","error");
     } finally {
       setUploading(false);
     }
@@ -54,10 +54,10 @@ const AddGstDetails = () => {
     try {
       const response = await imsAxios.post(`/gst/postgstdata`, formData);
       if (response.status === 200) {
-        toast.success("Form submitted successfully!");
+        showToast("Form submitted successfully!");
         gstForm.resetFields();
       } else {
-        toast.error(" Error in submitted Form!");
+        showToast(" Error in submitted Form!","error");
       }
     } catch (error) {
       console.log(error);

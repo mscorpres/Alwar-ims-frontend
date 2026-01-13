@@ -2,6 +2,7 @@ import { Card, Col, Flex, Row, Skeleton, Typography } from "antd";
 import SummarySection from "./SummarySection";
 import MyDatePicker from "../../Components/MyDatePicker";
 import MyButton from "../../Components/MyButton";
+import { customColor } from "../../utils/customColor";
 
 const MINSummary = ({ minSummary, setMINDate, loading }) => {
   const data = [
@@ -74,7 +75,7 @@ const MINSummary = ({ minSummary, setMINDate, loading }) => {
   };
   return (
     <Col span={12}>
-      <Card>
+      <Card style={{backgroundColor:customColor.cardColor}}>
         <Row align="middle">
           <Col span={24}>
             <Row align="middle" justify="space-between">
@@ -131,7 +132,7 @@ const SummaryItem = ({
 }) => {
   return (
     <Col key={index} span={8}>
-      <Card size="small">
+      <Card size="small" style={{backgroundColor: customColor.cardColor, border:"none"}}>
         <Flex vertical justify="justify-between" align="stretch">
           <Col span={24}>
             <Row justify="space-between" align="middle">

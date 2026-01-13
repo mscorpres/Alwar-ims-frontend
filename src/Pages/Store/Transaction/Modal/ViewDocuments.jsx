@@ -8,9 +8,10 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import { downloadAttachement } from "../../../../api/store/material-in";
 import { downloadFromLink } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 
 function ViewDocuments() {
+  const { showToast } = useToast();
   const [minId, setMinId] = useState("");
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ function ViewDocuments() {
     } else {
       setLoading(false);
 
-      toast.error(response.message);
+      showToast(response.message, "error");
     }
     setLoading(false);
   };
@@ -114,7 +115,7 @@ function ViewDocuments() {
         ></MyButton>
         {/* </Col> */}
       </Row>
-      <div style={{ height: "90%", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 20px)", padding: "0px 10px" }}>
         <MyDataTable columns={columns} data={rows} loading={loading} />
       </div>
     </div>

@@ -3,7 +3,7 @@ import { Button, Col, Input, Row, Tooltip, Popconfirm, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import printFunction, {
   downloadFunction,
@@ -28,6 +28,7 @@ import DebitEdit from "./DebitEdit";
 import MyButton from "../../../Components/MyButton";
 
 function DebitRegister() {
+  const { showToast } = useToast();
   const wiseOptions = [
     { text: "Date", value: "date_wise" },
     { text: "Effective Wise", value: "eff_wise" },
@@ -66,7 +67,7 @@ function DebitRegister() {
       setRows(arr);
     } else {
       setRows([]);
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -80,10 +81,10 @@ function DebitRegister() {
       setLoading(false);
       if (response.success) {
         setDeleteConfirm(null);
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     }
   };
@@ -268,7 +269,7 @@ function DebitRegister() {
     setSearchTerm("");
   }, [wise]);
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row justify="space-between" style={{ padding: 5, paddingTop: 5 }}>
         <Col>
           <Space>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Row, Space } from "antd";
 import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
@@ -12,6 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 export default function MaterialTransferReport({ type }) {
+  const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
@@ -41,7 +42,7 @@ export default function MaterialTransferReport({ type }) {
       });
       setRows(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setRows([]);
     }
   };
@@ -67,7 +68,7 @@ export default function MaterialTransferReport({ type }) {
     { headerName: "Remarks", field: "remark", flex: 1 },
   ];
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row
         style={{ padding: "0px 10px", paddingBottom: 5 }}
         justify="space-between"

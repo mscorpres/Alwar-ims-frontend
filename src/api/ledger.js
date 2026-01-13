@@ -10,7 +10,7 @@ export const getLedgerReport = async (payload) => {
 
     return response;
   } catch (error) {
-    console.log("something happened wrong", error);
+    console.error("something happened wrong", error);
   }
 };
 

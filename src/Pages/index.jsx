@@ -13,7 +13,6 @@ export { default as CreateBom } from "./Master/Bom/CreateBom";
 export { default as ManageBom } from "./Master/Bom/Manage";
 export { default as DisabledBom } from "./Master/Bom/Disabled";
 export { default as HsnMap } from "./Master/HSNMap/HsnMap.tsx";
-export { default as DocNumbering } from "./Master/DocNumbering";
 export { default as Vendor } from "./Master/Vendor/Vendor";
 export { default as CPMMaster } from "./Master/projects/CPMMaster";
 export { default as R19Master } from "./Master/reports/R19/R19Master";
@@ -52,7 +51,7 @@ export { default as StockControl } from "../Pages/Master/Components/stockControl
 export { default as TransactionIn } from "./Store/Transaction/TransactionIn";
 export { default as TransactionOut } from "./Store/Transaction/TransactionOut";
 export { default as CompletedFG } from "./Store/FoodGoods/CompletedFG";
-export { default as PendingFG } from "./Store/FoodGoods/PendingFG";
+export { default as PendingFG } from "./Store/FoodGoods/PendingFG.jsx";
 export { default as CreatePhysical } from "./Store/PhysicalStock/CreatePhysical";
 export { default as ViewPhysical } from "./Store/PhysicalStock/ViewPhysical";
 
@@ -89,6 +88,7 @@ export { default as PendingPPR } from "./Production/Production & Planning/Pendin
 export { default as CompletedPo } from "./PurchaseOrder/CompletedPO/CompletedPo";
 export { default as ManagePO } from "./PurchaseOrder/ManagePO/ManagePo";
 export { default as EditPO } from "./PurchaseOrder/ManagePO/EditPO/EditPO";
+export { default as POrequest } from "./PurchaseOrder/POREQUEST/RequestPo.jsx";
 export { default as CreatePo } from "./PurchaseOrder/CreatePO/CreatePo";
 export { default as VendorPricingUpload } from "./PurchaseOrder/VendorPricingUpload";
 export { default as PoApproval } from "./PurchaseOrder/ManagePO/PoApproval/PoApproval";

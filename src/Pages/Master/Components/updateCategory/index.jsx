@@ -4,7 +4,7 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { useState } from "react";
 import { useCallback } from "react";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import {
   Card,
   Col,
@@ -23,6 +23,7 @@ import { v4 } from "uuid";
 import Loading from "../../../../Components/Loading";
 
 const UpdateCategory = () => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [stage, setStage] = useState(0);
   const [categories, setCategories] = useState([]);
@@ -47,7 +48,7 @@ const UpdateCategory = () => {
           }));
           setCategories(arr);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
@@ -68,7 +69,7 @@ const UpdateCategory = () => {
           setselectedCategory(data.header.category_id);
           setExistingValues(data.inputs);
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
@@ -90,7 +91,7 @@ const UpdateCategory = () => {
             componentName: data.data.c_name,
           });
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {
@@ -142,7 +143,7 @@ const UpdateCategory = () => {
   }, [selectedCategory]);
   return (
     <Row
-      justify="center"
+      
       style={{ height: "90%", position: "relative", marginTop: 150 }}
     >
       {loading && <Loading />}
@@ -175,7 +176,7 @@ const SelectCategory = ({
   stage,
 }) => {
   return (
-    <Row justify={"center"} style={{ maxHeight: "100%" }}>
+    <Row  style={{ maxHeight: "100%" }}>
       <Col span={24}>
         <Card
           title="Select Category"
@@ -235,7 +236,7 @@ const Fields = ({
             }));
             setFields(arr);
           } else {
-            toast.error(response.message?.msg || response.message);
+            showToast(response.message?.msg || response.message, "error");
           }
         }
       } else {
@@ -292,12 +293,12 @@ const Fields = ({
       const { data } = response;
       if (data) {
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           if (!existingValues) {
             setStage(0);
           }
         } else {
-          toast.error(response.message?.msg || response.message);
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     } catch (error) {

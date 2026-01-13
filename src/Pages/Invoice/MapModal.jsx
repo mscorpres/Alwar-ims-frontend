@@ -2,9 +2,10 @@ import { Button, Drawer, Form, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import { imsAxios } from "../../axiosInterceptor";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 
 const MapModal = ({ open, close }) => {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -79,7 +80,7 @@ const MapModal = ({ open, close }) => {
         name: type,
         group: values,
       });
-      toast.success(response.data);
+      showToast(response.data, "success");
     } catch (error) {
       console.log("error in updating groups", error);
     } finally {

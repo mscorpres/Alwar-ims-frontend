@@ -5,10 +5,11 @@ import axios from "axios";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import printFunction from "../../../Components/printFunction";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 
 const CompletedModal = ({ editModal, setEditModal }) => {
+  const { showToast } = useToast();
   const [mainData, setMainData] = useState([]);
   const [printLoading, setPrintLoading] = useState(false);
   const [modalLoad, setModalLoad] = useState(false);
@@ -31,7 +32,7 @@ const CompletedModal = ({ editModal, setEditModal }) => {
       setModalLoad(false);
     } else if (!response.success) {
       setEditModal(false);
-      toast.error(response.message);
+      showToast(response.message, "error");
       // setModalLoad(false);
     }
   };

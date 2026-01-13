@@ -12,15 +12,13 @@ import {
 import { useState } from "react";
 import { imsAxios } from "../../../../../axiosInterceptor";
 import { useEffect } from "react";
-import SingleComponent from "./SingleProduct";
-// import SingleProduc
-import VBTHeaders from "./VBTHeaders";
-// import NavFooter from "../../../../Components/NavFooter";
-import { toast } from "react-toastify";
-import dayjs from "dayjs";
-import NavFooter from "../../../../../Components/NavFooter";
+import { useToast } from "../../../../../hooks/useToast.js";
+
 import validateResponse from "../../../../../Components/validateResponse";
 import { v4 } from "uuid";
+import VBTHeaders from "../VBT01/VBTHeaders.jsx";
+import NavFooter from "../../../../../Components/NavFooter.jsx";
+import SingleComponent from "../../SingleProduct.jsx";
 
 function VBT02Report({
   editingVBT,
@@ -29,10 +27,9 @@ function VBT02Report({
   apiUrl,
   setApiUrl,
   editVbtDrawer,
-  isFromEdit,
-  setEditVbtDrawer,
-}) {
+})  {
   const [Vbt01] = Form.useForm();
+    const { showToast } = useToast();
   const [vbtComponent, setVbtComponent] = useState([]);
   const [taxDetails, setTaxDetails] = useState([]);
   const [roundOffSign, setRoundOffSign] = useState("+");
@@ -262,10 +259,6 @@ function VBT02Report({
         currency: values.components.map((component) => component.currency),
         custom_duty: values.components.map((component) => component.customDuty),
         exchange: values.components.map((component) => component.currencyRate),
-        freight: values.components.map((component) => component.freightAmount),
-        gst_ass_vals: values.components.map(
-          (component) => component.gstAssValue
-        ),
         insurance: values.components.map((component) =>
           component.insurance.toString()
         ),
@@ -373,10 +366,6 @@ function VBT02Report({
         currency: values.components.map((component) => component.currency),
         custom_duty: values.components.map((component) => component.customDuty),
         exchange: values.components.map((component) => component.currencyRate),
-        freight: values.components.map((component) => component.freightAmount),
-        gst_ass_vals: values.components.map(
-          (component) => component.gstAssValue
-        ),
         insurance: values.components.map((component) =>
           component.insurance.toString()
         ),
@@ -421,7 +410,7 @@ function VBT02Report({
     const { data } = response;
     // console.log("response", response);
     if (response.status == 200) {
-      toast.success(data);
+      showToast(data, "success");
       setTimeout(() => {
         setEditingVBT(null);
       }, 2000);
@@ -443,11 +432,11 @@ function VBT02Report({
     const { data } = response;
     // console.log("data", response);
     if (response.status === 200) {
-      toast.success(response.data);
+      showToast(response.data, "success");
       setEditVbtDrawer(null);
       setLoading(false);
     } else {
-      toast.error(response.data);
+      showToast(response.data, "error");
       setLoading(false);
     }
   };
@@ -562,7 +551,6 @@ function VBT02Report({
         IGSTGL: row?.igst,
         igstAmount: row?.igstAmount,
         vbtOtherData: row?.vbtOtherData,
-        currency: row?.currencyType,
         currency: row?.currencyType,
         // gstAssValue,
         // igstAmount: row.igsts,
@@ -717,7 +705,6 @@ function VBT02Report({
         sgstAmount: row.in_gst_sgst,
         igstAmount: row.in_gst_igst,
         venAddress: row.in_vendor_addr,
-        igstAmount: row.in_gst_igst,
         ven_name: row.in_gst_igst,
         // glName: row.tds?.tdsName,
         // glCode: row?.tds?.tdsGlKey,
@@ -761,7 +748,6 @@ function VBT02Report({
         venAmmount: +Number(row.value),
         // totalFreight: 0,
         // totalMisc: 0,
-        freight: 0,
         // portCode: "INDEL4",
         // portName: "Delhi Air Cargo",
         // boeNo: "",
@@ -820,7 +806,7 @@ function VBT02Report({
       // setmainArrs(arr);
       setSingleArr(arr);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditingVBT(null);
     }
     // setLoading(false);

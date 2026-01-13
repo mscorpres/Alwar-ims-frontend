@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import { Col, Row, Select, Space } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
@@ -8,8 +8,10 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MyButton from "../../../Components/MyButton";
+import dayjs from "dayjs";
 
 function JwToJwViewTransaction() {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const options = [{ label: "Date Wise", value: "datewise" }];
   const [allData, setAllData] = useState({
@@ -40,20 +42,55 @@ function JwToJwViewTransaction() {
     downloadCSV(dataComesFromDateWise, columns, "JW To JW View Transaction");
   };
 
+  const formatDateForAPI = (dateValue) => {
+    // datee comes in format "DD-MM-YYYY-DD-MM-YYYY" from MyDatePicker
+    if (typeof dateValue === "string" && dateValue.includes("-")) {
+      // If it's a string like "10-12-2025-13-12-2025"
+      const parts = dateValue.split("-");
+      if (parts.length >= 6) {
+        // Extract dates: DD-MM-YYYY-DD-MM-YYYY
+        // parts[0] = DD, parts[1] = MM, parts[2] = YYYY, parts[3] = DD, parts[4] = MM, parts[5] = YYYY
+        const fromDate = `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD
+        const toDate = `${parts[5]}-${parts[4]}-${parts[3]}`; // YYYY-MM-DD
+        return { fromDate, toDate };
+      }
+    } else if (Array.isArray(dateValue) && dateValue.length === 2) {
+      // If it's an array of dayjs objects
+      const fromDate = dayjs(dateValue[0]).format("YYYY-MM-DD");
+      const toDate = dayjs(dateValue[1]).format("YYYY-MM-DD");
+      return { fromDate, toDate };
+    } else if (dateValue && typeof dateValue === "object") {
+      // Handle dayjs objects directly
+      if (dateValue[0] && dateValue[1]) {
+        const fromDate = dayjs(dateValue[0]).format("YYYY-MM-DD");
+        const toDate = dayjs(dateValue[1]).format("YYYY-MM-DD");
+        return { fromDate, toDate };
+      }
+    }
+    return null;
+  };
+
   const dateWise = async (e) => {
     e.preventDefault();
     if (!allData.selectdate) {
-      toast.error("Please Select Mode Then Proceed Next");
+      showToast("Please Select Mode Then Proceed Next", "error");
     } else if (!datee[0]) {
-      toast.error("Please Select Date");
+      showToast("Please Select Date", "error");
     } else {
       setDataComesFromDateWise([]);
       setLoading(true);
 
-      const response = await imsAxios.post("/godown/report_jw2jw", {
-        data: datee,
-        wise: allData.selectdate,
-      });
+      // Format dates to YYYY-MM-DD
+      const formattedDates = formatDateForAPI(datee);
+      if (!formattedDates) {
+        toast.error("Invalid date format");
+        setLoading(false);
+        return;
+      }
+
+      const response = await imsAxios.post(
+        `/godown/transfer/jw-jw/tranfer/view?from=${formattedDates.fromDate}&to=${formattedDates.toDate}`
+      );
 
       if (response?.success) {
         let arr = response?.data.map((row) => {
@@ -65,15 +102,15 @@ function JwToJwViewTransaction() {
         setDataComesFromDateWise(arr);
         setLoading(false);
       } else {
-        toast.error(response?.message);
+        showToast(response?.message, "error");
         setLoading(false);
       }
     }
   };
 
   return (
-    <div style={{ height: "90%" }}>
-      <Row gutter={16} justify="space-between" style={{ margin: "10px" }}>
+    <div style={{ height: "100%" }}>
+      <Row gutter={16} justify="space-between">
         <Space>
           <div style={{ width: 120 }}>
             <Select
@@ -120,4 +157,3 @@ function JwToJwViewTransaction() {
 }
 
 export default JwToJwViewTransaction;
-

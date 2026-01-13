@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Col, Popover, Row } from "antd";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MyDataTable from "../../Components/MyDataTable";
 import { InfoCircleFilled } from "@ant-design/icons";
@@ -11,6 +11,7 @@ import { imsAxios } from "../../axiosInterceptor";
 import MyButton from "../../Components/MyButton";
 
 function ReverseMin() {
+  const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [reverseModal, setReverseModal] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -50,7 +51,7 @@ function ReverseMin() {
       setHeaderData(data.header);
       setLoading(false);
     } else {
-      toast.error(data.message?.msg || data.message);
+      showToast(data.message?.msg || data.message, "error");
       setLoading(false);
     }
   };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Col, message, Divider, Popconfirm, Row, Space } from "antd";
 import axios from "axios";
-import { toast } from "react-toastify";
+import { useToast } from "../../../../hooks/useToast.js";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { DownloadOutlined, PlusOutlined } from "@ant-design/icons";
 import { v4 } from "uuid";
@@ -14,6 +14,7 @@ import { downloadCSV } from "../../../../Components/exportToCSV";
 import MySelect from "../../../../Components/MySelect";
 
 function AppVendorReport() {
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -59,7 +60,7 @@ function AppVendorReport() {
       setLoading(false);
       setRows(arr);
     } else if (response.status == 500) {
-      toast.error(response.message.msg);
+      showToast(response.message.msg, "error");
       setLoading(false);
     }
 
@@ -179,7 +180,7 @@ function AppVendorReport() {
   ];
 
   return (
-    <div style={{ height: "90%" }}>
+    <div style={{ height: "100%" }}>
       <Row style={{ padding: "0px 5px" }} justify="space-between" gutter={10}>
         <Col>
           <Space>

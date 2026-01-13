@@ -1,7 +1,7 @@
 const links = [
   {
     routeName: "Bank Payment Register",
-    routePath: "/tally/vouchers/bank_payment/report",
+    routePath: "/tally/vouchers/bank-payment/report",
     key: 0,
   },
   {

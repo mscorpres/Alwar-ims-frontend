@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useToast } from "../../../hooks/useToast.js";
 import ViewModal from "./Modal/ViewModal";
 
 import { Button, Col, DatePicker, Input, Row, Select } from "antd";
@@ -13,6 +13,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
 function PendingTransfer() {
+  const { showToast } = useToast();
   const [locationData, setLocationData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
@@ -84,7 +85,7 @@ function PendingTransfer() {
       setDataComesFromDateWise(arr);
       setLoading(false);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoading(false);
     }
   };
@@ -104,7 +105,7 @@ function PendingTransfer() {
       setLoading(false);
       // setFilterDate(data.data);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoading(false);
     }
     
@@ -126,7 +127,7 @@ function PendingTransfer() {
       setLoading(false);
       // setFilterDate(data.data);
     } else {
-      toast.error(response?.message);
+      showToast(response?.message, "error");
       setLoading(false);
     }
   };

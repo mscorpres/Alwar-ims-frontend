@@ -17,12 +17,13 @@ import MyDataTable from "../../../Components/MyDataTable";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import { useToast } from "../../../hooks/useToast.js";
 const R24 = () => {
+  const { showToast } = useToast();
   const { user: stateUser } = useSelector((state) => state.login);
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -89,7 +90,7 @@ const R24 = () => {
           }));
           setRows(arr);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
           setRows([]);
         }
       } else {
@@ -117,7 +118,7 @@ const R24 = () => {
 
           setUserComponents(arr);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
           setUserComponents([]);
         }
       } else {
@@ -141,11 +142,11 @@ const R24 = () => {
       });
     
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           getUserComponents(stateUser.id);
           filterForm.setFieldValue("component", undefined);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
       
     } catch (error) {
@@ -164,10 +165,10 @@ const R24 = () => {
       });
     
         if (response.success) {
-          toast.success(response.message);
+          showToast(response.message, "success");
           getUserComponents(stateUser.id);
         } else {
-          toast.error(response.message);
+          showToast(response.message, "error");
         }
     } catch (error) {
       console.log("Some error occured while deleting user component", error);
@@ -194,8 +195,8 @@ const R24 = () => {
     }
   }, []);
   return (
-    <Row gutter={6} style={{ height: "90%", padding: 10, paddingTop: 0 }}>
-      <Col span={4} style={{ height: "100%", overflow: "hidden" }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10, paddingTop: 0 }}>
+      <Col span={6} style={{ height: "100%", overflow: "hidden" }}>
         <Row gutter={[0, 6]} style={{ height: "100%", overflow: "hidden" }}>
           <Col span={24}>
             <Card size="small" title="Filters">
@@ -329,7 +330,7 @@ const R24 = () => {
           </Col>
         </Row>
       </Col>
-      <Col span={20}>
+      <Col span={18}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

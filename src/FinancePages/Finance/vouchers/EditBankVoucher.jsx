@@ -3,12 +3,8 @@ import { Button, Card, Col, Drawer, Input, Row, Space } from "antd";
 import { v4 } from "uuid";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import MyDataTable from "../../../Components/MyDataTable";
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import { PlusSquareFilled, MinusSquareFilled } from "@ant-design/icons";
-import axios from "axios";
-import moment from "moment";
-import { toast } from "react-toastify";
+
+import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading";
 import FormTable from "../../../Components/FormTable";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -20,6 +16,7 @@ export default function EditBankVoucher({
   voucherType,
   getRows,
 }) {
+  const { showToast } = useToast();
   const [submitLoading, setSubmitLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -62,7 +59,7 @@ export default function EditBankVoucher({
   };
   const submitHandler = async () => {
     if (!effectiveDate) {
-      return toast.error("Please select Effective date");
+      return showToast("Please select Effective date", "error");
     }
     let paymentLabel = voucherType === "bank-payment" ? "debit" : "credit";
     let finalObj = {
@@ -118,19 +115,19 @@ export default function EditBankVoucher({
       setSubmitLoading(false);
       if (response.success) {
         // resetHandler();
-        toast.success(response.message);
+        showToast(response.message, "success");
         getRows();
         setTimeout(() => {
           setEditVoucher(null);
         }, 3000);
       } else {
-        toast.error(response.message?.msg || response.message);
+        showToast(response.message?.msg || response.message, "error");
       }
     } else {
       if (problem == "gls") {
-        return toast.error("All entries should have a gls");
+        return showToast("All entries should have a gls", "error");
       } else if (problem == "payment") {
-        return toast.error("All entries should have a payment amount");
+        return showToast("All entries should have a payment amount", "error");
       }
     }
   };
@@ -266,7 +263,7 @@ export default function EditBankVoucher({
       setBank({ value: data.data[0].bank_key, label: data.data[0].bank_name });
       setEffectiveDate(data.data[0].ref_date);
     } else {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
       setEditVoucher(null);
     }
   };
