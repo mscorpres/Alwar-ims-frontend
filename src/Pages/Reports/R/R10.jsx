@@ -20,8 +20,8 @@ const R10 = () => {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locationOptions, setLocationOptions] = useState([]);
   const [selectedUser, setSelectedUser] = useState({
-    value: user.id,
-    label: user.userName,
+    value: user?.id,
+    label: user?.userName,
   });
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);

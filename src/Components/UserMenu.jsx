@@ -61,7 +61,7 @@ export default function UserMenu({ user, logoutHandler, setShowSettings }) {
         >
           {user?.userName && user?.userName[0]?.toUpperCase()}
         </Avatar>
-        <span>{user.userName?.split(" ")[0]}</span>
+        <span>{user?.userName?.split(" ")[0]}</span>
         {/* </div> */}
         <DownOutlined />
       </Space>

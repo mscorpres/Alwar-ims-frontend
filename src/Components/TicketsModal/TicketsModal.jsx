@@ -21,12 +21,12 @@ import {
 import { useSelector } from "react-redux";
 import { imsAxios } from "../../axiosInterceptor";
 import { customColor } from "../../utils/customColor";
-import {useToast} from "../../hooks/useToast";
+import { useToast } from "../../hooks/useToast";
 const { TextArea } = Input;
 const axiosLink = "https://support.mscorpres.com";
 
 export default function TicketsModal({ open, handleClose }) {
- const { showToast } = useToast();
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
   const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
@@ -54,7 +54,7 @@ export default function TicketsModal({ open, handleClose }) {
       const response = await imsAxios.get("/ticket/masters");
       if (response?.success && response?.data) {
         const { topics, priorities, languages } = response.data;
-        
+
         // Map topics - { value, text }
         if (topics && Array.isArray(topics)) {
           setTopicOptions(
@@ -64,7 +64,7 @@ export default function TicketsModal({ open, handleClose }) {
             }))
           );
         }
-        
+
         // Map priorities - { value, text }
         if (priorities && Array.isArray(priorities)) {
           setPriorityOptions(
@@ -74,7 +74,7 @@ export default function TicketsModal({ open, handleClose }) {
             }))
           );
         }
-        
+
         // Map languages - { value, text }
         if (languages && Array.isArray(languages)) {
           setLanguageOptions(
@@ -95,7 +95,7 @@ export default function TicketsModal({ open, handleClose }) {
     setLoading("fetching");
     try {
       const response = await imsAxios.get("/ticket/fetch", {
-        params: { email: user.email, topic: 18 },
+        params: { email: user?.email, topic: 18 },
       });
       setLoading(false);
       if (response?.success && response?.data) {
@@ -169,17 +169,17 @@ export default function TicketsModal({ open, handleClose }) {
 
       // Build FormData payload
       const submitFormData = new FormData();
-      submitFormData.append("name", user.userName || user.name || "");
-      submitFormData.append("email", user.email || "");
-      submitFormData.append("phone", user.phone || "");
+      submitFormData.append("name", user?.userName || user?.name || "");
+      submitFormData.append("email", user?.email || "");
+      submitFormData.append("phone", user?.phone || "");
       submitFormData.append("subject", formData.subject);
       submitFormData.append("message", formData.concern);
       submitFormData.append("topic", formData.topic);
-      
+
       if (formData.priority) {
         submitFormData.append("priority", formData.priority);
       }
-      
+
       if (formData.language) {
         submitFormData.append("language", formData.language);
       }
@@ -207,7 +207,6 @@ export default function TicketsModal({ open, handleClose }) {
     } catch (error) {
       setLoading(false);
       showToast(error?.message || "Failed to create ticket", "error");
-      
     }
   };
 
@@ -261,7 +260,10 @@ export default function TicketsModal({ open, handleClose }) {
               justifyContent: "center",
               borderRadius: 6,
               cursor: "pointer",
-              backgroundColor: activeMenu === "create" ? customColor.newBgColor : "transparent",
+              backgroundColor:
+                activeMenu === "create"
+                  ? customColor.newBgColor
+                  : "transparent",
               color: activeMenu === "create" ? "#fff" : "#666",
               transition: "all 0.2s ease",
             }}
@@ -284,7 +286,8 @@ export default function TicketsModal({ open, handleClose }) {
               justifyContent: "center",
               borderRadius: 6,
               cursor: "pointer",
-              backgroundColor: activeMenu === "fetch" ? customColor.newBgColor : "transparent",
+              backgroundColor:
+                activeMenu === "fetch" ? customColor.newBgColor : "transparent",
               color: activeMenu === "fetch" ? "#fff" : "#666",
               transition: "all 0.2s ease",
             }}
@@ -413,7 +416,10 @@ export default function TicketsModal({ open, handleClose }) {
                   type="primary"
                   onClick={handleSubmit}
                   loading={loading === "submitting"}
-                  style={{ backgroundColor: customColor.newBgColor, borderColor: customColor.newBgColor }}
+                  style={{
+                    backgroundColor: customColor.newBgColor,
+                    borderColor: customColor.newBgColor,
+                  }}
                 >
                   Submit
                 </Button>
