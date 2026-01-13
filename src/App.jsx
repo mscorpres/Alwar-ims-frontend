@@ -994,7 +994,7 @@ const App = () => {
                       const bannerHeight = isBannerVisible ? 40 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
-                        pathname === "/myProfile" || pathname === "/login"
+                        pathname === "/auth/profile" || pathname === "/login"
                           ? 0
                           : 50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
