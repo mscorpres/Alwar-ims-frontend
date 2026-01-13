@@ -391,7 +391,7 @@ const Dashboard = () => {
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            {getGreetingTime()}, {user.userName}
+            {getGreetingTime()}, {user?.userName}
           </Typography>
           <Box sx={{ minWidth: 260 }}>
             <MyDatePicker
