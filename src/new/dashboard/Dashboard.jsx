@@ -40,7 +40,6 @@ import {
   Legend,
 } from "recharts";
 
-
 const CHART_COLORS = [
   "#6366F1",
   "#06B6D4",
@@ -54,6 +53,8 @@ const CHART_COLORS = [
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.login);
+
   const {
     summaryDate,
     masterSummary,
@@ -64,6 +65,17 @@ const Dashboard = () => {
     mfgProducts,
     loading,
   } = useSelector((state) => state.dashboard);
+
+  const getGreetingTime = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) {
+      return "Good Morning";
+    } else if (hour < 18) {
+      return "Good Afternoon";
+    } else {
+      return "Good Evening";
+    }
+  };
 
   const transactionsChartData = useMemo(
     () =>
@@ -118,18 +130,12 @@ const Dashboard = () => {
     dispatch(fetchMasterSummary());
   }, []);
 
-  const renderSummaryGrid = (
-    title,
-    items,
-    loadingFlag,
-    subtitle
-  ) => (
+  const renderSummaryGrid = (title, items, loadingFlag, subtitle) => (
     <Box sx={{ width: "100%" }}>
       <Paper
-      elevation={0}
+        elevation={0}
         sx={{
-          p: 2,
-    
+          py: 2,
         }}
       >
         <Box
@@ -140,7 +146,9 @@ const Dashboard = () => {
             mb: 1,
           }}
         >
-          <Typography variant="h6" sx={{fontWeight:"bold"}}>{title}</Typography>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            {title}
+          </Typography>
           {subtitle && (
             <Typography variant="body2" color="text.secondary">
               {subtitle}
@@ -174,45 +182,68 @@ const Dashboard = () => {
             {items.map((it, idx) => (
               <Card
                 key={`${it.title}-${idx}`}
-
                 sx={{
-                  backgroundColor: "background.paper",
                   borderRadius: 2,
-                    boxShadow:
-                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
-                "&:hover": {
-                  boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                },
+                  boxShadow: "0 0 12px rgba(0,0,0,0.12)",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "all 0.25s ease",
+                  "&:hover": {
+                    boxShadow: "0 0 20px rgba(0,0,0,0.18)",
+                    transform: "translateY(-2px)",
+                  },
                 }}
               >
-                <CardContent>
-                  <Typography variant="subtitle2" color="text.secondary">
-                    {it.title}
-                  </Typography>
-                  <Typography variant="h5" sx={{ my: 0.5 }}>
-                    {it.value ?? "-"}
-                  </Typography>
-                  {it?.date && (
-                    <Typography variant="caption" color="text.secondary">
-                      Last: {it.date}
+                <div
+                  style={{
+                    position: "absolute",
+                    width: 300,
+                    height: 300,
+                    borderRadius: "50%",
+                    background: `url('/assets/smallCard.png') no-repeat center center`,
+                    backgroundSize: "cover",
+                    top: -100,
+                    right: -180,
+                  }}
+                />
+                <CardContent
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr auto",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  {/* LEFT: content */}
+                  <Box>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      {it.title}
                     </Typography>
-                  )}
-                  {it?.link && (
-                    <Box sx={{ mt: 1 }}>
-                      <Chip
-                        size="small"
-                        icon={<LaunchIcon fontSize="small" />}
-                        label="Details"
-                        color="primary"
-                        variant="outlined"
-                        clickable
-                        onClick={() => {
-                          window.location.href = it.link ;
-                        }}
-                      />
-                    </Box>
-                  )}
+
+                    <Typography variant="h5" sx={{ my: 0.5 }}>
+                      {it.value ?? "-"}
+                    </Typography>
+
+                    {it?.date && (
+                      <Typography variant="caption" color="text.secondary">
+                        Last: {it.date}
+                      </Typography>
+                    )}
+
+                    {it?.link && (
+                      <Box sx={{ mt: 1 }}>
+                        <Chip
+                          size="small"
+                          icon={<LaunchIcon fontSize="small" />}
+                          label="Details"
+                          color="primary"
+                          variant="outlined"
+                          clickable
+                          onClick={() => (window.location.href = it.link)}
+                        />
+                      </Box>
+                    )}
+                  </Box>
                 </CardContent>
               </Card>
             ))}
@@ -222,6 +253,129 @@ const Dashboard = () => {
     </Box>
   );
 
+
+   const renderSummaryGridThree = (title, items, loadingFlag, subtitle) => (
+    <Box sx={{ width: "100%" }}>
+      <Paper
+        elevation={0}
+        sx={{
+          py: 2,
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            mb: 1,
+          }}
+        >
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            {title}
+          </Typography>
+          {subtitle && (
+            <Typography variant="body2" color="text.secondary">
+              {subtitle}
+            </Typography>
+          )}
+        </Box>
+        {/* <Divider sx={{ mb: 2 }} /> */}
+        {loadingFlag ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              py: 4,
+            }}
+          >
+            <CircularProgress size={24} />
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: {
+                xs: "1fr",
+                sm: "1fr 1fr",
+                md: "repeat(4, 1fr)",
+              },
+              gap: 3,
+            }}
+          >
+            {items.map((it, idx) => (
+              <Card
+                key={`${it.title}-${idx}`}
+                sx={{
+                  borderRadius: 2,
+                  boxShadow: "0 0 12px rgba(0,0,0,0.12)",
+                  position: "relative",
+                  overflow: "hidden",
+                  transition: "all 0.25s ease",
+                  "&:hover": {
+                    boxShadow: "0 0 20px rgba(0,0,0,0.18)",
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    width: 300,
+                    height: 300,
+                    borderRadius: "50%",
+                    background: `url('/assets/smallCard.png') no-repeat center center`,
+                    backgroundSize: "cover",
+                    top: -100,
+                    right: -180,
+                  }}
+                />
+                <CardContent
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr auto",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  {/* LEFT: content */}
+                  <Box>
+                    <Typography variant="subtitle2" color="text.secondary">
+                      {it.title}
+                    </Typography>
+
+                    <Typography variant="h5" sx={{ my: 0.5 }}>
+                      {it.value ?? "-"}
+                    </Typography>
+
+                    {it?.date && (
+                      <Typography variant="caption" color="text.secondary">
+                        Last: {it.date}
+                      </Typography>
+                    )}
+
+                    {it?.link && (
+                      <Box sx={{ mt: 1 }}>
+                        <Chip
+                          size="small"
+                          icon={<LaunchIcon fontSize="small" />}
+                          label="Details"
+                          color="primary"
+                          variant="outlined"
+                          clickable
+                          onClick={() => (window.location.href = it.link)}
+                        />
+                      </Box>
+                    )}
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        )}
+      </Paper>
+    </Box>
+  );
   const theme = createTheme();
 
   return (
@@ -236,7 +390,9 @@ const Dashboard = () => {
             mb: 2,
           }}
         >
-          <Typography variant="h6" sx={{fontWeight:"bold"}}>Master Summary</Typography>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            {getGreetingTime()}, {user.userName}
+          </Typography>
           <Box sx={{ minWidth: 260 }}>
             <MyDatePicker
               setDateRange={(v) => {
@@ -263,16 +419,17 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                
-                  boxShadow:
-                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
+                position: "relative",
+                overflow: "hidden",
+
+                boxShadow: "0 0 12px rgba(0,0,0,0.12)",
+                transition: "box-shadow 0.3s ease",
                 "&:hover": {
-                  boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                  boxShadow: "0 0 20px rgba(0,0,0,0.18)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2,fontWeight:"bold" }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
                 Transactions Overview
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
@@ -298,15 +455,16 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                 boxShadow:
-                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
+                overflow: "hidden",
+                position: "relative",
+                boxShadow: "0 0 12px rgba(0,0,0,0.12)",
+                transition: "box-shadow 0.3s ease",
                 "&:hover": {
-                  boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                  boxShadow: "0 0 20px rgba(0,0,0,0.18)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2,fontWeight:"bold" }}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
                 Pending Summary
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
@@ -346,15 +504,17 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                 boxShadow:
-                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
+                overflow: "hidden",
+                position: "relative",
+                boxShadow: "0 0 12px rgba(0,0,0,0.12)",
+                transition: "box-shadow 0.3s ease",
                 "&:hover": {
-                  boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                  boxShadow: "0 0 20px rgba(0,0,0,0.18)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2,fontWeight:"bold" }}>
+              {" "}
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
                 Gate Pass Overview
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
@@ -380,15 +540,16 @@ const Dashboard = () => {
               sx={{
                 p: 2,
                 height: 360,
-                 boxShadow:
-                  "0 4px 6px -1px rgb(214 214 214) 0px 0px 6px -1px, rgb(255 255 255) 0px 0px 4px -1px !important",
+                overflow: "hidden",
+                position: "relative",
+                boxShadow: "0 0 12px rgba(0,0,0,0.12)",
+                transition: "box-shadow 0.3s ease",
                 "&:hover": {
-                  boxShadow:
-                    "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                  boxShadow: "0 0 20px rgba(0,0,0,0.18)",
                 },
               }}
             >
-              <Typography variant="h6" sx={{ mb: 2 , fontWeight:"bold"}}>
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
                 Top MFG Products
               </Typography>
               <ResponsiveContainer width="100%" height={280}>
@@ -411,7 +572,7 @@ const Dashboard = () => {
           </Box>
         </Box>
 
-        {renderSummaryGrid("MIN Summary", minSummary, loading.min)}
+        {renderSummaryGridThree("MIN Summary", minSummary, loading.min)}
       </Box>
     </ThemeProvider>
   );

@@ -846,7 +846,7 @@ const Routes = [
     main: () => <R19Master />,
   },
   {
-    path: "/myProfile",
+    path: "/auth/profile",
     main: () => <Profile />,
   },
   // CPM

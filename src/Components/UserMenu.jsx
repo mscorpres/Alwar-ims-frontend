@@ -8,7 +8,7 @@ export default function UserMenu({ user, logoutHandler, setShowSettings }) {
   const menuItems = [
     {
       key: "1",
-      label: <Link to={"/myProfile"}>Profile</Link>,
+      label: <Link to={"/auth/profile"}>Profile</Link>,
     },
     { type: "divider" },
   ];
