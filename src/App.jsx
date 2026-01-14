@@ -245,11 +245,15 @@ const App = () => {
       if (e.altKey && (e.key === "c" || e.key === "C") && !e.shiftKey && !e.ctrlKey) {
         // Check if user is not typing in an input field
         const activeElement = document.activeElement;
+        const isCalculatorInput = activeElement?.id === "calc-display";
         const isInputField =
-          (activeElement?.tagName === "INPUT" && activeElement?.type !== "button" && activeElement?.type !== "submit") ||
-          activeElement?.tagName === "TEXTAREA" ||
-          activeElement?.contentEditable === "true";
-        
+          !isCalculatorInput &&
+          ((activeElement?.tagName === "INPUT" &&
+            activeElement?.type !== "button" &&
+            activeElement?.type !== "submit") ||
+            activeElement?.tagName === "TEXTAREA" ||
+            activeElement?.contentEditable === "true");
+
         if (!isInputField) {
           e.preventDefault();
           e.stopPropagation();
@@ -260,12 +264,27 @@ const App = () => {
       if (e.key === "Escape") {
         setShowSideBar(false);
         dispatch(setShowCalculator(false));
+        // Restore focus when closing calculator with Escape
+        setTimeout(() => {
+          const mainContent = document.getElementById("main-content-area");
+          if (mainContent) {
+            mainContent.focus();
+          } else {
+            // Fallback: blur any active element
+            if (
+              document.activeElement &&
+              document.activeElement !== document.body
+            ) {
+              document.activeElement.blur();
+            }
+          }
+        }, 100);
       }
     };
 
     // Use capture phase to catch the event earlier
     window.addEventListener("keydown", handleKeyPress, true);
-    
+
     return () => {
       window.removeEventListener("keydown", handleKeyPress, true);
     };
@@ -1015,12 +1034,31 @@ const App = () => {
             >
               <CalculatorDrawer
                 open={showCalculator}
-                onClose={() => dispatch(setShowCalculator(false))}
+                onClose={() => {
+                  dispatch(setShowCalculator(false));
+                  // Restore focus to main content area so Alt+C works immediately
+                  setTimeout(() => {
+                    const mainContent =
+                      document.getElementById("main-content-area");
+                    if (mainContent) {
+                      mainContent.focus();
+                    } else {
+                      // Fallback: blur any active element
+                      if (
+                        document.activeElement &&
+                        document.activeElement !== document.body
+                      ) {
+                        document.activeElement.blur();
+                      }
+                    }
+                  }, 100);
+                }}
               />
               <Content style={{ height: "100%" }}>
                 <InternalNav links={internalLinks} />
 
                 <div
+                  tabIndex={-1}
                   style={{
                     height: (() => {
                       const headerHeight = pathname === "/login" ? 10 : 50;
@@ -1038,7 +1076,9 @@ const App = () => {
                       testPage && user?.type != "developer" ? "none" : "all",
 
                     overflowX: "hidden",
+                    outline: "none",
                   }}
+                  id="main-content-area"
                 >
                   <Routes>
                     {filteredRoutes.map((route, index) => (
