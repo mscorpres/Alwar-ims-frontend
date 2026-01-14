@@ -15,6 +15,9 @@ export default defineConfig({
       },
     ],
   },
+  optimizeDeps: {
+    include: ['@mui/material', '@mui/material/styles', '@emotion/react', '@emotion/styled'],
+  },
   server: {
     port: 3000,
     host: true,
@@ -24,6 +27,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'antd': ['antd'],
+          'mui-vendor': ['@mui/material', '@mui/material/styles', '@emotion/react', '@emotion/styled'],
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
         },
       },

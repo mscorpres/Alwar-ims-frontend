@@ -4,8 +4,8 @@ import "../../index.css";
 import { loadMenuConfig } from "./menuLoader";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import logo from "../../../public/assets/images/ms.png"
-import logoFull from "../../../public/assets/images/mscorpres_auto_logo.png"
+
+
 
 const Sidebar = ({
   showSideBar,
@@ -428,48 +428,31 @@ const Sidebar = ({
           {/* Logo/Brand */}
           <div
             style={{
-             
               color: "#333",
-              // fontWeight: "700",
               fontSize: 18,
               borderBottom: "1px solid #e0e0e0",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
-              transition: "all 0.3s ease",
-              minHeight: "56px",
-         
+              minHeight: 56,
+              overflow: "hidden",
             }}
           >
             
-            {showSideBar ? (
-              <img
-                src={logo}
-                alt="IMS Full Logo"
-                style={{
-                  height: 32,
-                  width: "auto",
-                  opacity: 1,
-                  transition: "all 0.3s ease",
-                  display: "block",
-               
-                }}
-              />
-            ) : (
-              <img
-                src={logoFull}
-                alt="IMS Icon Logo"
-                style={{
-                  height: 32,
-                  width: 32,
-                  opacity: 1,
-                  transition: "all 0.3s ease",
-                  display: "block",
-                     
-                }}
-              />
-            )}
+      
+             <img
+              src={showSideBar ?  "/assets/images/ms.png" : "/assets/images/mscorpres_auto_logo.png"}
+              alt="IMS Logo"
+              style={{
+                width: showSideBar ? 220 : 32,
+                height: "auto",
+                transition: "opacity 0.3s ease, transform 0.3s ease",
+                transform: showSideBar ? "scale(1)" : "scale(1)",
+                opacity: 1,
+                willChange: "transform",
+              }}
+            />
           </div>
 
           {/* Main Menu Items */}

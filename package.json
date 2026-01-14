@@ -20,6 +20,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^5.15.0",
+    "@mui/material": "^5.18.0",
     "@mui/x-data-grid": "^5.17.8",
     "@reduxjs/toolkit": "^1.8.5",
     "@rollup/plugin-dynamic-import-vars": "^2.1.2",

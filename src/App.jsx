@@ -39,7 +39,6 @@ import Layout, { Content, Header } from "antd/lib/layout/layout";
 import { Select, Modal, Button } from "antd";
 import { SearchOutlined, SwapOutlined } from "@ant-design/icons";
 import { Tooltip, IconButton } from "@mui/material";
-import { SiSocketdotio } from "react-icons/si";
 import InternalNav from "./Components/InternalNav";
 import { imsAxios } from "./axiosInterceptor";
 import internalLinks from "./Pages/internalLinks.jsx";
@@ -47,8 +46,7 @@ import TicketsModal from "./Components/TicketsModal/TicketsModal";
 import { items, items1 } from "./utils/sidebarRoutes.jsx";
 import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
-import { customColor } from "./utils/customColor.js";
-import Information from "./Pages/Master/Components/Information.jsx";
+
 import { useToast } from "./hooks/useToast.js";
 
 const App = () => {
