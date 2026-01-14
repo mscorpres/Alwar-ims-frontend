@@ -37,7 +37,7 @@ const Dashboard = () => {
     {
       title: "Purchase Orders",
       value: "",
-      link: "/manage-po",
+      link: "/procurement/manage",
     },
   ]);
   const [pendingTransactionSummary, setPendingTransactionSummary] = useState([
@@ -57,12 +57,12 @@ const Dashboard = () => {
     {
       title: "Pending FG",
       value: "",
-      link: "/manage-po",
+      link: "/procurement/manage",
     },
     {
       title: "Pending MR Approval",
       value: "",
-      link: "/manage-po",
+      link: "/procurement/manage",
     },
   ]);
   const [masterSummary, setMasterSummary] = useState([
@@ -184,7 +184,7 @@ const Dashboard = () => {
                 title: "Purchase Orders",
                 value: data.totalPO,
                 date: data.lastPO,
-                link: "/manage-po",
+                link: "/procurement/manage",
               },
             ]);
           } else if (transactionType === "gatePass") {
@@ -350,12 +350,12 @@ const Dashboard = () => {
             {
               title: "Pending FG",
               value: data.pendingFG,
-              // link: "/manage-po",
+              // link: "/procurement/manage",
             },
             {
               title: "Pending MR Approval",
               value: data.pendingMRapproval,
-              // link: "/manage-po",
+              // link: "/procurement/manage",
             },
           ]);
         } else {

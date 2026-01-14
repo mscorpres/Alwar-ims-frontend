@@ -625,43 +625,37 @@
                 "key": "B21",
                 "label": "Create PR",
                 "icon": "AddShoppingCartIcon",
-                "path": "/create-po",
+                "path": "/procurement/create",
                 "isShown": true
               },
                 {
                 "key": "B22",
                 "label": "Requested PR",
                 "icon": "ManageAccountsIcon",
-                "path": "/request-po",
+                "path": "/procurement/request",
                 "isShown": true
               },
               {
                 "key": "B22",
-                "label": "Manage PO",
+                "label": "Manage",
                 "icon": "ManageAccountsIcon",
-                "path": "/manage-po",
+                "path": "/procurement/manage",
                 "isShown": true
               },
             
               {
                 "key": "B23",
-                "label": "Completed PO",
+                "label": "Completed",
                 "icon": "CheckCircleIcon",
-                "path": "/completed-po",
+                "path": "/procurement/completed",
                 "isShown": true
               },
-              {
-                "key": "B24",
-                "label": "Vendor Pricing",
-                "icon": "AttachMoneyIcon",
-                "path": "/vendor-pricing",
-                "isShown": true
-              },
+           
               {
                 "key": "B25",
-                "label": "Po Approval",
+                "label": "Approval",
                 "icon": "ApprovalIcon",
-                "path": "/approval-po",
+                "path": "/procurement/approval",
                 "isShown": true
               }
             ]

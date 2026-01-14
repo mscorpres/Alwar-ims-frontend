@@ -17,32 +17,32 @@ const links = [
   [
     {
       routeName: "Create PR",
-      routePath: "/create-po",
+      routePath: "/procurement/create",
       key: 0,
     },
      {
       routeName: "Requested PR",
-      routePath: "/request-po",
+      routePath: "/procurement/request",
       key: 0,
     },
     {
-      routeName: "Manage PO",
-      routePath: "/manage-po",
+      routeName: "Manage",
+      routePath: "/procurement/manage",
       key: 1,
     },
     {
-      routeName: "Completed PO",
-      routePath: "/completed-po",
+      routeName: "Completed",
+      routePath: "/procurement/completed",
       key: 2,
     },
+    // {
+    //   routeName: "Vendor Pricing",
+    //   routePath: "/vendor-pricing",
+    //   key: 3,
+    // },
     {
-      routeName: "Vendor Pricing",
-      routePath: "/vendor-pricing",
-      key: 3,
-    },
-    {
-      routeName: "PO Approval",
-      routePath: "/approval-po",
+      routeName: "Approval",
+      routePath: "/procurement/approval",
       key: 4,
     },
   ],

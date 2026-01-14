@@ -789,23 +789,23 @@ const Routes = [
   },
   // Purchase Order
   {
-    path: "/create-po",
+    path: "/procurement/create",
     main: () => <CreatePo />,
   },
  {
-    path: "/request-po",
+    path: "/procurement/request",
     main: () => <POrequest />,
   },
   {
-    path: "/manage-po",
+    path: "/procurement/manage",
     main: () => <ManagePO />,
   },
   {
-    path: "/completed-po",
+    path: "/procurement/completed",
     main: () => <CompletedPo />,
   },
   {
-    path: "/approval-po",
+    path: "/procurement/approval",
     main: () => <PoApproval />,
     text: "Po Approval",
   },

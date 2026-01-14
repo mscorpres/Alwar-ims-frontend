@@ -587,7 +587,9 @@ textarea.ant-input {
   border-width: 2px !important;
 }
 .ant-card {
-  border-radius: 0 !important;
+  border-radius: 15px !important;
+  background-color: #f1f7fc !important;
+  border: 2px solid #c6def4 !important;
 }
 .ant-card-head {
   border-radius: 0 !important;

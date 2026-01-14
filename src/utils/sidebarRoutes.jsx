@@ -311,32 +311,32 @@ export const items = (user) => [
     ]),
     getItem("Procurement", "B2", <ImCart />, [
       getItem(
-        <Link to="/create-po">Create PR</Link>,
+        <Link to="/procurement/create">Create PR</Link>,
         "B23"
         // <AiOutlineMinus />
       ),
        getItem(
-        <Link to="/request-po">Requested PR</Link>,
+        <Link to="/procurement/request">Requested PR</Link>,
         "B22"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/manage-po">Manage PO</Link>,
+        <Link to="/procurement/manage">Manage</Link>,
         "B23"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/completed-po">Completed PO</Link>,
+        <Link to="/procurement/completed">Completed</Link>,
         "B24"
         // <AiOutlineMinus />
       ),
+      // getItem(
+      //   <Link to="/vendor-pricing">Vendor Pricing</Link>,
+      //   "B25"
+      //   // <AiOutlineMinus />
+      // ),
       getItem(
-        <Link to="/vendor-pricing">Vendor Pricing</Link>,
-        "B25"
-        // <AiOutlineMinus />
-      ),
-      getItem(
-        <Link to="/approval-po">Po Approval</Link>,
+        <Link to="/procurement/approval">Approval</Link>,
         "B26"
         // <AiOutlineMinus />
       ),

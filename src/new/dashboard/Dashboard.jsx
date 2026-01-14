@@ -54,6 +54,16 @@ const CHART_COLORS = [
 const Dashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.login);
+  const images = [
+  "/assets/smallCard.png",
+  "/assets/smallCard2.png",
+  "/assets/smallCard3.png",
+  "/assets/smallCard4.png",
+];
+const getImage = (index) => {
+  return images[index % images.length];
+};
+
 
   const {
     summaryDate,
@@ -200,7 +210,7 @@ const Dashboard = () => {
                     width: 300,
                     height: 300,
                     borderRadius: "50%",
-                    background: `url('/assets/smallCard.png') no-repeat center center`,
+                    background: `url(${getImage(idx)}) no-repeat center center`,
                     backgroundSize: "cover",
                     top: -100,
                     right: -180,
@@ -238,6 +248,7 @@ const Dashboard = () => {
                           label="Details"
                           color="primary"
                           variant="outlined"
+                          sx={{p:1.6}}
                           clickable
                           onClick={() => (window.location.href = it.link)}
                         />
@@ -254,11 +265,11 @@ const Dashboard = () => {
   );
 
   const renderSummaryGridThree = (title, items, loadingFlag, subtitle) => (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%" , display: "flex", flexDirection: "column" , alignItems: "center", justifyContent: "center", mt: 2}}>
       <Paper
         elevation={0}
         sx={{
-          py: 2,
+        
         }}
       >
         <Box
@@ -272,11 +283,6 @@ const Dashboard = () => {
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
             {title}
           </Typography>
-          {subtitle && (
-            <Typography variant="body2" color="text.secondary">
-              {subtitle}
-            </Typography>
-          )}
         </Box>
         {/* <Divider sx={{ mb: 2 }} /> */}
         {loadingFlag ? (
@@ -291,86 +297,126 @@ const Dashboard = () => {
             <CircularProgress size={24} />
           </Box>
         ) : (
-          <Box
-            sx={{
-              display: "grid",
-              gridTemplateColumns: {
-                xs: "1fr",
-                sm: "1fr 1fr",
-                md: "repeat(4, 1fr)",
-              },
-              gap: 3,
-            }}
-          >
-            {items.map((it, idx) => (
-              <Card
-                key={`${it.title}-${idx}`}
+          // <Box
+
+          // >
+          <>
+            <Card
+              sx={{
+                minWidth: { sx: 300, md: 900 },
+               
+                borderRadius: 2,
+                boxShadow: "0 0 12px rgba(0,0,0,0.12)",
+            
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.25s ease",
+                "&:hover": {
+                  boxShadow: "0 0 20px rgba(0,0,0,0.18)",
+                },
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  width: 140,
+                  height: 150,
+                  // borderRadius: "50%",
+                  background: `url('/assets/cardImg.png') no-repeat center center`,
+                  backgroundSize: "cover",
+                  top: 0,
+                  left: 0,
+                }}
+              />
+              <div
+                style={{
+                 position:"absolute",
+                 bottom:10,
+                 left:10
+                }}
+              >
+         
+                
+                  <Typography variant="subtitle2" sx={{ maxWidth: 180  }}>
+                    {subtitle ?? "-"}
+                  </Typography>
+            
+              </div>
+
+              <Box
                 sx={{
-                  borderRadius: 2,
-                  boxShadow: "0 0 12px rgba(0,0,0,0.12)",
-                  position: "relative",
-                  overflow: "hidden",
-                  transition: "all 0.25s ease",
-                  "&:hover": {
-                    boxShadow: "0 0 20px rgba(0,0,0,0.18)",
-                    transform: "translateY(-2px)",
+                  display: "grid",
+                  gridTemplateColumns: {
+                    xs: "1fr",
+                    sm: "1fr 1fr",
+                    md: "repeat(3, 1fr)",
+                  },
+                  gap: 3,
+                  marginLeft: {
+                    xs: 15,
+                    sm: 25,
                   },
                 }}
               >
-                <div
-                  style={{
-                    position: "absolute",
-                    width: 300,
-                    height: 300,
-                    borderRadius: "50%",
-                    background: `url('/assets/smallCard.png') no-repeat center center`,
-                    backgroundSize: "cover",
-                    top: -100,
-                    right: -180,
-                  }}
-                />
-                <CardContent
-                  sx={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr auto",
-                    alignItems: "center",
-                    gap: 2,
-                  }}
-                >
-                  {/* LEFT: content */}
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {it.title}
-                    </Typography>
+                {items.map((it, idx) => (
+                  <Card
+                    key={`${it.title}-${idx}`}
+                    elevation={0}
+                    sx={{
+                     
+                    
+                      borderRadius: 0,
+                      my: 2,
+                      position: "relative",
+                      overflow: "hidden",
 
-                    <Typography variant="h5" sx={{ my: 0.5 }}>
-                      {it.value ?? "-"}
-                    </Typography>
+                      borderLeft: "1px solid #d9d9d9",
+                    }}
+                  >
+                    <CardContent
+                      sx={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr auto",
+                        alignItems: "center",
+                        gap: 2,
+                      }}
+                    >
+                  
+                      <Box>
+                        <Typography variant="subtitle2" color="text.secondary">
+                          {it.title}
+                        </Typography>
 
-                    {it?.date && (
-                      <Typography variant="caption" color="text.secondary">
-                        Last: {it.date}
-                      </Typography>
-                    )}
+                        <Typography variant="h5" sx={{ my: 0.5 }}>
+                          {it.value ?? "-"}
+                        </Typography>
 
-                    {it?.link && (
-                      <Box sx={{ mt: 1 }}>
-                        <Chip
-                          size="small"
-                          icon={<LaunchIcon fontSize="small" />}
-                          label="Details"
-                          color="primary"
-                          variant="outlined"
-                          clickable
-                          onClick={() => (window.location.href = it.link)}
-                        />
+                        {it?.date && (
+                          <Typography variant="caption" color="text.secondary">
+                            Last: {it.date}
+                          </Typography>
+                        )}
+
+                        {it?.link && (
+                          <Box sx={{ mt: 1 }}>
+                            <Chip
+                              size="small"
+                              icon={<LaunchIcon fontSize="small" />}
+                              label="Details"
+                              color="primary"
+                              variant="outlined"
+                              clickable
+                              onClick={() => (window.location.href = it.link)}
+                            />
+                          </Box>
+                        )}
                       </Box>
-                    )}
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
-          </Box>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            </Card>
+          </>
         )}
       </Paper>
     </Box>
@@ -571,7 +617,7 @@ const Dashboard = () => {
           </Box>
         </Box>
 
-        {renderSummaryGridThree("MIN Summary", minSummary, loading.min)}
+        {renderSummaryGridThree("MIN Summary", minSummary, loading.min, "Summary of Material Inward")}
       </Box>
     </ThemeProvider>
   );
