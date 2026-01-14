@@ -19,7 +19,6 @@ import {
 //
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import Loading from "../../../../Components/Loading";
-import FormTable from "../../../../Components/FormTable";
 import { Button, Card, Col, Modal, Row, Typography } from "antd";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -30,6 +29,7 @@ import {
   getProductsOptions,
 } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 export default function AddComponents({
   rowCount,
   setRowCount,
@@ -866,14 +866,9 @@ export default function AddComponents({
         </Col>
         <Col
           span={18}
-          style={{
-            height: "100%",
-            padding: 0,
-
-            border: "1px solid #EEEEEE",
-          }}
+        
         >
-          <FormTable columns={columns} data={rowCount} />
+          <MyDataTable columns={columns} data={rowCount} />
         </Col>
       </Row>
       <NavFooter

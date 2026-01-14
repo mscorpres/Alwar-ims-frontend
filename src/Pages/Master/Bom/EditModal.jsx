@@ -20,10 +20,10 @@ import AddEmergingComponent from "./AddEmergingComponent";
 import ViewEmergingComponent from "./ViewEmergingComponent";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import FormTable from "../../../Components/FormTable";
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 const EditBranch = ({ modalEditOpen, setModalEditOpen }) => {
   const { showToast } = useToast();
   const [fetchData, setFetchData] = useState([]);
@@ -434,7 +434,7 @@ const EditBranch = ({ modalEditOpen, setModalEditOpen }) => {
           <Divider style={{ margin: "13px 0" }} />
           <Row gutter={24} style={{ height: "75vh" }}>
             {secondData?.length && (
-              <FormTable hideHeaderMenu columns={columns} data={secondData} />
+              <MyDataTable hideHeaderMenu columns={columns} data={secondData} />
             )}
           </Row>
         </>

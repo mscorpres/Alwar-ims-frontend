@@ -9,8 +9,8 @@ import {
 import { useToast } from "../../hooks/useToast.js";
 import { v4 } from "uuid";
 import { imsAxios } from "../../axiosInterceptor";
-import FormTable from "../../Components/FormTable";
 import MyButton from "../../Components/MyButton";
+import MyDataTable from "../../Components/MyDataTable.jsx";
 
 function UpdateRM() {
   const { showToast } = useToast();
@@ -278,8 +278,7 @@ function UpdateRM() {
       </Col>
       <Col span={18} style={{}}>
         <div style={{ height: "85vh", padding: "0px 10px" }}>
-          <FormTable
-            // loading={loading}
+          <MyDataTable
             data={mainData}
             columns={columns}
           />

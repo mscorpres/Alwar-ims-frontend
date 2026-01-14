@@ -14,13 +14,13 @@ import { useState, useEffect } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MySelect from "../../../../Components/MySelect";
-import FormTable from "../../../../Components/FormTable";
 import Loading from "../../../../Components/Loading";
 import { useToast } from "../../../../hooks/useToast.js";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MyButton from "../../../../Components/MyButton";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 export default function ReqdComponentModal({
   editPPR,
@@ -422,7 +422,7 @@ export default function ReqdComponentModal({
           />
         </Space>
       </Row>
-      <FormTable columns={columns} data={sqdComponents} />
+      <MyDataTable columns={columns} data={sqdComponents} />
     </Col>
   );
 }

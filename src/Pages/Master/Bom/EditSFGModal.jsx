@@ -18,9 +18,9 @@ import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 import ViewEmergingComponent from "./ViewEmergingComponent";
 import AddEmergingComponent from "./AddEmergingComponent";
-import FormTable from "../../../Components/FormTable";
 import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions } from "../../../api/general.ts";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
   const { showToast } = useToast();
@@ -432,7 +432,7 @@ const EditSFGModal = ({ sfgEditModal, setSfgEditModal }) => {
           <Divider style={{ margin: "13px 0" }} />
           <Row gutter={24} style={{ height: "75vh" }}>
             {secondData?.length && (
-              <FormTable hideHeaderMenu columns={columns} data={secondData} />
+              <MyDataTable hideHeaderMenu columns={columns} data={secondData} />
             )}
           </Row>
         </>

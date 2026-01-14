@@ -13,9 +13,9 @@ import React, { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../../axiosInterceptor";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
-import FormTable from "../../../../Components/FormTable";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { useToast } from "../../../../hooks/useToast.js";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 function CashReceiptEdit({
   edit,
@@ -372,7 +372,7 @@ function CashReceiptEdit({
           </Row>
           <Row gutter={10}>
             <Col span={24} style={{ height: "95%" }}>
-              <FormTable data={allData} columns={columns} />
+              <MyDataTable data={allData} columns={columns} />
             </Col>
           </Row>
         </>

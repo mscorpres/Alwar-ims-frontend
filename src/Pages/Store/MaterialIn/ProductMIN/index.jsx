@@ -39,7 +39,6 @@ import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
 import AddBranch from "../../../Master/Vendor/model/AddBranch";
 import SuccessPage from "../SuccessPage";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import FormTable from "../../../../Components/FormTable";
 import { useNavigate } from "react-router-dom";
 import { imsAxios } from "../../../../axiosInterceptor";
 import axiosResponseFunction from "../../../../Components/axiosResponseFun";

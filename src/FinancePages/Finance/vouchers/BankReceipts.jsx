@@ -8,7 +8,6 @@ import NavFooter from "../../../Components/NavFooter";
 import { Card, Col, DatePicker, Form, Input, Modal, Row } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import FormTable from "../../../Components/FormTable";
 import MySelect from "../../../Components/MySelect";
 import SummaryCard from "../../../Components/SummaryCard";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -17,6 +16,7 @@ import Loading from "../../../Components/Loading";
 import dayjs from "dayjs";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function BankReceits() {
   const { showToast } = useToast();
@@ -502,7 +502,7 @@ export default function BankReceits() {
             padding: "0px 0px",
           }}
         >
-          <FormTable
+          <MyDataTable
             hideHeaderMenu
             data={bankPaymentRows}
             columns={BankPaymentTable}

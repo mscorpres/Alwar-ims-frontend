@@ -38,7 +38,6 @@ import SingleProduct from "../../../Master/Vendor/SingleProduct";
 import CurrenceModal from "../CurrenceModal";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import FormTable from "../../../../Components/FormTable";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import SuccessPage from "../SuccessPage";
 import { imsAxios } from "../../../../axiosInterceptor";

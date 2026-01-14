@@ -7,7 +7,7 @@ import moment from "moment";
 import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading";
 import { imsAxios } from "../../../axiosInterceptor";
-import FormTable from "../../../Components/FormTable";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function EditJournalVoucher({ editVoucher, setEditVoucher }) {
   const { showToast } = useToast();
@@ -381,9 +381,7 @@ export default function EditJournalVoucher({ editVoucher, setEditVoucher }) {
               // offset={2}
               span={24}
             >
-              <FormTable
-                //   loading={loading}
-                hideHeaderMenu
+              <MyDataTable
                 data={journalRows}
                 columns={columns}
               />

@@ -6,7 +6,6 @@ import {
   inputComponent,
 } from "../../../../Components/TableInput";
 import { v4 } from "uuid";
-import FormTable from "../../../../Components/FormTable";
 import NavFooter from "../../../../Components/NavFooter";
 import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Modal } from "antd";
@@ -14,6 +13,7 @@ import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 export default function AddDCComponents({
   newGatePass,
   setActiveTab,
@@ -352,7 +352,7 @@ export default function AddDCComponents({
           Challan?
         </p>
       </Modal>
-      <FormTable columns={columns} data={rows} />
+      <MyDataTable columns={columns} data={rows} />
       <NavFooter
         nextLabel="Create"
         resetFunction={() => setShowResetConfirm(true)}

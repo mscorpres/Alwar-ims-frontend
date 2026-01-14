@@ -16,11 +16,9 @@ import { useEffect } from "react";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
 import { useToast } from "../../../../hooks/useToast.js";
-import FormTable from "../../../../Components/FormTable";
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { useLocation } from "react-router-dom";
 import Loading from "../../../../Components/Loading";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 export default function CashEditModal({ cashEdit, setCashEdit }) {
   const { showToast } = useToast();
@@ -305,7 +303,7 @@ export default function CashEditModal({ cashEdit, setCashEdit }) {
             </Col>
           </Form>
           <Col style={{ height: "90%" }} span={24}>
-            <FormTable columns={columns} data={rows} />
+            <MyDataTable  columns={columns} data={rows} />
           </Col>
           <Col span={24}>
             <Row justify="end">

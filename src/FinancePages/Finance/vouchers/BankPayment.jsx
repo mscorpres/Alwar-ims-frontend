@@ -6,8 +6,6 @@ import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Card, Col, DatePicker, Form, Input, Modal, Row } from "antd";
-import SingleDatePicker from "../../../Components/SingleDatePicker";
-import FormTable from "../../../Components/FormTable";
 import MySelect from "../../../Components/MySelect";
 import SummaryCard from "../../../Components/SummaryCard";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -15,6 +13,7 @@ import Loading from "../../../Components/Loading";
 import dayjs from "dayjs";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function BankPayment() {
   const { showToast } = useToast();
@@ -504,7 +503,7 @@ export default function BankPayment() {
           }}
           span={18}
         >
-          <FormTable
+          <MyDataTable
             hideHeaderMenu
             data={bankPaymentRows}
             columns={BankPaymentTable}

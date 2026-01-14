@@ -16,7 +16,6 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { v4 } from "uuid";
-import FormTable from "../../../Components/FormTable";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import Loading from "../../../Components/Loading";
 
@@ -24,6 +23,7 @@ import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 export default function ReqWithoutBom() {
   const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -486,8 +486,7 @@ export default function ReqWithoutBom() {
         </Card>
       </Col>
       <Col span={18} style={{ height: "95%" }}>
-        {loading === "component" && <Loading />}
-        <FormTable data={rows} columns={columns} />
+        <MyDataTable data={rows} columns={columns} loading={loading === "component"} />
       </Col>
     </Row>
   );

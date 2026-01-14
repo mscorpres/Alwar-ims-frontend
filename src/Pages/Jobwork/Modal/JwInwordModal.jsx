@@ -22,7 +22,6 @@ import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
-import FormTable from "../../../Components/FormTable";
 import useLoading from "../../../hooks/useLoading";
 import {
   getBomItem,
@@ -37,6 +36,7 @@ import { uploadMinInvoice } from "../../../api/store/material-in";
 import SuccessPage from "../../Store/MaterialIn/SuccessPage";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import SingleProduct from "../../Master/Vendor/SingleProduct";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 export default function JwInwordModal({ editModal, setEditModal }) {
   const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -859,13 +859,14 @@ export default function JwInwordModal({ editModal, setEditModal }) {
               <div style={{ height: "50%", marginTop: "5px" }}>
                 <div style={{ height: "100%" }}>
                   {showBomList && bomList ? (
-                    <FormTable
+                    <MyDataTable
                       data={bomList}
                       columns={bomcolumns}
                       loading={loading}
                     />
+
                   ) : (
-                    <FormTable data={mainData} columns={columns} />
+                    <MyDataTable data={mainData} columns={columns} />
                   )}
                 </div>
               </div>

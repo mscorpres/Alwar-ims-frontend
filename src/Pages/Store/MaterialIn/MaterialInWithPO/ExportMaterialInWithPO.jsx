@@ -40,7 +40,6 @@ import {
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton/index.jsx";
-import FormTable from "../../../../Components/FormTable.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
 import { v4 } from "uuid";
 

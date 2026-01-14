@@ -855,7 +855,6 @@ export default function Reference() {
       </Row>
       <Row gutter={6} style={{ height: "85%", paddingTop: 5 }}>
         <Col span={12} style={{ height: "100%" }}>
-          {/* <FormTable data={vbtRows} columns={leftColumns} /> */}
           {uploadFile == true ? (
             <MyDataTable
               loading={loading === "fetching"}

@@ -435,7 +435,6 @@ export default function AppPaymentSetup() {
       </Row>
       <Row gutter={6} style={{ height: "95%", paddingTop: 5 }}>
         <Col span={12} style={{ height: "100%" }}>
-          {/* <FormTable data={vbtRows} columns={leftColumns} /> */}
           <MyDataTable
             loading={loading === "fetching"}
             data={bpRows}

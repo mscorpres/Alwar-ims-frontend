@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { v4 } from "uuid";
 import { useToast } from "../../../../hooks/useToast.js";
 import { Input, Skeleton, Tabs, Typography } from "antd";
-import FormTable from "../../../../Components/FormTable";
 import NavFooter from "../../../../Components/NavFooter";
 import { imsAxios } from "../../../../axiosInterceptor";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
   const { showToast } = useToast();
@@ -288,7 +288,7 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
         children: (
           <div style={{ height: "73vh" }}>
             <div style={{ height: "95%" }}>
-              <FormTable
+              <MyDataTable
                 loading={loading}
                 columns={columns}
                 data={tableData.filter((row) => row.type == tab)}

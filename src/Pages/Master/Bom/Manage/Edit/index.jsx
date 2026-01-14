@@ -3,8 +3,6 @@ import { Card, Col, Divider, Drawer, Input, Row, Typography } from "antd";
 import { imsAxios } from "../../../../../axiosInterceptor";
 import ToolTipEllipses from "../../../../../Components/ToolTipEllipses";
 import MySelect from "../../../../../Components/MySelect";
-
-import FormTable from "../../../../../Components/FormTable";
 import { useEffect } from "react";
 import { CommonIcons } from "../../../../../Components/TableActions.jsx/TableActions";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
@@ -19,6 +17,7 @@ import AlterModal from "../../AlterModal.jsx";
 
 import useApi from "../../../../../hooks/useApi.ts";
 import { convertSelectOptions } from "../../../../../utils/general.ts";
+import MyDataTable from "../../../../../Components/MyDataTable.jsx";
 const EditModal = ({ show, close, bomType }) => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -362,7 +361,7 @@ const EditModal = ({ show, close, bomType }) => {
           <SummaryCard bomType={bomType} details={details} />
         </Col>
         <Col span={18} style={{ overflowY: "auto", height: "100%" }}>
-          <FormTable columns={columns} data={rows} />
+          <MyDataTable columns={columns} data={rows} />
         </Col>
       </Row>
       <AlterModal

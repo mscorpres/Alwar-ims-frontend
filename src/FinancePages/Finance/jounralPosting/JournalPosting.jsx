@@ -7,12 +7,12 @@ import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
 import links from "./links";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import FormTable from "../../../Components/FormTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Card, Col, DatePicker, Form, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function JournalPosting() {
   const { showToast } = useToast();
@@ -381,7 +381,7 @@ export default function JournalPosting() {
                 bodyStyle={{ height: "100%", padding: 0 }}
                 size="small"
               >
-                <FormTable data={journalRows} columns={columns} />
+                <MyDataTable data={journalRows} columns={columns} />
               </Card>
             </Col>
           </Row>

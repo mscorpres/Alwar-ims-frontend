@@ -2,7 +2,6 @@ import { Col, Drawer, Form, Input, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import NavFooter from "../../Components/NavFooter";
 import { imsAxios } from "../../axiosInterceptor";
-import FormTable from "../../Components/FormTable";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
@@ -13,10 +12,9 @@ import { useToast } from "../../hooks/useToast.js";
 import useApi from "../../hooks/useApi.ts";
 import { getCostCentresOptions, getProjectOptions } from "../../api/general.ts";
 import { convertSelectOptions } from "../../utils/general.ts";
+import MyDataTable from "../../Components/MyDataTable.jsx";
 
 function SFTransferDrawer({
-  sfTransferModal,
-  setSfTransferModal,
   drawerData,
   //
   setDrawerData,
@@ -457,20 +455,8 @@ function SFTransferDrawer({
           </Col>
           {/* </Col> */}
           <Col span={24} style={{ height: "90%", overflow: "auto" }}>
-            <FormTable data={rows} columns={colms} />
-            {/* <FormTable2
-              removableRows={true}
-              nonRemovableColumns={1}
-              //   columns={[...componentsItems(gstType), locationColumn]}
-              listName="components"
-              watchKeys={["rate", "qty", "gstRate"]}
-              nonListWatchKeys={["gstType"]}
-              componentRequiredRef={["rate", "qty"]}
-              form={minForm}
-              calculation={calculation}
-              rules={listRules}
-            /> */}
-            {/* </Card> */}
+            <MyDataTable data={rows} columns={colms} />
+           
           </Col>
         </Row>
       </Form>

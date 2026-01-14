@@ -9,7 +9,6 @@ import MyDataTable from "../../../Components/MyDataTable";
 import { DownloadOutlined } from "@ant-design/icons";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
-import FormTable from "../../../Components/FormTable";
 import Loading from "../../../Components/Loading";
 import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions, getVendorOptions } from "../../../api/general.ts";
@@ -372,9 +371,8 @@ function SampleQC() {
         </Space>
       </Row>
       <div style={{ height: "85%", padding: "0px 10px" }}>
-        {/* <MyDataTable loading={searchLoading} columns={columns} data={rows} /> */}
-        {searchLoading && <Loading />}
-        <FormTable loading={searchLoading} columns={columns} data={rows} />
+        <MyDataTable loading={searchLoading} columns={columns} data={rows} />
+     
       </div>
     </>
   );

@@ -14,12 +14,10 @@ import {
   Popover,
   Skeleton,
 } from "antd";
-import { GridActionsCellItem } from "@mui/x-data-grid";
 import { CloseCircleFilled, CheckCircleFilled } from "@ant-design/icons";
-import MyDataTable from "../../../../Components/MyDataTable";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../../axiosInterceptor";
-import FormTable from "../../../../Components/FormTable";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 export default function NewModal({
   modalOpen,
@@ -356,7 +354,7 @@ export default function NewModal({
                   <Spin />
                 </div>
               ) : (
-                <FormTable data={mat} columns={columns} />
+                <MyDataTable data={mat} columns={columns} />
               )}
             </>
           )}

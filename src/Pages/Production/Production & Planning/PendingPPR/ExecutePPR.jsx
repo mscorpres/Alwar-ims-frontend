@@ -14,8 +14,8 @@ import { useToast } from "../../../../hooks/useToast.js";
 import { v4 } from "uuid";
 import MySelect from "../../../../Components/MySelect";
 import NavFooter from "../../../../Components/NavFooter";
-import FormTable from "../../../../Components/FormTable";
 import { imsAxios } from "../../../../axiosInterceptor";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
   const { showToast } = useToast();
@@ -313,7 +313,7 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
             <div className=" remove-cell-border" style={{ height: "73vh" }}>
               <div style={{ height: "95%" }}>
                 {/* {pageLoading && <Loading />} */}
-                <FormTable
+                <MyDataTable
                   columns={columns}
                   data={tableData?.filter((row) => row.type == tab)}
                 />

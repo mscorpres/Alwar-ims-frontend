@@ -6,8 +6,8 @@ import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { Card, Col, Input, Row } from "antd";
-import FormTable from "../../../Components/FormTable";
 import { imsAxios } from "../../../axiosInterceptor";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function Contra1() {
   const { showToast } = useToast();
@@ -339,7 +339,7 @@ export default function Contra1() {
 
         <Col style={{ height: "70%" }} span={18}>
           <Card bodyStyle={{ padding: 0 }} size="small">
-            <FormTable loading={loading} data={contraRows} columns={columns} />
+            <MyDataTable loading={loading} data={contraRows} columns={columns} />
           </Card>
         </Col>
       </Row>

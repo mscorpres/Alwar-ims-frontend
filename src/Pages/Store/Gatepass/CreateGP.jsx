@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
-import FormTable from "../../../Components/FormTable";
 import NavFooter from "../../../Components/NavFooter";
 import Loading from "../../../Components/Loading";
 import { useToast } from "../../../hooks/useToast.js";
@@ -13,6 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 export default function CreateGP() {
   const { showToast } = useToast();
   const [rows, setRows] = useState([
@@ -531,7 +531,7 @@ export default function CreateGP() {
               {fetchDetailsLoading && <Loading />}
               {/* narration */}
               <Col span={18} style={{ maxHeight: 350, overflowY: "auto" }}>
-                <FormTable
+                <MyDataTable
                   // density="comfortable"
                   columns={columns}
                   data={rows}

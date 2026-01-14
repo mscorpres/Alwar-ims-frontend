@@ -5,24 +5,21 @@ import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
-import { GridActionsCellItem } from "@mui/x-data-grid";
 import {
   CheckOutlined,
   CloseOutlined,
   MessageOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
-import MyDataTable from "../../../Components/MyDataTable";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
-import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import FormTable from "../../../Components/FormTable";
 
 import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions, getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 function CompletedQC() {
   const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
@@ -474,7 +471,7 @@ function CompletedQC() {
         </Space>
       </Row>
       <div style={{ height: "85%", padding: "0px 10px" }}>
-        <FormTable columns={columns} data={rows} loading={tableLoading} />
+        <MyDataTable columns={columns} data={rows} loading={tableLoading} />
       </div>
     </>
   );
