@@ -826,11 +826,11 @@ const Routes = [
     main: () => <MaterialInWithoutPO />,
   },
   {
-    path: "/warehouse/material-in-with-po",
+    path: "/warehouse/material-in-po",
     main: () => <MaterialInWithPO />,
   },
   {
-    path: "/warehouse/export-material-in-with-po",
+    path: "/warehouse/export-material-in-po",
     main: () => <ExportMaterialInWithPO />,
   },
   {

@@ -489,18 +489,13 @@ function PIAScan() {
                               form={scan}
                               remove={remove}
                               loading={loading}
+                              //@ts-ignore
                               SingleDetail={SingleDetail}
                               index={index}
                             />
                           </Form.Item>
                         ))}
-                        <Row justify="center">
-                          {components?.length > 0 && (
-                            <Typography.Text type="secondary">
-                              ----End of the List----
-                            </Typography.Text>
-                          )}
-                        </Row>
+                   
                       </Flex>
                     )}
                   </Form.List>

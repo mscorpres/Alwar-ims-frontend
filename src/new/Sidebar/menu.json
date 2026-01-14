@@ -691,7 +691,7 @@
                 "key": "B321",
                 "label": "MIN PO",
                 "icon": "InputIcon",
-                "path": "/warehouse/material-in-with-po",
+                "path": "/warehouse/material-in-po",
                 "isShown": false
               },
               {
@@ -705,7 +705,7 @@
                 "key": "B323",
                 "label": "Import MATLS IN",
                 "icon": "InputIcon",
-                "path": "/warehouse/export-material-in-with-po",
+                "path": "/warehouse/export-material-in-po",
                 "isShown": false
               },
               {

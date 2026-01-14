@@ -52,6 +52,8 @@ import {
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import { UploadOutlined } from "@ant-design/icons";
 
 export default function MaterialInWithPO({}) {
   const { showToast } = useToast();
@@ -170,14 +172,20 @@ export default function MaterialInWithPO({}) {
           true
         ) {
           validation = false;
-          return showToast("Currency of all components should be the same", "error");
+          return showToast(
+            "Currency of all components should be the same",
+            "error"
+          );
         } else if (
           (componentData.gsttype.filter((v, i, a) => v === a[0]).length ===
             componentData.gsttype.length) !=
           true
         ) {
           validation = false;
-          return showToast("gst type of all components should be the same", "error");
+          return showToast(
+            "gst type of all components should be the same",
+            "error"
+          );
         }
 
         Modal.confirm({
@@ -241,7 +249,7 @@ export default function MaterialInWithPO({}) {
         "/transaction/upload-invoice",
         values.formData
       );
-     const {data} = response
+      const { data } = response;
 
       if (response?.success && data) {
         let final = {
@@ -287,7 +295,8 @@ export default function MaterialInWithPO({}) {
       } else {
         setSubmitLoading(false);
         showToast(
-          "Some error occured while uploading invoices, Please try again", "error"
+          "Some error occured while uploading invoices, Please try again",
+          "error"
         );
       }
     }
@@ -476,10 +485,8 @@ export default function MaterialInWithPO({}) {
     // if (search?.length > 2) {
     const response = await executeFun(() => getVendorOptions(search), "select");
     let arr = [];
-    console.log("this is the vendor options", response?.data);
     if (response?.success) {
       arr = convertSelectOptions(response?.data);
-      console.log("this is the arr options", arr);
     }
     setAsyncOptions(arr);
     // }
@@ -813,7 +820,14 @@ export default function MaterialInWithPO({}) {
   // log
   const { Text } = Typography;
   return (
-    <div style={{ height: "90%", position: "relative" }}>
+    <div
+      style={{
+        height: "calc(100vh - 170px)",
+        position: "relative",
+        overflow:"hidden"
+   
+      }}
+    >
       <Row
         justify="space-between"
         style={{ padding: "0px 10px", paddingBottom: 5 }}
@@ -969,20 +983,22 @@ export default function MaterialInWithPO({}) {
       {/* upload doc modal */}
 
       {!materialInSuccess && (
-        <Row gutter={8} style={{ height: "100%", padding: "0px 10px" }}>
+        <Row gutter={8} style={{ height: "100%", padding: "0px 10px", }}>
           <Col span={6}>
             <Row
               style={{
-                height: "76%",
+                height: "calc(100% - 290px)",
+                overflow: "auto",
+                
               }}
               gutter={[0, 4]}
             >
               {/* vendor details */}
-              <Row style={{ height: "50%", width: "100%" }}>
+              <Row style={{ height: "75%", width: "100%" }}>
                 <Card
                   size="small"
                   style={{ height: "100%", width: "100%" }}
-                  bodyStyle={{ overflowY: "auto", maxHeight: "80%" }}
+                  bodyStyle={{ overflowY: "auto", maxHeight: "90%" }}
                   title="Vendor Details"
                 >
                   <Row gutter={[0, 8]}>
@@ -995,7 +1011,7 @@ export default function MaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor Type
+                          Type
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1005,7 +1021,7 @@ export default function MaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.vendortype}
+                          {poData?.headers?.vendortype ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1025,7 +1041,7 @@ export default function MaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor Name
+                          Name
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1035,7 +1051,7 @@ export default function MaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.vendorname}
+                          {poData?.headers?.vendorname ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1055,7 +1071,7 @@ export default function MaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor Address
+                          Address
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1067,10 +1083,12 @@ export default function MaterialInWithPO({}) {
                         >
                           <ToolTipEllipses
                             type="Paragraph"
-                            text={poData?.headers?.vendoraddress?.replaceAll(
-                              "<br>",
-                              " "
-                            )}
+                            text={
+                              poData?.headers?.vendoraddress?.replaceAll(
+                                "<br>",
+                                " "
+                              ) ?? "N/A"
+                            }
                           />
                         </Typography.Text>
                       )}
@@ -1091,7 +1109,7 @@ export default function MaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor GSTIN
+                          GSTIN
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1101,10 +1119,13 @@ export default function MaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.gstin}
+                          {poData?.headers?.gstin ?? "N/A"}
                         </Typography.Text>
                       )}
-                      <Col span={24}>
+                      <Col
+                        span={24}
+                        style={{ display: "flex", alignItems: "center" }}
+                      >
                         {/* <Form.Item name="QR"> */}
                         <Checkbox
                           checked={isScan}
@@ -1113,8 +1134,8 @@ export default function MaterialInWithPO({}) {
                         <Typography.Text
                           style={{
                             fontSize: 11,
-                            marginLeft: "4px",
-                            marginBottom: "4px",
+                            marginLeft: "10px",
+                            fontWeight: "bold",
                           }}
                         >
                           Scan with QR Code
@@ -1123,26 +1144,12 @@ export default function MaterialInWithPO({}) {
                       </Col>
                       <span display="flex">
                         <Row gutter={[0, 0]}>
-                          <Col span={10}>
-                            <Typography.Title
-                              style={{
-                                marginTop: "5px",
-                                fontSize:
-                                  window.innerWidth < 1600
-                                    ? "0.85rem"
-                                    : "0.95rem",
-                              }}
-                              level={5}
-                            >
-                              Acknowledgment Number
-                            </Typography.Title>
-                          </Col>
-                          <Col span={14}>
+                          <Col span={24}>
                             <Input
                               style={{
                                 marginTop: "5px",
                               }}
-                              placeholder="Please enter Acknowledgment Number"
+                              placeholder="Acknowledgment Number"
                               onChange={(e) => setIrnNum(e.target.value)}
                             />
                           </Col>
@@ -1175,7 +1182,7 @@ export default function MaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.cost_center_name}
+                          {poData?.headers?.cost_center_name ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1206,7 +1213,7 @@ export default function MaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.project_code}
+                          {poData?.headers?.project_code ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1237,7 +1244,7 @@ export default function MaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.project_description ?? "--"}
+                          {poData?.headers?.project_description ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1251,7 +1258,34 @@ export default function MaterialInWithPO({}) {
                   </Row>
                 </Card>
               </Row>
-
+              <Col span={24} style={{ width: "100%", height: "20%" }}>
+                <Card
+                  size="small"
+                  style={{ width: "100%", height: "100%" }}
+                  bodyStyle={{ overflowY: "auto", maxHeight: "74%" }}
+                  title="Attachments"
+                >
+                  <Row
+                    span={24}
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Col>
+                      <Button
+                        type="primary"
+                        icon={<UploadOutlined />}
+                        onClick={() => setUploadClicked(true)}
+                      >
+                        {" "}
+                        Upload Documents
+                      </Button>
+                    </Col>
+                  </Row>
+                </Card>
+              </Col>
               {/* tax details */}
               <Col span={24} style={{ width: "100%", height: "50%" }}>
                 <Card
@@ -1311,12 +1345,7 @@ export default function MaterialInWithPO({}) {
                   </Row>
                 </Card>
               </Col>
-              <Col span={24} style={{ height: "10%" }}>
-                <Button onClick={() => setUploadClicked(true)}>
-                  {" "}
-                  Upload Documents
-                </Button>
-              </Col>
+
               <Modal
                 open={uplaoaClicked}
                 layout="vertical"
@@ -1359,11 +1388,6 @@ export default function MaterialInWithPO({}) {
                                     />
                                   </Form.Item>
                                 ))}
-                                <Row justify="center">
-                                  <Typography.Text type="secondary">
-                                    ----End of the List----
-                                  </Typography.Text>
-                                </Row>
                               </Col>
                             </>
                           )}
@@ -1375,13 +1399,12 @@ export default function MaterialInWithPO({}) {
               </Modal>
             </Row>
           </Col>
-          <Col
-            span={18}
-            style={{ height: "85%", padding: 0, border: "1px solid #eeeeee " }}
-          >
-            {" "}
-            {pageLoading || (loading1("select") && <Loading />)}
-            <FormTable columns={columns} data={poData?.materials} />
+          <Col span={18} style={{ height: "calc(100vh - 210px)" }}>
+            <MyDataTable
+              data={poData?.materials}
+              columns={columns}
+              loading={loading1("select") || pageLoading}
+            />
           </Col>
 
           <NavFooter

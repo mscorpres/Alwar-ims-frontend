@@ -159,11 +159,7 @@ function ProductionMIS() {
                     />
                   </Form.Item>
                 ))}
-                <Row justify="center">
-                  <Typography.Text type="secondary">
-                    ----End of the List----
-                  </Typography.Text>
-                </Row>
+     
               </Col>
             )}
           </Form.List>

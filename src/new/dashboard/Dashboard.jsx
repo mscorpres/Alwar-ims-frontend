@@ -426,13 +426,13 @@ const getImage = (index) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1, p: 3, paddingBottom: "80px" }}>
+      <Box sx={{ flexGrow: 1, p: 3,  }}>
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-            mb: 2,
+      
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>

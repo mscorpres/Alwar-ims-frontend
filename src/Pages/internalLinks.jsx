@@ -402,7 +402,7 @@ const links = [
     },
     {
       routeName: "Material In from PO",
-      routePath: "/warehouse/material-in-with-po",
+      routePath: "/warehouse/material-in-po",
     },
     {
       routeName: "Material In FG/SFG",
@@ -410,7 +410,7 @@ const links = [
     },
     {
       routeName: "Import Material In from PO ",
-      routePath: "/warehouse/export-material-in-with-po",
+      routePath: "/warehouse/export-material-in-po",
     },
   ],
   //QA link
