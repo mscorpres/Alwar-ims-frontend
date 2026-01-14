@@ -6,6 +6,7 @@ const initialState = {
   showTickets: false,
   showSetting: false,
   showSwitchModule: false,
+  showCalculator: false,
 };
 
 const uiSlice = createSlice({
@@ -45,6 +46,12 @@ const uiSlice = createSlice({
     setShowSwitchModule: (state, action) => {
       state.showSwitchModule = action.payload;
     },
+    setShowCalculator: (state, action) => {
+      state.showCalculator = action.payload;
+    },
+    toggleCalculator: (state) => {
+      state.showCalculator = !state.showCalculator;
+    },
   },
 });
 
@@ -56,6 +63,8 @@ export const {
   setShowTickets,
   setShowSetting,
   setShowSwitchModule,
+  setShowCalculator,
+  toggleCalculator,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

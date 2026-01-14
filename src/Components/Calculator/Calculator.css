@@ -1,0 +1,300 @@
+.calculator-container {
+  padding: 16px;
+  max-width: 100%;
+}
+
+.calculator-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #0d9489;
+}
+
+.calculator-header > div {
+  display: flex;
+  align-items: center;
+}
+
+.calculator-display-container {
+  margin-bottom: 16px;
+}
+
+.calculator-display {
+  font-family: "Courier New", monospace;
+}
+
+/* History Panel Styles - Bottom */
+.calculator-history-panel-bottom {
+  margin-top: 20px;
+  background-color: #fafafa;
+  border-radius: 4px;
+  padding: 12px 16px;
+  max-height: 200px;
+  overflow-y: auto;
+  min-height: 60px;
+  border: 1px solid #e8e8e8;
+}
+
+.calculator-history-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0d9489;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.calc-history-entry {
+  font-size: 13px;
+  color: #666;
+  text-align: right;
+  margin-bottom: 6px;
+  font-family: "Courier New", monospace;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.calc-history-entry:last-child {
+  margin-bottom: 0;
+}
+
+.calc-history-entry-clickable {
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.calc-history-entry-clickable:hover {
+  background-color: #e6f7ff;
+  color: #0d9489;
+  border-left: 3px solid #0d9489;
+  padding-left: 10px;
+}
+
+.calc-history-entry-clickable:active {
+  background-color: #bae7ff;
+  transform: scale(0.98);
+}
+
+/* Scrollbar for history panel */
+.calculator-history-panel-bottom::-webkit-scrollbar {
+  width: 6px;
+}
+
+.calculator-history-panel-bottom::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.calculator-history-panel-bottom::-webkit-scrollbar-thumb {
+  background: #0d9489;
+  border-radius: 3px;
+}
+
+.calculator-history-panel-bottom::-webkit-scrollbar-thumb:hover {
+  background: #0d9489cb;
+}
+
+/* Pressed button state for keyboard feedback */
+.calc-btn-pressed {
+  transform: scale(0.95) !important;
+  opacity: 0.8 !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.calc-btn-number.calc-btn-pressed {
+  background-color: #e0e0e0 !important;
+  border-color: #0d9489 !important;
+}
+
+.calc-btn-operation.calc-btn-pressed {
+  background-color: #0a7a73 !important;
+  border-color: #0a7a73 !important;
+}
+
+.calc-btn-clear.calc-btn-pressed {
+  background-color: #ff9999 !important;
+  border-color: #ff6666 !important;
+  color: #990000 !important;
+}
+
+.calc-btn-function.calc-btn-pressed {
+  background-color: #d0d0d0 !important;
+  border-color: #0d9489 !important;
+}
+
+.calc-btn-equals.calc-btn-pressed {
+  background-color: #0a7a73 !important;
+  border-color: #0a7a73 !important;
+}
+
+.calc-btn-memory.calc-btn-pressed {
+  background-color: #b8d4bb !important;
+  border-color: #0d9489 !important;
+}
+
+/* Current Expression Display */
+.calculator-current-expression {
+  font-size: 16px;
+  color: #666;
+  text-align: right;
+  margin-bottom: 8px;
+  font-family: "Courier New", monospace;
+  min-height: 24px;
+}
+
+.calculator-current-expression-display {
+  font-size: 16px;
+  color: #666;
+  text-align: right;
+  margin-bottom: 8px;
+  font-family: "Courier New", monospace;
+  min-height: 24px;
+  padding: 4px 8px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+}
+
+.calculator-result-display {
+  position: relative;
+}
+
+.calculator-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.calc-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.calc-rows-combined {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 60px);
+  gap: 8px;
+}
+
+.calc-btn-number,
+.calc-btn-operation,
+.calc-btn-function,
+.calc-btn-memory,
+.calc-btn-equals,
+.calc-btn-clear {
+  height: 60px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 0 !important;
+  border: 1px solid #d9d9d9;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.calc-btn-equals-tall {
+  grid-row: 1 / 3; /* Spans both rows */
+  grid-column: 4; /* Position in 4th column */
+  height: 128px; /* 60px + 8px gap + 60px */
+}
+
+.calc-btn-number {
+  background-color: #ffffff;
+  color: #203624;
+}
+
+.calc-btn-number:hover {
+  background-color: #f5f5f5 !important;
+  border-color: #0d9489 !important;
+  color: #203624 !important;
+}
+
+.calc-btn-operation {
+  background-color: #0d9489;
+  color: #ffffff;
+}
+
+.calc-btn-operation:hover {
+  background-color: #0d9489cb !important;
+  border-color: #0d9489cd !important;
+  color: #ffffff !important;
+}
+
+/* Clear buttons (CE, Delete, Clear) - Light Red */
+.calc-btn-clear {
+  background-color: #ffcccc !important;
+  color: #cc0000 !important;
+  border-color: #ff9999 !important;
+}
+
+.calc-btn-clear:hover {
+  background-color: #ffaaaa !important;
+  border-color: #ff6666 !important;
+  color: #990000 !important;
+}
+
+.calc-btn-function {
+  background-color: #f0f0f0;
+  color: #203624;
+}
+
+.calc-btn-function:hover {
+  background-color: #e0e0e0 !important;
+  border-color: #0d9489 !important;
+  color: #203624 !important;
+}
+
+.calc-btn-memory {
+  background-color: #e8f5e9;
+  color: #203624;
+  font-size: 14px;
+}
+
+.calc-btn-memory:hover {
+  background-color: #c8e6c9 !important;
+  border-color: #0d9489 !important;
+  color: #203624 !important;
+}
+
+.calc-btn-equals {
+  background-color: #0d9489;
+  color: #ffffff;
+  font-size: 24px;
+}
+
+.calc-btn-equals:hover {
+  background-color: #0d9489cb !important;
+  border-color: #0d9489cd !important;
+  color: #ffffff !important;
+}
+
+.calculator-history {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Scrollbar styling for history */
+.calculator-history::-webkit-scrollbar {
+  width: 6px;
+}
+
+.calculator-history::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.calculator-history::-webkit-scrollbar-thumb {
+  background: #0d9489;
+  border-radius: 3px;
+}
+
+.calculator-history::-webkit-scrollbar-thumb:hover {
+  background: #0d9489cb;
+}
