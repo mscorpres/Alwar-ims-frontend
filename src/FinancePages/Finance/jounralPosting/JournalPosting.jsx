@@ -16,7 +16,6 @@ import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function JournalPosting() {
   const { showToast } = useToast();
-  const [journalDate, setJournalDate] = useState("");
   const [debitTotal, setDebitTotal] = useState(0);
   const [creditTotal, setCreditTotal] = useState(0);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -376,13 +375,9 @@ export default function JournalPosting() {
         <Col style={{ height: "100%", padding: 0 }} span={18}>
           <Row style={{ height: "100%", padding: 0 }}>
             <Col style={{ height: "100%", padding: 0 }} span={24}>
-              <Card
-                style={{ height: "90%", padding: 0 }}
-                bodyStyle={{ height: "100%", padding: 0 }}
-                size="small"
-              >
+              
                 <MyDataTable data={journalRows} columns={columns} />
-              </Card>
+              
             </Col>
           </Row>
         </Col>

@@ -1137,18 +1137,9 @@ export default function VBTReport() {
 
       {/* data table here */}
 
-      <div style={{ height: "calc(100vh - 160px)", padding: "0 10px" }}>
+      <div style={{ height: "calc(100vh - 200px)", padding: "0 10px" }}>
         <MyDataTable
-          // initialState={{
-          //   columns: {
-          //     // ...data.initialState?.columns,
-          //     columnVisibilityModel: {
-          //       min_id: false,
-          //       // vbt_code: false,
-          //       cgst_gl: false,
-          //     },
-          //   },
-          // }}
+      
           checkboxSelection={wise == "vendorwise"}
           loading={loading}
           columns={columns}

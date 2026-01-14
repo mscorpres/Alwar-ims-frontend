@@ -326,7 +326,7 @@ export default function Contra1() {
 
   return (
     <div style={{ height: "100%", padding: 5 }}>
-      <Row gutter={4}>
+      <Row gutter={[16, 16]} style={{height:"100%"}}>
         <Col span={6}>
           <Card title="Select Date" size="small">
             <SingleDatePicker
@@ -337,10 +337,11 @@ export default function Contra1() {
           </Card>
         </Col>
 
-        <Col style={{ height: "70%" }} span={18}>
-          <Card bodyStyle={{ padding: 0 }} size="small">
-            <MyDataTable loading={loading} data={contraRows} columns={columns} />
-          </Card>
+        <Col span={18}>
+            <div style={{ height: "calc(100% - 50px)",  }}>
+              <MyDataTable loading={loading} data={contraRows} columns={columns} />
+            </div>
+     
         </Col>
       </Row>
       <NavFooter

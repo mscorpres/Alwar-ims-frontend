@@ -209,12 +209,12 @@ export default function ChartOfAccounts() {
             <SummaryCard summary={summary} title="Summary" loading={loading} />
           </Col>
           <Col span={20}>
-            <Card size="small" style={{ height: "100%" }}>
+            {/* <Card size="small" style={{ height: "100%" }}> */}
               <TableContainer sx={{ maxHeight: "calc(100vh - 210px)" }}>
                 {loading && <Loading size="large" />}
                 <Table
                   stickyHeader
-                  sx={{ width: "100%" }}
+                  sx={{ width: "100%", backgroundColor:"#f1f7fc" }}
                   size="small"
                   aria-label="a dense table"
                 >
@@ -310,7 +310,7 @@ export default function ChartOfAccounts() {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </Card>
+            {/* </Card> */}
           </Col>
         </Row>
       </div>

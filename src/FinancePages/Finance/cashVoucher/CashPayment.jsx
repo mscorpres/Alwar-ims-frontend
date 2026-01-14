@@ -252,7 +252,7 @@ function CashPayment() {
   };
 
   return (
-    <div style={{ height: "calc(100vh - 210px)", }}>
+    <div style={{ height: "calc(100vh - 210px)" }}>
       <Row gutter={10} style={{ height: "100%", margin: "10px" }}>
         <Col span={6}>
           <Card title="Cash Payment" size="small">
@@ -301,10 +301,11 @@ function CashPayment() {
           </Card>
         </Col>
         <Col span={18}>
-        
-          <MyDataTable    hideHeaderMenu
+          <MyDataTable
+            hideHeaderMenu
             data={cashPaymentRows}
-            columns={CashPaymentTable} />
+            columns={CashPaymentTable}
+          />
         </Col>
       </Row>
       <NavFooter
