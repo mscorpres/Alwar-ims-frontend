@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
+
 import "swiper/css";
 import "swiper/css/pagination";
-import { Pagination, EffectFade, Autoplay } from "swiper/modules";
+import ForgotPassword from "./ForgotPassword.tsx";
 import "swiper/css/effect-fade";
 import { Box } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -399,6 +399,10 @@ const Login = () => {
   // console.log("ispassSame", ispassSame);
   return (
     <div className="flex justify-center items-center h-[calc(100vh-30px)]">
+           <ForgotPassword
+        show={showForgotPassword}
+        hide={() => setShowForgotPassword(false)}
+      />
       <div
         style={{
           display: "grid",

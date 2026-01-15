@@ -440,6 +440,7 @@ const getImage = (index) => {
           </Typography>
           <Box sx={{ minWidth: 260 }}>
             <MyDatePicker
+              value={summaryDate}
               setDateRange={(v) => {
                 dispatch(setSummaryDate(v));
               }}
