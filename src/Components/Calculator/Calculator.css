@@ -175,14 +175,6 @@
   gap: 8px;
 }
 
-.calc-row-5 {
-  grid-template-columns: repeat(5, 1fr) !important;
-}
-
-.calc-row-4 {
-  grid-template-columns: repeat(4, 1fr) !important;
-}
-
 .calc-rows-combined {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -206,12 +198,6 @@
 }
 
 .calc-btn-equals-tall {
-  grid-row: 1 / 3; /* Spans both rows */
-  grid-column: 4; /* Position in 4th column */
-  height: 128px; /* 60px + 8px gap + 60px */
-}
-
-.calc-btn-plus-tall {
   grid-row: 1 / 3; /* Spans both rows */
   grid-column: 4; /* Position in 4th column */
   height: 128px; /* 60px + 8px gap + 60px */

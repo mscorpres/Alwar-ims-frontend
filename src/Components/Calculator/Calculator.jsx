@@ -353,16 +353,6 @@ const Calculator = ({ onClose }) => {
     setMemory(0);
   };
 
-  const handleMRC = () => {
-    // MRC = Memory Recall Clear (combines MR and MC)
-    if (memory !== 0) {
-      setDisplay(memory.toString());
-      setMemory(0);
-    } else {
-      setDisplay(memory.toString());
-    }
-  };
-
   const handleSquareRoot = () => {
     const value = parseFloat(display);
     if (value < 0) {
@@ -515,10 +505,13 @@ const Calculator = ({ onClose }) => {
       </div>
 
       <div className="calculator-buttons">
-        {/* Row 1: MRC, M-, M+, √, ± */}
-        <div className="calc-row calc-row-5">
-          <Button onClick={handleMRC} className="calc-btn-memory">
-            MRC
+        {/* Memory Functions Row */}
+        <div className="calc-row">
+          <Button onClick={handleMemoryClear} className="calc-btn-memory">
+            MC
+          </Button>
+          <Button onClick={handleMemoryRecall} className="calc-btn-memory">
+            MR
           </Button>
           <Button onClick={handleMemorySubtract} className="calc-btn-memory">
             M-
@@ -526,25 +519,32 @@ const Calculator = ({ onClose }) => {
           <Button onClick={handleMemoryAdd} className="calc-btn-memory">
             M+
           </Button>
-          <Button onClick={handleSquareRoot} className="calc-btn-memory">
-            √
-          </Button>
-          <Button 
-            onClick={handlePlusMinus} 
-            className={`calc-btn-memory ${pressedKey === "plus-minus" ? "calc-btn-pressed" : ""}`}
-          >
-            ±
-          </Button>
         </div>
 
-        {/* Row 2: AC, CE, %, ÷ */}
-        <div className="calc-row calc-row-4">
+        {/* Function Row */}
+        <div className="calc-row">
+          <Button onClick={handleSquareRoot} className="calc-btn-function">
+            √
+          </Button>
+          <Button onClick={handleSquare} className="calc-btn-function">
+            x²
+          </Button>
+          <Button 
+            onClick={handlePercent} 
+            className={`calc-btn-function ${pressedKey === "percent" ? "calc-btn-pressed" : ""}`}
+          >
+            %
+          </Button>
           <Button 
             onClick={handleClear} 
             className={`calc-btn-clear ${pressedKey === "clear" ? "calc-btn-pressed" : ""}`}
           >
-            AC
+            <ClearOutlined />
           </Button>
+        </div>
+
+        {/* Clear and Operations Row */}
+        <div className="calc-row">
           <Button 
             onClick={handleClearEntry} 
             className={`calc-btn-clear ${pressedKey === "clear-entry" ? "calc-btn-pressed" : ""}`}
@@ -552,10 +552,10 @@ const Calculator = ({ onClose }) => {
             CE
           </Button>
           <Button 
-            onClick={handlePercent} 
-            className={`calc-btn-operation ${pressedKey === "percent" ? "calc-btn-pressed" : ""}`}
+            onClick={handleDelete} 
+            className={`calc-btn-clear ${pressedKey === "delete" ? "calc-btn-pressed" : ""}`}
           >
-            %
+            <DeleteOutlined />
           </Button>
           <Button 
             onClick={() => handleOperation("/")} 
@@ -563,10 +563,16 @@ const Calculator = ({ onClose }) => {
           >
             ÷
           </Button>
+          <Button 
+            onClick={() => handleOperation("*")} 
+            className={`calc-btn-operation ${pressedKey === "op-multiply" ? "calc-btn-pressed" : ""}`}
+          >
+            ×
+          </Button>
         </div>
 
-        {/* Row 3: 7, 8, 9, x */}
-        <div className="calc-row calc-row-4">
+        {/* Row with 7-9 and Minus */}
+        <div className="calc-row">
           <Button 
             onClick={() => handleNumber(7)} 
             className={`calc-btn-number ${pressedKey === "num-7" ? "calc-btn-pressed" : ""}`}
@@ -586,15 +592,15 @@ const Calculator = ({ onClose }) => {
             9
           </Button>
           <Button 
-            onClick={() => handleOperation("*")} 
-            className={`calc-btn-operation ${pressedKey === "op-multiply" ? "calc-btn-pressed" : ""}`}
+            onClick={() => handleOperation("-")} 
+            className={`calc-btn-operation calc-btn-tall ${pressedKey === "op-minus" ? "calc-btn-pressed" : ""}`}
           >
-            x
+            −
           </Button>
         </div>
 
-        {/* Row 4: 4, 5, 6, - */}
-        <div className="calc-row calc-row-4">
+        {/* Row with 4-6 and Plus */}
+        <div className="calc-row">
           <Button 
             onClick={() => handleNumber(4)} 
             className={`calc-btn-number ${pressedKey === "num-4" ? "calc-btn-pressed" : ""}`}
@@ -614,66 +620,56 @@ const Calculator = ({ onClose }) => {
             6
           </Button>
           <Button 
-            onClick={() => handleOperation("-")} 
-            className={`calc-btn-operation ${pressedKey === "op-minus" ? "calc-btn-pressed" : ""}`}
+            onClick={() => handleOperation("+")} 
+            className={`calc-btn-operation ${pressedKey === "op-plus" ? "calc-btn-pressed" : ""}`}
           >
-            −
+            +
           </Button>
         </div>
 
-        {/* Row 5 & 6: 1, 2, 3, + (spanning 2 rows), then 0, ., = */}
+        {/* Combined grid for last two rows with equals spanning */}
         <div className="calc-rows-combined">
-          {/* Row 5: 1, 2, 3 */}
           <Button 
             onClick={() => handleNumber(1)} 
             className={`calc-btn-number ${pressedKey === "num-1" ? "calc-btn-pressed" : ""}`}
-            style={{ gridRow: 1, gridColumn: 1 }}
           >
             1
           </Button>
           <Button 
             onClick={() => handleNumber(2)} 
             className={`calc-btn-number ${pressedKey === "num-2" ? "calc-btn-pressed" : ""}`}
-            style={{ gridRow: 1, gridColumn: 2 }}
           >
             2
           </Button>
           <Button 
             onClick={() => handleNumber(3)} 
             className={`calc-btn-number ${pressedKey === "num-3" ? "calc-btn-pressed" : ""}`}
-            style={{ gridRow: 1, gridColumn: 3 }}
           >
             3
           </Button>
-          {/* + button spanning 2 rows */}
           <Button 
-            onClick={() => handleOperation("+")} 
-            className={`calc-btn-operation calc-btn-plus-tall ${pressedKey === "op-plus" ? "calc-btn-pressed" : ""}`}
-            style={{ gridRow: "1 / 3", gridColumn: 4 }}
+            onClick={handleEquals} 
+            className={`calc-btn-equals calc-btn-equals-tall ${pressedKey === "equals" ? "calc-btn-pressed" : ""}`}
           >
-            +
+            =
           </Button>
-          {/* Row 6: 0, ., = */}
+          <Button 
+            onClick={handlePlusMinus} 
+            className={`calc-btn-number ${pressedKey === "plus-minus" ? "calc-btn-pressed" : ""}`}
+          >
+            ±
+          </Button>
           <Button 
             onClick={() => handleNumber(0)} 
             className={`calc-btn-number ${pressedKey === "num-0" ? "calc-btn-pressed" : ""}`}
-            style={{ gridRow: 2, gridColumn: 1 }}
           >
             0
           </Button>
           <Button 
             onClick={handleDecimal} 
             className={`calc-btn-number ${pressedKey === "decimal" ? "calc-btn-pressed" : ""}`}
-            style={{ gridRow: 2, gridColumn: 2 }}
           >
             .
-          </Button>
-          <Button 
-            onClick={handleEquals} 
-            className={`calc-btn-operation ${pressedKey === "equals" ? "calc-btn-pressed" : ""}`}
-            style={{ gridRow: 2, gridColumn: 3 }}
-          >
-            =
           </Button>
         </div>
       </div>
