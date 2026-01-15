@@ -359,7 +359,7 @@ function JwToJw() {
   };
 
   return (
-    <div style={{ height: "95%", position: "relative" }}>
+    <div style={{ height: "100%", position: "relative", padding:10 }}>
       {csvUploading && (
         <div
           style={{
@@ -384,7 +384,7 @@ function JwToJw() {
       )}
 
       {/* Main UI */}
-          <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
+          <Row gutter={10} >
             <Col span={6}>
               <Row gutter={10} style={{ margin: "5px" }}>
                 <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
@@ -509,9 +509,8 @@ function JwToJw() {
                   </div>
                   <div
                     style={{
-                      overflowX: "auto",
-                      overflowY: "auto",
-                      maxHeight: "38vh",
+                      overflow: "auto",
+                      height:"calc(100vh - 220px)",
                     }}
                   >
                     <table

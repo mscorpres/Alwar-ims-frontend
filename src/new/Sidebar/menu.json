@@ -855,63 +855,63 @@
                 "key": "B61",
                 "label": "Jobwork & Analysis",
                 "icon": "AnalyticsIcon",
-                "path": "/create-jw",
+                "path": "/warehouse/job-work/create",
                 "isShown": true
               },
               {
                 "key": "B611",
                 "label": "Jobwork Approval",
                 "icon": "AnalyticsIcon",
-                "path": "/approval-jw",
+                "path": "/warehouse/job-work/approval",
                 "isShown": false
               },
               {
                 "key": "B612",
                 "label": "PO Analysis",
                 "icon": "AnalyticsIcon",
-                "path": "/po-analysis",
+                "path": "/warehouse/job-work/analysis",
                 "isShown": false
               },
               {
                 "key": "B613",
                 "label": "Jobwork Issue",
                 "icon": "AnalyticsIcon",
-                "path": "/jw-rw-issue",
+                "path": "/warehouse/job-work/issue",
                 "isShown": false
               },
               {
                 "key": "B614",
                 "label": "Jobwork issue Challan",
                 "icon": "AnalyticsIcon",
-                "path": "/jw-issue-challan",
+                "path": "/warehouse/job-work/issue-challan",
                 "isShown": false
               },
               {
                 "key": "B615",
                 "label": "Jobwork Rm Challan",
                 "icon": "AnalyticsIcon",
-                "path": "/jw-rw-challan",
+                "path": "/warehouse/job-work/challan-list",
                 "isShown": false
               },
               {
                 "key": "B616",
                 "label": "Jobwork Sf inward",
                 "icon": "AnalyticsIcon",
-                "path": "/jw-sf-inward",
+                "path": "/warehouse/job-work/inward",
                 "isShown": false
               },
               {
                 "key": "B617",
                 "label": "Jobwork Rm Return",
                 "icon": "AnalyticsIcon",
-                "path": "/jw-rm-return",
+                "path": "/warehouse/job-work/return",
                 "isShown": false
               },
               {
                 "key": "B618",
                 "label": "Jobwork Completed",
                 "icon": "AnalyticsIcon",
-                "path": "/jw-completed",
+                "path": "/warehouse/job-work/completed",
                 "isShown": false
               },
 
@@ -1027,14 +1027,14 @@
                 "key": "B363",
                 "label": "RM To REJ",
                 "icon": "BlockIcon",
-                "path": "/material-transfer/re-to-rej",
+                "path": "/material-transfer/rm-to-rej",
                 "isShown": true
               },
               {
                 "key": "B3631",
                 "label": "View Transaction",
                 "icon": "BlockIcon",
-                "path": "/material-transfer/re-to-rej/view-transation",
+                "path": "/material-transfer/rm-to-rej/view-transation",
                 "isShown": false
               },
               {

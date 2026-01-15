@@ -231,7 +231,7 @@ export default function CreateJW({}) {
     const response = await imsAxios.post("/backend/billingAddressList", {
       search: inputValue,
     });
-   
+
     setLoading("select", false);
 
     const { data } = response;
@@ -254,14 +254,9 @@ export default function CreateJW({}) {
     });
     setLoading("fetch", false);
     const { data } = response;
-   
 
     if (response?.success) {
-      
-      createPoForm.setFieldValue(
-        "billaddress",
-        data?.address
-      );
+      createPoForm.setFieldValue("billaddress", data?.address);
       createPoForm.setFieldValue("billGST", data?.gstin);
       createPoForm.setFieldValue("billPan", data?.pan);
     }
@@ -347,7 +342,7 @@ export default function CreateJW({}) {
     const response = await imsAxios.post("jobwork/fetchProductData4Table", {
       product_name: inputValue,
     });
- 
+
     setLoading("fetch", false);
     const { data } = response;
 
@@ -489,11 +484,10 @@ export default function CreateJW({}) {
   return (
     <div
       style={{
-        // height: "95%",
-        overflowY: "scroll",
-        overflowX: "hidden",
-        padding: 20,
-        paddingBottom: 120,
+        height: "calc(100vh - 165px)",
+
+        padding: 10,
+        overflow: "auto",
       }}
     >
       {/* vendor */}
@@ -679,7 +673,10 @@ export default function CreateJW({}) {
                                   createPoForm.getFieldValue("vendorname")
                                     ?.value,
                               })
-                            : showToast("Please Select a vendor first", "error");
+                            : showToast(
+                                "Please Select a vendor first",
+                                "error"
+                              );
                         }}
                         style={{ color: "#1890FF" }}
                       >

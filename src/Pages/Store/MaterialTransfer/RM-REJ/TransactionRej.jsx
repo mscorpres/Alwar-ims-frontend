@@ -9,8 +9,6 @@ import MyDatePicker from "../../../../Components/MyDatePicker";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MyButton from "../../../../Components/MyButton";
 
-const { RangePicker } = DatePicker;
-
 function TransactionRej() {
   const { showToast } = useToast();
   const options = [{ label: "Date Wise", value: "datewise" }];
@@ -83,7 +81,7 @@ function TransactionRej() {
     }
   };
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "calc(100vh - 160px)", padding:10 }}>
       <Row gutter={16}>
         <Col span={4} className="gutter-row">
           <div>
@@ -132,14 +130,14 @@ function TransactionRej() {
           </Col>
         )}
       </Row>
-      <div className="m-2" style={{ height: "100%" }}>
-        <div style={{ height: "80%", margin: "10px" }}>
+
+        <div style={{ height: "calc(100vh - 180px)", marginTop: "10px" }}>
           <MyDataTable
             loading={loading}
             data={dataComesFromDateWise}
             columns={columns}
           />
-        </div>
+       
       </div>
     </div>
   );

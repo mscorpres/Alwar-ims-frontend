@@ -17,7 +17,7 @@ function PendingTransfer() {
   const [locationData, setLocationData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState({
-    typeWise: "",
+    typeWise: "datewise",
     selectdate: "",
     transactionText: "",
     locationText: "",
@@ -144,15 +144,15 @@ function PendingTransfer() {
   }, []);
 
   return (
-    <div style={{ height: "85%" }}>
-      <Row gutter={16} style={{ margin: "5px" }}>
+    <div style={{ height: "100%", padding: "10px" }}>
+      <Row gutter={16} >
         <Col span={4} className="gutter-row">
           <div>
             <Select
               style={{ width: "100%" }}
               options={opt}
               placeholder="Select Option"
-              value={allData.typeWise.value}
+              value={allData.typeWise}
               onChange={(e) =>
                 setAllData((allData) => {
                   return { ...allData, typeWise: e };
@@ -229,7 +229,7 @@ function PendingTransfer() {
         )}
       </Row>
 
-      <div style={{ height: "100%", margin: "10px" }}>
+      <div style={{ height: "calc(100% - 50px)", marginTop: "10px" }}>
         {allData.typeWise == "datewise" ? (
           <MyDataTable
             loading={loading}

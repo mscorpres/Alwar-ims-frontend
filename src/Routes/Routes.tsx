@@ -439,12 +439,12 @@ const Routes = [
     main: () => <ViewTransaction />,
   },
   {
-    path: "/material-transfer/re-to-rej",
+    path: "/material-transfer/rm-to-rej",
     exact: true,
     main: () => <ReToRej />,
   },
   {
-    path: "/material-transfer/re-to-rej/view-transation",
+    path: "/material-transfer/rm-to-rej/view-transation",
     exact: true,
     main: () => <TransactionRej />,
   },
@@ -861,35 +861,35 @@ const Routes = [
 
   // Jobwork
   {
-    path: "/create-jw",
+    path: "/warehouse/job-work/create",
     main: () => <CreateJW />,
   },
     {
-    path: "/approval-jw",
+    path: "/warehouse/job-work/approval",
     main: () => <JobworkApproval />,
   },
   {
-    path: "/po-analysis",
+    path: "/warehouse/job-work/analysis",
     main: () => <POAnalysis />,
   },
   {
-    path: "/jw-rw-issue",
+    path: "/warehouse/job-work/issue",
     main: () => <JwIssue />,
   },
   {
-    path: "/jw-rw-challan",
+    path: "/warehouse/job-work/challan-list",
     main: () => <JwRmChallan />,
   },
   {
-    path: "/jw-sf-inward",
+    path: "/warehouse/job-work/inward",
     main: () => <JwsfInward />,
   },
   {
-    path: "/jw-rm-return",
+    path: "/warehouse/job-work/return",
     main: () => <JwrmReturn />,
   },
   {
-    path: "/jw-completed",
+    path: "/warehouse/job-work/completed",
     main: () => <JwCompleted />,
   },
   {
@@ -901,7 +901,7 @@ const Routes = [
     main: () => <JWUpdateRate />,
   },
   {
-    path: "/jw-issue-challan",
+    path: "/warehouse/job-work/issue-challan",
     main: () => <JwPendingRequest />,
   },
   {

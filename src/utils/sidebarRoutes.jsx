@@ -408,7 +408,7 @@ export const items = (user) => [
         //   // <MdDashboard />
         // ),
         getItem(
-          <Link to="/material-transfer/re-to-rej">RM To REJ</Link>,
+          <Link to="/material-transfer/rm-to-rej">RM To REJ</Link>,
           "B363"
           // <MdDashboard />
         ),
@@ -430,7 +430,7 @@ export const items = (user) => [
       ),
       getItem("Jobwork", "B6", <MdQueryStats />, [
         getItem(
-          <Link to="/create-jw">Jobwork & Analysis</Link>,
+          <Link to="/warehouse/job-work/create">Jobwork & Analysis</Link>,
           "B61"
           // <AiOutlineMinus />
         ),

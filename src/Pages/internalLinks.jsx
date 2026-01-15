@@ -470,10 +470,10 @@ const links = [
   ],
   // RM to REJ links
   [
-    { routeName: "RM To REJ", routePath: "/material-transfer/re-to-rej" },
+    { routeName: "RM To REJ", routePath: "/material-transfer/rm-to-rej" },
     {
       routeName: "View Transaction",
-      routePath: "/material-transfer/re-to-rej/view-transation",
+      routePath: "/material-transfer/rm-to-rej/view-transation",
     },
   ],
   // pending transfer links
@@ -498,32 +498,32 @@ const links = [
   ],
   // jobwork links
   [
-    { routeName: "CREATE JW PO", routePath: "/create-jw" },
+    { routeName: "Create JW PO", routePath: "/warehouse/job-work/create" },
     {
-      routeName: "JW Approval",
-      routePath: "/approval-jw"
+      routeName: "Approval",
+      routePath: "/warehouse/job-work/approval"
     },
-    { routeName: "PO ANALYSIS", routePath: "/po-analysis" },
-    { routeName: "JW RM ISSUE", routePath: "/jw-rw-issue" },
+    { routeName: "Analysis", routePath: "/warehouse/job-work/analysis" },
+    { routeName: "RM Issue", routePath: "/warehouse/job-work/issue" },
     {
-      routeName: "JW RM ISSUE CHALLAN",
-      routePath: "/jw-issue-challan",
-    },
-    {
-      routeName: "JW RM CHALLAN",
-      routePath: "/jw-rw-challan",
+      routeName: "Issue Challan",
+      routePath: "/warehouse/job-work/issue-challan",
     },
     {
-      routeName: "JW SF INWARD",
-      routePath: "/jw-sf-inward",
+      routeName: "Challan",
+      routePath: "/warehouse/job-work/challan-list",
     },
     {
-      routeName: "JW RM RETURN",
-      routePath: "/jw-rm-return",
+      routeName: "SF Inward",
+      routePath: "/warehouse/job-work/inward",
     },
     {
-      routeName: "JW COMPLETED",
-      routePath: "/jw-completed",
+      routeName: "RM Return",
+      routePath: "/warehouse/job-work/return",
+    },
+    {
+      routeName: "Completed",
+      routePath: "/warehouse/job-work/completed",
     },
     // {
     //   routeName: "JW VENDOR PRICING",

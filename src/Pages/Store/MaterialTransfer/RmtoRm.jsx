@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MySelect from "../../../Components/MySelect";
 import { useToast } from "../../../hooks/useToast.js";
-import { Col, Row, Select, Button, Input } from "antd";
+import { Col, Row, Select, Button, Input, Card } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import "./Modal/style.css";
@@ -276,12 +276,15 @@ function RmtoRm() {
   }, [allData?.locationFrom]);
 
   return (
-    <div style={{ height: "95%" }}>
+    <div style={{ height: "calc(100vh - 200px)", padding:10 }}>
       {/* <InternalNav links={Main} /> */}
-      <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
+      <Row gutter={10} >
         <Col span={6}>
-          <Row gutter={10} style={{ margin: "5px" }}>
-            <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
+        <Card>
+
+      
+          <Row gutter={10} >
+            <Col span={24} style={{  width: "100%" }}>
               <span>PICK LOCATION</span>
             </Col>
             <Col span={24}>
@@ -301,6 +304,7 @@ function RmtoRm() {
               <TextArea rows={2} disabled value={branchName} />
             </Col>
           </Row>
+            </Card>
         </Col>
 
         <Col span={18}>
@@ -310,7 +314,7 @@ function RmtoRm() {
                 style={{
                   display: "flex",
                   justifyContent: "flex-end",
-                  marginBottom: 10,
+               
                 }}
               >
                 <Button type="primary" onClick={addRow}>
@@ -321,7 +325,7 @@ function RmtoRm() {
                 style={{
                   overflowX: "auto",
                   overflowY: "auto",
-                  maxHeight: "38vh",
+                 height: "calc(100vh - 220px)",
                 }}
               >
                 <table
