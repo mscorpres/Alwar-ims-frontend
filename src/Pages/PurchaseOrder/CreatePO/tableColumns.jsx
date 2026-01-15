@@ -17,7 +17,7 @@ export const componentSelect = (
 ) => (
   <MyAsyncSelect
     selectLoading={selectLoading}
-    // onBlur={() => setAsyncOptions([])}
+    onBlur={() => setAsyncOptions([])}
     // onInputChange={(value) => setSearchInput(value)}
     value={row?.component}
     onChange={(value) => {
