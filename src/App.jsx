@@ -34,8 +34,6 @@ import {
   setShowTickets,
   setShowSetting,
   setShowSwitchModule,
-  toggleCalculator,
-  setShowCalculator,
 } from "./Features/uiSlice/uiSlice.js";
 import Layout, { Content, Header } from "antd/lib/layout/layout";
 import { Select, Modal, Button } from "antd";
@@ -48,9 +46,7 @@ import TicketsModal from "./Components/TicketsModal/TicketsModal";
 import { items, items1 } from "./utils/sidebarRoutes.jsx";
 import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
-import CalculatorDrawer from "./Components/Calculator/CalculatorDrawer.jsx";
-import { customColor } from "./utils/customColor.js";
-import Information from "./Pages/Master/Components/Information.jsx";
+
 import { useToast } from "./hooks/useToast.js";
 
 const App = () => {
@@ -70,7 +66,6 @@ const App = () => {
     showTickets,
     showSetting,
     showSwitchModule,
-    showCalculator,
   } = useSelector((state) => state.ui);
 
   const filteredRoutes = Rout.filter((route) => {
@@ -240,35 +235,11 @@ const App = () => {
     if (Notification.permission == "default") {
       Notification.requestPermission();
     }
-    const handleKeyPress = (e) => {
-      // Handle Alt+C for calculator
-      if (e.altKey && (e.key === "c" || e.key === "C") && !e.shiftKey && !e.ctrlKey) {
-        // Check if user is not typing in an input field
-        const activeElement = document.activeElement;
-        const isInputField =
-          (activeElement?.tagName === "INPUT" && activeElement?.type !== "button" && activeElement?.type !== "submit") ||
-          activeElement?.tagName === "TEXTAREA" ||
-          activeElement?.contentEditable === "true";
-        
-        if (!isInputField) {
-          e.preventDefault();
-          e.stopPropagation();
-          dispatch(toggleCalculator());
-        }
-      }
-      // Handle Escape key
+    document.addEventListener("keyup", (e) => {
       if (e.key === "Escape") {
         setShowSideBar(false);
-        dispatch(setShowCalculator(false));
       }
-    };
-
-    // Use capture phase to catch the event earlier
-    window.addEventListener("keydown", handleKeyPress, true);
-    
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress, true);
-    };
+    });
     if (!user) {
       navigate("/login");
     }
@@ -1008,15 +979,9 @@ const App = () => {
                       : 60
                     : 0,
 
-                marginRight: showCalculator ? 400 : 0,
                 minWidth: 0,
-                transition: "margin-right 0.3s ease",
               }}
             >
-              <CalculatorDrawer
-                open={showCalculator}
-                onClose={() => dispatch(setShowCalculator(false))}
-              />
               <Content style={{ height: "100%" }}>
                 <InternalNav links={internalLinks} />
 
