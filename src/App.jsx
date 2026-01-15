@@ -808,7 +808,7 @@ const App = () => {
           <Layout style={{ height: "100%" }}>
             <AppHeader
               onToggleSidebar={() => setShowSideBar((open) => !open)}
-              logo={<Logo />}
+              // logo={<Logo />}
               title="IMS"
               branchOptions={options}
               sessionOptions={sessionOptions}
