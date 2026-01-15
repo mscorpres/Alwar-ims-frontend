@@ -1,0 +1,23 @@
+.calculator-sidebar {
+  overflow: hidden !important;
+}
+
+.calculator-sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.calculator-sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+/* Ensure calculator container fits properly */
+.calculator-sidebar-body .calculator-container {
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
