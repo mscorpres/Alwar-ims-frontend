@@ -83,7 +83,7 @@ function ManageDC() {
   { field: "ewaybill_no", headerName: "E WayBill No.", width: 200 },
 ];
   const [state, setState] = useState({
-    selType: "",
+    selType: "datewise",
     gpInput: "",
   });
   const [tableData, setTableData] = useState([]);
@@ -184,7 +184,7 @@ function ManageDC() {
   }, []);
 
   return (
-    <div style={{ height: "90%", padding: "10px" }}>
+    <div style={{ height: "calc(100vh - 160px)", padding: "10px" }}>
       {updatedDCId && (
         <EditDC updatedDCId={updatedDCId} setUpdateDCId={setUpdateDCId} />
       )}
@@ -257,7 +257,7 @@ function ManageDC() {
           </Col>
         )}
       </Row>
-      <div style={{ height: "95%", margin: "10px" }}>
+      <div style={{ height: "100%", marginTop: "10px" }}>
         <MyDataTable loading={loading} data={tableData} columns={COLUMNS} />
       </div>
     </div>

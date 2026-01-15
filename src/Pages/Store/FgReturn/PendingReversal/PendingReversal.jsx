@@ -6,9 +6,6 @@ import MyButton from "../../../../Components/MyButton";
 import { imsAxios } from "../../../../axiosInterceptor";
 import MySelect from "../../../../Components/MySelect";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import { AiFillEdit } from "react-icons/ai";
 import TableActions from "../../../../Components/TableActions.jsx/TableActions";
 import ExecutePPR from "./ExecutePPR";
 import useApi from "../../../../hooks/useApi";
@@ -91,7 +88,7 @@ function PendingReversal() {
   }, [wise]);
 
   return (
-    <Row gutter={6} style={{ height: "95%", padding: 10 }}>
+    <Row gutter={[12, 6]} style={{ height: "100%", padding: 10 }}>
       <ExecutePPR
         getRows={getRows}
         editPPR={executePPR}

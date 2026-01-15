@@ -200,13 +200,12 @@ export default function CreateDC() {
     getBillTo();
   }, []);
   return (
-    <div style={{ height: "95%", overflow: "hidden" }}>
+    <div style={{ height: "calc(100vh - 145px)", overflow: "hidden", padding: "10px" }}>
       {!successPage && (
         <>
           {pageLoading && <Loading />}
           <Tabs
             style={{
-              padding: "0 10px",
               height: "98%",
               overflow: "auto",
               overflowX: "hidden",
@@ -221,11 +220,7 @@ export default function CreateDC() {
             >
               <>
                 <div
-                  style={{
-                    overflowY: "scroll",
-                    overflowX: "hidden",
-                    padding: "0vh 20px 10px",
-                  }}
+                
                 >
                   {/* reset confirm modal */}
                   <Modal

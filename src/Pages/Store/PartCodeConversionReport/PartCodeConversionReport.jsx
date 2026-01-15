@@ -4,11 +4,9 @@ import {
   Col,
   Input,
   Space,
-  Button,
-  Switch,
+
   Table,
-  Pagination,
-  Spin,
+ 
 } from "antd";
 import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -17,9 +15,6 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../../hooks/useToast.js";
 import Exceljs from "exceljs";
-import printFunction, {
-  downloadFunction,
-} from "../../../Components/printFunction";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
@@ -300,9 +295,9 @@ const PartCodeConversionReport = () => {
   };
 
   return (
-    <>
+    <div style={{height:"calc(100%-160)", padding:10}}>
       <Row
-        style={{ margin: 4, padding: "1rem", paddingTop: 0 }}
+      
         justify="space-between"
       >
         <Col>
@@ -353,7 +348,7 @@ const PartCodeConversionReport = () => {
         />
       </Row>
       <Row
-        style={{ width: "92vw", marginLeft: "1.5rem", marginRight: "1.5rem" }}
+       
       >
         <Table
           columns={columns}
@@ -377,7 +372,7 @@ const PartCodeConversionReport = () => {
           loading={loading}
         />
       </Row>
-    </>
+    </div>
   );
 };
 

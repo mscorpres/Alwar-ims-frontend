@@ -277,7 +277,7 @@ function UpdateRM() {
         </Row>
       </Col>
       <Col span={18} style={{}}>
-        <div style={{ height: "85vh", padding: "0px 10px" }}>
+        <div style={{ height: "calc(100vh - 130px)", padding: "0px 10px" }}>
           <MyDataTable
             data={mainData}
             columns={columns}

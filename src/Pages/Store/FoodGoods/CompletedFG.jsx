@@ -131,8 +131,8 @@ const CompletedFG = () => {
   };
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row gutter={5} style={{ margin: "5px" }}>
+    <div style={{ height: "calc(100vh - 130px)", margin:5 }} >
+      <Row gutter={5}>
         <Col span={3}>
           <Select
             options={options}
@@ -235,7 +235,7 @@ const CompletedFG = () => {
           </Col>
         )} */}
       </Row>
-      <div style={{ height: "93%", margin: "5px" }}>
+      <div style={{ height: "calc(100vh - 170px)", marginTop: "10px" }}>
         {all.info == "datewise" ? (
           <MyDataTable loading={loading} data={dateData} columns={columns} />
         ) : (

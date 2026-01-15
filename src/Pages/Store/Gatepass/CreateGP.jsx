@@ -276,10 +276,8 @@ export default function CreateGP() {
     <div
       style={{
         position: "relative",
-        height: "90%",
-        overflowY: "auto",
-        overflowX: "hidden",
-        paddingBottom: 50,
+        height: "calc(100vh - 160px)",
+        padding:10
       }}
     >
       {loading && <Loading />}
@@ -287,7 +285,7 @@ export default function CreateGP() {
         style={{
           opacity: loading ? 0.5 : 1,
           pointerEvents: loading ? "none" : "all",
-          padding: "20px",
+
         }}
       >
         <Row>
@@ -518,7 +516,7 @@ export default function CreateGP() {
           </Col>
         </Row>
         <Divider />
-        <Row>
+        <Row >
           <Col span={4}>
             <Descriptions
               size="small"
@@ -526,16 +524,14 @@ export default function CreateGP() {
             ></Descriptions>
           </Col>
 
-          <Col span={20}>
-            <Row gutter={16}>
+          <Col span={20} >
+            <Row gutter={16} style={{height:"100%"}}>
               {fetchDetailsLoading && <Loading />}
               {/* narration */}
-              <Col span={18} style={{ maxHeight: 350, overflowY: "auto" }}>
-                <MyDataTable
-                  // density="comfortable"
-                  columns={columns}
-                  data={rows}
-                />
+              <Col span={18}  >
+                <div style={{ height: 280 }}>
+    <MyDataTable columns={columns} data={rows} />
+  </div>
               </Col>
             </Row>
           </Col>

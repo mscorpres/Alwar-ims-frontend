@@ -354,44 +354,44 @@ export const items = (user) => [
         "B33"
         // <AiOutlineMinus />
       ),
-        getItem(
-          <Link to="/update-rm">Edit MIN</Link>,
-          "warehouse/minedit/edit"
-          // <AiOutlineMinus />
-        ),
+        // getItem(
+        //   <Link to="/rm/update">Edit MIN</Link>,
+        //   "warehouse/minedit/edit"
+        //   // <AiOutlineMinus />
+        // ),
 
       getItem("FG (s) Inwarding", "B43", <MdDashboard />, [
         getItem(
-          <Link to="/list/pending-fg">Pending FG (s)</Link>,
+          <Link to="/warehouse/fg/pending">Pending FG (s)</Link>,
           "B431"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/list/complete-fg">Completed FG (s)</Link>,
+          <Link to="/warehouse/fg/complete">Completed FG (s)</Link>,
           "B432"
           // <AiOutlineMinus />
         ),
       ]),
       getItem("FG(s) Out", "B35", <MdDashboard />, [
         getItem(
-          <Link to="/fg-out/create-fg">Create FG Out</Link>,
+          <Link to="/warehouse/fg-out/create">Create FG Out</Link>,
           "B351"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/fg-out/fg-out-list">View FG Out</Link>,
+          <Link to="/warehouse/fg-out/view">View FG Out</Link>,
           "B352"
           // <AiOutlineMinus />
         ),
       ]),
       getItem("FG(s) Return", "B38", <MdDashboard />, [
         getItem(
-          <Link to="/return/create-fg">Create FG Return</Link>,
+          <Link to="/warehouse/fg-return/create">Create FG Return</Link>,
           "B381"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/return/pending-fg-list">Pending Reversals</Link>,
+          <Link to="/warehouse/fg-return/pending">Pending Reversals</Link>,
           "B382"
           // <AiOutlineMinus />
         ),
@@ -462,17 +462,17 @@ export const items = (user) => [
         getItem(<Link to="/woreport">Report</Link>, "B78"),
       ]),
       getItem(
-        <Link to="/warehouse/dc/create-dc">RGP - DC</Link>,
+        <Link to="/warehouse/dc/create">RGP - DC</Link>,
         "B44"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/branch-transfer-challan">Branch Transfer Challan</Link>,
+        <Link to="/warehouse/branch-transfer/challan">Branch Transfer Challan</Link>,
         "B45"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/warehouse/gp/create-gp">Gatepass (RGP / NRGP)</Link>,
+        <Link to="/warehouse/gp/create">Gatepass (RGP / NRGP)</Link>,
         "B39"
         // <AiOutlineMinus />
       ),

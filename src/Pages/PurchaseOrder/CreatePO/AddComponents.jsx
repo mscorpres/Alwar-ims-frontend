@@ -325,6 +325,7 @@ export default function AddComponents({
               : newPurchaseOrder.project_name,
         }
       );
+    
       setPageLoading(false);
       let arr1 = rowCount;
       const autoGstType = gstState || "L";

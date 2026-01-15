@@ -181,10 +181,9 @@ export default function ManageGatePass() {
     </Space>
   );
   return (
-    <div style={{ position: "relative", height: "95%" }}>
+    <div style={{ position: "relative", height: "95%", padding:10 }}>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <Col>
           <Space>
@@ -257,8 +256,9 @@ export default function ManageGatePass() {
       </Row>
       <div
         style={{
-          height: "90%",
-          padding: "0px 10px",
+          height: "calc(100% - 10px)",
+          marginTop:"10px"
+      
         }}
       >
         <MyDataTable

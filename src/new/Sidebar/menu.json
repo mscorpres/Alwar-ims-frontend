@@ -715,20 +715,13 @@
                 "path": "/warehouse/prod-return-MIN",
                 "isShown": true
               },
-              {
-                "key": "warehouse/minedit",
-                "label": "MIN Edit/Reverse",
-                "icon": "EditIcon",
-
-                "path": "/update-rm",
-                "isShown": true
-              },
+            
               {
                 "key": "B43",
                 "label": "FG (s) Inwarding",
                 "icon": "InventoryIcon",
 
-                "path": "/list/complete-fg",
+                "path": "/warehouse/fg/complete",
                 "isShown": true
               },
               {
@@ -736,7 +729,7 @@
                 "label": "FG (s) Pending",
                 "icon": "InventoryIcon",
 
-                "path": "/list/pending-fg",
+                "path": "/warehouse/fg/pending",
                 "isShown": false
               },
               {
@@ -744,7 +737,7 @@
                 "label": "FG(s) Out",
                 "icon": "OutputIcon",
 
-                "path": "/fg-out/create-fg",
+                "path": "/warehouse/fg-out/create",
                 "isShown": true
               },
               {
@@ -752,7 +745,7 @@
                 "label": "View FG(s) Out",
                 "icon": "OutputIcon",
 
-                "path": "/fg-out/fg-out-list",
+                "path": "/warehouse/fg-out/view",
                 "isShown": false
               },
               {
@@ -760,7 +753,7 @@
                 "label": "FG(s) Return",
                 "icon": "ReturnIcon",
 
-                "path": "/return/create-fg",
+                "path": "/warehouse/fg-return/create",
                 "isShown": true
               },
               {
@@ -768,7 +761,7 @@
                 "label": "FG(s) Pending",
                 "icon": "ReturnIcon",
 
-                "path": "/return/pending-fg-list",
+                "path": "/warehouse/fg-return/pending",
                 "isShown": false
               },
               {
@@ -776,7 +769,7 @@
                 "label": "FG(s) Completed",
                 "icon": "ReturnIcon",
 
-                "path": "/return/complete-fg-list",
+                "path": "/warehouse/fg-return/completed",
                 "isShown": false
               },
 
@@ -791,28 +784,28 @@
                 "key": "B34",
                 "label": "RGP - DC",
                 "icon": "DescriptionIcon",
-                "path": "/warehouse/dc/create-dc",
+                "path": "/warehouse/dc/create",
                 "isShown": true
               },
               {
                 "key": "B341",
                 "label": "Manage DC",
                 "icon": "DescriptionIcon",
-                "path": "/warehouse/dc/manage-dc",
+                "path": "/warehouse/dc/manage",
                 "isShown": false
               },
               {
                 "key": "B36",
                 "label": "Branch Transfer Challan",
                 "icon": "SwapHorizIcon",
-                "path": "/branch-transfer-challan",
+                "path": "/warehouse/branch-transfer/challan",
                 "isShown": true
               },
               {
                 "key": "B361",
                 "label": "Branch Transfer View",
                 "icon": "SwapHorizIcon",
-                "path": "/view-branch-transfer",
+                "path": "/warehouse/branch-transfer/view",
                 "isShown": false
               },
               {
@@ -833,21 +826,21 @@
                 "key": "B411",
                 "label": "Part Code Conversion Report",
                 "icon": "TransformIcon",
-                "path": "/warehouse/part-code-conversion-report",
+                "path": "/warehouse/part-code-conversion/report",
                 "isShown": false
               },
               {
                 "key": "B39",
                 "label": "Gatepass (RGP / NRGP)",
                 "icon": "SecurityIcon",
-                "path": "/warehouse/gp/create-gp",
+                "path": "/warehouse/gp/create",
                 "isShown": true
               },
               {
                 "key": "B391",
                 "label": "Manage GP",
                 "icon": "SecurityIcon",
-                "path": "/warehouse/gp/manage-gp",
+                "path": "/warehouse/gp/manage",
                 "isShown": false
               }
             ]

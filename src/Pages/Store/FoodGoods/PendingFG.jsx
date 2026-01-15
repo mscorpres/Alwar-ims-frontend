@@ -106,7 +106,7 @@ const PendingFG = () => {
   }, []);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "calc(100vh - 140px)", margin:"10px" }}>
       <Row>
         {/* <Col span={4} className="gutter-row">
           <div>
@@ -129,7 +129,7 @@ const PendingFG = () => {
         )}
       </Row>
 
-      <div style={{ height: "90%", margin: "10px" }}>
+      <div style={{ height: "100%" }}>
         {/* <Skeleton loading={loading}> */}
         <MyDataTable data={pending} columns={columns} loading={loading} />
         {/* </Skeleton> */}

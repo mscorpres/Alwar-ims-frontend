@@ -190,10 +190,11 @@ function ViewBranchTransfer() {
   };
   return (
     <>
-      <div style={{ height: "90%", marginTop: 10 }}>
+      <div style={{ height: "calc(100vh - 160px)", margin: 10 }}>
         <Row
           justify="space-between"
-          style={{ padding: "0px 10px", marginBottom: -15 }}
+          
+        
         >
           {loading === "fetch" && <Loading />}
           <Form
@@ -201,7 +202,7 @@ function ViewBranchTransfer() {
             layout="vertical"
             initialValues={defaultValues}
           >
-            <div>
+            <div >
               <Space>
                 <div style={{ width: 200 }}>
                   <Form.Item name="status" label="Status">
@@ -238,15 +239,18 @@ function ViewBranchTransfer() {
                   </div>
                 )}
 
-                <MyButton
+             <div style={{marginTop:6}}>
+                 <MyButton
                   variant="search"
                   type="primary"
                   loading={loading === "rows"}
                   onClick={getRows}
                   id="submit"
+                  
                 >
                   Search
                 </MyButton>
+             </div>
               </Space>
             </div>
           </Form>
@@ -266,7 +270,7 @@ function ViewBranchTransfer() {
             />
           </Space>
         </Row>
-        <div style={{ height: "93%", padding: "0px 10px" }}>
+        <div style={{ height: "calc(100vh - 200px)" }}>
           <MyDataTable
             columns={[actionColumn, ...columns]}
             data={rows}

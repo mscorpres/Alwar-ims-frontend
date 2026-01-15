@@ -383,10 +383,8 @@ const PartCodeConversion = () => {
   return (
     <div
       style={{
-        height: "90%",
+        height: "calc(100vh - 160px)",
         padding: 10,
-        paddingRight: "10%",
-        paddingLeft: "10%",
       }}
     >
       <Form

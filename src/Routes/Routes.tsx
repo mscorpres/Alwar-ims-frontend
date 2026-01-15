@@ -385,31 +385,31 @@ const Routes = [
     main: () => <TransactionOut />,
   },
   {
-    path: "/list/complete-fg",
+    path: "/warehouse/fg/complete",
     main: () => <CompletedFG />,
   },
   {
-    path: "/list/pending-fg",
+    path: "/warehouse/fg/pending",
     main: () => <PendingFG />,
   },
   {
-    path: "/return/create-fg",
+    path: "/warehouse/fg-return/create",
     main: () => <CreateFgReturn />,
   },
   {
-    path: "/return/pending-fg-list",
+    path: "/warehouse/fg-return/pending",
     main: () => <PendingReversal />,
   },
   {
-    path: "/return/complete-fg-list",
+    path: "/warehouse/fg-return/completed",
     main: () => <CompletedFgReturn />,
   },
   {
-    path: "/fg-out/create-fg",
+    path: "/warehouse/fg-out/create",
     main: () => <CreateFGOut />,
   },
   {
-    path: "/fg-out/fg-out-list",
+    path: "/warehouse/fg-out/view",
     main: () => <ViewFGOut />,
   },
 
@@ -459,22 +459,22 @@ const Routes = [
     main: () => <Rejection />,
   },
   {
-    path: "/warehouse/dc/create-dc",
+    path: "/warehouse/dc/create",
     exact: true,
     main: () => <CreateDC />,
   },
   {
-    path: "/warehouse/dc/manage-dc",
+    path: "/warehouse/dc/manage",
     exact: true,
     main: () => <ManageDC />,
   },
   {
-    path: "/warehouse/gp/create-gp",
+    path: "/warehouse/gp/create",
     exact: true,
     main: () => <CreateGP />,
   },
   {
-    path: "/warehouse/gp/manage-gp",
+    path: "/warehouse/gp/manage",
     exact: true,
     main: () => <ManageGatePass />,
   },
@@ -908,10 +908,10 @@ const Routes = [
     path: "/jw-vendor-pricing",
     main: () => <JWVendorPricingUpload />,
   },
-  {
-    path: "/update-rm",
-    main: () => <UpdateRM />,
-  },
+  // {
+  //   path: "/rm/update",
+  //   main: () => <UpdateRM />,
+  // },
   {
     path: "/reverse-min",
     main: () => <ReverseMin />,
@@ -1276,7 +1276,7 @@ const Routes = [
     main: () => <Invoice />,
   },
   {
-    path: "/view-branch-transfer",
+    path: "/warehouse/branch-transfer/view",
     main: () => <ViewBranchTransfer />,
   },
   {
@@ -1305,7 +1305,7 @@ const Routes = [
     main: () => <MapProcesses />,
   },
   {
-    path: "/branch-transfer-challan",
+    path: "/warehouse/branch-transfer/challan",
     main: () => <CreateBranchTransferChallan />,
   },
   {
@@ -1314,7 +1314,7 @@ const Routes = [
   },
   // to be added
   {
-    path: "/warehouse/part-code-conversion-report",
+    path: "/warehouse/part-code-conversion/report",
     main: () => <PartCodeConversionReport />,
   },
   {

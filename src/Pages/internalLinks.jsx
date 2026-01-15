@@ -419,36 +419,37 @@ const links = [
   //   { routeName: "Create Process MAP", routePath: "/master/qa-process-map" },
   // ],
   // edit and reverse MIN links
-  [
-    { routeName: "Edit MIN", routePath: "/update-rm" },
-    // { routeName: "Reverse MIN", routePath: "/reverse-min" },
-  ],
+  // [
+  //   { routeName: "Edit MIN", routePath: "/rm/update" },
+  //   // { routeName: "Reverse MIN", routePath: "/reverse-min" },
+  // ],
   // FG inward links
   [
-    {
-      routeName: "Pending FG (s)",
-      routePath: "/list/pending-fg",
+     {
+      routeName: "Completed Finish Goods",
+      routePath: "/warehouse/fg/complete",
     },
     {
-      routeName: "Completed FG (s)",
-      routePath: "/list/complete-fg",
+      routeName: "Pending ",
+      routePath: "/warehouse/fg/pending",
     },
+   
   ],
   // FG Out links
   [
     {
       routeName: "Create FG OUT",
-      routePath: "/fg-out/create-fg",
+      routePath: "/warehouse/fg-out/create",
     },
-    { routeName: "VIEW FG OUT", routePath: "/fg-out/fg-out-list" },
+    { routeName: "View", routePath: "/warehouse/fg-out/view" },
   ],
   [
     {
       routeName: "Create FG Return",
-      routePath: "/return/create-fg",
+      routePath: "/warehouse/fg-return/create",
     },
-    { routeName: "Pending FG Return", routePath: "/return/pending-fg-list" },
-    { routeName: "Completed FG Return", routePath: "/return/complete-fg-list" },
+    { routeName: "Pending", routePath: "/warehouse/fg-return/pending" },
+    { routeName: "Completed", routePath: "/warehouse/fg-return/completed" },
   ],
   // RM to RM transfer links
   [
@@ -485,7 +486,7 @@ const links = [
   // rejection links
   [
     {
-      routeName: "Create Rejection",
+      routeName: "Rejection",
       routePath: "/warehouse/rejection",
     },
   ],
@@ -564,30 +565,30 @@ const links = [
   [
     {
       routeName: "Branch Transfer",
-      routePath: "/branch-transfer-challan",
+      routePath: "/warehouse/branch-transfer/challan",
     },
     {
-      routeName: "View Branch Transfer",
-      routePath: "/view-branch-transfer",
+      routeName: "View",
+      routePath: "/warehouse/branch-transfer/view",
     },
   ],
   // DC Links
   [
     {
       routeName: "Create DC",
-      routePath: "/warehouse/dc/create-dc",
+      routePath: "/warehouse/dc/create",
       key: "0",
     },
     {
-      routeName: "Manage DC",
-      routePath: "/warehouse/dc/manage-dc",
+      routeName: "Manage",
+      routePath: "/warehouse/dc/manage",
       key: "1",
     },
   ],
   // gatepass links
   [
-    { routeName: "Create GP", routePath: "/warehouse/gp/create-gp" },
-    { routeName: "Manage GP", routePath: "/warehouse/gp/manage-gp" },
+    { routeName: "Create GP", routePath: "/warehouse/gp/create" },
+    { routeName: "Manage", routePath: "/warehouse/gp/manage" },
   ],
   // physical stock
   // [
@@ -637,7 +638,7 @@ const links = [
     // to be added
     {
       routeName: "Part Code Conversion Report",
-      routePath: "/warehouse/part-code-conversion-report",
+      routePath: "/warehouse/part-code-conversion/report",
     },
   ],
   // MIN register
