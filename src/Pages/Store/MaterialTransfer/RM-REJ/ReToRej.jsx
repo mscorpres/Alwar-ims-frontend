@@ -52,7 +52,6 @@ function ReToRej() {
 
   const getComponentList = async (e) => {
     if (e?.length > 2) {
-      
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
       let arr = [];
@@ -94,7 +93,8 @@ function ReToRej() {
       const r = rows[i];
       if (!r.component)
         return showToast(`Row ${i + 1}: Please select Component`, "error");
-      if (!r.qty1) return showToast(`Row ${i + 1}: Please add Quantity`, "error");
+      if (!r.qty1)
+        return showToast(`Row ${i + 1}: Please add Quantity`, "error");
       if (!r.locationTo)
         return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
       if (r.locationTo == allDataRej.locationFrom)
@@ -114,7 +114,10 @@ function ReToRej() {
       type: "RM2REJ",
     });
     if (response?.success) {
-      showToast(response.message.toString()?.replaceAll("<br/>", ""), "success");
+      showToast(
+        response.message.toString()?.replaceAll("<br/>", ""),
+        "success"
+      );
       setAllDataRej({
         locationFrom: "",
         comment: "",
@@ -187,14 +190,14 @@ function ReToRej() {
 
   // Note: per-row changes trigger API calls in onChange handlers
   return (
-    <div style={{ height: "100%", padding:10}}>
+    <div style={{ height: "100%", padding: 10 }}>
       {/* <InternalNav links={MainREJ} /> */}
 
-      <Row gutter={10} >
+      <Row gutter={10}>
         <Col span={6}>
           <Card>
-            <Row gutter={10} >
-              <Col span={24} style={{  width: "100%" }}>
+            <Row gutter={10}>
+              <Col span={24} style={{ width: "100%" }}>
                 <span>PICK LOCATION</span>
               </Col>
               <Col span={24}>
@@ -236,7 +239,6 @@ function ReToRej() {
                 style={{
                   display: "flex",
                   justifyContent: "flex-end",
-              
                 }}
               >
                 <Button
@@ -257,137 +259,156 @@ function ReToRej() {
                   Add Row
                 </Button>
               </div>
-              <div style={{ overflowY: "auto", height:"calc(100vh - 220px)" }}>
-                <table
-                  style={{
-                    tableLayout: "fixed",
-                    width: "100%",
-                    minWidth: 1200,
-                  }}
+              <div
+                style={{
+                  marginTop: "10px",
+                  border: "1px solid #ccc",
+                  padding: 4,
+                }}
+              >
+                {" "}
+                <div
+                  style={{ overflowY: "auto", height: "calc(100vh - 230px)" }}
                 >
-                  <tr>
-                    <th className="an" style={{ width: "18vw" }}>
-                      Component/Part No.
-                    </th>
-                    <th className="an" style={{ width: "12vw" }}>
-                      STOCK QUANTITY
-                    </th>
-                    <th className="an" style={{ width: "12vw" }}>
-                      TRANSFERING QTY
-                    </th>
-                    <th className="an" style={{ width: "14vw" }}>
-                      DROP (+) Loc
-                    </th>
-                    <th className="an" style={{ width: "12vw" }}>
-                      Weighted Average Rate
-                    </th>
-                    <th className="an" style={{ width: "22vw" }}>
-                      Address
-                    </th>
-                    <th className="an" style={{ width: "10vw" }}>
-                      Actions
-                    </th>
-                  </tr>
-                  {rows.map((r, idx) => (
-                    <tr key={idx}>
-                      <td style={{ width: "18vw" }}>
-                        <div
-                          style={{
-                            width: "100%",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          <MyAsyncSelect
+                  <table
+                    style={{
+                      tableLayout: "fixed",
+                      width: "100%",
+                      minWidth: 1200,
+                    }}
+                  >
+                    <tr>
+                      <th className="table-col" style={{ width: "18vw" }}>
+                        Component / Part No.
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        Stock QTY
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                         Transfering QTY
+                      </th>
+                      <th className="table-col" style={{ width: "14vw" }}>
+                        DROP (+) Loc
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        WAR
+                      </th>
+                      <th className="table-col" style={{ width: "22vw" }}>
+                        Address
+                      </th>
+                      <th className="table-col" style={{ width: "10vw" }}>
+                        Actions
+                      </th>
+                    </tr>
+                    {rows.map((r, idx) => (
+                      <tr key={idx}>
+                        <td style={{ width: "18vw" }}>
+                          <div
+                            style={{
+                              width: "100%",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            <MyAsyncSelect
+                              style={{ width: "100%" }}
+                              loadOptions={getComponentList}
+                              onInputChange={(e) => setSearch(e)}
+                              onBlur={() => setAsyncOptions([])}
+                              placeholder="Part Name/Code"
+                              optionsState={asyncOptions}
+                              value={r.component}
+                              onChange={async (e) => {
+                                setRows((prev) => {
+                                  const updated = [...prev];
+                                  updated[idx] = {
+                                    ...updated[idx],
+                                    component: e,
+                                  };
+                                  return updated;
+                                });
+                                await getRowQtyFunction(idx, e);
+                              }}
+                            />
+                          </div>
+                        </td>
+                        <td style={{ width: "12vw" }}>
+                          {/* <Input
+                            suffix={r?.restDetail?.unit}
+                            disabled
+                            value={
+                              r?.restDetail?.available_qty
+                                ? `${r?.restDetail?.available_qty} ${r?.restDetail?.unit}`
+                                : "0"
+                            }
+                          /> */}
+                            <span>
+                              {r?.restDetail?.available_qty ?? "0"} {r?.restDetail?.unit ?? ""}
+                            </span>
+                        </td>
+                        <td style={{ width: "12vw" }}>
+                          <Input
+                            suffix={r?.restDetail?.unit}
+                            value={r.qty1}
+                            onChange={(e) =>
+                              setRows((prev) => {
+                                const updated = [...prev];
+                                updated[idx] = {
+                                  ...updated[idx],
+                                  qty1: e.target.value,
+                                };
+                                return updated;
+                              })
+                            }
+                          />
+                        </td>
+                        <td style={{ width: "14vw" }}>
+                          <Select
                             style={{ width: "100%" }}
-                            loadOptions={getComponentList}
-                            onInputChange={(e) => setSearch(e)}
-                            onBlur={() => setAsyncOptions([])}
-                            placeholder="Part Name/Code"
-                            optionsState={asyncOptions}
-                            value={r.component}
+                            options={locDataTo}
+                            value={r.locationTo}
                             onChange={async (e) => {
                               setRows((prev) => {
                                 const updated = [...prev];
                                 updated[idx] = {
                                   ...updated[idx],
-                                  component: e,
+                                  locationTo: e,
                                 };
                                 return updated;
                               });
-                              await getRowQtyFunction(idx, e);
+                              await getRowLocationName(idx, e);
                             }}
                           />
-                        </div>
-                      </td>
-                      <td style={{ width: "12vw" }}>
-                        <Input
-                          suffix={r?.restDetail?.unit}
-                          disabled
-                          value={
-                            r?.restDetail?.available_qty
-                              ? `${r?.restDetail?.available_qty} ${r?.restDetail?.unit}`
-                              : "0"
-                          }
-                        />
-                      </td>
-                      <td style={{ width: "12vw" }}>
-                        <Input
-                          suffix={r?.restDetail?.unit}
-                          value={r.qty1}
-                          onChange={(e) =>
-                            setRows((prev) => {
-                              const updated = [...prev];
-                              updated[idx] = {
-                                ...updated[idx],
-                                qty1: e.target.value,
-                              };
-                              return updated;
-                            })
-                          }
-                        />
-                      </td>
-                      <td style={{ width: "14vw" }}>
-                        <Select
-                          style={{ width: "100%" }}
-                          options={locDataTo}
-                          value={r.locationTo}
-                          onChange={async (e) => {
-                            setRows((prev) => {
-                              const updated = [...prev];
-                              updated[idx] = { ...updated[idx], locationTo: e };
-                              return updated;
-                            });
-                            await getRowLocationName(idx, e);
-                          }}
-                        />
-                      </td>
-                      <td style={{ width: "12vw" }}>
-                        <Input disabled value={r?.restDetail?.avr_rate} />
-                      </td>
-                      <td style={{ width: "22vw" }}>
-                        <TextArea
-                          rows={2}
-                          disabled
-                          value={r.address}
-                          style={{ resize: "none" }}
-                        />
-                      </td>
-                      <td style={{ width: "10vw" }}>
-                        <Button
-                          danger
-                          onClick={() =>
-                            setRows((prev) => prev.filter((_, i) => i !== idx))
-                          }
-                          disabled={rows.length === 1}
-                        >
-                          Remove
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </table>
+                        </td>
+                        <td style={{ width: "12vw" }}>
+                          <Input disabled value={r?.restDetail?.avr_rate} />
+                        </td>
+                        <td style={{ width: "22vw" }}>
+                          <TextArea
+                            rows={2}
+                            disabled
+                            value={r.address}
+                            style={{ resize: "none" }}
+                          />
+                        </td>
+                        <td style={{ width: "10vw" }}>
+                          <Button
+                            danger
+                            onClick={() =>
+                              setRows((prev) =>
+                                prev.filter((_, i) => i !== idx)
+                              )
+                            }
+                            disabled={rows.length === 1}
+                          >
+                            Remove
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </table>
+                </div>
               </div>
             </Col>
           </Row>

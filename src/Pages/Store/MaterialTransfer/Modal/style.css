@@ -4,9 +4,9 @@ td {
   /* border: 0.9px solid; */
   padding: 5px;
 }
-.an {
-  padding: 10px;
-  /* background-color: #245181; */
+.table-col {
+  padding: 2px;
+  background-color: #ccc;
   color: rgb(0, 0, 0);
 }
 

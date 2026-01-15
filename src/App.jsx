@@ -564,7 +564,7 @@ const App = () => {
         }
       }
     }
-  }, [navigate]);
+  }, []);
   useEffect(() => {
     notificationsRef.current = notifications;
   }, [notifications]);
