@@ -272,7 +272,7 @@ function ShipmentsList() {
   }, [wise]);
 
   return (
-    <Row gutter={6} style={{ height: "95%", padding: 10 }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10 }}>
       <Col span={4}>
         <Card size="small" title="Filters">
           <Form

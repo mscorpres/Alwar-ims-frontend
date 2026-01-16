@@ -1,6 +1,5 @@
-import { Button, Col, DatePicker, Row, Space } from "antd";
-import React, { useEffect, useState } from "react";
-import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import {  Col,  Row, Space } from "antd";
+import {  useState } from "react";
 import { getClosingStockForQuery6 } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -11,7 +10,6 @@ import { useToast } from "../../../hooks/useToast.js";
 import MyButton from "../../../Components/MyButton";
 
 function Index() {
-  const { showToast } = useToast();
   const [searchInput, setSearchInput] = useState("");
   const [rows, setRows] = useState([]);
   const { executeFun, loading } = useApi();
@@ -44,8 +42,8 @@ function Index() {
 
 
   return (
-    <div style={{ height: "calc(100vh - 160px)", overflow: "hidden" }}>
-      <Row justify="space-between" style={{ padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding:10 }}>
+      <Row justify="space-between" >
         <Col>
           <Space>
             <div>
@@ -84,7 +82,7 @@ function Index() {
         {/* </div> */}
       </Row>
 
-      <Row style={{ marginTop: 15, height: "calc(100vh - 220px)", overflowX: "hidden" }}>
+      <Row style={{ marginTop: 10, height: "calc(100vh - 180px)",}}>
         <MyDataTable
           columns={columns}
           pageSize={12}

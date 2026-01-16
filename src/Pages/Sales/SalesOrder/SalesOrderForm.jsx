@@ -37,7 +37,6 @@ import {
   getProjectDetails,
   getProjectOptions,
   getUsersOptions,
-  getVendorBranchOptions,
 } from "../../../api/general.ts";
 import {
   createOrder,
@@ -98,19 +97,13 @@ const SalesOrderForm = () => {
   const client = Form.useWatch("client", form);
   const clientbranch = Form.useWatch("clientbranch", form);
   const billaddressid = Form.useWatch("billaddressid", form);
-  const shipaddressid = Form.useWatch("shipaddressid", form);
-  const fetchQty = form.getFieldValue("qty");
 
-  // console.log("fetchQty", fetchQty, shipaddressid);
   const { executeFun, loading } = useApi();
   const { orderId } = useParams();
   const toggleInputType = (checked) => {
     setCopyInfo(checked);
-    // console.log(`switch to ${checked}`);
   };
-  // const onChange = (checked) => {
-  //   console.log(`switch to ${checked}`);
-  // };
+ 
   const handleFetchClientOptions = async (search) => {
     const response = await executeFun(
       () => getClientsOptions(search),
@@ -378,17 +371,14 @@ const SalesOrderForm = () => {
       setConfirmSubmit(false);
     } else {
       const response = await executeFun(() => createOrder(payload), "submit");
-      // console.log("response", response);
       if (response.success) {
         setActiveTab("1");
         form.resetFields();
-        // newdata.resetFields();
         setSelectLoading(false);
         setSelectLoading(false);
         setConfirmSubmit(false);
         showToast(response.message.msg, "success");
       } else {
-        // console.log("response.data", response.data);
         showToast(response.data.message, "error");
         setConfirmSubmit(false);
 
@@ -442,26 +432,17 @@ const SalesOrderForm = () => {
       getBillingAddress(billaddressid);
     }
   }, [billaddressid]);
-
-  // useEffect(() => {
-  //   if (shipaddressid) {
-  //     handleFetchClientBranchDetails("shipaddressid", shipaddressid);
-  //   }
-  // }, [shipaddressid]);
   useEffect(() => {
     if (copyinfo) {
       let gst = form.getFieldValue("gstin");
       let address = form.getFieldValue("clientaddress");
 
-      // console.log("gst", gst, client);
       if (client) {
-        // form.setFieldValue("shipPan", details.panNo);
         form.setFieldValue("shipGST", gst);
         form.setFieldValue("shipaddress", address);
         form.setFieldValue("shipaddressid", client.label);
       } else {
         showToast("Please Fill in the client details.", "error");
-        // setCopyInfo(false);
       }
     }
   }, [copyinfo]);
@@ -469,7 +450,8 @@ const SalesOrderForm = () => {
   return (
     <div
       style={{
-        height: "95%",
+        height: "calc(100vh - 160px)",
+        padding:10
       }}
     >
       <Modal
@@ -504,7 +486,6 @@ const SalesOrderForm = () => {
           >
             <Tabs
               style={{
-                padding: "0 10px",
                 height: "100%",
               }}
               activeKey={activeTab}
@@ -514,10 +495,7 @@ const SalesOrderForm = () => {
                 <div
                   style={{
                     height: "100%",
-                    overflowY: "scroll",
-                    overflowX: "hidden",
-                    padding: "0vh 20px 10px",
-                    paddingBottom: 50,
+                    overflow:"hidden"
                   }}
                 >
                   {pageLoading && <Loading />}

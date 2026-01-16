@@ -306,7 +306,7 @@ export default function ItemLocationLog() {
   ];
 
   return (
-    <Row gutter={6} style={{ padding: "0px 5px", height: "100%" }}>
+    <Row gutter={6} style={{ padding: "10px", height: "100%" }}>
       <Col span={4} style={{ height: "100%", overflowY: "auto" }}>
         <Row gutter={[0, 6]}>
           <Col span={24}>
@@ -427,7 +427,7 @@ export default function ItemLocationLog() {
                 ))}
               </Collapse>
             </Card>
-            <Card title="Similar Components" size="small">
+            <Card title="Similar Components" size="small" style={{ marginTop: 6 }}>
               <Collapse loading={loading}>
                 {altDetails.map((row) => (
                   <Collapse.Panel

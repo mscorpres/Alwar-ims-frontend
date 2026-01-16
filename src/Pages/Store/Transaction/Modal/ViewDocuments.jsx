@@ -94,8 +94,8 @@ function ViewDocuments() {
   ];
 
   return (
-    <div style={{ height: "95%" }}>
-      <Row style={{ padding: "2px 10px" }} gutter={[10]}>
+    <div style={{ height: "100%", padding:10 }}>
+      <Row gutter={[10]}>
         {/* <Col 
           style={{ overflowY: "auto", height: "100%", paddingBottom: 50 }}
           span={24}
@@ -115,7 +115,7 @@ function ViewDocuments() {
         ></MyButton>
         {/* </Col> */}
       </Row>
-      <div style={{ height: "calc(100% - 20px)", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 40px)", marginTop: 10 }}>
         <MyDataTable columns={columns} data={rows} loading={loading} />
       </div>
     </div>

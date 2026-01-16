@@ -646,15 +646,15 @@ const links = [
   [
     {
       routeName: "MIN Register",
-      routePath: "/transaction/transaction-in",
+      routePath: "/reports/transaction-in",
     },
     {
       routeName: "RM Issue Register",
-      routePath: "/transaction/transaction-out",
+      routePath: "/reports/transaction-out",
     },
     {
       routeName: "View Documents",
-      routePath: "/document/upload-document",
+      routePath: "/reports/upload-document/view",
     },
   ],
   // reports r1-r14 links
@@ -856,32 +856,32 @@ const links = [
   [
     {
       routeName: "Q1",
-      routePath: "/item-all-logs",
+      routePath: "/query/item-all-logs",
       placeholder: "Item Query (All)",
     },
     {
       routeName: "Q2",
-      routePath: "/item-location-logs",
+      routePath: "/query/item-location-logs",
       placeholder: "Item Query (Loc Wise)",
     },
     {
       routeName: "Q3",
-      routePath: "/query/q3/sku-query",
+      routePath: "/query/sku-query",
       placeholder: "SKU Query",
     },
     {
       routeName: "Q4",
-      routePath: "/query/q4-query",
+      routePath: "/query/ledger",
       placeholder: "Ledger's Query",
     },
     {
       routeName: "Q5",
-      routePath: "/query/q5-query",
+      routePath: "/query/component-wise-stock",
       placeholder: "Component wise stock",
     },
     {
       routeName: "Q6",
-      routePath: "/query/q6-query",
+      routePath: "/query/closing-stock",
       placeholder: "Closing stock",
     },
   ],
@@ -1107,19 +1107,19 @@ const links = [
   [
     {
       routeName: "Create Sales Order",
-      routePath: "/sales/order/create",
+      routePath: "/sales-order/create",
     },
     {
-      routeName: "Sales Order Register",
-      routePath: "/sales/order/register",
+      routeName: "Register",
+      routePath: "/sales-order/register",
     },
     {
       routeName: "Shipment",
-      routePath: "/sales/order/shipments",
+      routePath: "/sales-order/shipments",
     },
     {
       routeName: "Challan",
-      routePath: "/sales/order/challan",
+      routePath: "/sales-order/challan",
     },
   ],
   // mes links

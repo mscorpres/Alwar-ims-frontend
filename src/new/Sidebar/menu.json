@@ -1065,32 +1065,33 @@
             "icon": "TbReportAnalytics",
             "isHeading": true,
             "children": [
+               {
+                "key": "C52",
+                "label": "Create order",
+                "icon": "AddIcon",
+                "path": "/sales-order/create",
+                "isShown": true
+              },
               {
                 "key": "E51",
                 "label": "Register",
                 "icon": "ListIcon",
-                "path": "/sales/order/register",
+                "path": "/sales-order/register",
                 "isShown": true
               },
-              {
-                "key": "C52",
-                "label": "Create order",
-                "icon": "AddIcon",
-                "path": "/sales/order/create",
-                "isShown": true
-              },
+             
               {
                 "key": "C53",
                 "label": "Challan",
                 "icon": "ReceiptIcon",
-                "path": "/sales/order/challan",
+                "path": "/sales-order/challan",
                 "isShown": true
               },
               {
                 "key": "C54",
                 "label": "Shipment",
                 "icon": "LocalShippingIcon",
-                "path": "/sales/order/shipments",
+                "path": "/sales-order/shipments",
                 "isShown": true
               }
             ]
@@ -1130,7 +1131,7 @@
                 "key": "B411",
                 "label": "MIN Register",
                 "icon": "ListIcon",
-                "path": "/transaction/transaction-in",
+                "path": "/reports/transaction-in",
                 "isShown": true
               },
               {
@@ -1144,7 +1145,7 @@
                 "key": "B412",
                 "label": "RM Issue Register",
                 "icon": "OutputIcon",
-                "path": "/transaction/transaction-out",
+                "path": "/reports/transaction-out",
                 "isShown": true
               },
               {
@@ -1166,42 +1167,42 @@
                 "key": "C51",
                 "label": "Q1 - Q6",
                 "icon": "HelpIcon",
-                "path": "/item-all-logs",
+                "path": "/query/item-all-logs",
                 "isShown": true
               },
               {
                 "key": "C511",
                 "label": "Q2",
                 "icon": "HelpIcon",
-                "path": "/item-location-logs",
+                "path": "/query/item-location-logs",
                 "isShown": false
               },
               {
                 "key": "C512",
                 "label": "Q3",
                 "icon": "HelpIcon",
-                "path": "/query/q3/sku-query",
+                "path": "/query/sku-query",
                 "isShown": false
               },
               {
                 "key": "C513",
                 "label": "Q4",
                 "icon": "HelpIcon",
-                "path": "/query/q4-query",
+                "path": "/query/ledger",
                 "isShown": false
               },
               {
                 "key": "C514",
                 "label": "Q5",
                 "icon": "HelpIcon",
-                "path": "/query/q5-query",
+                "path": "/query/component-wise-stock",
                 "isShown": false
               },
               {
                 "key": "C515",
                 "label": "Q6",
                 "icon": "HelpIcon",
-                "path": "/query/q6-query",
+                "path": "/query/closing-stock",
                 "isShown": false
               }
             ]

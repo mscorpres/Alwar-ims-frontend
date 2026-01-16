@@ -134,7 +134,7 @@ const TransactionIn = () => {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "calc(100vh - 150px)", padding: "5px", paddingTop: 0 }}>
+    <div style={{ height: "calc(100vh - 140px)", padding: "10px" }}>
       <Row justify="space-between">
         <Space>
           <div style={{ width: 150 }}>
@@ -179,13 +179,13 @@ const TransactionIn = () => {
           />
           <CommonIcons
             tooltip="Download Brief Report"
-            type="secondary"
+       
             onClick={handleSimmpleDownloadingCSV}
             action="downloadButton"
           />
         </Space>
       </Row>
-      <div style={{ height: "calc(100% - 10px)", paddingTop: 5 }}>
+      <div style={{ height: "calc(100% - 20px)", marginTop: 10 }}>
         <MyDataTable
           loading={loading === "fetch" || loading1("download")}
           rows={rows}

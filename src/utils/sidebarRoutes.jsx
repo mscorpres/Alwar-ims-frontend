@@ -489,19 +489,19 @@ export const items = (user) => [
       ),
     ]),
     getItem("Sales Order", "C5", <TbReportAnalytics />, [
-      getItem(<Link to="/sales/order/register">Register</Link>, "E51"),
+      getItem(<Link to="/sales-order/register">Register</Link>, "E51"),
       getItem(
-        <Link to="/sales/order/create">Create order</Link>,
+        <Link to="/sales-order/create">Create order</Link>,
         "C52"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/sales/order/challan">Challan</Link>,
+        <Link to="/sales-order/challan">Challan</Link>,
         "C53"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/sales/order/shipments">Shipment</Link>,
+        <Link to="/sales-order/shipments">Shipment</Link>,
         "C54"
         // <AiOutlineMinus />
       ),
@@ -509,14 +509,14 @@ export const items = (user) => [
     getItem("Reports", "B4", <TbReportAnalytics />, [
       getItem("Inventory Reports", "B41", <MdDashboard />, [
         getItem(
-          <Link to="/transaction/transaction-in">MIN Register</Link>,
+          <Link to="/reports/transaction-in">MIN Register</Link>,
           "B411"
           // <AiOutlineMinus />
         ),
 
         getItem(<Link to="/weeklyAudit">Weekly Audit</Link>, "B414"),
         getItem(
-          <Link to="/transaction/transaction-out">RM Issue Register</Link>,
+          <Link to="/reports/transaction-out">RM Issue Register</Link>,
           "B412"
           // <AiOutlineMinus />
         ),
@@ -545,7 +545,7 @@ export const items = (user) => [
     ]),
     getItem("Query", "B5", <MdQueryStats />, [
       getItem(
-        <Link to="/item-all-logs">Q1 - Q6</Link>,
+        <Link to="/query/item-all-logs">Q1 - Q6</Link>,
         "C51"
         // <AiOutlineMinus />
       ),
@@ -626,7 +626,7 @@ export const items = (user) => [
     // ]),
     getItem("Query", "C3", <MdQueryStats />, [
       getItem(
-        <Link to="/item-all-logs">Q1 - Q6</Link>,
+        <Link to="/query/item-all-logs">Q1 - Q6</Link>,
         "C31"
         // <AiOutlineMinus />
       ),
@@ -640,11 +640,11 @@ export const items = (user) => [
     getItem("Reports", "C4", <TbReportAnalytics />, [
       getItem("Inventory Reports", "C41", <MdDashboard />, [
         getItem(
-          <Link to="/transaction/transaction-in">MIN Register</Link>,
+          <Link to="/reports/transaction-in">MIN Register</Link>,
           "C411"
           // <AiOutlineMinus />
         ),
-        getItem(<Link to="/transaction/transaction-out">RM Issue Register</Link>, "C412"),
+        getItem(<Link to="/reports/transaction-out">RM Issue Register</Link>, "C412"),
         getItem(<Link to="/weeklyAudit">Weekly Audit</Link>, "C414"),
 
         getItem(

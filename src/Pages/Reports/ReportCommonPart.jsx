@@ -1,16 +1,16 @@
 const ReportCommonPart = [
   {
     routeName: "Q1",
-    routePath: "/item-all-logs",
+    routePath: "/query/item-all-logs",
     placeholder: "Item Query (All)",
   },
   {
     routeName: "Q2",
-    routePath: "/item-location-logs",
+    routePath: "/query/item-location-logs",
     placeholder: "Item Query (Loc Wise)",
   },
-  { routeName: "Q3", routePath: "/query/q3/sku-query", placeholder: "SKU Query" },
-  { routeName: "Q4", routePath: "/query/q4-query", placeholder: "Ledger's Query" },
+  { routeName: "Q3", routePath: "/query/sku-query", placeholder: "SKU Query" },
+  { routeName: "Q4", routePath: "/query/ledger", placeholder: "Ledger's Query" },
 ];
 
 export default ReportCommonPart;

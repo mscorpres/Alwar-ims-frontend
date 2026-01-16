@@ -373,15 +373,15 @@ const Routes = [
   //   main: () => <MaterialTransaction />,
   // },
   {
-    path: "/document/upload-document",
+    path: "/reports/upload-document/view",
     main: () => <ViewDocuments />,
   },
   {
-    path: "/transaction/transaction-in",
+    path: "/reports/transaction-in",
     main: () => <TransactionIn />,
   },
   {
-    path: "/transaction/transaction-out",
+    path: "/reports/transaction-out",
     main: () => <TransactionOut />,
   },
   {
@@ -479,21 +479,21 @@ const Routes = [
     main: () => <ManageGatePass />,
   },
   {
-    path: "/query/q3/sku-query",
+    path: "/query/sku-query",
     exact: true,
     main: () => <SkuQuery />,
   },
   {
-    path: "/query/q4-query",
+    path: "/query/ledger",
     exact: true,
     main: () => <Q4 />,
   },
   {
-    path: "/query/q5-query",
+    path: "/query/component-wise-stock",
     main: () => <QueryQ5 />,
   },
   {
-    path: "/query/q6-query",
+    path: "/query/closing-stock",
     main: () => <Index />,
   },
   // production MIS
@@ -610,11 +610,11 @@ const Routes = [
   },
   // Reports
   {
-    path: "/item-all-logs",
+    path: "/query/item-all-logs",
     main: () => <ItemAllLogs />,
   },
   {
-    path: "/item-location-logs",
+    path: "/query/item-location-logs",
     main: () => <ItemLocationLog />,
   },
   {
@@ -1362,7 +1362,7 @@ const Routes = [
   },
   // CreateSalesOrder
   {
-    path: "/sales/order/create",
+    path: "/sales-order/create",
     main: () => <CreateSalesOrder />,
   },
   {
@@ -1371,18 +1371,18 @@ const Routes = [
   },
 
   {
-    path: "/sales/order/register",
+    path: "/sales-order/register",
     main: () => <SalesORderRegister />,
   },
 
   //
   {
-    path: "/sales/order/shipments",
+    path: "/sales-order/shipments",
     main: () => <ShipmentsList />,
   },
 
   {
-    path: "/sales/order/challan",
+    path: "/sales-order/challan",
     main: () => <Challan />,
   },
   //gst reco

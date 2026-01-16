@@ -79,8 +79,8 @@ const Q3 = () => {
     }
   };
   return (
-    <div style={{ height: "calc(100vh - 120px)", overflow: "hidden" }}>
-      <Row justify="space-between" style={{ padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "calc(100vh - 160px)", padding:10 }}>
+      <Row justify="space-between" s>
         <Col>
           <Space>
             <div style={{ width: 250 }}>
@@ -112,10 +112,10 @@ const Q3 = () => {
         />
       </Row>
       <Row
-        style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}
+        style={{ height: "100%", marginTop: 10, }}
         gutter={6}
       >
-        <Col span={4}>
+        <Col span={6}>
           <Row>
             <Col span={24}>
               <Card size="small" title="Stock Details">
@@ -182,7 +182,7 @@ const Q3 = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={20}>
+        <Col span={18}>
           <MyDataTable
             loading={loading === "fetch"}
             columns={columns}
