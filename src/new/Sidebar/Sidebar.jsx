@@ -5,8 +5,6 @@ import { loadMenuConfig } from "./menuLoader";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 
-
-
 const Sidebar = ({
   showSideBar,
   setShowSideBar,
@@ -70,13 +68,11 @@ const Sidebar = ({
 
   useEffect(() => {
     const activeMenuItem = findActiveMenuItem(sidebar1Items, location.pathname);
+
     if (activeMenuItem) {
       if (activeMenuItem.parentKey) {
         setActiveKey(activeMenuItem.parentKey);
 
-        if (!showSideBar) {
-          setShowSideBar(true);
-        }
         setIsSecondSidebarOpen(true);
         setIsSecondSidebarCollapsed(true);
 
@@ -125,7 +121,7 @@ const Sidebar = ({
       navigate(path);
 
       setShowSideBar(false);
-      
+
       // Collapse second sidebar when item is clicked
       setIsSecondSidebarCollapsed(true);
 
@@ -141,13 +137,10 @@ const Sidebar = ({
     }
   };
 
-
-
   const hoveredItem = useMemo(() => {
     return sidebar1Items.find((item) => item.key === activeKey);
   }, [activeKey, sidebar1Items]);
 
-  
   const sidebar2Items = useMemo(() => {
     if (useJsonConfig) {
       return hoveredItem?.children || [];
@@ -155,26 +148,24 @@ const Sidebar = ({
     return items1 || [];
   }, [useJsonConfig, hoveredItem, items1]);
 
-
   const filterItemsByIsShown = (items) => {
     return items
       .map((item) => {
-     
         if (item.isShown === false) {
           return null;
         }
-        
+
         const filteredItem = { ...item };
 
         if (item.children && item.children.length > 0) {
           const filteredChildren = filterItemsByIsShown(item.children);
-         
+
           if (filteredChildren.length === 0 && item.isShown !== true) {
             return null;
           }
           filteredItem.children = filteredChildren;
         }
-        
+
         return filteredItem;
       })
       .filter((item) => item !== null);
@@ -369,12 +360,9 @@ const Sidebar = ({
     setShowSideBar(!showSideBar);
   };
 
-
   const toggleSecondSidebarCollapse = () => {
     setIsSecondSidebarCollapsed(!isSecondSidebarCollapsed);
   };
-
- 
 
   return (
     <>
@@ -439,10 +427,12 @@ const Sidebar = ({
               overflow: "hidden",
             }}
           >
-            
-      
-             <img
-              src={showSideBar ?  "/assets/images/ms.png" : "/assets/images/mscorpres_auto_logo.png"}
+            <img
+              src={
+                showSideBar
+                  ? "/assets/images/ms.png"
+                  : "/assets/images/mscorpres_auto_logo.png"
+              }
               alt="IMS Logo"
               style={{
                 width: showSideBar ? 220 : 32,
@@ -459,10 +449,15 @@ const Sidebar = ({
           <div style={{ padding: "8px 0" }}>{renderList(sidebar1Items)}</div>
 
           {/* Bottom Section - Show sidebar2 items from config or items1 */}
-          {(useJsonConfig ? sidebar2ItemsFromConfig.length > 0 : sidebar2Items.length > 0) && (
-            <div style={{ position: "absolute", bottom: 60, left: 0, right: 0 }}>
-            
-              {renderList(useJsonConfig ? sidebar2ItemsFromConfig : sidebar2Items)}
+          {(useJsonConfig
+            ? sidebar2ItemsFromConfig.length > 0
+            : sidebar2Items.length > 0) && (
+            <div
+              style={{ position: "absolute", bottom: 60, left: 0, right: 0 }}
+            >
+              {renderList(
+                useJsonConfig ? sidebar2ItemsFromConfig : sidebar2Items
+              )}
             </div>
           )}
 
@@ -561,7 +556,6 @@ const Sidebar = ({
                   : hoveredItem?.label?.props?.children || ""}
               </span>
               <div style={{ display: "flex", gap: "8px" }}>
-
                 <button
                   onClick={toggleSecondSidebarCollapse}
                   style={{
@@ -621,15 +615,12 @@ const Sidebar = ({
                   {renderList(hoveredItem.children, true, true)}
                 </div>
               ) : (
-                   <div style={{ padding: "8px 0" }}>
+                <div style={{ padding: "8px 0" }}>
                   {renderList(hoveredItem.children, false, true)}
                 </div>
               )}
-
-         
             </div>
 
-       
             <button
               onClick={toggleSecondSidebarCollapse}
               style={{
