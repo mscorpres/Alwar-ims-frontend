@@ -346,7 +346,7 @@ export default function ReqWithoutBom() {
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 30,
+      width: 80,
       type: "rowChange",
       field: "add",
       renderCell: ({ row }) =>
