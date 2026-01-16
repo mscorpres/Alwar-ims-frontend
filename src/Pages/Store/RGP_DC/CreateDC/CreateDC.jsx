@@ -61,8 +61,9 @@ export default function CreateDC() {
 
 
   const inputHandler = async (name, value) => {
+   
     let obj = newGatePass;
-    if (name == "vendorName") {
+    if (name === "vendorName") {
       const branches = await getVendorBracnch(value.value);
       const { address, gstin } = await getVendorAddress({
         vendorCode: value.value,
@@ -106,6 +107,7 @@ export default function CreateDC() {
   };
   //getting vendor branches
   const getVendorBracnch = async (vendorCode) => {
+    
     setPageLoading(true);
     const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
@@ -116,6 +118,7 @@ export default function CreateDC() {
     const arr = validatedData.map((d) => {
       return { value: d.id, text: d.text };
     });
+
     setVendorBranches(arr);
     return arr;
   };
