@@ -134,7 +134,7 @@ export default function Products() {
   };
 
   return (
-    <Row gutter={6} style={{ padding: 5, height: "calc(100vh - 120px)" }} >
+    <Row gutter={6} style={{ padding: 10, height: "calc(100vh - 120px)" }} >
       <ConfirmModal
         show={showConfirm}
         hide={() => setShowConfirm(false)}

@@ -22,7 +22,6 @@ import Loading from "../../../Components/Loading";
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
-import MyButton from "../../../Components/MyButton";
 import MyDataTable from "../../../Components/MyDataTable.jsx";
 export default function ReqWithoutBom() {
   const { showToast } = useToast();
@@ -433,7 +432,7 @@ export default function ReqWithoutBom() {
     }
   }, [loading]);
   return (
-    <Row gutter={6} style={{ height: "90%", padding: "0px 5px" }}>
+    <Row gutter={12} style={{ height: "100%", padding: "10px" }}>
       {contextHolder}
       {headerLocationcontextHolder}
       {loading === "fetching" && <Loading />}
@@ -485,7 +484,7 @@ export default function ReqWithoutBom() {
           </Row>
         </Card>
       </Col>
-      <Col span={18} style={{ height: "95%" }}>
+      <Col span={18} >
         <MyDataTable data={rows} columns={columns} loading={loading === "component"} />
       </Col>
     </Row>

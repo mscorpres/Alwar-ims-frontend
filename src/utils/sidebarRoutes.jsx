@@ -566,24 +566,24 @@ export const items = (user) => [
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/req-with-out-bom">Req Without BOM</Link>,
+          <Link to="/material-requisition/with-out-bom">Req Without BOM</Link>,
           "C112"
           // <AiOutlineMinus />
         ),
       ]),
       getItem("Production and Plan (s)", "C12", <MdDashboard />, [
         getItem(
-          <Link to="/create-ppr">Create PPR</Link>,
+          <Link to="/production-and-plan/create">Create PPR</Link>,
           "C121"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/pending-ppr">Pending PPR</Link>,
+          <Link to="/production-and-plan/pending">Pending PPR</Link>,
           "C122"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/completed-ppr">Completed PPR</Link>,
+          <Link to="/production-and-plan/completed">Completed PPR</Link>,
           "C123"
           // <AiOutlineMinus />
         ),
@@ -591,12 +591,12 @@ export const items = (user) => [
 
       getItem("Location Movement", "C14", <MdDashboard />, [
         getItem(
-          <Link to="/sf-to-sf">SF To SF</Link>,
+          <Link to="/location-movement/sf-to-sf">SF To SF</Link>,
           "C141"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/sf-to-rej">SF To REJ</Link>,
+          <Link to="/location-movement/sf-to-rej">SF To REJ</Link>,
           "C142"
           // <AiOutlineMinus />
         ),
@@ -604,22 +604,22 @@ export const items = (user) => [
     ]),
     // getItem("QCA", "C2", <MdDashboard />, [
     //   getItem(
-    //     <Link to="/sample-qc">Create Sample</Link>,
+    //     <Link to="/qca/sample">Create Sample</Link>,
     //     "C131"
     //     // <AiOutlineMinus />
     //   ),
     //   getItem(
-    //     <Link to="/pending-qc">Pending Sample</Link>,
+    //     <Link to="/qca/pending">Pending Sample</Link>,
     //     "C132"
     //     // <AiOutlineMinus />
     //   ),
     //   getItem(
-    //     <Link to="/completed-qc">Completed Sample</Link>,
+    //     <Link to="/qca/completed">Completed Sample</Link>,
     //     "C133"
     //     // <AiOutlineMinus />
     //   ),
     //   getItem(
-    //     <Link to="/report-qc">QC Report</Link>,
+    //     <Link to="/qca/report">QC Report</Link>,
     //     "C134"
     //     // <AiOutlineMinus />
     //   ),
@@ -656,7 +656,7 @@ export const items = (user) => [
       ]),
     ]),
     getItem(
-      <Link to="/production/ppc">Production MIS</Link>,
+      <Link to="/production-ims">Production MIS</Link>,
       "D6",
       <MdAccountBox />
     ),
@@ -696,7 +696,7 @@ export const items = (user) => [
     ]),
     getItem("QCA", "Z2", <CheckCircleOutlined />, [
       getItem(<Link to="/print-qc-label">Print QCA Label</Link>, "Z21"),
-      getItem(<Link to="/qc-check">QC Check</Link>, "Z22"),
+      getItem(<Link to="/qc/check">QC Check</Link>, "Z22"),
       getItem(<Link to="/qca/report">QC Report</Link>, "Z23"),
     ]),
   ]),
@@ -709,13 +709,13 @@ export const items = (user) => [
   //   ),
   //   // getItem('QCA', 'G2',<CheckCircleOutlined />,[
   //   //   getItem(<Link to='/print-qc-label'>Print QCA Label</Link>,'G21'),
-  //   //   getItem(<Link to='/qc-check'>QC Check</Link>,'G22'),
-  //   //   getItem(<Link to='/report-qc'>QC Report</Link>,'G23'),
+  //   //   getItem(<Link to='/qc/check'>QC Check</Link>,'G22'),
+  //   //   getItem(<Link to='/qca/report'>QC Report</Link>,'G23'),
   //   // ]),
   // ]),
   // getItem("CPM", "E", <CalculatorFilled />, [
-  //   getItem(<Link to="/CPM/CPM-analysis">CPM Analysis</Link>, "E1"),
-  //   getItem(<Link to="/CPM/report">CPM Finance</Link>, "reports/cpm"),
+  //   getItem(<Link to="/cpm/analysis">CPM Analysis</Link>, "E1"),
+  //   getItem(<Link to="/cpm/reports">CPM Finance</Link>, "reports/cpm"),
   // ]),
   // getItem("Analysis", "F", <SiPaytm />, [
   //   // getItem(

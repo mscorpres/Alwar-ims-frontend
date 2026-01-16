@@ -215,10 +215,9 @@ function MesQcaReport() {
   };
   return (
     <>
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "100%", padding:10 }}>
         <Row
           justify="space-between"
-          style={{ padding: "10px 10px", marginBottom: -15 }}
         >
           {loading === "fetch" && <Loading />}
           <Form
@@ -290,7 +289,7 @@ function MesQcaReport() {
             />
           </Space>
         </Row>
-        <div style={{ height: "85%", padding: "15px 10px" }}>
+        <div style={{ height: "calc(100% - 70px)", marginTop: "10px" }}>
           <MyDataTable
             columns={[actionColumn, ...columns]}
             data={rows}

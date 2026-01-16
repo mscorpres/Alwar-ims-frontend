@@ -414,10 +414,10 @@ const links = [
     },
   ],
   //QA link
-  // [
-  //   { routeName: "Create Process", routePath: "/master/qa-process" },
-  //   { routeName: "Create Process MAP", routePath: "/master/qa-process-map" },
-  // ],
+  [
+    { routeName: "Create Process", routePath: "/master/qa-process" },
+    { routeName: "MAP", routePath: "/master/qa-process-map" },
+  ],
   // edit and reverse MIN links
   // [
   //   { routeName: "Edit MIN", routePath: "/rm/update" },
@@ -889,12 +889,12 @@ const links = [
   [
     {
       routeName: "CPM",
-      routePath: "/CPM/CPM-analysis",
+      routePath: "/cpm/analysis",
       placeholder: "Client Project Management",
     },
     {
       routeName: "CPM Finance",
-      routePath: "/CPM/report",
+      routePath: "/cpm/reports",
     },
   ],
   // Paytm qc
@@ -919,59 +919,59 @@ const links = [
   ],
   // PPR links
   [
-    { routeName: "Create PPR", routePath: "/create-ppr" },
-    { routeName: "Pending PPR", routePath: "/pending-ppr" },
+    { routeName: "Create PPR", routePath: "/production-and-plan/create" },
+    { routeName: "Pending", routePath: "/production-and-plan/pending" },
     {
-      routeName: "Completed PPR",
-      routePath: "/completed-ppr",
+      routeName: "Completed",
+      routePath: "/production-and-plan/completed",
     },
   ],
   // Material Requisition links
   [
     {
       routeName: "Material Requisition with BOM",
-      routePath: "/req-with-bom",
+      routePath: "/material-requisition/with-bom",
     },
     {
       routeName: "Material Requisition without BOM",
-      routePath: "/req-with-out-bom",
+      routePath: "/material-requisition/with-out-bom",
     },
   ],
   // SF To REJ links
   [
-    { routeName: "SF to REJ", routePath: "/sf-to-rej" },
+    { routeName: "SF to REJ", routePath: "/location-movement/sf-to-rej" },
     {
       routeName: "View Transactions",
-      routePath: "/transaction-sf-to-rej",
+      routePath: "/location-movement/sf-to-rej/view",
     },
   ],
   // SF To SF links
   [
-    { routeName: "SF to SF", routePath: "/sf-to-sf" },
+    { routeName: "SF to SF", routePath: "/location-movement/sf-to-sf" },
     {
       routeName: "View Transactions",
-      routePath: "/transaction-sf-to-sf",
+      routePath: "/location-movement/sf-to-sf/view",
     },
   ],
 
   // Create QC ALl
   [
     { routeName: "Print QCA Label", routePath: "/print-qc-label" },
-    { routeName: "QC Check", routePath: "/qc-check" },
-    { routeName: "QC Report", routePath: "/qca/report" },
+    { routeName: "Check", routePath: "/qc/check" },
+    { routeName: "Report", routePath: "/qca/report's" },
   ],
   // Create QC ALl
   [
-    { routeName: "Create Sample", routePath: "/sample-qc" },
+    { routeName: "Create Sample", routePath: "/qca/sample" },
     {
       routeName: "Pending Sample",
-      routePath: "/pending-qc",
+      routePath: "/qca/pending",
     },
     {
       routeName: "Completed Sample",
-      routePath: "/completed-qc",
+      routePath: "/qca/completed",
     },
-    { routeName: "QC Report", routePath: "/report-qc" },
+    { routeName: "QC Report", routePath: "/qca/report" },
   ],
   [
     {
@@ -1095,11 +1095,11 @@ const links = [
       routePath: "/invoice/create",
     },
     {
-      routeName: "Draft Invoices",
+      routeName: "Draft",
       routePath: "/draft-invoices",
     },
     {
-      routeName: "Final Invoices",
+      routeName: "Final",
       routePath: "/final-invoices",
     },
   ],
@@ -1188,11 +1188,11 @@ const links = [
       routePath: routeConstants.researchAndDevelopment.bom.create,
     },
     {
-      routeName: "BOM List",
+      routeName: "List",
       routePath: routeConstants.researchAndDevelopment.bom.list,
     },
     {
-      routeName: "BOM Drafts",
+      routeName: "Drafts List",
       routePath: routeConstants.researchAndDevelopment.bom.drafts,
     },
   ],
@@ -1225,7 +1225,7 @@ const links = [
   [
     {
       routeName: "Production MIS",
-      routePath: "/production/ppc",
+      routePath: "/production-ims",
     },
   ],
   // Version & Changelog

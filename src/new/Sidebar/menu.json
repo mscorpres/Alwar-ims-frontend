@@ -1225,7 +1225,7 @@
                 "label": "Material Requisition",
                 "icon": "RequestQuoteIcon",
 
-                "path": "/req-with-bom",
+                "path": "/material-requisition/with-bom",
                 "isShown": true
               },
               {
@@ -1233,7 +1233,7 @@
                 "label": "Material Requisition Without Bom",
                 "icon": "RequestQuoteIcon",
 
-                "path": "/req-with-out-bom",
+                "path": "/material-requisition/with-out-bom",
                 "isShown": false
               },
               {
@@ -1241,7 +1241,7 @@
                 "label": "Production and Plan (s)",
                 "icon": "ScheduleIcon",
 
-                "path": "/create-ppr",
+                "path": "/production-and-plan/create",
                 "isShown": true
               },
               {
@@ -1249,7 +1249,7 @@
                 "label": "Pending PPR",
                 "icon": "ScheduleIcon",
 
-                "path": "/pending-ppr",
+                "path": "/production-and-plan/pending",
                 "isShown": false
               },
               {
@@ -1257,14 +1257,14 @@
                 "label": "Complete PPR",
                 "icon": "ScheduleIcon",
 
-                "path": "/completed-ppr",
+                "path": "/production-and-plan/completed",
                 "isShown": false
               },
               {
                 "key": "D1",
                 "label": "Production MIS",
                 "icon": "MdAccountBox",
-                "path": "/production/ppc",
+                "path": "/production-ims",
                 "isShown": true
               },
               {
@@ -1286,28 +1286,28 @@
                 "key": "C141",
                 "label": "SF To SF",
                 "icon": "SwapHorizIcon",
-                "path": "/sf-to-sf",
+                "path": "/location-movement/sf-to-sf",
                 "isShown": true
               },
               {
                 "key": "C1411",
                 "label": "View Transaction",
                 "icon": "SwapHorizIcon",
-                "path": "/transaction-sf-to-sf",
+                "path": "/location-movement/sf-to-sf/view",
                 "isShown": false
               },
               {
                 "key": "C142",
                 "label": "SF To REJ",
                 "icon": "BlockIcon",
-                "path": "/sf-to-rej",
+                "path": "/location-movement/sf-to-rej",
                 "isShown": true
               },
               {
                 "key": "C1421",
                 "label": "View Transaction",
                 "icon": "BlockIcon",
-                "path": "/transaction-sf-to-rej",
+                "path": "/location-movement/sf-to-rej/view",
                 "isShown": false
               }
             ]
@@ -1322,28 +1322,28 @@
                 "key": "C131",
                 "label": "Create Sample",
                 "icon": "AddIcon",
-                "path": "/sample-qc",
+                "path": "/qca/sample",
                 "isShown": true
               },
               {
                 "key": "C132",
                 "label": "Pending Sample",
                 "icon": "PendingIcon",
-                "path": "/pending-qc",
+                "path": "/qca/pending",
                 "isShown": true
               },
               {
                 "key": "C133",
                 "label": "Completed Sample",
                 "icon": "CheckCircleIcon",
-                "path": "/completed-qc",
+                "path": "/qca/completed",
                 "isShown": true
               },
               {
                 "key": "C134",
                 "label": "QC Report",
                 "icon": "AssessmentIcon",
-                "path": "/report-qc",
+                "path": "/qca/report",
                 "isShown": true
               }
             ]
@@ -1394,14 +1394,14 @@
                 "key": "Z22",
                 "label": "QC Check",
                 "icon": "CheckCircleIcon",
-                "path": "/qc-check",
+                "path": "/qc/check",
                 "isShown": true
               },
               {
                 "key": "Z23",
                 "label": "QC Report",
                 "icon": "AssessmentIcon",
-                "path": "/qca/report",
+                "path": "/qca/report's",
                 "isShown": true
               }
             ]
@@ -1423,7 +1423,7 @@
                 "key": "E11",
                 "label": "CPM Analysis",
                 "icon": "AnalyticsIcon",
-                "path": "/CPM/CPM-analysis",
+                "path": "/cpm/analysis",
                 "isShown": true
               }
             ]
@@ -1438,7 +1438,7 @@
                 "key": "reports/cpm",
                 "label": "CPM Finance",
                 "icon": "AccountBalanceIcon",
-                "path": "/CPM/report",
+                "path": "/cpm/reports",
                 "isShown": true
               }
             ]
@@ -1516,21 +1516,21 @@
             "children": [
               {
                 "key": "bom/create",
-                "label": "Create BOM",
+                "label": "Create",
                 "icon": "ListIcon",
                 "path": "/research-and-development/bom/create",
                 "isShown": true
               },
               {
                 "key": "bom/list",
-                "label": "BOM List",
+                "label": "List",
                 "icon": "ListIcon",
                 "path": "/research-and-development/bom/list",
                 "isShown": true
               },
               {
                 "key": "bom/drafts",
-                "label": "Draft BOM List",
+                "label": "Draft List",
                 "icon": "ListIcon",
                 "path": "/research-and-development/bom/drafts",
                 "isShown": true

@@ -263,7 +263,7 @@ const PendingPPR = () => {
     }
   }, [wise]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding:10 }}>
       <ClosePPR
         setsCancelPPR={setsCancelPPR}
         cancelPPR={cancelPPR}
@@ -281,7 +281,6 @@ const PendingPPR = () => {
       />
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <div>
           <Space>
@@ -343,7 +342,7 @@ const PendingPPR = () => {
           />
         </Space>
       </Row>
-      <div style={{ height: "95%", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 40px)", marginTop: 10 }}>
         <MyDataTable columns={columns} data={rows} loading={searchLoading} />
       </div>
     </div>

@@ -397,10 +397,9 @@ function SalesRegister() {
     setSearchTerm("");
   }, [wise]);
   return (
-    <div style={{ height: "calc(100vh - 140px)" }}>
+    <div style={{ height: "calc(100vh - 120px)", padding:10 }}>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <Drawer
           open={open?.invoiceID}
@@ -408,9 +407,8 @@ function SalesRegister() {
           width={1800}
           onClose={() => setOpen(false)}
         >
-          <div style={{ height: "calc(100vh - 180px)", padding: "0px 5px" }}>
+          <div style={{ height: "calc(100vh - 160px)", marginTop:"10px" }}>
             <MyDataTable
-              // loading={loading === "fetch"}
               data={modalVals}
               columns={modalcol}
               loading={loading}

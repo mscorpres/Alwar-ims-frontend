@@ -243,7 +243,8 @@ const CreateInvoice = () => {
   return (
     <div
       style={{
-        height: "90%",
+        height: "100%",
+        padding: 10,
       }}
     >
       <MapModal open={showMapInvoice} close={() => setShowMapInvoice(false)} />
@@ -256,7 +257,6 @@ const CreateInvoice = () => {
       >
         <Tabs
           style={{
-            padding: "0 5px",
             height: "100%",
           }}
           activeKey={activeTab}
@@ -268,7 +268,7 @@ const CreateInvoice = () => {
             </Button>
           }
         >
-          <Tabs.TabPane tab="Billing Details" key="1" style={{ height: "100%" }}>
+          <Tabs.TabPane tab="Billing Details" key="1" style={{ height: "calc(100% - 40px)" }}>
             <HeaderDetails
               setTcsOptions={setTcsOptions}
               form={invoiceForm}
@@ -276,7 +276,7 @@ const CreateInvoice = () => {
               setLoading={setLoading}
             />
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Product Details" style={{ height: "100%" }} key="2">
+          <Tabs.TabPane tab="Product Details"style={{ height: "calc(100% - 40px)" }}key="2">
             <Products
               gstType={gstType}
               form={invoiceForm}

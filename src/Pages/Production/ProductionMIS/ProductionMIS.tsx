@@ -60,7 +60,7 @@ function ProductionMIS() {
     setAsyncOptions(response.data);
   };
 
-  const handleFetchProductOptions = async (searchInput, id: string) => {
+  const handleFetchProductOptions = async (searchInput:any, id: string) => {
     const response = await executeFun(
       () => getComponenentAndProduct(searchInput),
       "select"
@@ -97,7 +97,7 @@ function ProductionMIS() {
     <Form
       form={misForm}
       layout="vertical"
-      style={{ height: "95%", overflowY: "hidden" }}
+      style={{ height: "100%", padding:10}}
       initialValues={initialValues}
     >
       <Row

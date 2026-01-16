@@ -498,7 +498,7 @@ const Routes = [
   },
   // production MIS
   {
-    path: "/production/ppc",
+    path: "/production-ims",
     main: () => <ProductionMIS />,
   },
 
@@ -530,28 +530,28 @@ const Routes = [
     main: () => <PrintQCALabel />,
   },
   {
-    path: "/qc-check",
+    path: "/qc/check",
     exact: true,
     main: () => <QcScan />,
   },
   // QCA
   {
-    path: "/sample-qc",
+    path: "/qca/sample",
     exact: true,
     main: () => <SampleQC />,
   },
   {
-    path: "/pending-qc",
+    path: "/qca/pending",
     exact: true,
     main: () => <PendingQC />,
   },
   {
-    path: "/completed-qc",
+    path: "/qca/completed",
     exact: true,
     main: () => <CompletedQC />,
   },
   {
-    path: "/report-qc",
+    path: "/qca/report's",
     exact: true,
     main: () => <ReportQC />,
   },
@@ -577,23 +577,23 @@ const Routes = [
   },
   // sf to sf
   {
-    path: "/sf-to-sf",
+    path: "/location-movement/sf-to-sf",
     exact: true,
     main: () => <MaterialTransfer type="sftosf" title="SF to SF" />,
   },
   {
-    path: "/sf-to-rej",
+    path: "/location-movement/sf-to-rej",
     exact: true,
     main: () => <MaterialTransfer type="sftorej" title="SF to REJ" />,
   },
   {
-    path: "/transaction-sf-to-sf",
+    path: "/location-movement/sf-to-sf/view",
     exact: true,
     main: () => <MaterialTransferReport type="sftosf" />,
   },
 
   {
-    path: "/transaction-sf-to-rej",
+    path: "/location-movement/sf-to-rej/view",
     exact: true,
     main: () => <MaterialTransferReport type="sftorej" />,
   },
@@ -768,23 +768,23 @@ const Routes = [
     main: () => <R37 />,
   },
   {
-    path: "/req-with-bom",
+    path: "/material-requisition/with-bom",
     main: () => <ReqWithBom />,
   },
   {
-    path: "/req-with-out-bom",
+    path: "/material-requisition/with-out-bom",
     main: () => <ReqWithoutBom />,
   },
   {
-    path: "/create-ppr",
+    path: "/production-and-plan/create",
     main: () => <CreatePPR />,
   },
   {
-    path: "/pending-ppr",
+    path: "/production-and-plan/pending",
     main: () => <PendingPPR />,
   },
   {
-    path: "/completed-ppr",
+    path: "/production-and-plan/completed",
     main: () => <CompletedPPR />,
   },
   // Purchase Order
@@ -851,11 +851,11 @@ const Routes = [
   },
   // CPM
   {
-    path: "/CPM/CPM-analysis",
+    path: "/cpm/analysis",
     main: () => <CPMAnalysis />,
   },
   {
-    path: "/CPM/report",
+    path: "/cpm/reports",
     main: () => <CPMReport />,
   },
 

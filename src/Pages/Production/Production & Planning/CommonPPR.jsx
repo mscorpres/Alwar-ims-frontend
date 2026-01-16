@@ -32,20 +32,20 @@ const CommonPPR = () => {
             data-ace-scroll="{}"
           >
             <ul className="nav w-auto has-active-border active-on-right active-on-top">
-              <li className={`nav-item ${pathname == "/create-ppr" && "active"}`}>
-                <Link className="nav-link" to="/create-ppr">
+              <li className={`nav-item ${pathname == "/production-and-plan/create" && "active"}`}>
+                <Link className="nav-link" to="/production-and-plan/create">
                   <span>Create PPR</span>
                 </Link>
                 <b className="sub-arrow"></b>
               </li>
-              <li className={`nav-item ${pathname == "/pending-ppr" && "active"}`}>
-                <Link className="nav-link" to="/pending-ppr">
+              <li className={`nav-item ${pathname == "/production-and-plan/pending" && "active"}`}>
+                <Link className="nav-link" to="/production-and-plan/pending">
                   <span>Pending PPR</span>
                 </Link>
                 <b className="sub-arrow"></b>
               </li>
-              <li className={`nav-item ${pathname == "/completed-ppr" && "active"}`}>
-                <Link className="nav-link" to="/completed-ppr">
+              <li className={`nav-item ${pathname == "/production-and-plan/completed" && "active"}`}>
+                <Link className="nav-link" to="/production-and-plan/completed">
                   <span>Completed PPR</span>
                 </Link>
                 <b className="sub-arrow"></b>

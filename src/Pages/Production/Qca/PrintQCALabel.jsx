@@ -33,7 +33,7 @@ const PrintQCALabel = () => {
   };
 
   return (
-    <Row style={{ height: "90%" }}>
+    <Row style={{ height: "100%", padding:10 }}>
       <Col span={6}>
         <Card>
           <Form

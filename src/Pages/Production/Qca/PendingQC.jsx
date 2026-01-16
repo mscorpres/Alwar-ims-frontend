@@ -341,7 +341,7 @@ function PendingQC() {
     setSearchInput("");
   }, [wise]);
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <Row justify="space-between">
         <div>
           <Space>
@@ -412,10 +412,10 @@ function PendingQC() {
           />
         </Space>
       </Row>
-      <div style={{ height: "85%", margin: "10px" }}>
+      <div style={{ height: "calc(100% - 40px)", marginTop: "10px" }}>
         <MyDataTable columns={columns} data={rows} loading={tableLoading} />
       </div>
-    </>
+    </div>
   );
 }
 

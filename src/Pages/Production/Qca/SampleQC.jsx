@@ -19,7 +19,6 @@ function SampleQC() {
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rows, setRows] = useState([]);
@@ -253,7 +252,7 @@ function SampleQC() {
   const { Paragraph, Text } = Typography;
 
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <Modal
         title={`Confirm Samples : ${samples.length} Item${
           samples.length == 1 ? "" : "s"
@@ -274,7 +273,6 @@ function SampleQC() {
       </Modal>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <div>
           <Space>
@@ -370,11 +368,11 @@ function SampleQC() {
           </Button>
         </Space>
       </Row>
-      <div style={{ height: "85%", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 40px)", marginTop: "10px" }}>
         <MyDataTable loading={searchLoading} columns={columns} data={rows} />
      
       </div>
-    </>
+    </div>
   );
 }
 

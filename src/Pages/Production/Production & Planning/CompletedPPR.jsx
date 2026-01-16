@@ -1,5 +1,5 @@
-import { Button, Row, Space, Input } from "antd";
-import React, { useState, useEffect } from "react";
+import {  Row, Space, Input } from "antd";
+import { useState, useEffect } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -96,10 +96,9 @@ const CompletedPPR = () => {
     }
   }, [wise]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding:10 }}>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <div>
           <Space>
@@ -167,7 +166,7 @@ const CompletedPPR = () => {
           />
         </Space>
       </Row>
-      <div style={{ height: "95%", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 40px)", marginTop:10 }}>
         <MyDataTable
           // export={true}
           columns={columns}

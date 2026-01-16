@@ -151,10 +151,9 @@ function ReportQC() {
     { headerName: "Approval Date", width: 150, field: "apv_dt" },
   ];
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <div>
           <Space>
@@ -199,11 +198,11 @@ function ReportQC() {
           />
         </Space>
       </Row>
-      <div style={{ height: "85%", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 50px)", marginTop: "10px" }}>
         <MyDataTable columns={columns} data={rows} loading={searchLoading} />
       </div>
       <CommentModal show={showComments} hide={() => setShowComments(null)} />
-    </>
+    </div>
   );
 }
 
