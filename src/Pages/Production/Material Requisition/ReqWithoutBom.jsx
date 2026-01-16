@@ -361,6 +361,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Component",
+      field: "component",
       width: 200,
       renderCell: ({ row }) => (
         <MyAsyncSelect
@@ -381,6 +382,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Pick Location",
+      field: "pickLocation",
       width: 100,
       renderCell: ({ row }) => (
         <MyAsyncSelect
@@ -400,6 +402,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Order Qty",
+      field: "qty",
       width: 150,
       renderCell: ({ row }) => (
         <Input
@@ -411,6 +414,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Remarks",
+      field: "remarks",
       width: 150,
       renderCell: ({ row }) => (
         <Input
