@@ -21,12 +21,13 @@ import {
 } from "./tableColumns";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import Loading from "../../../Components/Loading";
-import { Button, Card, Col, Modal, Row, Typography } from "antd";
+import { Button, Card, Col, Form, Modal, Row, Typography } from "antd";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 export default function AddComponents({
   form,
   rowCount,
@@ -496,7 +497,7 @@ export default function AddComponents({
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 40,
+      width: 80,
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>
@@ -972,7 +973,7 @@ export default function AddComponents({
         <Col
           span={18}
         >
-          <MyDataTable columns={columns} data={rowCount} />
+          <FormTable columns={columns} data={rowCount} />
         </Col>
       </Row>
       <NavFooter
