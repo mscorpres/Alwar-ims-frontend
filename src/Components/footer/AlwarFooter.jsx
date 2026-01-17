@@ -12,7 +12,7 @@ const AlwarFooter = () => {
           © 2017 - {new Date().getFullYear()} | All rights reserved
         </Typography>
       </div>
-      <div className="flex flex-col gap-[10px] w-[300px] items-start text-left justify-end">
+      <div className="flex flex-col gap-[10px] w-[310px] items-start text-left justify-end">
         <img src="./assets/images/ms.png" alt="" className="w-[280px] h-auto" />
         <div>
           <Typography fontSize={13}  sx={{color:"#999999"}}  variant="subtitle2">
