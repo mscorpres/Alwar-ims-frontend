@@ -948,7 +948,7 @@ const App = () => {
                   style={{
                     height: (() => {
                       const headerHeight = pathname === "/login" ? 10 : 50;
-                      const bannerHeight = isBannerVisible ? 40 : 0;
+                      const bannerHeight = isBannerVisible ? 30 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || pathname === "/login"

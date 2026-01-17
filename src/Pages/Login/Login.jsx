@@ -121,10 +121,12 @@ const Login = () => {
             showlegal: payload.department === "legal" ? true : false,
             session: "25-26",
           };
+
           dispatch(setUser(obj));
           if (payload.settings) dispatch(setSettings(payload.settings));
           showToast("Login successful!");
           navigate("/");
+          window.location.reload();
         }
       } else {
         setRecaptchaValue(null);
