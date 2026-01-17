@@ -126,8 +126,6 @@ const Sidebar = ({
       navigate(path);
 
       setShowSideBar(false);
-
-      // Collapse second sidebar when item is clicked
       setIsSecondSidebarCollapsed(true);
 
       if (!isInSubMenu) {
@@ -441,11 +439,9 @@ const Sidebar = ({
               alt="IMS Logo"
               style={{
                 width: showSideBar ? 220 : 32,
-                height: "auto",
-                transition: "opacity 0.3s ease, transform 0.3s ease",
-                transform: showSideBar ? "scale(1)" : "scale(1)",
-                opacity: 1,
-                willChange: "transform",
+                height: 40,
+                objectFit: "contain",
+    aspectRatio: "5 / 1",
               }}
             />
           </div>
