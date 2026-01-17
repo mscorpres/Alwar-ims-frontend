@@ -344,7 +344,7 @@ export default function AddComponents({
               component: value,
               gsttype: "L",
               last_rate: newLastRate,
-              unit: data.data.unit,
+              unit: response.data.unit,
               hsncode: response.data.hsn,
               gstrate: response.data.gstrate,
 

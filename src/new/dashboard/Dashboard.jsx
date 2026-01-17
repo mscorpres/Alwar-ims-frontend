@@ -619,6 +619,7 @@ const getImage = (index) => {
         </Box>
 
         {renderSummaryGridThree("MIN Summary", minSummary, loading.min, "Summary of Material Inward")}
+     
       </Box>
     </ThemeProvider>
   );

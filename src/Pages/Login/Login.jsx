@@ -101,7 +101,7 @@ const Login = () => {
           setOtpTimer(600); // Reset timer to 10 minutes
           showToast("OTP sent to your registered email address", "success");
         } else {
-          // Normal login flow (no OTP)
+   
           const payload = res?.data ?? res;
           const obj = {
             email: payload.crn_email,

@@ -33,7 +33,7 @@ const ApprovedTransaction = () => {
       transaction: transactionId,
     });
     setLoading(false);
-    printFunction(data.data.buffer.data);
+    printFunction(response.data.buffer.data);
   };
 
   const columns = [
