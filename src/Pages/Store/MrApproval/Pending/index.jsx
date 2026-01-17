@@ -131,19 +131,20 @@ const PendingApproval = () => {
       const response = await imsAxios.post("/storeApproval/print_request", {
         transaction: requestId,
       });
-      const { data } = response;
-      if (data) {
-        if (data.success) {
-          const buffer = data.data.buffer.data;
+      
+      const { data,success } = response;
+     
+        if (success) {
+          const buffer = data.buffer.data;
           if (action === "print") {
             printFunction(buffer);
           } else {
             downloadFunction(buffer, requestId);
           }
         } else {
-          showToast(data.message?.msg || data.message, "error");
+          showToast(response.message?.msg ?? response.message, "error");
         }
-      }
+ 
     } catch (error) {
     } finally {
       setLoading(false);
