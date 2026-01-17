@@ -93,7 +93,6 @@ const Sidebar = ({
   useEffect(() => {
     if (showSideBar && activeKey) {
       setIsSecondSidebarOpen(true);
-      // Collapse second sidebar when module is open
       setIsSecondSidebarCollapsed(true);
     }
   }, [showSideBar, activeKey]);
@@ -110,10 +109,16 @@ const Sidebar = ({
         setIsSecondSidebarOpen(true);
         setIsSecondSidebarCollapsed(false);
       } else {
-        setActiveKey((prev) => (prev === key ? null : key));
-        const nextOpen = activeKey !== key;
-        setIsSecondSidebarOpen(nextOpen);
-        if (nextOpen) {
+        if (activeKey === key) {
+          if (isSecondSidebarOpen) {
+            setIsSecondSidebarCollapsed(!isSecondSidebarCollapsed);
+          } else {
+            setIsSecondSidebarOpen(true);
+            setIsSecondSidebarCollapsed(false);
+          }
+        } else {
+          setActiveKey(key);
+          setIsSecondSidebarOpen(true);
           setIsSecondSidebarCollapsed(false);
         }
       }

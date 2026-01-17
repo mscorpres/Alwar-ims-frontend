@@ -56,10 +56,12 @@ const App = () => {
   const sessionFromUrl = searchParams.get("session");
   const branchFromUrl = searchParams.get("branch");
   const comFromUrl = searchParams.get("company");
-  const { user, notifications, testPages } = useSelector(
+  const { user,testPages } = useSelector(
     (state) => state.login
   );
-  const notificationButtonRef = useRef(null);
+
+    const { notifications } = useSelector((state) => state.login);
+
   const {
     showNotifications,
     showMessageNotifications,
@@ -101,11 +103,7 @@ const App = () => {
     setShowBlackScreen(false);
     dispatch(logout());
   };
-  const deleteNotification = (id) => {
-    let arr = notifications;
-    arr = arr.filter((not) => not.ID != id);
-    dispatch(setNotifications(arr));
-  };
+ 
 
   const handleSelectCompanyBranch = (value) => {
     dispatch(setCompanyBranch(value));
@@ -867,14 +865,8 @@ const App = () => {
               socketConnected={isConnected}
               socketLoading={isLoading}
               onRefreshSocket={() => refreshConnection()}
-              notificationsCount={
-                notifications.filter((not) => not?.type != "message")?.length
-              }
-              onClickNotifications={() => dispatch(toggleNotifications())}
-              notificationButtonRef={notificationButtonRef}
-              messagesCount={
-                notifications.filter((not) => not?.type == "message").length
-              }
+           
+            
               onClickMessages={() => dispatch(setShowTickets(true))}
               switchModule={
                 <Tooltip title="Switch Module" placement="bottom">
@@ -904,15 +896,7 @@ const App = () => {
                 ) : null
               }
             />
-            <NotificationDropdown
-              open={showNotifications}
-              onClose={() => dispatch(setShowNotifications(false))}
-              notifications={notifications.filter(
-                (not) => not?.type != "message"
-              )}
-              deleteNotification={deleteNotification}
-              anchorRef={notificationButtonRef}
-            />
+         
           </Layout>
         )}
         {/* header ends */}
@@ -955,19 +939,7 @@ const App = () => {
             )}
             {/* sidebar ends */}
             <Layout
-              onClick={(e) => {
-                // Don't close if clicking on notification button
-
-                const target = e.target;
-
-                if (notificationButtonRef.current?.contains(target)) {
-                  return;
-                }
-
-                dispatch(setShowNotifications(false));
-
-                dispatch(setShowMessageNotifications(false));
-              }}
+            
               id="app-content-left-margin"
               style={{
                 height: "100%",

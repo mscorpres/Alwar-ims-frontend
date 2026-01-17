@@ -15,34 +15,36 @@ const NotificationDropdown = ({
   anchorRef,
 }) => {
   const [position, setPosition] = useState({ top: 0, right: 0 });
+  const [isPositioned, setIsPositioned] = useState(false);
 
   useEffect(() => {
     if (open && anchorRef?.current) {
-      const updatePosition = () => {
+      const calculatePosition = () => {
+        if (!anchorRef?.current) return;
+        
         const rect = anchorRef.current.getBoundingClientRect();
         const dropdownWidth = 420;
         const viewportWidth = window.innerWidth;
         const rightEdge = viewportWidth - rect.right;
-
-        // Calculate position
         let right = rightEdge;
-
-        // If dropdown would go off-screen, adjust it
         if (right + dropdownWidth > viewportWidth - 12) {
           right = viewportWidth - dropdownWidth - 12;
         }
-
-        // Ensure minimum margin from right edge
         right = Math.max(12, right);
-
-        // Position dropdown below the button
         setPosition({
           top: rect.bottom + 8,
           right: right,
         });
+        setIsPositioned(true);
+      };
+      requestAnimationFrame(() => {
+        calculatePosition();
+      });
+
+      const updatePosition = () => {
+        calculatePosition();
       };
 
-      updatePosition();
       window.addEventListener("resize", updatePosition);
       window.addEventListener("scroll", updatePosition, true);
 
@@ -50,6 +52,8 @@ const NotificationDropdown = ({
         window.removeEventListener("resize", updatePosition);
         window.removeEventListener("scroll", updatePosition, true);
       };
+    } else {
+      setIsPositioned(false);
     }
   }, [open, anchorRef]);
 
@@ -66,8 +70,12 @@ const NotificationDropdown = ({
     };
 
     if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
+      const timeoutId = setTimeout(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 100);
+      
       return () => {
+        clearTimeout(timeoutId);
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
@@ -98,7 +106,7 @@ const NotificationDropdown = ({
   return (
     <>
       {/* Arrow indicator - positioned relative to button */}
-      {anchorRef?.current && (
+      {anchorRef?.current && isPositioned && (
         <div
           style={{
             position: "fixed",
@@ -117,6 +125,8 @@ const NotificationDropdown = ({
             borderBottom: "8px solid #f5f5f5",
             zIndex: 10001,
             filter: "drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.1))",
+            opacity: isPositioned ? 1 : 0,
+            transition: "opacity 0.2s ease-out",
           }}
         />
       )}
@@ -137,6 +147,10 @@ const NotificationDropdown = ({
           display: "flex",
           flexDirection: "column",
           marginTop: 2,
+          opacity: isPositioned ? 1 : 0,
+          transform: isPositioned ? "translateY(0)" : "translateY(-10px)",
+          transition: "opacity 0.2s ease-out, transform 0.2s ease-out",
+          pointerEvents: isPositioned ? "auto" : "none",
         }}
       >
         <div
