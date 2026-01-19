@@ -26,7 +26,7 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
       pic_loc: allBom.locSecond,
       shiftLocation: allBom.locValue,
     });
-    setPageLoading(false);
+  
     if (response.success) {
       let dataArray = [...response?.data?.filter((a) => a?.type == "P")];
       dataArray = dataArray.map((row) => {
@@ -68,8 +68,10 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
       let arr = tableData;
       arr = [...dataArray, ...dataArray1, ...dataArray2, ...dataArray3];
       setTableData(arr);
+        setPageLoading(false);
     }
     else{
+        setPageLoading(false);
       showToast(response.message, "error");
     }
   };
