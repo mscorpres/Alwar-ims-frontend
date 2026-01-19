@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Form, Input, Row, Space } from "antd";
-//@ts-ignore
 import MyDataTable from "../../Components/MyDataTable";
-//@ts-ignore
-// import { v4 } from "uuid";
-// import { imsAxios } from "../../axiosInterceptor";
 import MyButton from "../../Components/MyButton";
 //@ts-ignore
 import useApi from "../../hooks/useApi.ts";
@@ -109,8 +105,8 @@ const Uom = () => {
   }, []);
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row gutter={6} style={{ padding: 10 }} >
+    <div style={{ height: "100%", padding: 10 }}>
+      <Row gutter={12} >
         <Col span={8}>
           <Card size="small" title="Create UOM">
             <Form form={form} layout="vertical">

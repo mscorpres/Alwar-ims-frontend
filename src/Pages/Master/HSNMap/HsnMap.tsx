@@ -60,7 +60,7 @@ const HsnMap = () => {
       layout="vertical"
       initialValues={initialValues}
       form={form}
-      style={{ height: "100%",margin: "0px 10px" }}
+      style={{ height: "100%", padding: "10px" }}
     >
       <Row gutter={16} style={{ height: "100%" }}>
         <Col sm={8} xxl={4}>

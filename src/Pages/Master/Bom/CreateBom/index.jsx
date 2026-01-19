@@ -43,8 +43,6 @@ const CreateBom = () => {
     }
   };
 
-  const getPreviewData = async (values, url) => {};
-
   const resetProduct = () => {
     setProductSelected(false);
     form.setFieldValue("sku", "");
@@ -208,14 +206,14 @@ const CreateBom = () => {
   }, [uploadType]);
 
   return (
-    <div style={{ height: "90%", padding: 10, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 10, }}>
       <Form
         initialValues={initialValues}
         layout="vertical"
         form={form}
         style={{ height: "100%" }}
       >
-        <Row style={{ height: "100%" }} gutter={6}>
+        <Row style={{ height: "100%" }} gutter={12}>
           <Col span={6} style={{ height: "100%", overflow: "auto" }}>
             <ProductDetails
               uploadType={uploadType}

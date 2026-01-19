@@ -238,8 +238,8 @@ const SubGroup = () => {
   }, []);
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row gutter={8} style={{ padding: "0 10px", height: "100%" }}>
+    <div style={{ height: "100%", padding: 10 }}>
+      <Row gutter={12} style={{  height: "100%" }}>
         <Col span={8}>
           <Card title="Add Sub Group" size="small">
             <Form form={form} layout="vertical">
