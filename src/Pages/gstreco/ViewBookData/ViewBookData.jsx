@@ -276,15 +276,15 @@ const ViewBookData = () => {
   // console.log(getbookdata)
 
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <Button
-        style={{ marginLeft: "2rem", marginTop: "0.5rem" }}
+      
         onClick={showConfirm}
       >
         Validate Data
       </Button>
       <MyButton
-        style={{ marginLeft: "2rem" }}
+        style={{ marginLeft: "8px" }}
         onClick={downloadtable}
         variant="download"
       >
@@ -293,9 +293,8 @@ const ViewBookData = () => {
       </MyButton>
       <Col
         style={{
-          height: "75%",
-          paddingLeft: "2rem",
-          paddingRight: "2rem",
+          height: "calc(100% - 50px)",
+        
           marginTop: "1rem",
         }}
       >
@@ -323,7 +322,7 @@ const ViewBookData = () => {
           getbookdata={getbookdata}
         />
       )}
-    </>
+    </div>
   );
 };
 

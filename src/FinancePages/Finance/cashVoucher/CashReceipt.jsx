@@ -11,7 +11,7 @@ import {
 } from "react-icons/ai";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 
 function CashReceipt() {
   const { showToast } = useToast();
@@ -272,8 +272,8 @@ function CashReceipt() {
   };
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row gutter={10} style={{ height: "100%", margin: "10px" }}>
+    <div style={{ height: "100%", padding:10 }}>
+      <Row gutter={10} style={{ height: "100%",}}>
         <Col span={6}>
           <Card title="Cash Receipt" size="small">
             <Form layout="vertical" size="small">
@@ -320,9 +320,9 @@ function CashReceipt() {
             </Form>
           </Card>
         </Col>
-        <Col span={18}>
+        <Col span={18} style={{height: "75vh"}}>
      
-          <MyDataTable    
+          <FormTable    
             data={cashPaymentRows}
             columns={CashPaymentTable}  />
         </Col>

@@ -125,17 +125,9 @@ function TrialBalReport() {
   //   allData.map((a) => console.log(a.label));
   return (
     <div
-      style={
-        {
-          //   position: "relative",
-          //   width: "100%",
-          //   height: "90%",
-          //   padding: "0 10px",
-          //   overflow: "hidden",
-        }
-      }
+    style={{ margin: "10px" }}
     >
-      <Row gutter={16} style={{ margin: "5px" }}>
+      <Row gutter={0} >
         <Col span={5}>
           <MyDatePicker setDateRange={setDate} size="default" />
         </Col>
@@ -159,7 +151,7 @@ function TrialBalReport() {
           </Button>
         </Col>
       </Row>
-      <Card size="small" style={{ height: "92%", margin: "10px" }}>
+      <Card size="small" style={{ height: "90%", marginTop: 10 }}>
         <TableContainer sx={{ maxHeight: "75vh" }}>
           <Skeleton
             active

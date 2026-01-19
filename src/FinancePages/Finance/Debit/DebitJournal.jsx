@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
-import axios from "axios";
 import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
-import links from "../jounralPosting/links";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Card, Col, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 
 export default function JournalPosting() {
   const { showToast } = useToast();
@@ -360,12 +358,11 @@ export default function JournalPosting() {
     // setJournalDate("");
   };
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "92%", padding:10 }}>
       <Row
-        gutter={[4, 4]}
+        gutter={12}
         style={{
           height: "100%",
-          padding: "0px 5px",
         }}
       >
         <Col span={6}>
@@ -382,17 +379,11 @@ export default function JournalPosting() {
           </Card>
         </Col>
         <Col style={{ height: "100%", padding: 0 }} span={18}>
-          <Row style={{ height: "100%", padding: 0 }}>
-            <Col style={{ height: "100%", padding: 0 }} span={24}>
-              <Card
-                style={{ height: "90%", padding: 0 }}
-                bodyStyle={{ height: "100%", padding: 0 }}
-                size="small"
-              >
-                <MyDataTable data={journalRows} columns={columns} />
-              </Card>
-            </Col>
-          </Row>
+      
+             
+                <FormTable data={journalRows} columns={columns} />
+             
+           
         </Col>
       </Row>
       <NavFooter

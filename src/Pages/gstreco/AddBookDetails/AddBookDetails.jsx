@@ -97,8 +97,8 @@ const AddBookDetails = () => {
   };
 
   return (
-    <>
-     <Col style={{ paddingLeft: "20px", paddingRight: "20px" }}>
+    <div style={{height:"100%", padding:10}}>
+     <Col >
         <hr style={{ border: "1px solid #D3D3D3" , marginTop:"10px", marginBottom:'10px' }} />
 
       {/* <h3>Book Details</h3> */}
@@ -377,7 +377,7 @@ const AddBookDetails = () => {
         </Row>
       </Form>
       </Col>
-      <Col style={{paddingLeft: '20px', paddingRight:'20px'}}>
+      <Col >
       <Divider>Or</Divider>
       <h3>Bulk Book Upload</h3>
       <div
@@ -414,7 +414,7 @@ const AddBookDetails = () => {
         </Button>
       </div>
       </Col>
-    </>
+    </div>
   );
 };
 

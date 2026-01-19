@@ -13,7 +13,7 @@ import Loading from "../../../Components/Loading";
 import dayjs from "dayjs";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 
 export default function BankPayment() {
   const { showToast } = useToast();
@@ -404,7 +404,8 @@ export default function BankPayment() {
   return (
     <div
       style={{
-        height: "calc(100vh - 160px)",
+        height: "calc(100vh - 115px)",
+        padding:10
       }}
     >
       <Modal
@@ -418,14 +419,14 @@ export default function BankPayment() {
       >
         <p>Are you sure you want to create this bank payment voucher</p>
       </Modal>
-      <Row gutter={8} style={{ height: "100%", padding: "0px 10px" }}>
+      <Row gutter={8} style={{ height: "100%", }}>
         <Col
           span={6}
           style={{
             maxHeight: "90%",
             overflowY: "auto",
             overflowX: "hidden",
-            paddingBottom: 10,
+         
           }}
         >
           <Row gutter={[0, 6]}>
@@ -497,13 +498,12 @@ export default function BankPayment() {
         </Col>
         <Col
           style={{
-            height: "90%",
-            border: "1px solid #eeeeee",
-            padding: "0px 0px",
+            height: "92%",
+           
           }}
           span={18}
         >
-          <MyDataTable
+          <FormTable
             hideHeaderMenu
             data={bankPaymentRows}
             columns={BankPaymentTable}

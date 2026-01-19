@@ -216,9 +216,9 @@ function DayBook() {
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding: 10 }}>
       <Row
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
+        
         justify="space-between"
       >
         <div>
@@ -250,7 +250,7 @@ function DayBook() {
           </Space>
         </div>
       </Row>
-      <Row style={{ padding: "0px 10px" }}>
+      <Row style={{ marginTop:10 }}>
         <Col span={6}>
           <Card size="small">
             <Row>

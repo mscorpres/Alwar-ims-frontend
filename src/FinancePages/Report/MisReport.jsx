@@ -241,8 +241,8 @@ function MisReport() {
   };
 
   return (
-    <div style={{ height: "80%" }}>
-      <Row gutter={16} style={{ margin: "5px" }}>
+    <div style={{ height: "80%", padding: 10, }}>
+      <Row gutter={16} >
         <Col span={5}>
           <MyDatePicker setDateRange={setDateRange} />
         </Col>
@@ -265,13 +265,9 @@ function MisReport() {
           </Space>
         </Space>
       </Row>
-      <Col style={{ paddingBottom: 45 }}>
-        <Card
-          size="small"
-          style={{ minHeight: "80%" }}
-          bodyStyle={{ padding: 0, backgroundColor: "#F7F9FE" }}
-        >
-          <TableContainer sx={{ maxHeight: "75vh" }}>
+      <Col >
+      
+          <TableContainer sx={{ maxHeight: "75vh", marginTop: 2 }}>
             <Skeleton
               active
               loading={loading}
@@ -690,7 +686,7 @@ function MisReport() {
               </div>
             </Skeleton>
           </TableContainer>
-        </Card>
+   
       </Col>
     </div>
   );

@@ -1012,11 +1012,11 @@ const links = [
       routePath: "/tally/vouchers/reference/setup",
     },
     {
-      routeName: "Ap Payment Setup",
+      routeName: "Payment Setup",
       routePath: "/tally/vouchers/reference/payment",
     },
     {
-      routeName: "Ap Report",
+      routeName: "Report",
       routePath: "/tally/vouchers/reference/report",
     },
     // {

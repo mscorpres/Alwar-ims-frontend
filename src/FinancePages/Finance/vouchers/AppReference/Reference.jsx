@@ -27,8 +27,6 @@ import {
   UploadOutlined,
 } from "@ant-design/icons";
 import { downloadCSV } from "../../../../Components/exportToCSV";
-import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
-import { async } from "q";
 import MyButton from "../../../../Components/MyButton";
 
 export default function Reference() {
@@ -47,15 +45,6 @@ export default function Reference() {
   const [showZeroBpRows, setShowZeroBpRows] = useState(false);
   const [zeroVbtRows, setZeroVbtRows] = useState([]);
   const [zeroBpRows, setZeroBpRows] = useState([]);
-  const [fileList, setFileList] = useState([
-    {
-      uid: "-1",
-      name: "xxx.png",
-      status: "done",
-      url: "http://www.baidu.com/xxx.png",
-    },
-  ]);
-  const [uploading, setUploading] = useState(false);
   const [uploadFile, setUploadFile] = useState(false);
   const [showUploadFile, setShowUploadFile] = useState(false);
   // const []
@@ -759,9 +748,9 @@ export default function Reference() {
   };
 
   return (
-    <div style={{ height: "90%", padding: "0px 10px" }}>
-      <Row gutter={6} style={{ marginTop: "5px" }}>
-        <Col></Col>
+    <div style={{ height: "100%", padding: "10px" }}>
+      <Row gutter={6} >
+       
         <Col span={4}>
           <MyAsyncSelect
             selectLoading={loading === "select"}
@@ -853,7 +842,7 @@ export default function Reference() {
           </Button>
         </Col>
       </Row>
-      <Row gutter={6} style={{ height: "85%", paddingTop: 5 }}>
+      <Row gutter={6} style={{ height: "85%", marginTop: 10 }}>
         <Col span={12} style={{ height: "100%" }}>
           {uploadFile == true ? (
             <MyDataTable

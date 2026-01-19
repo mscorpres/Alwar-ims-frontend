@@ -324,7 +324,7 @@ export default function VoucherReport() {
   }, [pathname]);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding: 10 }}>
       <EditBankVoucher
         getRows={getRows}
         voucherType={voucherType}
@@ -337,7 +337,6 @@ export default function VoucherReport() {
       />
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <div className="left">
           <Space>
@@ -420,7 +419,7 @@ export default function VoucherReport() {
         </Space>
       </Row>
 
-      <div style={{ height:"calc(100% - 40px)", padding: "0 10px" }}>
+      <div style={{ height:"calc(100% - 50px)",marginTop: 10 }}>
         <MyDataTable
           // export={true}
           loading={loading}

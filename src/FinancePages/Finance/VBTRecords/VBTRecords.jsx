@@ -1,22 +1,17 @@
 import { Col, Form, Row, Space, Input, Button, Modal } from "antd";
-import React from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
 
 import { useState } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { useEffect } from "react";
-import { imsAxios } from "../../../axiosInterceptor";
-import { CodeSandboxCircleFilled } from "@ant-design/icons";
 import { useToast } from "../../../hooks/useToast.js";
-import { downloadExcel } from "../../../Components/printFunction";
-import { v4 } from "uuid";
-import Loading from "../../../Components/Loading";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import socket from "../../../Components/socket";
 import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 function VBTRecords() {
   const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
@@ -164,10 +159,9 @@ function VBTRecords() {
     setSearchDateRange("");
   }, [wise]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding:10 }}>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <Col>
           <Space gutter={10}>
@@ -272,7 +266,7 @@ function VBTRecords() {
           </Space>
         </Col>
       </Row>
-      <div style={{ height: "95%", padding: "0 10px" }}>
+      <div style={{ height: "95%", marginTop: 10   }}>
         {/* <MyDataTable
           // initialState={{
           //   columns: {

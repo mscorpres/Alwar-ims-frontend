@@ -404,7 +404,7 @@ function ProfilLossReport() {
   }, [expenseRows, incomeRows]);
   return (
     <div
-      style={{ height: "80%", padding: 5, paddingTop: 0, marginBottom: 100 }}
+      style={{ height: "100%", padding: 10 }}
     >
       <Row justify="space-between">
         <EditSheet
@@ -435,7 +435,7 @@ function ProfilLossReport() {
             onClick={downloadFun}
           />
         </Space>
-        <Col style={{ marginTop: 5, paddingBottom: 100 }} span={24}>
+        <Col span={24} style={{ marginTop: 10 }}>
           <Row gutter={6}>
             <Col span={24}>
               <Row gutter={[6, 6]}>
@@ -485,7 +485,7 @@ function ProfilLossReport() {
                   <Card
                     size="small"
                     style={{ minHeight: "52vh" }}
-                    bodyStyle={{ padding: 0, height: "100%" }}
+                    bodyStyle={{ padding: 0, height: "100%", }}
                   >
                     <Row style={{ height: "40vh" }}>
                       <Table
