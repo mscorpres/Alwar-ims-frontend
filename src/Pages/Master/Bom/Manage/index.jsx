@@ -139,19 +139,21 @@ const ManageBOM = () => {
     downloadCSVnested2(rows, columns, "FG BOM", actionColumns);
   };
   return (
-    <div style={{ height: "calc(100vh - 160px)", padding: 5, paddingTop: 0 }}>
-      <Row justify="end" style={{ margin: "5x 0" }}>
+    <div style={{ height: "calc(100vh - 160px)", padding: 10,  }}>
+      <Row justify="end" >
         <CommonIcons
           disabled={rows.length === 0}
           onClick={handleDownload}
           action="downloadButton"
         />
       </Row>
-      <MyDataTable
+     <div style={{marginTop:10, height:"100%"}}>
+       <MyDataTable
         loading={loading === "fetch"}
         columns={[...actionColumns, ...columns]}
         data={rows}
       />
+     </div>
 
       <ViewModal show={viewBom} close={() => setViewBom(false)} />
       <EditModal

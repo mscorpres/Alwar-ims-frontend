@@ -520,7 +520,8 @@ export default function EditComponent({
         removePartLoading.toString() === row.id ? (
           <LoadingOutlined />
         ) : (
-          rowCount.length > 1 && (
+        
+              row.new  && rowCount.length > 1 && (
             <Popconfirm
               placement="topRight"
               title="Are you sure you want to delete this component"
