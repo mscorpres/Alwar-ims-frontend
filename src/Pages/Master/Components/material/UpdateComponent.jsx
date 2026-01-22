@@ -340,8 +340,8 @@ export default function UpdateComponent() {
       "/component/updateComponent/verify",
       payload
     );
-    const { data } = response;
-    if (data.code === 200) {
+    const { data, success } = response;
+    if (success) {
       Modal.confirm({
         title: "Are you sure you want to submit this Updated Component?",
         content: `${data.message}`,
@@ -351,7 +351,7 @@ export default function UpdateComponent() {
         onCancel() {},
       });
     } else {
-      showToast(data.message.msg, "error");
+      showToast(response.message, "error");
     }
   };
   const validateHandler = async () => {

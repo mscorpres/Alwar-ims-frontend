@@ -50,8 +50,8 @@ const BillingAddress = () => {
   }, [search]);
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row justify="end" style={{ padding: "0px 10px", paddingBottom: 5 }}>
+    <div style={{ height: "100%", padding:10 }}>
+      <Row justify="end" style={{  paddingBottom: 5 }}>
         <Space>
           <CommonIcons
             action="addButton"
@@ -62,7 +62,7 @@ const BillingAddress = () => {
           </Button> */}
         </Space>
       </Row>
-      <div style={{ height: "90%", padding: "0 10px" }}>
+      <div style={{ height: "90%", marginTop: 10  }}>
         <MyDataTable loading={loading} data={dataa} columns={columns} />
       </div>
 

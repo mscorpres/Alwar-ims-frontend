@@ -193,12 +193,11 @@ const AddVendor = () => {
   // }, [third]);
 
   return (
-    <div style={{ height: "calc(100vh - 160px)", overflow: "auto" }}>
+    <div style={{ height: "calc(100vh - 165px)", overflow: "auto" , padding:10}}>
       <Form
         initialValues={initialValues}
         layout="vertical"
         form={addVendorForm}
-        style={{ padding: 20 }}
       >
         <Modal
           title="Submit Confirm"

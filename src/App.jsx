@@ -48,6 +48,7 @@ import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
 
 import { useToast } from "./hooks/useToast.js";
+import AlwarFooter from "./Components/footer/AlwarFooter.jsx";
 
 const App = () => {
   const { showToast } = useToast();
@@ -56,10 +57,12 @@ const App = () => {
   const sessionFromUrl = searchParams.get("session");
   const branchFromUrl = searchParams.get("branch");
   const comFromUrl = searchParams.get("company");
-  const { user, notifications, testPages } = useSelector(
-    (state) => state.login
-  );
-  const notificationButtonRef = useRef(null);
+  const { user, testPages } = useSelector((state) => state.login);
+
+
+
+  const { notifications } = useSelector((state) => state.login);
+
   const {
     showNotifications,
     showMessageNotifications,
@@ -78,6 +81,7 @@ const App = () => {
   const [loadingSwitch, setLoadingSwitch] = useState(false);
   const [newNotification, setNewNotification] = useState(null);
   const { pathname } = useLocation();
+    
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
   const [modulesOptions, setModulesOptions] = useState([]);
@@ -94,17 +98,11 @@ const App = () => {
   const [switchSuccess, setSwitchSuccess] = useState(false);
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-  const [showMessageDrawer, setShowMessageDrawer] = useState(false);
   const [searchHis, setSearchHis] = useState("");
   const [hisList, setHisList] = useState([]);
   const logoutHandler = () => {
     setShowBlackScreen(false);
     dispatch(logout());
-  };
-  const deleteNotification = (id) => {
-    let arr = notifications;
-    arr = arr.filter((not) => not.ID != id);
-    dispatch(setNotifications(arr));
   };
 
   const handleSelectCompanyBranch = (value) => {
@@ -182,11 +180,10 @@ const App = () => {
 
   const fetchUserDeatils = async (token, session, com, branch) => {
     setLoadingSwitch(true);
-   
 
     try {
       const response = await imsAxios.get(
-        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}`
+        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}`,
       );
       if (response?.success) {
         const payload = response?.data;
@@ -282,7 +279,7 @@ const App = () => {
       socket.on("socket_receive_notification", (data) => {
         if (data.type == "message") {
           let arr = notificationsRef.current.filter(
-            (not) => not.conversationId != data.conversationId
+            (not) => not.conversationId != data.conversationId,
           );
           arr = [data, ...arr];
           if (arr) {
@@ -408,7 +405,7 @@ const App = () => {
       navigate("/login");
     } else if (user) {
       let branch = JSON.parse(
-        localStorage.getItem("branchData")
+        localStorage.getItem("branchData"),
       )?.company_branch;
       if (branch) {
         setBranchSelected(true);
@@ -438,7 +435,7 @@ const App = () => {
       socket.on("socket_receive_notification", (data) => {
         if (data.type == "message") {
           let arr = notificationsRef.current.filter(
-            (not) => not.conversationId != data.conversationId
+            (not) => not.conversationId != data.conversationId,
           );
           arr = [data, ...arr];
           if (arr) {
@@ -623,12 +620,12 @@ const App = () => {
     window.addEventListener("offline", (e) => {
       showToast(
         "You are no longer connected to the Internet, please check your connection and try again.",
-        "error"
+        "error",
       );
     });
     window.addEventListener("online", (e) => {
       showToast(
-        "The internet has been restored. Kindly review your progress to ensure there is no duplication of data."
+        "The internet has been restored. Kindly review your progress to ensure there is no duplication of data.",
       );
       window.location.reload();
     });
@@ -659,7 +656,7 @@ const App = () => {
       const ids = hisList.map(({ label, text }) => label || text); // Support both formats
 
       const filtered = hisList.filter(
-        ({ label, text }, index) => !ids.includes(label || text, index + 1)
+        ({ label, text }, index) => !ids.includes(label || text, index + 1),
       );
 
       localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
@@ -678,8 +675,6 @@ const App = () => {
   };
 
   const getOffsetLeft = () => {
-  
-
     if (isTestServer && isBannerVisible) {
       return 92;
     } else if (isTestServer) {
@@ -691,12 +686,8 @@ const App = () => {
     }
   };
 
-  const options = [
-    { label: "B36 [ALWAR]", value: "BRALWR36" },
-  ];
-  const sessionOptions = [
-    { label: "Session 25-26", value: "25-26" },
-  ];
+  const options = [{ label: "B36 [ALWAR]", value: "BRALWR36" }];
+  const sessionOptions = [{ label: "Session 25-26", value: "25-26" }];
 
   const locationBranchOptions = {
     alwar: [{ label: "B36 [ALWAR]", value: "BRALWR36" }],
@@ -713,8 +704,7 @@ const App = () => {
 
     const company = location.toLowerCase() === "alwar" ? "COM0002" : "COM0001";
     if (company === existing?.comId) {
-     
-      showToast(`You are already On ${location} Module`,"error");
+      showToast(`You are already On ${location} Module`, "error");
       return;
     }
 
@@ -772,7 +762,6 @@ const App = () => {
 
   return (
     <div style={{ height: "100vh" }}>
-
       <Layout
         style={{
           width: "100%",
@@ -832,7 +821,7 @@ const App = () => {
                     } else {
                       // Show all modules when search is cleared
                       setModulesOptions(
-                        allModules.length > 0 ? allModules : []
+                        allModules.length > 0 ? allModules : [],
                       );
                     }
                   }}
@@ -840,8 +829,8 @@ const App = () => {
                     modulesOptions?.length > 0
                       ? modulesOptions
                       : allModules.length > 0
-                      ? allModules
-                      : showHisList || []
+                        ? allModules
+                        : showHisList || []
                   }
                   filterOption={false}
                   notFoundContent={null}
@@ -867,14 +856,6 @@ const App = () => {
               socketConnected={isConnected}
               socketLoading={isLoading}
               onRefreshSocket={() => refreshConnection()}
-              notificationsCount={
-                notifications.filter((not) => not?.type != "message")?.length
-              }
-              onClickNotifications={() => dispatch(toggleNotifications())}
-              notificationButtonRef={notificationButtonRef}
-              messagesCount={
-                notifications.filter((not) => not?.type == "message").length
-              }
               onClickMessages={() => dispatch(setShowTickets(true))}
               switchModule={
                 <Tooltip title="Switch Module" placement="bottom">
@@ -903,15 +884,6 @@ const App = () => {
                   />
                 ) : null
               }
-            />
-            <NotificationDropdown
-              open={showNotifications}
-              onClose={() => dispatch(setShowNotifications(false))}
-              notifications={notifications.filter(
-                (not) => not?.type != "message"
-              )}
-              deleteNotification={deleteNotification}
-              anchorRef={notificationButtonRef}
             />
           </Layout>
         )}
@@ -946,7 +918,7 @@ const App = () => {
                   topOffset={getOffsetLeft()}
                   onWidthChange={(w) => {
                     const layout = document.querySelector(
-                      "#app-content-left-margin"
+                      "#app-content-left-margin",
                     );
                     if (layout) layout.style.marginLeft = `${w}px`;
                   }}
@@ -955,19 +927,6 @@ const App = () => {
             )}
             {/* sidebar ends */}
             <Layout
-              onClick={(e) => {
-                // Don't close if clicking on notification button
-
-                const target = e.target;
-
-                if (notificationButtonRef.current?.contains(target)) {
-                  return;
-                }
-
-                dispatch(setShowNotifications(false));
-
-                dispatch(setShowMessageNotifications(false));
-              }}
               id="app-content-left-margin"
               style={{
                 height: "100%",
@@ -989,7 +948,7 @@ const App = () => {
                   style={{
                     height: (() => {
                       const headerHeight = pathname === "/login" ? 10 : 50;
-                      const bannerHeight = isBannerVisible ? 40 : 0;
+                      const bannerHeight = isBannerVisible ? 30 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || pathname === "/login"
@@ -1014,6 +973,7 @@ const App = () => {
                       />
                     ))}
                   </Routes>
+                  {pathname === "/" && <AlwarFooter />}
                 </div>
               </Content>
             </Layout>
@@ -1199,7 +1159,7 @@ const App = () => {
                     switchLocation.charAt(0).toUpperCase() +
                       switchLocation.slice(1),
                     switchBranch,
-                    switchSession || user?.session
+                    switchSession || user?.session,
                   );
                 }}
               >

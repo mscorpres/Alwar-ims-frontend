@@ -174,7 +174,7 @@ function ViewClients() {
 
   return (
     <>
-      <div style={{  height: "calc(100vh - 120px)", }}>
+      <div style={{  height: "calc(100vh - 140px)", }}>
         <MyDataTable loading={fetchLoading} rows={rows} columns={columns} />
       </div>
 

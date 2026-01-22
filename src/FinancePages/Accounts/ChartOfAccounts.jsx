@@ -20,7 +20,6 @@ import TableActions, {
   CommonIcons,
 } from "../../Components/TableActions.jsx/TableActions";
 import { Button, Card, Col, Form, Row, Space } from "antd";
-import SingleDatePicker from "../../Components/SingleDatePicker";
 import MyDatePicker from "../../Components/MyDatePicker";
 import { imsAxios } from "../../axiosInterceptor";
 import SummaryCard from "../../Components/SummaryCard";
@@ -179,11 +178,11 @@ export default function ChartOfAccounts() {
           position: "relative",
           width: "100%",
           height: "100%",
-          padding: "0 10px",
+          padding:10,
           overflow: "hidden",
         }}
       >
-        <Row style={{ marginBottom: 5 }} justify="space-between">
+        <Row style={{ marginBottom: 10 }} justify="space-between">
           <Space>
             <Form layout="inline">
               <Form.Item label="Select Range">
@@ -204,7 +203,7 @@ export default function ChartOfAccounts() {
             disabled={charts.length == 0}
           />
         </Row>
-        <Row gutter={4} style={{ height: "100%" }}>
+        <Row gutter={12} style={{ height: "100%" }}>
           <Col span={4}>
             <SummaryCard summary={summary} title="Summary" loading={loading} />
           </Col>

@@ -199,12 +199,12 @@ function NatureofTCS() {
 
   return (
     <>
-      <div style={{ height: "100%", overflow: "hidden" }}>
+      <div style={{ height: "100%", overflow: "hidden", padding:10 }}>
         <Row
-          gutter={8}
+          gutter={12}
           style={{
             height: "100%",
-            margin: "5px",
+          
             overflow:"hidden"
           }}
         >

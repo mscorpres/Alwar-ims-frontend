@@ -469,7 +469,6 @@ export default function CreatePo() {
       return;
     }
 
-    // Component level validation
     rowCount.map((count) => {
       if (
         count.currency == "" ||

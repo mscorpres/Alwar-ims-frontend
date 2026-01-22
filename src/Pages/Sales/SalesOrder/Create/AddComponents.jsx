@@ -29,7 +29,7 @@ import {
   getProductsOptions,
 } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
-import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 export default function AddComponents({
   rowCount,
   setRowCount,
@@ -868,7 +868,7 @@ export default function AddComponents({
           span={18}
         
         >
-          <MyDataTable columns={columns} data={rowCount} />
+          <FormTable columns={columns} data={rowCount} />
         </Col>
       </Row>
       <NavFooter

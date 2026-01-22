@@ -117,7 +117,7 @@ const CategoryMaster = () => {
     console.log(fieldSelectOptions);
   }, [fieldSelectOptions]);
   return (
-    <Row style={{ height: "90%", padding: 10 }}>
+    <Row style={{ height: "100%", padding: 10 }}>
       <Col span={24}>
         <Row>
           <Col span={24}>

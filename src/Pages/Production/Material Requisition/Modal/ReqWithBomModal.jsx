@@ -8,7 +8,6 @@ import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
   const { showToast } = useToast();
-  console.log(allBom);
   const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState([]);
   const [submitLoading, setsubmitLoading] = useState(false);
@@ -26,7 +25,7 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
       pic_loc: allBom.locSecond,
       shiftLocation: allBom.locValue,
     });
-    setPageLoading(false);
+  
     if (response.success) {
       let dataArray = [...response?.data?.filter((a) => a?.type == "P")];
       dataArray = dataArray.map((row) => {
@@ -68,8 +67,10 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
       let arr = tableData;
       arr = [...dataArray, ...dataArray1, ...dataArray2, ...dataArray3];
       setTableData(arr);
+        setPageLoading(false);
     }
     else{
+        setPageLoading(false);
       showToast(response.message, "error");
     }
   };
@@ -286,10 +287,9 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
 
         key: tab,
         children: (
-          <div style={{ height: "73vh" }}>
-            <div style={{ height: "95%" }}>
+          <div style={{ height: "65vh" , marginTop: 10  }}>
+            <div style={{ height: "100%" }}>
               <MyDataTable
-                loading={loading}
                 columns={columns}
                 data={tableData.filter((row) => row.type == tab)}
               />
@@ -302,7 +302,7 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
   }, [tableData]);
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "calc(100%-180px)" , padding:10,  }}>
       <div style={{ margin: 20 }}>
         <Skeleton active loading={pageLoading} />
         <Skeleton active loading={pageLoading} />

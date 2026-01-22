@@ -7,7 +7,7 @@ import NavFooter from "../../../Components/NavFooter";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { Card, Col, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 
 export default function Contra1() {
   const { showToast } = useToast();
@@ -325,7 +325,7 @@ export default function Contra1() {
   };
 
   return (
-    <div style={{ height: "100%", padding: 5 }}>
+    <div style={{ height: "100%", padding: 10 }}>
       <Row gutter={[16, 16]} style={{height:"100%"}}>
         <Col span={6}>
           <Card title="Select Date" size="small">
@@ -338,8 +338,8 @@ export default function Contra1() {
         </Col>
 
         <Col span={18}>
-            <div style={{ height: "calc(100% - 50px)",  }}>
-              <MyDataTable loading={loading} data={contraRows} columns={columns} />
+            <div style={{ height: "calc(100% - 50px)" }}>
+              <FormTable loading={loading} data={contraRows} columns={columns} />
             </div>
      
         </Col>

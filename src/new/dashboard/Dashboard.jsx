@@ -426,7 +426,7 @@ const getImage = (index) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1, p: 3,  }}>
+      <Box sx={{ flexGrow: 1, p: 2,  }}>
         <Box
           sx={{
             display: "flex",
@@ -619,6 +619,7 @@ const getImage = (index) => {
         </Box>
 
         {renderSummaryGridThree("MIN Summary", minSummary, loading.min, "Summary of Material Inward")}
+     
       </Box>
     </ThemeProvider>
   );

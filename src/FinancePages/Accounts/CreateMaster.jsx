@@ -72,6 +72,7 @@ export default function CreateMaster() {
         overflowY: "auto",
         overflowX: "hidden",
         position: "relative",
+        padding: 10,
       }}
     >
       <Row
@@ -79,8 +80,6 @@ export default function CreateMaster() {
         style={{
           height: "calc(100% - 40px)",
           marginBottom: 5,
-          padding: "0px 5px",
-          // overflowY: "auto",
         }}
       >
         <Col span={8}>

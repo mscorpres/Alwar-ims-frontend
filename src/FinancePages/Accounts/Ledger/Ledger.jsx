@@ -89,9 +89,9 @@ export default function CreateMaster() {
     getLedgerList();
   }, []);
   return (
-    <div style={{ height: "100%" }}>
-      <Row gutter={8} style={{ height: "100%", padding: "0px 10px" }}>
-        <Col span={12}>
+    <div style={{ height: "100%", padding: 10 }}>
+      <Row gutter={12} style={{ height: "100%" }}>
+        <Col span={10}>
           <Tabs type="card" size="small">
             {/* add ledger */}
             <Tabs.TabPane tab="Add new Ledger" key="1">
@@ -118,7 +118,7 @@ export default function CreateMaster() {
           </Tabs>
         </Col>
         {/* add form column ends */}
-        <Col style={{ padding: "10px 0px", height: "calc(100% - 35px)" }} span={12}>
+        <Col style={{  height: "calc(100% - 35px)" }} span={14}>
           <Row justify="end" style={{ marginBottom: 10 }}>
             <CommonIcons
               action="downloadButton"

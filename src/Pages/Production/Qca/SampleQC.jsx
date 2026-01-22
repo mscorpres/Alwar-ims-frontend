@@ -249,8 +249,6 @@ function SampleQC() {
     setSearchInput("");
   }, [wise]);
 
-  const { Paragraph, Text } = Typography;
-
   return (
     <div style={{height:"100%", padding:10}}>
       <Modal
@@ -291,7 +289,7 @@ function SampleQC() {
                   size="default"
                   setDateRange={setSearchInput}
                   dateRange={setSearchInput}
-                  value={setSearchInput}
+                  value={searchInput}
                 />
               ) : wise === "powise" ? (
                 <Input
@@ -341,7 +339,6 @@ function SampleQC() {
             </div>
             <MyButton
               variant="search"
-              disabled={!searchInput ? true : false}
               type="primary"
               // loading={searchLoading}
               onClick={getRows}

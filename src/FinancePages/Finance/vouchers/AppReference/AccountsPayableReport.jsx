@@ -271,8 +271,8 @@ export default function AccountsPayableReport() {
   }, [socketValue]);
 
   return (
-    <div style={{ height: "90%", padding: "0px 10px" }}>
-      <Row gutter={4} style={{ height: "95%" }} justify="space-between">
+    <div style={{ height: "100%", padding: "10px" }}>
+      <Row gutter={4} style={{ height: "90%" }} justify="space-between">
         <Col style={{ display: "flex", alignItems: "center", gap: 5 }}>
           <Typography.Text style={{ whiteSpace: "nowrap", fontSize: "0.8rem" }}>
             Sundry Creditors:
@@ -302,7 +302,7 @@ export default function AccountsPayableReport() {
           </Button>
         </Col>
 
-        <Col></Col>
+     
         <Col span={24} style={{ height: "100%", paddingTop: 5 }}>
           {/* <MyDataTable data={rows} columns={columns} loading={loading} /> */}
         </Col>

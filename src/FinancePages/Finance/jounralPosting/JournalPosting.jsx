@@ -12,7 +12,7 @@ import { Card, Col, DatePicker, Form, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 
 export default function JournalPosting() {
   const { showToast } = useToast();
@@ -332,13 +332,10 @@ export default function JournalPosting() {
     }
   }, [loading]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "76vh", padding:10, overflowY: "auto" }}>
       <Row
-        gutter={[4, 4]}
-        style={{
-          height: "100%",
-          padding: "0px 5px",
-        }}
+        gutter={12}
+     
       >
         <Col span={6}>
           <Card title="Select Date" size="small">
@@ -373,13 +370,10 @@ export default function JournalPosting() {
           </Card>
         </Col>
         <Col style={{ height: "100%", padding: 0 }} span={18}>
-          <Row style={{ height: "100%", padding: 0 }}>
-            <Col style={{ height: "100%", padding: 0 }} span={24}>
               
-                <MyDataTable data={journalRows} columns={columns} />
-              
-            </Col>
-          </Row>
+                <FormTable data={journalRows} columns={columns} />
+          
+       
         </Col>
       </Row>
       <NavFooter

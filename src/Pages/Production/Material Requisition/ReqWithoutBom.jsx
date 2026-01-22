@@ -22,7 +22,8 @@ import Loading from "../../../Components/Loading";
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
+
 export default function ReqWithoutBom() {
   const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -346,7 +347,7 @@ export default function ReqWithoutBom() {
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 80,
+      width: 120,
       type: "rowChange",
       field: "add",
       renderCell: ({ row }) =>
@@ -489,7 +490,7 @@ export default function ReqWithoutBom() {
         </Card>
       </Col>
       <Col span={18} >
-        <MyDataTable data={rows} columns={columns} loading={loading === "component"} />
+        <FormTable data={rows} columns={columns} loading={loading === "component"} />
       </Col>
     </Row>
   );

@@ -55,9 +55,9 @@ const Product = () => {
 
   return (
     <Row
-      gutter={6}
+      gutter={12}
       
-      style={{ height: "calc(100vh - 160px)", padding: "0px 5px" }}
+      style={{ height: "calc(100vh - 160px)", padding: "10px" }}
     >
       <ComponentImages showImages={showImages} setShowImages={setShowImages} />
       <Edit

@@ -128,7 +128,7 @@ export default function AddClients() {
     }
   }, [selectedCountry]);
   return (
-    <div style={{ height: "100%", padding: "0px 5px" }}>
+    <div style={{ height: "100%", padding: "10px" }}>
       {pageLoading && <Loading />}
       {/* submit confirm modal */}
       <Modal

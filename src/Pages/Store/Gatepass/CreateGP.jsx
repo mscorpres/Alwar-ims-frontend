@@ -12,7 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 export default function CreateGP() {
   const { showToast } = useToast();
   const [rows, setRows] = useState([
@@ -32,10 +32,9 @@ export default function CreateGP() {
   const { executeFun, loading: loading1 } = useApi();
 
   const getComponentDetail = async (searchInputText) => {
-  
     const response = await executeFun(
       () => getComponentOptions(searchInputText),
-      "select"
+      "select",
     );
     const { data } = response;
     let arr = [];
@@ -57,7 +56,7 @@ export default function CreateGP() {
         "/component/getComponentDetailsByCode",
         {
           component_code: value,
-        }
+        },
       );
       setFetchDetailsLoading(false);
       arr = arr.map((row) => {
@@ -277,7 +276,7 @@ export default function CreateGP() {
       style={{
         position: "relative",
         height: "calc(100vh - 160px)",
-        padding:10
+        padding: 10,
       }}
     >
       {loading && <Loading />}
@@ -285,7 +284,6 @@ export default function CreateGP() {
         style={{
           opacity: loading ? 0.5 : 1,
           pointerEvents: loading ? "none" : "all",
-
         }}
       >
         <Row>
@@ -516,7 +514,7 @@ export default function CreateGP() {
           </Col>
         </Row>
         <Divider />
-        <Row >
+        <Row>
           <Col span={4}>
             <Descriptions
               size="small"
@@ -524,14 +522,14 @@ export default function CreateGP() {
             ></Descriptions>
           </Col>
 
-          <Col span={20} >
-            <Row gutter={16} style={{height:"100%"}}>
+          <Col span={20}>
+            <Row gutter={16} style={{ height: "100%" }}>
               {fetchDetailsLoading && <Loading />}
               {/* narration */}
-              <Col span={18}  >
-                <div style={{ height: 280 }}>
-    <MyDataTable columns={columns} data={rows} />
-  </div>
+              <Col span={18}>
+                <div style={{ height: 260 }}>
+                  <FormTable columns={columns} data={rows} />
+                </div>
               </Col>
             </Row>
           </Col>
