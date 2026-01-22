@@ -227,7 +227,7 @@ export default function AddDCComponents({
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 40,
+      width: 80,
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>

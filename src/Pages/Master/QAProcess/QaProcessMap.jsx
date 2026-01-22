@@ -4,7 +4,7 @@ import { v4 } from "uuid";
 import { useToast } from "@/hooks/useToast.js";
 import MySelect from "@/Components/MySelect";
 import { Card, Col, Form, Input, Row, Space, Upload } from "antd";
-import MyDataTable from "@/Components/MyDataTable";
+import FormTable from "@/Components/FormTable";
 import MyAsyncSelect from "@/Components/MyAsyncSelect";
 import NavFooter from "@/Components/NavFooter";
 import { CommonIcons } from "@/Components/TableActions.jsx/TableActions";
@@ -746,7 +746,7 @@ const QaProcessMap = () => {
           }}
           span={18}
         >
-          <MyDataTable
+          <FormTable
             columns={columns}
             data={qaProcessInputs}
             hideHeaderMenu

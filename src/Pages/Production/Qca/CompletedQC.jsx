@@ -28,7 +28,6 @@ function CompletedQC() {
   const [rows, setRows] = useState([]);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
@@ -416,7 +415,7 @@ function CompletedQC() {
                   size="default"
                   setDateRange={setSearchInput}
                   dateRange={setSearchInput}
-                  value={setSearchInput}
+                  value={searchInput}
                 />
               ) : wise === "partwise" ? (
                 <MyAsyncSelect

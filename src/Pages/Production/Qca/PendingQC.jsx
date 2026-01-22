@@ -25,7 +25,6 @@ function PendingQC() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
@@ -87,8 +86,8 @@ function PendingQC() {
       });
       console.log(arr);
       setRows(arr);
-    } else if (!response.success) {
-      showToast(data.message.data, "error");
+    } else {
+      showToast(response.message, "error");
       setRows([]);
     }
   };
@@ -360,7 +359,7 @@ function PendingQC() {
                   size="default"
                   setDateRange={setSearchInput}
                   dateRange={setSearchInput}
-                  value={setSearchInput}
+                  value={searchInput}
                 />
               ) : wise === "partwise" ? (
                 <MyAsyncSelect

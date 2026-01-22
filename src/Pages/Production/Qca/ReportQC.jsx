@@ -173,7 +173,7 @@ function ReportQC() {
                 size="default"
                 setDateRange={setSearchInput}
                 dateRange={setSearchInput}
-                value={setSearchInput}
+                value={searchInput}
               />
             </div>
             <MyButton

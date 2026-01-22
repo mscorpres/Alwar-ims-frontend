@@ -228,7 +228,7 @@ export default function EditDCComponents({
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 40,
+      width: 80,
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>
