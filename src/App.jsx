@@ -675,15 +675,16 @@ const App = () => {
   };
 
   const getOffsetLeft = () => {
-    if (isTestServer && isBannerVisible) {
-      return 92;
-    } else if (isTestServer) {
-      return 60;
-    } else if (isBannerVisible) {
-      return 70;
-    } else {
+    // if (isTestServer && isBannerVisible) {
+    //   return 92;
+    // } else if (isTestServer) {
+    //   return 60;
+    // } else if (isBannerVisible) {
+    //   return 70;
+    // } else {
+      if(isTestServer) return 60;
       return 40;
-    }
+    // }
   };
 
   const options = [{ label: "B36 [ALWAR]", value: "BRALWR36" }];
@@ -783,7 +784,7 @@ const App = () => {
             TEST SERVER
           </div>
         )}
-        {showBlackScreen && (
+        {/* {showBlackScreen && (
           <TopBanner
             messages={[
               "Welcome to IMS Alwar.",
@@ -791,7 +792,7 @@ const App = () => {
             ]}
             onVisibilityChange={setIsBannerVisible}
           />
-        )}
+        )} */}
         {/* <Information /> */}
         {user && user.passwordChanged === "C" && (
           <Layout style={{ height: "100%" }}>
@@ -948,7 +949,7 @@ const App = () => {
                   style={{
                     height: (() => {
                       const headerHeight = pathname === "/login" ? 10 : 50;
-                      const bannerHeight = isBannerVisible ? 30 : 0;
+                      const bannerHeight = isBannerVisible ? 0 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || pathname === "/login"
