@@ -4,11 +4,11 @@ import { v4 } from "uuid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import NavFooter from "../../../Components/NavFooter";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import FormTable from "../../../Components/FormTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Card, Col, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast";
+import MyDataTable from "../../Components/MyDataTable";
 
 export default function CreditJournal() {
   const { showToast } = useToast();
@@ -386,7 +386,8 @@ export default function CreditJournal() {
                 bodyStyle={{ height: "100%", padding: 0 }}
                 size="small"
               >
-                <FormTable data={journalRows} columns={columns} />
+           
+                <MyDataTable data={journalRows} columns={columns}  />
               </Card>
             </Col>
           </Row>

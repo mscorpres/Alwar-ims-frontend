@@ -373,43 +373,43 @@ const Routes = [
   //   main: () => <MaterialTransaction />,
   // },
   {
-    path: "/document/upload-document",
+    path: "/reports/upload-document/view",
     main: () => <ViewDocuments />,
   },
   {
-    path: "/transaction/transaction-in",
+    path: "/reports/transaction-in",
     main: () => <TransactionIn />,
   },
   {
-    path: "/transaction/transaction-out",
+    path: "/reports/transaction-out",
     main: () => <TransactionOut />,
   },
   {
-    path: "/list/complete-fg",
+    path: "/warehouse/fg/complete",
     main: () => <CompletedFG />,
   },
   {
-    path: "/list/pending-fg",
+    path: "/warehouse/fg/pending",
     main: () => <PendingFG />,
   },
   {
-    path: "/return/create-fg",
+    path: "/warehouse/fg-return/create",
     main: () => <CreateFgReturn />,
   },
   {
-    path: "/return/pending-fg-list",
+    path: "/warehouse/fg-return/pending",
     main: () => <PendingReversal />,
   },
   {
-    path: "/return/complete-fg-list",
+    path: "/warehouse/fg-return/completed",
     main: () => <CompletedFgReturn />,
   },
   {
-    path: "/fg-out/create-fg",
+    path: "/warehouse/fg-out/create",
     main: () => <CreateFGOut />,
   },
   {
-    path: "/fg-out/fg-out-list",
+    path: "/warehouse/fg-out/view",
     main: () => <ViewFGOut />,
   },
 
@@ -439,12 +439,12 @@ const Routes = [
     main: () => <ViewTransaction />,
   },
   {
-    path: "/material-transfer/re-to-rej",
+    path: "/material-transfer/rm-to-rej",
     exact: true,
     main: () => <ReToRej />,
   },
   {
-    path: "/material-transfer/re-to-rej/view-transation",
+    path: "/material-transfer/rm-to-rej/view-transation",
     exact: true,
     main: () => <TransactionRej />,
   },
@@ -459,46 +459,46 @@ const Routes = [
     main: () => <Rejection />,
   },
   {
-    path: "/warehouse/dc/create-dc",
+    path: "/warehouse/dc/create",
     exact: true,
     main: () => <CreateDC />,
   },
   {
-    path: "/warehouse/dc/manage-dc",
+    path: "/warehouse/dc/manage",
     exact: true,
     main: () => <ManageDC />,
   },
   {
-    path: "/warehouse/gp/create-gp",
+    path: "/warehouse/gp/create",
     exact: true,
     main: () => <CreateGP />,
   },
   {
-    path: "/warehouse/gp/manage-gp",
+    path: "/warehouse/gp/manage",
     exact: true,
     main: () => <ManageGatePass />,
   },
   {
-    path: "/query/q3/sku-query",
+    path: "/query/sku-query",
     exact: true,
     main: () => <SkuQuery />,
   },
   {
-    path: "/query/q4-query",
+    path: "/query/ledger",
     exact: true,
     main: () => <Q4 />,
   },
   {
-    path: "/query/q5-query",
+    path: "/query/component-wise-stock",
     main: () => <QueryQ5 />,
   },
   {
-    path: "/query/q6-query",
+    path: "/query/closing-stock",
     main: () => <Index />,
   },
   // production MIS
   {
-    path: "/production/ppc",
+    path: "/production-ims",
     main: () => <ProductionMIS />,
   },
 
@@ -530,28 +530,28 @@ const Routes = [
     main: () => <PrintQCALabel />,
   },
   {
-    path: "/qc-check",
+    path: "/qc/check",
     exact: true,
     main: () => <QcScan />,
   },
   // QCA
   {
-    path: "/sample-qc",
+    path: "/qca/sample",
     exact: true,
     main: () => <SampleQC />,
   },
   {
-    path: "/pending-qc",
+    path: "/qca/pending",
     exact: true,
     main: () => <PendingQC />,
   },
   {
-    path: "/completed-qc",
+    path: "/qca/completed",
     exact: true,
     main: () => <CompletedQC />,
   },
   {
-    path: "/report-qc",
+    path: "/qca/report's",
     exact: true,
     main: () => <ReportQC />,
   },
@@ -577,23 +577,23 @@ const Routes = [
   },
   // sf to sf
   {
-    path: "/sf-to-sf",
+    path: "/location-movement/sf-to-sf",
     exact: true,
     main: () => <MaterialTransfer type="sftosf" title="SF to SF" />,
   },
   {
-    path: "/sf-to-rej",
+    path: "/location-movement/sf-to-rej",
     exact: true,
     main: () => <MaterialTransfer type="sftorej" title="SF to REJ" />,
   },
   {
-    path: "/transaction-sf-to-sf",
+    path: "/location-movement/sf-to-sf/view",
     exact: true,
     main: () => <MaterialTransferReport type="sftosf" />,
   },
 
   {
-    path: "/transaction-sf-to-rej",
+    path: "/location-movement/sf-to-rej/view",
     exact: true,
     main: () => <MaterialTransferReport type="sftorej" />,
   },
@@ -610,11 +610,11 @@ const Routes = [
   },
   // Reports
   {
-    path: "/item-all-logs",
+    path: "/query/item-all-logs",
     main: () => <ItemAllLogs />,
   },
   {
-    path: "/item-location-logs",
+    path: "/query/item-location-logs",
     main: () => <ItemLocationLog />,
   },
   {
@@ -768,44 +768,44 @@ const Routes = [
     main: () => <R37 />,
   },
   {
-    path: "/req-with-bom",
+    path: "/material-requisition/with-bom",
     main: () => <ReqWithBom />,
   },
   {
-    path: "/req-with-out-bom",
+    path: "/material-requisition/with-out-bom",
     main: () => <ReqWithoutBom />,
   },
   {
-    path: "/create-ppr",
+    path: "/production-and-plan/create",
     main: () => <CreatePPR />,
   },
   {
-    path: "/pending-ppr",
+    path: "/production-and-plan/pending",
     main: () => <PendingPPR />,
   },
   {
-    path: "/completed-ppr",
+    path: "/production-and-plan/completed",
     main: () => <CompletedPPR />,
   },
   // Purchase Order
   {
-    path: "/create-po",
+    path: "/procurement/create",
     main: () => <CreatePo />,
   },
  {
-    path: "/request-po",
+    path: "/procurement/request",
     main: () => <POrequest />,
   },
   {
-    path: "/manage-po",
+    path: "/procurement/manage",
     main: () => <ManagePO />,
   },
   {
-    path: "/completed-po",
+    path: "/procurement/completed",
     main: () => <CompletedPo />,
   },
   {
-    path: "/approval-po",
+    path: "/procurement/approval",
     main: () => <PoApproval />,
     text: "Po Approval",
   },
@@ -826,11 +826,11 @@ const Routes = [
     main: () => <MaterialInWithoutPO />,
   },
   {
-    path: "/warehouse/material-in-with-po",
+    path: "/warehouse/material-in-po",
     main: () => <MaterialInWithPO />,
   },
   {
-    path: "/warehouse/export-material-in-with-po",
+    path: "/warehouse/export-material-in-po",
     main: () => <ExportMaterialInWithPO />,
   },
   {
@@ -851,45 +851,45 @@ const Routes = [
   },
   // CPM
   {
-    path: "/CPM/CPM-analysis",
+    path: "/cpm/analysis",
     main: () => <CPMAnalysis />,
   },
   {
-    path: "/CPM/report",
+    path: "/cpm/reports",
     main: () => <CPMReport />,
   },
 
   // Jobwork
   {
-    path: "/create-jw",
+    path: "/warehouse/job-work/create",
     main: () => <CreateJW />,
   },
     {
-    path: "/approval-jw",
+    path: "/warehouse/job-work/approval",
     main: () => <JobworkApproval />,
   },
   {
-    path: "/po-analysis",
+    path: "/warehouse/job-work/analysis",
     main: () => <POAnalysis />,
   },
   {
-    path: "/jw-rw-issue",
+    path: "/warehouse/job-work/issue",
     main: () => <JwIssue />,
   },
   {
-    path: "/jw-rw-challan",
+    path: "/warehouse/job-work/challan-list",
     main: () => <JwRmChallan />,
   },
   {
-    path: "/jw-sf-inward",
+    path: "/warehouse/job-work/inward",
     main: () => <JwsfInward />,
   },
   {
-    path: "/jw-rm-return",
+    path: "/warehouse/job-work/return",
     main: () => <JwrmReturn />,
   },
   {
-    path: "/jw-completed",
+    path: "/warehouse/job-work/completed",
     main: () => <JwCompleted />,
   },
   {
@@ -901,17 +901,17 @@ const Routes = [
     main: () => <JWUpdateRate />,
   },
   {
-    path: "/jw-issue-challan",
+    path: "/warehouse/job-work/issue-challan",
     main: () => <JwPendingRequest />,
   },
   {
     path: "/jw-vendor-pricing",
     main: () => <JWVendorPricingUpload />,
   },
-  {
-    path: "/update-rm",
-    main: () => <UpdateRM />,
-  },
+  // {
+  //   path: "/rm/update",
+  //   main: () => <UpdateRM />,
+  // },
   {
     path: "/reverse-min",
     main: () => <ReverseMin />,
@@ -1276,7 +1276,7 @@ const Routes = [
     main: () => <Invoice />,
   },
   {
-    path: "/view-branch-transfer",
+    path: "/warehouse/branch-transfer/view",
     main: () => <ViewBranchTransfer />,
   },
   {
@@ -1305,7 +1305,7 @@ const Routes = [
     main: () => <MapProcesses />,
   },
   {
-    path: "/branch-transfer-challan",
+    path: "/warehouse/branch-transfer/challan",
     main: () => <CreateBranchTransferChallan />,
   },
   {
@@ -1314,7 +1314,7 @@ const Routes = [
   },
   // to be added
   {
-    path: "/warehouse/part-code-conversion-report",
+    path: "/warehouse/part-code-conversion/report",
     main: () => <PartCodeConversionReport />,
   },
   {
@@ -1362,7 +1362,7 @@ const Routes = [
   },
   // CreateSalesOrder
   {
-    path: "/sales/order/create",
+    path: "/sales-order/create",
     main: () => <CreateSalesOrder />,
   },
   {
@@ -1371,18 +1371,18 @@ const Routes = [
   },
 
   {
-    path: "/sales/order/register",
+    path: "/sales-order/register",
     main: () => <SalesORderRegister />,
   },
 
   //
   {
-    path: "/sales/order/shipments",
+    path: "/sales-order/shipments",
     main: () => <ShipmentsList />,
   },
 
   {
-    path: "/sales/order/challan",
+    path: "/sales-order/challan",
     main: () => <Challan />,
   },
   //gst reco

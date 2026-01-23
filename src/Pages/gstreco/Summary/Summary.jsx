@@ -98,13 +98,9 @@ const Summary = () => {
   };
 
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <MyButton
-        style={{
-          marginTop: "1rem",
-          marginLeft: "2rem",
-          marginBottom: "1rem",
-        }}
+      
         onClick={() => downloadCSV(summaryData, columns, "Summary")}
         variant="download"
       >
@@ -112,7 +108,7 @@ const Summary = () => {
       </MyButton>
       <div className="summary-container">
         <>
-          <div style={{ height: "100%", marginLeft: "4rem" }}>
+          <div style={{ height: "100%", marginTop: "10px" }}>
             <Table
               dataSource={summaryData}
               columns={columns}
@@ -124,7 +120,7 @@ const Summary = () => {
           </div>
         </>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -18,7 +18,6 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useNavigate, Link } from "react-router-dom";
-import { CheckOutlined } from "@ant-design/icons";
 import DeleteVbt from "./DeleteVbt";
 import CreateDebitNote from "../DebitNote/Create";
 import VBT01Report from "./FormVBT/VBT01/VBT01Report";
@@ -976,7 +975,7 @@ export default function VBTReport() {
   // }, [openModal]);
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding: 10 }}>
       {editVbtDrawer ? (
         editvbturl === "vbt03" ? (
           <VBT02Report
@@ -1018,7 +1017,7 @@ export default function VBTReport() {
       /> */}
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
+       
       >
         <Col>
           <Space>
@@ -1137,18 +1136,9 @@ export default function VBTReport() {
 
       {/* data table here */}
 
-      <div style={{ height: "calc(100vh - 160px)", padding: "0 10px" }}>
+      <div style={{ height: "calc(100vh - 180px)", marginTop: 10 }}>
         <MyDataTable
-          // initialState={{
-          //   columns: {
-          //     // ...data.initialState?.columns,
-          //     columnVisibilityModel: {
-          //       min_id: false,
-          //       // vbt_code: false,
-          //       cgst_gl: false,
-          //     },
-          //   },
-          // }}
+      
           checkboxSelection={wise == "vendorwise"}
           loading={loading}
           columns={columns}

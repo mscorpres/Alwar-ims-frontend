@@ -67,8 +67,8 @@ const AddGstDetails = () => {
   const [gstForm] = Form.useForm();
 
   return (
-    <>
-      <Col style={{ paddingLeft: "20px", paddingRight: "20px" }}>
+    <div style={{height: "100%", padding:10}}>
+      <Col >
         <hr style={{ border: "1px solid #D3D3D3" , marginTop:"10px", marginBottom:'10px' }} />
 
         <Form
@@ -347,7 +347,7 @@ const AddGstDetails = () => {
           </Button>
         </div>
       </Col>
-    </>
+    </div>
   );
 };
 

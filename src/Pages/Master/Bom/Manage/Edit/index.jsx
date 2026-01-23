@@ -3,8 +3,6 @@ import { Card, Col, Divider, Drawer, Input, Row, Typography } from "antd";
 import { imsAxios } from "../../../../../axiosInterceptor";
 import ToolTipEllipses from "../../../../../Components/ToolTipEllipses";
 import MySelect from "../../../../../Components/MySelect";
-
-import FormTable from "../../../../../Components/FormTable";
 import { useEffect } from "react";
 import { CommonIcons } from "../../../../../Components/TableActions.jsx/TableActions";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
@@ -19,6 +17,7 @@ import AlterModal from "../../AlterModal.jsx";
 
 import useApi from "../../../../../hooks/useApi.ts";
 import { convertSelectOptions } from "../../../../../utils/general.ts";
+import FormTable from "../../../../../Components/FormTable.jsx";
 const EditModal = ({ show, close, bomType }) => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
@@ -201,6 +200,7 @@ const EditModal = ({ show, close, bomType }) => {
   };
   const columns = [
     {
+     
       headerName: <CommonIcons action="addRow" onClick={addRow} />,
       width: 30,
       // flex: 1,
@@ -210,6 +210,7 @@ const EditModal = ({ show, close, bomType }) => {
         ),
     },
     {
+     
       headerName: "Component",
       width: 150,
       // flex: 1,
@@ -229,12 +230,14 @@ const EditModal = ({ show, close, bomType }) => {
         ),
     },
     {
+     
       headerName: "Part Code",
       width: 100,
       // flex: 1,
       renderCell: ({ row }) => <ToolTipEllipses text={row.partCode} />,
     },
     {
+     
       headerName: "Status",
       width: 120,
       renderCell: ({ row }) => (
@@ -249,6 +252,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+    
       headerName: "Priority",
       width: 100,
       renderCell: ({ row }) => (
@@ -259,6 +263,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+     
       headerName: "Qty",
       width: 100,
       renderCell: ({ row }) => (
@@ -269,6 +274,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+     
       headerName: "Category",
       width: 150,
       renderCell: ({ row }) => (
@@ -280,6 +286,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+     
       headerName: "Vendor",
       width: 200,
       renderCell: ({ row }) => (
@@ -295,6 +302,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+      
       headerName: "Process",
       width: 100,
       renderCell: ({ row }) => (
@@ -306,6 +314,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+    
       headerName: "Source",
       width: 150,
       renderCell: ({ row }) => (
@@ -317,6 +326,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+    
       headerName: "SMT/MI Loc",
       width: 150,
       renderCell: ({ row }) => (
@@ -327,6 +337,7 @@ const EditModal = ({ show, close, bomType }) => {
       ),
     },
     {
+    
       headerName: "",
       width: 30,
       renderCell: ({ row }) => (

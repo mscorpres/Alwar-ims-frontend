@@ -8,16 +8,32 @@ import AddBranch from "../../Master/Vendor/model/AddBranch";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import NavFooter from "../../../Components/NavFooter";
-import { Col, Descriptions, Divider, Form, Input, Row, Tabs, Modal, Button, InputNumber, Radio, Checkbox } from "antd";
+import {
+  Col,
+  Descriptions,
+  Divider,
+  Form,
+  Input,
+  Row,
+  Tabs,
+  Modal,
+  Button,
+  InputNumber,
+  Radio,
+  Checkbox,
+} from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import Loading from "../../../Components/Loading";
 import SuccessPage from "./SuccessPage";
 import { imsAxios } from "../../../axiosInterceptor";
 import AddProjectModal from "./AddProjectModal";
 import useApi from "../../../hooks/useApi.ts";
-import { getCostCentresOptions, getProjectOptions, getVendorOptions } from "../../../api/general.ts";
+import {
+  getCostCentresOptions,
+  getProjectOptions,
+  getVendorOptions,
+} from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
-
 
 const deliveryTermOptions = [
   { label: "Within 10 days", value: "Within 10 days" },
@@ -83,8 +99,8 @@ export default function CreatePo() {
   const [selectLoading, setSelectLoading] = useState(false);
   const [stateCode, setStateCode] = useState("");
   const [showQtyWarning, setShowQtyWarning] = useState(false);
-const [qtyWarningData, setQtyWarningData] = useState(null);
-const [pendingPOData, setPendingPOData] = useState(null);
+  const [qtyWarningData, setQtyWarningData] = useState(null);
+  const [pendingPOData, setPendingPOData] = useState(null);
   const [rowCount, setRowCount] = useState([
     {
       id: v4(),
@@ -121,7 +137,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
 
   const termsCondition = Form.useWatch("termscondition", form);
   const advancePayment = Form.useWatch("advancePayment", form);
-  console.log("newPurchaseOrder", newPurchaseOrder);
+
   const { executeFun, loading: loading1 } = useApi();
   const validatePO = () => {
     const formValues = form.getFieldsValue();
@@ -129,71 +145,105 @@ const [pendingPOData, setPendingPOData] = useState(null);
     const currentPurchaseOrder = {
       ...newPurchaseOrder,
       ...formValues,
-      project_name: formProjectName !== undefined && formProjectName !== null 
-        ? formProjectName 
-        : (formValues.project_name !== undefined && formValues.project_name !== null 
-          ? formValues.project_name 
-          : newPurchaseOrder.project_name),
-      pocostcenter: formValues.pocostcenter !== undefined && formValues.pocostcenter !== null
-        ? formValues.pocostcenter 
-        : newPurchaseOrder.pocostcenter,
-      vendorname: formValues.vendorname !== undefined && formValues.vendorname !== null
-        ? formValues.vendorname 
-        : newPurchaseOrder.vendorname,
-      vendorbranch: formValues.vendorbranch !== undefined && formValues.vendorbranch !== null
-        ? formValues.vendorbranch 
-        : newPurchaseOrder.vendorbranch,
-      billaddressid: formValues.billaddressid !== undefined && formValues.billaddressid !== null
-        ? formValues.billaddressid 
-        : newPurchaseOrder.billaddressid,
-      shipaddressid: formValues.shipaddressid !== undefined && formValues.shipaddressid !== null
-        ? formValues.shipaddressid 
-        : newPurchaseOrder.shipaddressid,
-      ship_vendor: formValues.ship_vendor !== undefined && formValues.ship_vendor !== null
-        ? formValues.ship_vendor 
-        : newPurchaseOrder.ship_vendor,
-      ship_vendor_branch: formValues.ship_vendor_branch !== undefined && formValues.ship_vendor_branch !== null
-        ? formValues.ship_vendor_branch 
-        : newPurchaseOrder.ship_vendor_branch,
-      ship_type: formValues.ship_type !== undefined && formValues.ship_type !== null
-        ? formValues.ship_type 
-        : newPurchaseOrder.ship_type,
-      po_comment: formValues.po_comment !== undefined && formValues.po_comment !== null
-        ? formValues.po_comment 
-        : newPurchaseOrder.po_comment,
-      paymentterms: formValues.paymentterms !== undefined && formValues.paymentterms !== null
-        ? formValues.paymentterms 
-        : newPurchaseOrder.paymentterms,
-      paymenttermsday: formValues.paymenttermsday !== undefined && formValues.paymenttermsday !== null
-        ? formValues.paymenttermsday 
-        : newPurchaseOrder.paymenttermsday,
-      termscondition: formValues.termscondition !== undefined && formValues.termscondition !== null
-        ? formValues.termscondition 
-        : newPurchaseOrder.termscondition,
-      customDeliveryTerm: formValues.customDeliveryTerm !== undefined && formValues.customDeliveryTerm !== null
-        ? formValues.customDeliveryTerm 
-        : newPurchaseOrder.customDeliveryTerm,
-      customPaymentTerm: formValues.customPaymentTerm !== undefined && formValues.customPaymentTerm !== null
-        ? formValues.customPaymentTerm 
-        : newPurchaseOrder.customPaymentTerm,
-      advancePayment: formValues.advancePayment !== undefined && formValues.advancePayment !== null
-        ? formValues.advancePayment 
-        : newPurchaseOrder.advancePayment,
-      advancePercentage: formValues.advancePercentage !== undefined && formValues.advancePercentage !== null
-        ? formValues.advancePercentage 
-        : newPurchaseOrder.advancePercentage,
-      raisedBy: formValues.raisedBy !== undefined && formValues.raisedBy !== null
-        ? formValues.raisedBy 
-        : newPurchaseOrder.raisedBy,
-      original_po: formValues.original_po !== undefined && formValues.original_po !== null
-        ? formValues.original_po 
-        : newPurchaseOrder.original_po,
-      pocreatetype: formValues.pocreatetype !== undefined && formValues.pocreatetype !== null
-        ? formValues.pocreatetype 
-        : newPurchaseOrder.pocreatetype,
+      project_name:
+        formProjectName !== undefined && formProjectName !== null
+          ? formProjectName
+          : formValues.project_name !== undefined &&
+            formValues.project_name !== null
+          ? formValues.project_name
+          : newPurchaseOrder.project_name,
+      pocostcenter:
+        formValues.pocostcenter !== undefined &&
+        formValues.pocostcenter !== null
+          ? formValues.pocostcenter
+          : newPurchaseOrder.pocostcenter,
+      vendorname:
+        formValues.vendorname !== undefined && formValues.vendorname !== null
+          ? formValues.vendorname
+          : newPurchaseOrder.vendorname,
+      vendorbranch:
+        formValues.vendorbranch !== undefined &&
+        formValues.vendorbranch !== null
+          ? formValues.vendorbranch
+          : newPurchaseOrder.vendorbranch,
+      billaddressid:
+        formValues.billaddressid !== undefined &&
+        formValues.billaddressid !== null
+          ? formValues.billaddressid
+          : newPurchaseOrder.billaddressid,
+      shipaddressid:
+        formValues.shipaddressid !== undefined &&
+        formValues.shipaddressid !== null
+          ? formValues.shipaddressid
+          : newPurchaseOrder.shipaddressid,
+      ship_vendor:
+        formValues.ship_vendor !== undefined && formValues.ship_vendor !== null
+          ? formValues.ship_vendor
+          : newPurchaseOrder.ship_vendor,
+      ship_vendor_branch:
+        formValues.ship_vendor_branch !== undefined &&
+        formValues.ship_vendor_branch !== null
+          ? formValues.ship_vendor_branch
+          : newPurchaseOrder.ship_vendor_branch,
+      ship_type:
+        formValues.ship_type !== undefined && formValues.ship_type !== null
+          ? formValues.ship_type
+          : newPurchaseOrder.ship_type,
+      po_comment:
+        formValues.po_comment !== undefined && formValues.po_comment !== null
+          ? formValues.po_comment
+          : newPurchaseOrder.po_comment,
+      paymentterms:
+        formValues.paymentterms !== undefined &&
+        formValues.paymentterms !== null
+          ? formValues.paymentterms
+          : newPurchaseOrder.paymentterms,
+      paymenttermsday:
+        formValues.paymenttermsday !== undefined &&
+        formValues.paymenttermsday !== null
+          ? formValues.paymenttermsday
+          : newPurchaseOrder.paymenttermsday,
+      termscondition:
+        formValues.termscondition !== undefined &&
+        formValues.termscondition !== null
+          ? formValues.termscondition
+          : newPurchaseOrder.termscondition,
+      customDeliveryTerm:
+        formValues.customDeliveryTerm !== undefined &&
+        formValues.customDeliveryTerm !== null
+          ? formValues.customDeliveryTerm
+          : newPurchaseOrder.customDeliveryTerm,
+      customPaymentTerm:
+        formValues.customPaymentTerm !== undefined &&
+        formValues.customPaymentTerm !== null
+          ? formValues.customPaymentTerm
+          : newPurchaseOrder.customPaymentTerm,
+      advancePayment:
+        formValues.advancePayment !== undefined &&
+        formValues.advancePayment !== null
+          ? formValues.advancePayment
+          : newPurchaseOrder.advancePayment,
+      advancePercentage:
+        formValues.advancePercentage !== undefined &&
+        formValues.advancePercentage !== null
+          ? formValues.advancePercentage
+          : newPurchaseOrder.advancePercentage,
+      raisedBy:
+        formValues.raisedBy !== undefined && formValues.raisedBy !== null
+          ? formValues.raisedBy
+          : newPurchaseOrder.raisedBy,
+      original_po:
+        formValues.original_po !== undefined && formValues.original_po !== null
+          ? formValues.original_po
+          : newPurchaseOrder.original_po,
+      pocreatetype:
+        formValues.pocreatetype !== undefined &&
+        formValues.pocreatetype !== null
+          ? formValues.pocreatetype
+          : newPurchaseOrder.pocreatetype,
     };
     setnewPurchaseOrder(currentPurchaseOrder);
-    
+
     let newPo = {};
     let componentData = {
       currency: [],
@@ -241,7 +291,10 @@ const [pendingPOData, setPendingPOData] = useState(null);
       ...componentData,
       billaddressid: currentPurchaseOrder.billaddressid,
       original_po: currentPurchaseOrder.original_po,
-      pocostcenter: typeof currentPurchaseOrder.pocostcenter === "object" ? currentPurchaseOrder.pocostcenter.value : currentPurchaseOrder.pocostcenter,
+      pocostcenter:
+        typeof currentPurchaseOrder.pocostcenter === "object"
+          ? currentPurchaseOrder.pocostcenter.value
+          : currentPurchaseOrder.pocostcenter,
       pocreatetype: currentPurchaseOrder.pocreatetype,
 
       shipaddressid: (() => {
@@ -249,7 +302,9 @@ const [pendingPOData, setPendingPOData] = useState(null);
           return currentPurchaseOrder.shipaddressid;
         } else if (currentPurchaseOrder.ship_type === "vendor") {
           // Send vendor ID
-          return currentPurchaseOrder.ship_vendor ? currentPurchaseOrder.ship_vendor.value : null;
+          return currentPurchaseOrder.ship_vendor
+            ? currentPurchaseOrder.ship_vendor.value
+            : null;
         } else {
           // For manual entry,
           return null;
@@ -258,7 +313,9 @@ const [pendingPOData, setPendingPOData] = useState(null);
       // Keep ship_vendor_branch separate for reference if needed
       ship_vendor_branch: currentPurchaseOrder.ship_vendor_branch,
       vendorbranch: currentPurchaseOrder.vendorbranch,
-      vendorname: currentPurchaseOrder.vendorname?.value || currentPurchaseOrder.vendorname,
+      vendorname:
+        currentPurchaseOrder.vendorname?.value ||
+        currentPurchaseOrder.vendorname,
       vendortype: currentPurchaseOrder.vendortype,
       pocomment: currentPurchaseOrder.po_comment,
       poproject_name: (() => {
@@ -269,11 +326,21 @@ const [pendingPOData, setPendingPOData] = useState(null);
         }
         return project;
       })(),
-      paymenttermsday: currentPurchaseOrder.paymenttermsday ? (currentPurchaseOrder.paymenttermsday === "" ? 30 : currentPurchaseOrder.paymenttermsday) : 30,
+      paymenttermsday: currentPurchaseOrder.paymenttermsday
+        ? currentPurchaseOrder.paymenttermsday === ""
+          ? 30
+          : currentPurchaseOrder.paymenttermsday
+        : 30,
       paymentterms: (() => {
-        if (currentPurchaseOrder.paymentterms === "Other" && currentPurchaseOrder.customPaymentTerm?.trim()) {
+        if (
+          currentPurchaseOrder.paymentterms === "Other" &&
+          currentPurchaseOrder.customPaymentTerm?.trim()
+        ) {
           return currentPurchaseOrder.customPaymentTerm.trim();
-        } else if (currentPurchaseOrder.paymentterms && currentPurchaseOrder.paymentterms !== "Other") {
+        } else if (
+          currentPurchaseOrder.paymentterms &&
+          currentPurchaseOrder.paymentterms !== "Other"
+        ) {
           return currentPurchaseOrder.paymentterms;
         } else {
           return "As per standard terms";
@@ -281,7 +348,10 @@ const [pendingPOData, setPendingPOData] = useState(null);
       })(),
       po_raise_by: currentPurchaseOrder.raisedBy,
       advancePayment: currentPurchaseOrder.advancePayment,
-      termscondition: currentPurchaseOrder.termscondition === "Other" ? currentPurchaseOrder.customDeliveryTerm : currentPurchaseOrder.termscondition,
+      termscondition:
+        currentPurchaseOrder.termscondition === "Other"
+          ? currentPurchaseOrder.customDeliveryTerm
+          : currentPurchaseOrder.termscondition,
     };
 
     let error = false;
@@ -303,31 +373,55 @@ const [pendingPOData, setPendingPOData] = useState(null);
         showToast("Please select shipping address", "error");
         return;
       }
-      if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        showToast("Shipping address is not populated. Please select a valid shipping address", "error");
+      if (
+        !currentPurchaseOrder.shipaddress ||
+        currentPurchaseOrder.shipaddress.trim() === ""
+      ) {
+        showToast(
+          "Shipping address is not populated. Please select a valid shipping address",
+          "error"
+        );
         return;
       }
     } else if (currentPurchaseOrder.ship_type === "vendor") {
       // For vendor mode, validate vendor and branch selection
-      if (!currentPurchaseOrder.ship_vendor || !currentPurchaseOrder.ship_vendor_branch) {
+      if (
+        !currentPurchaseOrder.ship_vendor ||
+        !currentPurchaseOrder.ship_vendor_branch
+      ) {
         showToast("Please select shipping vendor and branch", "error");
         return;
       }
-      if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
-        showToast("Shipping address is not populated. Please select a valid vendor branch", "error");
+      if (
+        !currentPurchaseOrder.shipaddress ||
+        currentPurchaseOrder.shipaddress.trim() === ""
+      ) {
+        showToast(
+          "Shipping address is not populated. Please select a valid vendor branch",
+          "error"
+        );
         return;
       }
     } else if (currentPurchaseOrder.ship_type === "manual") {
       // For manual mode, validate all manual fields
-      if (!currentPurchaseOrder.shipaddress || currentPurchaseOrder.shipaddress.trim() === "") {
+      if (
+        !currentPurchaseOrder.shipaddress ||
+        currentPurchaseOrder.shipaddress.trim() === ""
+      ) {
         showToast("Please enter shipping address in manual mode", "error");
         return;
       }
-      if (!currentPurchaseOrder.shipPan || currentPurchaseOrder.shipPan.trim() === "") {
+      if (
+        !currentPurchaseOrder.shipPan ||
+        currentPurchaseOrder.shipPan.trim() === ""
+      ) {
         showToast("Please enter shipping PAN in manual mode", "error");
         return;
       }
-      if (!currentPurchaseOrder.shipGST || currentPurchaseOrder.shipGST.trim() === "") {
+      if (
+        !currentPurchaseOrder.shipGST ||
+        currentPurchaseOrder.shipGST.trim() === ""
+      ) {
         showToast("Please enter shipping GSTIN in manual mode", "error");
         return;
       }
@@ -346,23 +440,43 @@ const [pendingPOData, setPendingPOData] = useState(null);
       return;
     }
 
-    if (currentPurchaseOrder.pocreatetype == "S" && !currentPurchaseOrder.original_po) {
-      return showToast("Please select a PR ID in case of supplementary PR", "error");
+    if (
+      currentPurchaseOrder.pocreatetype == "S" &&
+      !currentPurchaseOrder.original_po
+    ) {
+      return showToast(
+        "Please select a PR ID in case of supplementary PR",
+        "error"
+      );
     }
 
-    if (currentPurchaseOrder.termscondition === "Other" && !currentPurchaseOrder.customDeliveryTerm?.trim()) {
-      showToast("Please enter custom delivery term when 'Other' is selected", "error");
+    if (
+      currentPurchaseOrder.termscondition === "Other" &&
+      !currentPurchaseOrder.customDeliveryTerm?.trim()
+    ) {
+      showToast(
+        "Please enter custom delivery term when 'Other' is selected",
+        "error"
+      );
       return;
     }
 
-    if (currentPurchaseOrder.paymentterms === "Advance Payment" && !currentPurchaseOrder.advancePercentage) {
+    if (
+      currentPurchaseOrder.paymentterms === "Advance Payment" &&
+      !currentPurchaseOrder.advancePercentage
+    ) {
       showToast("Please enter advance payment percentage", "error");
       return;
     }
 
-    // Component level validation
     rowCount.map((count) => {
-      if (count.currency == "" || count.exchange == 0 || count.component == "" || count.qty == 0 || count.rate == "") {
+      if (
+        count.currency == "" ||
+        count.exchange == 0 ||
+        count.component == "" ||
+        count.qty == 0 ||
+        count.rate == ""
+      ) {
         error = true;
       }
     });
@@ -377,72 +491,106 @@ const [pendingPOData, setPendingPOData] = useState(null);
   const submitHandler = async (confirmQtyExceed = false) => {
     const formValues = form.getFieldsValue();
     const formProjectName = form.getFieldValue("project_name");
-    
+
     const currentPurchaseOrder = {
       ...newPurchaseOrder,
       ...formValues,
-      project_name: formProjectName !== undefined && formProjectName !== null 
-        ? formProjectName 
-        : (formValues.project_name !== undefined && formValues.project_name !== null 
-          ? formValues.project_name 
-          : newPurchaseOrder.project_name),
-      pocostcenter: formValues.pocostcenter !== undefined && formValues.pocostcenter !== null
-        ? formValues.pocostcenter 
-        : newPurchaseOrder.pocostcenter,
-      vendorname: formValues.vendorname !== undefined && formValues.vendorname !== null
-        ? formValues.vendorname 
-        : newPurchaseOrder.vendorname,
-      vendorbranch: formValues.vendorbranch !== undefined && formValues.vendorbranch !== null
-        ? formValues.vendorbranch 
-        : newPurchaseOrder.vendorbranch,
-      billaddressid: formValues.billaddressid !== undefined && formValues.billaddressid !== null
-        ? formValues.billaddressid 
-        : newPurchaseOrder.billaddressid,
-      shipaddressid: formValues.shipaddressid !== undefined && formValues.shipaddressid !== null
-        ? formValues.shipaddressid 
-        : newPurchaseOrder.shipaddressid,
-      ship_vendor: formValues.ship_vendor !== undefined && formValues.ship_vendor !== null
-        ? formValues.ship_vendor 
-        : newPurchaseOrder.ship_vendor,
-      ship_vendor_branch: formValues.ship_vendor_branch !== undefined && formValues.ship_vendor_branch !== null
-        ? formValues.ship_vendor_branch 
-        : newPurchaseOrder.ship_vendor_branch,
-      ship_type: formValues.ship_type !== undefined && formValues.ship_type !== null
-        ? formValues.ship_type 
-        : newPurchaseOrder.ship_type,
-      po_comment: formValues.po_comment !== undefined && formValues.po_comment !== null
-        ? formValues.po_comment 
-        : newPurchaseOrder.po_comment,
-      paymentterms: formValues.paymentterms !== undefined && formValues.paymentterms !== null
-        ? formValues.paymentterms 
-        : newPurchaseOrder.paymentterms,
-      paymenttermsday: formValues.paymenttermsday !== undefined && formValues.paymenttermsday !== null
-        ? formValues.paymenttermsday 
-        : newPurchaseOrder.paymenttermsday,
-      termscondition: formValues.termscondition !== undefined && formValues.termscondition !== null
-        ? formValues.termscondition 
-        : newPurchaseOrder.termscondition,
-      customDeliveryTerm: formValues.customDeliveryTerm !== undefined && formValues.customDeliveryTerm !== null
-        ? formValues.customDeliveryTerm 
-        : newPurchaseOrder.customDeliveryTerm,
-      customPaymentTerm: formValues.customPaymentTerm !== undefined && formValues.customPaymentTerm !== null
-        ? formValues.customPaymentTerm 
-        : newPurchaseOrder.customPaymentTerm,
-      advancePayment: formValues.advancePayment !== undefined && formValues.advancePayment !== null
-        ? formValues.advancePayment 
-        : newPurchaseOrder.advancePayment,
-      advancePercentage: formValues.advancePercentage !== undefined && formValues.advancePercentage !== null
-        ? formValues.advancePercentage 
-        : newPurchaseOrder.advancePercentage,
-      raisedBy: formValues.raisedBy !== undefined && formValues.raisedBy !== null
-        ? formValues.raisedBy 
-        : newPurchaseOrder.raisedBy,
-      original_po: formValues.original_po !== undefined && formValues.original_po !== null
-        ? formValues.original_po 
-        : newPurchaseOrder.original_po,
-      pocreatetype: formValues.pocreatetype !== undefined && formValues.pocreatetype !== null
-        ? formValues.pocreatetype 
-        : newPurchaseOrder.pocreatetype,
+      project_name:
+        formProjectName !== undefined && formProjectName !== null
+          ? formProjectName
+          : formValues.project_name !== undefined &&
+            formValues.project_name !== null
+          ? formValues.project_name
+          : newPurchaseOrder.project_name,
+      pocostcenter:
+        formValues.pocostcenter !== undefined &&
+        formValues.pocostcenter !== null
+          ? formValues.pocostcenter
+          : newPurchaseOrder.pocostcenter,
+      vendorname:
+        formValues.vendorname !== undefined && formValues.vendorname !== null
+          ? formValues.vendorname
+          : newPurchaseOrder.vendorname,
+      vendorbranch:
+        formValues.vendorbranch !== undefined &&
+        formValues.vendorbranch !== null
+          ? formValues.vendorbranch
+          : newPurchaseOrder.vendorbranch,
+      billaddressid:
+        formValues.billaddressid !== undefined &&
+        formValues.billaddressid !== null
+          ? formValues.billaddressid
+          : newPurchaseOrder.billaddressid,
+      shipaddressid:
+        formValues.shipaddressid !== undefined &&
+        formValues.shipaddressid !== null
+          ? formValues.shipaddressid
+          : newPurchaseOrder.shipaddressid,
+      ship_vendor:
+        formValues.ship_vendor !== undefined && formValues.ship_vendor !== null
+          ? formValues.ship_vendor
+          : newPurchaseOrder.ship_vendor,
+      ship_vendor_branch:
+        formValues.ship_vendor_branch !== undefined &&
+        formValues.ship_vendor_branch !== null
+          ? formValues.ship_vendor_branch
+          : newPurchaseOrder.ship_vendor_branch,
+      ship_type:
+        formValues.ship_type !== undefined && formValues.ship_type !== null
+          ? formValues.ship_type
+          : newPurchaseOrder.ship_type,
+      po_comment:
+        formValues.po_comment !== undefined && formValues.po_comment !== null
+          ? formValues.po_comment
+          : newPurchaseOrder.po_comment,
+      paymentterms:
+        formValues.paymentterms !== undefined &&
+        formValues.paymentterms !== null
+          ? formValues.paymentterms
+          : newPurchaseOrder.paymentterms,
+      paymenttermsday:
+        formValues.paymenttermsday !== undefined &&
+        formValues.paymenttermsday !== null
+          ? formValues.paymenttermsday
+          : newPurchaseOrder.paymenttermsday,
+      termscondition:
+        formValues.termscondition !== undefined &&
+        formValues.termscondition !== null
+          ? formValues.termscondition
+          : newPurchaseOrder.termscondition,
+      customDeliveryTerm:
+        formValues.customDeliveryTerm !== undefined &&
+        formValues.customDeliveryTerm !== null
+          ? formValues.customDeliveryTerm
+          : newPurchaseOrder.customDeliveryTerm,
+      customPaymentTerm:
+        formValues.customPaymentTerm !== undefined &&
+        formValues.customPaymentTerm !== null
+          ? formValues.customPaymentTerm
+          : newPurchaseOrder.customPaymentTerm,
+      advancePayment:
+        formValues.advancePayment !== undefined &&
+        formValues.advancePayment !== null
+          ? formValues.advancePayment
+          : newPurchaseOrder.advancePayment,
+      advancePercentage:
+        formValues.advancePercentage !== undefined &&
+        formValues.advancePercentage !== null
+          ? formValues.advancePercentage
+          : newPurchaseOrder.advancePercentage,
+      raisedBy:
+        formValues.raisedBy !== undefined && formValues.raisedBy !== null
+          ? formValues.raisedBy
+          : newPurchaseOrder.raisedBy,
+      original_po:
+        formValues.original_po !== undefined && formValues.original_po !== null
+          ? formValues.original_po
+          : newPurchaseOrder.original_po,
+      pocreatetype:
+        formValues.pocreatetype !== undefined &&
+        formValues.pocreatetype !== null
+          ? formValues.pocreatetype
+          : newPurchaseOrder.pocreatetype,
     };
     const storedPOData = pendingPOData || showSubmitConfirm;
     if (!storedPOData) {
@@ -450,27 +598,34 @@ const [pendingPOData, setPendingPOData] = useState(null);
       setSubmitLoading(false);
       return;
     }
-    
+
     // Merge latest form values with stored component data
     const finalPOData = {
       ...storedPOData,
       // Override with latest form values
       billaddressid: currentPurchaseOrder.billaddressid,
       original_po: currentPurchaseOrder.original_po,
-      pocostcenter: typeof currentPurchaseOrder.pocostcenter === "object" ? currentPurchaseOrder.pocostcenter.value : currentPurchaseOrder.pocostcenter,
+      pocostcenter:
+        typeof currentPurchaseOrder.pocostcenter === "object"
+          ? currentPurchaseOrder.pocostcenter.value
+          : currentPurchaseOrder.pocostcenter,
       pocreatetype: currentPurchaseOrder.pocreatetype,
       shipaddressid: (() => {
         if (currentPurchaseOrder.ship_type === "saved") {
           return currentPurchaseOrder.shipaddressid;
         } else if (currentPurchaseOrder.ship_type === "vendor") {
-          return currentPurchaseOrder.ship_vendor ? currentPurchaseOrder.ship_vendor.value : null;
+          return currentPurchaseOrder.ship_vendor
+            ? currentPurchaseOrder.ship_vendor.value
+            : null;
         } else {
           return null;
         }
       })(),
       ship_vendor_branch: currentPurchaseOrder.ship_vendor_branch,
       vendorbranch: currentPurchaseOrder.vendorbranch,
-      vendorname: currentPurchaseOrder.vendorname?.value || currentPurchaseOrder.vendorname,
+      vendorname:
+        currentPurchaseOrder.vendorname?.value ||
+        currentPurchaseOrder.vendorname,
       vendortype: currentPurchaseOrder.vendortype,
       pocomment: currentPurchaseOrder.po_comment,
       poproject_name: (() => {
@@ -481,11 +636,21 @@ const [pendingPOData, setPendingPOData] = useState(null);
         }
         return project;
       })(),
-      paymenttermsday: currentPurchaseOrder.paymenttermsday ? (currentPurchaseOrder.paymenttermsday === "" ? 30 : currentPurchaseOrder.paymenttermsday) : 30,
+      paymenttermsday: currentPurchaseOrder.paymenttermsday
+        ? currentPurchaseOrder.paymenttermsday === ""
+          ? 30
+          : currentPurchaseOrder.paymenttermsday
+        : 30,
       paymentterms: (() => {
-        if (currentPurchaseOrder.paymentterms === "Other" && currentPurchaseOrder.customPaymentTerm?.trim()) {
+        if (
+          currentPurchaseOrder.paymentterms === "Other" &&
+          currentPurchaseOrder.customPaymentTerm?.trim()
+        ) {
           return currentPurchaseOrder.customPaymentTerm.trim();
-        } else if (currentPurchaseOrder.paymentterms && currentPurchaseOrder.paymentterms !== "Other") {
+        } else if (
+          currentPurchaseOrder.paymentterms &&
+          currentPurchaseOrder.paymentterms !== "Other"
+        ) {
           return currentPurchaseOrder.paymentterms;
         } else {
           return "As per standard terms";
@@ -493,9 +658,12 @@ const [pendingPOData, setPendingPOData] = useState(null);
       })(),
       po_raise_by: currentPurchaseOrder.raisedBy,
       advancePayment: currentPurchaseOrder.advancePayment,
-      termscondition: currentPurchaseOrder.termscondition === "Other" ? currentPurchaseOrder.customDeliveryTerm : currentPurchaseOrder.termscondition,
+      termscondition:
+        currentPurchaseOrder.termscondition === "Other"
+          ? currentPurchaseOrder.customDeliveryTerm
+          : currentPurchaseOrder.termscondition,
     };
-    
+
     setSubmitLoading(true);
     try {
       const response = await imsAxios.post("/purchaseOrder/createPO", {
@@ -503,51 +671,51 @@ const [pendingPOData, setPendingPOData] = useState(null);
         confirmQtyExceed: confirmQtyExceed,
       });
 
-        setSubmitLoading(false);
-        const responseData = response?.data || response;
-        if (responseData) {
-          if (response.status === "warning") {
+      setSubmitLoading(false);
+      const responseData = response?.data || response;
+      if (responseData) {
+        if (response.status === "warning") {
           setShowSubmitConfirm(null);
           setQtyWarningData(response.data);
           setShowQtyWarning(true);
           return;
         }
-          setShowSubmitConfirm(null);
-          setPendingPOData(null);
-          if (response.success) {
-            resetFunction();
-            rowsReset();
-            setActiveTab("1");
-            setSuccessData({
-              vendorName: newPurchaseOrder.vendorname.label,
-              project: newPurchaseOrder.project_name,
-              poId: response.data?.po_id,
-              components: rowCount.map((row, index) => {
-                return {
-                  id: index,
-                  component: row.component.label,
-                  // part: row.qty,
-                  qty: row.qty,
-                  rate: row.rate,
-                  uom: row.unit,
-                  value: Number(row.qty).toFixed(2) * Number(row.rate).toFixed(2),
-                };
-              }),
-            });
-          } else {
-            showToast(response.message, "error");
-          }
+        setShowSubmitConfirm(null);
+        setPendingPOData(null);
+        if (response.success) {
+          resetFunction();
+          rowsReset();
+          setActiveTab("1");
+          setSuccessData({
+            vendorName: newPurchaseOrder.vendorname.label,
+            project: newPurchaseOrder.project_name,
+            poId: response.data?.po_id,
+            components: rowCount.map((row, index) => {
+              return {
+                id: index,
+                component: row.component.label,
+                // part: row.qty,
+                qty: row.qty,
+                rate: row.rate,
+                uom: row.unit,
+                value: Number(row.qty).toFixed(2) * Number(row.rate).toFixed(2),
+              };
+            }),
+          });
+        } else {
+          showToast(response.message, "error");
         }
-      } catch (error) {
-        setSubmitLoading(false);
-        // Handle error response - message can be string or object
-        const errorMessage = error?.response?.data?.message
-          ? typeof error.response.data.message === "string"
-            ? error.response.data.message
-            : error.response.data.message?.msg || "An error occurred"
-          : error?.message || "Failed to create PR";
-        showToast(errorMessage, "error");
       }
+    } catch (error) {
+      setSubmitLoading(false);
+      // Handle error response - message can be string or object
+      const errorMessage = error?.response?.data?.message
+        ? typeof error.response.data.message === "string"
+          ? error.response.data.message
+          : error.response.data.message?.msg || "An error occurred"
+        : error?.message || "Failed to create PR";
+      showToast(errorMessage, "error");
+    }
   };
   const getPOs = async (searchInput) => {
     if (searchInput?.length > 2) {
@@ -573,14 +741,13 @@ const [pendingPOData, setPendingPOData] = useState(null);
       vendorcode: vendorCode,
     });
     setPageLoading(false);
-    const  data  = response?.data;
-  
-      if (response.success) {
-        return data;
-      } else {
-        showToast(response.message, "error");
-      }
- 
+    const data = response?.data;
+
+    if (response.success) {
+      return data;
+    } else {
+      showToast(response.message, "error");
+    }
   };
   const selectInputHandler = async (name, value) => {
     if (!value) return;
@@ -591,6 +758,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
         vendorCode: value,
         vendorBranch: branches[0]?.value,
       });
+
       const termsData = await getPaymentTermsDay(value.value);
 
       const updated = {
@@ -705,10 +873,14 @@ const [pendingPOData, setPendingPOData] = useState(null);
     setSameAsBilling(checked);
 
     if (checked) {
-      const billingOption = billToOptions.find((option) => option.value === newPurchaseOrder.billaddressid);
+      const billingOption = billToOptions.find(
+        (option) => option.value === newPurchaseOrder.billaddressid
+      );
 
       if (billingOption) {
-        const existsInShipping = shipToOptions.some((option) => option.value === billingOption.value);
+        const existsInShipping = shipToOptions.some(
+          (option) => option.value === billingOption.value
+        );
         if (!existsInShipping) {
           setShipToOptions((prev) => [...prev, billingOption]);
         }
@@ -782,7 +954,7 @@ const [pendingPOData, setPendingPOData] = useState(null);
       arr = convertSelectOptions(response.data);
     }
     setAsyncOptions(arr);
-    let  data  = response?.data;
+    let data = response?.data;
     arr = data;
     // //   if (!data.msg) {
     if (response.success) {
@@ -800,29 +972,31 @@ const [pendingPOData, setPendingPOData] = useState(null);
     const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
     });
-    
+
     setPageLoading(false);
-    if(response.success){
+    if (response.success) {
       const arr = response.data.map((d) => {
-      return { value: d.id, text: d.text };
-    });
-    setVendorBranches(arr);
-    return arr;
+        return { value: d.id, text: d.text };
+      });
+      setVendorBranches(arr);
+      return arr;
     }
     if (!response?.success) {
-      return
+      return;
     }
   };
   // getting vendor address
   const getVendorAddress = async ({ vendorCode, vendorBranch }) => {
-  
-   
     const response = await imsAxios.post("/backend/vendorAddress", {
       vendorcode: vendorCode?.value,
       branchcode: vendorBranch,
     });
-   
-    return { address: response?.data?.address, gstin: response?.data.gstid };
+
+    return {
+      address: response?.data?.address,
+      gstin: response?.data.gstid,
+      statecode: response?.data?.state,
+    };
   };
   const getBillTo = async () => {
     setSelectLoading(true);
@@ -862,7 +1036,10 @@ const [pendingPOData, setPendingPOData] = useState(null);
     }
   };
   const handleFetchCostCenterOptions = async (search) => {
-    const response = await executeFun(() => getCostCentresOptions(search), "select");
+    const response = await executeFun(
+      () => getCostCentresOptions(search),
+      "select"
+    );
     let arr = [];
     if (response.success) arr = convertSelectOptions(response.data);
     setAsyncOptions(arr);
@@ -963,15 +1140,19 @@ const [pendingPOData, setPendingPOData] = useState(null);
     setSuccessData(false);
   };
   const handleFetchProjectOptions = async (search) => {
-    const response = await executeFun(() => getProjectOptions(search), "select");
+    const response = await executeFun(
+      () => getProjectOptions(search),
+      "select"
+    );
     setAsyncOptions(response.data);
   };
   const handleProjectChange = async (value) => {
-    const projectValue = typeof value === "object" ? value : { value: value, label: value };
-    
+    const projectValue =
+      typeof value === "object" ? value : { value: value, label: value };
+
     // Update form value to ensure it's synced
     form.setFieldsValue({ project_name: projectValue });
-    
+
     setnewPurchaseOrder((prev) => ({
       ...prev,
       project_name: projectValue,
@@ -982,12 +1163,14 @@ const [pendingPOData, setPendingPOData] = useState(null);
       project_name: typeof value === "object" ? value.value : value,
     });
     setPageLoading(false);
-    const  data  = response?.data;
+    const data = response?.data;
     if (data) {
       if (response.success) {
         setProjectDesc(data.description);
 
-        await handleProjectCostCenter(typeof value === "object" ? value.value : value);
+        await handleProjectCostCenter(
+          typeof value === "object" ? value.value : value
+        );
       } else {
         showToast(data.message, "error");
       }
@@ -1001,9 +1184,16 @@ const [pendingPOData, setPendingPOData] = useState(null);
         project_name: projectName,
       });
       setPageLoading(false);
-      const responseData = response?.success !== undefined ? response : response?.data || response;
+      const responseData =
+        response?.success !== undefined ? response : response?.data || response;
 
-      if (responseData && responseData.success && responseData.data && Array.isArray(responseData.data) && responseData.data.length > 0) {
+      if (
+        responseData &&
+        responseData.success &&
+        responseData.data &&
+        Array.isArray(responseData.data) &&
+        responseData.data.length > 0
+      ) {
         const costCenterData = responseData.data[0];
         const costCenterOption = {
           value: costCenterData.id,
@@ -1011,7 +1201,10 @@ const [pendingPOData, setPendingPOData] = useState(null);
         };
 
         form.setFieldsValue({ pocostcenter: costCenterOption });
-        const updatedPO = { ...newPurchaseOrder, pocostcenter: costCenterOption };
+        const updatedPO = {
+          ...newPurchaseOrder,
+          pocostcenter: costCenterOption,
+        };
         setnewPurchaseOrder(updatedPO);
       } else {
         showToast(data?.message || "Failed to fetch cost center", "error");
@@ -1054,10 +1247,14 @@ const [pendingPOData, setPendingPOData] = useState(null);
 
   useEffect(() => {
     if (sameAsBilling && newPurchaseOrder.billaddressid) {
-      const billingOption = billToOptions.find((option) => option.value === newPurchaseOrder.billaddressid);
+      const billingOption = billToOptions.find(
+        (option) => option.value === newPurchaseOrder.billaddressid
+      );
 
       if (billingOption) {
-        const existsInShipping = shipToOptions.some((option) => option.value === billingOption.value);
+        const existsInShipping = shipToOptions.some(
+          (option) => option.value === billingOption.value
+        );
         if (!existsInShipping) {
           setShipToOptions((prev) => [...prev, billingOption]);
         }
@@ -1092,34 +1289,34 @@ const [pendingPOData, setPendingPOData] = useState(null);
     <div
       style={{
         height: "calc(100vh - 180px)",
-        overflow:"hidden"
+        overflow: "hidden",
       }}
     >
       {/* create confirm modal */}
       <Modal
-  title="Confirm Create PR!"
-  open={showSubmitConfirm}
-  onCancel={() => setShowSubmitConfirm(false)}
-  footer={[
-    <Button key="back" onClick={() => setShowSubmitConfirm(false)}>
-      No
-    </Button>,
-    <Button
-      key="submit"
-      type="primary"
-      loading={submitLoading}
-      onClick={() => {
-        setPendingPOData(showSubmitConfirm);  // ← Store the PR data
-        setShowSubmitConfirm(false);          // ← Close this modal
-        submitHandler(false);                 // ← Try to submit (will trigger warning if needed)
-      }}
-    >
-      Yes
-    </Button>,
-  ]}
->
-  <p>Are you sure you want to generate this Purchase Order?</p>
-</Modal>
+        title="Confirm Create PR!"
+        open={showSubmitConfirm}
+        onCancel={() => setShowSubmitConfirm(false)}
+        footer={[
+          <Button key="back" onClick={() => setShowSubmitConfirm(false)}>
+            No
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={submitLoading}
+            onClick={() => {
+              setPendingPOData(showSubmitConfirm); // ← Store the PR data
+              setShowSubmitConfirm(false); // ← Close this modal
+              submitHandler(false); // ← Try to submit (will trigger warning if needed)
+            }}
+          >
+            Yes
+          </Button>,
+        ]}
+      >
+        <p>Are you sure you want to generate this Purchase Order?</p>
+      </Modal>
       {/* reset vendor confirm modal */}
       <Modal
         title="Confirm Reset!"
@@ -1138,76 +1335,90 @@ const [pendingPOData, setPendingPOData] = useState(null);
         <p>Are you sure to reset details of this Purchase Order?</p>
       </Modal>
       {/* Quantity Warning Modal */}
-<Modal
-  title={
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <span style={{ fontSize: '20px', color: '#faad14' }}>⚠️</span>
-      <span>Quantity Exceeds Project Requirement</span>
-    </div>
-  }
-  open={showQtyWarning}
-  onCancel={() => {
-    setShowQtyWarning(false);
-    setQtyWarningData(null);
-    setPendingPOData(null); 
-  }}
-  footer={[
-    <Button 
-      key="back" 
-      onClick={() => {
-        setShowQtyWarning(false);
-        setQtyWarningData(null);
-      }}
-    >
-      Cancel
-    </Button>,
-    <Button 
-      key="submit" 
-      type="primary" 
-      danger
-      loading={submitLoading}
-      onClick={async () => {
-        setShowQtyWarning(false);
-        await submitHandler(true); // Pass confirmation flag - pendingPOData already has the data
-      }}
-    >
-      Proceed Anyway
-    </Button>,
-  ]}
-  width={700}
->
-  <div>
-    <p style={{ marginBottom: '16px', fontWeight: 500 }}>
-      The following components exceed the project quantity requirements:
-    </p>
-    
-    {qtyWarningData?.warnings?.map((warning, index) => (
-      <div 
-        key={index}
-        style={{
-          padding: '12px',
-          marginBottom: '12px',
-          backgroundColor: '#fff7e6',
-          border: '1px solid #ffd591',
-          borderRadius: '4px',
+      <Modal
+        title={
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{ fontSize: "20px", color: "#faad14" }}>⚠️</span>
+            <span>Quantity Exceeds Project Requirement</span>
+          </div>
+        }
+        open={showQtyWarning}
+        onCancel={() => {
+          setShowQtyWarning(false);
+          setQtyWarningData(null);
+          setPendingPOData(null);
         }}
+        footer={[
+          <Button
+            key="back"
+            onClick={() => {
+              setShowQtyWarning(false);
+              setQtyWarningData(null);
+            }}
+          >
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            danger
+            loading={submitLoading}
+            onClick={async () => {
+              setShowQtyWarning(false);
+              await submitHandler(true); // Pass confirmation flag - pendingPOData already has the data
+            }}
+          >
+            Proceed Anyway
+          </Button>,
+        ]}
+        width={700}
       >
-        <p style={{ margin: '4px 0', fontSize: '14px' }}>
-          <strong>{warning.message}:</strong>
-        </p>
-      </div>
-    ))}
-    
-    <p style={{ marginTop: '16px', color: '#595959', fontSize: '13px' }}>
-      ⚠️ <strong>Warning:</strong> Proceeding will create a PR that exceeds the project requirements. 
-      Please verify this is intentional before continuing.
-    </p>
-  </div>
-</Modal>
-      <AddVendorSideBar open={showAddVendorModal} setOpen={setShowAddVendorModal} />
-      <AddBranch getVendorBracnch={getVendorBracnch} setOpenBranch={setShowBranchModal} openBranch={showBranchModel} />
-      <CreateCostModal showAddCostModal={showAddCostModal} setShowAddCostModal={setShowAddCostModal} />
-      <AddProjectModal showAddProjectConfirm={showAddProjectConfirm} setShowAddProjectConfirm={setShowAddProjectConfirm} />
+        <div>
+          <p style={{ marginBottom: "16px", fontWeight: 500 }}>
+            The following components exceed the project quantity requirements:
+          </p>
+
+          {qtyWarningData?.warnings?.map((warning, index) => (
+            <div
+              key={index}
+              style={{
+                padding: "12px",
+                marginBottom: "12px",
+                backgroundColor: "#fff7e6",
+                border: "1px solid #ffd591",
+                borderRadius: "4px",
+              }}
+            >
+              <p style={{ margin: "4px 0", fontSize: "14px" }}>
+                <strong>{warning.message}:</strong>
+              </p>
+            </div>
+          ))}
+
+          <p style={{ marginTop: "16px", color: "#595959", fontSize: "13px" }}>
+            ⚠️ <strong>Warning:</strong> Proceeding will create a PR that
+            exceeds the project requirements. Please verify this is intentional
+            before continuing.
+          </p>
+        </div>
+      </Modal>
+      <AddVendorSideBar
+        open={showAddVendorModal}
+        setOpen={setShowAddVendorModal}
+      />
+      <AddBranch
+        getVendorBracnch={getVendorBracnch}
+        setOpenBranch={setShowBranchModal}
+        openBranch={showBranchModel}
+      />
+      <CreateCostModal
+        showAddCostModal={showAddCostModal}
+        setShowAddCostModal={setShowAddCostModal}
+      />
+      <AddProjectModal
+        showAddProjectConfirm={showAddProjectConfirm}
+        setShowAddProjectConfirm={setShowAddProjectConfirm}
+      />
       {!successData && (
         <div style={{ height: "100%", overflow: "auto" }}>
           <Tabs
@@ -1260,7 +1471,11 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       <Row gutter={16}>
                         {/* PR type */}
                         <Col span={6}>
-                          <Form.Item name="pocreatetype" label="PR Type" rules={rules.pocreatetype}>
+                          <Form.Item
+                            name="pocreatetype"
+                            label="PR Type"
+                            rules={rules.pocreatetype}
+                          >
                             <MySelect size="default" options={POoption} />
                           </Form.Item>
                         </Col>
@@ -1272,7 +1487,8 @@ const [pendingPOData, setPendingPOData] = useState(null);
                               label={
                                 <span
                                   style={{
-                                    fontSize: window.innerWidth < 1600 && "0.7rem",
+                                    fontSize:
+                                      window.innerWidth < 1600 && "0.7rem",
                                   }}
                                 >
                                   Original PR
@@ -1280,7 +1496,13 @@ const [pendingPOData, setPendingPOData] = useState(null);
                               }
                               rules={rules.original_po}
                             >
-                              <MyAsyncSelect selectLoading={selectLoading} size="default" onBlur={() => setAsyncOptions([])} loadOptions={getPOs} optionsState={asyncOptions} />
+                              <MyAsyncSelect
+                                selectLoading={selectLoading}
+                                size="default"
+                                onBlur={() => setAsyncOptions([])}
+                                loadOptions={getPOs}
+                                optionsState={asyncOptions}
+                              />
                             </Form.Item>
                           </Col>
                         )}
@@ -1310,7 +1532,8 @@ const [pendingPOData, setPendingPOData] = useState(null);
                             label={
                               <span
                                 style={{
-                                  fontSize: window.innerWidth < 1600 && "0.7rem",
+                                  fontSize:
+                                    window.innerWidth < 1600 && "0.7rem",
                                 }}
                               >
                                 Vendor Type
@@ -1318,7 +1541,10 @@ const [pendingPOData, setPendingPOData] = useState(null);
                             }
                             rules={rules.vendortype}
                           >
-                            <MySelect size="default" options={vendorDetailsOptions} />
+                            <MySelect
+                              size="default"
+                              options={vendorDetailsOptions}
+                            />
                           </Form.Item>
                         </Col>
                         {/* vendor name */}
@@ -1329,7 +1555,8 @@ const [pendingPOData, setPendingPOData] = useState(null);
                             label={
                               <div
                                 style={{
-                                  fontSize: window.innerWidth < 1600 && "0.7rem",
+                                  fontSize:
+                                    window.innerWidth < 1600 && "0.7rem",
                                   display: "flex",
                                   justifyContent: "space-between",
                                   width: 350,
@@ -1348,7 +1575,14 @@ const [pendingPOData, setPendingPOData] = useState(null);
                               </div>
                             }
                           >
-                            <MyAsyncSelect selectLoading={loading1("select")} size="default" labelInValue onBlur={() => setAsyncOptions([])} optionsState={asyncOptions} loadOptions={getVendors} />
+                            <MyAsyncSelect
+                              selectLoading={loading1("select")}
+                              size="default"
+                              labelInValue
+                              onBlur={() => setAsyncOptions([])}
+                              optionsState={asyncOptions}
+                              loadOptions={getVendors}
+                            />
                           </Form.Item>
                         </Col>
                         {/* venodr branch */}
@@ -1359,7 +1593,8 @@ const [pendingPOData, setPendingPOData] = useState(null);
                             label={
                               <div
                                 style={{
-                                  fontSize: window.innerWidth < 1600 && "0.7rem",
+                                  fontSize:
+                                    window.innerWidth < 1600 && "0.7rem",
                                   display: "flex",
                                   justifyContent: "space-between",
                                   width: 350,
@@ -1403,7 +1638,11 @@ const [pendingPOData, setPendingPOData] = useState(null);
                           </Form.Item>
                         </Col>
                         <Col span={12}>
-                          <Form.Item name="vendoraddress" label="Bill From Address" rules={rules.vendoraddress}>
+                          <Form.Item
+                            name="vendoraddress"
+                            label="Bill From Address"
+                            rules={rules.vendoraddress}
+                          >
                             <TextArea
                               value={newPurchaseOrder.vendoraddress}
                               rows={4}
@@ -1445,19 +1684,27 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       <Row gutter={16}>
                         {/* terms and conditions */}
                         <Col span={6}>
-                          <Form.Item name="termscondition" label="Delivery Terms">
+                          <Form.Item
+                            name="termscondition"
+                            label="Delivery Terms"
+                          >
                             <MySelect
                               options={deliveryTermOptions}
                               onChange={(value) => {
                                 if (value !== "Other") {
-                                  form.setFieldsValue({ customDeliveryTerm: "" });
+                                  form.setFieldsValue({
+                                    customDeliveryTerm: "",
+                                  });
                                 }
                               }}
                             />
                           </Form.Item>
                           <Form.Item noStyle>
                             {termsCondition === "Other" && (
-                              <Form.Item name="customDeliveryTerm" style={{ marginTop: 8 }}>
+                              <Form.Item
+                                name="customDeliveryTerm"
+                                style={{ marginTop: 8 }}
+                              >
                                 <Input placeholder="Enter custom delivery term" />
                               </Form.Item>
                             )}
@@ -1480,18 +1727,33 @@ const [pendingPOData, setPendingPOData] = useState(null);
                                   form.setFieldsValue({
                                     customPaymentTerm: "",
                                   });
-                                  setnewPurchaseOrder((prev) => ({ ...prev, customPaymentTerm: "" }));
+                                  setnewPurchaseOrder((prev) => ({
+                                    ...prev,
+                                    customPaymentTerm: "",
+                                  }));
                                 }
                               }}
                             />
                           </Form.Item>
                           {form.getFieldValue("paymentterms") === "Other" && (
-                            <Form.Item name="customPaymentTerm" rules={[{ required: true, message: "Please enter payment terms" }]} style={{ marginTop: 8 }}>
+                            <Form.Item
+                              name="customPaymentTerm"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please enter payment terms",
+                                },
+                              ]}
+                              style={{ marginTop: 8 }}
+                            >
                               <Input.TextArea
                                 rows={2}
                                 placeholder="e.g. 30% Advance, balance against delivery"
                                 onChange={(e) => {
-                                  setnewPurchaseOrder((prev) => ({ ...prev, customPaymentTerm: e.target.value }));
+                                  setnewPurchaseOrder((prev) => ({
+                                    ...prev,
+                                    customPaymentTerm: e.target.value,
+                                  }));
                                 }}
                               />
                             </Form.Item>
@@ -1507,32 +1769,57 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       </Row>
                       <Row gutter={16} style={{ marginTop: 16 }}>
                         <Col span={5}>
-                          <Form.Item label="Advance Payment" name="advancePayment">
+                          <Form.Item
+                            label="Advance Payment"
+                            name="advancePayment"
+                          >
                             <Radio.Group
                               onChange={(e) => {
                                 const isYes = e.target.value === 1;
                                 if (!isYes) {
-                                  form.setFieldsValue({ advancePercentage: null });
-                                  setnewPurchaseOrder((prev) => ({ ...prev, advancePercentage: null }));
+                                  form.setFieldsValue({
+                                    advancePercentage: null,
+                                  });
+                                  setnewPurchaseOrder((prev) => ({
+                                    ...prev,
+                                    advancePercentage: null,
+                                  }));
                                 }
 
-                                if (isYes && form.getFieldValue("paymentterms") === "Other") {
-                                  const percent = form.getFieldValue("advancePercentage") || "";
-                                  const currentText = form.getFieldValue("customPaymentTerm") || "";
+                                if (
+                                  isYes &&
+                                  form.getFieldValue("paymentterms") === "Other"
+                                ) {
+                                  const percent =
+                                    form.getFieldValue("advancePercentage") ||
+                                    "";
+                                  const currentText =
+                                    form.getFieldValue("customPaymentTerm") ||
+                                    "";
                                   let newText = "";
 
                                   if (percent) {
                                     if (currentText.includes("% Advance")) {
-                                      newText = currentText.replace(/\d+% Advance/, `${percent}% Advance`);
+                                      newText = currentText.replace(
+                                        /\d+% Advance/,
+                                        `${percent}% Advance`
+                                      );
                                     } else {
-                                      newText = currentText ? `${percent}% Advance, ${currentText}` : `${percent}% Advance`;
+                                      newText = currentText
+                                        ? `${percent}% Advance, ${currentText}`
+                                        : `${percent}% Advance`;
                                     }
                                   } else {
                                     newText = currentText;
                                   }
 
-                                  form.setFieldsValue({ customPaymentTerm: newText });
-                                  setnewPurchaseOrder((prev) => ({ ...prev, customPaymentTerm: newText }));
+                                  form.setFieldsValue({
+                                    customPaymentTerm: newText,
+                                  });
+                                  setnewPurchaseOrder((prev) => ({
+                                    ...prev,
+                                    customPaymentTerm: newText,
+                                  }));
                                 }
                               }}
                             >
@@ -1545,7 +1832,11 @@ const [pendingPOData, setPendingPOData] = useState(null);
                         <Col span={3}>
                           <Form.Item noStyle>
                             {advancePayment === 1 && (
-                              <Form.Item name="advancePercentage" label="Advance %" rules={[{ required: true, message: "Enter %" }]}>
+                              <Form.Item
+                                name="advancePercentage"
+                                label="Advance %"
+                                rules={[{ required: true, message: "Enter %" }]}
+                              >
                                 <InputNumber
                                   min={1}
                                   max={100}
@@ -1553,22 +1844,40 @@ const [pendingPOData, setPendingPOData] = useState(null);
                                   parser={(v) => v.replace("%", "")}
                                   style={{ width: "100%" }}
                                   onChange={(value) => {
-                                    if (form.getFieldValue("paymentterms") === "Other") {
-                                      const currentText = form.getFieldValue("customPaymentTerm") || "";
+                                    if (
+                                      form.getFieldValue("paymentterms") ===
+                                      "Other"
+                                    ) {
+                                      const currentText =
+                                        form.getFieldValue(
+                                          "customPaymentTerm"
+                                        ) || "";
                                       let newText = "";
 
                                       if (value) {
                                         if (currentText.includes("% Advance")) {
-                                          newText = currentText.replace(/\d+% Advance/, `${value}% Advance`);
+                                          newText = currentText.replace(
+                                            /\d+% Advance/,
+                                            `${value}% Advance`
+                                          );
                                         } else {
-                                          newText = currentText ? `${value}% Advance, ${currentText}` : `${value}% Advance`;
+                                          newText = currentText
+                                            ? `${value}% Advance, ${currentText}`
+                                            : `${value}% Advance`;
                                         }
                                       } else {
-                                        newText = currentText.replace(/\d+% Advance,?\s*/, "").trim();
+                                        newText = currentText
+                                          .replace(/\d+% Advance,?\s*/, "")
+                                          .trim();
                                       }
 
-                                      form.setFieldsValue({ customPaymentTerm: newText });
-                                      setnewPurchaseOrder((prev) => ({ ...prev, customPaymentTerm: newText }));
+                                      form.setFieldsValue({
+                                        customPaymentTerm: newText,
+                                      });
+                                      setnewPurchaseOrder((prev) => ({
+                                        ...prev,
+                                        customPaymentTerm: newText,
+                                      }));
                                     }
                                   }}
                                 />
@@ -1587,14 +1896,14 @@ const [pendingPOData, setPendingPOData] = useState(null);
                             label={
                               <div
                                 style={{
-                                  fontSize: window.innerWidth < 1600 && "0.7rem",
+                                  fontSize:
+                                    window.innerWidth < 1600 && "0.7rem",
                                   display: "flex",
                                   justifyContent: "space-between",
                                   width: 350,
                                 }}
                               >
                                 Project ID
-                             
                               </div>
                             }
                           >
@@ -1610,7 +1919,11 @@ const [pendingPOData, setPendingPOData] = useState(null);
                         {/* project name */}
                         <Col span={5}>
                           <Form.Item label="Project Description">
-                            <Input size="default" disabled value={projectDesc} />
+                            <Input
+                              size="default"
+                              disabled
+                              value={projectDesc}
+                            />
                           </Form.Item>
                         </Col>
                         {/* cost center */}
@@ -1621,7 +1934,8 @@ const [pendingPOData, setPendingPOData] = useState(null);
                             label={
                               <div
                                 style={{
-                                  fontSize: window.innerWidth < 1600 && "0.7rem",
+                                  fontSize:
+                                    window.innerWidth < 1600 && "0.7rem",
                                   display: "flex",
                                   justifyContent: "space-between",
                                   width: 350,
@@ -1640,7 +1954,12 @@ const [pendingPOData, setPendingPOData] = useState(null);
                               </div>
                             }
                           >
-                            <MyAsyncSelect selectLoading={loading1("select")} onBlur={() => setAsyncOptions([])} loadOptions={handleFetchCostCenterOptions} optionsState={asyncOptions} />
+                            <MyAsyncSelect
+                              selectLoading={loading1("select")}
+                              onBlur={() => setAsyncOptions([])}
+                              loadOptions={handleFetchCostCenterOptions}
+                              optionsState={asyncOptions}
+                            />
                           </Form.Item>
                         </Col>
                         {/* comments */}
@@ -1651,14 +1970,20 @@ const [pendingPOData, setPendingPOData] = useState(null);
                         </Col>
                         {/* raised by */}
                         <Col span={5}>
-                          <Form.Item label="Requested By" name="raisedBy" rules={rules.raisedBy}>
+                          <Form.Item
+                            label="Requested By"
+                            name="raisedBy"
+                            rules={rules.raisedBy}
+                          >
                             <MyAsyncSelect
                               selectLoading={selectLoading}
                               size="default"
                               onBlur={() => setUserOptions([])}
                               optionsState={userOptions}
                               loadOptions={getusers}
-                              onChange={(value) => selectInputHandler("raisedBy", value)}
+                              onChange={(value) =>
+                                selectInputHandler("raisedBy", value)
+                              }
                             />
                           </Form.Item>
                         </Col>
@@ -1683,27 +2008,51 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       <Row gutter={16}>
                         {/* billing id */}
                         <Col span={6}>
-                          <Form.Item name="billaddressid" label="Billing Id" rules={rules.billaddressid}>
+                          <Form.Item
+                            name="billaddressid"
+                            label="Billing Id"
+                            rules={rules.billaddressid}
+                          >
                             <MySelect options={billToOptions} />
                           </Form.Item>
                         </Col>
                         {/* pan number */}
                         <Col span={6}>
-                          <Form.Item name="billPan" label="Pan No." rules={rules.billPan}>
-                            <Input size="default" value={newPurchaseOrder.billPan} disabled />
+                          <Form.Item
+                            name="billPan"
+                            label="Pan No."
+                            rules={rules.billPan}
+                          >
+                            <Input
+                              size="default"
+                              value={newPurchaseOrder.billPan}
+                              disabled
+                            />
                           </Form.Item>
                         </Col>
                         {/* gstin uin */}
                         <Col span={6}>
-                          <Form.Item name="billGST" label="GSTIN / UIN" rules={rules.billGST}>
-                            <Input size="default" value={newPurchaseOrder.billGST} disabled />
+                          <Form.Item
+                            name="billGST"
+                            label="GSTIN / UIN"
+                            rules={rules.billGST}
+                          >
+                            <Input
+                              size="default"
+                              value={newPurchaseOrder.billGST}
+                              disabled
+                            />
                           </Form.Item>
                         </Col>
                       </Row>
                       {/* billing address */}
                       <Row>
                         <Col span={18}>
-                          <Form.Item name="billaddress" label="Billing Address" rules={rules.billaddress}>
+                          <Form.Item
+                            name="billaddress"
+                            label="Billing Address"
+                            rules={rules.billaddress}
+                          >
                             <TextArea
                               value={newPurchaseOrder.billaddress}
                               disabled
@@ -1733,13 +2082,23 @@ const [pendingPOData, setPendingPOData] = useState(null);
                   <Row>
                     <Col span={4}>
                       <Descriptions size="small" title="Shipping Details">
-                        <Descriptions.Item contentStyle={{ fontSize: window.innerWidth < 1600 && "0.7rem" }}>Provide shipping information</Descriptions.Item>
+                        <Descriptions.Item
+                          contentStyle={{
+                            fontSize: window.innerWidth < 1600 && "0.7rem",
+                          }}
+                        >
+                          Provide shipping information
+                        </Descriptions.Item>
                       </Descriptions>
                     </Col>
                     <Col span={20}>
                       <Row gutter={16}>
                         <Col span={10}>
-                          <Form.Item name="ship_type" label="Shipping Address Type" initialValue="saved">
+                          <Form.Item
+                            name="ship_type"
+                            label="Shipping Address Type"
+                            initialValue="saved"
+                          >
                             <Radio.Group
                               onChange={(e) => {
                                 const type = e.target.value;
@@ -1772,7 +2131,15 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       </Row>
                       <Col span={6}>
                         <Form.Item label="">
-                          <Checkbox checked={sameAsBilling} onChange={(e) => handleSameAsBilling(e.target.checked)} disabled={form.getFieldValue("ship_type") !== "saved"}>
+                          <Checkbox
+                            checked={sameAsBilling}
+                            onChange={(e) =>
+                              handleSameAsBilling(e.target.checked)
+                            }
+                            disabled={
+                              form.getFieldValue("ship_type") !== "saved"
+                            }
+                          >
                             Same as Billing Address
                           </Checkbox>
                         </Form.Item>
@@ -1782,18 +2149,50 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       {form.getFieldValue("ship_type") === "saved" && (
                         <Row gutter={16} style={{ marginTop: 16 }}>
                           <Col span={6}>
-                            <Form.Item name="shipaddressid" label="Shipping Id" rules={[{ required: true, message: "Please select shipping address" }]}>
-                              <MySelect options={shipToOptions} disabled={sameAsBilling} />
+                            <Form.Item
+                              name="shipaddressid"
+                              label="Shipping Id"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please select shipping address",
+                                },
+                              ]}
+                            >
+                              <MySelect
+                                options={shipToOptions}
+                                disabled={sameAsBilling}
+                              />
                             </Form.Item>
                           </Col>
                           <Col span={6}>
-                            <Form.Item label="Pan No." name="shipPan" rules={rules.shipPan}>
-                              <Input size="default" disabled={sameAsBilling || newPurchaseOrder.shipaddressid !== "other"} />
+                            <Form.Item
+                              label="Pan No."
+                              name="shipPan"
+                              rules={rules.shipPan}
+                            >
+                              <Input
+                                size="default"
+                                disabled={
+                                  sameAsBilling ||
+                                  newPurchaseOrder.shipaddressid !== "other"
+                                }
+                              />
                             </Form.Item>
                           </Col>
                           <Col span={6}>
-                            <Form.Item name="shipGST" label="GSTIN / UIN" rules={rules.shipGST}>
-                              <Input size="default" disabled={sameAsBilling || newPurchaseOrder.shipaddressid !== "other"} />
+                            <Form.Item
+                              name="shipGST"
+                              label="GSTIN / UIN"
+                              rules={rules.shipGST}
+                            >
+                              <Input
+                                size="default"
+                                disabled={
+                                  sameAsBilling ||
+                                  newPurchaseOrder.shipaddressid !== "other"
+                                }
+                              />
                             </Form.Item>
                           </Col>
                         </Row>
@@ -1803,7 +2202,16 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       {form.getFieldValue("ship_type") === "vendor" && (
                         <Row gutter={16} style={{ marginTop: 16 }}>
                           <Col span={8}>
-                            <Form.Item name="ship_vendor" label="Shipping Vendor" rules={[{ required: true, message: "Please select shipping vendor" }]}>
+                            <Form.Item
+                              name="ship_vendor"
+                              label="Shipping Vendor"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please select shipping vendor",
+                                },
+                              ]}
+                            >
                               <MyAsyncSelect
                                 labelInValue
                                 placeholder="Search vendor for shipping"
@@ -1812,21 +2220,28 @@ const [pendingPOData, setPendingPOData] = useState(null);
                                 optionsState={asyncOptions}
                                 onChange={async (value) => {
                                   if (!value) return;
-                                  const branches = await getVendorBracnch(value.value);
-                                  const { address, gstin } = await getVendorAddress({
-                                    vendorCode: value,
-                                    vendorBranch: branches[0]?.value,
-                                  });
+                                  const branches = await getVendorBracnch(
+                                    value.value
+                                  );
+                                  const { address, gstin } =
+                                    await getVendorAddress({
+                                      vendorCode: value,
+                                      vendorBranch: branches[0]?.value,
+                                    });
                                   form.setFieldsValue({
-                                    ship_vendor_branch: branches[0]?.value || "",
-                                    shipaddress: address?.replaceAll("<br>", "\n") || "",
+                                    ship_vendor_branch:
+                                      branches[0]?.value || "",
+                                    shipaddress:
+                                      address?.replaceAll("<br>", "\n") || "",
                                     shipGST: gstin || "",
                                   });
                                   setnewPurchaseOrder((prev) => ({
                                     ...prev,
                                     ship_vendor: value,
-                                    ship_vendor_branch: branches[0]?.value || "",
-                                    shipaddress: address?.replaceAll("<br>", "\n") || "",
+                                    ship_vendor_branch:
+                                      branches[0]?.value || "",
+                                    shipaddress:
+                                      address?.replaceAll("<br>", "\n") || "",
                                     shipGST: gstin || "",
                                   }));
                                 }}
@@ -1834,24 +2249,42 @@ const [pendingPOData, setPendingPOData] = useState(null);
                             </Form.Item>
                           </Col>
                           <Col span={8}>
-                            <Form.Item name="ship_vendor_branch" label="Shipping vendor Branch" rules={[{ required: true, message: "Please select branch" }]}>
+                            <Form.Item
+                              name="ship_vendor_branch"
+                              label="Shipping vendor Branch"
+                              rules={[
+                                {
+                                  required: true,
+                                  message: "Please select branch",
+                                },
+                              ]}
+                            >
                               <MySelect
                                 options={vendorBranches}
                                 onChange={async (branch) => {
-                                  if (!newPurchaseOrder.ship_vendor && !form.getFieldValue("ship_vendor")) return;
-                                  const vendorValue = newPurchaseOrder.ship_vendor || form.getFieldValue("ship_vendor");
-                                  const { address, gstin } = await getVendorAddress({
-                                    vendorCode: vendorValue,
-                                    vendorBranch: branch,
-                                  });
+                                  if (
+                                    !newPurchaseOrder.ship_vendor &&
+                                    !form.getFieldValue("ship_vendor")
+                                  )
+                                    return;
+                                  const vendorValue =
+                                    newPurchaseOrder.ship_vendor ||
+                                    form.getFieldValue("ship_vendor");
+                                  const { address, gstin } =
+                                    await getVendorAddress({
+                                      vendorCode: vendorValue,
+                                      vendorBranch: branch,
+                                    });
                                   form.setFieldsValue({
-                                    shipaddress: address?.replaceAll("<br>", "\n") || "",
+                                    shipaddress:
+                                      address?.replaceAll("<br>", "\n") || "",
                                     shipGST: gstin || "",
                                   });
                                   setnewPurchaseOrder((prev) => ({
                                     ...prev,
                                     ship_vendor_branch: branch,
-                                    shipaddress: address?.replaceAll("<br>", "\n") || "",
+                                    shipaddress:
+                                      address?.replaceAll("<br>", "\n") || "",
                                     shipGST: gstin || "",
                                   }));
                                 }}
@@ -1875,18 +2308,39 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       {form.getFieldValue("ship_type") === "manual" && (
                         <Row gutter={16} style={{ marginTop: 16 }}>
                           <Col span={6}>
-                            <Form.Item label="Party Name" name="partyName" rules={rules.shipPan}>
-                              <Input size="default" placeholder="Enter Party Name" />
+                            <Form.Item
+                              label="Party Name"
+                              name="partyName"
+                              rules={rules.shipPan}
+                            >
+                              <Input
+                                size="default"
+                                placeholder="Enter Party Name"
+                              />
                             </Form.Item>
                           </Col>
                           <Col span={6}>
-                            <Form.Item label="Pan No." name="shipPan" rules={rules.shipPan}>
-                              <Input size="default" placeholder="Enter Shipping PAN" />
+                            <Form.Item
+                              label="Pan No."
+                              name="shipPan"
+                              rules={rules.shipPan}
+                            >
+                              <Input
+                                size="default"
+                                placeholder="Enter Shipping PAN"
+                              />
                             </Form.Item>
                           </Col>
                           <Col span={6}>
-                            <Form.Item name="shipGST" label="GSTIN / UIN" rules={rules.shipGST}>
-                              <Input size="default" placeholder="Enter Shipping GSTIN" />
+                            <Form.Item
+                              name="shipGST"
+                              label="GSTIN / UIN"
+                              rules={rules.shipGST}
+                            >
+                              <Input
+                                size="default"
+                                placeholder="Enter Shipping GSTIN"
+                              />
                             </Form.Item>
                           </Col>
                         </Row>
@@ -1895,11 +2349,24 @@ const [pendingPOData, setPendingPOData] = useState(null);
                       {/* Shipping Address Field - Common for all modes */}
                       <Row style={{ marginTop: 16 }}>
                         <Col span={18}>
-                          <Form.Item label="Shipping Address" name="shipaddress" rules={rules.shipaddress}>
+                          <Form.Item
+                            label="Shipping Address"
+                            name="shipaddress"
+                            rules={rules.shipaddress}
+                          >
                             <TextArea
                               rows={5}
-                              disabled={form.getFieldValue("ship_type") === "saved" ? sameAsBilling || newPurchaseOrder.shipaddressid !== "other" : form.getFieldValue("ship_type") !== "manual"}
-                              placeholder={form.getFieldValue("ship_type") === "manual" ? "Enter complete shipping address" : "Shipping address will be populated based on selection"}
+                              disabled={
+                                form.getFieldValue("ship_type") === "saved"
+                                  ? sameAsBilling ||
+                                    newPurchaseOrder.shipaddressid !== "other"
+                                  : form.getFieldValue("ship_type") !== "manual"
+                              }
+                              placeholder={
+                                form.getFieldValue("ship_type") === "manual"
+                                  ? "Enter complete shipping address"
+                                  : "Shipping address will be populated based on selection"
+                              }
                               style={{
                                 resize: "none",
                                 backgroundColor: "#ffffff",
@@ -1918,13 +2385,22 @@ const [pendingPOData, setPendingPOData] = useState(null);
                         </Col>
                       </Row>
                     </Col>
-                    <NavFooter submithtmlType="submit" submitButton={true} formName="create-po" resetFunction={() => setShowDetailsConfirm(true)} />
+                    <NavFooter
+                      submithtmlType="submit"
+                      submitButton={true}
+                      formName="create-po"
+                      resetFunction={() => setShowDetailsConfirm(true)}
+                    />
                   </Row>
                 </Form>
                 <Divider />
               </div>
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Add Components Details" style={{ height: "98%" }} key="2">
+            <Tabs.TabPane
+              tab="Add Components Details"
+              style={{ height: "98%" }}
+              key="2"
+            >
               <div style={{ height: "100%" }}>
                 <AddComponent
                   newPurchaseOrder={newPurchaseOrder}
@@ -1938,14 +2414,24 @@ const [pendingPOData, setPendingPOData] = useState(null);
                   submitLoading={submitLoading}
                   totalValues={totalValues}
                   setStateCode={setStateCode}
-                  gstState={newPurchaseOrder.billCode == newPurchaseOrder.venCode ? "L" : "I"}
+                  gstState={
+                    newPurchaseOrder.billCode === newPurchaseOrder.venCode
+                      ? "L"
+                      : "I"
+                  }
                 />
               </div>
             </Tabs.TabPane>
           </Tabs>
         </div>
       )}
-      {successData && <SuccessPage resetFunction={resetFunction} po={successData} setNewPO={setNewPO} />}
+      {successData && (
+        <SuccessPage
+          resetFunction={resetFunction}
+          po={successData}
+          setNewPO={setNewPO}
+        />
+      )}
     </div>
   );
 }

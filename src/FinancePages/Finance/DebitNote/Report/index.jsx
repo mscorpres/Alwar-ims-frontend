@@ -313,8 +313,8 @@ function DebitNoteReport() {
     getVendorOption(searchTerm);
   }, [searchTerm]);
   return (
-    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
-      <Row justify="space-between" style={{ padding: "0px 0px" }}>
+    <div style={{ height: "100%", padding: 10, }}>
+      <Row justify="space-between" >
         <Space>
           <div style={{ width: 250 }}>
             <MySelect onChange={setWise} options={wiseOptions} value={wise} />
@@ -360,7 +360,7 @@ function DebitNoteReport() {
           />
         </Space>
       </Row>
-      <div style={{ height: "95%", paddingTop: 5 }}>
+    <div style={{ height: "calc(100vh - 180px)", marginTop: 10 }}>
         <MyDataTable
           columns={columns}
           rows={rows}

@@ -599,7 +599,7 @@ const BOMCreate = () => {
 
   return (
     <Form
-      style={{ height: "95%" }}
+      style={{ height: "100%", padding:10 }}
       form={form}
       layout="vertical"
       initialValues={initialValues}
@@ -617,8 +617,8 @@ const BOMCreate = () => {
       {(loading("fetch") || loading("final") || loading("draft")) && (
         <Loading />
       )}
-      <Row gutter={6} style={{ height: "100%" }}>
-        <Col span={5} style={{ height: "100%", overflow: "auto" }}>
+      <Row gutter={12} style={{ height: "100%" }}>
+        <Col span={6} style={{ height: "100%", overflow: "auto" }}>
           <Flex vertical gap={5}>
             <Card size="small" title="Header Details">
               <Form.Item name="product" label="Product" rules={rules.product}>
@@ -714,7 +714,7 @@ const BOMCreate = () => {
             />
           </Flex>
         </Col>
-        <Col span={19} style={{ height: "100%", overflow: "hidden" }}>
+        <Col span={18} style={{ height: "100%", overflow: "hidden", padding:"10px 10px" }}>
           <Row gutter={[6, 6]} style={{ height: "100%" }}>
             <Col span={24} style={{ height: "50%", overflow: "hidden" }}>
               <Card

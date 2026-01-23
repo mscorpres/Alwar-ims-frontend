@@ -43,8 +43,8 @@ function ShippingAddress() {
     getRows();
   }, []);
   return (
-    <div style={{ height: "100%", padding: "0px 5px" }}>
-      <Row gutter={6} style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding: "10px" }}>
+      <Row gutter={12} style={{ height: "100%" }}>
         <Col span={6}>
           <AddShippingAddress
             getRows={getRows}

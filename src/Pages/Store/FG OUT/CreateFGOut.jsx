@@ -6,7 +6,7 @@ import { Col, Row, Select, Button, Input } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
-import MyButton from "../../../Components/MyButton";
+import NavFooter from "../../../Components/NavFooter.jsx";
 
 const { TextArea } = Input;
 const CreateFGOut = () => {
@@ -263,8 +263,8 @@ const CreateFGOut = () => {
 
   return (
     <>
-      <Row gutter={10} style={{ margin: "5px", height: "85%" }}>
-        <Col span={5}>
+      <Row gutter={10} style={{ margin: "8px", height: "calc(100% - 70px)" }}>
+        <Col span={6}>
           <Row gutter={16}>
             <Col span={24}>
               <Select
@@ -303,7 +303,7 @@ const CreateFGOut = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={19}>
+        <Col span={18}>
           <MyDataTable
             loading={loading}
             data={addRowData}
@@ -313,29 +313,13 @@ const CreateFGOut = () => {
         </Col>
       </Row>
       <Row >
-        <Col span={24}>
-          <div style={{ textAlign: "end" }}>
-            <MyButton
-              onClick={resetFunction}
-              // style={{
-              //   backgroundColor: "red",
-              //   color: "white",
-              //   marginRight: "5px",
-              // }}
-              variant="reset"
-            >
-              Reset{" "}
-            </MyButton>
-            <Button
-              type="primary"
-              onClick={addFGOut}
-              loading={loadingUpdate}
-              // style={{ backgroundColor: "#0e5185", color: "white" }}
-            >
-              Create Fg Out{" "}
-            </Button>
-          </div>
-        </Col>
+         <NavFooter
+                resetFunction={resetFunction}
+                submitFunction={addFGOut}
+                nextLabel="Submit"
+                loading={loadingUpdate}
+              />
+       
       </Row>
     </>
   );

@@ -31,11 +31,11 @@ import {
 import CurrenceModal from "../CurrenceModal";
 
 import UploadDocs from "../../../Store/MaterialIn/MaterialInWithPO/UploadDocs";
-import FormTable from "../../../../Components/FormTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import SuccessPage from "./SuccessPage";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { useToast } from "../../../../hooks/useToast";
+import MyDataTable from "../../../../Components/MyDataTable";
 
 export default function MateirialInward({
   materialInward,
@@ -881,10 +881,10 @@ export default function MateirialInward({
             </Row>
           </Col>
           <Col
-            style={{ height: "99.5%", border: "1px solid #eeeeee", padding: 0 }}
+         
             span={18}
           >
-            <FormTable columns={columns} data={poData?.materials} />
+            <MyDataTable columns={columns} data={poData?.materials} />
           </Col>
         </Row>
       )}

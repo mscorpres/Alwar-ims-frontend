@@ -9,7 +9,6 @@ import MyDataTable from "../../../Components/MyDataTable";
 import { DownloadOutlined } from "@ant-design/icons";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
-import FormTable from "../../../Components/FormTable";
 import Loading from "../../../Components/Loading";
 import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions, getVendorOptions } from "../../../api/general.ts";
@@ -20,7 +19,6 @@ function SampleQC() {
   const [wise, setWise] = useState("datewise");
   const [searchInput, setSearchInput] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [rows, setRows] = useState([]);
@@ -251,10 +249,8 @@ function SampleQC() {
     setSearchInput("");
   }, [wise]);
 
-  const { Paragraph, Text } = Typography;
-
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <Modal
         title={`Confirm Samples : ${samples.length} Item${
           samples.length == 1 ? "" : "s"
@@ -275,7 +271,6 @@ function SampleQC() {
       </Modal>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         <div>
           <Space>
@@ -294,7 +289,7 @@ function SampleQC() {
                   size="default"
                   setDateRange={setSearchInput}
                   dateRange={setSearchInput}
-                  value={setSearchInput}
+                  value={searchInput}
                 />
               ) : wise === "powise" ? (
                 <Input
@@ -344,7 +339,6 @@ function SampleQC() {
             </div>
             <MyButton
               variant="search"
-              disabled={!searchInput ? true : false}
               type="primary"
               // loading={searchLoading}
               onClick={getRows}
@@ -371,12 +365,11 @@ function SampleQC() {
           </Button>
         </Space>
       </Row>
-      <div style={{ height: "85%", padding: "0px 10px" }}>
-        {/* <MyDataTable loading={searchLoading} columns={columns} data={rows} /> */}
-        {searchLoading && <Loading />}
-        <FormTable loading={searchLoading} columns={columns} data={rows} />
+      <div style={{ height: "calc(100% - 40px)", marginTop: "10px" }}>
+        <MyDataTable loading={searchLoading} columns={columns} data={rows} />
+     
       </div>
-    </>
+    </div>
   );
 }
 

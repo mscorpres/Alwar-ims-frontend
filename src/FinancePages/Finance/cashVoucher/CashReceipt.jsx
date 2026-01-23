@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Card, Col, Form, Row, Input } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import axios from "axios";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
-import FormTable from "../../../Components/FormTable";
 import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -13,6 +11,7 @@ import {
 } from "react-icons/ai";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
+import FormTable from "../../../Components/FormTable.jsx";
 
 function CashReceipt() {
   const { showToast } = useToast();
@@ -273,8 +272,8 @@ function CashReceipt() {
   };
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row gutter={10} style={{ height: "100%", margin: "10px" }}>
+    <div style={{ height: "100%", padding:10 }}>
+      <Row gutter={10} style={{ height: "100%",}}>
         <Col span={6}>
           <Card title="Cash Receipt" size="small">
             <Form layout="vertical" size="small">
@@ -321,12 +320,11 @@ function CashReceipt() {
             </Form>
           </Card>
         </Col>
-        <Col span={18}>
-          <FormTable
-            hideHeaderMenu
+        <Col span={18} style={{height: "75vh"}}>
+     
+          <FormTable    
             data={cashPaymentRows}
-            columns={CashPaymentTable}
-          />
+            columns={CashPaymentTable}  />
         </Col>
       </Row>
       <NavFooter

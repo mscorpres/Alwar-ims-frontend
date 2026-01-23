@@ -77,8 +77,8 @@ function ViewTransaction() {
     }
   };
   return (
-    <div style={{ height: "100%" }}>
-      <Row gutter={16} justify="space-between" >
+    <div style={{ height: "100%", padding:10 }}>
+      <Row gutter={0} justify="space-between" >
         <Space>
           <div style={{ width: 120 }}>
             <Select
@@ -113,7 +113,7 @@ function ViewTransaction() {
           />
         </Col>
       </Row>
-      <div style={{ height: "90%", margin: "10px" }}>
+      <div style={{ height: "calc(100% - 40px)", marginTop: 10 }}>
         <MyDataTable
           loading={loading}
           data={dataComesFromDateWise}

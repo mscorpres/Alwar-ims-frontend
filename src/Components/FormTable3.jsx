@@ -177,11 +177,7 @@ const FormTable3 = ({
           />
         ))}
 
-        <Row justify="center" align="middle">
-          <Typography.Text type="secondary">
-            ----End of the List----
-          </Typography.Text>
-        </Row>
+
       </tbody>
     </table>
   );

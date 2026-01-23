@@ -114,9 +114,9 @@ const QueryQ5 = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "100%" }}>
+    <Row gutter={6} style={{ height: "100%", padding:10 }}>
       <Col
-        span={4}
+        span={6}
         style={{ overflowY: "auto", overflowX: "hidden", height: "100%" }}
       >
         <Flex gap={10} vertical style={{ height: "100%" }}>
@@ -243,7 +243,7 @@ const QueryQ5 = () => {
         </Flex>
       </Col>
       <Col
-        span={20}
+        span={18}
         style={{ overflowY: "auto", overflowX: "hidden", height: "100%" }}
       >
         <Row
@@ -251,7 +251,6 @@ const QueryQ5 = () => {
           style={{
             height: "100%",
             overflow: "hidden",
-            paddingBottom: 10,
           }}
           gutter={6}
         >
@@ -271,7 +270,6 @@ const QueryQ5 = () => {
               height: "100%",
               overflowY: "auto",
               overflowX: "hidden",
-              paddingBottom: 30,
             }}
           >
             {loading("fetch") && <Loading />}

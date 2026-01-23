@@ -69,7 +69,7 @@ const ApprovalList = (props: Props) => {
   }, []);
 
   return (
-    <Row  style={{ height: "calc(100vh - 120px)", padding:"0px 10px" }}>
+    <Row  style={{ height: "calc(100vh - 120px)", padding:"10px" }}>
       {selectedProduct && (
         <Approval
           show={showApprovalLogs}

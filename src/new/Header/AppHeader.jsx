@@ -1,4 +1,4 @@
-import React from "react";
+import  { useRef } from "react";
 import {
   Badge,
   Switch,
@@ -15,7 +15,9 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import { SiSocketdotio } from "react-icons/si";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector, useDispatch } from "react-redux";
+import NotificationDropdown from "../../Components/NotificationDropdown/NotificationDropdown";
+import { setShowNotifications } from "../../Features/uiSlice/uiSlice";
 
 const AppHeader = (props) => {
   const {
@@ -30,13 +32,10 @@ const AppHeader = (props) => {
     onChangeSession,
     showSearch = true,
     searchComponent,
-    onChangeTestSwitch,
     socketConnected,
     socketLoading,
     onRefreshSocket,
     notificationsCount = 0,
-    onClickNotifications,
-    notificationButtonRef,
     messagesCount = 0,
     onClickMessages,
     userMenu,
@@ -44,6 +43,11 @@ const AppHeader = (props) => {
     switchModule,
   } = props;
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { notifications } = useSelector((state) => state.login);
+  const { showNotifications } = useSelector((state) => state.ui);
+  const notificationButtonRef = useRef(null);
+
   return (
     <div className="fixed top-0 left-0 right-0 z-10 h-[45px] w-full flex items-center bg-[var(--ant-layout-header-background,#1d252c)]">
       <div className="w-full pr-[26px]">
@@ -119,21 +123,11 @@ const AppHeader = (props) => {
           </div>
 
           <div style={{ display: "flex", alignItems: "center" }}>
-            {showSearch && (
-             searchComponent
-            )}
+            {showSearch && searchComponent}
           </div>
 
           <div className="flex items-center gap-[24px] relative">
-            
-
-            {switchModule && (
-                switchModule
-            )}
-
-           
-
-            {onRefreshSocket && (
+              {onRefreshSocket && (
               <Tooltip
                 title={`Socket ${
                   socketConnected ? "Connected" : "Disconnected"
@@ -162,6 +156,9 @@ const AppHeader = (props) => {
                 </span>
               </Tooltip>
             )}
+            {switchModule && switchModule}
+
+          
 
             <div
               ref={notificationButtonRef}
@@ -178,6 +175,7 @@ const AppHeader = (props) => {
                 badgeContent={notificationsCount}
               >
                 <IconButton
+             
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -190,7 +188,8 @@ const AppHeader = (props) => {
                     ) {
                       e.nativeEvent.stopImmediatePropagation();
                     }
-                    onClickNotifications && onClickNotifications();
+                    dispatch(setShowNotifications(true));
+                
                   }}
                   size="small"
                   sx={{ p: 0.5 }}
@@ -222,6 +221,13 @@ const AppHeader = (props) => {
           </div>
         </div>
       </div>
+      <NotificationDropdown
+        open={showNotifications}
+        onClose={() => dispatch(setShowNotifications(false))}
+        notifications={notifications.filter((not) => not?.type != "message")}
+        // deleteNotification={deleteNotification}
+        anchorRef={notificationButtonRef}
+      />
     </div>
   );
 };

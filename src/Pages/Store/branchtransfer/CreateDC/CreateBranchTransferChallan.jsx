@@ -13,7 +13,6 @@ import {
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MySelect from "../../../../Components/MySelect";
 import NavFooter from "../../../../Components/NavFooter";
-import axios from "axios";
 import AddDCComponents from "./AddDCComponents";
 import SuccessPage from "../SuccessPage";
 import Loading from "../../../../Components/Loading";
@@ -59,7 +58,6 @@ export default function CreateBranchTransferChallan() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState();
   const [successPage, setSuccessPage] = useState(false);
-  const [branchtransferType, setBranchtransferType] = useState("R");
   const [pickuplocation, setpickuplocation] = useState([]);
   const [droplocation, setdroplocation] = useState([]);
   const [branchOptions, setBranchOptions] = useState([]);
@@ -238,14 +236,13 @@ export default function CreateBranchTransferChallan() {
     getallbranchs();
   }, []);
   return (
-    <div style={{ height: "95%", overflow: "hidden" }}>
+    <div style={{ height: "calc(100vh - 155px)", overflow: "hidden", padding:10 }}>
       {!successPage && (
         <>
           {pageLoading && <Loading />}
           <Tabs
             style={{
-              padding: "0 10px",
-              height: "98%",
+              height: "100%",
               overflow: "auto",
               overflowX: "hidden",
               position: "relative",
@@ -259,11 +256,7 @@ export default function CreateBranchTransferChallan() {
             >
               <>
                 <div
-                  style={{
-                    overflowY: "scroll",
-                    overflowX: "hidden",
-                    padding: "0vh 20px 10px",
-                  }}
+                
                 >
                   {/* reset confirm modal */}
                   <Modal

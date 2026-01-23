@@ -432,9 +432,8 @@ export default function CPMAnalysis() {
     }
   }, [projectId]);
   return (
-    <div>
+    <div style={{height:"100%", padding:10}}>
       <Row
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
         justify="space-between"
       >
         <Space>
@@ -507,7 +506,7 @@ export default function CPMAnalysis() {
           />
         </Col>
       </Row>
-      <div style={{ padding: "0px 10px" }}>
+      <div style={{ marginTop: "10px" }}>
         <Table
           bordered={true}
           columns={columns}
@@ -531,7 +530,7 @@ export default function CPMAnalysis() {
               );
             },
           }}
-          scroll={{ y: "75vh" }}
+          scroll={{ y: "45vh" }}
           dataSource={filteredRows}
           pagination={false}
           size="small"

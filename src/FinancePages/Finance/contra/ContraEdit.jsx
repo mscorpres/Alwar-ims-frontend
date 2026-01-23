@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Button, Col, DatePicker, Drawer, Form, Input, Row } from "antd";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../../hooks/useToast.js";
-import FormTable from "../../../Components/FormTable";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import dayjs from "dayjs";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function ContraEdit({ contra, close }) {
   const { showToast } = useToast();
@@ -189,7 +189,7 @@ export default function ContraEdit({ contra, close }) {
       </Form>
       <Row style={{ height: "85%", marginTop: -20 }}>
         <Col span={24} style={{ height: "100%" }}>
-          <FormTable columns={columns} data={rows} />
+          <MyDataTable columns={columns} data={rows} />
         </Col>
       </Row>
     </Drawer>

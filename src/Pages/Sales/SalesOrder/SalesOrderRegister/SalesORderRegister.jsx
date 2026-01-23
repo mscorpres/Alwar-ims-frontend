@@ -292,15 +292,13 @@ function SalesORderRegister() {
           </Form>
         </>
       </Modal>
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "100%" ,padding:10}}>
         <Row
           justify="space-between"
-          style={{ padding: "10px 10px", paddingBottom: 5 }}
         >
           <Col span={24}>
             <Row
               justify="space-between"
-              style={{ padding: "0px 10px", paddingBottom: 5 }}
             >
               <Col>
                 <Space>
@@ -363,28 +361,13 @@ function SalesORderRegister() {
             data={componentList}
           />
         </Drawer>
-        {/* <Drawer
-          onClose={() => setShipmentList(false)}
-          open={shipmentList}
-          width="100vw"
-          bodyStyle={{ overflow: "hidden", padding: 0 }}
-          className="message-modal"
-          // closable={false}
-          destroyOnClose={true}
-          title={`Component List `}
-        >
-          {/* <MyDataTable
-            loading={loading("fetch")}
-            columns={columnsdrawer}
-            data={componentList}
-          /> */}
-        {/* </Drawer> */}
+      
         <CreateShipment
           open={showShipmentDrawer}
           hide={() => setShowShipmentDrawer(null)}
         />
         {/* <Row style={{ padding: 5, paddingTop: 0 }}></Row> */}
-        <div style={{ height: "95%", paddingRight: 5, paddingLeft: 5 }}>
+        <div style={{ height: "calc(100% - 40px)", marginTop:10 }}>
           <MyDataTable
             loading={loading("fetch") || loading("print")}
             columns={[actionColumn, ...columns]}

@@ -114,7 +114,7 @@ function Pending() {
           </Col>
         </Row>
       </Col>
-      <Col span={24} style={{ height: "95%" }}>
+      <Col span={24} style={{ height: "100%" }}>
         <MyDataTable laoding={loading} data={rows} columns={columns} />
       </Col>
       {drawerData && (

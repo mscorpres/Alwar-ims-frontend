@@ -184,7 +184,7 @@ function BalanceSheet() {
     return debitNumber;
   };
   return (
-    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "100%", padding: 10, }}>
       <EditSheet
         editingSheet={editingSheet}
         setEditingSheet={setEditingSheet}

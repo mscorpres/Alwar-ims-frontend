@@ -39,15 +39,13 @@ import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
 import AddBranch from "../../../Master/Vendor/model/AddBranch";
 import SuccessPage from "../SuccessPage";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import FormTable from "../../../../Components/FormTable";
 import { useNavigate } from "react-router-dom";
 import { imsAxios } from "../../../../axiosInterceptor";
 import axiosResponseFunction from "../../../../Components/axiosResponseFun";
-import {
-  savefginward,
-} from "../../../../api/general.ts";
+import { savefginward } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 export default function ProductMIN() {
   const [showCurrency, setShowCurrenncy] = useState(null);
@@ -202,14 +200,20 @@ export default function ProductMIN() {
         true
       ) {
         validation = false;
-        return showToast("Currency of all components should be the same", "error");
+        return showToast(
+          "Currency of all components should be the same",
+          "error"
+        );
       } else if (
         (componentData.gst_type.filter((v, i, a) => v === a[0]).length ===
           componentData.gst_type.length) !=
         true
       ) {
         validation = false;
-        return showToast("gst type of all components should be the same", "error");
+        return showToast(
+          "gst type of all components should be the same",
+          "error"
+        );
       }
       // here submit
       const vendorValues = await form.validateFields();
@@ -241,7 +245,7 @@ export default function ProductMIN() {
           "/transaction/upload-invoice",
           values.formData
         );
-      
+
         fileData = response?.data;
         // form.getFieldValue("vendorType")
         if (response?.success) {
@@ -267,7 +271,10 @@ export default function ProductMIN() {
           };
           setSubmitLoading(true);
           let response = await executeFun(() => savefginward(final), "select");
-            console.log(response, "======================res====================");
+          console.log(
+            response,
+            "======================res===================="
+          );
           const data = response?.data;
           setSubmitLoading(false);
           if (response?.success) {
@@ -505,7 +512,7 @@ export default function ProductMIN() {
               [name]: value.value,
               locationName: value.label,
             };
-           
+
             return obj;
           } else {
             obj = { ...obj, [name]: value };
@@ -650,7 +657,7 @@ export default function ProductMIN() {
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRow} />,
-      width: 40,
+      width: 80,
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>
@@ -830,7 +837,7 @@ export default function ProductMIN() {
     }
   }, [vendorDetails.vendorType]);
   return (
-    <div style={{ height: "95%", overflow: "hidden" }}>
+    <div style={{ height: "calc(100%  - 10px)", overflow: "hidden" }}>
       {/* <TaxModal bottom={-80} visibleBottom={110} totalValues={totalValues} /> */}
       {showCurrency != null && (
         <CurrenceModal
@@ -879,10 +886,8 @@ export default function ProductMIN() {
         <Row
           gutter={8}
           style={{
-            height: "90%",
+            height: "92%",
             padding: "0px 10px",
-            overflowY: "auto",
-            overflowX: "hidden",
           }}
         >
           <Col
@@ -940,16 +945,33 @@ export default function ProductMIN() {
                   </Col>
                 </Row>
               </Form>
-              <Col span={24} style={{ height: "10%" }}>
-                <Row className="material-in-upload">
-                  <UploadDocs
-                    // disable={poData?.materials?.length == 0}
-                    setFiles={setInvoices}
-                    files={invoices}
-                  />
-                </Row>
-              </Col>
             </Card>
+
+            <Card
+              size="small"
+             style={{marginTop:6}}
+              title="Attachments"
+            >
+              <Row
+                span={24}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Col span={24} style={{ height: "10%" }}>
+                  <Row className="material-in-upload">
+                    <UploadDocs
+                      // disable={poData?.materials?.length == 0}
+                      setFiles={setInvoices}
+                      files={invoices}
+                    />
+                  </Row>
+                </Col>
+              </Row>
+            </Card>
+
             <Card
               className="small-text"
               size="small"
@@ -1009,10 +1031,11 @@ export default function ProductMIN() {
             </Card>
           </Col>
           <Col style={{ height: "100%" }} span={18}>
-            <div style={{ height: "98%", border: "1px solid #EEEEEE" }}>
-              {pageLoading || (loading1("select") && <Loading />)}
-              <FormTable columns={columns} data={materialInward} />
-            </div>
+            <MyDataTable
+              columns={columns}
+              data={materialInward}
+              loading={pageLoading || loading1("select")}
+            />
           </Col>
         </Row>
       )}

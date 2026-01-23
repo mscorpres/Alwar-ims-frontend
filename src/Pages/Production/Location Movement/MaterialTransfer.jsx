@@ -265,7 +265,7 @@ function MaterialTransfer({ type }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allData?.locationSel]);
   return (
-    <div style={{ height: "90vh" }}>
+    <div style={{ height: "calc(100vh - 160px)", padding:10, }}>
       <Row gutter={10}>
         <Col span={6}>
           <Card>
@@ -290,7 +290,7 @@ function MaterialTransfer({ type }) {
           </Card>
         </Col>
         <Col span={18} style={{ height: "50vh" }}>
-          <Card style={{ height: "100%" }}>
+       
             <div
               style={{
                 display: "flex",
@@ -302,13 +302,13 @@ function MaterialTransfer({ type }) {
                 Add Row
               </Button>
             </div>
-            <div
-              style={{
-                overflowX: "auto",
-                overflowY: "auto",
-                maxHeight: "38vh",
-              }}
-            >
+             <div style={{ marginTop: "10px", border: "1px solid #ccc", padding:4 }}>
+                <div
+                  style={{
+                    overflowY: "auto",
+                    height: "calc(100vh - 230px)",
+                  }}
+                >
               <table
                 className="table table-hover"
                 style={{ tableLayout: "fixed", width: "100%", minWidth: 1200 }}
@@ -424,8 +424,9 @@ function MaterialTransfer({ type }) {
                   ))}
                 </tbody>
               </table>
+              </div>
             </div>
-          </Card>
+        
         </Col>
       </Row>
       <NavFooter

@@ -5,8 +5,8 @@ import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { Card, Col, Input, Row } from "antd";
-import FormTable from "../../../Components/FormTable";
 import { imsAxios } from "../../../axiosInterceptor";
+import FormTable from "../../../Components/FormTable.jsx";
 
 export default function Contra2() {
   const { showToast } = useToast();
@@ -322,8 +322,8 @@ export default function Contra2() {
     setContraDate("");
   };
   return (
-    <div style={{ height: "100%", padding: 5 }}>
-      <Row gutter={4}>
+    <div style={{ height: "100%", padding: 10 }}>
+      <Row gutter={4} style={{ height: "100%" }}>
         <Col span={6}>
           <Card title="Select Date" size="small">
             <SingleDatePicker
@@ -334,10 +334,10 @@ export default function Contra2() {
           </Card>
         </Col>
 
-        <Col style={{ height: "70%" }} span={18}>
-          <Card bodyStyle={{ padding: 0 }} size="small">
+        <Col style={{ height: "calc(100% - 50px)" }} span={18}>
+       
             <FormTable loading={loading} data={contraRows} columns={columns} />
-          </Card>
+    
         </Col>
       </Row>
       <NavFooter

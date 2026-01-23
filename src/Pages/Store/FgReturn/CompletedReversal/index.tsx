@@ -30,8 +30,8 @@ const CompletedFgReturn = () => {
     downloadCSV(rows, columns, "Completed FG Return Report"),
   ];
   return (
-    <Row style={{ height: "95%", padding: 10 }} gutter={6}>
-      <Col span={4}>
+    <Row style={{ height: "100%", padding: 10 }} gutter={[12, 10]}>
+      <Col span={6}>
         <Card size="small">
           <Form layout="vertical" form={form}>
             <Form.Item name="date" label="Period">
@@ -53,7 +53,7 @@ const CompletedFgReturn = () => {
           </Row>
         </Card>
       </Col>
-      <Col span={20}>
+      <Col span={18}>
         <MyDataTable columns={columns} data={rows} loading={loading("fetch")} />
       </Col>
     </Row>

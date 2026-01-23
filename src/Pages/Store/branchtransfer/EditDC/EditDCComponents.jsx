@@ -6,7 +6,6 @@ import {
   inputComponent,
 } from "../../../../Components/TableInput";
 import { v4 } from "uuid";
-import FormTable from "../../../../Components/FormTable";
 import NavFooter from "../../../../Components/NavFooter";
 import { useToast } from "../../../../hooks/useToast.js";
 import { Button, Modal } from "antd";
@@ -14,6 +13,7 @@ import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 export default function EditDCComponents({
   newGatePass,
   setActiveTab,
@@ -228,7 +228,7 @@ export default function EditDCComponents({
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 40,
+      width: 80,
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>
@@ -373,7 +373,7 @@ export default function EditDCComponents({
           to the original Challan?
         </p>
       </Modal>
-      <FormTable columns={columns} data={rows} />
+      <MyDataTable columns={columns} data={rows} />
       <NavFooter
         nextLabel="Update"
         resetFunction={() => setShowResetConfirm(true)}

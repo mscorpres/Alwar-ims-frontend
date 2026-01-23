@@ -236,15 +236,14 @@ const ViewGstData = () => {
   };
 
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <Button
-        style={{ marginLeft: "2rem", marginTop: "0.2rem" }}
         onClick={showConfirm}
       >
         Validate Data
       </Button>
       <MyButton
-        style={{ marginLeft: "1rem" }}
+        style={{ marginLeft: "8px" }}
         onClick={() => downloadCSV(gstData, columns, "gstdata")}
         variant="download"
       >
@@ -252,9 +251,7 @@ const ViewGstData = () => {
       </MyButton>
       <Col
         style={{
-          height: "80%",
-          paddingLeft: "2rem",
-          paddingRight: "2rem",
+          height: "calc(100% - 50px)",
           marginTop: "1rem",
         }}
       >
@@ -272,7 +269,7 @@ const ViewGstData = () => {
           />
         )}
       </Col>
-    </>
+    </div>
   );
 };
 

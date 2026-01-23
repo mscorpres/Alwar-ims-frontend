@@ -313,10 +313,10 @@ export default function PoApproval() {
         </Col>
       </Row>
       <div style={{
-          height: "calc(100vh - 160px)",
-          overflowY: "auto",
-          overflowX: "hidden",
-          padding: "0 10px",
+          height: "calc(100vh - 200px)",
+      
+          marginTop: 8
+   
         }}
         >
         <MyDataTable
@@ -325,8 +325,6 @@ export default function PoApproval() {
           checkboxSelection
           rows={rows}
           onSelectionModelChange={(selected) => {
-            console.log(selected);
-            console.log(rows);
             setSelectedPo(selected);
           }}
         />

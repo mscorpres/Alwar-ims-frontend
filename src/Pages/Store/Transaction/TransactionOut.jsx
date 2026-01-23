@@ -120,8 +120,8 @@ const TransactionOut = () => {
 
   // console.log(dateData);
   return (
-    <div style={{ height: "calc(100vh - 120px)", }}>
-      <Row gutter={10} style={{ margin: "5px" }} justify="space-between">
+    <div style={{ height: "calc(100vh - 120px)", padding:10}}>
+      <Row gutter={10}  justify="space-between">
         <Col>
           <Space>
             <MyDatePicker setDateRange={setDatee} size="default" />
@@ -156,7 +156,7 @@ const TransactionOut = () => {
         </Col>
         {/* // )} */}
       </Row>
-      <div style={{ height:"calc(100vh - 180px)", margin: "10px" }}>
+      <div style={{ height:"calc(100vh - 180px)", marginTop: "10px" }}>
         <MyDataTable loading={loading} data={dateData} columns={columns} />
       </div>
     </div>

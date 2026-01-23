@@ -209,7 +209,7 @@ function CashPaymentResister() {
 
   return (
     <>
-      <div style={{ height: "90%", margin: "10px" }}>
+      <div style={{ height: "100%", padding: 10   }}>
         <CashEditModal cashEdit={cashEdit} setCashEdit={setCashEdit} />
         <Row gutter={10}>
           {selectedValue?.selType === "" ? (
@@ -396,7 +396,7 @@ function CashPaymentResister() {
             )
           )}
         </Row>
-        <div style={{ height: "calc(100vh - 210px)", marginTop: "5px" }}>
+        <div style={{ height: "calc(100vh - 190px)", marginTop: "10px" }}>
           {selectedValue?.selType == "date_wise" ? (
             <MyDataTable loading={loading} data={dateData} columns={columns} />
           ) : selectedValue?.selType == "eff_wise" ? (

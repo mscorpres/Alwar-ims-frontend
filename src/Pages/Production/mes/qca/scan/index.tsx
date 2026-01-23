@@ -170,7 +170,7 @@ const QcScan = (props: Props) => {
       setShowInsertModal(false);
       scanForm.setFieldValue("qr", undefined);
 
-      setCurrentScanDetails((curr) => ({
+      setCurrentScanDetails((curr:any) => ({
         currentScanned: +curr?.currentScanned + 1,
         failed: status === "FAIL" ? +curr?.failed + 1 : curr?.failed,
         passed: status === "PASS" ? +curr?.passed + 1 : curr?.passed,
@@ -309,7 +309,7 @@ const QcScan = (props: Props) => {
     setCurrentScanDetails(getCurrentScanDetails(rows ?? []));
   }, [rows]);
   return (
-    <Row style={{ height: "95%" }} justify={"center"} gutter={6}>
+    <Row style={{ height: "100%", padding:10 }} gutter={12}>
       <TransferModal
         show={showTransferModal}
         hide={() => setShowInsertModal(false)}
@@ -458,11 +458,7 @@ const QcScan = (props: Props) => {
         </Flex>
       </Col>
       <Col lg={12} xl={14} xxl={10} span={10}>
-        <Card
-          size="small"
-          style={{ height: "100%" }}
-          bodyStyle={{ height: "95%", overflow: "auto" }}
-        >
+      
           {loading("fetchRows") && <Loading />}
           <MyDataTable
             checkboxSelection
@@ -475,8 +471,7 @@ const QcScan = (props: Props) => {
               filterTheCheckedRows(selected, rows);
             }}
             loading={loading("select")}
-          />{" "}
-        </Card>
+          />
       </Col>
       <Col lg={6} xl={4} span={4}>
         <Flex vertical gap={5} style={{ overflowY: "auto" }}>

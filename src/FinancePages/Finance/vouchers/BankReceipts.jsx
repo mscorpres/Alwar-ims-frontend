@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import axios from "axios";
@@ -8,7 +7,6 @@ import NavFooter from "../../../Components/NavFooter";
 import { Card, Col, DatePicker, Form, Input, Modal, Row } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import FormTable from "../../../Components/FormTable";
 import MySelect from "../../../Components/MySelect";
 import SummaryCard from "../../../Components/SummaryCard";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -17,6 +15,7 @@ import Loading from "../../../Components/Loading";
 import dayjs from "dayjs";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
+import FormTable from "../../../Components/FormTable.jsx";
 
 export default function BankReceits() {
   const { showToast } = useToast();
@@ -405,7 +404,7 @@ export default function BankReceits() {
     });
   }, [bankPaymentRows]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%" , padding:10}}>
       <Modal
         title="Create Bank Receipt Confirm!"
         open={showSubmitConfirmModal}
@@ -417,7 +416,7 @@ export default function BankReceits() {
       >
         <p>Are you sure you want to create this bank receipt voucher?</p>
       </Modal>
-      <Row style={{ padding: "0px 10px", height: "100%" }} gutter={8}>
+      <Row style={{  height: "100%" }} gutter={8}>
         <Col
           span={6}
           style={{
@@ -498,8 +497,7 @@ export default function BankReceits() {
           span={18}
           style={{
             height: "90%",
-            border: "1px solid #eeeeee",
-            padding: "0px 0px",
+         
           }}
         >
           <FormTable

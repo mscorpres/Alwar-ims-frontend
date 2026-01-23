@@ -9,16 +9,15 @@ import {
   Row,
   Typography,
 } from "antd";
-import axios from "axios";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
-import FormTable from "../../../Components/FormTable";
 import Loading from "../../../Components/Loading";
 import SummaryCard from "../../../Components/SummaryCard";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
   const { showToast } = useToast();
@@ -202,8 +201,8 @@ function MINDrawer({ transactionInwarding, setTransactionInwarding }) {
             bodyStyle={{ padding: 0 }}
             style={{ height: "100%", padding: 0 }}
           >
-            {fetchLoading && <Loading />}
-            <FormTable data={rows} columns={columns} />
+     
+            <MyDataTable data={rows} columns={columns} loading={fetchLoading} />
           </Card>
         </Col>
       </Row>

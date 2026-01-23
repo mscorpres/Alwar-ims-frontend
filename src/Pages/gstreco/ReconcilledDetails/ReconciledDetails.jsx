@@ -342,9 +342,9 @@ const ReconciledDetails = () => {
 
  
   return (
-    <>
+ 
      
-         <Row  className= "main-container" style={{ width:'100%', height:'90%', padding:'1rem',marginTop:'1rem' }} >
+         <Row  className= "main-container" style={{ width:'100%', height:'100%', padding:'10px' }} >
           <Col span={4}  className="left-side-div"  style={{border:'1px solid #D3D3D3'}}>
           <h3 style={{textAlign:'center',marginTop:'1rem'}}>Reconciled Details</h3>
           <p style={{textAlign:'center',marginTop:'2rem'}}> Remaining Data: {count}/{getcountdata.data}</p>
@@ -412,7 +412,7 @@ const ReconciledDetails = () => {
             </Col>
             <Col className="right-side-div" style={{ marginLeft:'0.5rem'}}>
             <div style={{width:'72rem'}}>
-              <Col style={{border: '1px solid #D3D3D3', height:'12rem'}}>
+              <Col style={{border: '1px solid #D3D3D3', height:"calc(50vh - 100px)"}}>
           <MyDataTable
             sx={{
               "& .MuiDataGrid-cell": {
@@ -469,7 +469,7 @@ const ReconciledDetails = () => {
           </div>
           </Col>
           </Row>
-    </>
+   
   );
 };
 

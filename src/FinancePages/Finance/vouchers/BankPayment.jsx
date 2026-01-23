@@ -6,8 +6,6 @@ import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Card, Col, DatePicker, Form, Input, Modal, Row } from "antd";
-import SingleDatePicker from "../../../Components/SingleDatePicker";
-import FormTable from "../../../Components/FormTable";
 import MySelect from "../../../Components/MySelect";
 import SummaryCard from "../../../Components/SummaryCard";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -15,6 +13,7 @@ import Loading from "../../../Components/Loading";
 import dayjs from "dayjs";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
+import FormTable from "../../../Components/FormTable.jsx";
 
 export default function BankPayment() {
   const { showToast } = useToast();
@@ -405,7 +404,8 @@ export default function BankPayment() {
   return (
     <div
       style={{
-        height: "calc(100vh - 160px)",
+        height: "calc(100vh - 115px)",
+        padding:10
       }}
     >
       <Modal
@@ -419,14 +419,14 @@ export default function BankPayment() {
       >
         <p>Are you sure you want to create this bank payment voucher</p>
       </Modal>
-      <Row gutter={8} style={{ height: "100%", padding: "0px 10px" }}>
+      <Row gutter={8} style={{ height: "100%", }}>
         <Col
           span={6}
           style={{
             maxHeight: "90%",
             overflowY: "auto",
             overflowX: "hidden",
-            paddingBottom: 10,
+         
           }}
         >
           <Row gutter={[0, 6]}>
@@ -498,9 +498,8 @@ export default function BankPayment() {
         </Col>
         <Col
           style={{
-            height: "90%",
-            border: "1px solid #eeeeee",
-            padding: "0px 0px",
+            height: "92%",
+           
           }}
           span={18}
         >

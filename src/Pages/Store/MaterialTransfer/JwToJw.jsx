@@ -1,7 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
-import { Col, Row, Select, Button, Input, Modal, Spin, Tooltip } from "antd";
-import { DeleteOutlined, FileExcelOutlined, CheckOutlined, ClearOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  Col,
+  Row,
+  Select,
+  Button,
+  Input,
+  Modal,
+  Spin,
+  Tooltip,
+  Card,
+} from "antd";
+import {
+  DeleteOutlined,
+  FileExcelOutlined,
+  CheckOutlined,
+  ClearOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import "./Modal/style.css";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -42,22 +58,21 @@ function JwToJw() {
   const [showCsvModal, setShowCsvModal] = useState(false);
   const [showExcelWarning, setShowExcelWarning] = useState(false);
   const [addRowCount, setAddRowCount] = useState("");
-  
+
   // react-spreadsheet data format: array of rows, each row is array of cell objects with { value: "" }
   const createEmptySpreadsheetData = (rowCount = 10) => {
-    return Array(rowCount).fill(null).map(() => [
-      { value: "" },
-    ]);
+    return Array(rowCount)
+      .fill(null)
+      .map(() => [{ value: "" }]);
   };
-  const [spreadsheetData, setSpreadsheetData] = useState(createEmptySpreadsheetData(10));
+  const [spreadsheetData, setSpreadsheetData] = useState(
+    createEmptySpreadsheetData(10)
+  );
   const columnLabels = ["Part Code"];
 
   // Check if any row has qty exceeding stock
   const hasQtyExceeded = rows.some(
-    (row) =>
-      row.qty1 &&
-      row.stockQty &&
-      Number(row.qty1) > Number(row.stockQty)
+    (row) => row.qty1 && row.stockQty && Number(row.qty1) > Number(row.stockQty)
   );
 
   // Add row functionality
@@ -102,7 +117,9 @@ function JwToJw() {
 
   const getJwPoOptions = async (vendorId) => {
     try {
-      const response = await imsAxios.get(`/godown/transfer/jw-jw/po/${vendorId}`);
+      const response = await imsAxios.get(
+        `/godown/transfer/jw-jw/po/${vendorId}`
+      );
       let v = [];
       if (response?.data && Array.isArray(response.data)) {
         response.data.map((ad) =>
@@ -133,7 +150,9 @@ function JwToJw() {
   };
 
   const getLocationFunctionTo = async (vendorId) => {
-    const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendorId}`);
+    const response = await imsAxios.get(
+      `/backend/fetchVendorJWLocation?vendor=${vendorId}`
+    );
     let v = [];
     if (response?.data && Array.isArray(response.data)) {
       response.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
@@ -144,10 +163,14 @@ function JwToJw() {
   const getComponentList = async (e) => {
     if (e?.length > 2 && allData.jwPo) {
       try {
-        const response = await imsAxios.get(`/godown/transfer/jw-jw/stock?part=${e}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`);
-        
+        const response = await imsAxios.get(
+          `/godown/transfer/jw-jw/stock?part=${e}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`
+        );
+
         if (response?.success && response?.data) {
-          const data = Array.isArray(response.data) ? response.data : [response.data];
+          const data = Array.isArray(response.data)
+            ? response.data
+            : [response.data];
           const arr = data.map((d) => ({
             text: `(${d.component_name}) ${d.part_no}`,
             value: d.component_key,
@@ -210,7 +233,10 @@ function JwToJw() {
     });
 
     if (response.success) {
-      showToast(response.message.toString()?.replaceAll("<br/>", ""), "success");
+      showToast(
+        response.message.toString()?.replaceAll("<br/>", ""),
+        "success"
+      );
       // Reset form
       setAllData({
         jwVendor: "",
@@ -268,7 +294,10 @@ function JwToJw() {
     if (isNaN(count) || count < 1) {
       setSpreadsheetData((prev) => [...prev, ...createEmptySpreadsheetData(1)]);
     } else {
-      setSpreadsheetData((prev) => [...prev, ...createEmptySpreadsheetData(count)]);
+      setSpreadsheetData((prev) => [
+        ...prev,
+        ...createEmptySpreadsheetData(count),
+      ]);
     }
     setAddRowCount("");
   };
@@ -301,9 +330,7 @@ function JwToJw() {
     }
 
     // Filter rows that have part code
-    const validRows = spreadsheetData.filter(
-      (row) => row[0]?.value?.trim()
-    );
+    const validRows = spreadsheetData.filter((row) => row[0]?.value?.trim());
 
     if (validRows.length === 0) {
       showToast("No valid data found. Please enter Part Code.", "error");
@@ -317,12 +344,14 @@ function JwToJw() {
       const partCodes = validRows.map((row) => row[0]?.value?.trim());
 
       // Call stock API with part codes
-      const response = await imsAxios.get(`/godown/transfer/jw-jw/stock?part=${partCodes}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`);
+      const response = await imsAxios.get(
+        `/godown/transfer/jw-jw/stock?part=${partCodes}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`
+      );
 
       if (response?.success && response?.data) {
         // Handle both single and array response
-        const stockData = Array.isArray(response.data) 
-          ? response.data 
+        const stockData = Array.isArray(response.data)
+          ? response.data
           : [response.data];
 
         if (stockData.length === 0) {
@@ -359,7 +388,7 @@ function JwToJw() {
   };
 
   return (
-    <div style={{ height: "95%", position: "relative" }}>
+    <div style={{ height: "100%", position: "relative", padding: 10 }}>
       {csvUploading && (
         <div
           style={{
@@ -377,197 +406,212 @@ function JwToJw() {
           }}
         >
           <Spin size="large" />
-          <p style={{ marginTop: 16, color: customColor.newBgColor, fontWeight: 500 }}>
+          <p
+            style={{
+              marginTop: 16,
+              color: customColor.newBgColor,
+              fontWeight: 500,
+            }}
+          >
             Processing data...
           </p>
         </div>
       )}
 
       {/* Main UI */}
-          <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
-            <Col span={6}>
-              <Row gutter={10} style={{ margin: "5px" }}>
-                <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
-                  <span>SELECT JW VENDOR</span>
-                </Col>
-                <Col span={24}>
-                  <MyAsyncSelect
-                    placeholder="Type to search vendor..."
-                    style={{ width: "100%" }}
-                    optionsState={vendorAsyncOptions}
-                    loadOptions={getJwVendorOptions}
-                    onBlur={() => setVendorAsyncOptions([])}
-                    value={allData.jwVendor || undefined}
-                    onChange={(e) => {
-                      setAllData((allData) => {
-                        return { ...allData, jwVendor: e, jwPo: "" };
-                      });
-                      getJwPoOptions(e);
-                      getLocationFunctionTo(e);
-                    }}
-                  />
-                </Col>
-                <Col span={24} style={{ marginTop: "15px", marginBottom: "10px" }}>
-                  <span>SELECT JW PO</span>
-                </Col>
-                <Col span={24}>
-                  <Select
-                    placeholder="Please Select JW PO"
-                    style={{ width: "100%" }}
-                    options={jwPoOptions}
-                    showSearch
-                    optionLabelProp="title"
-                    filterOption={(input, option) =>
-                      (option?.searchText ?? option?.value ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    value={allData.jwPo || undefined}
-                    disabled={!allData.jwVendor}
-                    onChange={(e) =>
-                      setAllData((allData) => {
-                        return { ...allData, jwPo: e };
-                      })
-                    }
-                  />
-                </Col>
-                <Col span={24} style={{ marginTop: "15px", marginBottom: "10px" }}>
-                  <span>SELECT PICK LOCATION</span>
-                </Col>
-                <Col span={24}>
-                  <Select
-                    placeholder="Please Select Location"
-                    style={{ width: "100%" }}
-                    options={locData}
-                    showSearch
-                    filterOption={(input, option) =>
-                      (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                    }
-                    value={allData.locationFrom || undefined}
-                    onChange={(e) =>
-                      setAllData((allData) => {
-                        return { ...allData, locationFrom: e };
-                      })
-                    }
-                  />
-                </Col>
-                <Col span={24} style={{ marginTop: "15px", marginBottom: "10px" }}>
-                  <span>REMARK</span>
-                </Col>
-                <Col span={24}>
-                  <TextArea
-                    rows={4}
-                    placeholder="Enter remark..."
-                    value={allData.remark}
-                    onChange={(e) =>
-                      setAllData((allData) => {
-                        return { ...allData, remark: e.target.value };
-                      })
-                    }
-                  />
-                </Col>
-                <Col span={24} style={{ marginTop: "15px", marginBottom: "10px" }}>
-                  <span>SELECT DROP LOCATION</span>
-                </Col>
-                <Col span={24}>
-                  <Select
-                    style={{ width: "100%" }}
-                    options={locDataTo}
-                    value={allData.locationTo || undefined}
-                    placeholder="Select Location"
-                    showSearch
-                    filterOption={(input, option) =>
-                      (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
-                    }
-                    onChange={(e) => {
-                      setAllData((allData) => {
-                        return { ...allData, locationTo: e };
-                      });
-                    }}
-                  />
-                </Col>
-              </Row>
-            </Col>
+      <Row gutter={10}>
+        <Col span={6}>
+          <Card>
+            <Row gutter={0} >
+              <Col span={24} style={{ marginBottom: "10px"}}>
+                <span>SELECT JW VENDOR</span>
+              </Col>
+              <Col span={24}>
+                <MyAsyncSelect
+                  placeholder="Type to search vendor..."
+                  style={{ width: "100%" }}
+                  optionsState={vendorAsyncOptions}
+                  loadOptions={getJwVendorOptions}
+                  onBlur={() => setVendorAsyncOptions([])}
+                  value={allData.jwVendor || undefined}
+                  onChange={(e) => {
+                    setAllData((allData) => {
+                      return { ...allData, jwVendor: e, jwPo: "" };
+                    });
+                    getJwPoOptions(e);
+                    getLocationFunctionTo(e);
+                  }}
+                />
+              </Col>
+              <Col
+                span={24}
+                style={{ marginTop: "15px", marginBottom: "10px" }}
+              >
+                <span>SELECT JW PO</span>
+              </Col>
+              <Col span={24}>
+                <Select
+                  placeholder="Please Select JW PO"
+                  style={{ width: "100%" }}
+                  options={jwPoOptions}
+                  showSearch
+                  optionLabelProp="title"
+                  filterOption={(input, option) =>
+                    (option?.searchText ?? option?.value ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={allData.jwPo || undefined}
+                  disabled={!allData.jwVendor}
+                  onChange={(e) =>
+                    setAllData((allData) => {
+                      return { ...allData, jwPo: e };
+                    })
+                  }
+                />
+              </Col>
+              <Col
+                span={24}
+                style={{ marginTop: "15px", marginBottom: "10px" }}
+              >
+                <span>SELECT PICK LOCATION</span>
+              </Col>
+              <Col span={24}>
+                <Select
+                  placeholder="Please Select Location"
+                  style={{ width: "100%" }}
+                  options={locData}
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  value={allData.locationFrom || undefined}
+                  onChange={(e) =>
+                    setAllData((allData) => {
+                      return { ...allData, locationFrom: e };
+                    })
+                  }
+                />
+              </Col>
+              <Col
+                span={24}
+                style={{ marginTop: "15px", marginBottom: "10px" }}
+              >
+                <span>REMARK</span>
+              </Col>
+              <Col span={24}>
+                <TextArea
+                  rows={4}
+                  placeholder="Enter remark..."
+                  value={allData.remark}
+                  onChange={(e) =>
+                    setAllData((allData) => {
+                      return { ...allData, remark: e.target.value };
+                    })
+                  }
+                />
+              </Col>
+              <Col
+                span={24}
+                style={{ marginTop: "15px", marginBottom: "10px" }}
+              >
+                <span>SELECT DROP LOCATION</span>
+              </Col>
+              <Col span={24}>
+                <Select
+                  style={{ width: "100%" }}
+                  options={locDataTo}
+                  value={allData.locationTo || undefined}
+                  placeholder="Select Location"
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  onChange={(e) => {
+                    setAllData((allData) => {
+                      return { ...allData, locationTo: e };
+                    });
+                  }}
+                />
+              </Col>
+            </Row>
+          </Card>
+        </Col>
 
-            <Col span={18}>
-              <Row gutter={10}>
-                <Col span={24}>
-                  <div
+        <Col span={18}>
+          <Row gutter={10}>
+            <Col span={24}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 10,
+                  marginBottom: 10,
+                }}
+              >
+                <Button
+                  icon={<FileExcelOutlined />}
+                  onClick={() => setShowExcelWarning(true)}
+                >
+                  Open Excel Grid
+                </Button>
+              </div>
+              <div
+                style={{
+                  marginTop: "10px",
+                  border: "1px solid #ccc",
+                  padding: 4,
+                }}
+              >
+                {" "}
+                <div
+                  style={{
+                    overflow: "auto",
+                    height: "calc(100vh - 230px)",
+                  }}
+                >
+                  <table
                     style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      gap: 10,
-                      marginBottom: 10,
+                      tableLayout: "fixed",
+                      width: "100%",
+                      minWidth: 900,
                     }}
                   >
-                    <Button
-                      icon={<FileExcelOutlined />}
-                      onClick={() => setShowExcelWarning(true)}
-                    >
-                      Open Excel Grid
-                    </Button>
-                  </div>
-                  <div
-                    style={{
-                      overflowX: "auto",
-                      overflowY: "auto",
-                      maxHeight: "38vh",
-                    }}
-                  >
-                    <table
-                      style={{
-                        tableLayout: "fixed",
-                        width: "100%",
-                        minWidth: 900,
-                      }}
-                    >
-                      <thead>
-                        <tr>
-                          <th className="an" style={{ width: "5vw" }}>
-                            Action
-                          </th>
-                          <th className="an" style={{ width: "25vw" }}>
-                            Component/Part No.
-                          </th>
-                          <th className="an" style={{ width: "15vw" }}>
-                            STOCK QUANTITY
-                          </th>
-                          <th className="an" style={{ width: "15vw" }}>
-                            TRANSFERING QTY
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rows.map((row, index) => (
-                          <tr key={row.id}>
-                            <td style={{ width: "5vw", textAlign: "center" }}>
-                              {index === 0 ? (
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4 }}>
-                                  <Tooltip title="Delete Row">
-                                    <Button
-                                      type="text"
-                                      danger
-                                      size="small"
-                                      icon={<DeleteOutlined />}
-                                      onClick={() => removeRow(row.id)}
-                                      disabled={rows.length === 1}
-                                    />
-                                  </Tooltip>
-                                  <span style={{ color: "#ccc" }}>|</span>
-                                  <Tooltip title="Add Row">
-                                    <Button
-                                      type="text"
-                                      size="small"
-                                      icon={<PlusOutlined />}
-                                      onClick={addRow}
-                                      style={{ color: customColor.newBgColor }}
-                                    />
-                                  </Tooltip>
-                                </div>
-                              ) : (
+                    <thead>
+                      <tr>
+                        <th className="table-col" style={{ width: "5vw" }}>
+                          Action
+                        </th>
+                        <th className="table-col" style={{ width: "25vw" }}>
+                          Component / Part No.
+                        </th>
+                        <th className="table-col" style={{ width: "15vw" }}>
+                          Stock QTY
+                        </th>
+                        <th className="table-col" style={{ width: "15vw" }}>
+                          Transfering QTY
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row, index) => (
+                        <tr key={row.id}>
+                          <td style={{ width: "5vw", textAlign: "center" }}>
+                            {index === 0 ? (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  gap: 4,
+                                }}
+                              >
                                 <Tooltip title="Delete Row">
                                   <Button
-                                    type="text"
                                     danger
                                     size="small"
                                     icon={<DeleteOutlined />}
@@ -575,77 +619,101 @@ function JwToJw() {
                                     disabled={rows.length === 1}
                                   />
                                 </Tooltip>
-                              )}
-                            </td>
-                            <td style={{ width: "25vw" }}>
-                              <MyAsyncSelect
-                                style={{ width: "100%" }}
-                                loadOptions={getComponentList}
-                                onBlur={() => setAsyncOptions([])}
-                                onInputChange={(e) => setSearch(e)}
-                                placeholder="Part Name/Code"
-                                value={row.component}
-                                optionsState={asyncOptions}
-                                labelInValue={true}
-                                disabled={!allData.jwPo}
-                                onChange={(selected) => {
-                                  // Find selected option to get unit and stock
-                                  const selectedOption = asyncOptions.find(
-                                    (opt) => opt.value === selected?.value
-                                  );
-                                  setRows((prev) => {
-                                    const updated = [...prev];
-                                    updated[index] = {
-                                      ...updated[index],
-                                      component: selected,
-                                      unit: selectedOption?.unit || "",
-                                      stockQty: selectedOption?.stockQty || "0",
-                                    };
-                                    return updated;
-                                  });
-                                }}
-                              />
-                            </td>
-                            <td style={{ width: "15vw" }}>
-                              <Input
+                                <span style={{ color: "#ccc" }}>|</span>
+                                <Tooltip title="Add Row">
+                                  <Button
+                                    size="small"
+                                    icon={<PlusOutlined />}
+                                    onClick={addRow}
+                                    style={{ color: customColor.newBgColor }}
+                                  />
+                                </Tooltip>
+                              </div>
+                            ) : (
+                              <Tooltip title="Delete Row">
+                                <Button
+                                  danger
+                                  size="small"
+                                  icon={<DeleteOutlined />}
+                                  onClick={() => removeRow(row.id)}
+                                  disabled={rows.length === 1}
+                                />
+                              </Tooltip>
+                            )}
+                          </td>
+                          <td style={{ width: "25vw" }}>
+                            <MyAsyncSelect
+                              style={{ width: "100%" }}
+                              loadOptions={getComponentList}
+                              onBlur={() => setAsyncOptions([])}
+                              onInputChange={(e) => setSearch(e)}
+                              placeholder="Part Name/Code"
+                              value={row.component}
+                              optionsState={asyncOptions}
+                              labelInValue={true}
+                              disabled={!allData.jwPo}
+                              onChange={(selected) => {
+                                // Find selected option to get unit and stock
+                                const selectedOption = asyncOptions.find(
+                                  (opt) => opt.value === selected?.value
+                                );
+                                setRows((prev) => {
+                                  const updated = [...prev];
+                                  updated[index] = {
+                                    ...updated[index],
+                                    component: selected,
+                                    unit: selectedOption?.unit || "",
+                                    stockQty: selectedOption?.stockQty || "0",
+                                  };
+                                  return updated;
+                                });
+                              }}
+                            />
+                          </td>
+                          <td style={{ width: "15vw" }}>
+                            {/* <Input
                                 disabled
                                 value={row.stockQty || "0"}
                                 suffix={row.unit || ""}
-                              />
-                            </td>
-                            <td style={{ width: "15vw" }}>
-                              <Input
-                                value={row.qty1}
-                                onChange={(e) => {
-                                  setRows((prev) => {
-                                    const updated = [...prev];
-                                    updated[index] = {
-                                      ...updated[index],
-                                      qty1: e.target.value,
-                                    };
-                                    return updated;
-                                  });
-                                }}
-                                suffix={row.unit || ""}
-                                style={{
-                                  backgroundColor:
-                                    row.qty1 &&
-                                    row.stockQty &&
-                                    Number(row.qty1) > Number(row.stockQty)
-                                      ? "#ffcccc"
-                                      : undefined,
-                                }}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Col>
-              </Row>
+                              /> */}
+                            <span>
+                              {row.stockQty ?? "0"} {row.unit ?? ""}
+                            </span>
+                          </td>
+                          <td style={{ width: "15vw" }}>
+                            <Input
+                              value={row.qty1}
+                              onChange={(e) => {
+                                setRows((prev) => {
+                                  const updated = [...prev];
+                                  updated[index] = {
+                                    ...updated[index],
+                                    qty1: e.target.value,
+                                  };
+                                  return updated;
+                                });
+                              }}
+                              suffix={row.unit || ""}
+                              style={{
+                                backgroundColor:
+                                  row.qty1 &&
+                                  row.stockQty &&
+                                  Number(row.qty1) > Number(row.stockQty)
+                                    ? "#ffcccc"
+                                    : undefined,
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </Col>
           </Row>
+        </Col>
+      </Row>
       <NavFooter
         nextLabel="Transfer"
         submitFunction={saveJwToJw}
@@ -657,7 +725,14 @@ function JwToJw() {
       {/* Excel Warning Confirmation Modal */}
       <Modal
         title={
-          <div style={{ display: "flex", alignItems: "center", gap: 10, color: "#faad14" }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              color: "#faad14",
+            }}
+          >
             <span style={{ fontSize: 20 }}>⚠️</span>
             <span>Warning</span>
           </div>
@@ -713,49 +788,63 @@ function JwToJw() {
             overflow: "hidden",
           },
         }}
-        footer={csvUploading ? null : [
-          <div
-            key="footer-content"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              width: "100%",
-            }}
-          >
-            {/* Left side - Add Row controls */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <Input
-                placeholder="1"
-                value={addRowCount}
-                onChange={(e) => setAddRowCount(e.target.value.replace(/\D/g, ""))}
-                style={{ width: 60, textAlign: "center" }}
-                onPressEnter={addSpreadsheetRows}
-              />
-              <Tooltip title="Add Row">
-                <Button icon={<PlusOutlined />} onClick={addSpreadsheetRows} />
-              </Tooltip>
-            </div>
-            {/* Right side - Action buttons */}
-            <div style={{ display: "flex", gap: 8 }}>
-              <Tooltip title="Clear All">
-                <Button icon={<ClearOutlined />} onClick={clearSpreadsheetData} />
-              </Tooltip>
-              <Button onClick={() => setShowCsvModal(false)}>
-                Cancel
-              </Button>
-              <Button
-                type="primary"
-                icon={<CheckOutlined />}
-                onClick={processSpreadsheetData}
-                disabled={!allData.jwVendor || !allData.jwPo}
-                style={{ background: customColor.newBgColor }}
-              >
-                Process Data
-              </Button>
-            </div>
-          </div>,
-        ]}
+        footer={
+          csvUploading
+            ? null
+            : [
+                <div
+                  key="footer-content"
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  {/* Left side - Add Row controls */}
+                  <div
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    <Input
+                      placeholder="1"
+                      value={addRowCount}
+                      onChange={(e) =>
+                        setAddRowCount(e.target.value.replace(/\D/g, ""))
+                      }
+                      style={{ width: 60, textAlign: "center" }}
+                      onPressEnter={addSpreadsheetRows}
+                    />
+                    <Tooltip title="Add Row">
+                      <Button
+                        icon={<PlusOutlined />}
+                        onClick={addSpreadsheetRows}
+                      />
+                    </Tooltip>
+                  </div>
+                  {/* Right side - Action buttons */}
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <Tooltip title="Clear All">
+                      <Button
+                        icon={<ClearOutlined />}
+                        onClick={clearSpreadsheetData}
+                      />
+                    </Tooltip>
+                    <Button onClick={() => setShowCsvModal(false)}>
+                      Cancel
+                    </Button>
+                    <Button
+                      type="primary"
+                      icon={<CheckOutlined />}
+                      onClick={processSpreadsheetData}
+                      disabled={!allData.jwVendor || !allData.jwPo}
+                      style={{ background: customColor.newBgColor }}
+                    >
+                      Process Data
+                    </Button>
+                  </div>
+                </div>,
+              ]
+        }
       >
         {csvUploading ? (
           <div
@@ -768,7 +857,13 @@ function JwToJw() {
             }}
           >
             <Spin size="large" />
-            <p style={{ marginTop: 16, color: customColor.newBgColor, fontWeight: 500 }}>
+            <p
+              style={{
+                marginTop: 16,
+                color: customColor.newBgColor,
+                fontWeight: 500,
+              }}
+            >
               Processing Part Codes...
             </p>
           </div>
@@ -812,7 +907,11 @@ function JwToJw() {
                     <span style={{ color: "#ccc" }}>|</span>
                     <Tooltip title="Add Row">
                       <PlusOutlined
-                        style={{ color: customColor.newBgColor, fontSize: 12, cursor: "pointer" }}
+                        style={{
+                          color: customColor.newBgColor,
+                          fontSize: 12,
+                          cursor: "pointer",
+                        }}
                         onClick={() => addSpreadsheetRows()}
                       />
                     </Tooltip>
@@ -865,7 +964,8 @@ function JwToJw() {
                 color: "#555",
               }}
             >
-              <strong>Tip:</strong> Select Part Codes in Excel, press Ctrl+C, then click inside a cell and press Ctrl+V to paste.
+              <strong>Tip:</strong> Select Part Codes in Excel, press Ctrl+C,
+              then click inside a cell and press Ctrl+V to paste.
             </div>
           </>
         )}

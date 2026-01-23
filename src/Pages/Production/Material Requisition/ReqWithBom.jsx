@@ -160,8 +160,8 @@ const ReqWithBom = () => {
           style={{
             overflowY: "auto",
             overflowX: "hidden",
-            maxHeight: "90%",
-            padding: 20,
+            maxHeight: "100%",
+            padding: 10,
           }}
         >
           {pageLoading && <Loading />}

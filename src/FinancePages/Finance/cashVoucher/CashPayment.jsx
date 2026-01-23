@@ -3,13 +3,13 @@ import { Card, Col, Form, Row, Input } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import axios from "axios";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
-import FormTable from "../../../Components/FormTable";
 import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
+import FormTable from "../../../Components/FormTable.jsx";
 
 function CashPayment() {
   const { showToast } = useToast();
@@ -252,8 +252,8 @@ function CashPayment() {
   };
 
   return (
-    <div style={{ height: "calc(100vh - 210px)", }}>
-      <Row gutter={10} style={{ height: "100%", margin: "10px" }}>
+    <div style={{ height: "calc(100vh - 160px)", padding:10 }}>
+      <Row gutter={10} style={{ height: "100%", }}>
         <Col span={6}>
           <Card title="Cash Payment" size="small">
             <Form layout="vertical" size="small">

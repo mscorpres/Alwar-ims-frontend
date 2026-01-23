@@ -484,9 +484,8 @@ const ManagePO = () => {
       />
       <div
        style={{
-        height: "calc(100vh - 160px)",
-        overflowY: "auto",
-        overflowX: "hidden",
+        height: "calc(100vh - 200px)",
+    
         padding: "0 10px",
       }}
       >

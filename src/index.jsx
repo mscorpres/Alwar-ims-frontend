@@ -1,11 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App";
+import Main from "./Main";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { Store } from "./Features/Store";
 import "./index.css";
-// import { unregister as unregisterServiceWorker } from "./serviceWorkerRegistration";
 import { ConfigProvider } from "antd";
 import { customColor } from "./utils/customColor";
 import { ToastContext } from "./context/ToastContext";
@@ -88,13 +87,12 @@ const theme = {
 };
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-// unregisterServiceWorker();
 root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
       <ToastContext>
       <BrowserRouter>
-        <App />
+        <Main />
       </BrowserRouter>
       </ToastContext>
     </Provider>

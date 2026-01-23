@@ -31,8 +31,8 @@ function SfHeader() {
           data-ace-scroll="{}"
         >
           <ul className="nav w-auto has-active-border active-on-right active-on-top">
-            <li className={`nav-item ${pathname == "/sf-to-sf" && "active"}`}>
-              <Link className="nav-link" to="/sf-to-sf">
+            <li className={`nav-item ${pathname == "/location-movement/sf-to-sf" && "active"}`}>
+              <Link className="nav-link" to="/location-movement/sf-to-sf">
                 <span>SF To Sf</span>
               </Link>
               <b className="sub-arrow"></b>

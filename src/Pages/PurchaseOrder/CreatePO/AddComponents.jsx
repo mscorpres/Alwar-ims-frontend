@@ -18,16 +18,16 @@ import {
   SGSTCell,
   taxableCell,
   internalRemarkCell,
-  
 } from "./tableColumns";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import Loading from "../../../Components/Loading";
-import FormTable from "../../../Components/FormTable";
-import { Button, Card, Col, Modal, Row, Typography } from "antd";
+import { Button, Card, Col, Form, Modal, Row, Typography } from "antd";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 export default function AddComponents({
   form,
   rowCount,
@@ -51,7 +51,7 @@ export default function AddComponents({
     useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const addRows = () => {
-    const defaultGstType = gstState || "L"; 
+    const defaultGstType = gstState || "L";
     const newRow = {
       id: v4(),
       index: rowCount.length + 1,
@@ -60,16 +60,16 @@ export default function AddComponents({
       component: "",
       qty: 1,
       rate: "",
-      last_rate: "", 
+      last_rate: "",
       duedate: "",
       hsncode: "",
-      gsttype: defaultGstType, 
+      gsttype: defaultGstType,
       gstrate: "",
       cgst: "",
       sgst: "",
       igst: "",
       remark: "--",
-      internal_remark: "",  
+      internal_remark: "",
       inrValue: 0,
       foreginValue: 0,
       unit: "",
@@ -156,7 +156,12 @@ export default function AddComponents({
             ...obj,
             approval: app,
           };
-        } else if (name == "hsncode" || name == "duedate" || name == "remark" || name === "internal_remark") {
+        } else if (
+          name == "hsncode" ||
+          name == "duedate" ||
+          name == "remark" ||
+          name === "internal_remark"
+        ) {
           obj = {
             ...obj,
             [name]: value,
@@ -271,8 +276,13 @@ export default function AddComponents({
             };
           }
         }
-        
-        if (obj.gsttype == "L" && name != "gsttype" && name != "remark" && name != "internal_remark") {
+
+        if (
+          obj.gsttype == "L" &&
+          name != "gsttype" &&
+          name != "remark" &&
+          name != "internal_remark"
+        ) {
           let percentage = obj.gstrate / 2;
           obj = {
             ...obj,
@@ -280,7 +290,12 @@ export default function AddComponents({
             sgst: (obj.inrValue * percentage) / 100,
             igst: 0,
           };
-        } else if (obj.gsttype == "I" && name != "gsttype" && name != "remark" && name != "internal_remark") {
+        } else if (
+          obj.gsttype == "I" &&
+          name != "gsttype" &&
+          name != "remark" &&
+          name != "internal_remark"
+        ) {
           let percentage = obj.gstrate;
           obj = {
             ...obj,
@@ -294,7 +309,7 @@ export default function AddComponents({
         return row;
       }
     });
-    
+
     if (name == "component") {
       setPageLoading(true);
       const response = await imsAxios.post(
@@ -302,9 +317,16 @@ export default function AddComponents({
         {
           component_code: value.value,
           vencode: newPurchaseOrder.vendorname.value,
-          project: form.getFieldValue("project_name")==="object" ? form.getFieldValue("project_name").value : form.getFieldValue("project_name")||newPurchaseOrder.project_name==="object" ? newPurchaseOrder.project_name.value : newPurchaseOrder.project_name,
+          project:
+            form.getFieldValue("project_name") === "object"
+              ? form.getFieldValue("project_name").value
+              : form.getFieldValue("project_name") ||
+                newPurchaseOrder.project_name === "object"
+              ? newPurchaseOrder.project_name.value
+              : newPurchaseOrder.project_name,
         }
       );
+    
       setPageLoading(false);
       let arr1 = rowCount;
       const autoGstType = gstState || "L";
@@ -314,18 +336,18 @@ export default function AddComponents({
           let obj = row;
           let newLastRate = Number(response.data.rate.toString().trim());
           let percentage = response.data.gstrate;
-        
+
           if (autoGstType == "L") {
             percentage = response.data.gstrate / 2;
             obj = {
               ...obj,
               component: value,
-              gsttype: "L", 
+              gsttype: "L",
               last_rate: newLastRate,
-              unit: data.data.unit,
+              unit: response.data.unit,
               hsncode: response.data.hsn,
               gstrate: response.data.gstrate,
-           
+
               cgst: 0,
               sgst: 0,
               igst: 0,
@@ -335,21 +357,21 @@ export default function AddComponents({
               ...obj,
               cgst: 0,
               component: value,
-              gsttype: "I", 
+              gsttype: "I",
               last_rate: newLastRate,
               unit: response.data.unit,
               hsncode: response.data.hsn,
               gstrate: response.data.gstrate,
               sgst: 0,
-             
+
               igst: 0,
             };
           } else {
             obj = {
               ...obj,
               component: value,
-              gsttype: autoGstType, 
-              last_rate: newLastRate, 
+              gsttype: autoGstType,
+              last_rate: newLastRate,
               unit: response.data.unit,
               gstrate: response.data.gstrate,
               hsncode: response.data.hsn,
@@ -361,7 +383,9 @@ export default function AddComponents({
             project_req_qty: response.data.project_req_qty,
             po_exec_qty: response.data.po_exec_qty,
             closing_stock: response.data.closing_stock || 0,
-            tol_price: Number((response.data.project_rate * 1) / 100).toFixed(2),
+            tol_price: Number((response.data.project_rate * 1) / 100).toFixed(
+              2
+            ),
           };
           return obj;
         } else {
@@ -377,7 +401,6 @@ export default function AddComponents({
   };
   const getComponents = async (searchInput) => {
     if (searchInput.length > 2) {
-     
       const response = await executeFun(
         () => getComponentOptions(searchInput),
         "select"
@@ -404,12 +427,12 @@ export default function AddComponents({
         exchange: "1",
         component: "",
         qty: 1,
-        rate: "", 
-        last_rate: "", 
+        rate: "",
+        last_rate: "",
         duedate: "",
         inrValue: 0,
         hsncode: "",
-        gsttype: defaultGstType, 
+        gsttype: defaultGstType,
         gstrate: "",
         cgst: 0,
         sgst: 0,
@@ -417,7 +440,7 @@ export default function AddComponents({
         remark: "--",
         internal_remark: "",
         unit: "--",
-        closing_stock: 0, 
+        closing_stock: 0,
       },
     ]);
     setConfirmReset(false);
@@ -474,7 +497,7 @@ export default function AddComponents({
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 40,
+      width: 80,
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>
@@ -514,13 +537,13 @@ export default function AddComponents({
     },
 
     {
-      headerName: "Rate", 
+      headerName: "Rate",
       width: 170,
       field: "rate",
       sortable: false,
       renderCell: (params) => rateCell(params, inputHandler, currencies),
     },
- 
+
     {
       headerName: "Last Rate",
       width: 170,
@@ -612,43 +635,43 @@ export default function AddComponents({
       renderCell: (params) => gstTypeCell(params, inputHandler),
     },
     {
-  headerName: "GST Rate",
-  width: 120,
-  field: "gstrate",
-  sortable: false,
-  renderCell: (params) => {
-    const options = [
-      { label: "0%", value: 0 },
-      { label: "5%", value: 5 },
-      { label: "18%", value: 18 },
-    ];
+      headerName: "GST Rate",
+      width: 120,
+      field: "gstrate",
+      sortable: false,
+      renderCell: (params) => {
+        const options = [
+          { label: "0%", value: 0 },
+          { label: "5%", value: 5 },
+          { label: "18%", value: 18 },
+        ];
 
-    return (
-      <select
-        style={{
-          width: "100%",
-          padding: "6px 8px",
-          border: "1px solid #d9d9d9",
-          borderRadius: 6,
-          backgroundColor: "white",
-          fontSize: 13,
-        }}
-        value={params.row.gstrate || ""}
-        onChange={(e) => {
-          const newRate = Number(e.target.value);
-          inputHandler("gstrate", newRate, params.row.id);
-        }}
-      >
-        <option value="">Select</option>
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    );
-  },
-},
+        return (
+          <select
+            style={{
+              width: "100%",
+              padding: "6px 8px",
+              border: "1px solid #d9d9d9",
+              borderRadius: 6,
+              backgroundColor: "white",
+              fontSize: 13,
+            }}
+            value={params.row.gstrate || ""}
+            onChange={(e) => {
+              const newRate = Number(e.target.value);
+              inputHandler("gstrate", newRate, params.row.id);
+            }}
+          >
+            <option value="">Select</option>
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        );
+      },
+    },
     {
       headerName: "CGST",
       width: 150,
@@ -671,12 +694,12 @@ export default function AddComponents({
       renderCell: (params) => IGSTCell(params, inputHandler),
     },
     {
-  headerName: "Internal Remark",
-  width: 250,
-  field: "internal_remark",
-  sortable: false,
-  renderCell: (params) => internalRemarkCell(params, inputHandler), 
-},
+      headerName: "Internal Remark",
+      width: 250,
+      field: "internal_remark",
+      sortable: false,
+      renderCell: (params) => internalRemarkCell(params, inputHandler),
+    },
   ];
   useEffect(() => {
     getCurrencies();
@@ -949,11 +972,6 @@ export default function AddComponents({
         </Col>
         <Col
           span={18}
-          style={{
-            height: "100%",
-            padding: 0,
-            border: "1px solid #EEEEEE",
-          }}
         >
           <FormTable columns={columns} data={rowCount} />
         </Col>

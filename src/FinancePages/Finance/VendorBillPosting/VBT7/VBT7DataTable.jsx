@@ -1,8 +1,8 @@
 import { Input, InputNumber } from "antd";
 import MySelect from "../../../../Components/MySelect";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import FormTable from "../../../../Components/FormTable";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
+import MyDataTable from "../../../../Components/MyDataTable";
 // fun = name,value,id
 export default function VBT1DataTable({
   rows,
@@ -318,5 +318,5 @@ export default function VBT1DataTable({
       width: 150,
     },
   ];
-  return <FormTable hideHeaderMenu data={rows} columns={VBT7} />;
+  return <MyDataTable hideHeaderMenu data={rows} columns={VBT7} />;
 }

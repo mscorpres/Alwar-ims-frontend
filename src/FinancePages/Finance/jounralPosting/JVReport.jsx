@@ -250,8 +250,8 @@ function JVReport() {
     setSearchTerm("");
   }, [wise]);
   return (
-    <div style={{ height: "100%" }}>
-      <Row justify="space-between" style={{ padding: 5, paddingTop: 5 }}>
+    <div style={{ height: "100%", padding: 10 }}>
+      <Row justify="space-between" >
         <Col>
           <Space>
             <div style={{ width: 150 }}>
@@ -303,7 +303,7 @@ function JVReport() {
           />
         </Space>
       </Row>
-      <div style={{ height: "calc(100% - 50px)", padding: "0px 5px" }}>
+      <div style={{ height: "calc(100% - 50px)",marginTop:10 }}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

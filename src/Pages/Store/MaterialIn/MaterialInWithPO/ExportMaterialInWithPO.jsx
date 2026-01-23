@@ -40,7 +40,6 @@ import {
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton/index.jsx";
-import FormTable from "../../../../Components/FormTable.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
 import { v4 } from "uuid";
 
@@ -1050,7 +1049,7 @@ export default function ExportMaterialInWithPO({}) {
   };
 
   return (
-    <div style={{ height: "90%", position: "relative" }}>
+    <div style={{ height: "calc(100vh - 210px)", width: "100%", position: "relative" }}>
       <Row
         justify="space-between"
         style={{ padding: "0px 10px", paddingBottom: 5 }}
@@ -1209,16 +1208,16 @@ export default function ExportMaterialInWithPO({}) {
         <Row gutter={8} style={{ height: "100%", padding: "0px 10px" }}>
           <Col
             span={6}
-            style={{ overflowY: "hidden", maxHeight: "100%", height: "100%" }}
+            style={{ overflowY: "auto", height: "100%" }}
           >
             <Row
               style={{
-                height: "76%",
+                height: "calc(100% - 50px)",
               }}
               gutter={[0, 4]}
             >
               {/* vendor details */}
-              <Row style={{ height: "50%", width: "100%" }}>
+              <Row style={{ height: "80%", width: "100%" }}>
                 <Card
                   size="small"
                   style={{ height: "100%", width: "100%" }}
@@ -1235,7 +1234,7 @@ export default function ExportMaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor Type
+                          Type
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1245,7 +1244,7 @@ export default function ExportMaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.vendortype}
+                          {poData?.headers?.vendortype ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1265,7 +1264,7 @@ export default function ExportMaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor Name
+                          Name
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1275,7 +1274,7 @@ export default function ExportMaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.vendorname}
+                          {poData?.headers?.vendorname ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1295,7 +1294,7 @@ export default function ExportMaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor Address
+                          Address
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1310,7 +1309,7 @@ export default function ExportMaterialInWithPO({}) {
                             text={poData?.headers?.vendoraddress?.replaceAll(
                               "<br>",
                               " "
-                            )}
+                            ) ?? "N/A"}
                           />
                         </Typography.Text>
                       )}
@@ -1331,7 +1330,7 @@ export default function ExportMaterialInWithPO({}) {
                           }}
                           level={5}
                         >
-                          Vendor GSTIN
+                          GSTIN
                         </Typography.Title>
                       )}
                       {!searchLoading && (
@@ -1341,7 +1340,7 @@ export default function ExportMaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.gstin}
+                          {poData?.headers?.gstin ?? "N/A"}
                         </Typography.Text>
                       )}
 
@@ -1373,7 +1372,7 @@ export default function ExportMaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.cost_center_name}
+                          {poData?.headers?.cost_center_name ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1404,7 +1403,7 @@ export default function ExportMaterialInWithPO({}) {
                               window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
                           }}
                         >
-                          {poData?.headers?.project_code}
+                          {poData?.headers?.project_code ?? "N/A"}
                         </Typography.Text>
                       )}
                       <Skeleton
@@ -1524,12 +1523,12 @@ export default function ExportMaterialInWithPO({}) {
                   </Row>
                 </Card>
               </Row>
-              <Col span={24} style={{ width: "100%", height: "20%" }}>
+              <Col span={24} style={{ width: "100%", height: "30%" }}>
                 <Card
                   size="small"
                   style={{ width: "100%", height: "100%" }}
                   bodyStyle={{ overflowY: "auto", maxHeight: "74%" }}
-                  title="Upload Excel"
+                  title="Upload Excel & Attachments"
                 >
                   <Row
                     span={24}
@@ -1564,11 +1563,11 @@ export default function ExportMaterialInWithPO({}) {
                 </Card>
               </Col>
               {/* tax details */}
-              <Col span={24} style={{ width: "100%", height: "75%" }}>
+              <Col span={24} style={{ width: "100%",  }}>
                 <Card
                   size="small"
-                  style={{ width: "100%", height: "50%" }}
-                  bodyStyle={{ overflowY: "auto", maxHeight: "100%" }}
+                  style={{ width: "100%", height: "100%" }}
+                  bodyStyle={{ overflowY: "auto",  }}
                   title="Tax Details"
                 >
                   <Row gutter={[0, 4]}>
@@ -1772,11 +1771,7 @@ export default function ExportMaterialInWithPO({}) {
                                     />
                                   </Form.Item>
                                 ))}
-                                <Row justify="center">
-                                  <Typography.Text type="secondary">
-                                    ----End of the List----
-                                  </Typography.Text>
-                                </Row>
+                        
                               </Col>
                             </>
                           )}
@@ -1784,22 +1779,22 @@ export default function ExportMaterialInWithPO({}) {
                       </Col>
                     </div>
                   </Card>
-                </Form>{" "}
+                </Form>
               </Modal>
             </Row>
           </Col>
           <Col
             span={18}
-            style={{
-              height: "85%",
-              padding: 0,
-              border: "1px solid #eeeeee ",
-              overflow: "hidden",
-            }}
+         
           >
-            {" "}
-            {pageLoading || (loading1("select") && <Loading />)}
-            <FormTable columns={columns} data={poData?.materials} />
+
+            <MyDataTable 
+              columns={columns}
+              data={poData?.materials}
+            
+              loading={loading("select" || pageLoading)}
+          
+            />
           </Col>
 
           <NavFooter

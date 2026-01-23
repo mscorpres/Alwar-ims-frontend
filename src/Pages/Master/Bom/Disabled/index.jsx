@@ -91,19 +91,21 @@ const Disabled = () => {
     getRows();
   }, []);
   return (
-    <div style={{ height: "calc(100vh - 160px)", padding: 10, paddingTop: 0 }}>
-      <Row style={{ paddingBottom: 5 }} justify="end">
+    <div style={{ height: "calc(100vh - 160px)", padding: 10, }}>
+      <Row justify="end">
         <CommonIcons
           action="downloadButton"
           onClick={downloadHandler}
           disabled={rows.length === 0}
         />
       </Row>
-      <MyDataTable
+    <div style={{height:"100%", marginTop:10}}>
+        <MyDataTable
         data={rows}
         columns={[...actionColumns, ...columns]}
         loading={loading === "fetch"}
       />
+    </div>
     </div>
   );
 };

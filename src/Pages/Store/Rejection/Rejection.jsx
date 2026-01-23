@@ -68,10 +68,7 @@ const Rejection = () => {
       setAllDataComes(arr);
       setLoading(false);
     } else {
-      showToast(
-        response?.message,
-        "error"
-      );
+      showToast(response?.message, "error");
       setLoading(false);
     }
   };
@@ -194,11 +191,10 @@ const Rejection = () => {
       setLoadingRejection(false);
     }
   };
- 
 
   return (
-    <>
-      <Row gutter={10} >
+    <div style={{ padding: 10, height: "100%" }}>
+      <Row gutter={10}>
         <Col span={4}>
           <MyAsyncSelect
             style={{ width: "100%" }}
@@ -230,16 +226,12 @@ const Rejection = () => {
         )}
       </Row>
 
-      <Skeleton loading={loading}>
-        <div style={{ height: "69vh", margin: "15px" }}>
-          <div style={{ height: "100%" }}>
-            <MyDataTable data={allDataComes} columns={columns} />
-          </div>
-        </div>
-      </Skeleton>
+<div style={{ height: "calc(100% - 50px)", marginTop: "10px" }}>
+        <MyDataTable data={allDataComes} columns={columns} loading={loading} />
+  </div>
 
       {allDataComes.length > 0 && (
-        <Row gutter={16} >
+        <Row gutter={16}>
           <Col span={24}>
             <div style={{ textAlign: "end" }}>
               <Button onClick={reset} style={{ marginRight: "5px" }}>
@@ -257,7 +249,7 @@ const Rejection = () => {
           </Col>
         </Row>
       )}
-    </>
+    </div>
   );
 };
 

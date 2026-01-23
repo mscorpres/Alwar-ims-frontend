@@ -61,8 +61,9 @@ export default function CreateDC() {
 
 
   const inputHandler = async (name, value) => {
+   
     let obj = newGatePass;
-    if (name == "vendorName") {
+    if (name === "vendorName") {
       const branches = await getVendorBracnch(value.value);
       const { address, gstin } = await getVendorAddress({
         vendorCode: value.value,
@@ -106,6 +107,7 @@ export default function CreateDC() {
   };
   //getting vendor branches
   const getVendorBracnch = async (vendorCode) => {
+    
     setPageLoading(true);
     const response = await imsAxios.post("/backend/vendorBranchList", {
       vendorcode: vendorCode,
@@ -116,6 +118,7 @@ export default function CreateDC() {
     const arr = validatedData.map((d) => {
       return { value: d.id, text: d.text };
     });
+
     setVendorBranches(arr);
     return arr;
   };
@@ -200,13 +203,12 @@ export default function CreateDC() {
     getBillTo();
   }, []);
   return (
-    <div style={{ height: "95%", overflow: "hidden" }}>
+    <div style={{ height: "calc(100vh - 145px)", overflow: "hidden", padding: "10px" }}>
       {!successPage && (
         <>
           {pageLoading && <Loading />}
           <Tabs
             style={{
-              padding: "0 10px",
               height: "98%",
               overflow: "auto",
               overflowX: "hidden",
@@ -221,11 +223,7 @@ export default function CreateDC() {
             >
               <>
                 <div
-                  style={{
-                    overflowY: "scroll",
-                    overflowX: "hidden",
-                    padding: "0vh 20px 10px",
-                  }}
+                
                 >
                   {/* reset confirm modal */}
                   <Modal

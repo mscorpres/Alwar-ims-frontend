@@ -369,7 +369,7 @@ export default function AppPaymentSetup() {
     );
   };
   return (
-    <div style={{ height: "90%", padding: "0px 10px" }}>
+    <div style={{ height: "100%", padding: "10px" }}>
       <Row gutter={6} align="middle">
         <Col span={4}>
           <MyAsyncSelect
@@ -433,9 +433,8 @@ export default function AppPaymentSetup() {
           </Button>
         </Col>
       </Row>
-      <Row gutter={6} style={{ height: "95%", paddingTop: 5 }}>
+      <Row gutter={6} style={{ height: "90%", marginTop: 10 }}>
         <Col span={12} style={{ height: "100%" }}>
-          {/* <FormTable data={vbtRows} columns={leftColumns} /> */}
           <MyDataTable
             loading={loading === "fetching"}
             data={bpRows}

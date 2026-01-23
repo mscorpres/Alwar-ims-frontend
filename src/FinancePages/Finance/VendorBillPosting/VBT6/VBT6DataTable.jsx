@@ -3,8 +3,8 @@ import { Input, Tooltip, Button, Card } from "antd";
 import { CalculatorOutlined } from "@ant-design/icons";
 import MySelect from "../../../../Components/MySelect";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import FormTable from "../../../../Components/FormTable";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
+import MyDataTable from "../../../../Components/MyDataTable";
 // fun = name,value,id
 export default function VBT1DataTable({
   rows,
@@ -385,7 +385,7 @@ export default function VBT1DataTable({
       bodyStyle={{ padding: 0, height: "100%" }}
       style={{ height: "100%" }}
     >
-      <FormTable hideHeaderMenu data={rows} columns={VBT1} />
+      <MyDataTable data={rows} columns={VBT1} />
     </Card>
   );
 }

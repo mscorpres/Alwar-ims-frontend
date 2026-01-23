@@ -5,22 +5,19 @@ import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
-import { GridActionsCellItem } from "@mui/x-data-grid";
 import {
   CheckOutlined,
   CloseOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
-import MyDataTable from "../../../Components/MyDataTable";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
-import FormTable from "../../../Components/FormTable";
-import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import useApi from "../../../hooks/useApi.ts";
 import { getComponentOptions, getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 function PendingQC() {
   const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
@@ -28,7 +25,6 @@ function PendingQC() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
@@ -90,8 +86,8 @@ function PendingQC() {
       });
       console.log(arr);
       setRows(arr);
-    } else if (!response.success) {
-      showToast(data.message.data, "error");
+    } else {
+      showToast(response.message, "error");
       setRows([]);
     }
   };
@@ -344,7 +340,7 @@ function PendingQC() {
     setSearchInput("");
   }, [wise]);
   return (
-    <>
+    <div style={{height:"100%", padding:10}}>
       <Row justify="space-between">
         <div>
           <Space>
@@ -363,7 +359,7 @@ function PendingQC() {
                   size="default"
                   setDateRange={setSearchInput}
                   dateRange={setSearchInput}
-                  value={setSearchInput}
+                  value={searchInput}
                 />
               ) : wise === "partwise" ? (
                 <MyAsyncSelect
@@ -415,10 +411,10 @@ function PendingQC() {
           />
         </Space>
       </Row>
-      <div style={{ height: "85%", margin: "10px" }}>
-        <FormTable columns={columns} data={rows} loading={tableLoading} />
+      <div style={{ height: "calc(100% - 40px)", marginTop: "10px" }}>
+        <MyDataTable columns={columns} data={rows} loading={tableLoading} />
       </div>
-    </>
+    </div>
   );
 }
 

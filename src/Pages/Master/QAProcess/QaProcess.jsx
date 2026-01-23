@@ -70,7 +70,7 @@ function QaProcess() {
   }, []);
 
   return (
-    <div>
+    <div style={{ height: "100%", padding:10, }}>
       <Row gutter={10} span={24}>
         <Col span={8}>
           <Card>
@@ -106,7 +106,7 @@ function QaProcess() {
         <Col style={{ height: "100%" }} span={16}>
           {/* <div style={{ height: "15rem", marginTop: "20px" }}> */}
           <MyDataTable
-            style={{ height: "80vh" }}
+            style={{ height: "82vh" }}
             columns={columns}
             data={rows}
           />

@@ -199,8 +199,8 @@ function AppReport() {
   ];
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row justify="space-between" gutter={10} style={{ padding: "0px 5px" }}>
+    <div style={{ height: "100%", padding:10 }}>
+      <Row justify="space-between" gutter={10}>
         <Col>
           <Space>
             <div style={{ width: 250 }}>
@@ -247,7 +247,7 @@ function AppReport() {
         {/* <Divider /> */}
       </Row>
 
-      <div style={{ height: "calc(100% - 50px)", margin: 5 }}>
+      <div style={{ height: "calc(100% - 50px)", marginTop: 10 }}>
         <MyDataTable
           loading={loading}
           data={rows}

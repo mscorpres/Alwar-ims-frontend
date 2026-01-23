@@ -5,7 +5,7 @@ import axios from "axios";
 import { BsDownload, BsEyeFill } from "react-icons/bs";
 import MyDataTable from "../../../Components/MyDataTable";
 import ViewContraDetail from "./ViewContraDetail";
-import { AiFillDelete, AiFillPrinter } from "react-icons/ai";
+import {  AiFillPrinter } from "react-icons/ai";
 import printFunction, {
   downloadFunction,
 } from "../../../Components/printFunction";
@@ -248,11 +248,11 @@ export default function ContraReport() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ position: "relative", height: "100%" }}>
+    <div style={{ position: "relative", height: "100%", padding: 10 }}>
       <ViewContraDetail contraId={contraId} setContraId={setContraId} />
       <ContraEdit contra={editingContra} close={() => setEditingContra(null)} />
       <Row
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
+       
         justify="space-between"
       >
         <div>
@@ -325,7 +325,7 @@ export default function ContraReport() {
           />
         </Space>
       </Row>
-      <div className="" style={{ height: "calc(100% - 40px)", padding: "0 10px" }}>
+      <div className="" style={{ height: "calc(100% - 50px)", marginTop:10 }}>
         <MyDataTable
           loading={loading}
           pagination={true}

@@ -32,16 +32,16 @@ export default function SfRejHeader() {
             data-ace-scroll="{}"
           >
             <ul className="nav w-auto has-active-border active-on-right active-on-top">
-              <li className={`nav-item ${pathname == "/sf-to-rej" && "active"}`}>
-                <Link className="nav-link" to="/sf-to-rej">
+              <li className={`nav-item ${pathname == "/location-movement/sf-to-rej" && "active"}`}>
+                <Link className="nav-link" to="/location-movement/sf-to-rej">
                   <span>SF - REJ Transfer</span>
                 </Link>
                 <b className="sub-arrow"></b>
               </li>
               <li
-                className={`nav-item ${pathname == "/transaction-sf-to-rej" && "active"}`}
+                className={`nav-item ${pathname == "/location-movement/sf-to-rej/view" && "active"}`}
               >
-                <Link className="nav-link" to="/transaction-sf-to-rej">
+                <Link className="nav-link" to="/location-movement/sf-to-rej/view">
                   <span>View Transaction</span>
                 </Link>
                 <b className="sub-arrow"></b>

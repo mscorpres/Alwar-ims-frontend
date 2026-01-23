@@ -17,32 +17,32 @@ const links = [
   [
     {
       routeName: "Create PR",
-      routePath: "/create-po",
+      routePath: "/procurement/create",
       key: 0,
     },
      {
       routeName: "Requested PR",
-      routePath: "/request-po",
+      routePath: "/procurement/request",
       key: 0,
     },
     {
-      routeName: "Manage PO",
-      routePath: "/manage-po",
+      routeName: "Manage",
+      routePath: "/procurement/manage",
       key: 1,
     },
     {
-      routeName: "Completed PO",
-      routePath: "/completed-po",
+      routeName: "Completed",
+      routePath: "/procurement/completed",
       key: 2,
     },
+    // {
+    //   routeName: "Vendor Pricing",
+    //   routePath: "/vendor-pricing",
+    //   key: 3,
+    // },
     {
-      routeName: "Vendor Pricing",
-      routePath: "/vendor-pricing",
-      key: 3,
-    },
-    {
-      routeName: "PO Approval",
-      routePath: "/approval-po",
+      routeName: "Approval",
+      routePath: "/procurement/approval",
       key: 4,
     },
   ],
@@ -402,7 +402,7 @@ const links = [
     },
     {
       routeName: "Material In from PO",
-      routePath: "/warehouse/material-in-with-po",
+      routePath: "/warehouse/material-in-po",
     },
     {
       routeName: "Material In FG/SFG",
@@ -410,45 +410,46 @@ const links = [
     },
     {
       routeName: "Import Material In from PO ",
-      routePath: "/warehouse/export-material-in-with-po",
+      routePath: "/warehouse/export-material-in-po",
     },
   ],
   //QA link
-  // [
-  //   { routeName: "Create Process", routePath: "/master/qa-process" },
-  //   { routeName: "Create Process MAP", routePath: "/master/qa-process-map" },
-  // ],
-  // edit and reverse MIN links
   [
-    { routeName: "Edit MIN", routePath: "/update-rm" },
-    // { routeName: "Reverse MIN", routePath: "/reverse-min" },
+    { routeName: "Create Process", routePath: "/master/qa-process" },
+    { routeName: "MAP", routePath: "/master/qa-process-map" },
   ],
+  // edit and reverse MIN links
+  // [
+  //   { routeName: "Edit MIN", routePath: "/rm/update" },
+  //   // { routeName: "Reverse MIN", routePath: "/reverse-min" },
+  // ],
   // FG inward links
   [
-    {
-      routeName: "Pending FG (s)",
-      routePath: "/list/pending-fg",
+     {
+      routeName: "Completed Finish Goods",
+      routePath: "/warehouse/fg/complete",
     },
     {
-      routeName: "Completed FG (s)",
-      routePath: "/list/complete-fg",
+      routeName: "Pending ",
+      routePath: "/warehouse/fg/pending",
     },
+   
   ],
   // FG Out links
   [
     {
       routeName: "Create FG OUT",
-      routePath: "/fg-out/create-fg",
+      routePath: "/warehouse/fg-out/create",
     },
-    { routeName: "VIEW FG OUT", routePath: "/fg-out/fg-out-list" },
+    { routeName: "View", routePath: "/warehouse/fg-out/view" },
   ],
   [
     {
       routeName: "Create FG Return",
-      routePath: "/return/create-fg",
+      routePath: "/warehouse/fg-return/create",
     },
-    { routeName: "Pending FG Return", routePath: "/return/pending-fg-list" },
-    { routeName: "Completed FG Return", routePath: "/return/complete-fg-list" },
+    { routeName: "Pending", routePath: "/warehouse/fg-return/pending" },
+    { routeName: "Completed", routePath: "/warehouse/fg-return/completed" },
   ],
   // RM to RM transfer links
   [
@@ -469,10 +470,10 @@ const links = [
   ],
   // RM to REJ links
   [
-    { routeName: "RM To REJ", routePath: "/material-transfer/re-to-rej" },
+    { routeName: "RM To REJ", routePath: "/material-transfer/rm-to-rej" },
     {
       routeName: "View Transaction",
-      routePath: "/material-transfer/re-to-rej/view-transation",
+      routePath: "/material-transfer/rm-to-rej/view-transation",
     },
   ],
   // pending transfer links
@@ -485,7 +486,7 @@ const links = [
   // rejection links
   [
     {
-      routeName: "Create Rejection",
+      routeName: "Rejection",
       routePath: "/warehouse/rejection",
     },
   ],
@@ -497,32 +498,32 @@ const links = [
   ],
   // jobwork links
   [
-    { routeName: "CREATE JW PO", routePath: "/create-jw" },
+    { routeName: "Create JW PO", routePath: "/warehouse/job-work/create" },
     {
-      routeName: "JW Approval",
-      routePath: "/approval-jw"
+      routeName: "Approval",
+      routePath: "/warehouse/job-work/approval"
     },
-    { routeName: "PO ANALYSIS", routePath: "/po-analysis" },
-    { routeName: "JW RM ISSUE", routePath: "/jw-rw-issue" },
+    { routeName: "Analysis", routePath: "/warehouse/job-work/analysis" },
+    { routeName: "RM Issue", routePath: "/warehouse/job-work/issue" },
     {
-      routeName: "JW RM ISSUE CHALLAN",
-      routePath: "/jw-issue-challan",
-    },
-    {
-      routeName: "JW RM CHALLAN",
-      routePath: "/jw-rw-challan",
+      routeName: "Issue Challan",
+      routePath: "/warehouse/job-work/issue-challan",
     },
     {
-      routeName: "JW SF INWARD",
-      routePath: "/jw-sf-inward",
+      routeName: "Challan",
+      routePath: "/warehouse/job-work/challan-list",
     },
     {
-      routeName: "JW RM RETURN",
-      routePath: "/jw-rm-return",
+      routeName: "SF Inward",
+      routePath: "/warehouse/job-work/inward",
     },
     {
-      routeName: "JW COMPLETED",
-      routePath: "/jw-completed",
+      routeName: "RM Return",
+      routePath: "/warehouse/job-work/return",
+    },
+    {
+      routeName: "Completed",
+      routePath: "/warehouse/job-work/completed",
     },
     // {
     //   routeName: "JW VENDOR PRICING",
@@ -564,30 +565,30 @@ const links = [
   [
     {
       routeName: "Branch Transfer",
-      routePath: "/branch-transfer-challan",
+      routePath: "/warehouse/branch-transfer/challan",
     },
     {
-      routeName: "View Branch Transfer",
-      routePath: "/view-branch-transfer",
+      routeName: "View",
+      routePath: "/warehouse/branch-transfer/view",
     },
   ],
   // DC Links
   [
     {
       routeName: "Create DC",
-      routePath: "/warehouse/dc/create-dc",
+      routePath: "/warehouse/dc/create",
       key: "0",
     },
     {
-      routeName: "Manage DC",
-      routePath: "/warehouse/dc/manage-dc",
+      routeName: "Manage",
+      routePath: "/warehouse/dc/manage",
       key: "1",
     },
   ],
   // gatepass links
   [
-    { routeName: "Create GP", routePath: "/warehouse/gp/create-gp" },
-    { routeName: "Manage GP", routePath: "/warehouse/gp/manage-gp" },
+    { routeName: "Create GP", routePath: "/warehouse/gp/create" },
+    { routeName: "Manage", routePath: "/warehouse/gp/manage" },
   ],
   // physical stock
   // [
@@ -637,7 +638,7 @@ const links = [
     // to be added
     {
       routeName: "Part Code Conversion Report",
-      routePath: "/warehouse/part-code-conversion-report",
+      routePath: "/warehouse/part-code-conversion/report",
     },
   ],
   // MIN register
@@ -645,15 +646,15 @@ const links = [
   [
     {
       routeName: "MIN Register",
-      routePath: "/transaction/transaction-in",
+      routePath: "/reports/transaction-in",
     },
     {
       routeName: "RM Issue Register",
-      routePath: "/transaction/transaction-out",
+      routePath: "/reports/transaction-out",
     },
     {
       routeName: "View Documents",
-      routePath: "/document/upload-document",
+      routePath: "/reports/upload-document/view",
     },
   ],
   // reports r1-r14 links
@@ -855,32 +856,32 @@ const links = [
   [
     {
       routeName: "Q1",
-      routePath: "/item-all-logs",
+      routePath: "/query/item-all-logs",
       placeholder: "Item Query (All)",
     },
     {
       routeName: "Q2",
-      routePath: "/item-location-logs",
+      routePath: "/query/item-location-logs",
       placeholder: "Item Query (Loc Wise)",
     },
     {
       routeName: "Q3",
-      routePath: "/query/q3/sku-query",
+      routePath: "/query/sku-query",
       placeholder: "SKU Query",
     },
     {
       routeName: "Q4",
-      routePath: "/query/q4-query",
+      routePath: "/query/ledger",
       placeholder: "Ledger's Query",
     },
     {
       routeName: "Q5",
-      routePath: "/query/q5-query",
+      routePath: "/query/component-wise-stock",
       placeholder: "Component wise stock",
     },
     {
       routeName: "Q6",
-      routePath: "/query/q6-query",
+      routePath: "/query/closing-stock",
       placeholder: "Closing stock",
     },
   ],
@@ -888,12 +889,12 @@ const links = [
   [
     {
       routeName: "CPM",
-      routePath: "/CPM/CPM-analysis",
+      routePath: "/cpm/analysis",
       placeholder: "Client Project Management",
     },
     {
       routeName: "CPM Finance",
-      routePath: "/CPM/report",
+      routePath: "/cpm/reports",
     },
   ],
   // Paytm qc
@@ -918,59 +919,59 @@ const links = [
   ],
   // PPR links
   [
-    { routeName: "Create PPR", routePath: "/create-ppr" },
-    { routeName: "Pending PPR", routePath: "/pending-ppr" },
+    { routeName: "Create PPR", routePath: "/production-and-plan/create" },
+    { routeName: "Pending", routePath: "/production-and-plan/pending" },
     {
-      routeName: "Completed PPR",
-      routePath: "/completed-ppr",
+      routeName: "Completed",
+      routePath: "/production-and-plan/completed",
     },
   ],
   // Material Requisition links
   [
     {
       routeName: "Material Requisition with BOM",
-      routePath: "/req-with-bom",
+      routePath: "/material-requisition/with-bom",
     },
     {
       routeName: "Material Requisition without BOM",
-      routePath: "/req-with-out-bom",
+      routePath: "/material-requisition/with-out-bom",
     },
   ],
   // SF To REJ links
   [
-    { routeName: "SF to REJ", routePath: "/sf-to-rej" },
+    { routeName: "SF to REJ", routePath: "/location-movement/sf-to-rej" },
     {
       routeName: "View Transactions",
-      routePath: "/transaction-sf-to-rej",
+      routePath: "/location-movement/sf-to-rej/view",
     },
   ],
   // SF To SF links
   [
-    { routeName: "SF to SF", routePath: "/sf-to-sf" },
+    { routeName: "SF to SF", routePath: "/location-movement/sf-to-sf" },
     {
       routeName: "View Transactions",
-      routePath: "/transaction-sf-to-sf",
+      routePath: "/location-movement/sf-to-sf/view",
     },
   ],
 
   // Create QC ALl
   [
     { routeName: "Print QCA Label", routePath: "/print-qc-label" },
-    { routeName: "QC Check", routePath: "/qc-check" },
-    { routeName: "QC Report", routePath: "/qca/report" },
+    { routeName: "Check", routePath: "/qc/check" },
+    { routeName: "Report", routePath: "/qca/report's" },
   ],
   // Create QC ALl
   [
-    { routeName: "Create Sample", routePath: "/sample-qc" },
+    { routeName: "Create Sample", routePath: "/qca/sample" },
     {
       routeName: "Pending Sample",
-      routePath: "/pending-qc",
+      routePath: "/qca/pending",
     },
     {
       routeName: "Completed Sample",
-      routePath: "/completed-qc",
+      routePath: "/qca/completed",
     },
-    { routeName: "QC Report", routePath: "/report-qc" },
+    { routeName: "QC Report", routePath: "/qca/report" },
   ],
   [
     {
@@ -1011,11 +1012,11 @@ const links = [
       routePath: "/tally/vouchers/reference/setup",
     },
     {
-      routeName: "Ap Payment Setup",
+      routeName: "Payment Setup",
       routePath: "/tally/vouchers/reference/payment",
     },
     {
-      routeName: "Ap Report",
+      routeName: "Report",
       routePath: "/tally/vouchers/reference/report",
     },
     // {
@@ -1094,11 +1095,11 @@ const links = [
       routePath: "/invoice/create",
     },
     {
-      routeName: "Draft Invoices",
+      routeName: "Draft",
       routePath: "/draft-invoices",
     },
     {
-      routeName: "Final Invoices",
+      routeName: "Final",
       routePath: "/final-invoices",
     },
   ],
@@ -1106,19 +1107,19 @@ const links = [
   [
     {
       routeName: "Create Sales Order",
-      routePath: "/sales/order/create",
+      routePath: "/sales-order/create",
     },
     {
-      routeName: "Sales Order Register",
-      routePath: "/sales/order/register",
+      routeName: "Register",
+      routePath: "/sales-order/register",
     },
     {
       routeName: "Shipment",
-      routePath: "/sales/order/shipments",
+      routePath: "/sales-order/shipments",
     },
     {
       routeName: "Challan",
-      routePath: "/sales/order/challan",
+      routePath: "/sales-order/challan",
     },
   ],
   // mes links
@@ -1187,11 +1188,11 @@ const links = [
       routePath: routeConstants.researchAndDevelopment.bom.create,
     },
     {
-      routeName: "BOM List",
+      routeName: "List",
       routePath: routeConstants.researchAndDevelopment.bom.list,
     },
     {
-      routeName: "BOM Drafts",
+      routeName: "Drafts List",
       routePath: routeConstants.researchAndDevelopment.bom.drafts,
     },
   ],
@@ -1224,7 +1225,7 @@ const links = [
   [
     {
       routeName: "Production MIS",
-      routePath: "/production/ppc",
+      routePath: "/production-ims",
     },
   ],
   // Version & Changelog

@@ -27,11 +27,11 @@ import {
   MinusOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import FormTable from "../../../../Components/FormTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
+import MyDataTable from "../../../../Components/MyDataTable.jsx";
 export default function EditComponent({
   rowCount,
   setRowCount,
@@ -520,7 +520,8 @@ export default function EditComponent({
         removePartLoading.toString() === row.id ? (
           <LoadingOutlined />
         ) : (
-          rowCount.length > 1 && (
+        
+              row.new  && rowCount.length > 1 && (
             <Popconfirm
               placement="topRight"
               title="Are you sure you want to delete this component"
@@ -945,9 +946,8 @@ export default function EditComponent({
         </Col>
         <Col
           span={18}
-          style={{ height: "100%", padding: 0, border: "1px solid #EEEEEE" }}
         >
-          <FormTable columns={columns} data={rowCount} />
+          <MyDataTable columns={columns} data={rowCount} />
         </Col>
       </Row>
       <NavFooter

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useState } from "react";
-import { Col } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
 import { useToast } from "../../../hooks/useToast";
@@ -78,7 +77,7 @@ function BlockTCS() {
     getAllBlockTCS();
   }, []);
   return (
-    <div style={{ height: "calc(100vh - 130px)", margin: "5px" }}>
+    <div style={{ height: "calc(100vh - 120px)", padding: 10 }}>
       {/* <Col span={24} style={{ height: "100%", margin: "5px" }}> */}
         <MyDataTable
           loading={loading}

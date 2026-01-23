@@ -311,32 +311,32 @@ export const items = (user) => [
     ]),
     getItem("Procurement", "B2", <ImCart />, [
       getItem(
-        <Link to="/create-po">Create PR</Link>,
+        <Link to="/procurement/create">Create PR</Link>,
         "B23"
         // <AiOutlineMinus />
       ),
        getItem(
-        <Link to="/request-po">Requested PR</Link>,
+        <Link to="/procurement/request">Requested PR</Link>,
         "B22"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/manage-po">Manage PO</Link>,
+        <Link to="/procurement/manage">Manage</Link>,
         "B23"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/completed-po">Completed PO</Link>,
+        <Link to="/procurement/completed">Completed</Link>,
         "B24"
         // <AiOutlineMinus />
       ),
+      // getItem(
+      //   <Link to="/vendor-pricing">Vendor Pricing</Link>,
+      //   "B25"
+      //   // <AiOutlineMinus />
+      // ),
       getItem(
-        <Link to="/vendor-pricing">Vendor Pricing</Link>,
-        "B25"
-        // <AiOutlineMinus />
-      ),
-      getItem(
-        <Link to="/approval-po">Po Approval</Link>,
+        <Link to="/procurement/approval">Approval</Link>,
         "B26"
         // <AiOutlineMinus />
       ),
@@ -354,44 +354,44 @@ export const items = (user) => [
         "B33"
         // <AiOutlineMinus />
       ),
-        getItem(
-          <Link to="/update-rm">Edit MIN</Link>,
-          "warehouse/minedit/edit"
-          // <AiOutlineMinus />
-        ),
+        // getItem(
+        //   <Link to="/rm/update">Edit MIN</Link>,
+        //   "warehouse/minedit/edit"
+        //   // <AiOutlineMinus />
+        // ),
 
       getItem("FG (s) Inwarding", "B43", <MdDashboard />, [
         getItem(
-          <Link to="/list/pending-fg">Pending FG (s)</Link>,
+          <Link to="/warehouse/fg/pending">Pending FG (s)</Link>,
           "B431"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/list/complete-fg">Completed FG (s)</Link>,
+          <Link to="/warehouse/fg/complete">Completed FG (s)</Link>,
           "B432"
           // <AiOutlineMinus />
         ),
       ]),
       getItem("FG(s) Out", "B35", <MdDashboard />, [
         getItem(
-          <Link to="/fg-out/create-fg">Create FG Out</Link>,
+          <Link to="/warehouse/fg-out/create">Create FG Out</Link>,
           "B351"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/fg-out/fg-out-list">View FG Out</Link>,
+          <Link to="/warehouse/fg-out/view">View FG Out</Link>,
           "B352"
           // <AiOutlineMinus />
         ),
       ]),
       getItem("FG(s) Return", "B38", <MdDashboard />, [
         getItem(
-          <Link to="/return/create-fg">Create FG Return</Link>,
+          <Link to="/warehouse/fg-return/create">Create FG Return</Link>,
           "B381"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/return/pending-fg-list">Pending Reversals</Link>,
+          <Link to="/warehouse/fg-return/pending">Pending Reversals</Link>,
           "B382"
           // <AiOutlineMinus />
         ),
@@ -408,7 +408,7 @@ export const items = (user) => [
         //   // <MdDashboard />
         // ),
         getItem(
-          <Link to="/material-transfer/re-to-rej">RM To REJ</Link>,
+          <Link to="/material-transfer/rm-to-rej">RM To REJ</Link>,
           "B363"
           // <MdDashboard />
         ),
@@ -430,7 +430,7 @@ export const items = (user) => [
       ),
       getItem("Jobwork", "B6", <MdQueryStats />, [
         getItem(
-          <Link to="/create-jw">Jobwork & Analysis</Link>,
+          <Link to="/warehouse/job-work/create">Jobwork & Analysis</Link>,
           "B61"
           // <AiOutlineMinus />
         ),
@@ -462,17 +462,17 @@ export const items = (user) => [
         getItem(<Link to="/woreport">Report</Link>, "B78"),
       ]),
       getItem(
-        <Link to="/warehouse/dc/create-dc">RGP - DC</Link>,
+        <Link to="/warehouse/dc/create">RGP - DC</Link>,
         "B44"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/branch-transfer-challan">Branch Transfer Challan</Link>,
+        <Link to="/warehouse/branch-transfer/challan">Branch Transfer Challan</Link>,
         "B45"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/warehouse/gp/create-gp">Gatepass (RGP / NRGP)</Link>,
+        <Link to="/warehouse/gp/create">Gatepass (RGP / NRGP)</Link>,
         "B39"
         // <AiOutlineMinus />
       ),
@@ -489,19 +489,19 @@ export const items = (user) => [
       ),
     ]),
     getItem("Sales Order", "C5", <TbReportAnalytics />, [
-      getItem(<Link to="/sales/order/register">Register</Link>, "E51"),
+      getItem(<Link to="/sales-order/register">Register</Link>, "E51"),
       getItem(
-        <Link to="/sales/order/create">Create order</Link>,
+        <Link to="/sales-order/create">Create order</Link>,
         "C52"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/sales/order/challan">Challan</Link>,
+        <Link to="/sales-order/challan">Challan</Link>,
         "C53"
         // <AiOutlineMinus />
       ),
       getItem(
-        <Link to="/sales/order/shipments">Shipment</Link>,
+        <Link to="/sales-order/shipments">Shipment</Link>,
         "C54"
         // <AiOutlineMinus />
       ),
@@ -509,14 +509,14 @@ export const items = (user) => [
     getItem("Reports", "B4", <TbReportAnalytics />, [
       getItem("Inventory Reports", "B41", <MdDashboard />, [
         getItem(
-          <Link to="/transaction/transaction-in">MIN Register</Link>,
+          <Link to="/reports/transaction-in">MIN Register</Link>,
           "B411"
           // <AiOutlineMinus />
         ),
 
         getItem(<Link to="/weeklyAudit">Weekly Audit</Link>, "B414"),
         getItem(
-          <Link to="/transaction/transaction-out">RM Issue Register</Link>,
+          <Link to="/reports/transaction-out">RM Issue Register</Link>,
           "B412"
           // <AiOutlineMinus />
         ),
@@ -545,7 +545,7 @@ export const items = (user) => [
     ]),
     getItem("Query", "B5", <MdQueryStats />, [
       getItem(
-        <Link to="/item-all-logs">Q1 - Q6</Link>,
+        <Link to="/query/item-all-logs">Q1 - Q6</Link>,
         "C51"
         // <AiOutlineMinus />
       ),
@@ -566,24 +566,24 @@ export const items = (user) => [
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/req-with-out-bom">Req Without BOM</Link>,
+          <Link to="/material-requisition/with-out-bom">Req Without BOM</Link>,
           "C112"
           // <AiOutlineMinus />
         ),
       ]),
       getItem("Production and Plan (s)", "C12", <MdDashboard />, [
         getItem(
-          <Link to="/create-ppr">Create PPR</Link>,
+          <Link to="/production-and-plan/create">Create PPR</Link>,
           "C121"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/pending-ppr">Pending PPR</Link>,
+          <Link to="/production-and-plan/pending">Pending PPR</Link>,
           "C122"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/completed-ppr">Completed PPR</Link>,
+          <Link to="/production-and-plan/completed">Completed PPR</Link>,
           "C123"
           // <AiOutlineMinus />
         ),
@@ -591,12 +591,12 @@ export const items = (user) => [
 
       getItem("Location Movement", "C14", <MdDashboard />, [
         getItem(
-          <Link to="/sf-to-sf">SF To SF</Link>,
+          <Link to="/location-movement/sf-to-sf">SF To SF</Link>,
           "C141"
           // <AiOutlineMinus />
         ),
         getItem(
-          <Link to="/sf-to-rej">SF To REJ</Link>,
+          <Link to="/location-movement/sf-to-rej">SF To REJ</Link>,
           "C142"
           // <AiOutlineMinus />
         ),
@@ -604,29 +604,29 @@ export const items = (user) => [
     ]),
     // getItem("QCA", "C2", <MdDashboard />, [
     //   getItem(
-    //     <Link to="/sample-qc">Create Sample</Link>,
+    //     <Link to="/qca/sample">Create Sample</Link>,
     //     "C131"
     //     // <AiOutlineMinus />
     //   ),
     //   getItem(
-    //     <Link to="/pending-qc">Pending Sample</Link>,
+    //     <Link to="/qca/pending">Pending Sample</Link>,
     //     "C132"
     //     // <AiOutlineMinus />
     //   ),
     //   getItem(
-    //     <Link to="/completed-qc">Completed Sample</Link>,
+    //     <Link to="/qca/completed">Completed Sample</Link>,
     //     "C133"
     //     // <AiOutlineMinus />
     //   ),
     //   getItem(
-    //     <Link to="/report-qc">QC Report</Link>,
+    //     <Link to="/qca/report">QC Report</Link>,
     //     "C134"
     //     // <AiOutlineMinus />
     //   ),
     // ]),
     getItem("Query", "C3", <MdQueryStats />, [
       getItem(
-        <Link to="/item-all-logs">Q1 - Q6</Link>,
+        <Link to="/query/item-all-logs">Q1 - Q6</Link>,
         "C31"
         // <AiOutlineMinus />
       ),
@@ -640,11 +640,11 @@ export const items = (user) => [
     getItem("Reports", "C4", <TbReportAnalytics />, [
       getItem("Inventory Reports", "C41", <MdDashboard />, [
         getItem(
-          <Link to="/transaction/transaction-in">MIN Register</Link>,
+          <Link to="/reports/transaction-in">MIN Register</Link>,
           "C411"
           // <AiOutlineMinus />
         ),
-        getItem(<Link to="/transaction/transaction-out">RM Issue Register</Link>, "C412"),
+        getItem(<Link to="/reports/transaction-out">RM Issue Register</Link>, "C412"),
         getItem(<Link to="/weeklyAudit">Weekly Audit</Link>, "C414"),
 
         getItem(
@@ -656,7 +656,7 @@ export const items = (user) => [
       ]),
     ]),
     getItem(
-      <Link to="/production/ppc">Production MIS</Link>,
+      <Link to="/production-ims">Production MIS</Link>,
       "D6",
       <MdAccountBox />
     ),
@@ -696,7 +696,7 @@ export const items = (user) => [
     ]),
     getItem("QCA", "Z2", <CheckCircleOutlined />, [
       getItem(<Link to="/print-qc-label">Print QCA Label</Link>, "Z21"),
-      getItem(<Link to="/qc-check">QC Check</Link>, "Z22"),
+      getItem(<Link to="/qc/check">QC Check</Link>, "Z22"),
       getItem(<Link to="/qca/report">QC Report</Link>, "Z23"),
     ]),
   ]),
@@ -709,13 +709,13 @@ export const items = (user) => [
   //   ),
   //   // getItem('QCA', 'G2',<CheckCircleOutlined />,[
   //   //   getItem(<Link to='/print-qc-label'>Print QCA Label</Link>,'G21'),
-  //   //   getItem(<Link to='/qc-check'>QC Check</Link>,'G22'),
-  //   //   getItem(<Link to='/report-qc'>QC Report</Link>,'G23'),
+  //   //   getItem(<Link to='/qc/check'>QC Check</Link>,'G22'),
+  //   //   getItem(<Link to='/qca/report'>QC Report</Link>,'G23'),
   //   // ]),
   // ]),
   // getItem("CPM", "E", <CalculatorFilled />, [
-  //   getItem(<Link to="/CPM/CPM-analysis">CPM Analysis</Link>, "E1"),
-  //   getItem(<Link to="/CPM/report">CPM Finance</Link>, "reports/cpm"),
+  //   getItem(<Link to="/cpm/analysis">CPM Analysis</Link>, "E1"),
+  //   getItem(<Link to="/cpm/reports">CPM Finance</Link>, "reports/cpm"),
   // ]),
   // getItem("Analysis", "F", <SiPaytm />, [
   //   // getItem(

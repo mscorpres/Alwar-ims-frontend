@@ -6,9 +6,9 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 
 import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading";
-import FormTable from "../../../Components/FormTable";
 import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 export default function EditBankVoucher({
   editVoucher,
@@ -357,7 +357,7 @@ export default function EditBankVoucher({
               style={{ height: "100%" }}
               bodyStyle={{ padding: 0, maxHeight: "80%" }}
             >
-              <FormTable data={journalRows} columns={columns} />
+              <MyDataTable data={journalRows} columns={columns} />
             </Card>
           </Col>
         </Row>

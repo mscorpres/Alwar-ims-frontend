@@ -4,7 +4,7 @@ import { v4 } from "uuid";
 import { useToast } from "@/hooks/useToast.js";
 import MySelect from "@/Components/MySelect";
 import { Card, Col, Form, Input, Row, Space, Upload } from "antd";
-import MyDataTable from "@/Components/MyDataTable";
+import FormTable from "@/Components/FormTable";
 import MyAsyncSelect from "@/Components/MyAsyncSelect";
 import NavFooter from "@/Components/NavFooter";
 import { CommonIcons } from "@/Components/TableActions.jsx/TableActions";
@@ -711,12 +711,12 @@ const QaProcessMap = () => {
   }, [qaProcessData.sku]);
 
   return (
-    <div style={{ height: "90%", width: "100%" }}>
+    <div style={{ height: "calc(100vh - 160px)", padding:10}}>
       <Row
         gutter={6}
-        style={{ padding: "0px 10px", height: "100%", width: "100%" }}
+        style={{  height: "100%", width: "100%" }}
       >
-        <Col span={4}>
+        <Col span={6}>
           <Card size="small">
             <Form
               style={{ width: "100%", height: "100%" }}
@@ -740,14 +740,13 @@ const QaProcessMap = () => {
         </Col>
         <Col
           style={{
-            opacity: formfield ? 1 : 0.5,
-            pointerEvents: formfield ? "all" : "none",
+           
             height: "100%",
-            width: "100%",
+            
           }}
-          span={20}
+          span={18}
         >
-          <MyDataTable
+          <FormTable
             columns={columns}
             data={qaProcessInputs}
             hideHeaderMenu

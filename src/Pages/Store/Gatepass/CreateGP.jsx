@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
-import FormTable from "../../../Components/FormTable";
 import NavFooter from "../../../Components/NavFooter";
 import Loading from "../../../Components/Loading";
 import { useToast } from "../../../hooks/useToast.js";
@@ -13,6 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
+import FormTable from "../../../Components/FormTable.jsx";
 export default function CreateGP() {
   const { showToast } = useToast();
   const [rows, setRows] = useState([
@@ -32,10 +32,9 @@ export default function CreateGP() {
   const { executeFun, loading: loading1 } = useApi();
 
   const getComponentDetail = async (searchInputText) => {
-  
     const response = await executeFun(
       () => getComponentOptions(searchInputText),
-      "select"
+      "select",
     );
     const { data } = response;
     let arr = [];
@@ -57,7 +56,7 @@ export default function CreateGP() {
         "/component/getComponentDetailsByCode",
         {
           component_code: value,
-        }
+        },
       );
       setFetchDetailsLoading(false);
       arr = arr.map((row) => {
@@ -276,10 +275,8 @@ export default function CreateGP() {
     <div
       style={{
         position: "relative",
-        height: "90%",
-        overflowY: "auto",
-        overflowX: "hidden",
-        paddingBottom: 50,
+        height: "calc(100vh - 160px)",
+        padding: 10,
       }}
     >
       {loading && <Loading />}
@@ -287,7 +284,6 @@ export default function CreateGP() {
         style={{
           opacity: loading ? 0.5 : 1,
           pointerEvents: loading ? "none" : "all",
-          padding: "20px",
         }}
       >
         <Row>
@@ -527,15 +523,13 @@ export default function CreateGP() {
           </Col>
 
           <Col span={20}>
-            <Row gutter={16}>
+            <Row gutter={16} style={{ height: "100%" }}>
               {fetchDetailsLoading && <Loading />}
               {/* narration */}
-              <Col span={18} style={{ maxHeight: 350, overflowY: "auto" }}>
-                <FormTable
-                  // density="comfortable"
-                  columns={columns}
-                  data={rows}
-                />
+              <Col span={18}>
+                <div style={{ height: 260 }}>
+                  <FormTable columns={columns} data={rows} />
+                </div>
               </Col>
             </Row>
           </Col>

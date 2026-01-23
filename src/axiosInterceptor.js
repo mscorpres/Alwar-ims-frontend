@@ -2,7 +2,13 @@ import axios from "axios";
 import { getGlobalToast } from "./context/ToastContext";
 import { v4 as uuidv4 } from 'uuid';
 let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
-const imsLink = localStorage.getItem("currentUrl")|| import.meta.env.VITE_REACT_APP_API_BASE_URL; //for net
+
+// Function to get the current API base URL dynamically
+const getImsLink = () => {
+  return localStorage.getItem("currentUrl") || import.meta.env.VITE_REACT_APP_API_BASE_URL;
+};
+
+const imsLink = getImsLink(); // Initial value
 
 const formatTimestamp = () => {
   const now = new Date();
@@ -31,6 +37,12 @@ const imsAxios = axios.create({
 });
 imsAxios.interceptors.request.use(
   (config) => {
+    // Update baseURL dynamically from localStorage on each request
+    const currentUrl = getImsLink();
+    if (currentUrl) {
+      config.baseURL = currentUrl;
+    }
+
     // Generate a new UUID and timestamp for each request
     const newId = uuidv4();
     const timestamp = formatTimestamp();

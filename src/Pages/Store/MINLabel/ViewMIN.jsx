@@ -140,7 +140,7 @@ const ViewMIN = () => {
     }
   }, [selectedWise]);
   return (
-    <Row style={{ height: "95%", padding: 10 }} gutter={6}>
+    <Row style={{ height: "100%", padding: 10 }} gutter={6}>
       <LabelDrawer
         open={showLabelDrawer}
         hide={() => setShowLabelDrawer(false)}

@@ -16,14 +16,14 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { v4 } from "uuid";
-import FormTable from "../../../Components/FormTable";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import Loading from "../../../Components/Loading";
 
 import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
-import MyButton from "../../../Components/MyButton";
+import FormTable from "../../../Components/FormTable.jsx";
+
 export default function ReqWithoutBom() {
   const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -347,7 +347,7 @@ export default function ReqWithoutBom() {
   const columns = [
     {
       headerName: <CommonIcons action="addRow" onClick={addRows} />,
-      width: 30,
+      width: 120,
       type: "rowChange",
       field: "add",
       renderCell: ({ row }) =>
@@ -362,6 +362,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Component",
+      field: "component",
       width: 200,
       renderCell: ({ row }) => (
         <MyAsyncSelect
@@ -382,6 +383,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Pick Location",
+      field: "pickLocation",
       width: 100,
       renderCell: ({ row }) => (
         <MyAsyncSelect
@@ -401,6 +403,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Order Qty",
+      field: "qty",
       width: 150,
       renderCell: ({ row }) => (
         <Input
@@ -412,6 +415,7 @@ export default function ReqWithoutBom() {
     },
     {
       headerName: "Remarks",
+      field: "remarks",
       width: 150,
       renderCell: ({ row }) => (
         <Input
@@ -433,7 +437,7 @@ export default function ReqWithoutBom() {
     }
   }, [loading]);
   return (
-    <Row gutter={6} style={{ height: "90%", padding: "0px 5px" }}>
+    <Row gutter={12} style={{ height: "100%", padding: "10px" }}>
       {contextHolder}
       {headerLocationcontextHolder}
       {loading === "fetching" && <Loading />}
@@ -485,9 +489,8 @@ export default function ReqWithoutBom() {
           </Row>
         </Card>
       </Col>
-      <Col span={18} style={{ height: "95%" }}>
-        {loading === "component" && <Loading />}
-        <FormTable data={rows} columns={columns} />
+      <Col span={18} >
+        <FormTable data={rows} columns={columns} loading={loading === "component"} />
       </Col>
     </Row>
   );

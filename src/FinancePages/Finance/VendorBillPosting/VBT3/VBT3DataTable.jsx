@@ -2,9 +2,9 @@ import React from "react";
 import { Button, Input, Row, Tooltip } from "antd";
 import MySelect from "../../../../Components/MySelect";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import FormTable from "../../../../Components/FormTable";
 import { CopyOutlined, CalculatorOutlined } from "@ant-design/icons";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
+import MyDataTable from "../../../../Components/MyDataTable";
 
 export default function VBT3DataTable({
   rows,
@@ -432,5 +432,5 @@ export default function VBT3DataTable({
     // flex: 1,
     // },
   ];
-  return <FormTable hideHeaderMenu data={rows} columns={VBT3} />;
+  return <MyDataTable data={rows} columns={VBT3} />;
 }

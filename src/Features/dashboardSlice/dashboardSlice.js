@@ -18,7 +18,7 @@ const initialState = {
     { title: "Rejection", date: "", value: "" },
     { title: "MFG", date: "", value: "" },
     { title: "Consumption", date: "", value: "" },
-    { title: "Purchase Orders", value: "", link: "/manage-po" },
+    { title: "Purchase Orders", value: "", link: "/procurement/manage" },
   ],
   gatePassSummary: [
     { title: "Gatepass", value: "", date: "" },
@@ -118,7 +118,7 @@ export const fetchTransactionsSummary = createAsyncThunk(
             title: "Purchase Orders",
             value: data.totalPO,
             date: data.lastPO,
-            link: "/manage-po",
+            link: "/procurement/manage",
           },
         ];
       }

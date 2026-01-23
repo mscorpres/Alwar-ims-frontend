@@ -68,9 +68,9 @@ export default function MaterialTransferReport({ type }) {
     { headerName: "Remarks", field: "remark", flex: 1 },
   ];
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding:10 }}>
       <Row
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
+       
         justify="space-between"
       >
         <Space>
@@ -121,7 +121,7 @@ export default function MaterialTransferReport({ type }) {
           />
         </div>
       </Row>
-      <div style={{ height: "95%", padding: "0px 10px" }}>
+      <div style={{ height: "calc(100% - 50px)", marginTop: "10px" }}>
         <MyDataTable loading={searchLoading} columns={columns} data={rows} />
       </div>
     </div>

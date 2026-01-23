@@ -1,5 +1,4 @@
 import { Button, Col, Input, Popconfirm, Row, Space, Tooltip } from "antd";
-import React from "react";
 import { useState } from "react";
 import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -7,7 +6,7 @@ import { useEffect } from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../../hooks/useToast.js";
-import TableActions, {
+import  {
   CommonIcons,
 } from "../../../Components/TableActions.jsx/TableActions";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -187,7 +186,7 @@ export default function JobWorkApproval() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "calc(100vh - 160px)", padding: 10 }}>
       <PoRejectModa
         getRows={getRows}
         open={rejectPo}
@@ -285,7 +284,7 @@ export default function JobWorkApproval() {
           />
         </Col>
       </Row>
-      <div style={{ height: "100%", paddingTop: 5 }}>
+      <div style={{ height: "100%", marginTop: 10 }}>
         <MyDataTable
           loading={loading === "fetch"}
           columns={columns}

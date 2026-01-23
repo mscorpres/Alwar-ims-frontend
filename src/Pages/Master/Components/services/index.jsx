@@ -126,14 +126,14 @@ function Services() {
     getServices();
   }, []);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding: 10 }}>
       <UpdateService
         units={units}
         editService={editService}
         setEditService={setEditService}
         getServices={getServices}
       />
-      <Row gutter={8} style={{ height: "100%", padding: "0 10px" }}>
+      <Row gutter={12} style={{ height: "100%", }}>
         <Col span={8}>
           <Card title="Add Service" size="small">
             <Form size="small" layout="vertical">
@@ -239,7 +239,7 @@ function Services() {
             </Form>
           </Card>
         </Col>
-        <Col span={16} style={{ height: "calc(100% - 10px)" }}>
+        <Col span={16} style={{ height: "calc(100% - 0px)" }}>
           <MyDataTable loading={loading} rows={rows} columns={columns} />
         </Col>
       </Row>

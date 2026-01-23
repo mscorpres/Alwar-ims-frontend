@@ -1,9 +1,9 @@
 import { Button, Input, InputNumber, Tooltip } from "antd";
 import MySelect from "../../../../Components/MySelect";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import FormTable from "../../../../Components/FormTable";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import { CalculatorOutlined } from "@ant-design/icons";
+import MyDataTable from "../../../../Components/MyDataTable";
 ///
 const taxTypeOptions = [
   { value: "L", text: "Local" },
@@ -326,5 +326,5 @@ export default function VBT1DataTable({
       width: 150,
     },
   ];
-  return <FormTable hideHeaderMenu data={rows} columns={VBT1} />;
+  return <MyDataTable data={rows} columns={VBT1} />;
 }

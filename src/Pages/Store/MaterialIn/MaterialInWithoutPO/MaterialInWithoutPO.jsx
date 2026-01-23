@@ -903,7 +903,7 @@ export default function MaterialInWithoutPO() {
     }
   };
   return (
-    <div style={{ height: "97%", overflow: "hidden", padding: 10 }}>
+    <div style={{ height: "100%", overflow: "hidden", padding: 10 }}>
       {showCurrency != null && (
         <CurrenceModal
           showCurrency={showCurrency}
@@ -946,8 +946,7 @@ export default function MaterialInWithoutPO() {
           <Row
             gutter={8}
             style={{
-              height: "90%",
-
+              height: "calc(100% - 40px)",
               overflowY: "auto",
               overflowX: "hidden",
             }}
@@ -1316,11 +1315,7 @@ export default function MaterialInWithoutPO() {
                                 />
                               </Form.Item>
                             ))}
-                            <Row justify="center">
-                              <Typography.Text type="secondary">
-                                ----End of the List----
-                              </Typography.Text>
-                            </Row>
+                      
                           </Col>
                         </>
                       )}

@@ -25,7 +25,6 @@ const { TextArea } = Input;
 const CreatePPR = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [bomList, setBomList] = useState([]);
   const [locationn, setLocationn] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -183,8 +182,8 @@ const CreatePPR = () => {
     }
   }, [project]);
   return (
-    <div style={{ height: "90%", margin:20 }}>
-      <Row gutter={10}>
+    <div style={{ height: "100%", padding:10 }}>
+      <Row gutter={0}>
         {loading === "page" && <Loading />}
         <Form
           initialValues={initialValues}

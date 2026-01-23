@@ -4,8 +4,6 @@ import "../../index.css";
 import { loadMenuConfig } from "./menuLoader";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
-import logo from "../../../public/assets/images/ms.png"
-import logoFull from "../../../public/assets/images/mscorpres_auto_logo.png"
 
 const Sidebar = ({
   showSideBar,
@@ -70,13 +68,11 @@ const Sidebar = ({
 
   useEffect(() => {
     const activeMenuItem = findActiveMenuItem(sidebar1Items, location.pathname);
+
     if (activeMenuItem) {
       if (activeMenuItem.parentKey) {
         setActiveKey(activeMenuItem.parentKey);
 
-        if (!showSideBar) {
-          setShowSideBar(true);
-        }
         setIsSecondSidebarOpen(true);
         setIsSecondSidebarCollapsed(true);
 
@@ -97,7 +93,6 @@ const Sidebar = ({
   useEffect(() => {
     if (showSideBar && activeKey) {
       setIsSecondSidebarOpen(true);
-      // Collapse second sidebar when module is open
       setIsSecondSidebarCollapsed(true);
     }
   }, [showSideBar, activeKey]);
@@ -114,10 +109,16 @@ const Sidebar = ({
         setIsSecondSidebarOpen(true);
         setIsSecondSidebarCollapsed(false);
       } else {
-        setActiveKey((prev) => (prev === key ? null : key));
-        const nextOpen = activeKey !== key;
-        setIsSecondSidebarOpen(nextOpen);
-        if (nextOpen) {
+        if (activeKey === key) {
+          if (isSecondSidebarOpen) {
+            setIsSecondSidebarCollapsed(!isSecondSidebarCollapsed);
+          } else {
+            setIsSecondSidebarOpen(true);
+            setIsSecondSidebarCollapsed(false);
+          }
+        } else {
+          setActiveKey(key);
+          setIsSecondSidebarOpen(true);
           setIsSecondSidebarCollapsed(false);
         }
       }
@@ -125,8 +126,6 @@ const Sidebar = ({
       navigate(path);
 
       setShowSideBar(false);
-      
-      // Collapse second sidebar when item is clicked
       setIsSecondSidebarCollapsed(true);
 
       if (!isInSubMenu) {
@@ -141,13 +140,10 @@ const Sidebar = ({
     }
   };
 
-
-
   const hoveredItem = useMemo(() => {
     return sidebar1Items.find((item) => item.key === activeKey);
   }, [activeKey, sidebar1Items]);
 
-  
   const sidebar2Items = useMemo(() => {
     if (useJsonConfig) {
       return hoveredItem?.children || [];
@@ -155,26 +151,24 @@ const Sidebar = ({
     return items1 || [];
   }, [useJsonConfig, hoveredItem, items1]);
 
-
   const filterItemsByIsShown = (items) => {
     return items
       .map((item) => {
-     
         if (item.isShown === false) {
           return null;
         }
-        
+
         const filteredItem = { ...item };
 
         if (item.children && item.children.length > 0) {
           const filteredChildren = filterItemsByIsShown(item.children);
-         
+
           if (filteredChildren.length === 0 && item.isShown !== true) {
             return null;
           }
           filteredItem.children = filteredChildren;
         }
-        
+
         return filteredItem;
       })
       .filter((item) => item !== null);
@@ -369,12 +363,9 @@ const Sidebar = ({
     setShowSideBar(!showSideBar);
   };
 
-
   const toggleSecondSidebarCollapse = () => {
     setIsSecondSidebarCollapsed(!isSecondSidebarCollapsed);
   };
-
- 
 
   return (
     <>
@@ -428,58 +419,46 @@ const Sidebar = ({
           {/* Logo/Brand */}
           <div
             style={{
-             
               color: "#333",
-              // fontWeight: "700",
               fontSize: 18,
               borderBottom: "1px solid #e0e0e0",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               gap: 8,
-              transition: "all 0.3s ease",
-              minHeight: "56px",
-         
+              minHeight: 56,
+              overflow: "hidden",
             }}
           >
-            
-            {showSideBar ? (
-              <img
-                src={logo}
-                alt="IMS Full Logo"
-                style={{
-                  height: 32,
-                  width: "auto",
-                  opacity: 1,
-                  transition: "all 0.3s ease",
-                  display: "block",
-               
-                }}
-              />
-            ) : (
-              <img
-                src={logoFull}
-                alt="IMS Icon Logo"
-                style={{
-                  height: 32,
-                  width: 32,
-                  opacity: 1,
-                  transition: "all 0.3s ease",
-                  display: "block",
-                     
-                }}
-              />
-            )}
+            <img
+              src={
+                showSideBar
+                  ? "/assets/images/ms.png"
+                  : "/assets/images/mscorpres_auto_logo.png"
+              }
+              alt="IMS Logo"
+              style={{
+                width: showSideBar ? 220 : 32,
+                height: 40,
+                objectFit: "contain",
+    aspectRatio: "5 / 1",
+              }}
+            />
           </div>
 
           {/* Main Menu Items */}
           <div style={{ padding: "8px 0" }}>{renderList(sidebar1Items)}</div>
 
           {/* Bottom Section - Show sidebar2 items from config or items1 */}
-          {(useJsonConfig ? sidebar2ItemsFromConfig.length > 0 : sidebar2Items.length > 0) && (
-            <div style={{ position: "absolute", bottom: 60, left: 0, right: 0 }}>
-            
-              {renderList(useJsonConfig ? sidebar2ItemsFromConfig : sidebar2Items)}
+          {(useJsonConfig
+            ? sidebar2ItemsFromConfig.length > 0
+            : sidebar2Items.length > 0) && (
+            <div
+              style={{ position: "absolute", bottom: 60, left: 0, right: 0 }}
+            >
+              {renderList(
+                useJsonConfig ? sidebar2ItemsFromConfig : sidebar2Items
+              )}
             </div>
           )}
 
@@ -578,7 +557,6 @@ const Sidebar = ({
                   : hoveredItem?.label?.props?.children || ""}
               </span>
               <div style={{ display: "flex", gap: "8px" }}>
-
                 <button
                   onClick={toggleSecondSidebarCollapse}
                   style={{
@@ -638,15 +616,12 @@ const Sidebar = ({
                   {renderList(hoveredItem.children, true, true)}
                 </div>
               ) : (
-                   <div style={{ padding: "8px 0" }}>
+                <div style={{ padding: "8px 0" }}>
                   {renderList(hoveredItem.children, false, true)}
                 </div>
               )}
-
-         
             </div>
 
-       
             <button
               onClick={toggleSecondSidebarCollapse}
               style={{

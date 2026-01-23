@@ -248,9 +248,9 @@ export default function ItemAllLogs() {
   ];
 
   return (
-    <Row gutter={6} style={{ padding: "0px 5px", height: "100%" }}>
+    <Row gutter={12} style={{ padding: "10px", height: "100%" }}>
       <ComponentImages setShowImages={setShowImages} showImages={showImages} />
-      <Col span={4} style={{ height: "100%", overflowY: "auto" }}>
+      <Col span={6} style={{ height: "100%", overflowY: "auto" }}>
         <Row gutter={[0, 6]}>
           <Col span={24}>
             <Card size="small">
@@ -340,18 +340,18 @@ export default function ItemAllLogs() {
           </Col>
         </Row>
       </Col>
-      <Col span={20}>
+      <Col span={18}>
         {/* CHANGE: Wrapped MyDataTable with pagination */}
         <div
           style={{ height: "100%", display: "flex", flexDirection: "column" }}
         >
-          <div style={{ flex: 1, overflow: "auto" }}>
+       
             <MyDataTable
               loading={loading === "fetch"}
               data={rows}
               columns={columns}
             />
-          </div>
+       
 
           {/* CHANGE: Added Pagination Component */}
           {rows.length > 0 && (
