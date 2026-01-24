@@ -69,7 +69,6 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
   }, []);
 
   useEffect(() => {
-    console.log(url)
     // console.log("url", url);
     if (url === "vb-1") {
       setApiUrl("vbt01");

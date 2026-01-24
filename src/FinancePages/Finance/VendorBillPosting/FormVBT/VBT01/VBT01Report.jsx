@@ -52,11 +52,11 @@ function VBT01Report({
   //checkinvoice fn
   const checkInvoice = async (checkInvoiceId, vendorCode) => {
     // console.log("here in checkinvoice");
-    const data = await imsAxios.get(
+    const res = await imsAxios.get(
       `/tally/vbt/checkInvoice?vbtInvoiceNo=${checkInvoiceId}&vendor=${vendorCode}`
     );
-    if (data.status === 200 || response.success ) {
-      let arr = data.data;
+    if (res.success ) {
+      let arr = res.data;
       if (arr.checkInvoice == true) {
         // setConfirmModal(true);
 
@@ -83,7 +83,7 @@ function VBT01Report({
     setLoading(true);
     const response = await imsAxios.get(`/tally/vbt/getData?vbtKey=${vbtCode}`);
 
-    if (response.status == 200) {
+    if (response.success) {
       const { data } = response;
       getGl();
 
@@ -292,22 +292,20 @@ function VBT01Report({
     let link;
     if (editVbtDrawer) {
       let apiLink = getApiUrl(editVbtDrawer);
-      console.log("apilink", apiLink);
       setEditApiUrl(apiLink);
       link = `/tally/${apiLink}/${apiLink}_gl_options`;
     } else {
       link = `/tally/${apiUrl}/${apiUrl}_gl_options`;
     }
     const response = await imsAxios.get(link);
-    let arr = [];
-    if (data.length > 0) {
-      arr = data.map((d) => {
+   
+    if (response?.data.length > 0) {
+      arr = response?.data.map((d) => {
         return {
           text: d.text,
           value: d.id,
         };
       });
-      console.log("arr=>", arr);
       setGlCodes(arr);
     }
   };
@@ -329,7 +327,6 @@ function VBT01Report({
   // sumbit for both the edot and create fn
   const submitFunction = async () => {
     const values = await Vbt01.validateFields();
-    console.log("values", values);
     if (isCreate) {
       const roundarr = values.components.map(
         (component) => component.venAmmount
@@ -350,7 +347,6 @@ function VBT01Report({
       console.log("a", a);
       const modifiedArray =
         roundarr.length > 0 ? [...roundarr.slice(0, -1), a] : roundarr;
-      console.log("modifiedArray", modifiedArray);
       // return;
       // const tdsCodes = values.components.filter(
       //   (component) =>
@@ -835,8 +831,8 @@ function VBT01Report({
       open={editingVBT || editVbtDrawer}
       title={
         isCreate
-          ? vbtComponent?.data &&
-            `${vbtComponent?.data[0]?.ven_name} | ${vbtComponent?.data[0]?.ven_code}`
+          ? vbtComponent &&
+            `${vbtComponent[0]?.ven_name} | ${vbtComponent[0]?.ven_code}`
           : `${editVbtDrawer}`
       }
     >
