@@ -67,21 +67,23 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
     let splitUrl = pageUrl.at(-1);
     setUrl(splitUrl);
   }, []);
+
   useEffect(() => {
+    console.log(url)
     // console.log("url", url);
-    if (url === "VB1") {
+    if (url === "vb-1") {
       setApiUrl("vbt01");
-    } else if (url === "VB2") {
+    } else if (url === "vb-2") {
       setApiUrl("vbt02");
-    } else if (url === "VB3") {
+    } else if (url === "vb-3") {
       setApiUrl("vbt03");
-    } else if (url === "VB4") {
+    } else if (url === "vb-4") {
       setApiUrl("vbt04");
-    } else if (url === "VB5") {
+    } else if (url === "vb-5") {
       setApiUrl("vbt05");
-    } else if (url === "VB6") {
+    } else if (url === "vb-6") {
       setApiUrl("vbt06");
-    } else if (url === "VB7") {
+    } else if (url === "vb-") {
       setApiUrl("vbt07");
     } else {
       // console.log("the api is not valid");
