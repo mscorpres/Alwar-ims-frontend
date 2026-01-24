@@ -74,7 +74,7 @@ function VBT01Report({
         });
       }
     } else {
-      showToast(response.message?.msg || response.message, "error");
+      showToast(res.message, "error");
       // setEditingVBT(null);
     }
   };
@@ -113,7 +113,6 @@ function VBT01Report({
         billAmm: row?.taxableValue,
         // billAmount: row?.billAmount,
       }));
-      console.log("this is the details of vbt", arr);
       // console.log("arrarr", arr[0].billAmount);
       setEditVBTCode(arr);
       setVbtComponent(arr);
@@ -146,6 +145,7 @@ function VBT01Report({
     const { data } = response;
     if (response.success) {
       setVbtComponent(data);
+      
       const arr = response.data.map((row) => ({
         ...row,
         minId: row.min_id,
@@ -239,7 +239,7 @@ function VBT01Report({
       mins: [minId],
     });
     const { data } = response;
-    data.data[0].ven_tds.push({
+    data[0]?.ven_tds.push({
       ladger_name: "--",
       ledger_key: "--",
       tds_code: "--",
@@ -249,7 +249,7 @@ function VBT01Report({
       tds_percent: "0",
     });
     if (response.success) {
-      let arr = data.data;
+      let arr = data;
       setAllTdsOptions(arr[0].ven_tds);
 
       let tdsC = arr[0].ven_tds.map((r) => {
@@ -260,7 +260,7 @@ function VBT01Report({
       });
       setTdsArray(tdsC);
     } else {
-      showToast(response.message?.msg || response.message, "error");
+      showToast(response.message, "error");
     }
   };
   const getFreightGlOptions = async (vbtCode) => {
@@ -272,7 +272,7 @@ function VBT01Report({
       });
       const { data } = response;
       let arr = [];
-      if (data.length) {
+      if (data.length > 0) {
         arr = data.map((row) => ({
           value: row.id,
           text: row.text,
@@ -481,7 +481,6 @@ function VBT01Report({
       addVbt(finalData);
     } else {
       const values = await Vbt01.validateFields();
-      console.log("values", values);
 
       const roundarr = values.components.map(
         (component) => component.venAmmount
@@ -608,14 +607,14 @@ function VBT01Report({
     // console.log("vbtCodeForEdit", vbtCodeForEdit);
     let link = `/tally/${vbtCodeForEdit}/update`;
     const response = await imsAxios.put(link, finalData);
-    const { data } = response;
+    const {  success } = response;
     // console.log("data", response);
-    if (response.status === 200) {
-      showToast(response.data, "success");
+    if (success) {
+      showToast(response.message, "success");
       setEditVbtDrawer(null);
       setLoading(false);
     } else {
-      showToast(response.data, "error");
+      showToast(response.message, "error");
       setLoading(false);
     }
   };

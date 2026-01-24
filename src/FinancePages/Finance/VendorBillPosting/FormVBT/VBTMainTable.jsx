@@ -323,9 +323,10 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
         data: d,
       });
     }
+
     const { data } = response;
     if (response.success) {
-      const arr = response.data.map((row) => {
+      const arr = data.map((row) => {
         return {
           ...row,
           id: v4(),
@@ -433,7 +434,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       remark: values.remark,
     });
     if (response.success) {
-      showToast(response.data.data.status, "success");
+      showToast(response.data.status, "success");
       getRows();
     } else {
       showToast(response.data.message, "error");
