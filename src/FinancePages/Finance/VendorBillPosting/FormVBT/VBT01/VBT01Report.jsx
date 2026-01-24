@@ -57,7 +57,7 @@ function VBT01Report({
     );
     if (res.success ) {
       let arr = res.data;
-      if (arr.checkInvoice == true) {
+      if (arr.checkInvoice) {
         // setConfirmModal(true);
 
         Modal.confirm({
@@ -72,10 +72,11 @@ function VBT01Report({
             setEditingVBT(null);
           },
         });
+      } else {
+        console.log(res.data?.message)
+        showToast(res.data?.message, "error");
+        // setEditingVBT(null);
       }
-    } else {
-      showToast(res.message, "error");
-      // setEditingVBT(null);
     }
   };
   //edit vbt fn
