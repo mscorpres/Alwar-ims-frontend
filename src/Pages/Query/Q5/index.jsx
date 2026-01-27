@@ -312,7 +312,7 @@ const QueryQ5 = () => {
                                   marginRight: "4px",
                                 }}
                               >
-                                Total - {rmData.openingTotal} {headerData?.unit}
+                                Total - {rmData.closingTotal} {headerData?.unit}
                               </Typography>
                             </Space>
                             <Button
@@ -367,7 +367,7 @@ const QueryQ5 = () => {
                                   marginRight: "4px",
                                 }}
                               >
-                                Total - {sfData.openingTotal} {headerData?.unit}
+                                Total - {sfData.closingTotal} {headerData?.unit}
                               </Typography>
                             </Space>
                             <Button
@@ -436,7 +436,7 @@ const QueryQ5 = () => {
                                   marginRight: "4px",
                                 }}
                               >
-                                Total - {vendorData.openingTotal}{" "}
+                                Total - {vendorData.closingTotal}{" "}
                                 {headerData?.unit}
                               </Typography>
                             </Space>
