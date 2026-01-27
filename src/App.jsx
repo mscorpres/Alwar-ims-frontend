@@ -259,7 +259,7 @@ const App = () => {
     if (user && user.token) {
       // getting all notifications
       socket.on("all-notifications", (data) => {
-        let arr = data.data;
+        let arr = data;
         arr = arr.map((row) => {
           return {
             ...row,

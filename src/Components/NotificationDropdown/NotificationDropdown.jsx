@@ -12,8 +12,11 @@ const NotificationDropdown = ({
   onClose,
   notifications,
   deleteNotification,
+  
   anchorRef,
 }) => {
+
+  console.log(notifications,"data")
   const [position, setPosition] = useState({ top: 0, right: 0 });
   const [isPositioned, setIsPositioned] = useState(false);
 
