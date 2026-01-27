@@ -438,7 +438,7 @@ textarea {
 .nav-footer {
   left: 0;
   background-color: white;
-  box-shadow: 0px -1px 3px 0px gray;
+  box-shadow: 0px 2px 4px  #00001a;
 }
 .ant-layout-header,
 .ant-menu.ant-menu-dark .ant-menu-sub {
@@ -563,7 +563,7 @@ textarea:disabled,
 textarea[readonly],
 select:disabled,
 select[readonly] {
-  background-color: #ccc !important;
+  background-color: #fafafa !important;
   cursor: not-allowed !important;
 }
 .ant-select-selector {
@@ -588,8 +588,8 @@ textarea.ant-input {
 }
 .ant-card {
   border-radius: 15px !important;
-  background-color: #f1f7fc !important;
-  border: 2px solid #c6def4 !important;
+  background-color: #f8f9fa !important;
+  border: 2px solid #e1e1e1 !important;
 }
 .ant-card-head {
   border-radius: 0 !important;
