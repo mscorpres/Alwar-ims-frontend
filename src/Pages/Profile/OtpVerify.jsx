@@ -192,7 +192,7 @@ function OtpVerify({
           showToast(response.message, "success");
           setOTPSent(true);
         } else {
-          showToast(response.message?.msg || response.message,"error");
+          showToast(response.message?.msg || response.message, "error");
         }
       }
     }
@@ -200,12 +200,18 @@ function OtpVerify({
   const checkMobile = async () => {
     setLoading("submit");
     const response = await imsAxios.get("/profile/checkMobile");
-    setLoading(false);
-    validateResponse(data);
-    setUserNumber(
-      `${data.data.mobile[0]}*${data.data.mobile[1]}${data.data.mobile[2]}****${data.data.mobile[3]}${data.data.mobile[4]}`
-    );
-    return data.code;
+
+    if (response?.success) {
+      setLoading(false);
+      validateResponse(response?.data);
+      setUserNumber(
+        `${response?.data?.mobile?.[0]}*${response?.data?.mobile?.[1]}${response?.data?.mobile?.[2]}****${response?.data?.mobile?.[3]}${response?.data?.mobile?.[4]}`,
+      );
+    } else {
+      setLoading(false);
+      showToast(response?.message?.msg || response?.message, "error");
+    }
+    
   };
   const inputBox = (current, ref) => {
     console.log(mobileRefs[current]);
@@ -233,7 +239,7 @@ function OtpVerify({
       setShowOTPVerifyModal(false);
       updateUserState("mobileConfirmed");
     } else {
-      showToast(response.message?.msg || response.message,"error");
+      showToast(response.message?.msg || response.message, "error");
     }
   };
   useEffect(() => {
