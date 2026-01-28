@@ -52,7 +52,7 @@ const Q3 = () => {
         sku_code: searchInput,
       });
       if (response.success) {
-        const {  data:skuData } = response;
+        const {  data1:skuData, data2 } = response?.response;
         const detailsObj = {
           stock: skuData.closingqty,
           product: skuData.product,
@@ -61,7 +61,7 @@ const Q3 = () => {
           uom: skuData.uom,
         };
 
-        const arr = data?.map((row, index) => ({
+        const arr = data2?.map((row, index) => ({
           ...row,
           id: index + 1,
           txn: removeHtml(row.txn),
