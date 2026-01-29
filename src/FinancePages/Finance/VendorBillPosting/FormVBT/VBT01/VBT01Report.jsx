@@ -299,9 +299,10 @@ function VBT01Report({
       link = `/tally/${apiUrl}/${apiUrl}_gl_options`;
     }
     const response = await imsAxios.get(link);
-   
-    if (response?.data.length > 0) {
-      arr = response?.data.map((d) => {
+    
+   let arr =[]
+    if (response.data.length > 0) {
+      arr = response?.data?.map((d) => {
         return {
           text: d.text,
           value: d.id,
