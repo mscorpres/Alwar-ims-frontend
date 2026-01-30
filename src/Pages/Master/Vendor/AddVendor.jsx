@@ -101,7 +101,7 @@ const AddVendor = () => {
     //   formData.append("file", r.file[0].originFileObj);
     // });
     values.components.map((comp) => {
-      formData.append("file", comp.file[0]?.originFileObj);
+      formData.append("file", comp?.file?.[0]?.originFileObj);
     });
     // formData.append("file", values.components[0].file[0].originFileObj);
     // console.log("a-----", uploadedFie[0].file[0].originFileObj);
