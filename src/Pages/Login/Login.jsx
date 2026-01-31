@@ -67,10 +67,10 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    if (!recaptchaValue) {
-      toast.error("Please verify the reCAPTCHA");
-      return;
-    }
+    // if (!recaptchaValue) {
+    //   toast.error("Please verify the reCAPTCHA");
+    //   return;
+    // }
     const { username, password } = inpVal;
     if (username === "" && password === "") {
       showToast("Please fill the field", "error");
@@ -710,13 +710,13 @@ const Login = () => {
                         {/* <Link onClick={() => setForgotPassword("1")}>
                           Forgot Password
                         </Link> */}
-                        <div className="flex justify-center">
+                        {/* <div className="flex justify-center">
                           <ReCAPTCHA
                             sitekey="6LdmVcArAAAAAOb1vljqG4DTEEi2zP1TIjDd_0wR"
                             onChange={handleRecaptchaChange}
                             key={recaptchaKey}
                           />
-                        </div>
+                        </div> */}
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
                           <Button
                             loading={loading("submit")}
