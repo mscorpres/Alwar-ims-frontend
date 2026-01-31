@@ -32,17 +32,21 @@ import {
 import { convertSelectOptions } from "../../utils/general.ts";
 import useApi from "../../hooks/useApi.ts";
 
+// vendor type options
 const vendorTypeOptions = [
   { text: "JWI", value: "j01" },
   { text: "Vendor", value: "v01" },
 ];
+
 const poTypeOptions = [{ text: "New", value: "N" }];
 
+// gst type options
 const gstTypeOptions = [
   { text: "Local", value: "L" },
   { text: "Interstate", value: "I" },
 ];
 
+// gst rate options
 const gstRateOptions = [
   { text: "0%", value: "0" },
   { text: "5%", value: "5" },
@@ -91,6 +95,7 @@ export default function CreateJW({}) {
   // initialize loading state
   const { showToast } = useToast();
   const [loading, setLoading] = useLoading();
+  const [bomOptions, setBomOptions] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [asyncLocationOptions, setAsyncLocationOptions] = useState([]);
   const [requestByOptions, setRequestByOptions] = useState([]);
@@ -102,6 +107,7 @@ export default function CreateJW({}) {
   const [showBranchModel, setShowBranchModal] = useState(false);
   const [showAddCostModal, setShowAddCostModal] = useState(false);
   const [showAddVendorModal, setShowAddVendorModal] = useState(false);
+  const [dropLocationOptions, setDropLocationOptions] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
   const [taxSummary, setTaxSummary] = useState({
     value: "0",
@@ -112,7 +118,8 @@ export default function CreateJW({}) {
   });
   const [uom, setUom] = useState("");
   const [createPoForm] = Form.useForm();
-
+  // get po options
+  //   in case of po type change
   const getPoOptions = async (inputValue) => {};
   //   get vendor options
   const getVendorOption = async (search) => {
@@ -187,6 +194,33 @@ export default function CreateJW({}) {
     });
     getData(response);
   };
+
+    const getDropLocation = async () => {
+    let vendor = createPoForm.getFieldValue("vendorname")?.value;
+    if (vendor) {
+      try {
+        const response = await imsAxios.get(
+          `/backend/fetchVendorJWLocation?vendor=${vendor}`
+        );
+        if (response.success) {
+          let arr = [];
+          arr = response.data.map((row) => ({
+            value: row.id,
+            text: row.text,
+          }));
+          setDropLocationOptions(arr);
+        } else {
+          toast.error(response.message);
+        }
+      } catch (error) {
+        toast.error(error.message || "Failed to fetch pick location");
+      }
+    }
+  };
+
+  useEffect(()=>{
+    getDropLocation();
+  },[createPoForm.getFieldValue("vendorname")?.value])
 
   //   get cost center options
 
@@ -339,23 +373,27 @@ export default function CreateJW({}) {
   //   getting component details
   const getComponentDetails = async (inputValue) => {
     setLoading("fetch", true);
-    const response = await imsAxios.post("jobwork/fetchProductData4Table", {
-      product_name: inputValue,
-    });
-
+    const response = await imsAxios.get(
+      `jobwork/fetchProductData4Table?key=${inputValue}`
+    );
     setLoading("fetch", false);
-    const { data } = response;
-
-    if (response.success) {
-      setUom(data?.unit);
-      createPoForm.setFieldValue("qty", data?.description);
-      createPoForm.setFieldValue("rate", data?.rate);
-      createPoForm.setFieldValue("hsn", data?.hsn);
-      createPoForm.setFieldValue("gstRate", data?.gstrate);
+    if (response?.success) {
+      setUom(response?.data?.unit);
+      setBomOptions(
+        response?.data?.bom?.map((row) => ({
+          text: row.name,
+          value: row.key,
+        }))
+      );
+      createPoForm.setFieldValue("qty", response?.data?.description);
+      createPoForm.setFieldValue("rate", response?.data?.rate);
+      createPoForm.setFieldValue("hsn", response?.data?.hsn);
+      createPoForm.setFieldValue("gstRate", response?.data?.gstrate);
     } else {
       showToast(response.message, "error");
     }
   };
+
   const inputHandler = () => {
     let rate = createPoForm.getFieldValue("rate");
     let qty = createPoForm.getFieldValue("qty");
@@ -414,31 +452,34 @@ export default function CreateJW({}) {
     //validating form values
     const values = await createPoForm.validateFields();
     let finalObj = {
-      billingaddrid: values.billaddressid,
-      billingaddr: values.billaddress,
-      dispatch_id: values.shipaddressid,
-      dispatch_address: values.shipaddress,
-      termscondition: values.termscondition ?? "--",
-      quotationdetail: values.quotationdetail ?? "--",
-      paymentterms: values.paymentterms ?? "--",
-      paymenttermsday: values.paymenttermsday ?? 30,
-      pocostcenter: values.pocostcenter,
-      poproject_name: values.project_name,
-      jw_raise_by: values.jw_raise_by,
-      po_remark: values.po_comment ?? "--",
-      vendor_name: values.vendorname.value,
-      vendor_type: values.vendortype,
-      vendor_branch: values.vendorbranch,
-      vendor_address: values.vendoraddress,
-      location: values.location,
-      product: [values.component],
+      poType: values.pocreatetype,
       qty: [values.qty],
+      gstRate: [values.gstRate],
+      gstType: [values.gstType],
+      product: [values.component],
+      project: values.project_name,
+      bom: values.bom,
       rate: [values.rate],
-      duedate: [values.dueDate],
-      part_remark: [values.description],
-      hsncode: [values.hsn],
-      gsttype: [values.gstType],
-      gstrate: [values.gstRate],
+      costCenter: values.pocostcenter,
+      raiseBy: values.jw_raise_by,
+      pickLocation: values.location,
+      venJwLocation: values.venJwLocation,
+      billingAddressId: values.billaddressid,
+      billingAddress: values.billaddress,
+      dispatchId: values.shipaddressid,
+      vendorBranch: values.vendorbranch,
+      vendorAddress: values.vendoraddress,
+      dispatchAddress : values.shipaddress,
+      termsCondition: values.termscondition ?? "--",
+      quotationDetail: values.quotationdetail ?? "--",
+      paymentTerms: values.paymentterms ?? "--",
+      termsDay: values.paymenttermsday ?? 30,
+      poRemark: values.po_comment ?? "--",
+      partRemark: [values.description],
+      vendor: values.vendorname.value,
+      vendorType: values.vendortype,
+      dueDate: [values.dueDate],
+      hsnCode: [values.hsn],
       igst: [values.igst],
       cgst: [values.cgst],
       sgst: [values.sgst],
@@ -1112,6 +1153,25 @@ export default function CreateJW({}) {
               {/* order qty */}
               <Col span={4}>
                 <Form.Item
+                  name="bom"
+                  label="BOM"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select bom code",
+                    },
+                  ]}
+                >
+                  <MyAsyncSelect
+                    selectLoading={loading("select")}
+                    optionsState={bomOptions}
+                    onBlur={() => setBomOptions([])}
+                    loadOptions={() => {}}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item
                   label="Qty"
                   name="qty"
                   rules={[
@@ -1155,11 +1215,11 @@ export default function CreateJW({}) {
             <Row gutter={6}>
               <Col span={4}>
                 <Form.Item
-                  label="Location"
+                  label="Pick Location"
                   rules={[
                     {
                       required: true,
-                      message: "Please Select a Location!",
+                      message: "Please Select a Pick Location!",
                     },
                   ]}
                   name="location"
@@ -1169,6 +1229,25 @@ export default function CreateJW({}) {
                     loadOptions={getLocatonOptions}
                     optionsState={asyncLocationOptions}
                     selectLoading={loading === "selectLocation"}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={4}>
+                <Form.Item
+                  label="Drop Location(Vendor Location)"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please Select a Drop Location!",
+                    },
+                  ]}
+                  name="venJwLocation"
+                >
+                  <MyAsyncSelect
+                    onBlur={() => setDropLocationOptions([])}
+                    loadOptions={getDropLocation}
+                    optionsState={dropLocationOptions}
+                    selectLoading={loading === "selectDropLocation"}
                   />
                 </Form.Item>
               </Col>
