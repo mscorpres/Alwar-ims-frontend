@@ -308,12 +308,12 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
     },
   ];
 
-  const getArrayLocation = async (e) => {
-    const response = await imsAxios.get("/jobwork/jwChallanLocations");
+  const getArrayLocation = async (vendor) => {
+    const response = await imsAxios.get(`backend/jw/warehouse/location?vendor=${vendor}`);
     //  console.log(data);
     let arr = [];
     arr = response.data.map((d) => {
-      return { label: d.text, value: d.id };
+      return { label: d.name, value: d.key };
     });
     //  console.log(arr);
     setLastAddressData(arr);
@@ -329,7 +329,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       getBillingLocation();
       setrestBillingAddress([]);
       getDispatchLocation();
-      getArrayLocation();
+      getArrayLocation(vendorData?.vendor_code);
       // getLocation();
     }
   }, [challanModal]);

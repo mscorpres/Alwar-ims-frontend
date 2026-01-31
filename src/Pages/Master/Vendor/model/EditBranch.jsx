@@ -68,6 +68,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         msmeId: vendorResponse.data.vendor_msme_id,
         type: vendorResponse.data.vendor_msme_type,
         activity: vendorResponse.data.vendor_msme_activity,
+        applicability: vendorResponse.data.eInvoice?.status,
         ...vendorResponse.data[0],
       };
       updateVendorForm.setFieldsValue(obj);
