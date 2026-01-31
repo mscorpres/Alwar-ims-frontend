@@ -74,7 +74,7 @@ export default function Profile() {
     getUserDetails();
   }, []);
   return (
-    <div style={{ padding: 4, minHeight: "calc(100vh - 140px)", backgroundColor: "#f5f5f5" }}>
+    <div style={{ padding: 4, minHeight: "calc(100vh - 120px)", backgroundColor: "#f5f5f5" }}>
       <Modal
         title="Confirm Password Update!"
         open={showSubmitConfirm}
@@ -102,7 +102,7 @@ export default function Profile() {
           display: "grid",
           gridTemplateColumns: "1fr 3fr",
           gap: 0,
-          minHeight: "calc(100vh - 115px)",
+          minHeight: "calc(100vh - 110px)",
         }}
       >
         {/* Left Sidebar - Profile Section */}
@@ -239,7 +239,7 @@ export default function Profile() {
           style={{
             backgroundColor: "white",
             padding: "40px 50px",
-               minHeight: "calc(100vh - 140px)",
+               minHeight: "calc(100vh - 80px)",
           }}
         >
           {activeTab == "1" ? (
@@ -249,7 +249,6 @@ export default function Profile() {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  marginBottom: 20,
                 }}
               >
                 <Typography.Title level={2} style={{ margin: 0 }}>

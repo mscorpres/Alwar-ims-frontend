@@ -78,7 +78,6 @@ const R26 = () => {
   };
 
   const handleDownload = async () => {
-    // console.log("gere");
     const filter = await filterForm.validateFields();
     const otherdata = JSON.stringify({
       type: filter.wise,

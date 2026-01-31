@@ -97,7 +97,7 @@ function EditVBTReport({ editVbtDrawer, setEditVbtDrawer }) {
     }
   };
   const getGl = async () => {
-    const response = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
+    const {data} = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
     let arr = [];
     if (data.length > 0) {
       arr = data.map((d) => {

@@ -22,25 +22,14 @@ function VBTHeaders({
   billvalues,
   billam,
 }) {
-  //
-  // const totalBillingAmount = form.getFieldValue("billAmmount");
-  // let totalVenAm = form.getFieldValue([
-  //   "components",
-  //   field.name,
-  //   "venAmmount",
-  // ]);
-  // console.log("totalBillingAmount", totalBillingAmount);
-  // var values = components?.reduce(
-  //   (partialSum, a) => partialSum + +Number(a.totalBilAmm).toFixed(2),
-  //   0
-  // );
+  
 
   const [pageHeaders, setPageHeaders] = useState("");
   useEffect(() => {
     let obj = {};
     if (editingVBT && vbtComponent) {
-      if (vbtComponent && vbtComponent?.data) {
-        setPageHeaders(vbtComponent?.data[0]);
+      if (vbtComponent && vbtComponent) {
+        setPageHeaders(vbtComponent[0]);
       }
 
       if (editingVBT && pageHeaders) {
@@ -234,7 +223,7 @@ function VBTHeaders({
 
             <Col span={24}>
               <Form.Item label="Comments" name="comment">
-                <Input.TextArea placeholder="Comments" />
+                <Input.TextArea placeholder="Comments"  />
               </Form.Item>
             </Col>
             <Col span={24}>

@@ -1,4 +1,4 @@
-import  { useRef } from "react";
+import { useRef } from "react";
 import {
   Badge,
   Switch,
@@ -127,7 +127,7 @@ const AppHeader = (props) => {
           </div>
 
           <div className="flex items-center gap-[24px] relative">
-              {onRefreshSocket && (
+            {onRefreshSocket && (
               <Tooltip
                 title={`Socket ${
                   socketConnected ? "Connected" : "Disconnected"
@@ -158,8 +158,6 @@ const AppHeader = (props) => {
             )}
             {switchModule && switchModule}
 
-          
-
             <div
               ref={notificationButtonRef}
               onClick={(e) => {
@@ -169,13 +167,18 @@ const AppHeader = (props) => {
               <Badge
                 sx={{
                   "& .MuiBadge-badge": {
-                    background: notificationsCount > 0 ? "#EAAE0F" : "green",
+                    background: notifications.filter(
+                      (not) => not?.loading || not?.status == "pending",
+                    )[0]
+                      ? "#EAAE0F"
+                      : "green",
                   },
                 }}
-                badgeContent={notificationsCount}
+                badgeContent={
+                  notifications.filter((not) => not?.type != "message")?.length
+                }
               >
                 <IconButton
-             
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -189,7 +192,6 @@ const AppHeader = (props) => {
                       e.nativeEvent.stopImmediatePropagation();
                     }
                     dispatch(setShowNotifications(true));
-                
                   }}
                   size="small"
                   sx={{ p: 0.5 }}

@@ -41,7 +41,6 @@ function SFTransferDrawer({
 
   const { executeFun, loading: loading1 } = useApi();
   const inputHandler = async (name, id, value) => {
-    console.log(name, id, value);
     if (name == "trans_id") {
       setRows((a) =>
         a.map((aa) => {
@@ -146,13 +145,14 @@ function SFTransferDrawer({
       search: "",
     });
     // setSelectLoading(false);
+    
     if (response.success) {
-      let arr = data.response.data.map((d) => {
+      let arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
     } else {
-      showToast(response.message?.msg || response.message, "error");
+      showToast(response.message, "error");
     }
   };
   const getdrawerData = async (id) => {
@@ -162,8 +162,10 @@ function SFTransferDrawer({
     });
     const { data } = response;
     if (response.success) {
-      let arr = response.data.map((row) => {
+      let arr = data.map((row, index) => {
+
         return {
+          id: row?.serial + index,
           ...row,
         };
       });
