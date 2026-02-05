@@ -23,7 +23,7 @@ const RequestPo = () => {
   const [updatePoId, setUpdatePoId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [viewPoLogsId, setViewPoLogsId] = useState(null);
-  const [showCancelPO, setShowCancelPO] = useState(null);
+  const [showClosePO, setShowClosePO] = useState(null);
 
   const columns = [
     {
@@ -52,10 +52,10 @@ const RequestPo = () => {
           onClick={() => setViewPoLogsId(row.po_transaction)}
         />,
         <GridActionsCellItem
-        key="cancel"
+        key="close"
         showInMenu
-        label="Cancel"
-        onClick={() => handleCancelPO(row.po_transaction)}
+        label="Close PO"
+        onClick={() => handleClosePO(row.po_transaction)}
       />,
       ],
     },
@@ -233,14 +233,14 @@ const RequestPo = () => {
     },
   ];
 
-  const handleCancelPO = async (poid) => {
+  const handleClosePO = async (poid) => {
     setLoading(true);
     const response = await imsAxios.post("/purchaseOrder/fetchStatus4PO", {
       purchaseOrder: poid,
     });
     setLoading(false);
     if (response.success) {
-      setShowCancelPO(poid);
+      setShowClosePO(poid);
     } else {
       showToast(response.message, "error");
     }
@@ -375,9 +375,10 @@ const RequestPo = () => {
       )}
       <ViewPOLogs poId={viewPoLogsId} setPoId={setViewPoLogsId} />
       <CancelPO
+        variant="close"
         getSearchResults={getSearchResults}
-        setShowCancelPO={setShowCancelPO}
-        showCancelPO={showCancelPO}
+        setShowCancelPO={setShowClosePO}
+        showCancelPO={showClosePO}
         setRows={setRows}
         rows={rows}
       />
