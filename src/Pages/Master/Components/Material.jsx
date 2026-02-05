@@ -49,7 +49,7 @@ const Material = () => {
   const [selectLoading, setSelectLoading] = useState(false);
   const [materialModal, setMaterialModal] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
-  console.log("right page");
+  
   const { executeFun } = useApi();
 
   const allComponent = async () => {
@@ -97,7 +97,7 @@ const Material = () => {
 
   const fetchUOM = async () => {
     const response = await executeFun(() => getUOMList(), "fetch");
-    console.log("uom response", response);
+
     setUom(response.data);
     // const response = await imsAxios.post("/uom/uomSelect2");
     // let a = [];
@@ -122,7 +122,7 @@ const Material = () => {
       });
       setSelectLoading(false);
       let arr = [];
-      arr = data.map((d) => {
+      arr = response?.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);

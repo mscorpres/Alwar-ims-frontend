@@ -44,10 +44,13 @@ export default function UpdateComponent() {
       const response = await imsAxios.post("/component/fetchUpdateComponent", {
         componentKey,
       });
+      console.log(response,"res ponse data")
       const { data } = response;
 
       if (response.success) {
         const value = data;
+
+      
         const finalObj = {
           partCode: value.partcode,
           component: value.name,
@@ -110,8 +113,8 @@ export default function UpdateComponent() {
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/groups/groupSelect2");
-      const { data } = response;
-      if (data) {
+ 
+      
         if (response.success) {
           const arr = response.data.map((row) => ({
             text: row.text,
@@ -121,7 +124,7 @@ export default function UpdateComponent() {
         } else {
           showToast(response.message?.msg || response.message, "error");
         }
-      }
+  
     } catch (error) {
     } finally {
       setLoading(false);
@@ -204,22 +207,20 @@ export default function UpdateComponent() {
 
   const submitHandler = async (payload) => {
     try {
-      console.log(payload);
       setLoading("submit");
       const response = await imsAxios.post(
         "/component/updateComponent",
         payload
       );
 
-      const { data } = response;
-      if (data) {
+    
         if (response.success) {
           showToast(response.message, "success");
           getDetails();
         } else {
           showToast(response.message?.msg || response.message, "error");
         }
-      }
+     
     } catch (error) {
     } finally {
       setLoading(false);
