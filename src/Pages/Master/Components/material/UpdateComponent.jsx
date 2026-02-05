@@ -344,7 +344,7 @@ export default function UpdateComponent() {
     if (success) {
       Modal.confirm({
         title: "Are you sure you want to submit this Updated Component?",
-        content: `${data.message}`,
+        content: `${response.message}`,
         onOk() {
           submitHandler(payload);
         },
