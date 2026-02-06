@@ -368,11 +368,8 @@ export default function ProductMIN() {
     if (name == "component") {
       if (value) {
         setPageLoading(true);
-        const response = await imsAxios.post(
-          "/jobwork/fetchProductData4Table",
-          {
-            product_name: value.value,
-          }
+        const response = await imsAxios.get(
+          `jobwork/fetchProductData4Table?key=${value}`
         );
         setPageLoading(false);
 

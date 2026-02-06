@@ -339,9 +339,9 @@ export default function CreateJW({}) {
   //   getting component details
   const getComponentDetails = async (inputValue) => {
     setLoading("fetch", true);
-    const response = await imsAxios.post("jobwork/fetchProductData4Table", {
-      product_name: inputValue,
-    });
+    const response = await imsAxios.get(
+      `jobwork/fetchProductData4Table?key=${inputValue}`
+    );
 
     setLoading("fetch", false);
     const { data } = response;
@@ -414,31 +414,34 @@ export default function CreateJW({}) {
     //validating form values
     const values = await createPoForm.validateFields();
     let finalObj = {
-      billingaddrid: values.billaddressid,
-      billingaddr: values.billaddress,
-      dispatch_id: values.shipaddressid,
-      dispatch_address: values.shipaddress,
-      termscondition: values.termscondition ?? "--",
-      quotationdetail: values.quotationdetail ?? "--",
-      paymentterms: values.paymentterms ?? "--",
-      paymenttermsday: values.paymenttermsday ?? 30,
-      pocostcenter: values.pocostcenter,
-      poproject_name: values.project_name,
-      jw_raise_by: values.jw_raise_by,
-      po_remark: values.po_comment ?? "--",
-      vendor_name: values.vendorname.value,
-      vendor_type: values.vendortype,
-      vendor_branch: values.vendorbranch,
-      vendor_address: values.vendoraddress,
-      location: values.location,
-      product: [values.component],
+      poType: values.pocreatetype,
       qty: [values.qty],
+      gstRate: [values.gstRate],
+      gstType: [values.gstType],
+      product: [values.component],
+      project: values.project_name,
+      bom: values.bom,
       rate: [values.rate],
-      duedate: [values.dueDate],
-      part_remark: [values.description],
-      hsncode: [values.hsn],
-      gsttype: [values.gstType],
-      gstrate: [values.gstRate],
+      costCenter: values.pocostcenter,
+      raiseBy: values.jw_raise_by,
+      pickLocation: values.location,
+      venJwLocation: values.venJwLocation,
+      billingAddressId: values.billaddressid,
+      billingAddress: values.billaddress,
+      dispatchId: values.shipaddressid,
+      vendorBranch: values.vendorbranch,
+      vendorAddress: values.vendoraddress,
+      dispatchAddress: values.shipaddress,
+      termsCondition: values.termscondition ?? "--",
+      quotationDetail: values.quotationdetail ?? "--",
+      paymentTerms: values.paymentterms ?? "--",
+      termsDay: values.paymenttermsday ?? 30,
+      poRemark: values.po_comment ?? "--",
+      partRemark: [values.description],
+      vendor: values.vendorname.value,
+      vendorType: values.vendortype,
+      dueDate: [values.dueDate],
+      hsnCode: [values.hsn],
       igst: [values.igst],
       cgst: [values.cgst],
       sgst: [values.sgst],
