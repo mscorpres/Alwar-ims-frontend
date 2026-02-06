@@ -8,6 +8,7 @@ import {
   TransactionIn,
   TransactionOut,
   CompletedFG,
+  JwRmConsumption,
   PendingFG,
   CreateFGOut,
   ViewFGOut,
@@ -69,6 +70,7 @@ import {
   JwIssue,
   JwsfInward,
   JwrmReturn,
+  JwRmConsumptionReport,
   JwCompleted,
   UpdateRM,
   ReverseMin,
@@ -383,6 +385,10 @@ const Routes = [
   {
     path: "/reports/transaction-out",
     main: () => <TransactionOut />,
+  },
+  {
+    path: "/jw-rm-consumption-report",
+    main: () => <JwRmConsumptionReport />,
   },
   {
     path: "/warehouse/fg/complete",
@@ -887,6 +893,10 @@ const Routes = [
   {
     path: "/warehouse/job-work/return",
     main: () => <JwrmReturn />,
+  },
+  {
+    path: "/warehouse/job-work/rm-consumption",
+    main: () => <JwRmConsumption />,
   },
   {
     path: "/warehouse/job-work/completed",

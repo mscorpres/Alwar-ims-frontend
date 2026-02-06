@@ -52,6 +52,7 @@ export { default as TransactionIn } from "./Store/Transaction/TransactionIn";
 export { default as TransactionOut } from "./Store/Transaction/TransactionOut";
 export { default as CompletedFG } from "./Store/FoodGoods/CompletedFG";
 export { default as PendingFG } from "./Store/FoodGoods/PendingFG.jsx";
+export { default as JwRmConsumptionReport } from "./Store/JWRMConsumptionReport";
 export { default as CreatePhysical } from "./Store/PhysicalStock/CreatePhysical";
 export { default as ViewPhysical } from "./Store/PhysicalStock/ViewPhysical";
 
@@ -117,6 +118,7 @@ export { default as JWSupplementary } from "./Jobwork/update/supplementary";
 export { default as JWUpdateRate } from "./Jobwork/update/rate";
 export { default as SFGMIN } from "./Jobwork/VendorSFGMIN/SFGMIN";
 export { default as JWVendorPricingUpload } from "./Jobwork/VendorPricingUpload";
+export { default as JwRmConsumption } from "./Jobwork/JwRmConsumption";
 
 // Work order
 export { default as CreateWo } from "./Workorder/CreateWo";

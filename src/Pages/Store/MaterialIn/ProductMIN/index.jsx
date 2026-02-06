@@ -48,6 +48,7 @@ import useApi from "../../../../hooks/useApi.ts";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
 export default function ProductMIN() {
+  const { showToast } = useToast();
   const [showCurrency, setShowCurrenncy] = useState(null);
   const [invoices, setInvoices] = useState([]);
   const [showAddVendorModal, setShowAddVendorModal] = useState(false);
@@ -282,7 +283,7 @@ export default function ProductMIN() {
             setActiveTab("1");
             setShowSuccessPage({
               materialInId: data?.txn,
-              vendor: { vendorname: vendorDetails.vendor },
+              vendor: { vendorname:vendorDetails.vendorName ?? vendorDetails.vendor },
               components: materialInward.map((row, index) => {
                 return {
                   id: index,

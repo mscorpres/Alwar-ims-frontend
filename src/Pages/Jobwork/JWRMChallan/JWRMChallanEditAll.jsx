@@ -23,8 +23,7 @@ import Loading from "../../../Components/Loading";
 import NavFooter from "../../../Components/NavFooter";
 import errorToast from "../../../Components/errorToast";
 import {
-  UserAddOutlined,
-  ToolOutlined,
+  ReloadOutlined,
   DeleteTwoTone,
 } from "@ant-design/icons";
 import useLoading from "../../../hooks/useLoading";
@@ -78,7 +77,11 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         vendor_address: obj.vendor_address?.replaceAll("<br>", "\n"),
       };
       // console.log(obj.vendorcode)
-      createJobWorkChallanForm.setFieldsValue(obj);
+      
+         // Call getLocations after vendor is set
+         if (obj.vendorcode?.value) {
+          getLocations(obj.vendorcode?.value);
+        }
     }
   };
 
@@ -125,6 +128,36 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     }
 
     setRows(arr);
+  };
+
+  const refreshStockHandler = async (row) => {
+    if (!row.out_loc) {
+      showToast("Please choose Out Location first", "warning");
+      return;
+    }
+    setLoading("tableSpinner", true);
+    try {
+      const response = await imsAxios.post("/backend/compStockLoc", {
+        component: row.component_key,
+        location: row.out_loc,
+      });
+      const { data } = response;
+      if (response.success) {
+        setRows((prev) =>
+          prev.map((r) =>
+            r.id === row.id
+              ? { ...r, availableQty: data.data.closingStock }
+              : r
+          )
+        );
+      } else {
+        showToast(response.message || "Failed to fetch stock", "error");
+      }
+    } catch (err) {
+      showToast(err.message || "Failed to fetch stock", "error");
+    } finally {
+      setLoading("tableSpinner", false);
+    }
   };
 
   const submitHandler = async () => {
@@ -182,8 +215,8 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         duration: restCom?.duration,
         other_ref: restCom?.otherRef,
         // picklocation: obj?.pickLocation,
-        droplocation: obj?.dropLocation,
-        picklocation: obj?.pickLocation,
+        // droplocation: obj?.dropLocation,
+        // picklocation: obj?.pickLocation,
       },
       material: finalObj,
       // transaction_id: obj?.,
@@ -204,17 +237,17 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       }
     }
   };
-  const getLocations = async () => {
-    const response = await imsAxios.get("/jobwork/jwChallanLocations");
-    if (response.success) {
-      let arr = response.response.data.map((row) => ({
-        text: row.text,
-        value: row.id,
+  const getLocations = async (vendor) => {
+    const response = await imsAxios.get(`backend/jw/warehouse/location?vendor=${vendor}&jw=${editiJWAll.saveTransactionId}`);
+    if (response.data.code === 200) {
+      let arr = response.data.map((row) => ({
+        text: row.name,
+        value: row.key,
       }));
       setLocationOptions(arr);
     } else {
       setLocationOptions([]);
-      showToast(response.data.message.msg, "error");
+      showToast(response.data.message, "error");
     }
   };
   const getBillingBranchOptions = async () => {
@@ -386,17 +419,20 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       field: "issue_qty",
       headerName: "Qty",
       renderCell: ({ row }) => (
-        <div style={{ width: "100%" }}>
-          <Input
-            style={{ width: "100%" }}
-            value={row.issue_qty}
-            onChange={(e) => inputHandler("issue_qty", e.target.value, row.id)}
-            suffix={row.unit_name}
-            type="number"
-          />
+        <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        {row.availableQty != null && row.availableQty !== "" ? (
+          <span>{row.availableQty}</span>
+        ) : (
+          <span />
+        )}
+        <ReloadOutlined
+          style={{ cursor: "pointer", fontSize: 16 }}
+          title="Refresh stock"
+          onClick={() => refreshStockHandler(row)}
+        />
         </div>
       ),
-      width: 180,
+      width: 120,
     },
     {
       field: "availableQty",
@@ -520,15 +556,16 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
   useEffect(() => {
     if (editiJWAll) {
       getDetails();
-      getLocations();
       getBillingBranchOptions();
       getDispatchBranchOptions();
     }
   }, [editiJWAll]);
   
   useEffect(() => {
-    if (createJobWorkChallanForm.getFieldsValue().vendorcode) {
+    const vendorcode = createJobWorkChallanForm.getFieldsValue().vendorcode;
+    if (vendorcode) {
       getDropLocation();
+      getLocations(vendorcode?.value);
     }
   }, [createJobWorkChallanForm.getFieldsValue().vendorcode]);
 
@@ -701,7 +738,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
                     <Input />
                   </Form.Item>
                 </Col>
-                <Col span={8}>
+                {/* <Col span={8}>
                   <Form.Item
                     label="Pick Location"
                     name="pickLocation"
@@ -720,7 +757,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
                       options={dropLocationOptions}
                     />
                   </Form.Item>
-                </Col>
+                </Col> */}
               </Row>
               <Row>
                 <Col span={24}>
