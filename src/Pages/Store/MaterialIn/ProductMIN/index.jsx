@@ -45,7 +45,7 @@ import axiosResponseFunction from "../../../../Components/axiosResponseFun";
 import { savefginward } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
-import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 
 export default function ProductMIN() {
   const { showToast } = useToast();
@@ -95,7 +95,7 @@ export default function ProductMIN() {
       igst: 0,
       invoiceDate: "",
       invoiceId: "",
-      location: "20210910145118",
+      location: "",
       exchange_rate: 0,
       orderremark: "",
       locationName: "",
@@ -127,7 +127,7 @@ export default function ProductMIN() {
       igst: 0,
       invoiceDate: "",
       invoiceId: "",
-      location: "20210910145118",
+      location: "",
       exchange_rate: 0,
       orderremark: "",
       locationName: "",
@@ -272,10 +272,7 @@ export default function ProductMIN() {
           };
           setSubmitLoading(true);
           let response = await executeFun(() => savefginward(final), "select");
-          console.log(
-            response,
-            "======================res===================="
-          );
+        
           const data = response?.data;
           setSubmitLoading(false);
           if (response?.success) {
@@ -1029,7 +1026,7 @@ export default function ProductMIN() {
             </Card>
           </Col>
           <Col style={{ height: "100%" }} span={18}>
-            <MyDataTable
+            <FormTable
               columns={columns}
               data={materialInward}
               loading={pageLoading || loading1("select")}
