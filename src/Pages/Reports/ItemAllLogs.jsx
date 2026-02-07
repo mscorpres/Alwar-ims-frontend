@@ -90,7 +90,7 @@ export default function ItemAllLogs() {
     setLoading(false);
     if (response.success) {
       // CHANGE: Updated to use serial_no from backend instead of index
-      const arr = response.data.data2.map((row) => ({
+      const arr = response?.response?.data2.map((row) => ({
         index: row.serial_no, // CHANGED: Use serial_no from backend
         id: v4(),
         ...row,
@@ -98,25 +98,25 @@ export default function ItemAllLogs() {
       setRows(arr);
 
       // CHANGE: Updated pagination state from response
-      if (response.data.pagination) {
-        setCurrentPage(response.data.pagination.currentPage);
-        setTotalRecords(response.data.pagination.totalRecords);
-        setTotalPages(response.data.pagination.totalPages);
+      if (response.response.pagination) {
+        setCurrentPage(response?.response?.pagination.currentPage);
+        setTotalRecords(response?.response.pagination.totalRecords);
+        setTotalPages(response?.response.pagination.totalPages);
       }
       setSummaryData([
-        { title: "Component", description: response.data.data1.component },
-        { title: "Part Code", description: response.data.data1.partno },
-        { title: "Unique Id", description: response.data.data1.unique_id },
+        { title: "Component", description: response.response.data1.component },
+        { title: "Part Code", description: response.response.data1.partno },
+        { title: "Unique Id", description: response.response.data1.unique_id },
         // {
         //   title: "Closing",
         //   description:
-        //     data.response.data1.closingqty + " " + data.response.data1.uom,
+        //     response.response.data1.closingqty + " " + response.response.data1.uom,
         // },
         {
           title: "Last In (Date)",
-          description: response.data.data1.last_date ?? "--",
+          description: response.response.data1.last_date ?? "--",
         },
-        { title: "Last Rate", description: response.data.data1.lastRate },
+        { title: "Last Rate", description: response.response.data1.lastRate },
       ]);
     }else {
       showToast(response.message, "error");
