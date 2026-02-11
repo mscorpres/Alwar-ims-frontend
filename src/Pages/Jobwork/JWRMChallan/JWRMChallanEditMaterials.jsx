@@ -46,23 +46,35 @@ function JWRMChallanEditMaterials({
     });
   
     setLoading("fetchingDetails", false);
-    if (response.success) {
-      let arr = response.data.material.map((row, index) => ({
+    if (response?.success) {
+      const material = response.material ?? [];
+      const arr = material.map((row, index) => ({
         id: v4(),
         index: index + 1,
         ...row,
       }));
-      let obj = response.data.header;
-      let vendor = {
-        label: obj.vendorcode.label,
-        value: obj.vendorcode.value,
-      };
-      createJobWorkChallanForm.setFieldsValue({ ...obj, vendor: vendor });
-      await getVendorBranches(obj.vendorcode.value);
-      await getDispatchAddressDetails(obj.dispatch_info.value);
-      await getBillingAddressDetails(obj.billing_info.value);
-      setVendorData({ vendor: vendor, ...obj });
       setRows(arr);
+
+      const obj = response.header ?? {};
+      const vendorCode = obj.vendorcode;
+      const vendor = vendorCode
+        ? { label: vendorCode.label, value: vendorCode.value }
+        : null;
+      try {
+        createJobWorkChallanForm.setFieldsValue({ ...obj, vendor });
+        if (vendorCode?.value) {
+          await getVendorBranches(vendorCode.value);
+        }
+        if (obj.dispatch_info?.value) {
+          await getDispatchAddressDetails(obj.dispatch_info.value);
+        }
+        if (obj.billing_info?.value) {
+          await getBillingAddressDetails(obj.billing_info.value);
+        }
+        setVendorData(vendor ? { vendor, ...obj } : obj);
+      } catch (err) {
+        console.error("Error setting form/address details:", err);
+      }
     }
   };
   const inputHandler = (name, value, id) => {
@@ -138,13 +150,12 @@ function JWRMChallanEditMaterials({
       search: search,
     });
     setLoading("select", false);
-    if (response.data[0]) {
-      let arr = response.data;
-      arr = arr.map((row) => ({
-        text: row.text,
-        value: row.id,
+    const data = response.data ?? [];
+    if (data.length) {
+      const arr = data.map((row) => ({
+        text: row.label ?? row.text,
+        value: row.key ?? row.id,
       }));
-
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
@@ -201,29 +212,25 @@ function JWRMChallanEditMaterials({
       "/backend/dispatchAddressList"
     );
     setLoading("values", false);
-    const { data: billingData } = billingResponse;
-    const { data: dispatchData } = dispatchgResponse;
-    if (billingData) {
-      if (billingData[0]) {
-        let arr = billingData.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
-        setBillingAddressOptions(arr);
-      } else {
-        showToast(billingData.message.msg, "error");
-      }
+    const billingData = billingResponse.data ?? [];
+    const dispatchData = dispatchgResponse.data ?? [];
+    if (billingData.length) {
+      const arr = billingData.map((row) => ({
+        text: row.label ?? row.text,
+        value: row.key ?? row.id,
+      }));
+      setBillingAddressOptions(arr);
+    } else if (billingResponse.message) {
+      showToast(billingResponse.message?.msg ?? billingResponse.message, "error");
     }
-    if (dispatchData) {
-      if (dispatchData[0]) {
-        let arr = dispatchData.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
-        setDispatchAddressOptions(arr);
-      } else {
-        showToast(dispatchData.message.msg, "error");
-      }
+    if (dispatchData.length) {
+      const arr = dispatchData.map((row) => ({
+        text: row.label ?? row.text,
+        value: row.key ?? row.id,
+      }));
+      setDispatchAddressOptions(arr);
+    } else if (dispatchgResponse.message) {
+      showToast(dispatchgResponse.message?.msg ?? dispatchgResponse.message, "error");
     }
   };
   const getDispatchAddressDetails = async (code) => {
@@ -233,21 +240,19 @@ function JWRMChallanEditMaterials({
       dispatch_code: code,
     });
     setLoading("values", false);
-    const { data } = response;
-    if (data) {
+    
       if (response.success) {
         obj1 = {
           ...obj1,
-          dispatch_to__line1: data.data.address.replaceAll("<br>", "\n"),
-          dispatchfromgst: data.data.gstin,
-          dispatch_to__pincode: data.data.pincode,
+          dispatch_to__line1: response.data.address.replaceAll("<br>", "\n"),
+          dispatchfromgst: response.data.gstin,
+          dispatch_to__pincode: response.data.pincode,
           // billingaddrpan: data.data.pan,
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {
         showToast(response.message, "error");
       }
-    }
   };
   const getBillingAddressDetails = async (code) => {
     let obj1 = createJobWorkChallanForm.getFieldsValue();
@@ -256,15 +261,14 @@ function JWRMChallanEditMaterials({
       billing_code: code,
     });
     setLoading("values", false);
-    const { data } = response;
-  
+    
       if (response.success) {
         obj1 = {
           ...obj1,
-          billing_address: data.address.replaceAll("<br>", "\n"),
-          billingaddrgst: data.gstin,
-          billingaddrcin: data.cin,
-          billingaddrpan: data.pan,
+          billing_address: response.data.address.replaceAll("<br>", "\n"),
+          billingaddrgst: response.data.gstin,
+          billingaddrcin: response.data.cin,
+          billingaddrpan: response.data.pan,
         };
         createJobWorkChallanForm.setFieldsValue(obj1);
       } else {

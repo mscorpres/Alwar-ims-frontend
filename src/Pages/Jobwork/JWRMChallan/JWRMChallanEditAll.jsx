@@ -306,13 +306,12 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       search: search,
     });
     setLoading("select", false);
-    if (response.success && response.data[0]) {
-      let arr = response.data;
-      arr = arr.map((row) => ({
-        text: row.text,
-        value: row.id,
+    const data = response.data ?? [];
+    if (response.success && data.length) {
+      const arr = data.map((row) => ({
+        text: row.label ?? row.text,
+        value: row.key ?? row.id,
       }));
-
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
