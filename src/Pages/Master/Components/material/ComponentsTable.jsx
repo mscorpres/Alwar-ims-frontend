@@ -4,15 +4,15 @@ import { Tag } from "antd";
 
 export default function ComponentsTable({
   actionColumn,
-  getRows,
+
   components,
-  setComponents,
+  
   loading,
-  setLoading,
+
 }) {
   return (
     <MyDataTable
-      loading={loading === "fetch"}
+      loading={loading}
       data={components}
       columns={[actionColumn, ...columns]}
     />

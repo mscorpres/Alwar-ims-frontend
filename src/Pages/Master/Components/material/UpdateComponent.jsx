@@ -67,6 +67,7 @@ export default function UpdateComponent() {
       const response = await imsAxios.post("/component/fetchUpdateComponent", {
         componentKey,
       });
+
       const { data } = response;
 
       if (response.success) {
@@ -90,8 +91,8 @@ export default function UpdateComponent() {
             value: value.uomid,
           },
           mrp: value.mrp,
-          group: value.groupid,
-          subgroup: value.subgroup,
+          group: value.groupid, 
+          subgroup: value.subgroupid,
           isEnabled: value.enable_status,
           jobWork: value.jobwork_rate,
           qcStatus: value.qc_status,
@@ -130,6 +131,7 @@ export default function UpdateComponent() {
           text: value.attr_code,
           value: value.attr_code,
         });
+      
         setTooldata(finalObj.toolLabel);
         componentForm.setFieldsValue(finalObj);
 
@@ -228,12 +230,9 @@ export default function UpdateComponent() {
 
   useEffect(() => {
     if (selectedGroup) {
+      
       getSubGroupOptions(selectedGroup);
-      // Reset subgroup when group changes
-      componentForm.setFieldValue("subgroup", undefined);
-    } else {
-      setSubGroupOptions([]);
-      componentForm.setFieldValue("subgroup", undefined);
+    
     }
   }, [selectedGroup]);
 
@@ -241,39 +240,41 @@ export default function UpdateComponent() {
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/uom/uomSelect2");
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+      const { data, success } = response;
+    
+        if (success) {
+          const arr = data.map((row) => ({
             text: row.text,
             value: row.id,
           }));
           setuomOptions(arr);
         } else {
-          showToast(data.message.msg, "error");
+          showToast(response.message.msg || response.message, "error");
         }
-      }
+    
     } catch (error) {
     } finally {
       setLoading(false);
     }
   };
   const getGroupOptions = async () => {
+
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/groups/groupSelect2");
-      const { data } = response;
-      if (data) {
-        if (data.code === 200) {
-          const arr = data.data.map((row) => ({
+      const { data,success } = response;
+
+        if (success) {
+          componentForm.setFieldValue("group", data[0].id);
+          const arr = data.map((row) => ({
             text: row.text,
             value: row.id,
           }));
           setgroupOptions(arr);
         } else {
-          showToast(data.message.msg, "error");
+          showToast(response.message.msg || response.message, "error");
         }
-      }
+    
     } catch (error) {
     } finally {
       setLoading(false);
@@ -340,11 +341,11 @@ export default function UpdateComponent() {
       "/component/updateComponent/verify",
       payload
     );
-    const { data, success } = response;
+    const {  success } = response;
     if (success) {
       Modal.confirm({
         title: "Are you sure you want to submit this Updated Component?",
-        content: `${data.message}`,
+        content: `${response.message}`,
         onOk() {
           submitHandler(payload);
         },

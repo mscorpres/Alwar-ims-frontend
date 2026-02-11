@@ -32,7 +32,7 @@ import {
 } from "./TableCollumns";
 import UploadDocs from "../MaterialInWithPO/UploadDocs";
 import Loading from "../../../../Components/Loading";
-import { v4 } from "uuid";
+import { v4, validate } from "uuid";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import CurrenceModal from "../../../../Components/CurrenceModal";
 import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
@@ -45,7 +45,7 @@ import axiosResponseFunction from "../../../../Components/axiosResponseFun";
 import { savefginward } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
-import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 
 export default function ProductMIN() {
   const { showToast } = useToast();
@@ -95,7 +95,7 @@ export default function ProductMIN() {
       igst: 0,
       invoiceDate: "",
       invoiceId: "",
-      location: "20210910145118",
+      location: "",
       exchange_rate: 0,
       orderremark: "",
       locationName: "",
@@ -127,7 +127,7 @@ export default function ProductMIN() {
       igst: 0,
       invoiceDate: "",
       invoiceId: "",
-      location: "20210910145118",
+      location: "",
       exchange_rate: 0,
       orderremark: "",
       locationName: "",
@@ -143,7 +143,7 @@ export default function ProductMIN() {
   };
   const validataData = async () => {
     let validation = false;
-    materialInward.map((row) => {
+    materialInward?.map((row) => {
       if (row.component && row.location && row.orderqty) {
         validation = true;
       } else {
@@ -168,7 +168,7 @@ export default function ProductMIN() {
     };
     if (validation == true) {
       let formData = new FormData();
-      if (invoices?.length) {
+      if (invoices?.length > 0) {
         invoices?.map((file) => {
           formData.append("files", file);
         });
@@ -240,7 +240,7 @@ export default function ProductMIN() {
     // console.log("these are the values", values);
 
     axiosResponseFunction(async () => {
-      if (invoices?.length) {
+      if (invoices?.length > 0) {
         setSubmitLoading(true);
         const response = await imsAxios.post(
           "/transaction/upload-invoice",
@@ -249,7 +249,7 @@ export default function ProductMIN() {
 
         fileData = response?.data;
         // form.getFieldValue("vendorType")
-        if (response?.success) {
+        if (!response?.success) {
           return showToast(
             "Some error occured while uploading invoices, Please try again",
             "error"
@@ -270,12 +270,10 @@ export default function ProductMIN() {
             ...values.componentData,
             ...venDetails,
           };
+       
           setSubmitLoading(true);
           let response = await executeFun(() => savefginward(final), "select");
-          console.log(
-            response,
-            "======================res===================="
-          );
+        
           const data = response?.data;
           setSubmitLoading(false);
           if (response?.success) {
@@ -369,11 +367,8 @@ export default function ProductMIN() {
     if (name == "component") {
       if (value) {
         setPageLoading(true);
-        const response = await imsAxios.post(
-          "/jobwork/fetchProductData4Table",
-          {
-            product_name: value.value,
-          }
+        const response = await imsAxios.get(
+          `jobwork/fetchProductData4Table?key=${value?.key}`
         );
         setPageLoading(false);
 
@@ -1032,7 +1027,7 @@ export default function ProductMIN() {
             </Card>
           </Col>
           <Col style={{ height: "100%" }} span={18}>
-            <MyDataTable
+            <FormTable
               columns={columns}
               data={materialInward}
               loading={pageLoading || loading1("select")}

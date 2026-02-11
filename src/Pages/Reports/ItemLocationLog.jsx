@@ -72,7 +72,7 @@ export default function ItemLocationLog() {
 
   // getting data from response for setting async options for async select
   const getData = (response) => {
-    const { data, success, message } = response;
+    const { data, success, massage } = response;
     if (success) {
       if (data.length> 0) {
         const arr = data.map((row) => ({
@@ -83,7 +83,8 @@ export default function ItemLocationLog() {
         setAsyncOptions(arr);
       }
     } else {
-      showToast(message, "error");
+     
+      showToast(massage, "error");
     }
   };
   const getDetails = async (values) => {

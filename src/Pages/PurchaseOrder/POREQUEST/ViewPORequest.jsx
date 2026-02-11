@@ -157,8 +157,6 @@ export default function ViewPORequest({ poId, setPoId, getRows }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [purchaseOrder, billingOptions, shippingOptions]);
 
-  console.log("purchaseOrder", purchaseOrder);
-
  const fetchPODetails = async () => {
   setLoading(true);
   try {

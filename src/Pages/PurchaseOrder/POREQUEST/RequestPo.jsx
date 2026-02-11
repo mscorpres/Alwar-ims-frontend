@@ -12,6 +12,7 @@ import MyButton from "../../../Components/MyButton/index.jsx";
 import ViewPORequest from "./ViewPORequest.jsx";
 import EditPO from "../ManagePO/EditPO/EditPO.jsx";
 import ViewPOLogs from "./ViewPOLogs";
+import CancelPO from "../ManagePO/Sidebars/CancelPO.jsx";
 
 const RequestPo = () => {
   const { showToast } = useToast();
@@ -22,6 +23,7 @@ const RequestPo = () => {
   const [updatePoId, setUpdatePoId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [viewPoLogsId, setViewPoLogsId] = useState(null);
+  const [showClosePO, setShowClosePO] = useState(null);
 
   const columns = [
     {
@@ -49,6 +51,12 @@ const RequestPo = () => {
           label="View PO Logs"
           onClick={() => setViewPoLogsId(row.po_transaction)}
         />,
+        <GridActionsCellItem
+        key="close"
+        showInMenu
+        label="Close PO"
+        onClick={() => handleClosePO(row.po_transaction)}
+      />,
       ],
     },
     {
@@ -225,6 +233,19 @@ const RequestPo = () => {
     },
   ];
 
+  const handleClosePO = async (poid) => {
+    setLoading(true);
+    const response = await imsAxios.post("/purchaseOrder/fetchStatus4PO", {
+      purchaseOrder: poid,
+    });
+    setLoading(false);
+    if (response.success) {
+      setShowClosePO(poid);
+    } else {
+      showToast(response.message, "error");
+    }
+  };
+
   const getSearchResults = async (silent = false) => {
     if (!searchDateRange) {
       if (!silent) {
@@ -353,6 +374,14 @@ const RequestPo = () => {
         />
       )}
       <ViewPOLogs poId={viewPoLogsId} setPoId={setViewPoLogsId} />
+      <CancelPO
+        variant="close"
+        getSearchResults={getSearchResults}
+        setShowCancelPO={setShowClosePO}
+        showCancelPO={showClosePO}
+        setRows={setRows}
+        rows={rows}
+      />
     </div>
   );
 };

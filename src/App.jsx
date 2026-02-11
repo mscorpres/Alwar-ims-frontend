@@ -289,7 +289,7 @@ const App = () => {
       // getting all notifications
       socket.on("all-notifications", (data) => {
         let arr = data;
-        arr = arr.map((row) => {
+        arr = arr?.map((row) => {
           return {
             ...row,
             type: row.msg_type,
