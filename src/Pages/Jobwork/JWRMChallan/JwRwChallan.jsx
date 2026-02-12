@@ -96,7 +96,7 @@ function JwRwChallan() {
     });
     setLoading(false);
     if (response.success) {
-      printFunction(data.data.buffer.data);
+      printFunction(response.data.buffer.data);
     } else {
       showToast(response.message?.msg || response.message, "error");
     }
@@ -114,7 +114,7 @@ function JwRwChallan() {
     });
     setLoading(false);
     if (response.success) {
-      downloadFunction(data.data.buffer.data, data.data.filename);
+      downloadFunction(response.data.buffer.data, response.data.filename);
     } else {
       showToast(response.message?.msg || response.message, "error");
     }

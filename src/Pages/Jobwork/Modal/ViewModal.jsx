@@ -40,11 +40,12 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
       po_transaction: viewModalOpen.jwId,
     });
     setLoading(false);
-    const { data, header } = response?.data;
 
     if (response?.success) {
-      header.map((a) => setView(a));
-      let arr = data?.map((row, index) => {
+      const header = response.header;
+      setView(Array.isArray(header) ? header[0] ?? {} : header ?? {});
+      const rows = response.data ?? [];
+      let arr = rows.map((row, index) => {
         return {
           ...row,
           id: v4(),

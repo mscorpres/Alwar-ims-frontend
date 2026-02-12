@@ -499,10 +499,10 @@ const links = [
   // jobwork links
   [
     { routeName: "Create JW PO", routePath: "/warehouse/job-work/create" },
-    {
-      routeName: "Approval",
-      routePath: "/warehouse/job-work/approval"
-    },
+    // {
+    //   routeName: "Approval",
+    //   routePath: "/warehouse/job-work/approval"
+    // },
     { routeName: "Analysis", routePath: "/warehouse/job-work/analysis" },
     { routeName: "RM Issue", routePath: "/warehouse/job-work/issue" },
     {

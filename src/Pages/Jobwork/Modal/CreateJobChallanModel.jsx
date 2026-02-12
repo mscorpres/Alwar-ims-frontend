@@ -82,7 +82,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
   const getBillingLocation = async (e) => {
     const response = await imsAxios.post("/backend/billingAddressList");
     let a = [];
-    data.map((x) => a.push({ text: x.text, value: x.id }));
+    response.data.map((x) => a.push({ text: x.text, value: x.id }));
     setBillingLocationData(a);
     //  }
   };

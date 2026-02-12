@@ -29,11 +29,12 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
     
    
     setLoading("fetch", false);
-    const { data } = response;
   
     if (response?.success) {
-      data?.header.map((a) => setView(a));
-      let arr = data?.components.map((row, index) => {
+      const headers = response.headers ?? [];
+      setView(Array.isArray(headers) ? headers[0] ?? {} : headers ?? {});
+      const rows = response.components ?? [];
+      let arr = rows.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -154,15 +155,14 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
     };
     // const response = await imsAxios.post("/jobwork/save_jw_material_issue");
     const response = await executeFun(() => saveJwMAterialIssue(finalObj), "select");
-    const { data } = response;
     setCloseLoading("fetch", false);
     if (response.success) {
       setOpenModal(false);
-      toast.success(response.message);
+      showToast(response.message, "success");
     } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
+      showToast(response.message?.msg || response.message, "error");
     }
-    console.log(data);
+    console.log(response.data);
   };
 
   const reset = (i) => {

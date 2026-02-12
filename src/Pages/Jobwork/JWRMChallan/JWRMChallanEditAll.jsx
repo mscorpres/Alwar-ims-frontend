@@ -77,16 +77,15 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         vendor_address: obj.vendor_address?.replaceAll("<br>", "\n"),
       };
       // console.log(obj.vendorcode)
-      
-         // Call getLocations after vendor is set
-         if (obj.vendorcode?.value) {
-          getLocations(obj.vendorcode?.value);
-        }
+      createJobWorkChallanForm.setFieldsValue(obj);
+      // Call getLocations after vendor is set
+      if (obj.vendorcode?.value) {
+        getLocations(obj.vendorcode?.value);
+      }
     }
   };
 
   const inputHandler = async (name, value, id) => {
-    console.log(name, value, id);
     let arr = rows;
     if (name === "out_loc") {
       setLoading("tableSpinner", true);
@@ -95,14 +94,13 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         location: value.value,
       });
       setLoading("tableSpinner", false);
-      const { data } = response;
-      if (data) {
+    
         if (response.success) {
           arr = arr.map((row) => {
             if (row.id === id) {
               return {
                 ...row,
-                availableQty: data.data.closingStock,
+                availableQty: response.data.closingStock,
                 [name]: value.value,
               };
             } else {
@@ -112,7 +110,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         } else {
           showToast(response.message?.msg || response.message, "error");
         }
-      }
+      
     } else {
       arr = arr.map((row) => {
         if (row.id === id) {
@@ -141,12 +139,11 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         component: row.component_key,
         location: row.out_loc,
       });
-      const { data } = response;
       if (response.success) {
         setRows((prev) =>
           prev.map((r) =>
             r.id === row.id
-              ? { ...r, availableQty: data.data.closingStock }
+              ? { ...r, availableQty: response.data.closingStock }
               : r
           )
         );
@@ -222,8 +219,6 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       // transaction_id: obj?.,
     };
     const response = await executeFun(() => saveCreateChallan(final), "select");
-    // console.log("response", response);
-
     setLoading("submit", false);
     if (response.success) {
       showToast(response.data.message, "success");
@@ -239,7 +234,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
   };
   const getLocations = async (vendor) => {
     const response = await imsAxios.get(`backend/jw/warehouse/location?vendor=${vendor}&jw=${editiJWAll.saveTransactionId}`);
-    if (response.data.code === 200) {
+    if (response.success) {
       let arr = response.data.map((row) => ({
         text: row.name,
         value: row.key,
@@ -247,14 +242,14 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       setLocationOptions(arr);
     } else {
       setLocationOptions([]);
-      showToast(response.data.message, "error");
+      showToast(response.message, "error");
     }
   };
   const getBillingBranchOptions = async () => {
     const response = await imsAxios.post("backend/billingAddressList", {
       search: "",
     });
-    if (response.data[0]) {
+    if (response.success && response.data?.length > 0) {
       let arr = response.data;
       arr = arr.map((row) => ({
         text: row.text,
@@ -270,11 +265,11 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     const response = await imsAxios.post("/backend/dispatchAddressList", {
       search: "",
     });
-    if (response.data[0]) {
+    if (response.success && response.data) {
       let arr = response.data;
       arr = arr.map((row) => ({
-        text: row.text,
-        value: row.id,
+        text: row.label,
+        value: row.key,
       }));
 
       setDispatchBranches(arr);
@@ -297,7 +292,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
         }));
         setDropLocationOptions(arr);
       } else {
-        toast.error(response.message);
+        showToast(response.message, "error");
       }
     }
   };
@@ -311,13 +306,12 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       search: search,
     });
     setLoading("select", false);
-    if (response.data[0]) {
-      let arr = response.data;
-      arr = arr.map((row) => ({
-        text: row.text,
-        value: row.id,
+    const data = response.data ?? [];
+    if (response.success && data.length) {
+      const arr = data.map((row) => ({
+        text: row.label ?? row.text,
+        value: row.key ?? row.id,
       }));
-
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
@@ -330,17 +324,18 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     });
     setLoading("page", false);
     if (response.success) {
+      const data = response.data;
       let obj = createJobWorkChallanForm.getFieldsValue();
       obj = {
         ...obj,
-        dispatchfromaddr: response.data.data.address.replaceAll("<br>", "\n"),
+        dispatchfromaddr: data.address?.replaceAll("<br>", "\n") ?? "",
         dispatchfromaddrid: value,
-        dispatchfromgst: response.data.data.gstin,
-        dispatchfrompincode: response.data.data.pincode,
+        dispatchfromgst: data.gstin ?? "",
+        dispatchfrompincode: data.pincode ?? "",
       };
       createJobWorkChallanForm.setFieldsValue(obj);
     } else {
-      showToast(response.data.message.msg, "error");
+      showToast(response.message, "error");
     }
   };
   const getBillingAddress = async (value) => {
@@ -350,18 +345,19 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     });
     setLoading("page", false);
     if (response.success) {
+      const data = response.data;
       let obj = createJobWorkChallanForm.getFieldsValue();
       obj = {
         ...obj,
-        billingaddr: response.data.data.address.replaceAll("<br>", "\n"),
+        billingaddr: data.address?.replaceAll("<br>", "\n") ?? "",
         billingaddrid: value,
-        billingaddrgst: response.data.data.gstin,
-        billingaddrcin: response.data.data.cin,
-        billingaddrpan: response.data.data.pan,
+        billingaddrgst: data.gstin ?? "",
+        billingaddrcin: data.cin ?? "",
+        billingaddrpan: data.pan ?? "",
       };
       createJobWorkChallanForm.setFieldsValue(obj);
     } else {
-      showToast(response.data.message.msg, "error");
+      showToast(response.message, "error");
     }
   };
   const columns = [
@@ -419,37 +415,36 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       field: "issue_qty",
       headerName: "Qty",
       renderCell: ({ row }) => (
-        <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        {row.availableQty != null && row.availableQty !== "" ? (
-          <span>{row.availableQty}</span>
-        ) : (
-          <span />
-        )}
-        <ReloadOutlined
-          style={{ cursor: "pointer", fontSize: 16 }}
-          title="Refresh stock"
-          onClick={() => refreshStockHandler(row)}
-        />
+        <div style={{ width: "100%" }}>
+          <Input
+            style={{ width: "100%" }}
+            value={row.issue_qty}
+            onChange={(e) => inputHandler("issue_qty", e.target.value, row.id)}
+            suffix={row.unit_name}
+            type="number"
+          />
         </div>
       ),
-      width: 120,
+      width: 180,
     },
     {
       field: "availableQty",
       headerName: "Avail. Qty",
       renderCell: ({ row }) => (
-        <div style={{ width: "100%" }}>
-          <Input
-            disabled
-            style={{ width: "100%" }}
-            value={row.availableQty}
-            type="number"
-            // onChange={(e) => inputHandler("issue_qty", e.target.value, row.id)}
-            // suffix={row.availableQty}
+        <div style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          {row.availableQty != null && row.availableQty !== "" ? (
+            <span>{row.availableQty}</span>
+          ) : (
+            <span />
+          )}
+          <ReloadOutlined
+            style={{ cursor: "pointer", fontSize: 16 }}
+            title="Refresh stock"
+            onClick={() => refreshStockHandler(row)}
           />
         </div>
       ),
-      width: 180,
+      width: 120,
     },
     {
       field: "assign_rate",
@@ -531,7 +526,6 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
   ];
 
   const deleteRow = async (i) => {
-    console.log(i);
     setLoading("tableSpinner", true);
     const response = await imsAxios.post("/jobwork/removeChallanJWPart", {
       partcode: i?.component_key,
@@ -551,7 +545,6 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       showToast(response.message?.msg || response.message, "error");
       setLoadChallan(false);
     }
-    // console.log(data);
   };
   useEffect(() => {
     if (editiJWAll) {
@@ -738,26 +731,6 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
                     <Input />
                   </Form.Item>
                 </Col>
-                {/* <Col span={8}>
-                  <Form.Item
-                    label="Pick Location"
-                    name="pickLocation"
-                  >
-                    <MySelect
-                      options={locationOptions}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
-                  <Form.Item
-                    label="Drop Location"
-                    name="dropLocation"
-                  >
-                    <MySelect
-                      options={dropLocationOptions}
-                    />
-                  </Form.Item>
-                </Col> */}
               </Row>
               <Row>
                 <Col span={24}>
