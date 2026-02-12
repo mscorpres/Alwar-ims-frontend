@@ -246,8 +246,9 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
   const getGl = async () => {
     const response = await imsAxios.get("/tally/vbt01/vbt01_gl_options");
     let arr = [];
-    if (data.length > 0) {
-      arr = data.map((d) => {
+   
+    if (response?.data.length > 0) {
+      arr = response?.data.map((d) => {
         return {
           text: d.text,
           value: d.id,
