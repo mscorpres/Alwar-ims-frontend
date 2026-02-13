@@ -24,9 +24,11 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
       po_transaction: row?.jwId,
       skucode: row?.skuKey,
     });
-    setView(response?.data?.header);
+    
+   
     if (response.success) {
-      let arr = response.data.body.map((row, index) => {
+       setView(response?.headers);
+      let arr = response.data.map((row, index) => {
         return {
           ...row,
           id: v4(),
