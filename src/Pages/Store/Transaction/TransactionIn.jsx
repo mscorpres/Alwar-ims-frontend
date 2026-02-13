@@ -63,7 +63,6 @@ const TransactionIn = () => {
       type: "actions",
       width: 30,
       getActions: ({ row }) => [
-        // Upload DOC Icon
         <GridActionsCellItem
           key="download-attachment"
           showInMenu
