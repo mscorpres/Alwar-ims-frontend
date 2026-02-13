@@ -10,7 +10,9 @@ import {
   Row,
   Space,
   Checkbox,
+  Tooltip,
 } from "antd";
+import { CloudDownloadOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../axiosInterceptor";
 import MyDataTable from "../../Components/MyDataTable";
 import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
@@ -232,6 +234,7 @@ const POAnalysis = () => {
                 <Space>
                   <CommonIcons
                     action="downloadButton"
+                    tooltip="Download CSV"
                     onClick={() =>
                       downloadCSV(rows, columns, "PO Analysis Report")
                     }
@@ -239,11 +242,15 @@ const POAnalysis = () => {
                   />
                 </Space>
                 <Space>
-                  {wise?.value === "vendorwise" && (
-                    <CommonIcons
-                      action="downloadButton"
-                      onClick={handleSocketDownload}
-                    />
+                {wise?.value === "vendorwise" && (
+                    <Tooltip title="Download vendor-wise report">
+                      <Button
+                        type="default"
+                        shape="circle"
+                        icon={<CloudDownloadOutlined />}
+                        onClick={handleSocketDownload}
+                      />
+                    </Tooltip>
                   )}{" "}
                   <MyButton variant="search" type="primary" onClick={getRows}>
                     Fetch

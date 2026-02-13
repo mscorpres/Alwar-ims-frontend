@@ -82,12 +82,22 @@ export default function VBTReport() {
   ];
 
   const printFun = async (vbtId) => {
-    setLoading(true);
+   try {
+     setLoading(true);
     const response = await imsAxios.post("/tally/vbt_report/print_vbt_report", {
       vbt_key: vbtId,
     });
-    printFunction(data.buffer.data);
+
+    if (response?.data?.buffer) {
+         printFunction(response?.data.buffer?.data);
     setLoading(false);
+    }
+ 
+    
+   } catch (error) {
+    console.log(error);
+    setLoading(false);
+   }
   };
   const handleDownload = async (id) => {
     setLoading(true);
@@ -98,7 +108,7 @@ export default function VBTReport() {
       vbt_key: id,
     });
 
-    downloadFunction(data.buffer.data, filename);
+    downloadFunction(response.data?.buffer.data, filename);
     setLoading(false);
   };
   const deleteFun = async () => {

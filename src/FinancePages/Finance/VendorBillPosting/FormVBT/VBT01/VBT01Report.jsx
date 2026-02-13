@@ -84,7 +84,7 @@ function VBT01Report({
     setLoading(true);
     const response = await imsAxios.get(`/tally/vbt/getData?vbtKey=${vbtCode}`);
 
-    if (response.success) {
+    if (response.data.length > 0) {
       const { data } = response;
       getGl();
 

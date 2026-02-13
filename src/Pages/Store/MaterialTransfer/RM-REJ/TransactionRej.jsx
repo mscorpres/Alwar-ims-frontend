@@ -30,6 +30,7 @@ function TransactionRej() {
     { field: "uom", headerName: "UoM", width: 80 },
     { field: "transaction", headerName: "Transaction In", width: 150 },
     { field: "completed_by", headerName: "Shiffed By", width: 150 },
+    {field:"remark",headerName:"Remark",width:150},
   ];
 
   const handleDownloadingCSV = () => {
@@ -38,7 +39,7 @@ function TransactionRej() {
     arr = dataComesFromDateWise;
     csvData = arr.map((row) => {
       return {
-        Date: row.approvedate,
+        Date: row.date,
         Part: row.part,
         Component: row.name,
         "Out Location": row.out_location,
