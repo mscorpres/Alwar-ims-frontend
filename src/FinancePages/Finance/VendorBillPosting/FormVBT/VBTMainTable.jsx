@@ -28,7 +28,7 @@ import { RiProhibitedLine } from "react-icons/ri";
 const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
   const { showToast } = useToast();
   const [wise, setWise] = useState("min_wise");
-  const [searchInput, setSearchInput] = useState("MIN/25-26/");
+  const [searchInput, setSearchInput] = useState("MIN08/25-26/");
   const [selectLoading, setSelectLoading] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
   const [vbtData, setVBTData] = useState([]);
@@ -443,7 +443,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
   // ----------------------------
   useEffect(() => {
     if (wise == "min_wise") {
-      setSearchInput("MIN/25-26/");
+      setSearchInput("MIN08/25-26/");
     } else {
       setSearchInput(null);
     }

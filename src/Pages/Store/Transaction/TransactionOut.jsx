@@ -16,6 +16,15 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { DownloadOutlined } from "@ant-design/icons";
 import MyButton from "../../../Components/MyButton/index.jsx";
 import { useToast } from "../../../hooks/useToast.js";
+import MySelect from "../../../Components/MySelect.jsx";
+
+const wiseOptions = [
+  { text: "Issue", value: "ISSUE" },
+  { text: "Job Work", value: "JOBWORK" },
+  { text: "Consumption", value: "CONSUMPTION" },
+  { text: "SFG Consumption", value: "SFG-CONSUMPTION" },
+  { text: "Transfer", value: "TRANSFER" },
+];
 
 const TransactionOut = () => {
   const { showToast } = useToast();
@@ -24,7 +33,7 @@ const TransactionOut = () => {
   const [dateData, setDateData] = useState([]);
   const [fetchData, setFetchData] = useState([]);
   const [search, setSearch] = useState("");
-  const dispatch = useDispatch();
+  const [wise, setWise] = useState("ISSUE");
   const { user, notifications } = useSelector((state) => state.login);
 
   const content1 = (row) => (
@@ -91,7 +100,7 @@ const TransactionOut = () => {
     } else {
       setLoading(true);
       setDateData([]);
-      const response = await imsAxios.post("/transaction/transactionOut", {
+      const response = await imsAxios.get(`/transaction/transactionOut?data=${datee}&type=${wise}`, {
         data: datee,
       });
       // console.log("Response", data);
@@ -124,6 +133,14 @@ const TransactionOut = () => {
       <Row gutter={10}  justify="space-between">
         <Col>
           <Space>
+              <div style={{ width: "200px" }}> 
+             <MySelect
+              options={wiseOptions}
+              defaultValue={wiseOptions.filter((o) => o.value === wise)[0]}
+              onChange={setWise}
+              value={wise}
+            />
+           </div>
             <MyDatePicker setDateRange={setDatee} size="default" />
 
             <MyButton
