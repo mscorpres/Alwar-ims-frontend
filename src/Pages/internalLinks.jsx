@@ -337,6 +337,10 @@ const links = [
       routeName: "SFG Product",
       routePath: "/masters/products/sfg",
     },
+      {
+      routeName: "AddSKUOpeningRate",
+      routePath: "/masters/sku-opening-rate",
+    },
   ],
   // hsn map links
   [{ routeName: "HSN Map", routePath: "/hsn-map" }],

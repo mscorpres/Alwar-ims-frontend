@@ -127,6 +127,7 @@ import {
   ViewAgreement,
   AddAgreementType,
   JobworkApproval,
+   AddSKUOpeningRate,
   //@ts-ignore
 } from "../Pages/index.jsx";
 //@ts-ignore
@@ -304,9 +305,10 @@ const Routes = [
     main: () => <Product />,
   },
   {
-    path: "/masters/products/sfg",
-    main: () => <Product />,
+    path: "/masters/sku-opening-rate",
+    main: () => <AddSKUOpeningRate />,
   },
+    
   {
     path: "/group",
     main: () => <Group />,

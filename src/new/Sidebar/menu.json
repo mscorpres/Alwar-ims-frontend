@@ -502,6 +502,13 @@
                 "path": "/masters/products/sfg",
                 "isShown": false
               },
+                {
+                "key": "Component/B1442",
+                "label": "Add SKU Opening Rate",
+                "icon": "CategoryIcon",
+                "path": "/masters/sku-opening-rate",
+                "isShown": false
+              },
               {
                 "key": "hsn-map/B14",
                 "label": "HSN Map",
