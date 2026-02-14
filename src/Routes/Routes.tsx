@@ -304,6 +304,10 @@ const Routes = [
     path: "/masters/products/fg",
     main: () => <Product />,
   },
+   {
+    path: "/masters/products/sfg",
+    main: () => <Product />,
+  },
   {
     path: "/masters/sku-opening-rate",
     main: () => <AddSKUOpeningRate />,
