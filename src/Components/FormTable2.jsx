@@ -192,7 +192,7 @@ const SingleRow = memo(
             !row.conditional ? (
               <td key={columnIndex} style={columnCellStyle(row, index)}>
                 <Form.Item
-                  rules={isComponentRequired() && rules[row.name]}
+                  rules={isComponentRequired() && Array.isArray(rules[row.name]) ? rules[row.name] : []}
                   name={[field.name, row.name]}
                   style={{
                     margin: 0,
@@ -209,7 +209,7 @@ const SingleRow = memo(
               row.condition() && (
                 <td style={columnCellStyle(row, index)}>
                   <Form.Item
-                    rules={isComponentRequired() && rules[row.name]}
+                    rules={isComponentRequired() && Array.isArray(rules[row.name]) ? rules[row.name] : []}
                     name={[field.name, row.name]}
                     style={{
                       margin: 0,
