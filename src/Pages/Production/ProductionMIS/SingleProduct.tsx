@@ -15,6 +15,7 @@ import MyAsyncSelect from "@/Components/MyAsyncSelect";
 import SingleDatePicker from "@/Components/SingleDatePicker";
 import { CommonIcons } from "@/Components/TableActions.jsx/TableActions";
 import MyButton from "@/Components/MyButton";
+import { normalizeFormRules } from "@/utils/general";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 
@@ -120,7 +121,7 @@ export default function SingleProduct({
           style={{ width: 100 }}
           label="Shift"
           name={[field.name, "shiftLabel"]}
-          rules={rules.shiftLabel}
+          rules={normalizeFormRules(rules?.shiftLabel)}
         >
           <MySelect options={shiftLabelOptions} />
         </Form.Item>
@@ -129,7 +130,7 @@ export default function SingleProduct({
           style={{ width: 140 }}
           label="Product Type"
           name={[field.name, "productType"]}
-          rules={rules.shiftLabel}
+          rules={normalizeFormRules(rules?.shiftLabel)}
         >
           <MySelect disabled options={typeOptions} />
         </Form.Item>
@@ -137,7 +138,7 @@ export default function SingleProduct({
           style={{ width: 100 }}
           label="Line No."
           name={[field.name, "lineCount"]}
-          rules={rules.lineCount}
+          rules={normalizeFormRules(rules?.lineCount)}
         >
           <Input />
         </Form.Item>
@@ -145,7 +146,7 @@ export default function SingleProduct({
           <Form.Item
             label="Product/Component"
             name={[field.name, "product"]}
-            rules={rules.product}
+            rules={normalizeFormRules(rules?.product)}
           >
             <MyAsyncSelect
               loadOptions={handleFetchProductOptions}
@@ -161,7 +162,7 @@ export default function SingleProduct({
           style={{ width: 100 }}
           label="Manpower"
           name={[field.name, "manPower"]}
-          rules={rules.manPower}
+          rules={normalizeFormRules(rules?.manPower)}
         >
           <Input />
         </Form.Item>
@@ -170,12 +171,12 @@ export default function SingleProduct({
           style={{ width: 100 }}
           label="Output"
           name={[field.name, "output"]}
-          rules={rules.output}
+          rules={normalizeFormRules(rules?.output)}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item label="Date" name={[field.name, "date"]} rules={rules.date}>
+        <Form.Item label="Date" name={[field.name, "date"]} rules={normalizeFormRules(rules?.date)}>
           <SingleDatePicker
             setDate={(value) =>
               form.setFieldValue(["shifts", field.name, "date"], value)
@@ -186,7 +187,7 @@ export default function SingleProduct({
           <Form.Item
             label="Shift Timing"
             name={[field.name, "shiftHours"]}
-            rules={rules.shiftStart}
+            rules={normalizeFormRules(rules?.shiftStart)}
           >
             <TimePicker.RangePicker format={"HH:mm"} order={false} />
           </Form.Item>
@@ -196,7 +197,7 @@ export default function SingleProduct({
           <Form.Item
             label="Shift Start - End"
             name={[field.name, "workingTimings"]}
-            rules={rules.workingHoursHours}
+            rules={normalizeFormRules(rules?.workingHoursHours)}
           >
             <TimePicker.RangePicker
               order={false}

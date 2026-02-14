@@ -1,6 +1,7 @@
 import { Form, Upload } from "antd";
 import React from "react";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import { normalizeFormRules } from "../../../../utils/general";
 
 const UploadFile = ({ rules }) => {
   const props = {
@@ -25,7 +26,7 @@ const UploadFile = ({ rules }) => {
         name="files"
         valuePropName="fileList"
         getValueFromEvent={normFile}
-        rules={rules}
+        rules={normalizeFormRules(rules)}
         noStyle
       >
         <Upload.Dragger name="files" {...props}>

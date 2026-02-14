@@ -1,5 +1,12 @@
 import dayjs from "dayjs";
 
+/**
+ * Ensures Form.Item receives an array for `rules` (Ant Design calls rules.some()).
+ * Use for rules from objects (e.g. rules.fieldName) that may be undefined or non-array.
+ */
+export const normalizeFormRules = (rules: unknown): unknown[] =>
+  Array.isArray(rules) ? rules : [];
+
 export const convertSelectOptions = (
   arr: [],
   label?: string,

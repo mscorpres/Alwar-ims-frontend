@@ -232,6 +232,8 @@ function CustomNoRowsOverlay() {
 }
 
 export default function MyDataTable(props) {
+  // Omit 'rules' so it's never passed to DataGrid (Form.Item expects array; prevents rules.some error when used inside Form)
+  const { rules: _rules, ...dataTableProps } = props;
   function CustomToolbar() {
     return (
       <StyledToolbarContainer>
@@ -449,7 +451,7 @@ export default function MyDataTable(props) {
           },
         }}
         loading={props.loading}
-        {...props}
+        {...dataTableProps}
       />
     </Box>
   );

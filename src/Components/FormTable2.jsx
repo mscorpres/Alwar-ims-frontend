@@ -1,5 +1,6 @@
 import { Form, Row, Typography } from "antd";
 import React from "react";
+import { normalizeFormRules } from "../utils/general";
 import { CommonIcons } from "./TableActions.jsx/TableActions";
 import { useEffect } from "react";
 import { memo } from "react";
@@ -192,7 +193,7 @@ const SingleRow = memo(
             !row.conditional ? (
               <td key={columnIndex} style={columnCellStyle(row, index)}>
                 <Form.Item
-                  rules={isComponentRequired() && Array.isArray(rules[row.name]) ? rules[row.name] : []}
+                  rules={isComponentRequired() ? normalizeFormRules(rules[row.name]) : []}
                   name={[field.name, row.name]}
                   style={{
                     margin: 0,
@@ -209,7 +210,7 @@ const SingleRow = memo(
               row.condition() && (
                 <td style={columnCellStyle(row, index)}>
                   <Form.Item
-                    rules={isComponentRequired() && Array.isArray(rules[row.name]) ? rules[row.name] : []}
+                    rules={isComponentRequired() ? normalizeFormRules(rules[row.name]) : []}
                     name={[field.name, row.name]}
                     style={{
                       margin: 0,
