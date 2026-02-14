@@ -1,4 +1,4 @@
-import { Card, Flex, Drawer, Modal, Popover, Radio, Skeleton, Button, Space } from "antd";
+import { Card, Flex, Drawer, Modal, Tooltip, Radio, Skeleton, Button, Space } from "antd";
 import { Col, Divider, Form, Input, Row, Typography } from "antd/es";
 import React, { useEffect, useState } from "react";
 import MyButton from "../../../../Components/MyButton";
@@ -218,7 +218,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
   return (
     <Drawer
       title="Process Request"
-      open={show}
+      open={!!show}
       width="100vw"
       placement="right"
       onClose={hide}
@@ -329,25 +329,25 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                       label="Select Part Code"
                       rules={rules.component}
                     >
-                      <Radio.Group style={{ width: "100%" }}>
-                        <Row>
-                          {loading("fetchLocations") && <Loading />}
-                          {componentOptions
-                            .filter((row) => {
-                              const matched = row.text
-                                .toLowerCase()
-                                .includes(filterString.toLowerCase());
-                              return matched;
-                            })
-                            .map((comp, index) => (
-                              <Col span={6}>
-                                <Popover content={comp.componentName}>
-                                  <Radio value={comp.value}>{comp.text}</Radio>
-                                </Popover>
-                              </Col>
-                            ))}
-                        </Row>
-                      </Radio.Group>
+                      {loading("fetchLocations") && <Loading />}
+                      <Radio.Group 
+                        style={{ width: "100%", display: "flex", flexWrap: "wrap", gap: "8px" }}
+                        options={Array.isArray(componentOptions) ? componentOptions
+                          .filter((row) => {
+                            const matched = row.text
+                              .toLowerCase()
+                              .includes(filterString.toLowerCase());
+                            return matched;
+                          })
+                          .map((comp) => ({
+                            label: (
+                              <Tooltip title={comp.componentName} placement="top">
+                                <span>{comp.text}</span>
+                              </Tooltip>
+                            ),
+                            value: comp.value,
+                          })) : []}
+                      />
                     </Form.Item>
                   </div>
                 </Flex>
