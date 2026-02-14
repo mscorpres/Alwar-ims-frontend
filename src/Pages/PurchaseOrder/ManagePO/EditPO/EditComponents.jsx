@@ -535,7 +535,6 @@ export default function EditComponent({
             </Popconfirm>
           )
         ),
-      sortable: false,
     },
     {
       headerName: "Part no.",
@@ -560,7 +559,6 @@ export default function EditComponent({
     },
     {
       headerName: "Item Description",
-      width: 200,
       width: 250,
       sortable: false,
       renderCell: (params) => itemDescriptionCell(params, inputHandler),

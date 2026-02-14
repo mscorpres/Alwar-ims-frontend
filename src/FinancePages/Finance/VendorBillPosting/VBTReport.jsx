@@ -29,7 +29,7 @@ import MyButton from "../../../Components/MyButton";
 
 export default function VBTReport() {
   const { showToast } = useToast();
-  const [searchInput, setSearchInput] = useState("MIN/25-26/");
+  const [searchInput, setSearchInput] = useState("MIN08/25-26/");
 
   const [wise, setWise] = useState("minwise");
   const [vbtOption, setVbtOption] = useState("ALL");
@@ -972,7 +972,7 @@ export default function VBTReport() {
   useEffect(() => {
     setRows([]);
     if (wise == "minwise") {
-      setSearchInput("MIN/25-26/");
+      setSearchInput("MIN08/25-26/");
     } else {
       setSearchInput("");
     }
