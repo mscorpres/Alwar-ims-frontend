@@ -218,7 +218,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
   return (
     <Drawer
       title="Process Request"
-      open={show}
+      open={!!show}
       width="100vw"
       placement="right"
       onClose={hide}
