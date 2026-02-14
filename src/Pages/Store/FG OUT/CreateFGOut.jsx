@@ -7,14 +7,20 @@ import MyDataTable from "../../../Components/MyDataTable";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import NavFooter from "../../../Components/NavFooter.jsx";
+import MySelect from "../../../Components/MySelect.jsx";
 
 const { TextArea } = Input;
 const CreateFGOut = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [locationOptions, setLocationOptions] = useState([]);
   const [selLoading, setSelLoading] = useState(false);
-  const options = [{ label: "Sale", value: "SL001" },{ label: "Other", value: "OT001" }];
+  const options = [
+    { label: "Sale", value: "SL001" },
+    { label: "Replacement", value: "REPL" },
+    { label: "Other", value: "OT001" },
+  ];
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [createFgOut, setCreateFgOut] = useState({
@@ -33,6 +39,7 @@ const CreateFGOut = () => {
       product: "",
       quantity: "",
       total: "",
+      location: "",
       remarks: "",
       uom: "",
     },
@@ -46,6 +53,7 @@ const CreateFGOut = () => {
         id: v4(),
         product: "",
         quantity: "",
+        location: "",
         total: "",
         remarks: "",
       },
@@ -57,6 +65,17 @@ const CreateFGOut = () => {
       return addRowData.filter((row) => row.id != id);
     });
   };
+
+  const getLocations = async () => {
+    const { data } = await imsAxios.get("/ppr/mfg_locations");
+    const arr = [];
+    data?.map((a) => arr.push({ text: a.text, value: a.id }));
+    setLocationOptions(arr);
+  };
+
+  useEffect(() => {
+    getLocations();
+  }, []);
 
   const getOption = async (productSearchInput) => {
     if (productSearchInput?.length > 2) {
@@ -96,7 +115,7 @@ const CreateFGOut = () => {
           } else {
             return h;
           }
-        })
+        }),
       );
     } else if (name == "quantity") {
       setAddRowData((quantity) =>
@@ -108,7 +127,7 @@ const CreateFGOut = () => {
           } else {
             return h;
           }
-        })
+        }),
       );
     } else if (name == "remarks") {
       setAddRowData((remarks) =>
@@ -116,6 +135,19 @@ const CreateFGOut = () => {
           if (h.id == id) {
             {
               return { ...h, remarks: value.target.value };
+            }
+          } else {
+            return h;
+          }
+        }),
+      );
+    }else if (name == "location") {
+     
+      setAddRowData((location) =>
+        location.map((h) => {
+          if (h.id == id) {
+            {
+              return { ...h, location: value };
             }
           } else {
             return h;
@@ -130,11 +162,14 @@ const CreateFGOut = () => {
     let arrPro = [];
     let arrQty = [];
     let arrRemark = [];
+    let arrLoc = [];
     addRowData.map((a) => arrPro.push(a.product));
     addRowData.map((a) => arrQty.push(a.quantity));
     addRowData.map((a) => arrRemark.push(a.remarks));
+    addRowData.map((a) => arrLoc.push(a.location));
     // addRowData.map((a) => console.log(a));
     // console.log(arrQty);
+
 
     if (!createFgOut.selectType) {
       showToast("Please Select Option", "error");
@@ -144,6 +179,7 @@ const CreateFGOut = () => {
         fg_out_type: createFgOut.selectType,
         product: arrPro,
         qty: arrQty,
+        location: arrLoc,
         remark: arrRemark,
         comment: createFgOut.comment,
       });
@@ -169,6 +205,7 @@ const CreateFGOut = () => {
         id: v4(),
         product: "",
         quantity: "",
+        location: "",
         total: "",
         remarks: "",
       },
@@ -247,6 +284,18 @@ const CreateFGOut = () => {
       ),
     },
     {
+      headerName: "Location",
+      field: "location",
+      width: 400,
+      renderCell: ({ row }) => (
+        <MySelect
+          value={row?.location}
+          onChange={(value) => compInputHandler("location", row.id, value)}
+          options={locationOptions}
+        />
+      ),
+    },
+    {
       headerName: "Remark",
       field: "remarks ",
       width: 250,
@@ -312,14 +361,13 @@ const CreateFGOut = () => {
           />
         </Col>
       </Row>
-      <Row >
-         <NavFooter
-                resetFunction={resetFunction}
-                submitFunction={addFGOut}
-                nextLabel="Submit"
-                loading={loadingUpdate}
-              />
-       
+      <Row>
+        <NavFooter
+          resetFunction={resetFunction}
+          submitFunction={addFGOut}
+          nextLabel="Submit"
+          loading={loadingUpdate}
+        />
       </Row>
     </>
   );
