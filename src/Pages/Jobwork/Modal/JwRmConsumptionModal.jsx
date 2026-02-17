@@ -524,11 +524,10 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
           payload
         );
 
-        if (response.success || response.data?.status === "success") {
+        if (response.success) {
           setLoading(false);
           showToast(
             response.message ||
-              response.data?.message ||
               "RM Consumption saved successfully",
             "success"
           );
@@ -638,7 +637,6 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
       sfgCreateQty: mainData[0].orderqty,
     };
     const response = await executeFun(() => getBomItem(final), "select");
-    // const response = await imsAxios.post("/jobwork/getBomItem");
     if (response.data.status === "success" || response.data.code == 200) {
       const { data } = response;
       let arr = data.data.map((r, id) => {

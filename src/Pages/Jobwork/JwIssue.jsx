@@ -25,7 +25,7 @@ const JwIssue = () => {
   const [jwData, setJWData] = useState([]);
   const [vendorData, setVendorData] = useState([]);
   const [allData, setAllData] = useState({
-    setType: "",
+    setType: "datewise",
     sfg: "",
     jwId: "",
     vendorName: "",
@@ -55,7 +55,7 @@ const JwIssue = () => {
     if (search.length > 2) {
       const response = await executeFun(
         () => getVendorOptions(search),
-        "select"
+        "select",
       );
       let arr = [];
       if (response?.success) {
@@ -203,7 +203,11 @@ const JwIssue = () => {
         <div
           key="arrow-right"
           onClick={() => setOpenModal(row)}
-          style={{ cursor: "pointer", display: "inline-flex", alignItems: "center" }}
+          style={{
+            cursor: "pointer",
+            display: "inline-flex",
+            alignItems: "center",
+          }}
         >
           <ArrowRightOutlined />
         </div>,
@@ -212,7 +216,7 @@ const JwIssue = () => {
   ];
   return (
     <>
-      <div style={{ height: "95%" }}>
+      <div style={{ height: "95%", padding:10 }}>
         {/* <InternalNav links={JobworkLinks} /> */}
         <Row gutter={10}>
           <Col span={4}>
@@ -220,7 +224,7 @@ const JwIssue = () => {
               placeholder="Select Option"
               style={{ width: "100%" }}
               options={options}
-              value={allData.setType.value}
+              value={allData.setType}
               onChange={(w) =>
                 setAllData((allData) => {
                   return { ...allData, setType: w };
@@ -275,11 +279,11 @@ const JwIssue = () => {
                   loadOptions={getOption}
                   value={allData.sfg}
                   optionsState={asyncOptions}
-                  onChange={(e) =>
+                  onChange={(e) => {
                     setAllData((allData) => {
                       return { ...allData, sfg: e };
-                    })
-                  }
+                    });
+                  }}
                   placeholder="SFG SKU wise"
                 />
               </Col>
@@ -339,7 +343,7 @@ const JwIssue = () => {
           )}
         </Row>
 
-        <div style={{ height: "87%", margin: "10px" }}>
+        <div style={{ height: "calc(100% - 20px)", marginTop: "10px" }}>
           {allData.setType == "datewise" ? (
             <MyDataTable
               loading={loading("fetch")}

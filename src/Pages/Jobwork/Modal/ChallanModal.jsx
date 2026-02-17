@@ -211,6 +211,8 @@ function ChallanModal({ challanModal, setChallanModal }) {
     //  console.log(data);
     if (response.success) {
       setSpinLoading(false);
+      setChallanModal(false);
+      showToast(response.message, "success");
     } else if (!response.success) {
       showToast(response.message?.msg || response.message, "error");
       setSpinLoading(false);

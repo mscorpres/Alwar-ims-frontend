@@ -109,9 +109,9 @@ const POAnalysis = () => {
     const { data } = response;
     if (response.success) {
       if (action === "print") {
-        printFunction(data?.buffer.data);
+        printFunction(data?.buffer);
       } else {
-        downloadFunction(data?.buffer.data, jwId);
+        downloadFunction(data?.buffer?.data, jwId);
       }
     } else {
       toast.error(response?.message);
@@ -197,7 +197,7 @@ const POAnalysis = () => {
   const selectedWise = filterForm.getFieldValue("wise");
 
   return (
-    <Row gutter={6} style={{ height: "90%", padding: 10 }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10 }}>
       <Col span={4}>
         <Row gutter={[0, 6]}>
           <Col span={24}>

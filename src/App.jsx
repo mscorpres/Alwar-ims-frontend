@@ -259,8 +259,8 @@ const App = () => {
     if (user && user.token) {
       // getting all notifications
       socket.on("all-notifications", (data) => {
-        let arr = data;
-        arr = arr?.map((row) => {
+        let arr = [];
+        arr = data?.map((row) => {
           return {
             ...row,
             type: row.msg_type,

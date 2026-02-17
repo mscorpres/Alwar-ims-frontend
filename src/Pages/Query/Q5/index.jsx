@@ -55,7 +55,7 @@ const QueryQ5 = () => {
       "select"
     );
     let arr = [];
-    console.log("apu response in q5", response);
+ 
     if (response.success) {
       const { data } = response;
       arr = convertSelectOptions(data);
@@ -73,6 +73,7 @@ const QueryQ5 = () => {
         date: values.date,
       };
       const { data, success } = await executeFun(() => getQ5(payload), "fetch");
+     
       if (success && data) {
         setHeaderData({
           uniqueId: data.component.unique_id,

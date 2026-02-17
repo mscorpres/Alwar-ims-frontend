@@ -27,8 +27,8 @@ function UpdateModal({ updateModalInfo, setUpdateModalInfo, getRows }) {
     
    
     if (response.success) {
-       setView(response?.headers);
-      let arr = response.data.map((row, index) => {
+       setView(response?.data?.header);
+      let arr = response?.data?.body?.map((row, index) => {
         return {
           ...row,
           id: v4(),

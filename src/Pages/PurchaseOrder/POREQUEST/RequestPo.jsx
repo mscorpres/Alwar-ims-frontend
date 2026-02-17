@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Col, Row, Space, Tooltip } from "antd";
+import { Col, Input, Row, Space, Tooltip } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker.jsx";
 import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable.jsx";
@@ -13,13 +13,22 @@ import ViewPORequest from "./ViewPORequest.jsx";
 import EditPO from "../ManagePO/EditPO/EditPO.jsx";
 import ViewPOLogs from "./ViewPOLogs";
 import CancelPO from "../ManagePO/Sidebars/CancelPO.jsx";
+import MySelect from "../../../Components/MySelect.jsx";
+
+ const wiseOptions = [
+    { value: "single_date_wise", text: "Date Wise" },
+    { value: "po_wise", text: "PO ID Wise" },
+
+  ];
 
 const RequestPo = () => {
   const { showToast } = useToast();
   const [searchLoading, setSearchLoading] = useState(false);
   const [viewPoId, setViewPoId] = useState(null);
   const [rows, setRows] = useState([]);
+  const [wise, setWise] = useState("po_wise");
   const [searchDateRange, setSearchDateRange] = useState("");
+   const [searchInput, setSearchInput] = useState("");
   const [updatePoId, setUpdatePoId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [viewPoLogsId, setViewPoLogsId] = useState(null);
@@ -43,7 +52,10 @@ const RequestPo = () => {
           showInMenu
           label="Edit"
           onClick={() => getPoDetail(row.po_transaction)}
-          disabled={row.poacceptstatus === "UNDER VERIFICATION" || row.poacceptstatus === "PENDING"}
+          disabled={
+            row.poacceptstatus === "UNDER VERIFICATION" ||
+            row.poacceptstatus === "PENDING"
+          }
         />,
         <GridActionsCellItem
           key="poLogs"
@@ -52,11 +64,11 @@ const RequestPo = () => {
           onClick={() => setViewPoLogsId(row.po_transaction)}
         />,
         <GridActionsCellItem
-        key="close"
-        showInMenu
-        label="Close PO"
-        onClick={() => handleClosePO(row.po_transaction)}
-      />,
+          key="close"
+          showInMenu
+          label="Close PO"
+          onClick={() => handleClosePO(row.po_transaction)}
+        />,
       ],
     },
     {
@@ -247,19 +259,21 @@ const RequestPo = () => {
   };
 
   const getSearchResults = async (silent = false) => {
-    if (!searchDateRange) {
+  
       if (!silent) {
         showToast("Please select start and end dates for the results", "error");
+          return;
       }
-      return;
-    }
+    
+ 
+    const search = wise === "single_date_wise" ? searchDateRange : searchInput.trim();
 
     setRows([]);
     setSearchLoading(true);
     try {
       const response = await imsAxios.post("/purchaseOrder/requested", {
-        data: searchDateRange,
-        wise: "single_date_wise",
+        data: search,
+        wise: wise,
       });
       setSearchLoading(false);
       if (response.success) {
@@ -293,10 +307,9 @@ const RequestPo = () => {
 
   const getPoDetail = async (poid) => {
     setLoading(true);
-    const response = await imsAxios
-      .post("/purchaseOrder/fetchData4Update", {
-        pono: poid.replaceAll("_", "/"),
-      })
+    const response = await imsAxios.post("/purchaseOrder/fetchData4Update", {
+      pono: poid.replaceAll("_", "/"),
+    });
     setLoading(false);
     if (response.success) {
       setUpdatePoId({
@@ -318,16 +331,30 @@ const RequestPo = () => {
       >
         <Col>
           <Space>
+            <div style={{ width: 150 }}>
+              <MySelect options={wiseOptions} onChange={setWise} value={wise} />
+            </div>
             <div style={{ width: 300 }}>
-              <MyDatePicker
+               {wise === "single_date_wise" ? (
+                  <MyDatePicker
                 size="default"
                 setDateRange={setSearchDateRange}
                 dateRange={searchDateRange}
                 value={searchDateRange}
               />
+              ) :   (
+                <Input
+                  style={{ width: "100%" }}
+                  type="text"
+                  placeholder="Enter Po Number"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+              ) }
+            
             </div>
             <MyButton
-              disabled={searchDateRange === ""}
+              
               type="primary"
               loading={searchLoading}
               onClick={getSearchResults}

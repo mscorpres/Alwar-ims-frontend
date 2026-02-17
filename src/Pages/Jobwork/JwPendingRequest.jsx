@@ -86,9 +86,11 @@ function JwPendingRequest() {
       ref_id: refId,
       challan: challan_id,
     });
+
+
     setLoading(false);
     if (response.success) {
-      printFunction(response.data.buffer.data);
+      printFunction(response.data.buffer?.data);
     } else {
       showToast(response.message, "error");
     }
@@ -107,7 +109,7 @@ function JwPendingRequest() {
     });
     setLoading(false);
     if (response.success) {
-      downloadFunction(response.data.buffer.data, response.data.filename);
+      downloadFunction(response.data.buffer?.data, response.data.filename);
     } else {
       showToast(response.message, "error");
     }
@@ -238,7 +240,7 @@ function JwPendingRequest() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding:10 }}>
       <JWRMChallanEditMaterials
         editingJWMaterials={editingJWMaterials}
         setEditingJWMaterials={setEditingJWMaterials}
@@ -256,7 +258,7 @@ function JwPendingRequest() {
       />
       <Row
         justify="space-between"
-        style={{ margin: "0px 10px", marginBottom: 6 }}
+       
       >
         <Col>
           <Space>
@@ -344,7 +346,7 @@ function JwPendingRequest() {
           </Space>
         </Col>
       </Row>
-      <div style={{ height: "95%", margin: "0px 10px" }}>
+      <div style={{ height: "92%", marginTop: "10px" }}>
         <MyDataTable
           loading={loading === "fetch" || loading === "print"}
           columns={columns}
