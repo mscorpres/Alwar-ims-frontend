@@ -494,15 +494,30 @@ export default function EditComponent({
         updatecode: row.updateRow,
         pocode: updatePoId?.orderid,
       };
-      console.log(obj);
       setRemovePartLoading(row.id);
-      const response = await imsAxios.post("/purchaseOrder/removePart", obj);
-      setRemovePartLoading(false);
-      if (response.success) {
-        showToast(response.message, "success");
-        removeRows(row.id);
-      } else {
-        showToast(response.message?.msg || response.message, "error");
+      try {
+        const response = await imsAxios.post("/purchaseOrder/removePart", obj);
+        setRemovePartLoading(false);
+        // Interceptor may return response.data when success is present, so support both shapes
+        const data = response?.data ?? response;
+        const isSuccess =
+          data?.code === 200 ||
+          data?.success === true ||
+          data?.status === "success";
+        if (isSuccess) {
+          showToast(data?.message ?? "Part removed successfully.", "success");
+          removeRows(row.id);
+        } else {
+          showToast(data?.message?.msg ?? data?.message ?? "Failed to remove part", "error");
+        }
+      } catch (err) {
+        setRemovePartLoading(false);
+        const errMsg =
+          err?.response?.data?.message?.msg ??
+          err?.message?.msg ??
+          err?.message ??
+          "Failed to remove part";
+        showToast(errMsg, "error");
       }
     } else {
       removeRows(row.id);
@@ -516,12 +531,17 @@ export default function EditComponent({
       width: 50,
       field: "add",
       sortable: false,
-      renderCell: ({ row }) =>
-        removePartLoading.toString() === row.id ? (
+      disableColumnMenu: true,
+      renderCell: ({ row }) => {
+        const oldRowCount = rowCount.filter((r) => !r.new).length;
+        const canRemoveNew = row.new === true && rowCount.length > 1;
+        const canRemoveOld = !row.new && oldRowCount > 1 && rowCount.length > 1;
+        const showRemove = canRemoveNew || canRemoveOld;
+
+        return removePartLoading.toString() === row.id ? (
           <LoadingOutlined />
         ) : (
-        
-              row.new  && rowCount.length > 1 && (
+          showRemove && (
             <Popconfirm
               placement="topRight"
               title="Are you sure you want to delete this component"
@@ -534,7 +554,8 @@ export default function EditComponent({
               {/* <CommonIcons action="removeRow" /> */}
             </Popconfirm>
           )
-        ),
+        );
+      },
     },
     {
       headerName: "Part no.",
