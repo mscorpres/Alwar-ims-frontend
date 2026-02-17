@@ -645,8 +645,11 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       "submit"
     );
     if (fileResponse.success) {
-      const { data } = fileResponse;
-      let fetchAttachment = data.data;
+      // API returns { success, data: "filename.pdf" } - attachment is in data
+      const fetchAttachment =
+        typeof fileResponse.data === "string"
+          ? fileResponse.data
+          : fileResponse.data?.data;
       setAttachment(fetchAttachment);
       saveFunction(fetchAttachment);
     }
