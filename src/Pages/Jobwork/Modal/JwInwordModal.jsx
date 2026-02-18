@@ -36,7 +36,7 @@ import { uploadMinInvoice } from "../../../api/store/material-in";
 import SuccessPage from "../../Store/MaterialIn/SuccessPage";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import SingleProduct from "../../Master/Vendor/SingleProduct";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 export default function JwInwordModal({ editModal, setEditModal }) {
   const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -69,8 +69,8 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     );
 
     if (response.success) {
-      getLocation(response.data.header.vendor.code,response.data.header.jobworkID);
-      let arr = response.data.body.map((row, index) => {
+      getLocation(response?.data.header.vendor.code,response.data.header.jobworkID);
+      let arr = response?.data.body.map((row, index) => {
         return {
           ...row,
           id: v4(),
@@ -551,8 +551,10 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       jwID: header?.jobworkID,
       sfgCreateQty: mainData[0].orderqty,
     };
-    const response = await executeFun(() => getBomItem(final), "select");
-    // const response = await imsAxios.post("/jobwork/getBomItem");
+ try {
+
+     const response = await executeFun(() => getBomItem(final), "select");
+   
     if (response.success) {
       let arr = response.data.map((r, id) => {
         return {
@@ -574,10 +576,17 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     } else {
       showToast(response.data.message.msg, "error");
       setLoading(false);
+    
     }
-
+  
+ } catch (error) {
+  
     setLoading(false);
+ }
+
+ 
   };
+
   // const addAttachmentModal = async () => {
   //   // const values = await modalForm.validateFields();
   //   Modal.confirm({
@@ -859,14 +868,14 @@ export default function JwInwordModal({ editModal, setEditModal }) {
               <div style={{ height: "50%", marginTop: "5px" }}>
                 <div style={{ height: "100%" }}>
                   {showBomList && bomList ? (
-                    <MyDataTable
+                    <FormTable
                       data={bomList}
                       columns={bomcolumns}
                       loading={loading}
                     />
 
                   ) : (
-                    <MyDataTable data={mainData} columns={columns} />
+                    <FormTable data={mainData} columns={columns} />
                   )}
                 </div>
               </div>

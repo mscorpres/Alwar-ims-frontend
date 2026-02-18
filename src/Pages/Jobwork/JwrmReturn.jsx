@@ -21,7 +21,7 @@ const JwrmReturn = () => {
   const [editModal, setEditModal] = useState(false);
   const [datee, setDatee] = useState("");
   const [allData, setAllData] = useState({
-    setType: "",
+    setType: "datewise",
     jw: "",
     sku: "",
     ven: "",
@@ -185,7 +185,7 @@ const JwrmReturn = () => {
   ];
 
   return (
-    <div style={{ height: "95%" }}>
+    <div style={{ height: "95%", padding: "10px" }}>
       {/* <InternalNav links={JobworkLinks} /> */}
       <Row gutter={10}>
         <Col span={4}>
@@ -193,7 +193,7 @@ const JwrmReturn = () => {
             placeholder="Please Select Option"
             style={{ width: "100%" }}
             options={option}
-            value={allData.setType.value}
+            value={allData.setType}
             onChange={(e) =>
               setAllData((allData) => {
                 return { ...allData, setType: e };
@@ -312,7 +312,7 @@ const JwrmReturn = () => {
         )}
       </Row>
 
-      <div style={{ height: "89%", margin: "10px" }}>
+      <div style={{ height: "95%", marginTop: "10px" }}>
         {allData.setType == "datewise" ? (
           <MyDataTable
             loading={loading("fetch")}

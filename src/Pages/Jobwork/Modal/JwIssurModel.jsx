@@ -31,9 +31,9 @@ const JwIssurModel = ({ openModal, setOpenModal, datewiseFetchData }) => {
     setLoading("fetch", false);
   
     if (response?.success) {
-      const headers = response.headers ?? [];
+      const headers = response?.data?.header ?? [];
       setView(Array.isArray(headers) ? headers[0] ?? {} : headers ?? {});
-      const rows = response.components ?? [];
+      const rows = response?.data?.components ?? [];
       let arr = rows.map((row, index) => {
         return {
           ...row,

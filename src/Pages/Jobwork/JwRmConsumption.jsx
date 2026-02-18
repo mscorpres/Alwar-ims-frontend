@@ -21,7 +21,7 @@ const JwRmConsumption = () => {
   const [editModal, setEditModal] = useState(false);
   const [datee, setDatee] = useState("");
   const [allData, setAllData] = useState({
-    setType: "",
+    setType: "date",
     jw: "",
     sku: "",
     ven: "",
@@ -242,7 +242,7 @@ const JwRmConsumption = () => {
         setEditModal({
           all: allData.setType,
           row: row,
-          bomData: response.data || response,
+          bomData: response.data?.header?.bom || response,
           qty: qty, // Store qty for use in getFetchData
         });
       } else {
@@ -278,15 +278,15 @@ const JwRmConsumption = () => {
     },
   ];
   return (
-    <div style={{ height: "95%" }}>
+    <div style={{ height: "95%", padding:10 }}>
       {/* <InternalNav links={JobworkLinks} /> */}
-      <Row gutter={10} style={{ margin: "10px" }}>
+      <Row gutter={10} >
         <Col span={4}>
           <Select
             placeholder="Please Select Option"
             style={{ width: "100%" }}
             options={option}
-            value={allData.setType.value}
+            value={allData.setType}
             onChange={(e) =>
               setAllData((allData) => {
                 return { ...allData, setType: e };
@@ -405,7 +405,7 @@ const JwRmConsumption = () => {
         )}
       </Row>
 
-      <div style={{ height: "89%", margin: "10px" }}>
+      <div style={{ height: "95%", marginTop: "10px" }}>
         {allData.setType == "date" ? (
           <MyDataTable
             loading={loading("fetch")}
