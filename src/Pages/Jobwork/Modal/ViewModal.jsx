@@ -42,9 +42,9 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
     setLoading(false);
 
     if (response?.success) {
-      const header = response.header;
+      const header = response.data.header;
       setView(Array.isArray(header) ? header[0] ?? {} : header ?? {});
-      const rows = response.data ?? [];
+      const rows = response.data.body ?? [];
       let arr = rows.map((row, index) => {
         return {
           ...row,
@@ -148,7 +148,7 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
     <Space>
       <Drawer
         width="100vw"
-        title={`FG/SFG : ${viewModalOpen?.sku} | ${viewModalOpen?.jwId}`}
+        title={`FG/SFG : ${viewModalOpen?.skuKey} | ${viewModalOpen?.jwId}`}
         placement="right"
         destroyOnClose={true}
         onClose={() => setViewModalOpen(false)}
