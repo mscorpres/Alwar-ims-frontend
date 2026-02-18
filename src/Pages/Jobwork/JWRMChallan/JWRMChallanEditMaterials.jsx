@@ -47,7 +47,7 @@ function JWRMChallanEditMaterials({
   
     setLoading("fetchingDetails", false);
     if (response?.success) {
-      const material = response.material ?? [];
+      const material = response?.data?.material ?? [];
       const arr = material.map((row, index) => ({
         id: v4(),
         index: index + 1,
@@ -55,7 +55,7 @@ function JWRMChallanEditMaterials({
       }));
       setRows(arr);
 
-      const obj = response.header ?? {};
+      const obj = response?.data?.header ?? {};
       const vendorCode = obj.vendorcode;
       const vendor = vendorCode
         ? { label: vendorCode.label, value: vendorCode.value }
@@ -125,16 +125,15 @@ function JWRMChallanEditMaterials({
       finalObj
     );
     setLoading("submit", false);
-    console.log(response);
     if (response.success) {
-      showToast(response.data.message, "success");
+      showToast(response.message, "success");
       setEditingJWMaterials(false);
       getRows();
     } else {
-      if (response.data.message.msg) {
-        showToast(response.data.message.msg, "error");
+      if (response.message) {
+        showToast(response.message, "error");
       } else {
-        showToast(errorToast(response.data.message), "error");
+        showToast(errorToast(response.message), "error");
       }
     }
   };

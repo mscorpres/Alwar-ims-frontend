@@ -60,9 +60,12 @@ const JwReturnModel = ({ show, close }) => {
       REMARK: "test",
     },
   ];
+
+
+
   const getLocationOptions = async (vendor,transaction) => {
     try {
-      const response = await imsAxios.get(`/jobwork/jw_rm_return_location?vendor=${vendor}&transaction=${transaction}`);
+      const response = await imsAxios.get(`/jobwork/jw_rm_return_location?vendor=${vendor}&jw=${transaction}`);
       setLoading("fetch", true);
       if (response?.success) {
         const arr = response.data.map((row) => ({
@@ -122,7 +125,8 @@ const JwReturnModel = ({ show, close }) => {
         skucode: sku,
         transaction: transaction,
       });
-      const {data,header} = response?.data;
+
+      const {body,header} = response?.data;
       const headerValues = header;
       setVendor(headerValues?.vendor?.code)
       let headerArr = [];
@@ -146,7 +150,7 @@ const JwReturnModel = ({ show, close }) => {
         }
       }
 
-      const componentArr = data.map((row) => ({
+      const componentArr = body.map((row) => ({
         id: v4(),
         component: row.component,
         componentKey: row.component_key,
@@ -205,19 +209,18 @@ const JwReturnModel = ({ show, close }) => {
         setPreview(false);
         setPreviewRows([]);
         setSelectedRows([]);
+          setLoading("submit", false);
         close();
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500); // 1500 milliseconds  = 1.5 seconds
+    
       }
       else{
         showToast(response.message, "error");
+          setLoading("submit", false);
       }
     } catch (error) {
       showToast(error.message, "error");
-    } finally {
-      setLoading("submit", false);
-    }
+        setLoading("submit", false);
+     }
   };
   useEffect(() => {
     if (rows) {

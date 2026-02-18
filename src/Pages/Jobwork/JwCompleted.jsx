@@ -62,7 +62,7 @@ const JwCompleted = () => {
       transaction: d,
     });
     setLoading(false);
-    printFunction(response?.data.buffer);
+    printFunction(response?.data.buffer?.data);
   };
   const handleDownload = async (d) => {
     setLoading("print");
@@ -70,7 +70,7 @@ const JwCompleted = () => {
       transaction: d,
     });
     setLoading(false);
-    downloadFunction(response?.data.buffer, d);
+    downloadFunction(response?.data.buffer?.data, d);
   };
 
   const getVendor = async (search) => {
@@ -219,14 +219,14 @@ const JwCompleted = () => {
     },
   ];
   return (
-    <div style={{ height: "95%" }}>
+    <div style={{ height: "95%", padding:10 }}>
       <Row gutter={10}>
         <Col span={4}>
           <Select
             placeholder="Please Select Option"
             style={{ width: "100%" }}
             options={option}
-            value={allData.setType.value}
+            value={allData.setType}
             onChange={(e) =>
               setAllData((allData) => {
                 return { ...allData, setType: e };
@@ -350,7 +350,7 @@ const JwCompleted = () => {
         )}
       </Row>
 
-      <div style={{ height: "89%", margin: "10px" }}>
+      <div style={{ height: "95%", marginTop: "10px" }}>
         {allData.setType == "datewise" ? (
           <MyDataTable loading={loading} data={dateData} columns={columns} />
         ) : allData.setType == "jw_transaction_wise" ? (

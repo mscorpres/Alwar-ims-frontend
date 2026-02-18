@@ -65,7 +65,7 @@ const ViewFGOut = () => {
 
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding:10 }}>
       <Row gutter={16}>
         <Col span={4} className="gutter-row">
           <div>
@@ -106,7 +106,7 @@ const ViewFGOut = () => {
           </div>
         </Col>
       </Row>
-      <div style={{ height: "90%", margin: "10px" }}>
+      <div style={{ height: "92%", marginTop: "10px" }}>
         <MyDataTable
           loading={loading}
           data={fetchDataFromDate}
