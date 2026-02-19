@@ -171,8 +171,13 @@ const CreateFGOut = () => {
     // console.log(arrQty);
 
 
+    const hasEmptyLocation = addRowData.some(
+      (row) => !row.location || String(row.location).trim() === ""
+    );
     if (!createFgOut.selectType) {
       showToast("Please Select Option", "error");
+    } else if (hasEmptyLocation) {
+      showToast("Location is mandatory for all rows", "error");
     } else {
       setLoadingUpdate(true);
       const response = await imsAxios.post("/fgout/createFgOut", {
@@ -284,7 +289,7 @@ const CreateFGOut = () => {
       ),
     },
     {
-      headerName: "Location",
+      headerName: "Location *",
       field: "location",
       width: 400,
       renderCell: ({ row }) => (
@@ -292,6 +297,7 @@ const CreateFGOut = () => {
           value={row?.location}
           onChange={(value) => compInputHandler("location", row.id, value)}
           options={locationOptions}
+          placeholder="Select location"
         />
       ),
     },
