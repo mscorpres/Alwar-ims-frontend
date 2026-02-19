@@ -233,6 +233,10 @@ const wiseOptions = [
   {
     text:"Part Code Conversion",
     value:"part-conv"
+  },
+  {
+    text:"FG Consumption",
+    value:"finish-goods"
   }
 ];
 
