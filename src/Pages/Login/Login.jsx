@@ -23,7 +23,7 @@ import {
 import { imsAxios } from "../../axiosInterceptor";
 import useApi from "../../hooks/useApi.ts";
 import { setSettings, setUser } from "../../Features/loginSlice/loginSlice";
-import ReCAPTCHA from "react-google-recaptcha";
+import ImageCaptcha from "../../Components/ImageCaptcha/ImageCaptcha";
 import {
   ArrowLeftOutlined,
   SafetyOutlined,
@@ -36,10 +36,11 @@ const Login = () => {
   document.title = "IMS Login";
   const [signUpPage, setSignUpPage] = useState("1");
   const [forgotPassword, setForgotPassword] = useState("0");
-  const [recaptchaValue, setRecaptchaValue] = React.useState(null);
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [expectedCaptchaCode, setExpectedCaptchaCode] = useState("");
+  const [captchaKey, setCaptchaKey] = useState(Math.random());
   const [ispassSame, setIsPassSame] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [recaptchaKey, setRecaptchaKey] = React.useState(Math.random());
   const [showOTP, setShowOTP] = useState(false);
   const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
   const [otpTimer, setOtpTimer] = useState(600);
@@ -66,9 +67,12 @@ const Login = () => {
     });
   };
 
+  const isCaptchaValid = () =>
+    captchaInput.trim().toUpperCase() === expectedCaptchaCode;
+
   const handleSubmit = async (e) => {
-    if (!recaptchaValue) {
-      toast.error("Please verify the reCAPTCHA");
+    if (!isCaptchaValid()) {
+      showToast("Please enter the captcha text shown above", "error");
       return;
     }
     const { username, password } = inpVal;
@@ -129,8 +133,8 @@ const Login = () => {
           window.location.reload();
         }
       } else {
-        setRecaptchaValue(null);
-        setRecaptchaKey(Math.random());
+        setCaptchaInput("");
+        setCaptchaKey(Math.random());
         showToast(res?.message, "error");
       }
       // dispatch(
@@ -139,8 +143,8 @@ const Login = () => {
     }
   };
   const validatecreateNewUser = async () => {
-    if (!recaptchaValue) {
-      showToast("Please verify the reCAPTCHA", "error");
+    if (!isCaptchaValid()) {
+      showToast("Please enter the captcha text shown above", "error");
       return;
     }
     const values = await signUp.validateFields();
@@ -252,10 +256,6 @@ const Login = () => {
     signUp.getFieldValue("confirmPassword"),
     signUp.getFieldValue("password"),
   ]);
-
-  const handleRecaptchaChange = (value) => {
-    setRecaptchaValue(value);
-  };
 
   // OTP Timer Effect
   useEffect(() => {
@@ -711,10 +711,12 @@ const Login = () => {
                           Forgot Password
                         </Link> */}
                         <div className="flex justify-center">
-                          <ReCAPTCHA
-                            sitekey="6LdmVcArAAAAAOb1vljqG4DTEEi2zP1TIjDd_0wR"
-                            onChange={handleRecaptchaChange}
-                            key={recaptchaKey}
+                          <ImageCaptcha
+                            key={captchaKey}
+                            value={captchaInput}
+                            onChange={(e) => setCaptchaInput(e.target.value)}
+                            onCodeChange={setExpectedCaptchaCode}
+                            placeholder="Enter letters above"
                           />
                         </div>
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
@@ -902,10 +904,12 @@ const Login = () => {
                     </Form.Item>
                   </Form>
                   <div className="flex justify-center">
-                    <ReCAPTCHA
-                      sitekey="6LdmVcArAAAAAOb1vljqG4DTEEi2zP1TIjDd_0wR"
-                      onChange={handleRecaptchaChange}
-                      key={recaptchaKey}
+                    <ImageCaptcha
+                      key={captchaKey}
+                      value={captchaInput}
+                      onChange={(e) => setCaptchaInput(e.target.value)}
+                      onCodeChange={setExpectedCaptchaCode}
+                      placeholder="Enter letters above"
                     />
                   </div>
                   <Button
