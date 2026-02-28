@@ -408,6 +408,7 @@ const ReqWithBom = () => {
                             return { ...allBom, qty: e.target.value };
                           })
                         }
+                        type="number"
                         placeholder="Select product Quantity"
                       />
                     </Form.Item>

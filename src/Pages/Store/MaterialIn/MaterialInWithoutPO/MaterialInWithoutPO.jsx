@@ -610,6 +610,7 @@ export default function MaterialInWithoutPO() {
       ],
       field: (row, index) => (
         <Input
+        type="number"
           onChange={(e) => compareRates(e.target.value, index)}
           addonAfter={
             <div style={{ width: 50 }}>

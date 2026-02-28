@@ -195,7 +195,7 @@ function CreateFgReturn() {
                       },
                     ]}
                   >
-                    <Input />
+                    <Input  type="number"/>
                   </Form.Item>
                 </Col>
                 <Col span={6}>
