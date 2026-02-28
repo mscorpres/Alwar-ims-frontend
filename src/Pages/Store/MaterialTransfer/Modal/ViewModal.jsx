@@ -93,6 +93,7 @@ function ViewModal({ viewModal, setViewModal }) {
                   >{`${viewModal.request_qty} / ${viewModal.required_qty}`}</td>
                   <td style={{ border: "1px solid #ddd", padding: "1px" }}>
                     <Input
+                    type="number"
                       placeholder="Qty"
                       style={{ width: "30%" }}
                       value={allPenData.quantity}

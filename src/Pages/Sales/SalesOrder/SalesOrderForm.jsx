@@ -724,12 +724,14 @@ const SalesOrderForm = () => {
                             // ]}
                             label="Due Date (in days)"
                             name="paymenttermsday"
+                            
                           >
                             <InputNumber
                               style={{ width: "100%" }}
                               size="default"
                               min={1}
                               max={999}
+                              type="number"
                             />
                           </Form.Item>
                         </Col>

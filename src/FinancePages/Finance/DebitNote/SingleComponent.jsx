@@ -320,7 +320,7 @@ const SingleComponent = ({
       </Col>
       <Col span={2}>
         <Form.Item label="In Rate" name={[field.name, "rate"]}>
-          <Input disabled={addRateDiff} />
+          <Input disabled={addRateDiff}  />
         </Form.Item>
       </Col>
       <Col span={2}>
