@@ -276,7 +276,7 @@ const CreateFGOut = () => {
       ),
     },
     {
-      headerName: "Issue Qty|UoM",
+      headerName: "Issue Qty",
       field: "quantity ",
       width: 170,
       renderCell: ({ row }) => (
@@ -285,6 +285,7 @@ const CreateFGOut = () => {
           suffix={row?.uom}
           value={addRowData?.quantity}
           onChange={(e) => compInputHandler("quantity", row.id, e.target.value)}
+          type="number"
         />
       ),
     },

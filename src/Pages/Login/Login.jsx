@@ -68,7 +68,7 @@ const Login = () => {
   };
 
   const isCaptchaValid = () =>
-    captchaInput.trim().toUpperCase() === expectedCaptchaCode;
+    captchaInput.trim() === expectedCaptchaCode;
 
   const handleSubmit = async (e) => {
     if (!isCaptchaValid()) {

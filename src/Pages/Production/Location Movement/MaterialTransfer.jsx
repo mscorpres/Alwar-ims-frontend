@@ -356,6 +356,7 @@ function MaterialTransfer({ type }) {
                       </td>
                       <td style={{ width: "14vw" }}>
                         <Input
+                        type="number"
                           value={r.qty}
                           onChange={(e) =>
                             setRows((prev) => {

@@ -66,19 +66,23 @@ function VBTRecords() {
         vbt_type: vbtOption,
       },
     });
+
+  
+      setTimeout(() => {
+        setLoading(false);
+      }, 1000);
+   
   };
   const downlaodReport = async () => {
     setRows([]);
-    setLoading(true);
+  
     let search;
     if (wise === "datewise" || wise === "effectivewise") {
       search = searchDateRange;
     } else {
       search = null;
     }
-    if (searchInput || search) {
-      setLoading(true);
-    }
+
     emitDownloadEvent();
     setOpenModal(false);
   };
@@ -247,7 +251,10 @@ function VBTRecords() {
             </div>
             <Button
               type="primary"
-              onClick={() => setOpenModal(true)}
+              onClick={() => {
+                  setLoading(true);
+                  setOpenModal(true);
+              }}
               loading={loading}
             >
               Generate

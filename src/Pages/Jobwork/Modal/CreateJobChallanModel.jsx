@@ -224,6 +224,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
           value={row.issue_qty}
           placeholder="Qty"
           onChange={(e) => inputHandler("issue_qty", row.id, e.target.value)}
+          type="number"
         />
       ),
     },

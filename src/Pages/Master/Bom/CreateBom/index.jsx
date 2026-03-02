@@ -1,4 +1,4 @@
-import { Col, Form, Modal, Row } from "antd";
+  import { Col, Form, Modal, Row } from "antd";
 import React, { useState, useEffect } from "react";
 import ProductDetails from "./ProductDetails";
 import Components from "./Components";

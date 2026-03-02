@@ -143,6 +143,7 @@ function CashReceipt() {
             inputHandler("cash", e.target.value, row.id);
           }}
           placeholder="0"
+          type="number"
         />
       ),
     },

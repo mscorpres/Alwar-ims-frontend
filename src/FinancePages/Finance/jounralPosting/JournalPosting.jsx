@@ -205,6 +205,7 @@ export default function JournalPosting() {
               onChange={(e) => inputHandler("debit", e.target.value, row.id)}
               name="debit"
               inputType="number"
+              type="number"
             />
           ) : (
             <Input
@@ -213,6 +214,7 @@ export default function JournalPosting() {
               onChange={(e) => inputHandler("debit", e.target.value, row.id)}
               disabled={row.credit?.length > 0}
               inputType="number"
+                 type="number"
             />
           )}
         </>
@@ -232,6 +234,7 @@ export default function JournalPosting() {
           value={row.total ? creditTotal.toFixed(2) : row.credit}
           onChange={(e) => inputHandler("credit", e.target.value, row.id)}
           disabled={row.total || row.debit?.length > 0}
+             type="number"
         />
       ),
     },
