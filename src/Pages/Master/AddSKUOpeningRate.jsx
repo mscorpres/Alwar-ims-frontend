@@ -166,6 +166,7 @@ const { showToast } =    useToast();
                   style={{ width: "100%" }}
                     min={0}
                     step={1}
+                    type="number"
                 />
               </Form.Item>
 
@@ -184,6 +185,7 @@ const { showToast } =    useToast();
                   placeholder="Enter weighted average rate"
                   style={{ width: "100%" }}
                   min={0}
+                  type="number"
                 />
               </Form.Item>
 
@@ -204,6 +206,7 @@ const { showToast } =    useToast();
                   min={0}
                   step={0.01}
                   precision={2}
+                  type="number"
                 />
               </Form.Item>
 

@@ -692,7 +692,7 @@ const Material = () => {
                             name="percentage"
                             rules={rules.percentage}
                           >
-                            <Input suffix="%" />
+                            <Input suffix="%" type="number" />
                           </Form.Item>
                         </Col>
                         <Col span={2}>

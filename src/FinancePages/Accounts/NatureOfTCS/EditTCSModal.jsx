@@ -253,6 +253,7 @@ function EditTCS({
                   );
                 }}
                 placeholder="Enter Percentage..."
+                type="number"
               />
             </Form.Item>
           </Form>

@@ -233,6 +233,7 @@ export default function NatureOfTDS() {
                       }
                       suffix="%"
                       placeholder="Enter Percentage"
+                      type="number"
                     />
                   </Form.Item>
                 </Col>

@@ -88,6 +88,7 @@ export default function Contra1() {
               name="debit"
               inputType="number"
               id={row.id}
+              type="number"
             />
           ) : (
             <Input
@@ -97,6 +98,7 @@ export default function Contra1() {
               disabled={row.credit?.length > 0}
               inputType="number"
               id={row.id}
+              type="number"
             />
           )}
         </>
@@ -117,6 +119,7 @@ export default function Contra1() {
               disabled={true}
               value={creditTotal.toFixed(2)}
               onChange={(e) => inputHandler("credit", e.target.value, row.id)}
+              type="number"
             />
           ) : (
             <Input
@@ -124,6 +127,7 @@ export default function Contra1() {
               onChange={(e) => inputHandler("credit", e.target.value, row.id)}
               name="credit"
               disabled={row.debit?.length > 0}
+              type="number"
             />
           )}
         </>
@@ -205,12 +209,12 @@ export default function Contra1() {
     setCreditTotal(
       creditArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
     setDebitTotal(
       debitArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
 
     setContraRows(arr);
@@ -288,9 +292,15 @@ export default function Contra1() {
       if (problem == "account") {
         return showToast("All entries should have a account selected", "error");
       } else if (problem == "amount") {
-        return showToast("All entries should have a credit or debit amount", "error");
+        return showToast(
+          "All entries should have a credit or debit amount",
+          "error",
+        );
       } else if (problem == "total") {
-        return showToast("Debit total and Credit total does not match", "error");
+        return showToast(
+          "Debit total and Credit total does not match",
+          "error",
+        );
       }
     }
   };
@@ -326,7 +336,7 @@ export default function Contra1() {
 
   return (
     <div style={{ height: "100%", padding: 10 }}>
-      <Row gutter={[16, 16]} style={{height:"100%"}}>
+      <Row gutter={[16, 16]} style={{ height: "100%" }}>
         <Col span={6}>
           <Card title="Select Date" size="small">
             <SingleDatePicker
@@ -338,10 +348,9 @@ export default function Contra1() {
         </Col>
 
         <Col span={18}>
-            <div style={{ height: "calc(100% - 50px)" }}>
-              <FormTable loading={loading} data={contraRows} columns={columns} />
-            </div>
-     
+          <div style={{ height: "calc(100% - 50px)" }}>
+            <FormTable loading={loading} data={contraRows} columns={columns} />
+          </div>
         </Col>
       </Row>
       <NavFooter

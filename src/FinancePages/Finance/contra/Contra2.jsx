@@ -88,6 +88,7 @@ export default function Contra2() {
               name="debit"
               inputType="number"
               id={row.id}
+              type="number"
             />
           ) : (
             <Input
@@ -97,6 +98,7 @@ export default function Contra2() {
               disabled={row.credit?.length > 0}
               inputType="number"
               id={row.id}
+              type="number"
             />
           )}
         </>
@@ -117,6 +119,7 @@ export default function Contra2() {
               disabled={true}
               value={creditTotal.toFixed(2)}
               onChange={(e) => inputHandler("credit", e.target.value, row.id)}
+              type="number"
             />
           ) : (
             <Input
@@ -124,6 +127,7 @@ export default function Contra2() {
               onChange={(e) => inputHandler("credit", e.target.value, row.id)}
               name="credit"
               disabled={row.debit?.length > 0}
+              type="number"
             />
           )}
         </>
