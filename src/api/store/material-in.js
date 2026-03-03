@@ -253,3 +253,19 @@ export const updateBoxQty = async (componentKey, values, stock) => {
 
   return response;
 };
+
+export const printFGMIN = async (minId, action) => {
+  const response = await imsAxios.post("/fgMinPrint/printFGMin", {
+    transaction: minId,
+  });
+
+  if (response.data.code === 200) {
+    if (!action) {
+      printFunction(response.data.data.buffer.data);
+    } else if (action === "download") {
+      downloadFunction(response.data.data.buffer.data, minId);
+    }
+  }
+
+  return response;
+};

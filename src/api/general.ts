@@ -8,6 +8,19 @@ import {getGlobalToast} from "../context/ToastContext";
 
 
 
+
+
+
+export const uplaodFGFileInMINInward = async (formdata:any) => {
+  try {
+    const response = await imsAxios.post("fgMIN/upload/item", formdata);
+    return response;
+  } catch (error) {
+    console.log("something happened wrong", error);
+  }
+};
+
+
 export const getVendorOptions = async (search:any) => {
   
   try {

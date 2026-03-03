@@ -132,6 +132,7 @@ import {
 } from "../Pages/index.jsx";
 //@ts-ignore
 import Dashboard from "../new/dashboard/Dashboard.jsx";
+import ViewFGMIN from "../Pages/Store/viewfgmodule/ViewFGMIN.jsx";
 import {
   CreateMaster,
   Ledger,
@@ -1319,6 +1320,10 @@ const Routes = [
   {
     path: "/mes/process/map",
     main: () => <MapProcesses />,
+  },
+   {
+    path: "/warehouse/print-view-fg-min",
+    main: () => <ViewFGMIN />,
   },
   {
     path: "/warehouse/branch-transfer/challan",
