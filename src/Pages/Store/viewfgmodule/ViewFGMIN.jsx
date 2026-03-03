@@ -31,6 +31,7 @@ const ViewFGMIN = () => {
   const [preselected, setPreselected] = useState(null);
   const [rows, setRows] = useState([]);
   const [form] = Form.useForm();
+  const [isLoading, setIsLoading] = useState(false);
   const { executeFun, loading } = useApi();
 
   const selectedWise = Form.useWatch("wise", form);
@@ -45,6 +46,7 @@ const ViewFGMIN = () => {
   };
 
   const handleFetchRows = async () => {
+    setIsLoading(true);
     const values = await form.validateFields();
     setRows([]);
     const { wise, value } = values;
@@ -54,19 +56,23 @@ const ViewFGMIN = () => {
         data: value,
         wise,
       });
+    
 
-      if (response.data?.status === "success") {
-        setRows(response.data.data);
+      if (response.status === "success") {
+        setRows(response.data);
+        setIsLoading(false);
       } else {
         setRows([]);
-        showToast(response.data.message, "error");
+        setIsLoading(false);
+        showToast(response.message, "error");
       }
     } catch (error) {
+      setIsLoading(false);
       console.error(error);
-      toast.error(error.message);
+      showToast(error.message, "error");
     }
 
-    const response = await getFGMINLabelRows(values.wise, values.value);
+  
   };
 
   const handlePrintMIN = async (minId, action) => {
@@ -159,7 +165,7 @@ const ViewFGMIN = () => {
             <Flex justify="end" gap={8}>
               <MyButton
                 variant="search"
-                loading={loading("fetch")}
+                loading={loading("fetch") || isLoading}
                 onClick={handleFetchRows}
               />
             </Flex>
@@ -168,7 +174,7 @@ const ViewFGMIN = () => {
       </Col>
       <Col span={20} style={{ height: "calc(100vh - 130px)", marginTop: 10 }}>
         <MyDataTable
-          loading={loading("fetch") || loading("print")}
+          loading={loading("fetch") || loading("print") || isLoading}
           columns={[...actionColumns, ...columns]}
           data={rows}
         />
@@ -206,8 +212,8 @@ const columns = [
   {
     headerName: "Vendor",
     field: "vendorname",
-    //   width: 200,
-    flex: 1,
+      width: 200,
+   
   },
   {
     headerName: "Part Code",

@@ -230,7 +230,7 @@ export default function ProductMIN() {
           sgst: [...componentData.sgst, row.sgst],
           igst: [...componentData.igst, row.igst],
           remark: [...componentData.remark, row.orderremark],
-          location: [...componentData.location, row.location],
+          location: [...componentData.location, row.location?.value],
         };
       });
       if (
