@@ -76,9 +76,7 @@ const sampleData = [
 ];
 
 const vendorDetailsOptions = [
-  { text: "JWI (Job Work In)", value: "j01" },
   { text: "Vendor", value: "v01" },
-  { text: "Production Return", value: "p01" },
 ];
 
 export default function ProductMIN() {
@@ -275,7 +273,7 @@ export default function ProductMIN() {
   };
   const submitMIN = async (values) => {
     let fileData;
-    // console.log("these are the values", values);
+  
 
     axiosResponseFunction(async () => {
       if (invoices?.length > 0) {
@@ -299,7 +297,7 @@ export default function ProductMIN() {
           };
           let venDetails = {
             vendortype: values.vendorValues.vendorType ?? "",
-            vendor: values.vendorValues.vendorName ?? "",
+            vendor: values.vendorValues.vendorName?.value ?? "",
             vendorbranch: values.vendorValues.vendorBranch ?? "",
             invoice: values.vendorValues.invoiceId ?? "",
             invoice_date: values.vendorValues.invoiceDate ?? "",
