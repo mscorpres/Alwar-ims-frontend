@@ -215,11 +215,7 @@ const columns = [
       width: 200,
    
   },
-  {
-    headerName: "Part Code",
-    field: "sku",
-    width: 130,
-  },
+
   {
     headerName: "In Qty",
     field: "inqty",

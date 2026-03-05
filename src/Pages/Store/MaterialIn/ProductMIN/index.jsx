@@ -64,13 +64,13 @@ import SingleDatePicker from "../../../../Components/SingleDatePicker.jsx";
 
 const sampleData = [
   {
-    P_SKU: "p0001",
+    P_SKU: "106101",
     QTY: 12,
     RATE: "100",
     HSN: "123456",
     GST_TYPE: "LOCAL",
     GST_RATE: "18",
-    LOCATION: "RM021",
+    LOCATION: "AL_FG038",
     REMARK: "Sample remark",
   },
 ];
@@ -1497,7 +1497,7 @@ export default function ProductMIN() {
               <MyButton
                 variant="downloadSample"
                 onClick={() =>
-                  downloadCSVCustomColumns(sampleData, "Product MIN Inward")
+                  downloadCSVCustomColumns(sampleData, "FG MIN Inward")
                 }
               />
             </Row>
