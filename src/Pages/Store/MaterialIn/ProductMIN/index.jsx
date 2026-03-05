@@ -158,7 +158,7 @@ export default function ProductMIN() {
       gstrate: 0,
       unitsname: "--",
       gsttype: "L",
-      hsn: "",
+      hsncode: "",
       inrValue: 0,
       cgst: 0,
       sgst: 0,
@@ -223,7 +223,7 @@ export default function ProductMIN() {
           rate: [...componentData.rate, row.orderrate],
           currency: [...componentData.currency, row.currency],
           exchange: [...componentData.exchange, row.exchange_rate],
-          hsn_code: [...componentData.hsn_code, row.hsn ?? ""],
+          hsn_code: [...componentData.hsn_code, row.hsncode ?? ""],
           gst_type: [...componentData.gst_type, row.gsttype],
           gstrate: [...componentData.gstrate, row.gstrate],
           cgst: [...componentData.cgst, row.cgst],
@@ -697,6 +697,8 @@ export default function ProductMIN() {
     setMaterialInward(arr);
   };
   const vendorInputHandler = async (name, value) => {
+
+
     if (value) {
       let obj = vendorDetails;
       if (name == "vendorName") {
@@ -725,10 +727,10 @@ export default function ProductMIN() {
           setVendorSectionLoading(false);
           setVendorBranchOptions(arr);
 
-        
+      
           obj = {
             ...obj,
-            [name]: value.value,
+            [name]: value,
             vendorBranch: arr[0].value,
             gstin: data1.gstid,
             vendorAddress: data1.address.replaceAll("<br>", "\n"),
@@ -797,6 +799,7 @@ export default function ProductMIN() {
     const invoiceDate = form.getFieldValue("invoiceDate");
     const invoiceId = form.getFieldValue("invoiceId");
     const currency = form.getFieldValue("currency") || "";
+    
     const arr = previewRows.map((r) => {
       const loc = r.location;
       const locationForRow =

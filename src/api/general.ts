@@ -311,6 +311,19 @@ export const getMINOptions = async (search) => {
   return response;
 };
 
+export const getFGMINOptions = async (search:any) => {
+  const response = await imsAxios.post("/fgMinPrint/getFGMinsTransaction", {
+    searchTerm: search,
+  });
+
+  let arr:any = [];
+  if (response.success) {
+    arr = convertSelectOptions(response.data);
+  }
+  response.data = arr;
+  return response;
+};
+
 export const getHsnOptions = async (search: string) => {
   const response: ResponseType = await imsAxios.post("/backend/searchHsn", {
     searchTerm: search,

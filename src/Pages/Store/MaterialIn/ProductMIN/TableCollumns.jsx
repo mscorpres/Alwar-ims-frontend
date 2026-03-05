@@ -155,7 +155,7 @@ export const invoiceDateCell = ({ row }, inputHandler) => {
 export const HSNCell = ({ row }, inputHandler) => (
   <Input
     type="text"
-    value={row.hsn}
+    value={row.hsncode}
     onChange={(e) => inputHandler("hsn", e.target.value, row.id)}
   />
 );
