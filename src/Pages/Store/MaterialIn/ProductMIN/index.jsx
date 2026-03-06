@@ -221,7 +221,10 @@ export default function ProductMIN() {
       }
       materialInward.map((row) => {
         componentData = {
-          product: [...componentData.product, row.component.value],
+          product: [
+            ...componentData.product,
+            row.component?.value ?? row.component ?? "",
+          ],
           qty: [...componentData.qty, row.orderqty],
           rate: [...componentData.rate, row.orderrate],
           currency: [...componentData.currency, row.currency],
@@ -312,8 +315,14 @@ export default function ProductMIN() {
             vendorbranch: values.vendorValues.vendorBranch ?? "",
             invoice: values.vendorValues.invoiceId ?? "",
             invoice_date: values.vendorValues.invoiceDate ?? "",
-            cost_center: values.vendorValues.costCenter ?? "",
-            project_id: values.vendorValues.projectID ?? "",
+            cost_center:
+              values.vendorValues.costCenter?.value ??
+              values.vendorValues.costCenter ??
+              "",
+            project_id:
+              values.vendorValues.projectID?.value ??
+              values.vendorValues.projectID ??
+              "",
             address: values.vendorValues.vendorAddress ?? "",
           };
           final = {
@@ -507,15 +516,13 @@ export default function ProductMIN() {
   };
   const getCurrencies = async () => {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
-
-    let arr = [];
-    arr = response.data.map((d) => {
-      return {
-        text: d.currency_symbol,
-        value: d.currency_id,
-        notes: d.currency_notes,
-      };
-    });
+    const raw = response?.data?.data ?? response?.data ?? [];
+    let arr = Array.isArray(raw) ? raw : [];
+    arr = arr.map((d) => ({
+      text: d.currency_symbol,
+      value: d.currency_id,
+      notes: d.currency_notes,
+    }));
     setCurrencies(arr);
   };
   const getLocation = async () => {
@@ -569,6 +576,7 @@ export default function ProductMIN() {
                 gstrate: response?.data.gstrate,
                 orderrate: response?.data.rate,
                 unitsname: response?.data.unit,
+                hsncode: response?.data.hsn ?? response?.data.hsncode ?? "",
                 hsn: response?.data.hsn,
               };
               return obj;
@@ -702,8 +710,8 @@ export default function ProductMIN() {
           } else if (name == "location") {
             obj = {
               ...obj,
-              [name]: value.value,
-              locationName: value.label,
+              [name]: value,
+              locationName: value?.label ?? value?.text ?? "",
             };
 
             return obj;
@@ -1274,9 +1282,11 @@ export default function ProductMIN() {
                           onClick={() => {
                             vendorDetails.vendorName
                               ? setShowBranchModal({
-                                  vendor_code: vendorDetails.vendorName,
+                                  vendor_code:
+                                    vendorDetails.vendorName?.value ??
+                                    vendorDetails.vendorName,
                                 })
-                              : toast.error("Please Select a vendor first");
+                              : showToast("Please Select a vendor first", "error");
                           }}
                           style={{
                             color: "#1890FF",

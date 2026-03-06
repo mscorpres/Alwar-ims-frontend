@@ -120,13 +120,19 @@ export const taxableCell = ({ row }) => {
   return <Input disabled={true} value={row.inrValue} />;
 };
 
-/** Foreign Value: show only when currency is not INR; otherwise show empty (do not show foreign value for local currency). */
+/** Foreign Value: show when currency is not INR (display usdValue or inrValue * exchange_rate); otherwise show empty for INR. */
 export const foreignCell = ({ row }) => {
-  const isINR = row.currency === INR_CURRENCY_ID;
-  const hasForeignValue = !isINR && (Number(row.usdValue) || 0) !== 0;
-  return (
-    <Input disabled={true} value={hasForeignValue ? row.usdValue : ""} />
-  );
+  const currency = row.currency?.value ?? row.currency;
+  const isINR = String(currency) === String(INR_CURRENCY_ID);
+  const displayValue =
+    !isINR
+      ? Number(row.usdValue) ||
+        (Number(row.inrValue) || 0) * (Number(row.exchange_rate) || 0) ||
+        0
+      : "";
+  const valueToShow =
+    displayValue === "" ? "" : (Number(displayValue) || 0);
+  return <Input disabled={true} value={valueToShow} />;
 };
 export const invoiceIdCell = ({ row }, inputHandler) => {
   return (
@@ -163,8 +169,8 @@ export const invoiceDateCell = ({ row }, inputHandler) => {
 export const HSNCell = ({ row }, inputHandler) => (
   <Input
     type="text"
-    value={row.hsn}
-    onChange={(e) => inputHandler("hsn", e.target.value, row.id)}
+    value={row.hsncode ?? row.hsn ?? ""}
+    onChange={(e) => inputHandler("hsncode", e.target.value, row.id)}
   />
 );
 export const gstTypeCell = ({ row }, inputHandler) => (
