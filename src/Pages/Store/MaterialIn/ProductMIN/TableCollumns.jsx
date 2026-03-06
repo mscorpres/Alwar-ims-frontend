@@ -114,11 +114,19 @@ export const rateCell = ({ row }, inputHandler, currencies) => (
 // </div>
 // );
 
+const INR_CURRENCY_ID = "364907247";
+
 export const taxableCell = ({ row }) => {
   return <Input disabled={true} value={row.inrValue} />;
 };
+
+/** Foreign Value: show only when currency is not INR; otherwise show empty (do not show foreign value for local currency). */
 export const foreignCell = ({ row }) => {
-  return <Input disabled={true} value={row.usdValue} />;
+  const isINR = row.currency === INR_CURRENCY_ID;
+  const hasForeignValue = !isINR && (Number(row.usdValue) || 0) !== 0;
+  return (
+    <Input disabled={true} value={hasForeignValue ? row.usdValue : ""} />
+  );
 };
 export const invoiceIdCell = ({ row }, inputHandler) => {
   return (
@@ -155,7 +163,7 @@ export const invoiceDateCell = ({ row }, inputHandler) => {
 export const HSNCell = ({ row }, inputHandler) => (
   <Input
     type="text"
-    value={row.hsncode}
+    value={row.hsn}
     onChange={(e) => inputHandler("hsn", e.target.value, row.id)}
   />
 );
@@ -174,9 +182,27 @@ export const gstRate = ({ row }, inputHandler) => (
     onChange={(e) => inputHandler("gstrate", e.target.value, row.id)}
   />
 );
-export const CGSTCell = ({ row }) => <Input disabled={true} value={row.cgst} />;
-export const SGSTCell = ({ row }) => <Input disabled={true} value={row.sgst} />;
-export const IGSTCell = ({ row }) => <Input disabled={true} value={row.igst} />;
+/** When gstType is "L" (Local): show CGST value. When "I" (Interstate): show 0 / empty. */
+export const CGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "I" ? "" : (row.cgst ?? 0)}
+  />
+);
+/** When gstType is "L" (Local): show SGST value. When "I" (Interstate): show 0 / empty. */
+export const SGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "I" ? "" : (row.sgst ?? 0)}
+  />
+);
+/** When gstType is "I" (Interstate): show IGST value. When "L" (Local): show 0 / empty. */
+export const IGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "L" ? "" : (row.igst ?? 0)}
+  />
+);
 
 export const locationCell = (
   { row },
