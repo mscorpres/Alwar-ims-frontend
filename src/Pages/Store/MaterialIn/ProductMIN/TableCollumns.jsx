@@ -31,7 +31,7 @@ export const QuantityCell = ({ row }, inputHandler) => (
   <Input
     value={row.orderqty}
     onChange={(e) => inputHandler("orderqty", e.target.value, row.id)}
-    suffix={row.unitsname}
+    // suffix={row.unitsname}
     type="number"
   />
 );

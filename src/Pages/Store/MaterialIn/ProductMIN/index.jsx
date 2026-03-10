@@ -77,11 +77,12 @@ const sampleData = [
 
 const vendorDetailsOptions = [
   { text: "Vendor", value: "v01" },
+  { text: "Sales Return", value: "s01" },
 ];
 
 const getGstTypeValue = (v) => {
   if (v == null || v === "") return "L";
-  return typeof v === "object" ? v?.value ?? v?.text ?? "L" : v;
+  return typeof v === "object" ? (v?.value ?? v?.text ?? "L") : v;
 };
 
 export default function ProductMIN() {
@@ -284,7 +285,6 @@ export default function ProductMIN() {
   };
   const submitMIN = async (values) => {
     let fileData;
-  
 
     axiosResponseFunction(async () => {
       if (invoices?.length > 0) {
@@ -727,8 +727,6 @@ export default function ProductMIN() {
     setMaterialInward(arr);
   };
   const vendorInputHandler = async (name, value) => {
-
-
     if (value) {
       let obj = vendorDetails;
       if (name == "vendorName") {
@@ -737,7 +735,6 @@ export default function ProductMIN() {
           vendorcode: value.value,
         });
 
-      
         setVendorSectionLoading(false);
         if (response.success) {
           const arr = response.data.map((row) => {
@@ -757,7 +754,6 @@ export default function ProductMIN() {
           setVendorSectionLoading(false);
           setVendorBranchOptions(arr);
 
-      
           const addr1 = data1?.data ?? data1;
           obj = {
             ...obj,
@@ -770,7 +766,7 @@ export default function ProductMIN() {
         } else {
           showToast(response.message?.msg || response.message, "error");
         }
-          } else if (name == "vendorBranch") {
+      } else if (name == "vendorBranch") {
         setVendorSectionLoading(true);
         const response = await imsAxios.post("/backend/vendorAddress", {
           vendorcode:
@@ -848,12 +844,14 @@ export default function ProductMIN() {
       const rawGstType = r.gstType ?? "L";
       const gstTypeNormalized =
         typeof rawGstType === "object"
-          ? rawGstType.value ?? rawGstType.text ?? "L"
+          ? (rawGstType.value ?? rawGstType.text ?? "L")
           : rawGstType;
       const isLocal =
         gstTypeNormalized === "L" ||
         String(gstTypeNormalized).toUpperCase().startsWith("LOCAL");
-      const finalGstRate = isLocal ? getInt(gstRateNum) / 2 : getInt(gstRateNum);
+      const finalGstRate = isLocal
+        ? getInt(gstRateNum) / 2
+        : getInt(gstRateNum);
       const gst = getInt((inrValue * finalGstRate) / 100);
       const cgst = isLocal ? gst : 0;
       const sgst = isLocal ? gst : 0;
@@ -948,17 +946,14 @@ export default function ProductMIN() {
     const response = await imsAxios.post("/backend/projectDescription", {
       project_name: value,
     });
-   
-    setPageLoading(false);
-    
-   
- 
-      if (response?.success) {
-        form.setFieldValue("projectName", response?.data?.description);
-      } else {
-        showToast(response?.data?.message ?? response?.message, "error");
-      }
 
+    setPageLoading(false);
+
+    if (response?.success) {
+      form.setFieldValue("projectName", response?.data?.description);
+    } else {
+      showToast(response?.data?.message ?? response?.message, "error");
+    }
   };
   const materialResetFunction = () => {
     setMaterialInward([
@@ -1286,7 +1281,10 @@ export default function ProductMIN() {
                                     vendorDetails.vendorName?.value ??
                                     vendorDetails.vendorName,
                                 })
-                              : showToast("Please Select a vendor first", "error");
+                              : showToast(
+                                  "Please Select a vendor first",
+                                  "error",
+                                );
                           }}
                           style={{
                             color: "#1890FF",
@@ -1392,7 +1390,6 @@ export default function ProductMIN() {
                       <Input />
                     </Form.Item>
                   </Col>
-          
                 </Row>
               </Form>
             </Card>
@@ -1402,11 +1399,17 @@ export default function ProductMIN() {
                 span={24}
                 style={{
                   width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
                 }}
               >
-                <Col span={24} style={{ height: "10%" }}>
+                <Col
+                  span={24}
+                  style={{
+                    height: "10%",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                  }}
+                >
                   <Row className="material-in-upload">
                     <UploadDocs
                       // disable={poData?.materials?.length == 0}
@@ -1610,4 +1613,3 @@ export default function ProductMIN() {
     </div>
   );
 }
-
