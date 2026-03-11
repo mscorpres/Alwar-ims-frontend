@@ -336,7 +336,7 @@ export default function ProductMIN() {
 
           const data = response?.data;
           setSubmitLoading(false);
-          if (response?.success || data?.code === "200") {
+          if (response?.success || data?.success ) {
             setActiveTab("1");
             setShowSuccessPage({
               materialInId: data?.data?.txn ?? data?.txn,
@@ -359,7 +359,7 @@ export default function ProductMIN() {
             vendorResetFunction();
             materialResetFunction();
           } else {
-            showToast(response.message?.msg || response.message, "error");
+            showToast(response.message?.msg || data.message, "error");
           }
         }
       } else {
