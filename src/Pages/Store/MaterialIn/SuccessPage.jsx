@@ -21,7 +21,7 @@ export default function SuccessPage({
   
     setPringLoading(true);
 
-    const response = await imsAxios.post("/minPrint/printSingleMin", {
+    const response = await imsAxios.post("/fgMinPrint/printFGMin", {
       transaction: po?.materialInId,
     });
     setPringLoading(false);
@@ -33,7 +33,7 @@ export default function SuccessPage({
   const handleDownload = async () => {
     
     setDownloadLoading(true);
-    const response = await imsAxios.post("/minPrint/printSingleMin", {
+    const response = await imsAxios.post("/printDoc/download", {
       transaction: po?.materialInId,
     });
     setDownloadLoading(false);

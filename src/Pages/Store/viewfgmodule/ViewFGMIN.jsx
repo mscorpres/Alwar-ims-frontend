@@ -79,12 +79,7 @@ const ViewFGMIN = () => {
     await executeFun(() => printFGMIN(minId, action), "print");
   };
 
-  const handleDownloadConsumptionList = async (minId) => {
-    await executeFun(
-      () => downloadConsumptionList(minId, consuptionColumns),
-      "print",
-    );
-  };
+
   const handleDownloadAttachement = async (transactionId) => {
     // console.log("transactionId", transactionId);
 
