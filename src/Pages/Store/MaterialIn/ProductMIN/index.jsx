@@ -1511,6 +1511,7 @@ export default function ProductMIN() {
           newMinFunction={() => setShowSuccessPage(false)}
           successColumns={successColumns}
           po={showSuccessPage}
+          isFGMIN={true}
         />
       )}
 
