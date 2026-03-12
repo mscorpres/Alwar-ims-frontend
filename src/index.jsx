@@ -103,9 +103,14 @@ root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
       <ToastContext>
-      <BrowserRouter>
-        <Main />
-      </BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <Main />
+        </BrowserRouter>
       </ToastContext>
     </Provider>
   </ConfigProvider>

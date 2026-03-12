@@ -33,11 +33,13 @@ export default function FormTable({ columns, data, loading }) {
       <Card
         size="small"
         style={{ width: "100%", height: "100%" }}
-        bodyStyle={{
-          padding: 0,
-          height: "100%",
-          width: "100%",
-          overflow: "auto",
+        styles={{
+          body: {
+            padding: 0,
+            height: "100%",
+            width: "100%",
+            overflow: "auto",
+          },
         }}
       >
         <Table
