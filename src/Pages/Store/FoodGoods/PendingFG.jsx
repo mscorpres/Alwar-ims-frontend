@@ -74,6 +74,7 @@ const PendingFG = () => {
       getActions: ({ row }) => [
         <GridActionsCellItem
           key="view-fg"
+          label="View"
           icon={
             <GoArrowRight
               onClick={() => setFGModal(row)}

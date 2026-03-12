@@ -92,6 +92,7 @@ const ManagePO = () => {
 
   const columns = [
     {
+      field: "actions",
       headerName: "",
       type: "actions",
       width: 30,

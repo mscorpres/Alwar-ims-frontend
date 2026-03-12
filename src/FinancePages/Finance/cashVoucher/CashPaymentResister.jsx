@@ -151,6 +151,7 @@ function CashPaymentResister() {
       type: "actions",
       getActions: ({ row }) => [
         <GridActionsCellItem
+          label="View"
           icon={<EyeFilled onClick={() => setOpen(row?.module_used)} />}
         />,
         <TableActions
