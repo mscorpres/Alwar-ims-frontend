@@ -128,6 +128,8 @@ import {
   AddAgreementType,
   JobworkApproval,
    AddSKUOpeningRate,
+   FGToFGTransfer,
+   FGToFGViewTransaction
   //@ts-ignore
 } from "../Pages/index.jsx";
 //@ts-ignore
@@ -429,6 +431,16 @@ const Routes = [
     path: "/material-transfer/rm-to-rm",
     exact: true,
     main: () => <RmtoRm />,
+  },
+    {
+    path: "/warehouse/material-transfer/fg-to-fg",
+    exact: true,
+    main: () => <FGToFGTransfer />,
+  },
+    {
+    path: "/warehouse/material-transfer/fg-to-fg/view-transaction",
+    exact: true,
+    main: () => <FGToFGViewTransaction />,
   },
   {
     path: "/material-transfer/jw-to-jw",

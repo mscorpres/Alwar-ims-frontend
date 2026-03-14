@@ -40,6 +40,8 @@ export { default as MaterialInWithPO } from "./Store/MaterialIn/MaterialInWithPO
 export { default as ExportMaterialInWithPO } from "./Store/MaterialIn/MaterialInWithPO/ExportMaterialInWithPO.jsx";
 
 export { default as ProductMIN } from "./Store/MaterialIn/ProductMIN";
+export { default as FGToFGTransfer } from "./Store/MaterialTransfer/FGToFGTransfer";
+export { default as FGToFGViewTransaction } from "./Store/MaterialTransfer/FGtoFGViewTransaction";
 
 export { default as Rejection } from "./Store/Rejection/Rejection";
 
