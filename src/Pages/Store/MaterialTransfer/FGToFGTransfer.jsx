@@ -10,6 +10,7 @@ import useApi from "../../../hooks/useApi.ts";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../hooks/useToast.js";
+import Loading from "../../../Components/Loading.jsx";
 const { TextArea } = Input;
 
 function FGToFGTransfer() {
@@ -37,10 +38,8 @@ function FGToFGTransfer() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locDataTo, setloctionDataTo] = useState([]);
   const [branchName, setbBanchName] = useState([]);
-  const [seacrh, setSearch] = useState(null);
-  const { executeFun, loading: loading1 } = useApi();
-  const navigate = useNavigate();
   const { showToast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   // Add row functionality
   const addRow = () => {
@@ -71,6 +70,7 @@ function FGToFGTransfer() {
 
   // console.log(branchName);
   const getLocationFunction = async () => {
+    setIsLoading(true);
     try {
       const response = await imsAxios.get("/skuQueryA/q3Location");
       if (response?.success) {
@@ -79,30 +79,38 @@ function FGToFGTransfer() {
         data?.map((ad) => v.push({ label: ad.text, value: ad.id }));
         setloctionData(v);
         setloctionDataTo(v);
+        setIsLoading(false);
       } else {
         showToast(response?.message || "Data Not Found", "error");
+        setIsLoading(false);
       }
     } catch (error) {
       showToast(error?.message || "Server Error", "error");
+      setIsLoading(false);
     }
   };
 
   const branchInfoFunction = async () => {
+    setIsLoading(true);
     try {
       const response = await imsAxios.post("/godown/fetchLocationDetail_from", {
         location_key: allData.locationFrom,
       });
       if (response?.success) {
+        setIsLoading(false);
         setbBanchName(response?.data);
       } else {
         showToast(response?.message || "Data Not Found", "error");
+        setIsLoading(false);
       }
     } catch (error) {
       showToast(error?.message || "Server Error", "error");
+      setIsLoading(false);
     }
   };
 
   const getComponentList = async (e) => {
+    setIsLoading(true);
     try {
       if (e?.length > 2) {
         const response = await getProductsOptions(e);
@@ -112,16 +120,20 @@ function FGToFGTransfer() {
             ? data.map((d) => ({ text: d.text, value: d.value ?? d.id }))
             : [];
           setAsyncOptions(arr);
+          setIsLoading(false);
         } else {
           showToast(response?.message || "Data Not Found", "error");
+          setIsLoading(false);
         }
       }
     } catch (error) {
       showToast(error?.message || "Server Error", "error");
+      setIsLoading(false);
     }
   };
 
   const getQtyFuction = async (rowIndex, componentValue) => {
+    setIsLoading(true);
     const row = rows[rowIndex];
     const component = componentValue ?? row?.component;
     if (!allData.locationFrom || !component) return;
@@ -143,6 +155,7 @@ function FGToFGTransfer() {
         };
         return updated;
       });
+      setIsLoading(false);
     } catch (err) {
       setRows((prev) => {
         const updated = [...prev];
@@ -154,29 +167,28 @@ function FGToFGTransfer() {
         };
         return updated;
       });
+      setIsLoading(false);
     }
   };
 
   const saveFgToFg = async () => {
     if (!allData.locationFrom) {
-      return toast.error("Please select a Pick Location");
+      return showToast("Please select Pick Location", "error");
     }
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (!row.component) {
-        return toast.error(`Row ${i + 1}: Please select Product`);
+        return showToast(`Row ${i + 1}: Please select Component`, "error"); 
       }
       if (!row.qty1) {
-        return toast.error(`Row ${i + 1}: Please enter Qty`);
+        return showToast(`Row ${i + 1}: Please enter Qty`, "error"); 
       }
       if (!row.locationTo) {
-        return toast.error(`Row ${i + 1}: Please select Drop Location`);
+        return showToast(`Row ${i + 1}: Please select Drop Location`, "error"); 
       }
       if (row.locationTo === allData.locationFrom) {
-        return toast.error(
-          `Row ${i + 1}: Pick and Drop location cannot be same`,
-        );
+        return showToast(`Row ${i + 1}: Both Location Same`, "error"); 
       }
     }
 
@@ -212,17 +224,18 @@ function FGToFGTransfer() {
             : (res?.data ?? res);
 
         if (body?.success !== true && body?.status !== "success") {
-          toast.error(body?.message || "Transfer failed");
+        showToast(body?.message || "Transfer failed", "error");
           setLoading(false);
           return;
         }
         if (body?.message) successMessages.push(body.message);
       }
 
-      toast.success(
+      showToast(
         successMessages.length
           ? successMessages.join("\n")
           : "FG to FG transfer completed.",
+        "success",
       );
       setAllData({ locationFrom: "" });
       setRows([
@@ -240,9 +253,7 @@ function FGToFGTransfer() {
       ]);
       setbBanchName("");
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message || err?.message || "Transfer failed",
-      );
+    showToast(err?.message || "Server Error", "error");
     } finally {
       setLoading(false);
     }
@@ -309,6 +320,7 @@ function FGToFGTransfer() {
 
   return (
     <div style={{ height: "95%" }}>
+        {(loading || isLoading) && <Loading size="large" />}
       <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
         <Col span={6}>
           <Row gutter={10} style={{ margin: "5px" }}>
@@ -396,7 +408,7 @@ function FGToFGTransfer() {
                               style={{ width: "100%" }}
                               loadOptions={getComponentList}
                               onBlur={() => setAsyncOptions([])}
-                              onInputChange={(e) => setSearch(e)}
+                           
                               placeholder="Part Name/Code"
                               value={row.component}
                               optionsState={asyncOptions}
