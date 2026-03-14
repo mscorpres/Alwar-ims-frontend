@@ -127,7 +127,7 @@ import {
   ViewAgreement,
   AddAgreementType,
   JobworkApproval,
-   AddSKUOpeningRate,
+  AddSKUOpeningRate,
   //@ts-ignore
 } from "../Pages/index.jsx";
 //@ts-ignore
@@ -223,7 +223,8 @@ import SalesORderRegister from "../Pages/Sales/SalesOrder/SalesOrderRegister/Sal
 import PartCodeConversionReport from "../Pages/Store/PartCodeConversionReport/PartCodeConversionReport.jsx";
 import Pending from "../Pages/SFTransfer/Pending.jsx";
 import Addparty from "../Pages/Legal/master/Addparty.jsx";
-
+//@ts-ignore
+import R38 from "@/Pages/Reports/R/R38.jsx";
 import WoReport from "../Pages/Workorder/WoReport.jsx";
 import RnC from "../Pages/Legal/Registration&Certificates/RnC.jsx";
 import ViewRnC from "../Pages/Legal/Registration&Certificates/ViewRnC.jsx";
@@ -257,7 +258,6 @@ import ApprovalList from "@/Pages/R&D/products/approvalList.js";
 import BOMCreate from "@/Pages/R&D/bom/create/index.js";
 import BOMList from "@/Pages/R&D/bom/list/index.js";
 import VersionDownload from "@/Pages/Version/VersionDownload.jsx";
-
 
 const Routes = [
   {
@@ -304,7 +304,7 @@ const Routes = [
     path: "/masters/products/fg",
     main: () => <Product />,
   },
-   {
+  {
     path: "/masters/products/sfg",
     main: () => <Product />,
   },
@@ -312,12 +312,12 @@ const Routes = [
     path: "/masters/sku-opening-rate",
     main: () => <AddSKUOpeningRate />,
   },
-    
+
   {
     path: "/group",
     main: () => <Group />,
   },
-    {
+  {
     path: "/sub-group",
     main: () => <SubGroup />,
   },
@@ -780,6 +780,11 @@ const Routes = [
     main: () => <R37 />,
   },
   {
+    path: "/fg-register-report",
+
+    main: () => <R38 />,
+  },
+  {
     path: "/material-requisition/with-bom",
     main: () => <ReqWithBom />,
   },
@@ -804,7 +809,7 @@ const Routes = [
     path: "/procurement/create",
     main: () => <CreatePo />,
   },
- {
+  {
     path: "/procurement/request",
     main: () => <POrequest />,
   },
@@ -876,7 +881,7 @@ const Routes = [
     path: "/warehouse/job-work/create",
     main: () => <CreateJW />,
   },
-    {
+  {
     path: "/warehouse/job-work/approval",
     main: () => <JobworkApproval />,
   },
