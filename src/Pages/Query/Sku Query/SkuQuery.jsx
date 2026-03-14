@@ -130,13 +130,7 @@ const Q3 = () => {
             {/* Filters */}
             <Card size="small" title="Filters">
               <Space direction="vertical" size={12} style={{ width: "100%" }}>
-                     <div>
-                  <Typography.Text type="secondary">
-                    Select Date Range
-                  </Typography.Text>
-
-                  <MyDatePicker size="default" setDateRange={setDate} />
-                </div>
+                
                 <div>
                   <Typography.Text type="secondary">
                     Product Name
@@ -150,6 +144,13 @@ const Q3 = () => {
                     selectLoading={loading === "select"}
                     value={searchInput}
                   />
+                </div>
+                     <div>
+                  <Typography.Text type="secondary">
+                    Select Date Range
+                  </Typography.Text>
+
+                  <MyDatePicker size="default" setDateRange={setDate} />
                 </div>
 
                 <div>
