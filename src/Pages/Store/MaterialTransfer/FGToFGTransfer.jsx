@@ -78,6 +78,7 @@ function FGToFGTransfer() {
         let v = [];
         data?.map((ad) => v.push({ label: ad.text, value: ad.id }));
         setloctionData(v);
+        setloctionDataTo(v);
       } else {
         showToast(response?.message || "Data Not Found", "error");
       }
@@ -105,7 +106,6 @@ function FGToFGTransfer() {
     try {
       if (e?.length > 2) {
         const response = await getProductsOptions(e);
-console.log(response,"data")
         if (response?.success) {
           const data = response?.data;
           const arr = Array.isArray(data)
@@ -261,7 +261,7 @@ console.log(response,"data")
       const updated = [...prev];
       updated[rowIndex] = {
         ...updated[rowIndex],
-        address: data.data,
+        address: data,
       };
       return updated;
     });
