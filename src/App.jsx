@@ -161,22 +161,35 @@ const App = () => {
     setSearchHis(modOpt);
     setModulesOptions(modOpt);
   };
-  // notifications recieve handlers
-  socket.on("connect", () => {
-    setIsConnected(true);
-    setIsLoading(false);
-  });
 
-  socket.on("connect_error", (error) => {
-    console.error("Connection error:", error);
-    setIsConnected(false);
-    setIsLoading(false);
-  });
+  // notifications receive handlers
+  useEffect(() => {
+    const handleConnect = () => {
+      setIsConnected(true);
+      setIsLoading(false);
+    };
 
-  socket.on("disconnect", (reason) => {
-    setIsConnected(false);
-    setIsLoading(false);
-  });
+    const handleConnectError = (error) => {
+      console.error("Connection error:", error);
+      setIsConnected(false);
+      setIsLoading(false);
+    };
+
+    const handleDisconnect = () => {
+      setIsConnected(false);
+      setIsLoading(false);
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("connect_error", handleConnectError);
+    socket.on("disconnect", handleDisconnect);
+
+    return () => {
+      socket.off("connect", handleConnect);
+      socket.off("connect_error", handleConnectError);
+      socket.off("disconnect", handleDisconnect);
+    };
+  }, []);
 
   const fetchUserDeatils = async (token, session, com, branch) => {
     setLoadingSwitch(true);
@@ -259,17 +272,25 @@ const App = () => {
     if (user && user.token) {
       // getting all notifications
       socket.on("all-notifications", (data) => {
-        let arr = [];
-        arr = data?.map((row) => {
-          return {
-            ...row,
-            type: row.msg_type,
-            title: row.request_txt_label,
-            details: row.req_date,
-            file: JSON.parse(row.other_data).fileUrl,
-            message: JSON.parse(row.other_data)?.message,
-          };
-        });
+        let source = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.data)
+            ? data.data
+            : [];
+
+        if (!Array.isArray(source) || source.length === 0) {
+          return;
+        }
+
+        const arr = source.map((row) => ({
+          ...row,
+          type: row.msg_type,
+          title: row.request_txt_label,
+          details: row.req_date,
+          file: JSON.parse(row.other_data).fileUrl,
+          message: JSON.parse(row.other_data)?.message,
+        }));
+
         dispatch(setNotifications(arr));
       });
       socket.emit("fetch_notifications", {
