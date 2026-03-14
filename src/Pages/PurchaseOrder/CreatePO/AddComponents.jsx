@@ -138,7 +138,7 @@ export default function AddComponents({
 
       const gstRateNum = Number(r.gstRate ?? r.gstrate) || 0;
 
-      const rawGstType = r.gstType ?? gstState ?? "L";
+      const rawGstType =  gstState ?? "L";
 
       const gstTypeNormalized =
         typeof rawGstType === "object"
@@ -371,17 +371,6 @@ export default function AddComponents({
       ),
     },
 
-    {
-      headerName: "GST TYPE",
-
-      field: "Gsttype",
-
-      flex: 1,
-
-      minWidth: 100,
-
-      renderCell: ({ row }) => <ToolTipEllipses text={row.gstType?.text} />,
-    },
 
     {
       headerName: "Remark",
