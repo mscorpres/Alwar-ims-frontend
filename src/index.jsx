@@ -98,14 +98,25 @@ const theme = {
   },
 };
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const container = document.getElementById("root");
+let root = container._reactRoot;
+if (!root) {
+  root = ReactDOM.createRoot(container);
+  container._reactRoot = root;
+}
+
 root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
       <ToastContext>
-      <BrowserRouter>
-        <Main />
-      </BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <Main />
+        </BrowserRouter>
       </ToastContext>
     </Provider>
   </ConfigProvider>

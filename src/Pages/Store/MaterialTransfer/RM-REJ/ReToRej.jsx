@@ -277,32 +277,35 @@ function ReToRej() {
                       minWidth: 1200,
                     }}
                   >
-                    <tr>
-                      <th className="table-col" style={{ width: "18vw" }}>
-                        Component / Part No.
-                      </th>
-                      <th className="table-col" style={{ width: "12vw" }}>
-                        Stock QTY
-                      </th>
-                      <th className="table-col" style={{ width: "12vw" }}>
-                         Transfering QTY
-                      </th>
-                      <th className="table-col" style={{ width: "14vw" }}>
-                        DROP (+) Loc
-                      </th>
-                      <th className="table-col" style={{ width: "12vw" }}>
-                        WAR
-                      </th>
-                      <th className="table-col" style={{ width: "22vw" }}>
-                        Address
-                      </th>
-                      <th className="table-col" style={{ width: "10vw" }}>
-                        Actions
-                      </th>
-                    </tr>
-                    {rows.map((r, idx) => (
-                      <tr key={idx}>
-                        <td style={{ width: "18vw" }}>
+                    <thead>
+                      <tr>
+                        <th className="table-col" style={{ width: "18vw" }}>
+                          Component / Part No.
+                        </th>
+                        <th className="table-col" style={{ width: "12vw" }}>
+                          Stock QTY
+                        </th>
+                        <th className="table-col" style={{ width: "12vw" }}>
+                          Transfering QTY
+                        </th>
+                        <th className="table-col" style={{ width: "14vw" }}>
+                          DROP (+) Loc
+                        </th>
+                        <th className="table-col" style={{ width: "12vw" }}>
+                          WAR
+                        </th>
+                        <th className="table-col" style={{ width: "22vw" }}>
+                          Address
+                        </th>
+                        <th className="table-col" style={{ width: "10vw" }}>
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((r, idx) => (
+                        <tr key={idx}>
+                          <td style={{ width: "18vw" }}>
                           <div
                             style={{
                               width: "100%",
@@ -332,82 +335,75 @@ function ReToRej() {
                               }}
                             />
                           </div>
-                        </td>
-                        <td style={{ width: "12vw" }}>
-                          {/* <Input
-                            suffix={r?.restDetail?.unit}
-                            disabled
-                            value={
-                              r?.restDetail?.available_qty
-                                ? `${r?.restDetail?.available_qty} ${r?.restDetail?.unit}`
-                                : "0"
-                            }
-                          /> */}
+                          </td>
+                          <td style={{ width: "12vw" }}>
                             <span>
-                              {r?.restDetail?.available_qty ?? "0"} {r?.restDetail?.unit ?? ""}
+                              {r?.restDetail?.available_qty ?? "0"}{" "}
+                              {r?.restDetail?.unit ?? ""}
                             </span>
-                        </td>
-                        <td style={{ width: "12vw" }}>
-                          <Input
-                          type="number"
-                            suffix={r?.restDetail?.unit}
-                            value={r.qty1}
-                            onChange={(e) =>
-                              setRows((prev) => {
-                                const updated = [...prev];
-                                updated[idx] = {
-                                  ...updated[idx],
-                                  qty1: e.target.value,
-                                };
-                                return updated;
-                              })
-                            }
-                          />
-                        </td>
-                        <td style={{ width: "14vw" }}>
-                          <Select
-                            style={{ width: "100%" }}
-                            options={locDataTo}
-                            value={r.locationTo}
-                            onChange={async (e) => {
-                              setRows((prev) => {
-                                const updated = [...prev];
-                                updated[idx] = {
-                                  ...updated[idx],
-                                  locationTo: e,
-                                };
-                                return updated;
-                              });
-                              await getRowLocationName(idx, e);
-                            }}
-                          />
-                        </td>
-                        <td style={{ width: "12vw" }}>
-                          <Input disabled value={r?.restDetail?.avr_rate} />
-                        </td>
-                        <td style={{ width: "22vw" }}>
-                          <TextArea
-                            rows={2}
-                            disabled
-                            value={r.address}
-                            style={{ resize: "none" }}
-                          />
-                        </td>
-                        <td style={{ width: "10vw" }}>
-                          <Button
-                            danger
-                            onClick={() =>
-                              setRows((prev) =>
-                                prev.filter((_, i) => i !== idx)
-                              )
-                            }
-                            disabled={rows.length === 1}
-                          >
-                            Remove
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+                          <td style={{ width: "12vw" }}>
+                            <Input
+                              type="number"
+                              suffix={r?.restDetail?.unit}
+                              value={r.qty1}
+                              onChange={(e) =>
+                                setRows((prev) => {
+                                  const updated = [...prev];
+                                  updated[idx] = {
+                                    ...updated[idx],
+                                    qty1: e.target.value,
+                                  };
+                                  return updated;
+                                })
+                              }
+                            />
+                          </td>
+                          <td style={{ width: "14vw" }}>
+                            <Select
+                              style={{ width: "100%" }}
+                              options={locDataTo}
+                              value={r.locationTo}
+                              onChange={async (e) => {
+                                setRows((prev) => {
+                                  const updated = [...prev];
+                                  updated[idx] = {
+                                    ...updated[idx],
+                                    locationTo: e,
+                                  };
+                                  return updated;
+                                });
+                                await getRowLocationName(idx, e);
+                              }}
+                            />
+                          </td>
+                          <td style={{ width: "12vw" }}>
+                            <Input disabled value={r?.restDetail?.avr_rate} />
+                          </td>
+                          <td style={{ width: "22vw" }}>
+                            <TextArea
+                              rows={2}
+                              disabled
+                              value={r.address}
+                              style={{ resize: "none" }}
+                            />
+                          </td>
+                          <td style={{ width: "10vw" }}>
+                            <Button
+                              danger
+                              onClick={() =>
+                                setRows((prev) =>
+                                  prev.filter((_, i) => i !== idx),
+                                )
+                              }
+                              disabled={rows.length === 1}
+                            >
+                              Remove
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
                 </div>
               </div>

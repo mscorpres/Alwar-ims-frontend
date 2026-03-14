@@ -209,9 +209,11 @@ export default function NewModal({
       width: 200,
       getActions: ({ row }) => [
         <GridActionsCellItem
+          label="Reject"
           icon={<CloseCircleFilled onClick={() => setDelModal(row)} />}
         />,
         <GridActionsCellItem
+          label="Approve"
           icon={
             <CheckCircleFilled onClick={() => saveFunction(row, head[0])} />
           }

@@ -50,11 +50,11 @@ export const quantityCell = ({ row }, inputHandler) => (
 export const rateCell = ({ row }, inputHandler, currencies) => (
   <Input.Group compact>
     <Input
-      style={{ width: "65%", borderColor: row.approval && "red" }}
+      style={{ width: "62%", borderColor: row.approval && "red" }}
       value={row.rate}
       onChange={(e) => inputHandler("rate", e.target.value, row.id)}
     />
-    <div style={{ width: "35%" }}>
+    <div style={{ width: "35%" , marginLeft: "1px"}}>
       <MySelect
         options={currencies}
         value={row.currency}
@@ -135,7 +135,7 @@ export const itemDescriptionCell = ({ row }, inputHandler) => (
 export const internalRemarkCell = ({ row }, inputHandler) => (
   <Input
     placeholder="Internal Remark"
-    // value={row.internal_remark || ""}
+    value={row.internal_remark || ""}
     onChange={(e) => inputHandler("internal_remark", e.target.value, row.id)}
     // style={{ backgroundColor: "#fffbe6" }}
   />

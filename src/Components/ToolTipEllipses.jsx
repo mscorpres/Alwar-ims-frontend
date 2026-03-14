@@ -5,7 +5,7 @@ import { customColor } from "../utils/customColor";
 export default function ToolTipEllipses({ text, type, copy, width }) {
   return (
     <Tooltip
-      overlayStyle={{ fontSize: "0.7rem", color: "white" }}
+      styles={{ root: { fontSize: "0.7rem", color: "white" } }}
       placement="topLeft"
       title={text}
       color= {customColor.newBgColor}

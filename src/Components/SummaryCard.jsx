@@ -6,7 +6,7 @@ function SummaryCard({ summary, title, type, loading }) {
     <Card title={title} size="small">
       <Row gutter={[0, 8]}>
         {summary?.map((row, index) => (
-          <Col span={24}>
+          <Col span={24} key={row.key ?? row.id ?? index}>
             {row.title && (
               <Typography.Text
                 style={{

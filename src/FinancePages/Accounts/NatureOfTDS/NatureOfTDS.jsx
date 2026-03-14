@@ -51,7 +51,7 @@ export default function NatureOfTDS() {
         <GridActionsCellItem
           icon={<AiFillEdit />}
           onClick={() => setEditingTDS(row)}
-          // label="Delete"
+          label="Edit"
         />,
       ],
     },

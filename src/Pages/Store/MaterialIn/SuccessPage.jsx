@@ -13,40 +13,45 @@ export default function SuccessPage({
   successColumns,
   newMinFunction,
   title,
+  isFGMIN = false,
 }) {
   const [printLoading, setPringLoading] = useState(false);
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [rows, setRows] = useState([]);
   const printFun = async () => {
-  
     setPringLoading(true);
 
-    const response = await imsAxios.post("/minPrint/printSingleMin", {
+    const { data } = await imsAxios.post(isFGMIN ? "/fgMinPrint/printFGMin" : "/minPrint/printSingleMin", {
       transaction: po?.materialInId,
     });
     setPringLoading(false);
-    printFunction(response?.data.buffer?.data);
+    printFunction(data.data.buffer.data);
   };
   const downloadExcel = async () => {
     downloadCSV(po.components, successColumns, `SFG Inward Report`);
   };
   const handleDownload = async () => {
-    
     setDownloadLoading(true);
-    const response = await imsAxios.post("/minPrint/printSingleMin", {
-      transaction: po?.materialInId,
-    });
-    setDownloadLoading(false);
-    let filename = `MIN ${po?.materialInId}`;
-    downloadFunction(response?.data.buffer?.data, filename);
+    if (isFGMIN) {
+      const { data } = await imsAxios.post("/printDoc/download", {
+        transaction: po?.materialInId,
+      });
+      setDownloadLoading(false);
+      window.open(data.url, "_blank");
+    } else {
+      const { data } = await imsAxios.post("/minPrint/printSingleMin", {
+        transaction: po?.materialInId,
+      });
+      setDownloadLoading(false);
+      let filename = `MIN ${po?.materialInId}`;
+      downloadFunction(data.data.buffer.data, filename);
+    }
   };
   useEffect(() => {
-    console.log("SuccessPage - po object:", po);
-    console.log("SuccessPage - materialInId:", po?.materialInId);
     if (po?.components) {
       setRows(po?.components);
     }
-  }, [po]);
+  }, [po?.components]);
 
   return (
     <div style={{ height: "50vh" }}>
@@ -63,15 +68,15 @@ export default function SuccessPage({
                 po?.components?.length
               } component${po?.components?.length > 1 ? "s" : ""}) ${
                 po?.poId ? `from  ${po?.poId}` : ""
-              } from ${po?.vendor}`
+              } from ${po?.vendor?.vendorname ?? po?.vendor ?? ""}`
             : `Material Inward ${po?.materialInId}  (${
                 po?.components?.length
               } component${po?.components?.length > 1 ? "s" : ""}) ${
                 po?.poId ? `from  ${po?.poId}` : ""
-              } from ${po?.vendor?.vendorname ?? po?.vendor}`
+              } from ${po?.vendor?.vendorname ?? po?.vendor ?? ""}`
         }
         extra={[
-          <Row key="action-buttons" justify="center" gutter={16}>
+          <Row justify="center" gutter={16}>
             <Col>
               <CommonIcons action={"refreshButton"} onClick={newMinFunction} />
             </Col>
@@ -90,7 +95,7 @@ export default function SuccessPage({
               />
             </Col>
           </Row>,
-          <Row key="data-table" style={{ marginTop: 15, height: "40vh" }}>
+          <Row style={{ marginTop: 15, height: "40vh" }}>
             <MyDataTable data={rows} columns={successColumns} />
           </Row>,
         ]}

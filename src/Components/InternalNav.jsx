@@ -82,7 +82,7 @@ export default function InternalNav({
           label: (
             <Tooltip
               placement="bottomLeft"
-              overlayStyle={{ fontSize: "0.7rem", color: "white" }}
+              styles={{ root: { fontSize: "0.7rem", color: "white" } }}
               color={customColor.textColor}
               title={link.placeholder && link.placeholder}
             >
