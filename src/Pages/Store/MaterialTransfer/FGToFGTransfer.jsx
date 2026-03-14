@@ -5,7 +5,7 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect.jsx";
 import "./Modal/style.css";
 import { imsAxios } from "../../../axiosInterceptor.js";
 import NavFooter from "../../../Components/NavFooter.jsx";
-import {  getProductsOptions } from "../../../api/general.ts";
+import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +40,7 @@ function FGToFGTransfer() {
   const [seacrh, setSearch] = useState(null);
   const { executeFun, loading: loading1 } = useApi();
   const navigate = useNavigate();
- const {showToast} = useToast();
+  const { showToast } = useToast();
 
   // Add row functionality
   const addRow = () => {
@@ -71,36 +71,53 @@ function FGToFGTransfer() {
 
   // console.log(branchName);
   const getLocationFunction = async () => {
-    const { data } = await imsAxios.get("/skuQueryA/q3Location");
-
-    let v = [];
-    data.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
-    setloctionData(v);
-  };
-  const getLocationFunctionTo = async () => {
-    const { data } = await imsAxios.get("/skuQueryA/q3Location");
-
-    let v = [];
-    data.data.map((ad) => v.push({ label: ad.text, value: ad.id }));
-    setloctionDataTo(v);
+    try {
+      const response = await imsAxios.get("/skuQueryA/q3Location");
+      if (response?.success) {
+        const data = response?.data;
+        let v = [];
+        data?.map((ad) => v.push({ label: ad.text, value: ad.id }));
+        setloctionData(v);
+      } else {
+        showToast(response?.message || "Data Not Found", "error");
+      }
+    } catch (error) {
+      showToast(error?.message || "Server Error", "error");
+    }
   };
 
   const branchInfoFunction = async () => {
-    const { data } = await imsAxios.post("/godown/fetchLocationDetail_from", {
-      location_key: allData.locationFrom,
-    });
-    // console.log(data.data);
-    setbBanchName(data.data);
+    try {
+      const response = await imsAxios.post("/godown/fetchLocationDetail_from", {
+        location_key: allData.locationFrom,
+      });
+      if (response?.success) {
+        setbBanchName(response?.data);
+      } else {
+        showToast(response?.message || "Data Not Found", "error");
+      }
+    } catch (error) {
+      showToast(error?.message || "Server Error", "error");
+    }
   };
 
   const getComponentList = async (e) => {
-    if (e?.length > 2) {
-      const response = await executeFun(() => getProductsOptions(e), "select");
-      const data = response?.data;
-      const arr = Array.isArray(data)
-        ? data.map((d) => ({ text: d.text, value: d.value ?? d.id }))
-        : [];
-      setAsyncOptions(arr);
+    try {
+      if (e?.length > 2) {
+        const response = await getProductsOptions(e);
+console.log(response,"data")
+        if (response?.success) {
+          const data = response?.data;
+          const arr = Array.isArray(data)
+            ? data.map((d) => ({ text: d.text, value: d.value ?? d.id }))
+            : [];
+          setAsyncOptions(arr);
+        } else {
+          showToast(response?.message || "Data Not Found", "error");
+        }
+      }
+    } catch (error) {
+      showToast(error?.message || "Server Error", "error");
     }
   };
 
@@ -114,7 +131,7 @@ function FGToFGTransfer() {
         product: component,
         location: allData.locationFrom,
       });
-      
+
       const stockData = data?.data ?? data;
       setRows((prev) => {
         const updated = [...prev];
@@ -157,13 +174,14 @@ function FGToFGTransfer() {
         return toast.error(`Row ${i + 1}: Please select Drop Location`);
       }
       if (row.locationTo === allData.locationFrom) {
-        return toast.error(`Row ${i + 1}: Pick and Drop location cannot be same`);
+        return toast.error(
+          `Row ${i + 1}: Pick and Drop location cannot be same`,
+        );
       }
     }
 
     setLoading(true);
 
-    
     const byDrop = {};
     rows.forEach((row) => {
       const loc = row.locationTo;
@@ -188,7 +206,10 @@ function FGToFGTransfer() {
         });
 
         // Interceptor returns response.data when success is present, so res is already the body
-        const body = res && typeof res === "object" && "success" in res ? res : res?.data ?? res;
+        const body =
+          res && typeof res === "object" && "success" in res
+            ? res
+            : (res?.data ?? res);
 
         if (body?.success !== true && body?.status !== "success") {
           toast.error(body?.message || "Transfer failed");
@@ -199,7 +220,9 @@ function FGToFGTransfer() {
       }
 
       toast.success(
-        successMessages.length ? successMessages.join("\n") : "FG to FG transfer completed."
+        successMessages.length
+          ? successMessages.join("\n")
+          : "FG to FG transfer completed.",
       );
       setAllData({ locationFrom: "" });
       setRows([
@@ -217,7 +240,9 @@ function FGToFGTransfer() {
       ]);
       setbBanchName("");
     } catch (err) {
-      toast.error(err?.response?.data?.message || err?.message || "Transfer failed");
+      toast.error(
+        err?.response?.data?.message || err?.message || "Transfer failed",
+      );
     } finally {
       setLoading(false);
     }
@@ -265,7 +290,6 @@ function FGToFGTransfer() {
 
   useEffect(() => {
     getLocationFunction();
-    getLocationFunctionTo();
   }, []);
 
   useEffect(() => {
@@ -274,7 +298,6 @@ function FGToFGTransfer() {
     }
   }, [allData?.locationFrom]);
 
-  
   useEffect(() => {
     if (!allData.locationFrom) return;
     rows.forEach((row, index) => {

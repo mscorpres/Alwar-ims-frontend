@@ -3,47 +3,40 @@ import { convertSelectOptions } from "@/utils/general";
 //@ts-ignore
 import { imsAxios } from "../axiosInterceptor";
 //@ts-ignore
-import {getGlobalToast} from "../context/ToastContext";
+import { getGlobalToast } from "../context/ToastContext";
 
-
-
-
-export const getVendorOptions = async (search:any) => {
-  
+export const getVendorOptions = async (search: any) => {
   try {
     const response = await imsAxios.post("/backend/vendorList", {
       search,
     });
     return response;
-  } catch (error) {
-   
-  }
+  } catch (error) {}
 };
-export const createJobWorkReq = async (finalObj:any) => {
-   const showToast = getGlobalToast();
+export const createJobWorkReq = async (finalObj: any) => {
+  const showToast = getGlobalToast();
   try {
     const response = await imsAxios.post("/jobwork/createJobWorkReq", finalObj);
-    if(response.code == 500) {
-      showToast(response?.message?.msg,"error");
-
-    } 
+    if (response.code == 500) {
+      showToast(response?.message?.msg, "error");
+    }
     return response;
   } catch (error) {
     console.error("something happened wrong", error);
   }
 };
-export const saveJwMAterialIssue = async (finalObj:any) => {
+export const saveJwMAterialIssue = async (finalObj: any) => {
   try {
     const response = await imsAxios.post(
       "/jobwork/save_jw_material_issue",
-      finalObj
+      finalObj,
     );
     return response;
   } catch (error) {
     console.error("something happened wrong", error);
   }
 };
-export const checkInvoiceforMIN = async (payload:any) => {
+export const checkInvoiceforMIN = async (payload: any) => {
   try {
     const response = await imsAxios.post("/backend/checkInvoice", payload);
     return response;
@@ -51,7 +44,7 @@ export const checkInvoiceforMIN = async (payload:any) => {
     console.error("something happened wrong", error);
   }
 };
-export const poMINforMIN = async (final:any) => {
+export const poMINforMIN = async (final: any) => {
   try {
     const response = await imsAxios.post("/purchaseOrder/poMIN", final);
     return response;
@@ -60,7 +53,7 @@ export const poMINforMIN = async (final:any) => {
   }
 };
 
-export const poMINforImport = async (final:any) => {
+export const poMINforImport = async (final: any) => {
   try {
     const response = await imsAxios.post("/purchaseOthers/poMINImport", final);
     return response;
@@ -68,7 +61,7 @@ export const poMINforImport = async (final:any) => {
     console.error("something happened wrong", error);
   }
 };
-export const savefginward = async (final:any) => {
+export const savefginward = async (final: any) => {
   try {
     const response = await imsAxios.post("/fgMIN/savefginward", final);
     return response;
@@ -76,7 +69,7 @@ export const savefginward = async (final:any) => {
     console.error("something happened wrong", error);
   }
 };
-export const getBomItem = async (finalObj:any) => {
+export const getBomItem = async (finalObj: any) => {
   try {
     const response = await imsAxios.post("/jobwork/getBomItem", finalObj);
     return response;
@@ -84,7 +77,7 @@ export const getBomItem = async (finalObj:any) => {
     console.error("something happened wrong", error);
   }
 };
-export const savejwsfinward = async (finalObj:any) => {
+export const savejwsfinward = async (finalObj: any) => {
   try {
     const response = await imsAxios.post("/jobwork/savejwsfinward", finalObj);
     return response;
@@ -92,7 +85,7 @@ export const savejwsfinward = async (finalObj:any) => {
     console.error("something happened wrong", error);
   }
 };
-export const saveCreateChallan = async (final:any) => {
+export const saveCreateChallan = async (final: any) => {
   try {
     const response = await imsAxios.post("/jobwork/saveCreateChallan", final);
     return response;
@@ -100,7 +93,7 @@ export const saveCreateChallan = async (final:any) => {
     console.error("something happened wrong", error);
   }
 };
-export const uplaodFileInJWReturn = async (formdata:any) => {
+export const uplaodFileInJWReturn = async (formdata: any) => {
   try {
     const response = await imsAxios.post("/jobwork/upload/item ", formdata);
     return response;
@@ -108,7 +101,7 @@ export const uplaodFileInJWReturn = async (formdata:any) => {
     console.error("something happened wrong", error);
   }
 };
-export const uplaodFileInMINInward = async (formdata:any) => {
+export const uplaodFileInMINInward = async (formdata: any) => {
   try {
     const response = await imsAxios.post("transaction/upload/item", formdata);
     return response;
@@ -117,43 +110,49 @@ export const uplaodFileInMINInward = async (formdata:any) => {
   }
 };
 
-export const uploadPOExportFile = async (formdata:any) => {
+export const uploadPOExportFile = async (formdata: any) => {
   try {
-    const response = await imsAxios.post("purchaseOthers/uploadPoFile", formdata);
+    const response = await imsAxios.post(
+      "purchaseOthers/uploadPoFile",
+      formdata,
+    );
     return response;
   } catch (error) {
     console.error("something happened wrong", error);
   }
 };
-export const getVendorBranchOptions = async (vendorCode:any) => {
+export const getVendorBranchOptions = async (vendorCode: any) => {
   const response = await imsAxios.post("/backend/vendorBranchList", {
     vendorcode: vendorCode,
   });
 
   return response;
 };
-export const getVendorBranchDetails = async (vendorCode:any, branchCode:any) => {
+export const getVendorBranchDetails = async (
+  vendorCode: any,
+  branchCode: any,
+) => {
   const response = await imsAxios.post("/backend/vendorAddress", {
     branchcode: branchCode,
     vendorcode: vendorCode,
   });
   return response;
 };
-export const getCostCentresOptions = async (search:any) => {
+export const getCostCentresOptions = async (search: any) => {
   const response = await imsAxios.post("/backend/costCenter", {
     search,
   });
   return response;
 };
 
-export const getBomOptions = async (search:any) => {
+export const getBomOptions = async (search: any) => {
   const response = await imsAxios.post("/backend/bomRecipe", {
     search,
   });
   return response;
 };
 
-export const getUsersOptions = async (search:any) => {
+export const getUsersOptions = async (search: any) => {
   const response = await imsAxios.post("/backend/fetchAllUser", {
     search,
   });
@@ -161,7 +160,7 @@ export const getUsersOptions = async (search:any) => {
   return response;
 };
 
-export const getBillingAddressDetails = async (addressCode:any) => {
+export const getBillingAddressDetails = async (addressCode: any) => {
   const response = await imsAxios.post("/backend/billingAddress", {
     billing_code: addressCode,
   });
@@ -184,7 +183,7 @@ export const getShippingAddressOptions = async () => {
   return response;
 };
 
-export const getClientShippingOptions = async (search:any) => {
+export const getClientShippingOptions = async (search: any) => {
   const response = await imsAxios.post("/backend/shipingAddressList", {
     search,
   });
@@ -192,39 +191,42 @@ export const getClientShippingOptions = async (search:any) => {
   return response;
 };
 
-export const getProjectOptions = async (search:any) => {
+export const getProjectOptions = async (search: any) => {
   const response = await imsAxios.post("/backend/poProjectName", {
     search,
   });
 
-  let arr:any = [];
+  let arr: any = [];
   arr = convertSelectOptions(response.data ?? []);
   response.data = arr;
   return response;
 };
 
-export const getProjectDetails = async (projectId:any) => {
+export const getProjectDetails = async (projectId: any) => {
   const response = await imsAxios.post("/backend/projectDescription", {
     project_name: projectId,
   });
   return response;
 };
 
-export const getComponentOptions = async (search:any) => {
+export const getComponentOptions = async (search: any) => {
   const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
     search,
   });
   // console.error("response", response);
   return response;
 };
-export const updateAlternatePartCode = async (alternativeArr:any, basePartCode:any) => {
+export const updateAlternatePartCode = async (
+  alternativeArr: any,
+  basePartCode: any,
+) => {
   const response = await imsAxios.post("/component/update_alt_part_no", {
     componentKey: basePartCode,
     alt_part_key: alternativeArr,
   });
   return response;
 };
-export const fetchLocations = async (search:any, type?: "sf") => {
+export const fetchLocations = async (search: any, type?: "sf") => {
   let url = "/backend/fetchLocation";
   switch (type) {
     case "sf":
@@ -254,9 +256,6 @@ export const getProductsOptions = async (search: string, sku?: boolean) => {
     arr = convertSelectOptions(response.data);
   }
 
-  if (response?.data.length) {
-    arr = convertSelectOptions(response.data);
-  }
   response.data = arr;
 
   return response;
@@ -268,7 +267,7 @@ export const getClosingStockForQuery6 = async (search) => {
     "/closing_stock/save_closing_stock_cif",
     {
       date: search,
-    }
+    },
   );
 
   let arr = [];
@@ -355,7 +354,7 @@ export const getPprOptions = async (search: string) => {
 export const deleteQcaRows = async (payload) => {
   const response = await imsAxios.post(
     "/createqca/delete_testing_data",
-    payload
+    payload,
   );
 
   response.data = convertSelectOptions(response.data ?? []);
@@ -387,7 +386,7 @@ export const getComponenentAndProduct = async (search: string) => {
     {
       search,
       searchTerm: search,
-    }
+    },
   );
 
   let arr: SelectOptionType[] = [];
