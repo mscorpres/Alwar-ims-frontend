@@ -134,16 +134,12 @@ export const foreignCell = ({ row }) => {
     displayValue === "" ? "" : (Number(displayValue) || 0);
   return <Input disabled={true} value={valueToShow} />;
 };
-export const invoiceIdCell = ({ row }, inputHandler) => {
-  return (
-    <>
-      <Input
-        value={row.invoiceId}
-        onChange={(e) => inputHandler("invoiceId", e.target.value, row.id)}
-      />
-    </>
-  );
-};
+export const invoiceIdCell = ({ row }, inputHandler) => (
+  <Input
+    value={row.invoiceId}
+    onChange={(e) => inputHandler("invoiceId", e.target.value, row.id)}
+  />
+);
 export const invoiceDateCell = ({ row }, inputHandler) => {
   return (
     <InputMask
@@ -216,21 +212,14 @@ export const locationCell = (
 
   locationOptions
 ) => (
-  <>
-    <MySelect
-      labelInValue
-      // onBlur={() => setAsyncOptions([])}
-      value={row?.location}
-      // selectLoading={selectLoading}
-      onChange={(value) => {
-        inputHandler("location", value, row.id);
-      }}
-      options={locationOptions}
-      // labelInValue
-      // loadOptions={getLocation}
-      // optionsState={asyncOptions}
-    />
-  </>
+  <MySelect
+    labelInValue
+    value={row?.location}
+    onChange={(value) => {
+      inputHandler("location", value, row.id);
+    }}
+    options={locationOptions}
+  />
 );
 export const autoConsumptionCell = (
   { row },

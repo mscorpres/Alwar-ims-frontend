@@ -69,24 +69,22 @@ export default function FormTable({ columns, data, loading }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((row) => (
-              <TableRow key={row?.id}>
+            {data?.map((row, rowIndex) => (
+              <TableRow key={row?.id ?? `row-${rowIndex}`}>
                 {columns.map((col, index) => (
                   <TableCell
                     key={index}
                     size="small"
                     sx={{
                       width: `${row.width && row.width}px !important`,
-                      // maxWidth: `${row.width && row.width}px !important`,
-                      // minWidth: `${row.width && row.width}px !important`,
                       justifyContent: "center",
-                      // textAlign: "center",
                       padding: "2px 5px",
-
                       border: "none",
                     }}
                   >
-                    {col.renderCell({ row })}
+                    <div style={{ display: "contents" }}>
+                      {col.renderCell({ row })}
+                    </div>
                   </TableCell>
                 ))}
               </TableRow>

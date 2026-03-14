@@ -29,7 +29,6 @@ import {
   remarkCell,
   rateCell,
   autoConsumptionCell,
-  gstRate,
   componentCell,
 } from "./TableCollumns";
 import UploadDocs from "../MaterialInWithPO/UploadDocs";
@@ -987,10 +986,13 @@ export default function ProductMIN() {
       width: 80,
       field: "add",
       sortable: false,
-      renderCell: ({ row }) =>
-        materialInward.indexOf(row) >= 1 && (
-          <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
-        ),
+      renderCell: ({ row }) => (
+        <span>
+          {materialInward.indexOf(row) >= 1 ? (
+            <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
+          ) : null}
+        </span>
+      ),
     },
     {
       headerName: "Product",
@@ -1060,11 +1062,41 @@ export default function ProductMIN() {
     },
     {
       headerName: "GST Rate",
+      width: 120,
       field: "gstrate",
       sortable: false,
-      renderCell: (params) => gstRate(params, inputHandler),
-      // flex: 1,
-      width: 100,
+      renderCell: (params) => {
+        const options = [
+          { label: "0%", value: 0 },
+          { label: "5%", value: 5 },
+          { label: "18%", value: 18 },
+        ];
+
+        return (
+          <select
+            style={{
+              width: "100%",
+              padding: "6px 8px",
+              border: "1px solid #d9d9d9",
+              borderRadius: 6,
+              backgroundColor: "white",
+              fontSize: 13,
+            }}
+            value={params.row.gstrate ?? ""}
+            onChange={(e) => {
+              const newRate = Number(e.target.value);
+              inputHandler("gstrate", newRate, params.row.id);
+            }}
+          >
+            <option value="">Select</option>
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        );
+      },
     },
     {
       headerName: "CGST",
@@ -1209,7 +1241,12 @@ export default function ProductMIN() {
         openBranch={showBranchModal}
       />
 
-      {!showSuccessPage && (
+      <div
+        style={{
+          display: showSuccessPage ? "none" : "block",
+          height: "92%",
+        }}
+      >
         <Row
           gutter={8}
           style={{
@@ -1496,7 +1533,7 @@ export default function ProductMIN() {
             />
           </Col>
         </Row>
-      )}
+      </div>
       <NavFooter
         // uploadFun={() => {
         //   setShowUploadDoc(materialInward);
@@ -1566,7 +1603,7 @@ export default function ProductMIN() {
         title="Preview Data From Excel"
         placement="right"
         onClose={() => setPreview(false)}
-        destroyOnClose={true}
+        destroyOnClose={false}
         open={preview}
         bodyStyle={{ padding: 5 }}
       >
