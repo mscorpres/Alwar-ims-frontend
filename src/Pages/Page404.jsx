@@ -13,9 +13,7 @@ export default function Page404() {
     >
       <Empty
         image="/assets/images/404image.png"
-        imageStyle={{
-          height: 200,
-        }}
+        styles={{ image: { height: 200 } }}
         description={
           <div
             style={{

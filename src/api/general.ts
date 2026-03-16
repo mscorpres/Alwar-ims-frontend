@@ -5,7 +5,24 @@ import { imsAxios } from "../axiosInterceptor";
 //@ts-ignore
 import { getGlobalToast } from "../context/ToastContext";
 
-export const getVendorOptions = async (search: any) => {
+
+
+
+
+
+
+export const uplaodFGFileInMINInward = async (formdata:any) => {
+  try {
+    const response = await imsAxios.post("fgMIN/upload/item", formdata);
+    return response;
+  } catch (error) {
+    console.log("something happened wrong", error);
+  }
+};
+
+
+export const getVendorOptions = async (search:any) => {
+  
   try {
     const response = await imsAxios.post("/backend/vendorList", {
       search,
@@ -290,6 +307,19 @@ export const getMINOptions = async (search) => {
   });
 
   let arr = [];
+  if (response.success) {
+    arr = convertSelectOptions(response.data);
+  }
+  response.data = arr;
+  return response;
+};
+
+export const getFGMINOptions = async (search:any) => {
+  const response = await imsAxios.post("/fgMinPrint/getFGMinsTransaction", {
+    searchTerm: search,
+  });
+
+  let arr:any = [];
   if (response.success) {
     arr = convertSelectOptions(response.data);
   }

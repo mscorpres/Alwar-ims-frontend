@@ -92,30 +92,44 @@ export default function CreateMaster() {
     <div style={{ height: "100%", padding: 10 }}>
       <Row gutter={12} style={{ height: "100%" }}>
         <Col span={10}>
-          <Tabs type="card" size="small">
-            {/* add ledger */}
-            <Tabs.TabPane tab="Add new Ledger" key="1">
-              <AddLedger
-                getLedgerList={getLedgerList}
-                options={options}
-                statusOptions={statusOptions}
-              />
-            </Tabs.TabPane>
-            {/*edit ledger  */}
-            <Tabs.TabPane tab="Edit Ledger" key="2">
-              <Card title="Edit Ledger" size="small">
-                <EditLedger getLedgerList={getLedgerList} />
-              </Card>
-            </Tabs.TabPane>
-            {/* map vendor */}
-            <Tabs.TabPane tab="Map Vendor" key="3">
-              <MapVendor statusOptions={statusOptions} options={options} />
-            </Tabs.TabPane>
-            {/* map customer */}
-            <Tabs.TabPane tab="Map Customer" key="4">
-              <MapClient />
-            </Tabs.TabPane>
-          </Tabs>
+          <Tabs
+            type="card"
+            size="small"
+            items={[
+              {
+                key: "1",
+                label: "Add new Ledger",
+                children: (
+                  <AddLedger
+                    getLedgerList={getLedgerList}
+                    options={options}
+                    statusOptions={statusOptions}
+                  />
+                ),
+              },
+              {
+                key: "2",
+                label: "Edit Ledger",
+                children: (
+                  <Card title="Edit Ledger" size="small">
+                    <EditLedger getLedgerList={getLedgerList} />
+                  </Card>
+                ),
+              },
+              {
+                key: "3",
+                label: "Map Vendor",
+                children: (
+                  <MapVendor statusOptions={statusOptions} options={options} />
+                ),
+              },
+              {
+                key: "4",
+                label: "Map Customer",
+                children: <MapClient />,
+              },
+            ]}
+          />
         </Col>
         {/* add form column ends */}
         <Col style={{  height: "calc(100% - 35px)" }} span={14}>
