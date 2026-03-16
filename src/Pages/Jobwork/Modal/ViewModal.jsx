@@ -157,6 +157,7 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
         styles={{ body: { padding: 5 } }}
       >
         <Row>
+          <Col span={24}>
           <Card
             size="small"
             title="Details"
@@ -323,6 +324,7 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
               </Row>
             </Col>
           </Card>
+          </Col>
         </Row>
 
         <div style={{ height: "82%", marginTop: "5px" }}>
