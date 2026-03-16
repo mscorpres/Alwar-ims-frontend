@@ -442,14 +442,11 @@ export default function UpdateComponent() {
         payload
       );
 
-      const { data } = response;
-      if (data) {
-        if (data.code === "200") {
-          showToast(data.message, "success");
-          getDetails();
-        } else {
-          showToast(data.message.msg, "error");
-        }
+      if (response.success) {
+        showToast(response.message, "success");
+        getDetails();
+      } else {
+        showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
     } finally {
