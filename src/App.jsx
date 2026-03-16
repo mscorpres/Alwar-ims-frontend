@@ -43,8 +43,6 @@ import InternalNav from "./Components/InternalNav";
 import { imsAxios } from "./axiosInterceptor";
 import internalLinks from "./Pages/internalLinks.jsx";
 import TicketsModal from "./Components/TicketsModal/TicketsModal";
-import { items, items1 } from "./utils/sidebarRoutes.jsx";
-import TopBanner from "./Components/TopBanner";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
 
 import { useToast } from "./hooks/useToast.js";
