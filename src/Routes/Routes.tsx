@@ -244,7 +244,8 @@ import CreateScrapeChallan from "../Pages/Workorder/components/WoCreateChallan/C
 import ProductionMIS from "../Pages/Production/ProductionMIS/ProductionMIS";
 import R33 from "../Pages/Reports/R/R33";
 import ChangelogHistory from "../Pages/Changelog/ChangelogHistory.jsx";
-
+import FGToFGTransfer from "../Pages/Store/MaterialTransfer/FGToFGTransfer.jsx";
+import FGToFGViewTransaction from "../Pages/Store/MaterialTransfer/FGtoFGViewTransaction";
 import CreateFgReturn from "../Pages/Store/FgReturn/CreateFgReturn.jsx";
 import PendingReversal from "../Pages/Store/FgReturn/PendingReversal/PendingReversal.jsx";
 import ViewDocuments from "../Pages/Store/Transaction/Modal/ViewDocuments.jsx";
