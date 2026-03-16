@@ -25,7 +25,7 @@ const PendingApproval = () => {
       };
       const response = await imsAxios.post(
         "storeApproval/fetchTransactionForApproval",
-        payload
+        payload,
       );
       const data = response?.data;
 
@@ -36,7 +36,7 @@ const PendingApproval = () => {
           requestId: row.transaction_id,
           requestDate: row.insert_full_date,
         }));
-     
+
         setRows(arr);
       } else {
         showToast(response.message, "error");
@@ -131,20 +131,19 @@ const PendingApproval = () => {
       const response = await imsAxios.post("/storeApproval/print_request", {
         transaction: requestId,
       });
-      
-      const { data,success } = response;
-     
-        if (success) {
-          const buffer = data.buffer.data;
-          if (action === "print") {
-            printFunction(buffer);
-          } else {
-            downloadFunction(buffer, requestId);
-          }
+
+      const { data, success } = response;
+
+      if (success) {
+        const buffer = data.buffer.data;
+        if (action === "print") {
+          printFunction(buffer);
         } else {
-          showToast(response.message?.msg ?? response.message, "error");
+          downloadFunction(buffer, requestId);
         }
- 
+      } else {
+        showToast(response.message?.msg ?? response.message, "error");
+      }
     } catch (error) {
     } finally {
       setLoading(false);
@@ -155,10 +154,7 @@ const PendingApproval = () => {
     getRows();
   }, []);
   return (
-    <Row
-      
-      style={{ height: "100%", padding: 15 }}
-    >
+    <Row style={{ height: "100%", padding: 15 }}>
       <Col span={24}>
         <MyDataTable
           loading={loading === "fetch"}
