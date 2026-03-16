@@ -1031,6 +1031,20 @@
                 "isShown": false
               },
               {
+                "key": "B362",
+                "label": "FG to FG",
+                "icon": "SwapHorizIcon",
+                "path": "/warehouse/material-transfer/fg-to-fg",
+                "isShown": true
+              },
+              {
+                "key": "B3621",
+                "label": "View Transaction",
+                "icon": "SwapHorizIcon",
+                "path": "/warehouse/material-transfer/fg-to-fg/view-transaction",
+                "isShown": false
+              },
+              {
                 "key": "B363",
                 "label": "RM To REJ",
                 "icon": "BlockIcon",
