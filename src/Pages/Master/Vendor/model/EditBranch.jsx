@@ -57,7 +57,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const [statusLoading, setStatusLoading] = useState(false);
   const [editMSME, setEditMSME] = useState([]);
   const [tdsOptions, setTdsOptions] = useState([]);
-  const [locationOptions, setLocationOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [files, setFiles] = useState([]);
   const [updateVendorForm] = Form.useForm();
@@ -183,7 +182,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         panno: values?.vendor_pan,
         cinno: values?.vendor_cin,
         tally_tds: values.vendor_tds,
-        vendor_loc: values.vendor_loc,
         term_days: values.vendor_term_days,
         msme_status: values.vendor_msme_status,
         msme_year: rows.map((r) => r.vendor_msme_year),
@@ -208,7 +206,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         panno: values?.vendor_pan,
         cinno: values?.vendor_cin,
         tally_tds: values.vendor_tds,
-        vendor_loc: values.vendor_loc,
         term_days: values.vendor_term_days,
         msme_status: "N",
         msme_id: "--",
@@ -256,20 +253,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     }
   };
 
-  const getAllVendorLocationOptions = async () => {
-    const response = await imsAxios.get("/vendor/getAllLocation");
-    if (response.success) {
-      const arr = response.data.map((row) => ({
-        text: row.loc_name,
-        value: row.location_key,
-      }));
-      setLocationOptions(arr);
-    } else {
-      showToast(response.message, "error");
-      setLocationOptions([]);
-    }
-  };
-
   const getCurrencies = async () => {
     try {
       const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
@@ -288,7 +271,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   useEffect(() => {
     if (editVendor) {
       getDetails();
-      getAllVendorLocationOptions();
       getCurrencies();
     }
   }, [editVendor]);
@@ -387,7 +369,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         }
       >
         {<Skeleton active loading={skeletonLoading} />}
-        {<Skeleton active loading={skeletonLoading} />}
         {!skeletonLoading && (
           <Form
             form={updateVendorForm}
@@ -435,14 +416,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                   />
                 </Form.Item>
               </Col>
-              <Col span={24}>
-                <Form.Item label="Vendor Locations" name="vendor_loc">
-                  <MySelect
-                    mode="multiple"
-                    options={locationOptions}
-                  />
-                </Form.Item>
-              </Col>
+   
               <Col span={8}>
                 <Form.Item
                   style={{ padding: "3px" }}
