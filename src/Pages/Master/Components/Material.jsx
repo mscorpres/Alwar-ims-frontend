@@ -335,6 +335,7 @@ const Material = () => {
           onChange={(e) => {
             hsnInputHandler("tax", row.id, e.target.value);
           }}
+          type="number"
         />
       ),
     },

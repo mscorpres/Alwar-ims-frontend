@@ -94,9 +94,11 @@ function JwRwChallan() {
       ref_id: refId,
       challan: challan_id,
     });
+
+    console.log(response,"response")
     setLoading(false);
     if (response.success) {
-      printFunction(response.data.buffer.data);
+      printFunction(response.data.buffer?.data);
     } else {
       showToast(response.message?.msg || response.message, "error");
     }
@@ -114,7 +116,7 @@ function JwRwChallan() {
     });
     setLoading(false);
     if (response.success) {
-      downloadFunction(response.data.buffer.data, response.data.filename);
+      downloadFunction(response.data.buffer?.data, response.data.filename);
     } else {
       showToast(response.message?.msg || response.message, "error");
     }
@@ -302,7 +304,7 @@ function JwRwChallan() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", padding:10 }}>
       <JWRMChallanEditMaterials
         editingJWMaterials={editingJWMaterials}
         setEditingJWMaterials={setEditingJWMaterials}
@@ -323,7 +325,6 @@ function JwRwChallan() {
       />
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
       >
         {/* <EWayBillModal
           show={showEwayBillModal}
@@ -414,7 +415,7 @@ function JwRwChallan() {
           </Space>
         </Col>
       </Row>
-      <div style={{ height: "95%", padding: "0px 10px" }}>
+      <div style={{ height: "92%", marginTop: "10px" }}>
         <MyDataTable
           loading={loading === "fetch" || loading === "print"}
           columns={columns}

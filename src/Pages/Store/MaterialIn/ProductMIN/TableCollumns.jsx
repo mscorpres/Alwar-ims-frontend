@@ -31,7 +31,8 @@ export const QuantityCell = ({ row }, inputHandler) => (
   <Input
     value={row.orderqty}
     onChange={(e) => inputHandler("orderqty", e.target.value, row.id)}
-    suffix={row.unitsname}
+    // suffix={row.unitsname}
+    type="number"
   />
 );
 export const rateCell = ({ row }, inputHandler, currencies) => (
@@ -40,6 +41,7 @@ export const rateCell = ({ row }, inputHandler, currencies) => (
       style={{ width: "65%" }}
       value={row.orderrate}
       onChange={(e) => inputHandler("orderrate", e.target.value, row.id)}
+      type="number"
     />
     <div style={{ width: "35%" }}>
       <MySelect
@@ -112,22 +114,32 @@ export const rateCell = ({ row }, inputHandler, currencies) => (
 // </div>
 // );
 
+const INR_CURRENCY_ID = "364907247";
+
 export const taxableCell = ({ row }) => {
   return <Input disabled={true} value={row.inrValue} />;
 };
+
+/** Foreign Value: show when currency is not INR (display usdValue or inrValue * exchange_rate); otherwise show empty for INR. */
 export const foreignCell = ({ row }) => {
-  return <Input disabled={true} value={row.usdValue} />;
+  const currency = row.currency?.value ?? row.currency;
+  const isINR = String(currency) === String(INR_CURRENCY_ID);
+  const displayValue =
+    !isINR
+      ? Number(row.usdValue) ||
+        (Number(row.inrValue) || 0) * (Number(row.exchange_rate) || 0) ||
+        0
+      : "";
+  const valueToShow =
+    displayValue === "" ? "" : (Number(displayValue) || 0);
+  return <Input disabled={true} value={valueToShow} />;
 };
-export const invoiceIdCell = ({ row }, inputHandler) => {
-  return (
-    <>
-      <Input
-        value={row.invoiceId}
-        onChange={(e) => inputHandler("invoiceId", e.target.value, row.id)}
-      />
-    </>
-  );
-};
+export const invoiceIdCell = ({ row }, inputHandler) => (
+  <Input
+    value={row.invoiceId}
+    onChange={(e) => inputHandler("invoiceId", e.target.value, row.id)}
+  />
+);
 export const invoiceDateCell = ({ row }, inputHandler) => {
   return (
     <InputMask
@@ -153,8 +165,8 @@ export const invoiceDateCell = ({ row }, inputHandler) => {
 export const HSNCell = ({ row }, inputHandler) => (
   <Input
     type="text"
-    value={row.hsn}
-    onChange={(e) => inputHandler("hsn", e.target.value, row.id)}
+    value={row.hsncode ?? row.hsn ?? ""}
+    onChange={(e) => inputHandler("hsncode", e.target.value, row.id)}
   />
 );
 export const gstTypeCell = ({ row }, inputHandler) => (
@@ -172,9 +184,27 @@ export const gstRate = ({ row }, inputHandler) => (
     onChange={(e) => inputHandler("gstrate", e.target.value, row.id)}
   />
 );
-export const CGSTCell = ({ row }) => <Input disabled={true} value={row.cgst} />;
-export const SGSTCell = ({ row }) => <Input disabled={true} value={row.sgst} />;
-export const IGSTCell = ({ row }) => <Input disabled={true} value={row.igst} />;
+/** When gstType is "L" (Local): show CGST value. When "I" (Interstate): show 0 / empty. */
+export const CGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "I" ? "" : (row.cgst ?? 0)}
+  />
+);
+/** When gstType is "L" (Local): show SGST value. When "I" (Interstate): show 0 / empty. */
+export const SGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "I" ? "" : (row.sgst ?? 0)}
+  />
+);
+/** When gstType is "I" (Interstate): show IGST value. When "L" (Local): show 0 / empty. */
+export const IGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "L" ? "" : (row.igst ?? 0)}
+  />
+);
 
 export const locationCell = (
   { row },
@@ -182,21 +212,14 @@ export const locationCell = (
 
   locationOptions
 ) => (
-  <>
-    <MySelect
-      labelInValue
-      // onBlur={() => setAsyncOptions([])}
-      value={row?.location}
-      // selectLoading={selectLoading}
-      onChange={(value) => {
-        inputHandler("location", value, row.id);
-      }}
-      options={locationOptions}
-      // labelInValue
-      // loadOptions={getLocation}
-      // optionsState={asyncOptions}
-    />
-  </>
+  <MySelect
+    labelInValue
+    value={row?.location}
+    onChange={(value) => {
+      inputHandler("location", value, row.id);
+    }}
+    options={locationOptions}
+  />
 );
 export const autoConsumptionCell = (
   { row },

@@ -446,7 +446,7 @@ const PartCodeConversion = () => {
                 </Col>
                 <Col span={4}>
                   <Form.Item label="Qty" rules={rules.qtyIn} name="qtyIn">
-                    <Input />
+                    <Input type="number" />
                   </Form.Item>
                 </Col>
               </Row>
@@ -493,7 +493,7 @@ const PartCodeConversion = () => {
                 </Col>
                 <Col span={4}>
                   <Form.Item label="Qty" rules={rules.qtyOut} name="qtyOut">
-                    <Input />
+                    <Input  type="number"/>
                   </Form.Item>
                 </Col>
               </Row>

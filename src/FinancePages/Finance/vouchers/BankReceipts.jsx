@@ -145,6 +145,7 @@ export default function BankReceits() {
             inputHandler("credit", e.target.value, row.id);
           }}
           placeholder="0"
+          type="number"
         />
       ),
     },

@@ -5,6 +5,7 @@ export { default as ProductDetail } from "../Pages/Store/ProductDetail";
 export { default as Uom } from "./Master/Uom.tsx";
 export { default as Product } from "./Master/Products/Product";
 export { default as Group } from "./Master/Group";
+export { default as AddSKUOpeningRate } from "./Master/AddSKUOpeningRate";
 export { default as SubGroup } from "./Master/SubGroup.jsx";
 export { default as Location } from "./Master/Location";
 export { default as BillingAddress } from "./Master/BillingAddress";
@@ -39,6 +40,8 @@ export { default as MaterialInWithPO } from "./Store/MaterialIn/MaterialInWithPO
 export { default as ExportMaterialInWithPO } from "./Store/MaterialIn/MaterialInWithPO/ExportMaterialInWithPO.jsx";
 
 export { default as ProductMIN } from "./Store/MaterialIn/ProductMIN";
+export { default as FGToFGTransfer } from "./Store/MaterialTransfer/FGToFGTransfer";
+export { default as FGToFGViewTransaction } from "./Store/MaterialTransfer/FGtoFGViewTransaction";
 
 export { default as Rejection } from "./Store/Rejection/Rejection";
 

@@ -24,6 +24,7 @@ import {
 } from "@/api/general.js";
 import { getDepartmentOptions } from "@/api/master/department.js";
 import { createEntry, fetchShiftLabels } from "@/api/production/mis";
+import { normalizeFormRules } from "@/utils/general";
 import AddDepartmentModal from "@/Pages/Production/ProductionMIS/AddDepartment";
 import dayjs from "dayjs";
 import { SelectOptionType } from "@/types/general";
@@ -110,7 +111,7 @@ function ProductionMIS() {
             <Form.Item
               name="department"
               label="Department"
-              rules={rules.department}
+              rules={normalizeFormRules(rules.department)}
             >
               <MyAsyncSelect
                 optionsState={asyncOptions}

@@ -5,8 +5,20 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { Store } from "./Features/Store";
 import "./index.css";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, Form } from "antd";
 import { customColor } from "./utils/customColor";
+import { normalizeFormRules } from "./utils/general";
+
+// Ensure Form.Item always receives an array for rules (prevents "rules.some is not a function")
+const OriginalFormItem = Form.Item;
+function PatchedFormItem(props) {
+  return React.createElement(OriginalFormItem, {
+    ...props,
+    rules: normalizeFormRules(props.rules),
+  });
+}
+Object.assign(PatchedFormItem, OriginalFormItem);
+Form.Item = PatchedFormItem;
 import { ToastContext } from "./context/ToastContext";
 
 const theme = {
@@ -86,14 +98,25 @@ const theme = {
   },
 };
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const container = document.getElementById("root");
+let root = container._reactRoot;
+if (!root) {
+  root = ReactDOM.createRoot(container);
+  container._reactRoot = root;
+}
+
 root.render(
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
       <ToastContext>
-      <BrowserRouter>
-        <Main />
-      </BrowserRouter>
+        <BrowserRouter
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true,
+          }}
+        >
+          <Main />
+        </BrowserRouter>
       </ToastContext>
     </Provider>
   </ConfigProvider>

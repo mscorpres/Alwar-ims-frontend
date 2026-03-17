@@ -326,6 +326,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                         size="default"
                         min={1}
                         max={999}
+                        type="number"
                       />
                     </Form.Item>
                   </Col>

@@ -48,6 +48,7 @@ function TransactionRej() {
         Uom: row.uom,
         "Txd In": row.transaction,
         "Shiffed By": row.completed_by,
+        Remark:row.remark
       };
     });
     downloadCSVCustomColumns(csvData, "Transaction Rejection");

@@ -72,18 +72,18 @@ const UpdateJW = () => {
       );
       setLoading("fetchDetails", false);
       const { data } = response;
-      if (data) {
+     
         if (response.success) {
           const finalObj = {
-            jwId: data.data.headers.jobwork_id,
-            orderedQty: data.data.headers.ordered_qty,
-            product: data.data.headers.product_name,
-            date: data.data.headers.registered_date,
-            sku: data.data.headers.sku_code,
-            bom: data.data.headers.subject_name,
-            vendor: data.data.headers.vendor_name,
+            jwId: data.headers.jobwork_id,
+            orderedQty: data.headers.ordered_qty,
+            product: data.headers.product_name,
+            date: data.headers.registered_date,
+            sku: data.headers.sku_code,
+            bom: data.headers.subject_name,
+            vendor: data.headers.vendor_name,
           };
-          const componentsArr = data.data.components.map((row, index) => ({
+          const componentsArr = data.components.map((row, index) => ({
             component: {
               label: row.component_name,
               value: row.component_key,
@@ -97,7 +97,7 @@ const UpdateJW = () => {
           setComponents(componentsArr);
           jwUpdateForm.setFieldsValue(finalObj);
         }
-      }
+ 
     } catch (error) {
     } finally {
       setLoading(false);

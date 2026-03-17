@@ -524,11 +524,10 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
           payload
         );
 
-        if (response.success || response.data?.status === "success") {
+        if (response.success) {
           setLoading(false);
           showToast(
             response.message ||
-              response.data?.message ||
               "RM Consumption saved successfully",
             "success"
           );
@@ -562,9 +561,9 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
     let filedata = value.fileComponents;
     let pickLocation = value.pickLocation;
 
-    // Original flow for normal mode
+    // Original flow for normal mode (use attachment state when saveFunction called without arg)
     let payload = {
-      attachment: fetchAttachment,
+      attachment: fetchAttachment ?? attachment,
       companybranch: "BRMSC012",
       cost_center: header.costCenter,
       documentName: filedata.map((r) => r.documentName),
@@ -638,7 +637,6 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
       sfgCreateQty: mainData[0].orderqty,
     };
     const response = await executeFun(() => getBomItem(final), "select");
-    // const response = await imsAxios.post("/jobwork/getBomItem");
     if (response.data.status === "success" || response.data.code == 200) {
       const { data } = response;
       let arr = data.data.map((r, id) => {
@@ -728,11 +726,14 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
         "submit"
       );
       if (fileResponse.success) {
-        const { data } = fileResponse;
-        let fetchAttachment = data.data;
+        // API returns { success, data: "filename.pdf" } - attachment is in data
+        const fetchAttachment =
+          typeof fileResponse.data === "string"
+            ? fileResponse.data
+            : fileResponse.data?.data;
         setAttachment(fetchAttachment);
         // Store invoice details from upload response
-        setUploadedInvoiceDetails(data);
+        setUploadedInvoiceDetails(fileResponse.data);
         setUploadClicked(false);
 
         // If in BOM mode, automatically call saveFunction after upload

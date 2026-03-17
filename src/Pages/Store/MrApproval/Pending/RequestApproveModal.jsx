@@ -1,4 +1,4 @@
-import { Card, Flex, Drawer, Modal, Popover, Radio, Skeleton, Button, Space } from "antd";
+import { Card, Flex, Drawer, Modal, Tooltip, Radio, Skeleton, Button, Space } from "antd";
 import { Col, Divider, Form, Input, Row, Typography } from "antd/es";
 import React, { useEffect, useState } from "react";
 import MyButton from "../../../../Components/MyButton";
@@ -218,7 +218,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
   return (
     <Drawer
       title="Process Request"
-      open={show}
+      open={!!show}
       width="100vw"
       placement="right"
       onClose={hide}
@@ -238,12 +238,12 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
     >
       <Form layout="vertical" form={form} initialValues={initialValues}>
         <Row gutter={6}>
-          <Col span={4}>
+          <Col span={6}>
             <Card
               size="small"
               title="Request Details"
               style={{ height: "100%" }}
-              bodyStyle={{ height: "95%" }}
+              bodyStyle={{ height: "100%" }}
             >
               <Row gutter={[6, 6]}>
                 <Col span={24}>
@@ -310,9 +310,9 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   vertical
                   style={{
                     flex: 1,
-                    minHeight: "86%",
-                    maxHeight: 400,
-
+                    minHeight: "95%",
+                    maxHeight: 435,
+                    margin:"4px 0px",
                     display: "flex",
                     overflow: "hidden",
                   }}
@@ -329,25 +329,29 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                       label="Select Part Code"
                       rules={rules.component}
                     >
-                      <Radio.Group style={{ width: "100%" }}>
-                        <Row>
-                          {loading("fetchLocations") && <Loading />}
-                          {componentOptions
-                            .filter((row) => {
-                              const matched = row.text
-                                .toLowerCase()
-                                .includes(filterString.toLowerCase());
-                              return matched;
-                            })
-                            .map((comp, index) => (
-                              <Col span={6}>
-                                <Popover content={comp.componentName}>
-                                  <Radio value={comp.value}>{comp.text}</Radio>
-                                </Popover>
-                              </Col>
-                            ))}
-                        </Row>
-                      </Radio.Group>
+                      {loading("fetchLocations") && <Loading />}
+                      <Radio.Group 
+                        style={{ width: "100%", display: "flex", flexDirection:"column", flexWrap: "wrap", gap: "8px" }}
+                        options={Array.isArray(componentOptions) ? componentOptions
+                          .filter((row) => {
+                            const matched = row.text
+                              .toLowerCase()
+                              .includes(filterString.toLowerCase());
+                            return matched;
+                          })
+                          .map((comp) => ({
+                            label: (
+                              // <Tooltip title={comp.componentName} placement="top">
+                              <div style={{display:"flex", flexDirection:"column"}}>
+                                 <span style={{ fontSize: "0.8rem" }}>{comp.componentName}</span>
+                                  <span  style={{ fontSize: "0.7rem" }}>{comp.text}</span>
+                              </div>
+                               
+                              // </Tooltip>
+                            ),
+                            value: comp.value,
+                          })) : []}
+                      />
                     </Form.Item>
                   </div>
                 </Flex>
@@ -355,8 +359,9 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
             </Card>
           </Col>
 
-          <Col span={10}>
-            <Card size="small" title="Component Transfer Details">
+          <Col span={8}>
+            <Card size="small"  style={{ height: "100%" }}
+              bodyStyle={{ height: "100%" }} title="Component Transfer Details">
               <Row justify="center" gutter={6}>
                 <Col span={24} style={{ marginBottom: 10 }}>
                   <Flex justify="end">

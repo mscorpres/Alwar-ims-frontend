@@ -51,7 +51,7 @@ export default function NatureOfTDS() {
         <GridActionsCellItem
           icon={<AiFillEdit />}
           onClick={() => setEditingTDS(row)}
-          // label="Delete"
+          label="Edit"
         />,
       ],
     },
@@ -233,6 +233,7 @@ export default function NatureOfTDS() {
                       }
                       suffix="%"
                       placeholder="Enter Percentage"
+                      type="number"
                     />
                   </Form.Item>
                 </Col>

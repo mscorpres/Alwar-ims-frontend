@@ -96,9 +96,7 @@ const NotificationDropdown = ({
     >
       <Empty
         image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-        imageStyle={{
-          height: 80,
-        }}
+        styles={{ image: { height: 80 } }}
         description={<span>No Notifications</span>}
       />
     </div>

@@ -44,8 +44,8 @@ const PrintQCALabel = () => {
             <Form.Item label="SKU Type" name="type" rules={rules.type}>
               <MySelect options={typeOptions} />
             </Form.Item>
-            <Form.Item label="Quantity" name="quantity" rules={rules.quantity}>
-              <Input />
+            <Form.Item label="Quantity" name="quantity" rules={rules.quantity} >
+              <Input  type="number" />
             </Form.Item>
           </Form>
           <Row>

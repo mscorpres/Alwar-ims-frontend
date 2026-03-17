@@ -4,7 +4,7 @@ import { Button, Card, Flex, Form, Input, Modal, Typography } from "antd";
 import useApi from "@/hooks/useApi";
 import { sendOtp, verifyOtp, updatePassword } from "@/api/auth.js";
 import { InfoCircleFilled, InfoCircleOutlined } from "@ant-design/icons";
-import ReCAPTCHA from "react-google-recaptcha";
+import ImageCaptcha from "@/Components/ImageCaptcha/ImageCaptcha";
 import { useToast } from "@/hooks/useToast";
 
 interface PropTypes extends ModalType {}
@@ -16,13 +16,17 @@ const ForgotPassword = (props: PropTypes) => {
   const [timer, setTimer] = useState(defaultTimer);
   const [form] = Form.useForm();
   const { executeFun, loading } = useApi();
-  const [recaptchaValue, setRecaptchaValue] = useState<string | null>(null);
-  const [recaptchaKey, setRecaptchaKey] = useState(Math.random());
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [expectedCaptchaCode, setExpectedCaptchaCode] = useState("");
+  const [captchaKey, setCaptchaKey] = useState(Math.random());
+
+  const isCaptchaValid = () =>
+    captchaInput.trim().toUpperCase() === expectedCaptchaCode;
 
   const handleSubmit = async () => {
     if (stage === 0) {
-      if (!recaptchaValue) {
-        showToast("Please verify the reCAPTCHA", "error");
+      if (!isCaptchaValid()) {
+        showToast("Please enter the captcha text shown above", "error");
         return;
       }
       handleSendOtp();
@@ -50,8 +54,8 @@ const ForgotPassword = (props: PropTypes) => {
   };
 
   const handleSendOtp = async (skipCaptcha = false) => {
-    if (!skipCaptcha && !recaptchaValue) {
-      showToast("Please verify the reCAPTCHA", "error");
+    if (!skipCaptcha && !isCaptchaValid()) {
+      showToast("Please enter the captcha text shown above", "error");
       return;
     }
     const values = await form.validateFields(["email"]);
@@ -61,17 +65,13 @@ const ForgotPassword = (props: PropTypes) => {
       setStage(1);
       startTimer();
     } else {
-      // Reset captcha on error (only if on stage 0)
       if (stage === 0) {
-        setRecaptchaValue(null);
-        setRecaptchaKey(Math.random());
+        setCaptchaInput("");
+        setCaptchaKey(Math.random());
       }
     }
   };
 
-  const handleRecaptchaChange = (value: string | null) => {
-    setRecaptchaValue(value);
-  };
   const startTimer = () => {
     setTimer(defaultTimer);
     const interval = setInterval(() => {
@@ -112,10 +112,12 @@ const ForgotPassword = (props: PropTypes) => {
 
           {stage === 0 && (
             <Form.Item style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-              <ReCAPTCHA
-                sitekey="6LdmVcArAAAAAOb1vljqG4DTEEi2zP1TIjDd_0wR"
-                onChange={handleRecaptchaChange}
-                key={recaptchaKey}
+              <ImageCaptcha
+                key={captchaKey}
+                value={captchaInput}
+                onChange={(e) => setCaptchaInput(e.target.value)}
+                onCodeChange={setExpectedCaptchaCode}
+                placeholder="Enter letters above"
               />
             </Form.Item>
           )}

@@ -31,10 +31,7 @@ const TransactionIn = () => {
   ];
   const getRows = async () => {
     setLoading("fetch");
-    const response = await imsAxios.post("/transaction/transactionIn", {
-      data: searchInput,
-      min_types: wise,
-    });
+    const response = await imsAxios.get(`/transaction/transactionIn?data=${searchInput}&type=${wise}`);
     setLoading(false);
       if (response.success) {
         let arr = response.data.map((row, index) => ({
@@ -66,7 +63,6 @@ const TransactionIn = () => {
       type: "actions",
       width: 30,
       getActions: ({ row }) => [
-        // Upload DOC Icon
         <GridActionsCellItem
           key="download-attachment"
           showInMenu

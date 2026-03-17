@@ -337,6 +337,10 @@ const links = [
       routeName: "SFG Product",
       routePath: "/masters/products/sfg",
     },
+      {
+      routeName: "AddSKUOpeningRate",
+      routePath: "/masters/sku-opening-rate",
+    },
   ],
   // hsn map links
   [{ routeName: "HSN Map", routePath: "/hsn-map" }],
@@ -458,6 +462,14 @@ const links = [
     {
       routeName: "View Transaction",
       routePath: "/material-transfer/rm-to-rm/view-transaction",
+    },
+  ],
+    [
+    { routeName: "FG To FG", routePath: "/warehouse/material-transfer/fg-to-fg" },
+    // { routeName: "SF to Rej", routePath: "/sf-to-rm" },
+    {
+      routeName: "View Transaction",
+      routePath: "/warehouse/material-transfer/fg-to-fg/view-transaction",
     },
   ],
   // JW to JW transfer links
@@ -851,6 +863,12 @@ const links = [
 
       placeholder: "Job Work Inventory Report",
     },
+     {
+      routeName: "R38",
+      routePath: "/fg-register-report",
+
+      placeholder: "FG Register Report",
+    },
   ],
   // MIN label links
 
@@ -858,6 +876,10 @@ const links = [
     {
       routeName: "View and Print MIN Label",
       routePath: "/warehouse/print-view-min",
+    },
+        {
+      routeName: "View and Print FG MIN",
+      routePath: "/warehouse/print-view-fg-min",
     },
   ],
   // query reports

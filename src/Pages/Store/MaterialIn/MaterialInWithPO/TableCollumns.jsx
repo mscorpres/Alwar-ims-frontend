@@ -34,6 +34,7 @@ export const rateCell = ({ row }, inputHandler, currencies) => (
       style={{ width: "65%" }}
       value={row.orderrate}
       onChange={(e) => inputHandler("orderrate", e.target.value, row.id)}
+      type="number"
     />
     <div style={{ width: "35%" }}>
       <MySelect
@@ -109,12 +110,12 @@ export const rateCell = ({ row }, inputHandler, currencies) => (
 export const taxableCell = ({ row }) => {
   return <Input disabled={true} value={row.inrValue} />;
 };
+/** Foreign Value: do not show when currency is INR (364907247). */
 export const foreignCell = ({ row }) => {
+  const isINR = row.currency === "364907247";
+  const hasForeignValue = !isINR && (Number(row.usdValue) || 0) !== 0;
   return (
-    <Input
-      disabled={true}
-      value={row.currency == "364907247" ? 0 : row.usdValue}
-    />
+    <Input disabled={true} value={hasForeignValue ? row.usdValue : ""} />
   );
 };
 export const invoiceIdCell = ({ row }, inputHandler) => {
@@ -166,9 +167,27 @@ export const gstRate = ({ row }, inputHandler) => (
     placeholder="Enter HSN"
   />
 );
-export const CGSTCell = ({ row }) => <Input disabled={true} value={row.cgst} />;
-export const SGSTCell = ({ row }) => <Input disabled={true} value={row.sgst} />;
-export const IGSTCell = ({ row }) => <Input disabled={true} value={row.igst} />;
+/** When gstType is "L": show CGST. When "I": show empty. */
+export const CGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "I" ? "" : (row.cgst ?? 0)}
+  />
+);
+/** When gstType is "L": show SGST. When "I": show empty. */
+export const SGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "I" ? "" : (row.sgst ?? 0)}
+  />
+);
+/** When gstType is "I": show IGST. When "L": show empty. */
+export const IGSTCell = ({ row }) => (
+  <Input
+    disabled={true}
+    value={row.gsttype === "L" ? "" : (row.igst ?? 0)}
+  />
+);
 
 export const locationCell = ({ row }, inputHandler, locationOptions) => (
   <>

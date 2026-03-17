@@ -1233,10 +1233,6 @@ export default function CreatePo() {
     getBillTo();
     shipTo();
   }, []);
-  //getting address of branch
-  useEffect(() => {
-    getVendorAddress();
-  }, [newPurchaseOrder.vendorbranch]);
   //getting complete billing address
   useEffect(() => {
     getBillingAddress();
@@ -1428,8 +1424,12 @@ export default function CreatePo() {
             }}
             activeKey={activeTab}
             size="small"
-          >
-            <Tabs.TabPane tab="Purchase Request Details" key="1">
+            onChange={setActiveTab}
+            items={[
+              {
+                key: "1",
+                label: "Purchase Request Details",
+                children: (
               <div
                 style={{
                   height: "100%",
@@ -1843,6 +1843,7 @@ export default function CreatePo() {
                                   formatter={(v) => `${v}%`}
                                   parser={(v) => v.replace("%", "")}
                                   style={{ width: "100%" }}
+                                  type="number"
                                   onChange={(value) => {
                                     if (
                                       form.getFieldValue("paymentterms") ===
@@ -2097,7 +2098,6 @@ export default function CreatePo() {
                           <Form.Item
                             name="ship_type"
                             label="Shipping Address Type"
-                            initialValue="saved"
                           >
                             <Radio.Group
                               onChange={(e) => {
@@ -2395,34 +2395,36 @@ export default function CreatePo() {
                 </Form>
                 <Divider />
               </div>
-            </Tabs.TabPane>
-            <Tabs.TabPane
-              tab="Add Components Details"
-              style={{ height: "98%" }}
-              key="2"
-            >
-              <div style={{ height: "100%" }}>
-                <AddComponent
-                  newPurchaseOrder={newPurchaseOrder}
-                  form={form}
-                  setTotalValues={setTotalValues}
-                  setRowCount={setRowCount}
-                  rowCount={rowCount}
-                  setActiveTab={setActiveTab}
-                  resetFunction={resetFunction}
-                  submitHandler={validatePO}
-                  submitLoading={submitLoading}
-                  totalValues={totalValues}
-                  setStateCode={setStateCode}
-                  gstState={
-                    newPurchaseOrder.billCode === newPurchaseOrder.venCode
-                      ? "L"
-                      : "I"
-                  }
-                />
-              </div>
-            </Tabs.TabPane>
-          </Tabs>
+                ),
+              },
+              {
+                key: "2",
+                label: "Add Components Details",
+                children: (
+                  <div style={{ height: "100%" }}>
+                    <AddComponent
+                      newPurchaseOrder={newPurchaseOrder}
+                      form={form}
+                      setTotalValues={setTotalValues}
+                      setRowCount={setRowCount}
+                      rowCount={rowCount}
+                      setActiveTab={setActiveTab}
+                      resetFunction={resetFunction}
+                      submitHandler={validatePO}
+                      submitLoading={submitLoading}
+                      totalValues={totalValues}
+                      setStateCode={setStateCode}
+                      gstState={
+                        newPurchaseOrder.billCode === newPurchaseOrder.venCode
+                          ? "L"
+                          : "I"
+                      }
+                    />
+                  </div>
+                ),
+              },
+            ]}
+          />
         </div>
       )}
       {successData && (

@@ -122,6 +122,11 @@ const R2 = () => {
       width: 120,
     },
     {
+      field: "po_remark",
+      headerName: "Remark",
+      width: 120,
+    },
+    {
       field: "po_status",
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.po_status ? "Active" : "Closed"} />
@@ -192,6 +197,11 @@ const R2 = () => {
       field: "po_project",
       headerName: "Project Name",
       width: 120,
+    },
+    {
+      field: "po_remark",
+      headerName: "Remark",
+      width: 130,
     },
     {
       field: "branch",

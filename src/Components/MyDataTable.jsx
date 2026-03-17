@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Box, Typography, alpha } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -232,6 +232,26 @@ function CustomNoRowsOverlay() {
 }
 
 export default function MyDataTable(props) {
+  // Omit 'rules' so it's never passed to DataGrid (Form.Item expects array; prevents rules.some error when used inside Form)
+  const { rules: _rules, ...dataTableProps } = props;
+
+  // Ensure every column has a unique `field` so DataGrid gets valid keys (fixes "unique key" warning)
+  const columnsWithKeys = useMemo(() => {
+    const cols = props.columns || [];
+    const used = new Set();
+    return cols.map((col, index) => {
+      let field = col.field;
+      if (field == null || field === "") {
+        field = `col_${index}`;
+      }
+      if (used.has(field)) {
+        field = `${field}_${index}`;
+      }
+      used.add(field);
+      return { ...col, field };
+    });
+  }, [props.columns]);
+
   function CustomToolbar() {
     return (
       <StyledToolbarContainer>
@@ -269,7 +289,7 @@ export default function MyDataTable(props) {
         rows={props.data}
         rowLength={100}
         disableColumnMenu={props.hideHeaderMenu}
-        columns={props.columns}
+        columns={columnsWithKeys}
         components={{
           Toolbar: CustomToolbar,
           NoRowsOverlay: CustomNoRowsOverlay,
@@ -449,7 +469,7 @@ export default function MyDataTable(props) {
           },
         }}
         loading={props.loading}
-        {...props}
+        {...dataTableProps}
       />
     </Box>
   );
