@@ -24,7 +24,7 @@ import MyButton from "../../../Components/MyButton";
 import Loading from "../../../Components/Loading";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
-const PartCodeConversion = () => {
+const RMPartCodeConversion = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -44,16 +44,18 @@ const PartCodeConversion = () => {
   const componentOut = Form.useWatch("componentOut", addComponentForm);
   const locationIn = Form.useWatch("locationIn", addComponentForm);
 
+  // RM: pick and drop location must be the same — drop mirrors pick
+  useEffect(() => {
+    if (locationIn) {
+      addComponentForm.setFieldValue("locationOut", locationIn);
+    }
+  }, [locationIn]);
+
   const getComponentOption = async (search) => {
     try {
       const payload = {
         search,
       };
-      // setLoading("select");
-      // const response = await imsAxios.post(
-      //   "/backend/getComponentByNameAndNo",
-      //   payload
-      // );
       const response = await executeFun(
         () => getComponentOptions(search),
         "select"
@@ -76,15 +78,10 @@ const PartCodeConversion = () => {
   };
   const getLocationOptions = async (search) => {
     try {
-      const payload = {
-        searchTerm: search,
-      };
       setLoading("select");
-      const response = await imsAxios.post(
-        "/conversion/conversion_locations",
-        payload
+      const response = await imsAxios.get(
+        "/conversion/rm/location",
       );
-      const { data } = response;
 
       let arr = [];
       if (response?.success) {
@@ -292,7 +289,7 @@ const PartCodeConversion = () => {
       },
     };
     Modal.confirm({
-      title: "Confirm SF Part Code Conversion.",
+      title: "Confirm RM Part Code Conversion.",
       content: (
         <Row gutter={[0, 12]}>
           <Col span={24}>
@@ -319,7 +316,6 @@ const PartCodeConversion = () => {
               <Form.Item label="Remarks" name="remarks">
                 <Input.TextArea
                   rows={3}
-                  // onChange={(e) => setRemarks(e.target.value)}
                 />
               </Form.Item>
             </Form>
@@ -436,7 +432,7 @@ const PartCodeConversion = () => {
 
                 <Col span={6}>
                   <Form.Item
-                    label="Pick Location"
+                    label="Location (Pick = Drop)"
                     rules={rules.locationIn}
                     name="locationIn"
                   >
@@ -483,8 +479,7 @@ const PartCodeConversion = () => {
 
                 <Col span={6}>
                   <Form.Item
-                    label="Drop Location"
-                    rules={rules.locationOut}
+                    label="Drop Location (same as Pick)"
                     name="locationOut"
                   >
                     <MyAsyncSelect
@@ -493,6 +488,8 @@ const PartCodeConversion = () => {
                       labelInValue
                       loadOptions={getLocationOptions}
                       optionsState={asyncOptions}
+                      disabled
+                      placeholder="Same as Location above"
                     />
                   </Form.Item>
                 </Col>
@@ -531,7 +528,7 @@ const PartCodeConversion = () => {
         <Row style={{ marginBottom: 8 }}>
           <Col span={24}>
             <Typography.Text type="secondary" style={{ fontSize: "0.8rem" }}>
-              Note: SF Part Code Conversion allows only one Part Code at a time.
+              Note: RM Part Code Conversion allows only one Part Code at a time.
             </Typography.Text>
           </Col>
         </Row>
@@ -728,4 +725,4 @@ const defaultValues = {
   qtyOut: "",
   locationOut: null,
 };
-export default PartCodeConversion;
+export default RMPartCodeConversion;
