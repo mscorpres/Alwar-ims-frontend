@@ -718,7 +718,7 @@ const Login = () => {
                             onCodeChange={setExpectedCaptchaCode}
                             placeholder="Enter letters above"
                           />
-                        </div> */}
+                        </div> 
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
                           <Button
                             loading={loading("submit")}

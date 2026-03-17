@@ -67,6 +67,7 @@ import {
   CreateJW,
   POAnalysis,
   JwRmChallan,
+  RMPartCodeConversion,
   JwIssue,
   JwsfInward,
   JwrmReturn,
@@ -1353,6 +1354,10 @@ const Routes = [
   {
     path: "/warehouse/part-code-conversion/report",
     main: () => <PartCodeConversionReport />,
+  },
+  {
+    path: "/warehouse/rm-part-code-conversion",
+    main: () => <RMPartCodeConversion />,
   },
   {
     path: "/warehouse/e-way/:typeId/:jwId",
