@@ -34,6 +34,7 @@ export const rateCell = ({ row }, inputHandler, currencies) => (
       style={{ width: "65%" }}
       value={row.orderrate}
       onChange={(e) => inputHandler("orderrate", e.target.value, row.id)}
+      type="number"
     />
     <div style={{ width: "35%" }}>
       <MySelect
