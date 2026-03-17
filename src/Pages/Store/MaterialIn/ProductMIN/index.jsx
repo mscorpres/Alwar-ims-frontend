@@ -29,12 +29,11 @@ import {
   remarkCell,
   rateCell,
   autoConsumptionCell,
-  gstRate,
   componentCell,
 } from "./TableCollumns";
 import UploadDocs from "../MaterialInWithPO/UploadDocs";
 import Loading from "../../../../Components/Loading";
-import { v4, validate } from "uuid";
+import { v4 } from "uuid";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import CurrenceModal from "../../../../Components/CurrenceModal";
 import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
@@ -51,7 +50,7 @@ import {
   getCostCentresOptions,
   getProjectOptions,
 } from "../../../../api/general.ts";
-import { convertSelectOptions } from "../../../../utils/general.ts";
+import { convertSelectOptions, getInt } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import FormTable from "../../../../Components/FormTable.jsx";
 import MyButton from "../../../../Components/MyButton/index.jsx";
@@ -64,22 +63,26 @@ import SingleDatePicker from "../../../../Components/SingleDatePicker.jsx";
 
 const sampleData = [
   {
-    P_SKU: "p0001",
+    P_SKU: "106101",
     QTY: 12,
     RATE: "100",
     HSN: "123456",
     GST_TYPE: "LOCAL",
     GST_RATE: "18",
-    LOCATION: "RM021",
+    LOCATION: "AL_FG038",
     REMARK: "Sample remark",
   },
 ];
 
 const vendorDetailsOptions = [
-  { text: "JWI (Job Work In)", value: "j01" },
   { text: "Vendor", value: "v01" },
-  { text: "Production Return", value: "p01" },
+  { text: "Sales Return", value: "s01" },
 ];
+
+const getGstTypeValue = (v) => {
+  if (v == null || v === "") return "L";
+  return typeof v === "object" ? (v?.value ?? v?.text ?? "L") : v;
+};
 
 export default function ProductMIN() {
   const { showToast } = useToast();
@@ -158,7 +161,7 @@ export default function ProductMIN() {
       gstrate: 0,
       unitsname: "--",
       gsttype: "L",
-      hsn: "",
+      hsncode: "",
       inrValue: 0,
       cgst: 0,
       sgst: 0,
@@ -218,19 +221,25 @@ export default function ProductMIN() {
       }
       materialInward.map((row) => {
         componentData = {
-          product: [...componentData.product, row.component.value],
+          product: [
+            ...componentData.product,
+            row.component?.value ?? row.component ?? "",
+          ],
           qty: [...componentData.qty, row.orderqty],
           rate: [...componentData.rate, row.orderrate],
           currency: [...componentData.currency, row.currency],
           exchange: [...componentData.exchange, row.exchange_rate],
-          hsn_code: [...componentData.hsn_code, row.hsn ?? ""],
-          gst_type: [...componentData.gst_type, row.gsttype],
+          hsn_code: [...componentData.hsn_code, row.hsncode ?? ""],
+          gst_type: [...componentData.gst_type, getGstTypeValue(row.gsttype)],
           gstrate: [...componentData.gstrate, row.gstrate],
           cgst: [...componentData.cgst, row.cgst],
           sgst: [...componentData.sgst, row.sgst],
           igst: [...componentData.igst, row.igst],
           remark: [...componentData.remark, row.orderremark],
-          location: [...componentData.location, row.location?.value],
+          location: [
+            ...componentData.location,
+            row.location?.value ?? row.location,
+          ],
         };
       });
       if (
@@ -275,7 +284,6 @@ export default function ProductMIN() {
   };
   const submitMIN = async (values) => {
     let fileData;
-    // console.log("these are the values", values);
 
     axiosResponseFunction(async () => {
       if (invoices?.length > 0) {
@@ -299,12 +307,21 @@ export default function ProductMIN() {
           };
           let venDetails = {
             vendortype: values.vendorValues.vendorType ?? "",
-            vendor: values.vendorValues.vendorName ?? "",
+            vendor:
+              values.vendorValues.vendorName?.value ??
+              values.vendorValues.vendorName ??
+              "",
             vendorbranch: values.vendorValues.vendorBranch ?? "",
             invoice: values.vendorValues.invoiceId ?? "",
             invoice_date: values.vendorValues.invoiceDate ?? "",
-            cost_center: values.vendorValues.costCenter ?? "",
-            project_id: values.vendorValues.projectID ?? "",
+            cost_center:
+              values.vendorValues.costCenter?.value ??
+              values.vendorValues.costCenter ??
+              "",
+            project_id:
+              values.vendorValues.projectID?.value ??
+              values.vendorValues.projectID ??
+              "",
             address: values.vendorValues.vendorAddress ?? "",
           };
           final = {
@@ -318,27 +335,30 @@ export default function ProductMIN() {
 
           const data = response?.data;
           setSubmitLoading(false);
-          if (response?.success) {
-            // setvalues(false);
+          if (response?.success || data?.success ) {
             setActiveTab("1");
             setShowSuccessPage({
-              materialInId: data?.txn,
+              materialInId: data?.data?.txn ?? data?.txn,
               vendor: {
-                vendorname: vendorDetails.vendorName ?? vendorDetails.vendor,
+                vendorname:
+                  values.vendorValues?.vendorName?.label ??
+                  values.vendorValues?.vendorName ??
+                  vendorDetails.vendor ??
+                  vendorDetails.vendorName ??
+                  "",
               },
               components: materialInward.map((row, index) => {
                 return {
                   id: index,
-                  componentName: row.component.label,
+                  componentName: row.component?.label ?? "",
                   inQuantity: row.orderqty,
-                  // location: row.locationName,
                 };
               }),
             });
             vendorResetFunction();
             materialResetFunction();
           } else {
-            showToast(response.message?.msg || response.message, "error");
+            showToast(response.message?.msg || data.message, "error");
           }
         }
       } else {
@@ -351,7 +371,7 @@ export default function ProductMIN() {
     setPreview(true);
     const values = uploadForm.getFieldsValue();
     if (!values.files?.length || !values.files[0]?.originFileObj) {
-      toast.error("Please select a file");
+      showToast("Please select a file", "error");
       setPreview(false);
       return;
     }
@@ -495,15 +515,13 @@ export default function ProductMIN() {
   };
   const getCurrencies = async () => {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
-
-    let arr = [];
-    arr = response.data.map((d) => {
-      return {
-        text: d.currency_symbol,
-        value: d.currency_id,
-        notes: d.currency_notes,
-      };
-    });
+    const raw = response?.data?.data ?? response?.data ?? [];
+    let arr = Array.isArray(raw) ? raw : [];
+    arr = arr.map((d) => ({
+      text: d.currency_symbol,
+      value: d.currency_id,
+      notes: d.currency_notes,
+    }));
     setCurrencies(arr);
   };
   const getLocation = async () => {
@@ -557,6 +575,7 @@ export default function ProductMIN() {
                 gstrate: response?.data.gstrate,
                 orderrate: response?.data.rate,
                 unitsname: response?.data.unit,
+                hsncode: response?.data.hsn ?? response?.data.hsncode ?? "",
                 hsn: response?.data.hsn,
               };
               return obj;
@@ -584,15 +603,15 @@ export default function ProductMIN() {
               inrValue: value * row.orderrate,
               usdValue: value * row.orderrate * row.exchange_rate,
               igst:
-                row.gsttype == "L"
+                getGstTypeValue(row.gsttype) === "L"
                   ? 0
                   : (value * row.orderrate * row.gstrate) / 100,
               sgst:
-                row.gsttype == "I"
+                getGstTypeValue(row.gsttype) === "I"
                   ? 0
                   : (value * row.orderrate * row.gstrate) / 200,
               cgst:
-                row.gsttype == "I"
+                getGstTypeValue(row.gsttype) === "I"
                   ? 0
                   : (value * row.orderrate * row.gstrate) / 200,
             };
@@ -604,33 +623,34 @@ export default function ProductMIN() {
               inrValue: value * row.orderqty,
               usdValue: value * row.orderqty * row.exchange_rate,
               igst:
-                row.gsttype == "L"
+                getGstTypeValue(row.gsttype) === "L"
                   ? 0
                   : (value * row.orderqty * row.gstrate) / 100,
               sgst:
-                row.gsttype == "I"
+                getGstTypeValue(row.gsttype) === "I"
                   ? 0
                   : (value * row.orderqty * row.gstrate) / 200,
               cgst:
-                row.gsttype == "I"
+                getGstTypeValue(row.gsttype) === "I"
                   ? 0
                   : (value * row.orderqty * row.gstrate) / 200,
             };
             return obj;
           } else if (name == "gsttype") {
-            if (value == "I") {
+            const gstVal = getGstTypeValue(value);
+            if (gstVal === "I") {
               obj = {
                 ...obj,
-                [name]: value,
+                [name]: gstVal,
                 igst: (row.inrValue * row.gstrate) / 100,
                 sgst: 0,
                 cgst: 0,
               };
-            } else if (value == "L") {
+            } else {
               obj = {
                 ...obj,
+                [name]: gstVal,
                 igst: 0,
-                [name]: value,
                 sgst: (row.inrValue * row.gstrate) / 200,
                 cgst: (row.inrValue * row.gstrate) / 200,
               };
@@ -640,9 +660,18 @@ export default function ProductMIN() {
             obj = {
               ...obj,
               [name]: value,
-              igst: row.gsttype == "L" ? 0 : (value * row.inrValue) / 100,
-              sgst: row.gsttype == "I" ? 0 : (value * row.inrValue) / 200,
-              cgst: row.gsttype == "I" ? 0 : (value * row.inrValue) / 200,
+              igst:
+                getGstTypeValue(row.gsttype) === "L"
+                  ? 0
+                  : (value * row.inrValue) / 100,
+              sgst:
+                getGstTypeValue(row.gsttype) === "I"
+                  ? 0
+                  : (value * row.inrValue) / 200,
+              cgst:
+                getGstTypeValue(row.gsttype) === "I"
+                  ? 0
+                  : (value * row.inrValue) / 200,
             };
             return obj;
           } else if (name == "currency") {
@@ -680,8 +709,8 @@ export default function ProductMIN() {
           } else if (name == "location") {
             obj = {
               ...obj,
-              [name]: value.value,
-              locationName: value.label,
+              [name]: value,
+              locationName: value?.label ?? value?.text ?? "",
             };
 
             return obj;
@@ -705,7 +734,6 @@ export default function ProductMIN() {
           vendorcode: value.value,
         });
 
-      
         setVendorSectionLoading(false);
         if (response.success) {
           const arr = response.data.map((row) => {
@@ -725,13 +753,13 @@ export default function ProductMIN() {
           setVendorSectionLoading(false);
           setVendorBranchOptions(arr);
 
-        
+          const addr1 = data1?.data ?? data1;
           obj = {
             ...obj,
-            [name]: value.value,
+            [name]: value,
             vendorBranch: arr[0].value,
-            gstin: data1.gstid,
-            vendorAddress: data1.address.replaceAll("<br>", "\n"),
+            gstin: addr1?.gstid ?? "",
+            vendorAddress: (addr1?.address ?? "").replaceAll("<br>", "\n"),
             vendor: value.label,
           };
         } else {
@@ -740,16 +768,19 @@ export default function ProductMIN() {
       } else if (name == "vendorBranch") {
         setVendorSectionLoading(true);
         const response = await imsAxios.post("/backend/vendorAddress", {
-          vendorcode: vendorDetails.vendorName,
+          vendorcode:
+            vendorDetails.vendorName?.value ?? vendorDetails.vendorName,
           branchcode: value,
         });
         setVendorSectionLoading(false);
         if (response.success) {
+          const resData = response.data;
+          const addr = resData?.data ?? resData;
           obj = {
             ...obj,
             [name]: value,
-            gstin: data.data.gstid,
-            vendorAddress: data.data.address.replaceAll("<br>", "\n"),
+            gstin: addr?.gstid ?? "",
+            vendorAddress: (addr?.address ?? "").replaceAll("<br>", "\n"),
           };
         } else {
           showToast(response.message?.msg || response.message, "error");
@@ -797,6 +828,7 @@ export default function ProductMIN() {
     const invoiceDate = form.getFieldValue("invoiceDate");
     const invoiceId = form.getFieldValue("invoiceId");
     const currency = form.getFieldValue("currency") || "";
+
     const arr = previewRows.map((r) => {
       const loc = r.location;
       const locationForRow =
@@ -806,20 +838,38 @@ export default function ProductMIN() {
               value: loc.value ?? loc.id,
             }
           : (loc ?? "");
+      const inrValue = (Number(r.qty) || 0) * (Number(r.rate) || 0);
+      const gstRateNum = Number(r.gstRate) || 0;
+      const rawGstType = r.gstType ?? "L";
+      const gstTypeNormalized =
+        typeof rawGstType === "object"
+          ? (rawGstType.value ?? rawGstType.text ?? "L")
+          : rawGstType;
+      const isLocal =
+        gstTypeNormalized === "L" ||
+        String(gstTypeNormalized).toUpperCase().startsWith("LOCAL");
+      const finalGstRate = isLocal
+        ? getInt(gstRateNum) / 2
+        : getInt(gstRateNum);
+      const gst = getInt((inrValue * finalGstRate) / 100);
+      const cgst = isLocal ? gst : 0;
+      const sgst = isLocal ? gst : 0;
+      const igst = isLocal ? 0 : gst;
+      const gsttypeNormalized = isLocal ? "L" : "I";
       return {
         id: v4(),
         component: r.component ?? { label: r.partName, value: r.partCode },
         orderqty: Number(r.qty) || 0,
         orderrate: Number(r.rate) || 0,
         currency: currency,
-        gstrate: Number(r.gstRate) || 0,
+        gstrate: gstRateNum,
         unitsname: "--",
-        gsttype: r.gstType?.value ?? r.gstType ?? "L",
-        hsncode: r.Hsn ?? "",
-        inrValue: (Number(r.qty) || 0) * (Number(r.rate) || 0),
-        cgst: r.cgst ?? 0,
-        sgst: r.sgst ?? 0,
-        igst: r.igst ?? 0,
+        gsttype: gsttypeNormalized,
+        hsncode: r.Hsn ?? r.hsn ?? "",
+        inrValue,
+        cgst,
+        sgst,
+        igst,
         invoiceDate: invoiceDate ?? "",
         invoiceId: invoiceId ?? "",
         location: locationForRow,
@@ -895,17 +945,14 @@ export default function ProductMIN() {
     const response = await imsAxios.post("/backend/projectDescription", {
       project_name: value,
     });
-   
-    setPageLoading(false);
-    
-   
- 
-      if (response?.success) {
-        form.setFieldValue("projectName", response?.data?.description);
-      } else {
-        showToast(data.message, "error");
-      }
 
+    setPageLoading(false);
+
+    if (response?.success) {
+      form.setFieldValue("projectName", response?.data?.description);
+    } else {
+      showToast(response?.data?.message ?? response?.message, "error");
+    }
   };
   const materialResetFunction = () => {
     setMaterialInward([
@@ -939,10 +986,13 @@ export default function ProductMIN() {
       width: 80,
       field: "add",
       sortable: false,
-      renderCell: ({ row }) =>
-        materialInward.indexOf(row) >= 1 && (
-          <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
-        ),
+      renderCell: ({ row }) => (
+        <span>
+          {materialInward.indexOf(row) >= 1 ? (
+            <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
+          ) : null}
+        </span>
+      ),
     },
     {
       headerName: "Product",
@@ -1012,11 +1062,41 @@ export default function ProductMIN() {
     },
     {
       headerName: "GST Rate",
+      width: 120,
       field: "gstrate",
       sortable: false,
-      renderCell: (params) => gstRate(params, inputHandler),
-      // flex: 1,
-      width: 100,
+      renderCell: (params) => {
+        const options = [
+          { label: "0%", value: 0 },
+          { label: "5%", value: 5 },
+          { label: "18%", value: 18 },
+        ];
+
+        return (
+          <select
+            style={{
+              width: "100%",
+              padding: "6px 8px",
+              border: "1px solid #d9d9d9",
+              borderRadius: 6,
+              backgroundColor: "white",
+              fontSize: 13,
+            }}
+            value={params.row.gstrate ?? ""}
+            onChange={(e) => {
+              const newRate = Number(e.target.value);
+              inputHandler("gstrate", newRate, params.row.id);
+            }}
+          >
+            <option value="">Select</option>
+            {options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        );
+      },
     },
     {
       headerName: "CGST",
@@ -1161,7 +1241,12 @@ export default function ProductMIN() {
         openBranch={showBranchModal}
       />
 
-      {!showSuccessPage && (
+      <div
+        style={{
+          display: showSuccessPage ? "none" : "block",
+          height: "92%",
+        }}
+      >
         <Row
           gutter={8}
           style={{
@@ -1229,9 +1314,14 @@ export default function ProductMIN() {
                           onClick={() => {
                             vendorDetails.vendorName
                               ? setShowBranchModal({
-                                  vendor_code: vendorDetails.vendorName,
+                                  vendor_code:
+                                    vendorDetails.vendorName?.value ??
+                                    vendorDetails.vendorName,
                                 })
-                              : toast.error("Please Select a vendor first");
+                              : showToast(
+                                  "Please Select a vendor first",
+                                  "error",
+                                );
                           }}
                           style={{
                             color: "#1890FF",
@@ -1337,7 +1427,6 @@ export default function ProductMIN() {
                       <Input />
                     </Form.Item>
                   </Col>
-          
                 </Row>
               </Form>
             </Card>
@@ -1347,11 +1436,17 @@ export default function ProductMIN() {
                 span={24}
                 style={{
                   width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
                 }}
               >
-                <Col span={24} style={{ height: "10%" }}>
+                <Col
+                  span={24}
+                  style={{
+                    height: "10%",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 10,
+                  }}
+                >
                   <Row className="material-in-upload">
                     <UploadDocs
                       // disable={poData?.materials?.length == 0}
@@ -1438,7 +1533,7 @@ export default function ProductMIN() {
             />
           </Col>
         </Row>
-      )}
+      </div>
       <NavFooter
         // uploadFun={() => {
         //   setShowUploadDoc(materialInward);
@@ -1453,6 +1548,7 @@ export default function ProductMIN() {
           newMinFunction={() => setShowSuccessPage(false)}
           successColumns={successColumns}
           po={showSuccessPage}
+          isFGMIN={true}
         />
       )}
 
@@ -1494,7 +1590,7 @@ export default function ProductMIN() {
               <MyButton
                 variant="downloadSample"
                 onClick={() =>
-                  downloadCSVCustomColumns(sampleData, "Product MIN Inward")
+                  downloadCSVCustomColumns(sampleData, "FG MIN Inward")
                 }
               />
             </Row>
@@ -1507,7 +1603,7 @@ export default function ProductMIN() {
         title="Preview Data From Excel"
         placement="right"
         onClose={() => setPreview(false)}
-        destroyOnClose={true}
+        destroyOnClose={false}
         open={preview}
         bodyStyle={{ padding: 5 }}
       >

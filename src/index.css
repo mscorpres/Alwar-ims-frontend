@@ -61,6 +61,9 @@ a:hover {
   text-decoration: none !important;
 }
 /* Sidebar menu links should be visible on dark background */
+.ant-drawer-footer {
+  background-color: #f1f1f1d5 !important;
+}
 .ant-menu a,
 .ant-menu a:hover {
   color: inherit !important;

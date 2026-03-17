@@ -4,7 +4,7 @@ import MySelect from "../../../Components/MySelect.jsx";
 import SingleDatePicker from "../../../Components/SingleDatePicker.jsx";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect.jsx";
 import useApi from "../../../hooks/useApi.ts";
-import { getMINOptions } from "../../../api/general.ts";
+import { getFGMINOptions } from "../../../api/general.ts";
 import {
   downloadAttachement,
   downloadConsumptionList,
@@ -37,7 +37,7 @@ const ViewFGMIN = () => {
   const selectedWise = Form.useWatch("wise", form);
 
   const handleFetchMINOptions = async (search, setOptions) => {
-    const response = await executeFun(() => getMINOptions(search), "select");
+    const response = await executeFun(() => getFGMINOptions(search), "select");
     if (setOptions) {
       setOptions(response.data);
       return;
@@ -79,12 +79,7 @@ const ViewFGMIN = () => {
     await executeFun(() => printFGMIN(minId, action), "print");
   };
 
-  const handleDownloadConsumptionList = async (minId) => {
-    await executeFun(
-      () => downloadConsumptionList(minId, consuptionColumns),
-      "print",
-    );
-  };
+
   const handleDownloadAttachement = async (transactionId) => {
     // console.log("transactionId", transactionId);
 
@@ -215,11 +210,7 @@ const columns = [
       width: 200,
    
   },
-  {
-    headerName: "Part Code",
-    field: "partCode",
-    width: 130,
-  },
+
   {
     headerName: "In Qty",
     field: "inqty",

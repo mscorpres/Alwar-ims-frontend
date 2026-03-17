@@ -84,9 +84,11 @@ export default function CreateMaster() {
       >
         <Col span={8}>
           <Card
-            bodyStyle={{
-              // overflowY: "auto",
-              maxHeight: "100%",
+            styles={{
+              body: {
+                // overflowY: "auto",
+                maxHeight: "100%",
+              },
             }}
             style={{ height: "90%", overflowY: "scroll" }}
             title="Add New Master"
@@ -163,7 +165,7 @@ export default function CreateMaster() {
             title="Master Groups"
             size="small"
             style={{ height: "100%" }}
-            bodyStyle={{ height: "83%" }}
+            styles={{ body: { height: "83%" } }}
           >
             <div
               style={{

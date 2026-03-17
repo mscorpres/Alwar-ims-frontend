@@ -184,7 +184,7 @@ const Sidebar = ({
 
     return (
       <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-        {filteredArr.map((c) => {
+        {filteredArr.map((c, index) => {
           const hasChildren = c.children && c.children.length > 0;
           const isActive = activeKey === c.key;
 
@@ -192,9 +192,11 @@ const Sidebar = ({
           const isHeading = c.isHeading;
           const isHeadingExpanded = expandedHeading === c.key;
 
+          const reactKey = `${c.key}-${isSubMenu ? "sub" : "main"}-${index}`;
+
           if (isHeading && shouldShowText) {
             return (
-              <li key={c.key}>
+              <li key={reactKey}>
                 <div
                   onClick={() =>
                     handleItemClick(c.key, hasChildren, undefined, isSubMenu)
@@ -248,7 +250,7 @@ const Sidebar = ({
           }
 
           return (
-            <li key={c.key}>
+            <li key={reactKey}>
               <div
                 onMouseEnter={(e) => {
                   if (!isActive && !isPathActive) {

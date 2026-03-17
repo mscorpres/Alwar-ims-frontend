@@ -20,9 +20,7 @@ export default function Notifications({
   const EmptyList = () => (
     <Empty
       image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-      imageStyle={{
-        height: 60,
-      }}
+      styles={{ image: { height: 60 } }}
       description={
         source == "messages" ? (
           <span>No new Messages</span>

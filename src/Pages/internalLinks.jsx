@@ -464,6 +464,14 @@ const links = [
       routePath: "/material-transfer/rm-to-rm/view-transaction",
     },
   ],
+    [
+    { routeName: "FG To FG", routePath: "/warehouse/material-transfer/fg-to-fg" },
+    // { routeName: "SF to Rej", routePath: "/sf-to-rm" },
+    {
+      routeName: "View Transaction",
+      routePath: "/warehouse/material-transfer/fg-to-fg/view-transaction",
+    },
+  ],
   // JW to JW transfer links
   [
     { routeName: "JW To JW", routePath: "/material-transfer/jw-to-jw" },
@@ -854,6 +862,12 @@ const links = [
       routePath: "/r37",
 
       placeholder: "Job Work Inventory Report",
+    },
+     {
+      routeName: "R38",
+      routePath: "/fg-register-report",
+
+      placeholder: "FG Register Report",
     },
   ],
   // MIN label links

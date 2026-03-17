@@ -1,27 +1,35 @@
 import { useState } from "react";
 import "./r.css";
-import SingleDatePicker from "../../../Components/SingleDatePicker";
 import MyButton from "../../../Components/MyButton";
-import { Col, Row, Typography } from "antd";
+import { Col, Row, Select, Typography } from "antd";
 import socket from "../../../Components/socket";
+import MyDatePicker from "../../../Components/MyDatePicker";
 import { useToast } from "../../../hooks/useToast";
 
-const R11 = () => {
+const options = [
+  { value: "IN", label: "IN" },
+  { value: "OUT", label: "OUT" },
+];
+
+const R38 = () => {
   const [date, setDate] = useState("");
+  const [type, setType] = useState("IN");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
   const handleGenerate = async () => {
     if (!date) {
-      return showToast("Please select a date", "error");
+return showToast("Please select a date", "error");
     }
 
     try {
       setLoading(true);
-      socket.emit("weightedRateReport", {
+      socket.emit("skuMovementReport", {
         date,
+        type,
       });
-      showToast("Report generation initiated");
+      showToast("FG Register Report generation started. You will be notified when it is ready.");
+    
     } catch (error) {
       showToast("Error generating report", "error");
     } finally {
@@ -30,10 +38,21 @@ const R11 = () => {
   };
 
   return (
-    <div style={{ height: "90%" }}>
-      <Row gutter={16} style={{ margin: "10px" }}>
+    <div style={{ height: "90%", margin: "10px" }}>
+      <Row gutter={16}>
+        <Col span={3}>
+          <Select
+            placeholder="Select Option"
+            options={options}
+            value={type}
+            onChange={(e) => setType(e)}
+            style={{
+              width: "100%",
+            }}
+          />
+        </Col>
         <Col span={4}>
-          <SingleDatePicker size="default" setDate={setDate} />
+          <MyDatePicker size="default" setDateRange={setDate} />
         </Col>
         <Col span={2}>
           <MyButton
@@ -52,7 +71,7 @@ const R11 = () => {
             level={5}
             style={{ textAlign: "center", color: "darkslategray" }}
           >
-            Select a date and click Generate to start the Weighted Rate Report.
+            Select a date, type and click Generate to start the FG Registor Report.
           </Typography.Title>
         </Col>
       </Row>
@@ -60,4 +79,4 @@ const R11 = () => {
   );
 };
 
-export default R11;
+export default R38;

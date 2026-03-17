@@ -18,6 +18,7 @@ import { downloadCSV } from "../../../Components/exportToCSV";
 import MyButton from "../../../Components/MyButton";
 import MySelect from "../../../Components/MySelect";
 import { useToast } from "../../../hooks/useToast.js";
+import MyDatePicker from "../../../Components/MyDatePicker.jsx";
 
 
 const Q3 = () => {
@@ -29,6 +30,7 @@ const Q3 = () => {
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locationOptions, setLocationOptions] = useState([]);
+    const [date, setDate] = useState("");
   
   const getLocations = async () => {
     const response = await imsAxios.get("/skuQueryA/q3Location");
@@ -70,6 +72,7 @@ const Q3 = () => {
       const response = await imsAxios.post("/skuQueryA/fetchSKU_logs", {
         sku_code: searchInput,
         location: location,
+            date
       });
 
       // Check if response has error status
@@ -127,6 +130,7 @@ const Q3 = () => {
             {/* Filters */}
             <Card size="small" title="Filters">
               <Space direction="vertical" size={12} style={{ width: "100%" }}>
+                
                 <div>
                   <Typography.Text type="secondary">
                     Product Name
@@ -140,6 +144,13 @@ const Q3 = () => {
                     selectLoading={loading === "select"}
                     value={searchInput}
                   />
+                </div>
+                     <div>
+                  <Typography.Text type="secondary">
+                    Select Date Range
+                  </Typography.Text>
+
+                  <MyDatePicker size="default" setDateRange={setDate} />
                 </div>
 
                 <div>

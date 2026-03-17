@@ -914,6 +914,13 @@
                 "path": "/warehouse/job-work/return",
                 "isShown": false
               },
+                 {
+                "key": "B619",
+                "label": "RM Consumption",
+                "icon": "AnalyticsIcon",
+                "path": "/warehouse/job-work/rm-consumption",
+                "isShown": false
+              },
               {
                 "key": "B618",
                 "label": "Jobwork Completed",
@@ -1028,6 +1035,20 @@
                 "label": "View Transaction",
                 "icon": "SwapHorizIcon",
                 "path": "/material-transfer/rm-to-rm/view-transaction",
+                "isShown": false
+              },
+              {
+                "key": "B362",
+                "label": "FG to FG",
+                "icon": "SwapHorizIcon",
+                "path": "/warehouse/material-transfer/fg-to-fg",
+                "isShown": true
+              },
+              {
+                "key": "B3621",
+                "label": "View Transaction",
+                "icon": "SwapHorizIcon",
+                "path": "/warehouse/material-transfer/fg-to-fg/view-transaction",
                 "isShown": false
               },
               {
@@ -1157,7 +1178,7 @@
               },
               {
                 "key": "B413",
-                "label": "Reports R1 - R37",
+                "label": "Reports R1 - R38",
                 "icon": "DescriptionIcon",
                 "path": "/r1",
                 "isShown": true
