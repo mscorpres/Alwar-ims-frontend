@@ -7,56 +7,43 @@ import TaxDetails from "./TaxDetails";
 function VBTHeaders({
   form,
   vbtComponent,
-  setVbtComponent,
   taxDetails,
-
   editingVBT,
   roundOffValue,
   roundOffSign,
   setRoundOffSign,
   setRoundOffValue,
   apiUrl,
-  setEditVBTCode,
   editVBTCode,
-  components,
-  billvalues,
-  billam,
 }) {
   
 
   const [pageHeaders, setPageHeaders] = useState("");
   useEffect(() => {
     let obj = {};
-    if (editingVBT && vbtComponent) {
-      if (vbtComponent && vbtComponent) {
+    if (editingVBT && vbtComponent?.length > 0) {
+      if (vbtComponent && vbtComponent?.length > 0) {
         setPageHeaders(vbtComponent[0]);
       }
 
       if (editingVBT && pageHeaders) {
         obj = {
-          invoiceNo: pageHeaders?.invoice_id,
-
-          // invoiceDate: vbtComponent[0]?.invoiceDate,
-          venAddress: pageHeaders?.in_vendor_addr,
-          // comment: pageHeaders?.comment,
-          gst: pageHeaders?.gstin_option[0],
-          venCode: pageHeaders?.ven_code,
+          invoiceNo: pageHeaders?.invoiceId,
+          venAddress: pageHeaders?.venAddress,
+          gst: pageHeaders?.gstin?.[0],
+          venCode: pageHeaders?.venCode,
           comment:
             apiUrl === "vbt06"
-              ? `Being Jobwork charges due of challan no:____on inv: ${pageHeaders?.invoice_id} dt:____of amount:____TDS:___ payable amt:____`
+              ? `Being Jobwork charges due of challan no:____on inv: ${pageHeaders?.invoiceId} dt:____of amount:____TDS:___ payable amt:____`
               : apiUrl === "vbt07"
-              ? `Being -- purchase on inv ${pageHeaders?.invoice_id} date:____ of amt: ___ TDS:___ `
+              ? `Being -- purchase on inv ${pageHeaders?.invoiceId} date:____ of amt: ___ TDS:___ `
               : apiUrl === "vbt01"
-              ? `Being purchased for on INV no. ${pageHeaders?.invoice_id} date: ___ amount: ___ TDS:___ `
+              ? `Being purchased for on INV no. ${pageHeaders?.invoiceId} date: ___ amount: ___ TDS:___ `
               : apiUrl === "vbt02"
-              ? `Being Service charges due to INV no. ${pageHeaders?.invoice_id} date of amount TDS:___ `
+              ? `Being Service charges due to INV no. ${pageHeaders?.invoiceId} date of amount TDS:___ `
               : "",
           ackNum: pageHeaders?.acknowledgeIRN,
-          // billAmmount: billam,
-          // venAmmount: pageHeaders?.reduce(
-          //   (partialSum, a) => partialSum + +Number(a.venAmmount).toFixed(3),
-          //   0
-          // ),
+     
         };
         form.setFieldsValue(obj);
       }

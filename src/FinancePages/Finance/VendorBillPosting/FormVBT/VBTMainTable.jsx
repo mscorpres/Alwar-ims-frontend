@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import links from "../links";
 import MyDatePicker from "../../../../Components/MyDatePicker";
-import axios from "axios";
 import "../../../../";
 import { useToast } from "../../../../hooks/useToast.js";
 import { AiFillEdit } from "react-icons/ai";
@@ -13,9 +11,6 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Button, Checkbox, Form, Input, Modal, Row, Space, Switch } from "antd";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../../axiosInterceptor";
-import ConfirmModal from "../Shared/ConfirmModal";
-import { useSelector } from "react-redux";
-import { responseImmutable } from "@rc-component/context/lib/Immutable";
 import VBT01Report from "./VBT01/VBT01Report";
 import VBT02Report from "./VBTtype2/VBT02Report";
 import useApi from "../../../../hooks/useApi.ts";
@@ -40,7 +35,6 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
   const [mapVBT, setMapVBT] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [previewdisData, setPreviewdisData] = useState(false);
-  //////// confirm modal
   const [checkInvoiceId, setCheckInvoiceId] = useState("");
   const [confirmModal, setConfirmModal] = useState(false);
   const [open, setOpen] = useState(false);
@@ -84,15 +78,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       setApiUrl("vbt06");
     } else if (url === "vb-") {
       setApiUrl("vbt07");
-    } else {
-      // console.log("the api is not valid");
-      // if (editVbtDrawer) {
-      //   let editUrl = editVbtDrawer.split("/");
-      //   editUrl = editUrl[0];
-      //   setUrl(editUrl);
-      //   console.log("editUrl------", editUrl);
-      //
-    }
+    } 
   }, [url]);
 
   const vbtTableColumnsonesix = [
@@ -102,32 +88,39 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       sortable: true,
       flex: 1,
       id: "serial-no",
-      width: "8vw",
+     width: "120px",
+    },
+      {
+      headerName: "Type",
+      field: "type",
+      sortable: true,
+      flex: 1,
+      id: "type",
     },
     {
       headerName: "Vendor Code",
-      field: "ven_code",
+      field: "venCode",
       sortable: true,
       flex: 1,
       id: "vendor code",
     },
     {
-      headerName: "MIN ID",
-      field: "min_transaction",
+      headerName: "Transaction",
+      field: "transaction",
       sortable: true,
       flex: 1,
       id: "min id",
     },
-    {
-      headerName: "PART ID",
-      field: "part_code",
+      {
+      headerName: "PART / SKU",
+      field: "itemCode",
       flex: 1,
       sortable: true,
       id: "part id",
     },
     {
       headerName: "MIN DATE",
-      field: "min_in_date",
+      field: "minDate",
       flex: 1,
       sortable: true,
       id: "min date",
@@ -140,8 +133,8 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       type: "actions",
       flex: 1,
       getActions: ({ row }) =>
-        (apiUrl == "vbt06" && row.vbp_status == "PENDING") ||
-        (apiUrl === "vbt01" && row.vbp_status == "PENDING")
+        (apiUrl == "vbt06" && row.vbpStatus == "PENDING") ||
+        (apiUrl === "vbt01" && row.vbpStatus == "PENDING")
           ? [
               <>
                 <GridActionsCellItem
@@ -154,7 +147,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
                 />
                 <GridActionsCellItem
                   icon={<AiFillEdit />}
-                  onClick={() => setEditingVBT([row.min_transaction])}
+                  onClick={() => setEditingVBT([row])}
                   label="Edit"
                 />
               </>,
@@ -185,18 +178,25 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       sortable: true,
       flex: 1,
       id: "serial-no",
-      width: "8vw",
+       width: "120px",
+    },
+      {
+      headerName: "Type",
+      field: "type",
+      sortable: true,
+      flex: 1,
+      id: "type",
     },
     {
       headerName: "Vendor Code",
-      field: "ven_code",
+      field: "venCode",
       sortable: true,
       flex: 1,
       id: "vendor code",
     },
     {
-      headerName: "MIN ID",
-      field: "min_transaction",
+      headerName: "Transaction",
+      field: "transaction",
       sortable: true,
       flex: 1,
       id: "min id",
@@ -225,7 +225,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
       getActions: ({ row }) => [
         <GridActionsCellItem
           icon={<AiFillEdit />}
-          onClick={() => setEditingVBT([row.min_transaction])}
+          onClick={() => setEditingVBT([row])}
           label="Edit"
         />,
       ],
@@ -240,53 +240,14 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
     }
     setAsyncOptions(arr);
   };
-  // const getVBTDetail = async (minId) => {
-  //   console.log("there is a single vbt");
-  //   setLoading(true);
-  //   console.log("minid", minId);
-  //   const response = await imsAxios.post(`/tally/${apiUrl}/fetch_minData`, {
-  //     min_id: minId,
-  //   });
-  //   console.log("minid", response);
-  //   console.log("this is using the url");
-  //   const { data } = response;
-  //   if (response.success) {
-  //     setEditingVBT(data.data);
-  //   } else {
-  //     toast.error(response.message?.msg || response.message);
-  //     setEditingVBT(null);
-  //   }
-  //   setLoading(false);
-  // };
+
 
   const getMultipleVBTDetail = async () => {
-    // console.log("there is not single vbt");
     setLoading(true);
 
     let mins = selectedRows.map((row) => vbtData.filter((r) => r.id == row)[0]);
-    setEditingVBT(mins?.map((row) => row.min_transaction));
-    // console.log(mins);
-    // const response = await imsAxios.post(
-    //   `/tally/${apiUrl}/fetch_multi_min_data`,
-    //   {
-    //     mins: mins.map((row) => row.min_transaction),
-    //   }
-    // );
-    // setLoading(false);
-    // if (response.success) {
-    //   console.log(data.data);
-    //   let arr = data.data;
-    //   arr = arr.map((row) => ({
-    //     ...row,
-    //     ven_tds: arr[0].ven_tds,
-    //   }));
-    //   console.log("arr--------------", arr);
-    //   setEditingVBT(arr);
-    // } else {
-    //   toast.error(response.message?.msg || response.message);
-    //   setEditingVBT(null);
-    // }
-    // setLoading(false);
+    setEditingVBT(mins?.map((row) => row));
+   
   };
   const getRows = async () => {
     setPreviewdisData(false);
@@ -370,8 +331,8 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
 
   const disableVbt = async (singleRow) => {
     if (singleRow) {
-      ModalForm.setFieldValue("min_transaction", singleRow.min_transaction);
-      ModalForm.setFieldValue("part_code", singleRow.part_code);
+  ModalForm.setFieldValue("min_transaction", singleRow.transaction);
+      ModalForm.setFieldValue("part_code", singleRow.itemCode);
     }
 
     Modal.confirm({
@@ -381,11 +342,11 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
         <Form form={ModalForm} layout="vertical">
           <Form.Item
             name="min_transaction"
-            label="Min Transaction"
+            label="Transaction"
             rules={[
               {
                 required: true,
-                message: "Please Enter Min Transaction Number!",
+                message: "Please Enter Transaction Number!",
               },
             ]}
           >
@@ -393,7 +354,7 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
           </Form.Item>
           <Form.Item
             name="part_code"
-            label="Part Code"
+            label="Part / SKU"
             // rules={rules.nos_of_boxes}
             rules={[
               {
@@ -459,24 +420,13 @@ const VBTMainTable = ({ setEditVbtDrawer, editVbtDrawer }) => {
   }, [createVBT, selectedVendors]);
 
   useEffect(() => {
-    // console.log("previewdisData", previewdisData);
     if (previewdisData) {
-      // console.log("combinedData", combinedData);
-      // console.log("extracted", extracted);
       setVBTData(combinedData);
     } else {
       setVBTData(extracted);
     }
   }, [previewdisData]);
-  // useEffect(() => {
-  //   console.log("previewdisData", previewdisData);
-  //   if (previewdisData) {
-  //     console.log("combinedData", combinedData);
-  //     setShowAllData(combinedData);
-  //   } else {
-  //     setShowAllData(vbtData);
-  //   }
-  // }, [previewdisData]);
+
 
   return (
     <div style={{ height: "100%", padding:10 }}>
