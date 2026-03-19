@@ -62,9 +62,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const [updateVendorForm] = Form.useForm();
   const [updateMSMEForm] = Form.useForm();
   const [isMSMEEdited, setIsMSMEEdited] = useState([]);
-  const [currencies, setCurrencies] = useState([]);
   const einvoice = Form.useWatch("applicability", updateVendorForm);
-  const transactionType = Form.useWatch("transactionType", updateVendorForm);
   let msmeStat = "";
   msmeStat = Form.useWatch("vendor_msme_status", updateVendorForm);
 
@@ -135,36 +133,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     }
   };
 
-  useEffect(() => {
-    if (transactionType === "na") {
-      updateVendorForm.setFieldValue("accountNo", "N/A");
-      updateVendorForm.setFieldValue("ifsCode", "N/A");
-      updateVendorForm.setFieldValue("bankName", "N/A");
-      updateVendorForm.setFieldValue("bankBranch", "N/A");
-      updateVendorForm.setFieldValue("ledgerCurrency", "N/A");
-    } else if (transactionType !== undefined && transactionType !== "") {
-      updateVendorForm.setFieldValue(
-        "accountNo",
-        updateVendorForm.getFieldsValue().accountNo
-      );
-      updateVendorForm.setFieldValue(
-        "ifsCode",
-        updateVendorForm.getFieldsValue().ifsCode
-      );
-      updateVendorForm.setFieldValue(
-        "bankName",
-        updateVendorForm.getFieldsValue().bankName
-      );
-      updateVendorForm.setFieldValue(
-        "bankBranch",
-        updateVendorForm.getFieldsValue().bankBranch
-      );
-      updateVendorForm.setFieldValue(
-        "ledgerCurrency",
-        updateVendorForm.getFieldsValue().ledgerCurrency
-      );
-    }
-  }, [transactionType]);
 
   const formatMsmeEffectiveFrom = (val) => {
     if (!val) return "--";
@@ -594,49 +562,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                 </Flex>
               </Col>
               <Divider />
-              <Col span={24}>
-                <Divider />
-                <Row gutter={[10, 10]}>
-                  <Col span={24}>
-                    <Typography.Title level={5}>Bank Details</Typography.Title>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Transaction Type" name="transactionType">
-                      <MySelect
-                        options={transactionTypeOptions}
-                        onChange={(value) =>
-                          updateVendorForm.setFieldValue("transactionType", value)
-                        }
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="A/c No" name="accountNo">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="IFS Code" name="ifsCode">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Bank Name" name="bankName">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Bank Branch" name="bankBranch">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-                  <Col span={8}>
-                    <Form.Item label="Currency of Ledger" name="ledgerCurrency">
-                      <MySelect options={currencies} />
-                    </Form.Item>
-                  </Col>
-                </Row>
-              </Col>
+      
               <Col span={24}>
                 <Divider />
                 <Form.Item label="Vendor Document" name="file">
