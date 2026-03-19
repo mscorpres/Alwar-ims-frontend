@@ -119,17 +119,22 @@ function VBT01Report({
     setLoading(true);
 
     let link;
+    const type = minIdArr?.[0]?.type;
+    const typeQuery =
+      type != null && String(type).trim() !== ""
+        ? `?type=${encodeURIComponent(type)}`
+        : "";
     if (editVbtDrawer) {
       let apiLink = getApiUrl(editVbtDrawer);
 
-      link = `/tally/${apiLink}/fetch_multi_min_data?type=${minIdArr[0]?.type}`;
+      link = `/tally/${apiLink}/fetch_multi_min_data${typeQuery}`;
     } else {
-      link = `/tally/${apiUrl}/fetch_multi_min_data?type=${minIdArr[0]?.type}`;
+      link = `/tally/${apiUrl}/fetch_multi_min_data${typeQuery}`;
     }
     const response = await imsAxios.post(link, {
-      mins: minIdArr.map((row) => row?.transaction),
+      mins: minIdArr.map((row) => row?.transaction ?? row?.min_transaction),
     });
-  
+
     if (response.success) {
       const data = response?.data;
       setVbtComponent(response.data);
@@ -152,11 +157,7 @@ function VBT01Report({
         venAddress: row.venAddress,
         igstAmount: row.igst,
         ven_name: row.venName,
-        // gstType: row.in_gst_type,
 
-        // tdsAssValue:row.value,
-        // glName: row.tds?.tdsName,
-        // glCode: row?.tds?.tdsGlKey,
         tdsName: {
           label: row.ven_tds?.tds_name,
           value: row?.ven_tds?.tds_key,
@@ -237,11 +238,9 @@ function VBT01Report({
         }));
         setFreightGlOptions(arr);
       }
-    
     } catch (error) {
-
       showToast("Some error occured while fetching freight Gls", "error");
-    } 
+    }
   };
 
   const getGl = async () => {
@@ -301,7 +300,6 @@ function VBT01Report({
       }
       const modifiedArray =
         roundarr.length > 0 ? [...roundarr.slice(0, -1), a] : roundarr;
-  
 
       let finalObj = {
         bill_amount: values.billAmmount,
@@ -399,7 +397,6 @@ function VBT01Report({
         ...finalObj,
         round_type: roundOffSign.toString(),
         round_value: roundOffValue.toString(),
-  
       };
       const typeFromEditing =
         Array.isArray(editingVBT) && editingVBT.length > 0
@@ -538,7 +535,7 @@ function VBT01Report({
       setLoading(false);
     }
   };
-  const addVbt = async (finalData,type) => {
+  const addVbt = async (finalData, type) => {
     setLoading(true);
     const response = await imsAxios.post(
       `/tally/${apiUrl}/add_${apiUrl}?type=${type}`,
@@ -549,12 +546,12 @@ function VBT01Report({
       showToast(response.message, "success");
 
       setEditingVBT(null);
-   
+
       backFunction();
     } else {
       setLoading(false);
       validateResponse(data);
-          showToast(response.message, "error");
+      showToast(response.message, "error");
     }
   };
   const resetForm = () => {
@@ -586,7 +583,8 @@ function VBT01Report({
     if (editingVBT?.length > 0) {
       getVBTDetail(editingVBT);
       setIsCreate(true);
-      let editUrl = editingVBT[0]?.transaction.split("/");
+      const txn = editingVBT[0]?.transaction ?? editingVBT[0]?.min_transaction;
+      let editUrl = txn?.split("/");
       editUrl = editUrl[0];
       getFreightGlOptions(editUrl.toLowerCase());
       getGstGlOptions();
