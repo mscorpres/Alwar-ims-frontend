@@ -80,11 +80,7 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
       response.data.map((d) => a.push({ text: d.text, value: d.id }));
       getBranchDetails(a[0].value, "skeletonLoading");
       setAllBranchData(a);
-      if (a.length > 0) {
-        await imsAxios.post("/vendor/getBranchDetails", {
-          addresscode: a[0].value,
-        });
-      }
+    
       setSkeletonLoading(false);
     }
     setSkeletonLoading(false);
@@ -353,7 +349,7 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                       value={allField.mob}
                       onChange={(e) =>
                         setAllField((allField) => {
-                          return { ...allField, mob: e.target.value };
+                          return { ...allField,   mob: e.target.value.replace(/\D/g, ""), };
                         })
                       }
                     />
