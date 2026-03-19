@@ -4,7 +4,6 @@ import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Drawer,
-  Modal,
   Row,
   Col,
   Input,
@@ -19,12 +18,36 @@ import {
 } from "antd";
 import { imsAxios } from "../../../../axiosInterceptor";
 import UploadDocs from "../../../Store/MaterialIn/MaterialInWithPO/UploadDocs";
-import MyDataTable from "../../../../Components/MyDataTable";
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import MyButton from "../../../../Components/MyButton";
 import { v4 } from "uuid";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
+import dayjs from "dayjs";
+
+const msmeOptions = [
+  { text: "Yes", value: "Y" },
+  { text: "No", value: "N" },
+];
+const msmeYearOptions = [
+  { text: "2023-2024", value: "2023-2024" },
+  { text: "2024-2025", value: "2024-2025" },
+];
+const msmeTypeOptions = [
+  { text: "Micro", value: "Micro" },
+  { text: "Small", value: "Small" },
+  { text: "Medium", value: "Medium" },
+];
+const msmeActivityOptions = [
+  { text: "Manufacturing", value: "Manufacturing" },
+  { text: "Service", value: "Service" },
+  { text: "Trading", value: "Trading" },
+];
+const transactionTypeOptions = [
+  { text: "Cheque", value: "cheque" },
+  { text: "e-Fund Transfer", value: "transfer" },
+  { text: "UPI", value: "upi" },
+  { text: "Other", value: "other" },
+  { text: "N/A", value: "na" },
+];
 
 const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const { showToast } = useToast();
@@ -34,17 +57,15 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const [statusLoading, setStatusLoading] = useState(false);
   const [editMSME, setEditMSME] = useState([]);
   const [tdsOptions, setTdsOptions] = useState([]);
-  const [locationOptions, setLocationOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [files, setFiles] = useState([]);
   const [updateVendorForm] = Form.useForm();
   const [updateMSMEForm] = Form.useForm();
   const [isMSMEEdited, setIsMSMEEdited] = useState([]);
-  const [msmeRow, setMsmeRows] = useState([]);
-  const [add, isAdd] = useState(false);
   const einvoice = Form.useWatch("applicability", updateVendorForm);
   let msmeStat = "";
   msmeStat = Form.useWatch("vendor_msme_status", updateVendorForm);
+
   const getDetails = async () => {
     setSkeletonLoading(true);
 
@@ -53,45 +74,75 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       vendor_id: editVendor?.vendor_code,
     });
     setSkeletonLoading(false);
-    
+
     if (tdsResponse.success) {
-      let tdsArr = tdsResponse.data.map((row) => {
+      const tdsArr = tdsResponse.data.map((row) => {
         return { text: row.tds_name, value: row.tds_key };
       });
       setTdsOptions(tdsArr);
     }
-    
+
     if (vendorResponse.success) {
-      let obj = {
-        msmeStatus: vendorResponse.data.vendor_msme_status,
-        year: vendorResponse.data.vendor_msme_year,
-        msmeId: vendorResponse.data.vendor_msme_id,
-        type: vendorResponse.data.vendor_msme_type,
-        activity: vendorResponse.data.vendor_msme_activity,
-        applicability: vendorResponse.data.eInvoice?.status,
-        ...vendorResponse.data[0],
+      const vendor = Array.isArray(vendorResponse.data)
+        ? vendorResponse.data[0]
+        : vendorResponse.data;
+
+      const rawMsmeFrom = vendor?.msme_effective_from;
+      const hasValidMsmeDate =
+        rawMsmeFrom &&
+        rawMsmeFrom !== "--" &&
+        String(rawMsmeFrom).trim() !== "";
+      const parsedMsmeFrom = hasValidMsmeDate ? dayjs(rawMsmeFrom) : null;
+      const msmeEffectiveFrom = parsedMsmeFrom?.isValid()
+        ? parsedMsmeFrom
+        : undefined;
+
+      const obj = {
+        msmeStatus: vendor?.vendor_msme_status,
+        year: vendor?.vendor_msme_year,
+        msmeId: vendor?.vendor_msme_id,
+        type: vendor?.vendor_msme_type,
+        activity: vendor?.vendor_msme_activity,
+        transactionType: vendor?.transaction_type,
+        accountNo: vendor?.account_no,
+        ifsCode: vendor?.ifs_code,
+        bankName: vendor?.bank_name,
+        bankBranch: vendor?.bank_branch,
+        ledgerCurrency: vendor?.ledger_currency,
+        msmeEffectiveFrom,
+        ...vendor,
+        applicability: vendor?.eInvoice?.status ?? vendor?.applicability,
+        dobApplicabilty: vendor?.eInvoice?.date ?? vendor?.dobApplicabilty,
       };
       updateVendorForm.setFieldsValue(obj);
       setVendorStatus(obj.vendor_status);
-      let msmedata = vendorResponse.data;
-      let a = msmedata[0]?.msme_data.map(
-        (r, id) => {
+
+      const msmedata = vendor?.msme_data || [];
+      const a =
+        msmedata?.map((r) => {
           return {
             vendor_msme_year: r.year,
             vendor_msme_type: r.type,
             vendor_msme_activity: r.activity,
             id: v4(),
           };
-        }
-      );
+        }) ?? [];
 
       setRows(a);
       setIsMSMEEdited(false);
     }
   };
+
+
+  const formatMsmeEffectiveFrom = (val) => {
+    if (!val) return "--";
+    return dayjs.isDayjs(val) ? val.format("DD-MM-YYYY") : val;
+  };
+
   const submitHandler = async () => {
     let obj;
     const values = await updateVendorForm.validateFields();
+
     if (values.vendor_msme_status === "Y") {
       obj = {
         vendorcode: editVendor?.vendor_code,
@@ -99,16 +150,22 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         panno: values?.vendor_pan,
         cinno: values?.vendor_cin,
         tally_tds: values.vendor_tds,
-        vendor_loc: values.vendor_loc,
         term_days: values.vendor_term_days,
         msme_status: values.vendor_msme_status,
         msme_year: rows.map((r) => r.vendor_msme_year),
         msme_id: values.vendor_msme_id,
         msme_type: rows.map((r) => r.vendor_msme_type),
         msme_activity: rows.map((r) => r.vendor_msme_activity),
-        eInvoice: values.applicability||"N",
+        eInvoice: values.applicability || "N",
         dateOfApplicability:
           values.applicability === "Y" ? values.dobApplicabilty : "--",
+        transaction_type: values.transactionType,
+        account_no: values.accountNo,
+        ifs_code: values.ifsCode,
+        bank_name: values.bankName,
+        bank_branch: values.bankBranch,
+        ledger_currency: values.ledgerCurrency,
+        msme_effective_from: formatMsmeEffectiveFrom(values.msmeEffectiveFrom),
       };
     } else {
       obj = {
@@ -117,13 +174,19 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         panno: values?.vendor_pan,
         cinno: values?.vendor_cin,
         tally_tds: values.vendor_tds,
-        vendor_loc: values.vendor_loc,
         term_days: values.vendor_term_days,
         msme_status: "N",
         msme_id: "--",
-        eInvoice: values.applicability||"N",
+        eInvoice: values.applicability || "N",
         dateOfApplicability:
           values.applicability === "Y" ? values.dobApplicabilty : "--",
+        transaction_type: values.transactionType,
+        account_no: values.accountNo,
+        ifs_code: values.ifsCode,
+        bank_name: values.bankName,
+        bank_branch: values.bankBranch,
+        ledger_currency: values.ledgerCurrency,
+        msme_effective_from: formatMsmeEffectiveFrom(values.msmeEffectiveFrom),
       };
     }
     const formData = new FormData();
@@ -140,6 +203,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       showToast(response.message, "error");
     }
   };
+
   const changeStatus = async (value) => {
     setStatusLoading(true);
     const response = await imsAxios.post("/vendor/updateVendorStatus", {
@@ -156,64 +220,49 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       }
     }
   };
-  const getAllVendorLocationOptions = async () => {
-    const response = await imsAxios.get("/vendor/getAllLocation");
-    if (response.success) {
-      let arr = response.data.map((row) => ({
-        text: row.loc_name,
-        value: row.location_key,
-      }));
-      setLocationOptions(arr);
-    } else {
-      showToast(response.message, "error");
-      setLocationOptions([]);
+
+  const getCurrencies = async () => {
+    try {
+      const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+      const arr =
+        data?.data?.map((d) => ({
+          text: d.currency_symbol,
+          value: d.currency_id,
+          notes: d.currency_notes,
+        })) || [];
+      setCurrencies(arr);
+    } catch (error) {
+      setCurrencies([]);
     }
   };
 
   useEffect(() => {
     if (editVendor) {
       getDetails();
-      getAllVendorLocationOptions();
+      getCurrencies();
     }
   }, [editVendor]);
-  const msmeOptions = [
-    { text: "Yes", value: "Y" },
-    { text: "No", value: "N" },
-  ];
-  const msmeYearOptions = [
-    { text: "2023-2024", value: "2023-2024" },
-    { text: "2024-2025", value: "2024-2025" },
-  ];
-  const msmeTypeOptions = [
-    { text: "Micro", value: "Micro" },
-    { text: "Small", value: "Small" },
-    { text: "Medium", value: "Medium" },
-  ];
-  const msmeActivityOptions = [
-    { text: "Manufacturing", value: "Manufacturing" },
-    { text: "Service", value: "Service" },
-    { text: "Trading", value: "Trading" },
-  ];
-
 
   const deleteRow = (id) => {
-    let newrows = rows.filter((a) => a.id !== id);
+    const newrows = rows.filter((a) => a.id !== id);
     setIsMSMEEdited(newrows);
     setRows(newrows);
   };
+
   const close = () => {
     setEditMSME(false);
     updateMSMEForm.resetFields();
   };
+
   useEffect(() => {
     if (rows) {
       setRows(rows);
     }
   }, [rows]);
+
   useEffect(() => {
-    if (msmeStat == "N") {
+    if (msmeStat === "N") {
       updateVendorForm.setFieldValue("vendor_msme_id", "--");
-    } else {
     }
   }, [msmeStat]);
 
@@ -221,7 +270,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     setEditMSME(false);
     const values = await updateMSMEForm.validateFields();
     let value;
-    let a;
     let val;
     val = {
       id: v4(),
@@ -233,7 +281,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       (row) => row.vendor_msme_year === val.vendor_msme_year
     );
     if (found) {
-      let removerow = rows.filter(
+      const removerow = rows.filter(
         (r) => r.vendor_msme_year !== val.vendor_msme_year
       );
       value = [...removerow, val];
@@ -241,7 +289,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       value = [...rows, val];
     }
 
-    a = value.filter((b) => b.vendor_msme_year !== "--");
+    const a = value.filter((b) => b.vendor_msme_year !== "--");
     setIsMSMEEdited(a);
     setRows(a);
     updateMSMEForm.resetFields();
@@ -249,7 +297,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
 
   return (
     <>
-      {" "}
       <Drawer
         title={`Update Vendor: ${editVendor?.vendor_code}`}
         open={editVendor}
@@ -290,15 +337,12 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         }
       >
         {<Skeleton active loading={skeletonLoading} />}
-        {<Skeleton active loading={skeletonLoading} />}
         {!skeletonLoading && (
           <Form
             form={updateVendorForm}
-            // initialValues={initialValues}
             layout="vertical"
           >
             <Row>
-              {/* <Space> */}
               <Col span={24}>
                 <Form.Item label="Vendor Name" name="vendor_name">
                   <Input />
@@ -335,40 +379,23 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
               <Col span={24}>
                 <Form.Item label="Vendor TDS" name="vendor_tds">
                   <MySelect
-                    // size="default"
                     mode="multiple"
-                    // value={allDetails.vendor_tds}
-                    // onChange={(value) => inputHandler("vendor_tds", value)}
                     options={tdsOptions}
                   />
                 </Form.Item>
               </Col>
-              <Col span={24}>
-                <Form.Item label="Vendor Locations" name="vendor_loc">
-                  <MySelect
-                    // size="default"
-                    mode="multiple"
-                    // value={allDetails.vendor_loc}
-                    // onChange={(value) => inputHandler("vendor_loc", value)}
-                    options={locationOptions}
-                  />
-                </Form.Item>
-              </Col>
+   
               <Col span={8}>
                 <Form.Item
                   style={{ padding: "3px" }}
                   label="E-Invoice Applicability"
                   name="applicability"
-                  // rules={rules.applicability}
                 >
-                  <MySelect
-                    options={msmeOptions}
-                  />
+                  <MySelect options={msmeOptions} />
                 </Form.Item>
-              </Col>{" "}
+              </Col>
               {einvoice === "Y" && (
                 <Col span={8}>
-                  {" "}
                   <Form.Item
                     style={{ padding: "3px" }}
                     label="Date of Applicability"
@@ -387,17 +414,30 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                 <Row gutter={[10, 10]}>
                   <Col span={8}>
                     <Form.Item label="MSME Status" name="vendor_msme_status">
-                      <MySelect
-                        options={msmeOptions}
-                      />
+                      <MySelect options={msmeOptions} />
                     </Form.Item>
-                  </Col>{" "}
+                  </Col>
                   <Col span={8}>
                     <Form.Item label="MSME Id" name="vendor_msme_id">
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Row></Row>
+                  <Col span={8}>
+                    <Form.Item label="Effective From" name="msmeEffectiveFrom">
+                      <SingleDatePicker
+                        size="default"
+                        setDate={(value) =>
+                          updateVendorForm.setFieldValue(
+                            "msmeEffectiveFrom",
+                            value
+                          )
+                        }
+                        value={updateVendorForm.getFieldValue(
+                          "msmeEffectiveFrom"
+                        )}
+                      />
+                    </Form.Item>
+                  </Col>
                 </Row>
               </Col>
               <Col span={24} style={{ height: "10rem" }}>
@@ -415,7 +455,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                     justify="center"
                   >
                     <>
-                      {" "}
                       <div style={{ width: 185 }}>
                         <Typography.Text strong>Year</Typography.Text>
                       </div>
@@ -436,7 +475,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                     >
                       {isMSMEEdited.map((a) => (
                         <Flex key={a.id}>
-                          {" "}
                           <div style={{ width: 40 }}></div>
                           <div style={{ width: 200 }}>
                             <Typography.Text
@@ -463,29 +501,15 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                             </Typography.Text>
                           </div>
                           <div style={{ width: 40 }}>
-                            {/* <MyButton
-                              variant="edit"
-                              text=""
-                              size="small"
-                              // shape="round"
-                              onClick={() => setEditMSME(true)}
-                            ></MyButton> */}
-                          </div>
-                          <div style={{ width: 40 }}>
                             <MyButton
                               variant="delete"
                               text=""
                               size="small"
-                              // shape="round"
-
                               onClick={() => deleteRow(a.id)}
                             ></MyButton>
                           </div>
                         </Flex>
                       ))}
-                      {/* {isMSMEEdited?.map((a) => ( */}
-
-                      {/* ))} */}
                     </Flex>
                   ) : msmeStat == "Y" ? (
                     <Flex
@@ -495,11 +519,9 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                       vertical
                     >
                       {rows.map((a) => (
-                        <Flex>
-                          {" "}
+                        <Flex key={a.id}>
                           <div style={{ width: 40 }}></div>
                           <div style={{ width: 200 }}>
-                            {" "}
                             <Typography.Text
                               type="secondary"
                               style={{ fontSize: 12 }}
@@ -508,7 +530,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                             </Typography.Text>
                           </div>
                           <div style={{ width: 180 }}>
-                            {" "}
                             <Typography.Text
                               type="secondary"
                               style={{ fontSize: 12 }}
@@ -517,7 +538,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                             </Typography.Text>
                           </div>
                           <div style={{ width: 200 }}>
-                            {" "}
                             <Typography.Text
                               type="secondary"
                               style={{ fontSize: 12 }}
@@ -525,54 +545,35 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                               {a.vendor_msme_activity}
                             </Typography.Text>
                           </div>
-                          <div span={2}>
-                            {/* <MyButton
-                              variant="edit"
+                          <div style={{ width: 40 }}>
+                            <MyButton
+                              variant="delete"
                               text=""
                               size="small"
-                              // shape="round"
-                              onClick={() => setEditMSME(true)}
-                            ></MyButton> */}
+                              onClick={() => deleteRow(a.id)}
+                            ></MyButton>
                           </div>
-                          <div span={2}>
-                            <div style={{ width: 40 }}>
-                              <MyButton
-                                variant="delete"
-                                text=""
-                                size="small"
-                                // shape="round"
-
-                                onClick={() => deleteRow(a.id)}
-                              ></MyButton>
-                            </div>
-                          </div>
-                          {/* <MyButton
-                              variant="add"
-                              type="secondary"
-                              onClick={addRows}
-                            ></MyButton> */}
                         </Flex>
                       ))}
                     </Flex>
                   ) : (
                     ""
                   )}
-                  {/* </Col> */}
                 </Flex>
               </Col>
               <Divider />
+      
               <Col span={24}>
+                <Divider />
                 <Form.Item label="Vendor Document" name="file">
                   <Row className="material-in-upload">
                     <UploadDocs
-                      // disable={poData?.materials?.length == 0}
                       setFiles={setFiles}
                       files={files}
                     />
                   </Row>
                 </Form.Item>
               </Col>
-              {/* </Space> */}
             </Row>
           </Form>
         )}
@@ -585,9 +586,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
         onClose={close}
         extra={
           <Space>
-            <Button onClick={close}>
-              Back
-            </Button>
+            <Button onClick={close}>Back</Button>
             <Button
               type="primary"
               loading={submitLoading}
@@ -600,7 +599,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
       >
         <Form
           form={updateMSMEForm}
-          // initialValues={initialValues}
           layout="vertical"
         >
           <Divider />
@@ -619,11 +617,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
                 <MySelect options={msmeYearOptions} />
               </Form.Item>
             </Col>
-            {/* <Col span={8}>
-              <Form.Item label="Id" name="vendor_msme_id">
-                <Input />
-              </Form.Item>
-            </Col> */}
             <Col span={8}>
               <Form.Item
                 label="MSME Type"
@@ -660,6 +653,3 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
 };
 
 export default EditBranch;
-const initialValues = {
-  vendor_msme_status: "N",
-};
