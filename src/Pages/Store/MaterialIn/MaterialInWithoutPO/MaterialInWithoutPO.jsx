@@ -555,7 +555,7 @@ export default function MaterialInWithoutPO() {
           }}
         />
       ),
-      width: 250,
+      width: 500,
       flex: 1,
     },
     {
@@ -703,7 +703,7 @@ export default function MaterialInWithoutPO() {
       headerName: "Location",
       name: "location",
       field: () => <MySelect options={locationOptions} labelInValue={true} />,
-      width: 120,
+      width: 130,
     },
     {
       headerName: "Auto Consump",

@@ -914,6 +914,13 @@
                 "path": "/warehouse/job-work/return",
                 "isShown": false
               },
+                 {
+                "key": "B619",
+                "label": "RM Consumption",
+                "icon": "AnalyticsIcon",
+                "path": "/warehouse/job-work/rm-consumption",
+                "isShown": false
+              },
               {
                 "key": "B618",
                 "label": "Jobwork Completed",

@@ -5,7 +5,7 @@ import { useToast } from "../../../hooks/useToast.js";
 import ViewVBTReport from "./ViewVBTReport";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { Button, Col, Input, Modal, Popconfirm, Row, Space } from "antd";
+import { Button, Col, Input, Modal,  Row, Space } from "antd";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import printFunction, {
@@ -21,7 +21,6 @@ import { useNavigate, Link } from "react-router-dom";
 import DeleteVbt from "./DeleteVbt";
 import CreateDebitNote from "../DebitNote/Create";
 import VBT01Report from "./FormVBT/VBT01/VBT01Report";
-import VBT02Report from "./FormVBT/VBTtype2/VBT02Report";
 import useApi from "../../../hooks/useApi.ts";
 import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
@@ -33,18 +32,14 @@ export default function VBTReport() {
 
   const [wise, setWise] = useState("minwise");
   const [vbtOption, setVbtOption] = useState("ALL");
-  const [selectLoading, setSelectLoading] = useState(false);
   const [viewReportData, setViewReportData] = useState([]);
   const [searchDateRange, setSearchDateRange] = useState("");
   const [rows, setRows] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [editingVBT, setEditingVBT] = useState(null);
   const [selectedRows, setSelectedRows] = useState([]);
   const [editVbtDrawer, setEditVbtDrawer] = useState(false);
-  const [debitNotevbtCodes, setDebitNoteSetVBTCodes] = useState(null);
-  const [creatingDebitNote, setCreatingDebitNotes] = useState(false);
   const [openModal, setOpenModal] = useState(null);
   const [debitNoteDrawer, setDebitNoteDrawer] = useState(null);
   const [editvbturl, setEditVbtUrl] = useState("");
@@ -111,15 +106,7 @@ export default function VBTReport() {
     downloadFunction(response.data?.buffer.data, filename);
     setLoading(false);
   };
-  const deleteFun = async () => {
-    const response = await imsAxios.post("/tally/vbt01/vbt_delete", {
-      vbt_code: deleteConfirm,
-    });
-    if (response.success) {
-      showToast(response.message, "success");
-      getSearchResults();
-    }
-  };
+
   const getEditVBTDetails = async (code) => {
     setLoading(true);
 
@@ -148,21 +135,7 @@ export default function VBTReport() {
   };
   const confirmDelete = () => {};
 
-  const handleVerify = async (row) => {
-    Modal.confirm({
-      title: `Are you sure you want to verify ${row?.vbt_code}?`,
-      content:
-        "Please make sure that the values are correct, This process is irreversible",
-      onOk() {
-        submitVerifyHandler(row);
-      },
-      onCancel() {
-        submitUnVerifyHandler(row);
-      },
-      okText: "Yes",
-      cancelText: "No",
-    });
-  };
+
   const submitVerifyHandler = async (row) => {
     let vbtKey = row.vbt_code;
     let id = row.ID;
@@ -175,18 +148,7 @@ export default function VBTReport() {
       getSearchResults();
     }
   };
-  const submitUnVerifyHandler = async (row) => {
-    let vbtKey = row.vbt_code;
-    let id = row.ID;
-    const response = await imsAxios.patch("/tally/vbt/verify", {
-      ID: id,
-      vbtKey: vbtKey,
-      verificationStatus: "false",
-    });
-    if (response.status === 200) {
-      getSearchResults();
-    }
-  };
+ 
 
   const columns = [
     {
@@ -234,15 +196,7 @@ export default function VBTReport() {
           label="Download"
         />,
 
-        // <GridActionsCellItem
-        //   showInMenu
-        //   disabled={loading}
-        //   // icon={<CloudDownloadOutlined className="view-icon" />}
-        //   onClick={() => {
-        //     setDebitNoteVbtCodesHandler([row]);
-        //   }}
-        //   label="Create Debit Note"
-        // />,
+   
         <GridActionsCellItem
           showInMenu
           disabled={loading}
@@ -251,44 +205,7 @@ export default function VBTReport() {
           }}
           label="Create Debit Note"
 
-          // label={
-          //   <Link
-          //     style={{
-          //       color: "black",
-          //       textDecoration: "none",
-          //     }}
-          //     to="/tally/debit-note/vbt/create"
-          //     state={{ vbtCodes: [row.vbt_code] ?? "blank code" }}
-          //   >
-          //
-          //   </Link>
-          // }
         />,
-        // <GridActionsCellItem
-        //   showInMenu
-        //   disabled={loading}
-        //   // icon={<CloudDownloadOutlined className="view-icon" />}
-        //   onClick={() => {
-        //     handleVerify(row);
-        //   }}
-        //   label="Verify"
-        // />,
-        // <GridActionsCellItem
-        //   showInMenu
-        //   disabled={loading}
-        //   label={
-        //     <Space>
-        //       <Popconfirm
-        //         title={`Are you sure to pass Sample ${row.vbt_code}?`}
-        //         okText="Yes"
-        //         // loading={submitLoading === row.id}
-        //         cancelText="No"
-        //       >
-        //         Delete
-        //       </Popconfirm>
-        //     </Space>
-        //   }
-        // />,
       ],
     },
     {
@@ -383,16 +300,7 @@ export default function VBTReport() {
       field: "ven_code",
       width: 100,
     },
-    // {
-    //   headerName: "Vendor Address",
-    //   field: "ven_address",
-    //   renderCell: ({ row }) => (
-    //     <Tooltip title={row.ven_address}>
-    //       <span>{row.ven_address}</span>
-    //     </Tooltip>
-    //   ),
-    //   width: 120,
-    // },
+
     {
       headerName: "Item Name",
       field: "part",
@@ -536,108 +444,7 @@ export default function VBTReport() {
     },
   ];
   const downloadcolumns = [
-    // {
-    //   headerName: "",
-    //   field: "actions",
-    //   width: 10,
-    //   type: "actions",
-    //   getActions: ({ row }) => [
-    //     <GridActionsCellItem
-    //       showInMenu
-    //       disabled={loading}
-    //       onClick={() => {
-    //         setViewReportData(row.vbt_code);
-    //       }}
-    //       label="View"
-    //     />,
-    //     <GridActionsCellItem
-    //       showInMenu
-    //       disabled={loading}
-    //       onClick={() => {
-    //         setEditVbtDrawer(row.vbt_code);
-    //       }}
-    //       label="Edit"
-    //     />,
-    //     <GridActionsCellItem
-    //       showInMenu
-    //       disabled={loading}
-    //       onClick={() => {
-    //         setOpenModal(row);
-    //       }}
-    //       label="Delete"
-    //     />,
-    //     <GridActionsCellItem
-    //       showInMenu
-    //       disabled={loading}
-    //       onClick={() => printFun(row.vbt_code)}
-    //       label="Print"
-    //     />,
-    //     <GridActionsCellItem
-    //       showInMenu
-    //       disabled={loading}
-    //       onClick={() => {
-    //         handleDownload(row.vbt_code);
-    //       }}
-    //       label="Download"
-    //     />,
-
-    //     // <GridActionsCellItem
-    //     //   showInMenu
-    //     //   disabled={loading}
-    //     //   // icon={<CloudDownloadOutlined className="view-icon" />}
-    //     //   onClick={() => {
-    //     //     setDebitNoteVbtCodesHandler([row]);
-    //     //   }}
-    //     //   label="Create Debit Note"
-    //     // />,
-    //     <GridActionsCellItem
-    //       showInMenu
-    //       disabled={loading}
-    //       onClick={() => {
-    //         setDebitNoteDrawer(row);
-    //       }}
-    //       label="Create Debit Note"
-
-    //       // label={
-    //       //   <Link
-    //       //     style={{
-    //       //       color: "black",
-    //       //       textDecoration: "none",
-    //       //     }}
-    //       //     to="/tally/debit-note/vbt/create"
-    //       //     state={{ vbtCodes: [row.vbt_code] ?? "blank code" }}
-    //       //   >
-    //       //
-    //       //   </Link>
-    //       // }
-    //     />,
-    //     // <GridActionsCellItem
-    //     //   showInMenu
-    //     //   disabled={loading}
-    //     //   // icon={<CloudDownloadOutlined className="view-icon" />}
-    //     //   onClick={() => {
-    //     //     handleVerify(row);
-    //     //   }}
-    //     //   label="Verify"
-    //     // />,
-    //     // <GridActionsCellItem
-    //     //   showInMenu
-    //     //   disabled={loading}
-    //     //   label={
-    //     //     <Space>
-    //     //       <Popconfirm
-    //     //         title={`Are you sure to pass Sample ${row.vbt_code}?`}
-    //     //         okText="Yes"
-    //     //         // loading={submitLoading === row.id}
-    //     //         cancelText="No"
-    //     //       >
-    //     //         Delete
-    //     //       </Popconfirm>
-    //     //     </Space>
-    //     //   }
-    //     // />,
-    //   ],
-    // },
+   
     {
       headerName: "VBT Code",
       field: "vbt_code",
@@ -730,16 +537,6 @@ export default function VBTReport() {
       field: "ven_code",
       width: 100,
     },
-    // {
-    //   headerName: "Vendor Address",
-    //   field: "ven_address",
-    //   renderCell: ({ row }) => (
-    //     <Tooltip title={row.ven_address}>
-    //       <span>{row.ven_address}</span>
-    //     </Tooltip>
-    //   ),
-    //   width: 120,
-    // },
     {
       headerName: "Item Name",
       field: "part",
@@ -978,17 +775,13 @@ export default function VBTReport() {
     }
     setSearchDateRange("");
   }, [wise]);
-  // useEffect(() => {
-  //   if (openModal) {
-  //     callModal();
-  //   }
-  // }, [openModal]);
+
 
   return (
     <div style={{ height: "100%", padding: 10 }}>
       {editVbtDrawer ? (
         editvbturl === "vbt03" ? (
-          <VBT02Report
+          <VBT01Report
             setEditVbtDrawer={setEditVbtDrawer}
             editVbtDrawer={editVbtDrawer}
           />
@@ -1002,29 +795,13 @@ export default function VBTReport() {
         ""
       )}
 
-      {/* {editVbtDrawer ? (
-        <VBT01Report
-          setEditVbtDrawer={setEditVbtDrawer}
-          editVbtDrawer={editVbtDrawer}
-        />
-      ) : editvbturl === "vbt03" ? (
-        <VBT02Report
-          setEditVbtDrawer={setEditVbtDrawer}
-          editVbtDrawer={editVbtDrawer}
-        />
-      ) : (
-        ""
-      )} */}
+ 
       <ViewVBTReport
         viewReportData={viewReportData}
         setViewReportData={setViewReportData}
         getSearchResults={getSearchResults}
       />
-      {/* <DebitNote
-        debitNotevbtCodes={debitNotevbtCodes}
-        creatingDebitNote={creatingDebitNote}
-        setCreatingDebitNotes={setCreatingDebitNotes}
-      /> */}
+    
       <Row
         justify="space-between"
        

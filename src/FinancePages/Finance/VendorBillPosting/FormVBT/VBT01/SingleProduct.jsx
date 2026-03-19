@@ -375,29 +375,20 @@ export default function SingleComponent({
           </Col>
           <Col span={3}>
             <Form.Item label="MIN ID" name={[field.name, "minId"]}>
-              <Input />
+              <Input disabled />
             </Form.Item>
           </Col>
           <Col span={3}>
             <Form.Item label="Part Code" name={[field.name, "partCode"]}>
-              <Input rows={1} />
+              <Input rows={1} disabled />
             </Form.Item>
           </Col>
           <Col span={4}>
             <Form.Item label="Part Name" name={[field.name, "partName"]}>
-              <Input rows={1} />
+              <Input rows={1} disabled />
             </Form.Item>
           </Col>
-          {/* <Col span={4}>
-        <Form.Item label="Po Number" name={[field.name, "poNumber"]}>
-          <Input rows={1}   />
-        </Form.Item>
-      </Col>
-      <Col span={4}>
-        <Form.Item label="Project ID" name={[field.name, "projectID"]}>
-          <Input rows={1}   />
-        </Form.Item>
-      </Col> */}
+      
           <Col span={3}>
             <Form.Item label="Invoice Qty" name={[field.name, "vbtBillQty"]}>
               <Input />
@@ -408,16 +399,13 @@ export default function SingleComponent({
               <Input disabled />
             </Form.Item>
           </Col>
-          {/* {dataRate.length > 0 ? (
-            <> */}
-          {/* <Tooltip title={disabled ? "" : dataRate} > */}
+    
+      
           <Col span={4}>
             <Form.Item
               label="Price"
               name={[field.name, "vbtInRate"]}
-              // onFocus={() => {
-              //   getLastPrice(lastOpVals[0].ven_code);
-              // }}
+         
               validateStatus={showLastRateWarning.rate && "warning"}
               help={
                 showLastRateWarning.rate &&
@@ -431,15 +419,7 @@ export default function SingleComponent({
               <Input />
             </Form.Item>
           </Col>
-          {/* </Tooltip> */}
-          {/* </>
-          ) : (
-            <Col span={2}>
-              <Form.Item label="Price" name={[field.name, "vbtInRate"]}>
-                <Input />
-              </Form.Item>
-            </Col>
-          )} */}
+     
           <Col span={3}>
             <Form.Item label="Value" name={[field.name, "taxableValue"]}>
               <Input />
