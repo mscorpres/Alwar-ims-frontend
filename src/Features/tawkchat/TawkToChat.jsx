@@ -147,8 +147,10 @@ export default function TawkToChat() {
       "a[title*='Add Chat to your website'] { display: none !important; }",
       ".tawk-branding { display: none !important; }",
       "[class*='tawk-branding'] { display: none !important; }",
+       "[class*='tawk-bottom-navbar'] {  bottom: 0px !important; }",
          "[class*='tawk-toolbar-menu'] { display: none !important; }",
       ".tawk-padding-small { display: none !important; }",
+
     ].join("\n");
 
     var RETRY_DELAY_MS = 1500;
