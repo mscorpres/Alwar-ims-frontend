@@ -213,6 +213,8 @@ export default function ItemLocationLog() {
                 ? "#DD5353"
                 : row.transaction_type === "JOBWORK"
                 ? "#DD5353"
+                 : row.transaction_type === "CONVERSION"
+                ? "#ff9bb9"
                 : row.transaction_type === "CANCELLED" && "#36454F",
           }}
         />
