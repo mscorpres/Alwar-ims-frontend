@@ -9,12 +9,14 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions.j
 import { Row } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV.jsx";
 import { imsAxios } from "../../../axiosInterceptor.js";
+import UpdateVendorLocation from "./model/UpdateVendorLocation.jsx";
 
 const Vendor = () => {
   const [allVendor, setAllVender] = useState([]);
   const [openBranch, setOpenBranch] = useState(false);
   const [editVendor, setEditVendor] = useState(false);
   const [viewVendor, setViewVendor] = useState(false);
+    const [updateLocation, setUpdateLocation] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
 
   const [loading, setLoading] = useState(false);
@@ -72,6 +74,12 @@ const Vendor = () => {
           // icon={<FileCopyIcon />}
           label="Edit / View Branch Details"
           onClick={() => setViewVendor(row)}
+          showInMenu
+        />,
+          <GridActionsCellItem
+          // icon={<SecurityIcon />}
+          label="Update Location"
+          onClick={() => setUpdateLocation(row)}
           showInMenu
         />,
         // <TableActions  showInMenu action="view" onClick={() => setViewVendor(row)} />,
@@ -143,6 +151,12 @@ const Vendor = () => {
         showViewModal={showViewModal}
         setViewVendor={setViewVendor}
         viewVendor={viewVendor}
+      />
+          <UpdateVendorLocation
+      
+        onClose={() => setUpdateLocation(null)}
+        vendor={updateLocation}
+        onSuccess={fetchVendor}
       />
     </div>
   );
