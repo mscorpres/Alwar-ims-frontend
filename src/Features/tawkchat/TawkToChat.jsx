@@ -149,7 +149,7 @@ export default function TawkToChat() {
       "[class*='tawk-branding'] { display: none !important; }",
        "[class*='tawk-bottom-navbar'] {  bottom: 0px !important; }",
          "[class*='tawk-toolbar-menu'] { display: none !important; }",
-      ".tawk-padding-small { display: none !important; }",
+   
 
     ].join("\n");
 
