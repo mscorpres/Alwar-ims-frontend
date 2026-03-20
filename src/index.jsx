@@ -8,8 +8,8 @@ import "./index.css";
 import { ConfigProvider, Form } from "antd";
 import { customColor } from "./utils/customColor";
 import { normalizeFormRules } from "./utils/general";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-// Ensure Form.Item always receives an array for rules (prevents "rules.some is not a function")
 const OriginalFormItem = Form.Item;
 function PatchedFormItem(props) {
   return React.createElement(OriginalFormItem, {
@@ -98,6 +98,8 @@ const theme = {
   },
 };
 
+const googleId = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID;
+
 const container = document.getElementById("root");
 let root = container._reactRoot;
 if (!root) {
@@ -106,6 +108,7 @@ if (!root) {
 }
 
 root.render(
+   <GoogleOAuthProvider clientId={googleId}>
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
       <ToastContext>
@@ -120,4 +123,5 @@ root.render(
       </ToastContext>
     </Provider>
   </ConfigProvider>
+  </GoogleOAuthProvider>
 );

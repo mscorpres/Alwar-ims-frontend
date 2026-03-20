@@ -79,6 +79,7 @@ const ImageCaptcha = ({
   caseSensitive = true,
   placeholder = "Enter text shown above",
   inputStyle,
+    disabled = false,
   ...rest
 }) => {
   const canvasRef = useRef(null);
@@ -116,6 +117,7 @@ const ImageCaptcha = ({
           icon={<ReloadOutlined />}
           onClick={refresh}
           title="Refresh captcha"
+             disabled={disabled}
         />
       </Space>
       <Input
@@ -126,6 +128,7 @@ const ImageCaptcha = ({
         autoComplete="off"
         style={{ width: 180, ...inputStyle }}
         {...rest}
+           disabled={disabled}
       />
     </Space>
   );

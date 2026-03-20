@@ -1,13 +1,31 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../../Modal/modal.css";
 import { useToast } from "../../../../hooks/useToast.js";
-import { Button, Row, Col, Input, Skeleton, Form, Drawer, Space } from "antd";
+import {
+  Button,
+  Row,
+  Col,
+  Input,
+  Skeleton,
+  Form,
+  Drawer,
+  Space,
+  Typography,
+  Divider,
+} from "antd";
 import MySelect from "../../../../Components/MySelect";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import Loading from "../../../../Components/Loading";
 import { imsAxios } from "../../../../axiosInterceptor";
 const { TextArea } = Input;
-
+import { getVendorBranchBankOptions } from "../vendorBranchBankOptions";
+const transactionTypeOptions = [
+  { text: "Cheque", value: "cheque" },
+  { text: "e-Fund Transfer", value: "transfer" },
+  { text: "UPI", value: "upi" },
+  { text: "Other", value: "other" },
+  { text: "N/A", value: "na" },
+];
 const ViewModal = ({ viewVendor, setViewVendor }) => {
   const { showToast } = useToast();
   const [allField, setAllField] = useState({
@@ -22,6 +40,12 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
     address: "",
     fax: "",
     addresscode: "",
+    transactionType: "",
+    accountNo: "",
+    ifsCode: "",
+    bankName: "",
+    bankBranch: "",
+    ledgerCurrency: "",
   });
   const [resetData, setResetData] = useState({});
   const [skeletonLoading, setSkeletonLoading] = useState(false);
@@ -29,6 +53,22 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
   const [submitLoading, setsubmitLoading] = useState(false);
   const [allBranchData, setAllBranchData] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
+
+  const getCurrencies = async () => {
+    try {
+      const response = await imsAxios.get("/backend/fetchAllCurrecy");
+      const arr =
+        response?.data?.map((d) => ({
+          text: d.currency_symbol,
+          value: d.currency_id,
+          notes: d.currency_notes,
+        })) || [];
+      setCurrencies(arr);
+    } catch (error) {
+      setCurrencies([]);
+    }
+  };
 
   const fetchAllBranchList = async () => {
     setSkeletonLoading(true);
@@ -40,6 +80,7 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
       response.data.map((d) => a.push({ text: d.text, value: d.id }));
       getBranchDetails(a[0].value, "skeletonLoading");
       setAllBranchData(a);
+    
       setSkeletonLoading(false);
     }
     setSkeletonLoading(false);
@@ -53,6 +94,22 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
     });
     setSpinLoading(false);
     if (response.success) {
+      const d = response?.data?.[0] || {};
+      const isNaType = (d.transaction_type ?? "") === "na";
+      const bankNA = {
+        accountNo: "N/A",
+        ifsCode: "N/A",
+        bankName: "N/A",
+        bankBranch: "N/A",
+        ledgerCurrency: "N/A",
+      };
+      const bankFromApi = {
+        accountNo: d.account_no ?? "",
+        ifsCode: d.ifs_code ?? "",
+        bankName: d.bank_name ?? "",
+        bankBranch: d.bank_branch ?? "",
+        ledgerCurrency: d.ledger_currency ?? "",
+      };
       setAllField((allField) => {
         return {
           ...allField,
@@ -69,6 +126,8 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
             value: response.data[0].statecode,
             label: response.data[0].statename,
           },
+          transactionType: d.transaction_type ?? "",
+          ...(isNaType ? bankNA : bankFromApi),
         };
       });
       setResetData((allField) => {
@@ -87,6 +146,8 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
             value: response.data[0].statecode,
             label: response.data[0].statename,
           },
+          transactionType: d.transaction_type ?? "",
+          ...(isNaType ? bankNA : bankFromApi),
         };
       });
     }
@@ -125,12 +186,18 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
       city: allField.city,
       address: allField.address,
       pincode: allField.pcode,
-      fax: allField.fax == "" && "--",
-      email: allField.email == "" && "--",
-      mobile: allField.mob == "" && "--",
+      fax: allField.fax === "" ? "--" : allField.fax,
+      email: allField.email === "" ? "--" : allField.email,
+      mobile: allField.mob === "" ? "--" : allField.mob,
       gstid: allField.gst,
       address_code: allField.branchCode,
       vendor_code: viewVendor.vendor_code,
+      transaction_type: allField.transactionType,
+      account_no: allField.accountNo,
+      ifs_code: allField.ifsCode,
+      bank_name: allField.bankName,
+      bank_branch: allField.bankBranch,
+      ledger_currency: allField.ledgerCurrency,
     });
     setsubmitLoading(false);
     if (response.success) {
@@ -150,6 +217,7 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
       reset();
     } else if (viewVendor) {
       fetchAllBranchList();
+      getCurrencies();
     }
   }, [viewVendor]);
 
@@ -183,7 +251,14 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   />
                 </Form.Item>
               </Col>
-
+              <Col span={24} style={{ padding: "3px 0" }}>
+                <Typography.Title
+                  level={5}
+                  style={{ marginTop: 8, marginBottom: 8 }}
+                >
+                  Branch Details
+                </Typography.Title>
+              </Col>
               <>
                 <Col span={12} style={{ padding: "3px" }}>
                   <Form.Item label="Branch Name">
@@ -274,7 +349,7 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                       value={allField.mob}
                       onChange={(e) =>
                         setAllField((allField) => {
-                          return { ...allField, mob: e.target.value };
+                          return { ...allField,   mob: e.target.value.replace(/\D/g, ""), };
                         })
                       }
                     />
@@ -308,6 +383,118 @@ const ViewModal = ({ viewVendor, setViewVendor }) => {
                   </Form.Item>
                 </Col>
               </>
+            </Row>
+            <Divider style={{ margin: "16px 0" }} />
+            <Typography.Title
+              level={5}
+              style={{ marginTop: 0, marginBottom: 12 }}
+            >
+              Bank Details
+            </Typography.Title>
+            <Row style={{ width: "100%" }}>
+              <Col span={24} style={{ padding: "3px" }}>
+                <Form.Item label="Type">
+                  <MySelect
+                    value={allField.transactionType}
+                    options={transactionTypeOptions}
+                    onChange={(val) => {
+                      if (val === "na") {
+                        setAllField((f) => ({
+                          ...f,
+                          transactionType: val,
+                          accountNo: "N/A",
+                          ifsCode: "N/A",
+                          bankName: "N/A",
+                          bankBranch: "N/A",
+                          ledgerCurrency: "N/A",
+                        }));
+                      } else {
+                        setAllField((f) => ({
+                          ...f,
+                          transactionType: val,
+                          ...(f.transactionType === "na"
+                            ? {
+                                accountNo: "",
+                                ifsCode: "",
+                                bankName: "",
+                                bankBranch: "",
+                                ledgerCurrency: "",
+                              }
+                            : {}),
+                        }));
+                      }
+                    }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12} style={{ padding: "3px" }}>
+                <Form.Item label="A/c No">
+                  <Input
+                    value={allField.accountNo}
+                    onChange={(e) =>
+                      setAllField((allField) => ({
+                        ...allField,
+                        accountNo: e.target.value,
+                      }))
+                    }
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12} style={{ padding: "3px" }}>
+                <Form.Item label="IFS Code">
+                  <Input
+                    value={allField.ifsCode}
+                    onChange={(e) =>
+                      setAllField((allField) => ({
+                        ...allField,
+                        ifsCode: e.target.value,
+                      }))
+                    }
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12} style={{ padding: "3px" }}>
+                <Form.Item label="Bank Name">
+                  <MySelect
+                    placeholder="Select bank"
+                    options={getVendorBranchBankOptions(allField.bankName)}
+                    value={allField.bankName || undefined}
+                    onChange={(val) =>
+                      setAllField((f) => ({
+                        ...f,
+                        bankName: val ?? "",
+                      }))
+                    }
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12} style={{ padding: "3px" }}>
+                <Form.Item label="Bank Branch">
+                  <Input
+                    value={allField.bankBranch}
+                    onChange={(e) =>
+                      setAllField((allField) => ({
+                        ...allField,
+                        bankBranch: e.target.value,
+                      }))
+                    }
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={24} style={{ padding: "3px" }}>
+                <Form.Item label="Currency of Ledger">
+                  <MySelect
+                    value={allField.ledgerCurrency}
+                    options={currencies}
+                    onChange={(val) =>
+                      setAllField((allField) => ({
+                        ...allField,
+                        ledgerCurrency: val,
+                      }))
+                    }
+                  />
+                </Form.Item>
+              </Col>
             </Row>
             <Row justify="end">
               <Space>

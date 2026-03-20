@@ -588,11 +588,7 @@ function VBT02Report({
         setEditVBTCode(arr);
         setVbtComponent(arr);
       }
-      // setEditingVBT(arr);
-      // setEditVBTCode(arr);
-      // setVbtComponent(arr);
-      // Vbt01.setFieldValue("components", arr);
-      // getTdsOptions(response.data[0]?.minId);
+  
       setCurrent(1);
       setLoading(false);
     }
@@ -608,24 +604,6 @@ function VBT02Report({
     }
   };
 
-  // const updateSingleArr = (name, id, value) => {
-  //   setSingleArr((curr) => {
-  //     return curr.map((row) => {
-  //       if (row?.id === id) {
-  //         return {
-  //           ...row,
-  //           [name]: value,
-  //         };
-  //       } else {
-  //         return row;
-  //       }
-  //     });
-  //   });
-  // };
-  // console.log("components", components);
-  // console.log("SingleArrrrr", singleArr);
-  let a;
-  // console.log("mainArrss product", mainArrs);
   useEffect(() => {
     let arr = singleArr;
     components?.forEach((component) => {
@@ -644,32 +622,6 @@ function VBT02Report({
     // Vbt01.setFieldValue("mainArrs", singleArr);
   }, [components, singleArr]);
 
-  // console.log("single", singleArr);
-
-  // console.log("a", a);
-  // let indexesToReplace = new Set([0, components?.length]);
-  // indexesToReplace.forEach((index, i) => {
-  //   if (index >= 0 && index < singleArr.length) {
-  //     singleArr[index] = components[i];
-  //   }
-  // });
-  // useEffect(() => {
-  //   if (mainArrs) {
-  //     setmainArrs(mainArrs);
-  //   }
-  // }, [mainArrs]);
-
-  // useEffect(() => {
-  //   let a = components?.map((e) => {
-  //     return singleArr.filter((r) => r.id == e.id);
-  //     if (temp) {
-  //       return temp;
-  //     } else {
-  //       return null;
-  //     }
-  //   });
-  //   console.log("a", a);
-  // }, [components]);
 
   const getVBTDetail = async (minIdArr) => {
     // return;
@@ -681,91 +633,57 @@ function VBT02Report({
     const response = await imsAxios.post(
       `/tally/${apiUrl}/fetch_multi_min_data`,
       {
-        mins: minIdArr.map((row) => row),
+        mins: minIdArr.map((row) => row?.transation ?? row?.min_transaction),
       }
     );
     const { data } = response;
     if (response.success) {
       setVbtComponent(data);
-      let arr = response.data.map((row) => ({
+          const arr = response.data.map((row) => ({
         ...row,
-        id: v4(),
-        minId: row.min_id,
-        // poNumber: row.poNumber,
-        // projectID: row.projectID,
-        partCode: row.c_part_no,
-        partName: row.c_name,
+        minId: row.transaction,
+        poNumber: row.poNumber,
+        projectID: row.projectID,
+        partCode: row.itemCode,
+        partName: row.itemName,
         vbtBillQty: row.qty,
         vbtInQty: row.qty,
         taxableValue: row.value,
-        vbtInRate: row.in_po_rate,
-        hsnCode: row.in_hsn_code,
-        gstRate: row.in_gst_rate,
-        cgstAmount: row.in_gst_cgst,
-        sgstAmount: row.in_gst_sgst,
-        igstAmount: row.in_gst_igst,
-        venAddress: row.in_vendor_addr,
-        ven_name: row.in_gst_igst,
-        // glName: row.tds?.tdsName,
-        // glCode: row?.tds?.tdsGlKey,
+        vbtInRate: row.rate,
+        hsnCode: row.hsnCode,
+        gstRate: row.gstRate,
+        cgstAmount: row.cgst,
+        sgstAmount: row.sgst,
+        igstAmount: row.igst,
+        venAddress: row.venAddress,
+        igstAmount: row.igst,
+        ven_name: row.venName,
+
         tdsName: {
           label: row.ven_tds?.tds_name,
           value: row?.ven_tds?.tds_key,
         },
-        unit: row.comp_unit,
-        // tdsPercent: row?.tds?.tdsPercent,
+        unit: row.uom,
 
         gstType: row.gstType === "L" ? "L" : "I",
-        insertDate: row.insertDate,
-        insertBy: row.insertBy,
-        roundOffSigns: row.roundOffSign,
-        roundOffValue: row.roundOffValue,
-        // CGSTGLValue: "TP274965899340",
-        // SGSTGLValue: "TP385675494002",
-        IGSTGLValue: "TP486973272469",
-        // IGSTGLValue: "TP486973272469",
 
-        // CGSTGL: "CGST Input(400501)",
-        // SGSTGL: "SGST Input (400516)",
-        IGSTGL: "IGST Input (2040109)",
-        glCodeValue: "TP889514899393",
+        cgst: "TP274965899340",
+        sgst: "TP385675494002",
+        igst: "TP486973272469",
+        glCodeValue:
+          apiUrl === "vbt01"
+            ? "TP821753548513"
+            : apiUrl === "vbt06"
+              ? "TP672531876660"
+              : "",
         glCode: glCodes,
-        freight: "Freight Inward - Import (6030105)",
-
-        value: row.value,
-        currencyRate: 1,
-        cif: 0,
-        currency: "28567096",
-        miscCharges: 0,
-        totalMisc: 0,
-        misc: 0,
-        totalInsurance: 0,
-        insurance: 0,
-        sws: 0,
-        customDuty: 0,
-        otherDuty: 0,
+        freight: "(Freight Inward)800105",
         freightAmount: 0,
-        venAmmount: +Number(row.value),
-        // totalFreight: 0,
-        // totalMisc: 0,
-        // portCode: "INDEL4",
-        // portName: "Delhi Air Cargo",
-        // boeNo: "",
-        // boeDate: "",
-        // cha: "LINKERS INDIA LOGISTICS PV",
-        // hawbNo: "",
-        // mawbNo: "",
       }));
       getGl();
       getCurrencies();
-      // console.log("arr-", arr);
       setSingleArr(arr);
-      ///
-      // let newarr = arr.slice([130]);
-      // console.log("newArr", newarr);
-      // arr = newarr;
-      ////
-      // if arr lenght is greater than 25
+  
       if (arr.length > 25) {
         setIsAnother(true);
         console.log("Arr", arr.length);
@@ -798,12 +716,6 @@ function VBT02Report({
       // Vbt01.setFieldValue("portCode", "INDEL4");
       Vbt01.setFieldValue("portName", "Delhi Air Cargo");
       Vbt01.setFieldValue("cha", "LINKERS INDIA LOGISTICS PV");
-      // const partCodeArr = arr.map((row) => row.c_part_no);
-      // if (arr[0]?.ven_code) {
-      //   getLastPrice(arr[0]?.ven_code, partCodeArr);
-      // }
-      // Vbt01.setFieldValue("mainArrs", arr);
-      // setmainArrs(arr);
       setSingleArr(arr);
     } else {
       showToast(response.message?.msg || response.message, "error");
@@ -853,20 +765,10 @@ function VBT02Report({
       setLastRateArr([]);
     }
   };
-
-  // useEffect(() => {
-  //   if (editVbtDrawer) {
-  //     getEditVbtDetails(editVbtDrawer);
-  //   }
-  // }, [editVbtDrawer]);
   useEffect(() => {
     if (editingVBT?.length > 0) {
       getVBTDetail(editingVBT);
       setIsCreate(true);
-      // console.log("editingVBT", editingVBT);
-      // let editUrl = editingVBT[0].split("/");
-      // editUrl = editUrl[0];
-      // getFreightGlOptions(editUrl.toLowerCase());
       getGstGlOptions();
     }
   }, [editingVBT]);
@@ -907,22 +809,18 @@ function VBT02Report({
       0
     );
     const sgst = +Number(sgsts).toFixed(2);
-    // console.log("sgst", sgst);
     const igsts = singleArr?.reduce(
       (partialSum, a) => partialSum + +Number(a?.igstAmount).toFixed(2),
       0
     );
 
     const igst = +Number(igsts).toFixed(2);
-    // console.log("mainArrVenAm", mainArrVenAm);
-    // setmainArrs(mainArrs);
-    // console.log("mainArrs", mainArrs);
+   
     let vendorAmounts;
     vendorAmounts = mainArrs?.reduce(
       (partialSum, a) => partialSum + (a?.venAmmount || 0),
       0
     );
-    // console.log("vendorAmount", vendorAmounts);
     var vendorAmount = vendorAmounts;
     setMAVenAmValue(vendorAmount);
 
@@ -984,108 +882,8 @@ function VBT02Report({
     components,
     // mainArrs,
   ]);
-  // useEffect(() => {
-  //   if (singleArr) {
-  //     console.log("singleArr->", singleArr);
-  //     setmainArrs(singleArr);
-  //     // Vbt01.setFieldValue("mainArrs", singleArr);
-  //   }
-  // }, [singleArr]);
 
-  // useEffect(() => {
-  //   const values = components?.reduce(
-  //     (partialSum, a) => partialSum + +Number(a.taxableValue).toFixed(2),
-  //     0
-  //   );
-  //   const value = +Number(values).toFixed(2);
-  //   const freight = components?.reduce(
-  //     (partialSum, a) => partialSum + +Number(a.freightAmount).toFixed(2),
-  //     0
-  //   );
-  //   const cgsts = components?.reduce(
-  //     (partialSum, a) => partialSum + +Number(a.cgstAmount).toFixed(2),
-  //     0
-  //   );
-  //   const cgst = +Number(cgsts).toFixed(2);
-  //   const sgsts = components?.reduce(
-  //     (partialSum, a) => partialSum + +Number(a.sgstAmount).toFixed(2),
-  //     0
-  //   );
-  //   const sgst = +Number(sgsts).toFixed(2);
-  //   // console.log("sgst", sgst);
-  //   const igsts = components?.reduce(
-  //     (partialSum, a) => partialSum + +Number(a.igstAmount).toFixed(2),
-  //     0
-  //   );
 
-  //   const igst = +Number(igsts).toFixed(2);
-  //   // console.log("igst", igst);
-
-  //   let vendorAmounts;
-  //   vendorAmounts = components?.reduce(
-  //     (partialSum, a) => partialSum + +Number(a.venAmmount).toFixed(2),
-  //     0
-  //   );
-  //   var vendorAmount = +Number(vendorAmounts).toFixed(2);
-  //   // console.log("vendorAmount", vendorAmount);
-  //   const tds = components?.reduce(
-  //     (a, b) => a + +Number(b.tdsAmount ?? 0).toFixed(2),
-  //     0
-  //   );
-
-  //   if (roundOffSign === "+") {
-  //     vendorAmounts = vendorAmount + +Number(roundOffValue).toFixed(2);
-  //     vendorAmount = +Number(vendorAmounts).toFixed(2);
-  //   }
-  //   if (roundOffSign === "-") {
-  //     vendorAmounts -= +Number(roundOffValue).toFixed(2);
-  //     vendorAmount = +Number(vendorAmounts).toFixed(2);
-  //   }
-
-  //   const arr = [
-  //     {
-  //       title: "Value",
-  //       description: value,
-  //     },
-  //     {
-  //       title: "Freight",
-  //       description: freight,
-  //     },
-  //     {
-  //       title: "CGST",
-  //       description: cgst,
-  //     },
-  //     {
-  //       title: "SGST",
-  //       description: sgst,
-  //     },
-  //     {
-  //       title: "IGST",
-  //       description: igst,
-  //     },
-  //     { title: "TDS", description: tds },
-  //     {
-  //       title: "Round Off",
-  //       description:
-  //         roundOffSign.toString() + [Number(roundOffValue).toFixed(2)],
-  //     },
-  //     {
-  //       title: "Vendor Amount",
-  //       description: vendorAmount,
-  //     },
-  //   ];
-  //   setTaxDetails(arr);
-  // }, [components, roundOffSign, roundOffValue]);
-
-  // console.log("editingVBt", vbtComponent);
-
-  // console.log("main updated", mainUpdated);
-  // console.log("mainsArr", mainArrs);
-
-  useEffect(() => {
-    // console.log("inside use effect", mainArrs);
-    // setMainUpdated((curr) => curr + 1);
-  }, [JSON.stringify(mainArrs)]);
   return (
     <Drawer
       bodyStyle={{ padding: 5 }}
@@ -1095,8 +893,8 @@ function VBT02Report({
       destroyOnClose={true}
       title={
         isCreate
-          ? vbtComponent?.data &&
-            `${vbtComponent?.data[0]?.ven_name} | ${vbtComponent?.data[0]?.ven_code}`
+          ? vbtComponent?.length > 0 &&
+            `${vbtComponent?.[0]?.venName} | ${vbtComponent?.[0]?.venCode}`
           : `${editVbtDrawer}`
       }
     >

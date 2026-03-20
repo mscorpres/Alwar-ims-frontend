@@ -28,8 +28,8 @@ export default function ComponentImages({ showImages, setShowImages }) {
     const response = await imsAxios.post("/component/fetchImageComponent", {
       component: showImages.partNumber,
     });
-    if (response.success) {
-      setImages(data.data);
+    if (response?.success) {
+      setImages(response.data);
     } else {
       setImages([]);
       showToast(response.message?.msg || response.message, "error");

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import "swiper/css";
 import "swiper/css/pagination";
 import ForgotPassword from "./ForgotPassword.tsx";
 import "swiper/css/effect-fade";
-import { Box } from "@mui/material";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Box, CircularProgress } from "@mui/material";
 import {
   Form,
   Modal,
@@ -24,13 +23,10 @@ import { imsAxios } from "../../axiosInterceptor";
 import useApi from "../../hooks/useApi.ts";
 import { setSettings, setUser } from "../../Features/loginSlice/loginSlice";
 import ImageCaptcha from "../../Components/ImageCaptcha/ImageCaptcha";
-import {
-  ArrowLeftOutlined,
-  SafetyOutlined,
-  EditOutlined,
-} from "@ant-design/icons";
+import { ArrowLeftOutlined, SafetyOutlined } from "@ant-design/icons";
 import SelectEndPoint from "../SelectEndPoint";
 import { useToast } from "../../hooks/useToast.js";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Login = () => {
   document.title = "IMS Login";
@@ -50,6 +46,8 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const [googleLoginLoading, setGoogleLoginLoading] = useState(false);
+  const isLoginBusy = loading("submit") || googleLoginLoading;
 
   const [inpVal, setInpVal] = useState({
     username: "",
@@ -67,8 +65,7 @@ const Login = () => {
     });
   };
 
-  const isCaptchaValid = () =>
-    captchaInput.trim() === expectedCaptchaCode;
+  const isCaptchaValid = () => captchaInput.trim() === expectedCaptchaCode;
 
   const handleSubmit = async (e) => {
     if (!isCaptchaValid()) {
@@ -89,7 +86,7 @@ const Login = () => {
             username: username,
             password: password,
           }),
-        "submit"
+        "submit",
       );
       if (res?.success) {
         const isTwoStep = res?.data?.isTwoStep;
@@ -105,7 +102,6 @@ const Login = () => {
           setOtpTimer(600); // Reset timer to 10 minutes
           showToast("OTP sent to your registered email address", "success");
         } else {
-   
           const payload = res?.data ?? res;
           const obj = {
             email: payload.crn_email,
@@ -203,31 +199,60 @@ const Login = () => {
       showToast(response.message?.msg || response.message, "error");
     }
   };
-  // useEffect(() => {
-  //   if (message?.length > 0) {
-  //     if (user) {
-  //       navigate("/r1");
-  //       // toast.success(message);
-  //     }
-  //   }
-  // }, [message, user]);
-  // useEffect(() => {
-  //   if (user) {
-  //     navigate("/");
-  //   }
-  // }, []);
+  const handleLoginWithGoogle = async (googleResponse) => {
+    setGoogleLoginLoading(true);
+    const data = {
+      credential: googleResponse.credential,
+    };
+    try {
+      const response = await imsAxios.post("/auth/google", data);
+
+      if (response?.success) {
+        const payload = response?.data;
+        const obj = {
+          email: payload.crn_email,
+          phone: payload.crn_mobile,
+          userName: payload.username,
+          comId: payload.company_id,
+          token: payload.token,
+          favPages: payload.fav_pages ? JSON.parse(payload.fav_pages) : [],
+          type: payload.crn_type,
+          mobileConfirmed: payload.other?.m_v,
+          emailConfirmed: payload.other?.e_v,
+          passwordChanged: payload.other?.c_p ?? "C",
+          company_branch: inpVal.company_branch,
+          currentLink: JSON.parse(localStorage.getItem("otherData"))
+            ?.currentLink,
+          id: payload.crn_id,
+          showlegal: payload.department === "legal" ? true : false,
+          session: "25-26",
+        };
+
+        dispatch(setUser(obj));
+        if (payload.settings) dispatch(setSettings(payload.settings));
+     
+        showToast("Login successful!");
+        navigate("/");
+        window.location.reload();
+      } else {
+    
+        showToast(response?.message || "Google login failed. Please try again.", "error");
+        setGoogleLoginLoading(false);
+      }
+    } catch (error) {
+      showToast(error?.message || "Google login failed. Please try again.", "error");
+      setGoogleLoginLoading(false);
+    }
+  };
   const setThePassword = async () => {
     const values = await signUp.validateFields();
-    // console.log("values", values);
-    // return;
+
     let response = await imsAxios.post("/auth/forgot_password", {
       username: values.username,
       new_password: values.confirmPassword,
     });
-    // console.log("response", response);
-    const { data } = response;
+  
     if (response.success) {
-      // console.log("data.message", response.message);
       showToast(response.message, "success");
     }
   };
@@ -340,9 +365,9 @@ const Login = () => {
                 "x-csrf-token": userCredentials.token,
                 Authorization: `${userCredentials.token}`,
               },
-            }
+            },
           ),
-        "verifyOtp"
+        "verifyOtp",
       );
 
       // debugger
@@ -401,7 +426,7 @@ const Login = () => {
   // console.log("ispassSame", ispassSame);
   return (
     <div className="flex justify-center items-center h-[calc(100vh-30px)]">
-           <ForgotPassword
+      <ForgotPassword
         show={showForgotPassword}
         hide={() => setShowForgotPassword(false)}
       />
@@ -482,18 +507,7 @@ const Login = () => {
                     position: "relative",
                   }}
                 >
-                  {/* <Button
-                    type="text"
-                    icon={<EditOutlined />}
-                    onClick={() => setShowCustomUrlModal(true)}
-                    style={{
-                      position: "absolute",
-                      top: 16,
-                      right: 16,
-                      zIndex: 10,
-                    }}
-                    title="Add Custom URL"
-                  /> */}
+            
                   <Title
                     style={{
                       color: "#04b0a8",
@@ -582,8 +596,6 @@ const Login = () => {
                     Verify & Continue
                   </Button>
 
-                
-
                   <Alert
                     message="For your security, this code will expire in 5 minutes. Never share this code with anyone."
                     type="info"
@@ -599,18 +611,7 @@ const Login = () => {
                 </Box>
               ) : signUpPage === "1" ? (
                 <Box style={{ position: "relative" }}>
-                  {/* <Button
-                    type="text"
-                    icon={<EditOutlined />}
-                    onClick={() => setShowCustomUrlModal(true)}
-                    style={{
-                      position: "absolute",
-                      top: 16,
-                      right: 16,
-                      zIndex: 10,
-                    }}
-                    title="Add Custom URL"
-                  /> */}
+                
                   <Title
                     style={{
                       color: "gray",
@@ -658,6 +659,7 @@ const Login = () => {
                           inputHandler("username", e.target.value)
                         }
                         size="large"
+                          disabled={isLoginBusy}
                       />
                     </Form.Item>
                     <Form.Item
@@ -676,6 +678,7 @@ const Login = () => {
                           inputHandler("password", e.target.value)
                         }
                         size="large"
+                          disabled={isLoginBusy}
                       />
                     </Form.Item>
                     <Flex justify="end">
@@ -689,27 +692,7 @@ const Login = () => {
 
                     {forgotPassword === "0" ? (
                       <>
-                        {/* <Form.Item
-                          label="Password"
-                          name="password"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please input your password!",
-                            },
-                          ]}
-                        >
-                          <Input.Password
-                            value={inpVal.password}
-                            onChange={(e) =>
-                              inputHandler("password", e.target.value)
-                            }
-                            size="large"
-                          />
-                        </Form.Item> */}
-                        {/* <Link onClick={() => setForgotPassword("1")}>
-                          Forgot Password
-                        </Link> */}
+                      
                         <div className="flex justify-center">
                           <ImageCaptcha
                             key={captchaKey}
@@ -717,11 +700,12 @@ const Login = () => {
                             onChange={(e) => setCaptchaInput(e.target.value)}
                             onCodeChange={setExpectedCaptchaCode}
                             placeholder="Enter letters above"
+                              disabled={isLoginBusy}
                           />
                         </div>
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
                           <Button
-                            loading={loading("submit")}
+                           disabled={isLoginBusy}
                             block
                             size="large"
                             type="primary"
@@ -731,6 +715,42 @@ const Login = () => {
                             Log In
                           </Button>
                         </Form.Item>
+                           <div
+                          className="flex flex-col items-center justify-center w-full"
+                          style={{ marginTop: "0.5rem" }}
+                        >
+                          {googleLoginLoading && (
+                            <div className="flex justify-center items-center py-2">
+                              <CircularProgress size={20} />
+                            </div>
+                          )}
+                          {!loading("submit") && !googleLoginLoading && (
+                            <Typography
+                              style={{
+                                width: "100%",
+                                textAlign: "center",
+                                marginBottom: 8,
+                              }}
+                              variant="subtitle2"
+                            >
+                              OR
+                            </Typography>
+                          )}
+                          <div className="flex justify-center items-center w-full">
+                            {!loading("submit") && !googleLoginLoading && (
+                              <GoogleLogin
+                                onSuccess={(credentialResponse) => {
+                                  handleLoginWithGoogle(credentialResponse);
+                                }}
+                                onError={() => {
+                                
+                                 showToast("Google login failed", "error");
+                                }}
+                                shape="circle"
+                              />
+                            )}
+                          </div>
+                        </div>
 
                         <br />
                       </>
@@ -893,8 +913,8 @@ const Login = () => {
                             }
                             return Promise.reject(
                               new Error(
-                                "The new password that you entered do not match!"
-                              )
+                                "The new password that you entered do not match!",
+                              ),
                             );
                           },
                         }),
