@@ -20,6 +20,7 @@ function PatchedFormItem(props) {
 Object.assign(PatchedFormItem, OriginalFormItem);
 Form.Item = PatchedFormItem;
 import { ToastContext } from "./context/ToastContext";
+import RootLayout from "./Features/tawkchat/Layout";
 
 const theme = {
   token: {
@@ -111,6 +112,7 @@ root.render(
    <GoogleOAuthProvider clientId={googleId}>
   <ConfigProvider theme={theme}>
     <Provider store={Store}>
+         <RootLayout>
       <ToastContext>
         <BrowserRouter
           future={{
@@ -121,6 +123,7 @@ root.render(
           <Main />
         </BrowserRouter>
       </ToastContext>
+      </RootLayout>
     </Provider>
   </ConfigProvider>
   </GoogleOAuthProvider>
