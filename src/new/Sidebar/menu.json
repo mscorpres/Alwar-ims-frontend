@@ -829,6 +829,13 @@
                 "path": "/warehouse/part-code-conversion",
                 "isShown": true
               },
+                {
+                "key": "B41ah",
+                "label": "RM Part Code Conversion",
+                "icon": "TransformIcon",
+                "path": "/warehouse/rm-part-code-conversion",
+                "isShown": false
+              },
               {
                 "key": "B411",
                 "label": "Part Code Conversion Report",
