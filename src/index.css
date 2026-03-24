@@ -639,6 +639,15 @@ textarea.ant-input:focus {
   box-shadow: none !important;
   outline: none !important;
 }
+.ant-input-affix-wrapper .ant-input,
+.ant-input-affix-wrapper .ant-input:hover,
+.ant-input-affix-wrapper .ant-input:focus,
+.ant-input-affix-wrapper .ant-input-focused,
+.ant-input-affix-wrapper-focused .ant-input {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
 .ant-picker:hover,
 .ant-picker:focus,
 .ant-picker-focused,
