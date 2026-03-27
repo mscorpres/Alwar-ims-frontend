@@ -230,17 +230,22 @@ const Login = () => {
 
         dispatch(setUser(obj));
         if (payload.settings) dispatch(setSettings(payload.settings));
-     
+
         showToast("Login successful!");
         navigate("/");
         window.location.reload();
       } else {
-    
-        showToast(response?.message || "Google login failed. Please try again.", "error");
+        showToast(
+          response?.message || "Google login failed. Please try again.",
+          "error",
+        );
         setGoogleLoginLoading(false);
       }
     } catch (error) {
-      showToast(error?.message || "Google login failed. Please try again.", "error");
+      showToast(
+        error?.message || "Google login failed. Please try again.",
+        "error",
+      );
       setGoogleLoginLoading(false);
     }
   };
@@ -251,7 +256,7 @@ const Login = () => {
       username: values.username,
       new_password: values.confirmPassword,
     });
-  
+
     if (response.success) {
       showToast(response.message, "success");
     }
@@ -362,7 +367,6 @@ const Login = () => {
             { otp: otpString },
             {
               headers: {
-                "x-csrf-token": userCredentials.token,
                 Authorization: `${userCredentials.token}`,
               },
             },
@@ -507,7 +511,6 @@ const Login = () => {
                     position: "relative",
                   }}
                 >
-            
                   <Title
                     style={{
                       color: "#04b0a8",
@@ -611,7 +614,6 @@ const Login = () => {
                 </Box>
               ) : signUpPage === "1" ? (
                 <Box style={{ position: "relative" }}>
-                
                   <Title
                     style={{
                       color: "gray",
@@ -659,7 +661,7 @@ const Login = () => {
                           inputHandler("username", e.target.value)
                         }
                         size="large"
-                          disabled={isLoginBusy}
+                        disabled={isLoginBusy}
                       />
                     </Form.Item>
                     <Form.Item
@@ -678,7 +680,7 @@ const Login = () => {
                           inputHandler("password", e.target.value)
                         }
                         size="large"
-                          disabled={isLoginBusy}
+                        disabled={isLoginBusy}
                       />
                     </Form.Item>
                     <Flex justify="end">
@@ -692,7 +694,6 @@ const Login = () => {
 
                     {forgotPassword === "0" ? (
                       <>
-                      
                         <div className="flex justify-center">
                           <ImageCaptcha
                             key={captchaKey}
@@ -700,22 +701,23 @@ const Login = () => {
                             onChange={(e) => setCaptchaInput(e.target.value)}
                             onCodeChange={setExpectedCaptchaCode}
                             placeholder="Enter letters above"
-                              disabled={isLoginBusy}
+                            disabled={isLoginBusy}
                           />
                         </div>
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
                           <Button
-                           disabled={isLoginBusy}
+                            disabled={isLoginBusy}
                             block
                             size="large"
                             type="primary"
                             htmlType="submit"
                             style={{ marginTop: "1em" }}
+                            loading={loading("submit")}
                           >
                             Log In
                           </Button>
                         </Form.Item>
-                           <div
+                        <div
                           className="flex flex-col items-center justify-center w-full"
                           style={{ marginTop: "0.5rem" }}
                         >
@@ -743,8 +745,7 @@ const Login = () => {
                                   handleLoginWithGoogle(credentialResponse);
                                 }}
                                 onError={() => {
-                                
-                                 showToast("Google login failed", "error");
+                                  showToast("Google login failed", "error");
                                 }}
                                 shape="circle"
                               />

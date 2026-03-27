@@ -15,7 +15,6 @@ import "buffer";
 import AppHeader from "./new/Header/AppHeader.jsx";
 import NotificationDropdown from "./Components/NotificationDropdown/NotificationDropdown";
 import {
-  logout,
   setNotifications,
   setTestPages,
   setCompanyBranch,
@@ -44,7 +43,7 @@ import { imsAxios } from "./axiosInterceptor";
 import internalLinks from "./Pages/internalLinks.jsx";
 import TicketsModal from "./Components/TicketsModal/TicketsModal";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
-
+import { logoutUser } from "./Features/loginSlice/logoutSlice.js";
 import { useToast } from "./hooks/useToast.js";
 import AlwarFooter from "./Components/footer/AlwarFooter.jsx";
 
@@ -55,6 +54,7 @@ const App = () => {
   const sessionFromUrl = searchParams.get("session");
   const branchFromUrl = searchParams.get("branch");
   const comFromUrl = searchParams.get("company");
+  const type = searchParams.get("type")
   const { user, testPages } = useSelector((state) => state.login);
 
 
@@ -76,7 +76,10 @@ const App = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showSideBar, setShowSideBar] = useState(false);
-  const [loadingSwitch, setLoadingSwitch] = useState(false);
+  const isSwitchFlow = Boolean(
+    tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl && type,
+  );
+  const [loadingSwitch, setLoadingSwitch] = useState(isSwitchFlow);
   const [newNotification, setNewNotification] = useState(null);
   const { pathname } = useLocation();
     
@@ -100,7 +103,7 @@ const App = () => {
   const [hisList, setHisList] = useState([]);
   const logoutHandler = () => {
     setShowBlackScreen(false);
-    dispatch(logout());
+dispatch(logoutUser());
   };
 
   const handleSelectCompanyBranch = (value) => {
@@ -189,13 +192,15 @@ const App = () => {
     };
   }, []);
 
-  const fetchUserDeatils = async (token, session, com, branch) => {
+  const fetchUserDeatils = async (token, session, com, branch, type) => {
     setLoadingSwitch(true);
+    localStorage.setItem("switchInProgress", "1");
 
     try {
       const response = await imsAxios.get(
-        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}`,
+        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}&type=${type}`,
       );
+
       if (response?.success) {
         const payload = response?.data;
         const obj = {
@@ -219,25 +224,25 @@ const App = () => {
         localStorage.setItem("loggedInUser", JSON.stringify(obj));
         dispatch(setUser(obj));
         if (payload.settings) dispatch(setSettings(payload.settings));
-        setLoadingSwitch(false);
         setSearchParams({}, { replace: true });
       } else {
-        setLoadingSwitch(false);
         showToast(response?.message, "error");
         window.location.replace("https://oakter.mscorpres.com/");
       }
     } catch (error) {
-      setLoadingSwitch(false);
-      showToast(response?.message, "error");
+      showToast(error?.message, "error");
       window.location.replace("https://oakter.mscorpres.com/");
+    } finally {
+      localStorage.removeItem("switchInProgress");
+      setLoadingSwitch(false);
     }
   };
 
   useEffect(() => {
-    if (tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl) {
-      fetchUserDeatils(tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl);
+    if (tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl && type) {
+      fetchUserDeatils(tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type);
     }
-  }, [tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl]);
+  }, [tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type]);
 
   useEffect(() => {
     if (Notification.permission == "default") {
@@ -443,7 +448,8 @@ const App = () => {
     }
     if (user && user.token) {
       const tokenToUse = localStorage.getItem("newToken") || user.token;
-      imsAxios.defaults.headers["x-csrf-token"] = tokenToUse;
+      imsAxios.defaults.headers["Authorization"] = `${tokenToUse}`;
+
       imsAxios.defaults.headers["Company-Branch"] =
         user.company_branch || "BRALWR36";
       imsAxios.defaults.headers["Session"] = user.session || "25-26";
@@ -736,6 +742,7 @@ const App = () => {
       urlParams.append("company", company);
       urlParams.append("branch", branch);
       urlParams.append("session", session);
+      urlParams.append("type","switch")
     }
 
     const redirectUrl = `${targetUrl}?${urlParams.toString()}`;
