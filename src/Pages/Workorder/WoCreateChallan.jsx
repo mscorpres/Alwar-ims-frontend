@@ -77,7 +77,7 @@ const WoCreateChallan = () => {
 
   //
   return (
-    <div style={{ height: "90%", paddingRight: 10, paddingLeft: 10 }}>
+    <div style={{ height: "calc(100vh - 180px)", margin: "10px" }}>
       {loading === "fetch" && <Loading />}
       <Col span={24}>
         <Row>
@@ -129,7 +129,7 @@ const WoCreateChallan = () => {
           </Col>
         </Row>
       </Col>
-      <div style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "100%", }}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

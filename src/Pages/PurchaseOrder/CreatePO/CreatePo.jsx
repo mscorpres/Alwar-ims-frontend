@@ -1286,6 +1286,7 @@ export default function CreatePo() {
       style={{
         height: "calc(100vh - 180px)",
         overflow: "hidden",
+        margin: "10px",
       }}
     >
       {/* create confirm modal */}
@@ -1419,7 +1420,7 @@ export default function CreatePo() {
         <div style={{ height: "100%", overflow: "auto" }}>
           <Tabs
             style={{
-              padding: "0 10px",
+         
               height: "100%",
             }}
             activeKey={activeTab}

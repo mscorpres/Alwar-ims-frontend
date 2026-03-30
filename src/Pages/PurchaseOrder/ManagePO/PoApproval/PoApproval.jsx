@@ -213,7 +213,7 @@ export default function PoApproval() {
     setSearchInput("");
   }, [wise]);
   return (
-    <div style={{ height: "100%", padding: 5, paddingTop: 0 }}>
+    <div style={{ height: "calc(100vh - 135px)", margin: "10px" }}>
       <PoRejectModa
         getRows={getRows}
         open={rejectPo}
@@ -313,9 +313,9 @@ export default function PoApproval() {
         </Col>
       </Row>
       <div style={{
-          height: "calc(100vh - 200px)",
+          height: "calc(100vh - 180px)",
       
-          marginTop: 8
+          marginTop: 10
    
         }}
         >
