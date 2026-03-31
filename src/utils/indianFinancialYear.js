@@ -29,6 +29,33 @@ export function sessionCodeFromFiscalStartYear(fyStartYear) {
   return `${a}-${b}`;
 }
 
+/**
+ * If `stored` encodes a past Indian FY relative to `now`, returns the current
+ * session code; otherwise returns `stored` (or current FY when missing/invalid).
+ */
+export function resolveSessionToCurrentFinancialYearIfStale(
+  stored,
+  now = new Date(),
+) {
+  const current = getCurrentIndianFinancialYearSession(now);
+  if (stored == null || String(stored).trim() === "") {
+    return current;
+  }
+  try {
+    const storedStart = fiscalStartYearFromSessionCode(stored);
+    const currentStart = fiscalStartYearFromSessionCode(current);
+    if (Number.isNaN(storedStart) || Number.isNaN(currentStart)) {
+      return current;
+    }
+    if (storedStart < currentStart) {
+      return current;
+    }
+  } catch {
+    return current;
+  }
+  return String(stored);
+}
+
 /** Keeps every legacy session and adds any FY from the oldest legacy through today’s FY. Newest first. */
 export function buildMergedSessionSelectOptions(
   legacySessionValues,

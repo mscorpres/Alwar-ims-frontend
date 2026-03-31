@@ -1,22 +1,49 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { imsAxios } from "../../axiosInterceptor";
-import { getCurrentIndianFinancialYearSession } from "../../utils/indianFinancialYear";
+import {
+  getCurrentIndianFinancialYearSession,
+  resolveSessionToCurrentFinancialYearIfStale,
+} from "../../utils/indianFinancialYear";
+const rawLoggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+const branchDataForInit = JSON.parse(
+  localStorage.getItem("branchData") || "{}",
+);
+const effectiveStoredSession =
+  branchDataForInit?.session ?? rawLoggedInUser?.session;
+const resolvedSessionForInit = resolveSessionToCurrentFinancialYearIfStale(
+  effectiveStoredSession,
+);
+if (resolvedSessionForInit !== effectiveStoredSession) {
+  localStorage.setItem(
+    "branchData",
+    JSON.stringify({
+      ...branchDataForInit,
+      session: resolvedSessionForInit,
+    }),
+  );
+  if (rawLoggedInUser) {
+    localStorage.setItem(
+      "loggedInUser",
+      JSON.stringify({ ...rawLoggedInUser, session: resolvedSessionForInit }),
+    );
+  }
+  imsAxios.defaults.headers["Session"] = resolvedSessionForInit;
+}
+
 let fav =
-  typeof JSON.parse(localStorage.getItem("loggedInUser"))?.favPages == "string"
-    ? JSON.parse(JSON.parse(localStorage.getItem("loggedInUser"))?.favPages)
-    : JSON.parse(localStorage.getItem("loggedInUser"))?.favPages;
+  typeof rawLoggedInUser?.favPages == "string"
+    ? JSON.parse(rawLoggedInUser?.favPages)
+    : rawLoggedInUser?.favPages;
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem("loggedInUser"))
+  user: rawLoggedInUser
     ? {
         ...JSON.parse(localStorage.getItem("loggedInUser")),
         favPages: fav,
         company_branch: JSON.parse(localStorage.getItem("branchData"))
           ?.company_branch,
-        session:
-          JSON.parse(localStorage.getItem("branchData"))?.session ??
-          getCurrentIndianFinancialYearSession(),
+        session: resolvedSessionForInit,
         passwordChanged: "C",
         showlegal:
           JSON.parse(localStorage.getItem("loggedInUser"))?.department ===
@@ -177,6 +204,15 @@ const loginSlice = createSlice({
         "branchData",
         JSON.stringify({ ...existingBranchData, session: user.session })
       );
+      const persistedUser = JSON.parse(
+        localStorage.getItem("loggedInUser") || "null",
+      );
+      if (persistedUser) {
+        localStorage.setItem(
+          "loggedInUser",
+          JSON.stringify({ ...persistedUser, session: user.session }),
+        );
+      }
     },
     setCurrentLink: (state, action) => {
       state.user = { ...state.user, currentLink: action.payload };
