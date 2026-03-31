@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getGlobalToast } from "./context/ToastContext";
 import { v4 as uuidv4 } from 'uuid';
+import { getCurrentIndianFinancialYearSession } from "./utils/indianFinancialYear";
 let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
 
 const isSwitchInProgress = () => localStorage.getItem("switchInProgress") === "1";
@@ -40,7 +41,7 @@ const getBranchFromStorage = () => {
 const getSessionFromStorage = () => {
   const branchData = JSON.parse(localStorage.getItem("branchData") || "{}");
   const user = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
-  return branchData?.session || user?.session || "25-26";
+  return branchData?.session || user?.session || getCurrentIndianFinancialYearSession();
 };
 const imsAxios = axios.create({
   baseURL: imsLink,

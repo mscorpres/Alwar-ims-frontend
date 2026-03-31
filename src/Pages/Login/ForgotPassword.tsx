@@ -21,11 +21,12 @@ const ForgotPassword = (props: PropTypes) => {
   const [captchaKey, setCaptchaKey] = useState(Math.random());
 
   const isCaptchaValid = () =>
-    captchaInput.trim().toUpperCase() === expectedCaptchaCode;
+    captchaInput.trim() === expectedCaptchaCode;
 
   const handleSubmit = async () => {
     if (stage === 0) {
       if (!isCaptchaValid()) {
+           console.log("check", )
         showToast("Please enter the captcha text shown above", "error");
         return;
       }
@@ -55,6 +56,7 @@ const ForgotPassword = (props: PropTypes) => {
 
   const handleSendOtp = async (skipCaptcha = false) => {
     if (!skipCaptcha && !isCaptchaValid()) {
+      console.log("check", )
       showToast("Please enter the captcha text shown above", "error");
       return;
     }

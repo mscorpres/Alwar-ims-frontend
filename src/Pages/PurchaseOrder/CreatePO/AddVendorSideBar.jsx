@@ -18,6 +18,13 @@ import { imsAxios } from "../../../axiosInterceptor";
 import UploadDocs from "../../Store/MaterialIn/MaterialInWithPO/UploadDocs";
 import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
+import { mergeMsmeYearOptions } from "../../../utils/indianFinancialYear";
+
+const MSME_YEAR_LEGACY_SIDEBAR = [
+  { text: "2023 - 2024", value: "2023 - 2024" },
+  { text: "2024 - 2025", value: "2024 - 2025" },
+];
+const msmeYearOptions = mergeMsmeYearOptions(MSME_YEAR_LEGACY_SIDEBAR);
 
 const AddVendorSideBar = ({ setOpen, open }) => {
   const { showToast } = useToast();
@@ -154,10 +161,6 @@ const AddVendorSideBar = ({ setOpen, open }) => {
   const msmeOptions = [
     { text: "Yes", value: "Y" },
     { text: "No", value: "N" },
-  ];
-  const msmeYearOptions = [
-    { text: "2023 - 2024", value: "2023 - 2024" },
-    { text: "2024 - 2025", value: "2024 - 2025" },
   ];
   const msmeTypeOptions = [
     { text: "Micro", value: "Micro" },

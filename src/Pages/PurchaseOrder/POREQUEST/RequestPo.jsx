@@ -324,10 +324,10 @@ const RequestPo = () => {
   };
 
   return (
-    <div className="manage-po" style={{ position: "relative", height: "100%" }}>
+    <div className="manage-po" style={{ position: "relative", height: "calc(100vh - 135px)", margin: "10px" }}>
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
+     
       >
         <Col>
           <Space>
@@ -379,7 +379,7 @@ const RequestPo = () => {
       <div
         style={{
           height: "calc(100% - 40px)",
-          padding: "0 10px",
+       marginTop: "10px",
         }}
       >
         <MyDataTable

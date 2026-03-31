@@ -27,6 +27,7 @@ import { ArrowLeftOutlined, SafetyOutlined } from "@ant-design/icons";
 import SelectEndPoint from "../SelectEndPoint";
 import { useToast } from "../../hooks/useToast.js";
 import { GoogleLogin } from "@react-oauth/google";
+import { getCurrentIndianFinancialYearSession } from "../../utils/indianFinancialYear";
 
 const Login = () => {
   document.title = "IMS Login";
@@ -119,7 +120,7 @@ const Login = () => {
               ?.currentLink,
             id: payload.crn_id,
             showlegal: payload.department === "legal" ? true : false,
-            session: "25-26",
+            session: getCurrentIndianFinancialYearSession(),
           };
 
           dispatch(setUser(obj));
@@ -225,7 +226,7 @@ const Login = () => {
             ?.currentLink,
           id: payload.crn_id,
           showlegal: payload.department === "legal" ? true : false,
-          session: "25-26",
+          session: getCurrentIndianFinancialYearSession(),
         };
 
         dispatch(setUser(obj));
@@ -393,7 +394,7 @@ const Login = () => {
             ?.currentLink,
           id: payload.crn_id,
           showlegal: payload.department === "legal" ? true : false,
-          session: "25-26",
+          session: getCurrentIndianFinancialYearSession(),
         };
         dispatch(setUser(obj));
         if (payload.settings) dispatch(setSettings(payload.settings));

@@ -57,8 +57,8 @@ const CompletedPo = () => {
           wise === "vendor_wise"
             ? searchInput
             : wise === "po_wise"
-            ? searchInput.trim()
-            : wise === "single_date_wise" && searchDateRange,
+              ? searchInput.trim()
+              : wise === "single_date_wise" && searchDateRange,
         wise: wise,
       });
       setSearchLoading(false);
@@ -90,7 +90,7 @@ const CompletedPo = () => {
     if (search?.length > 2) {
       const response = await executeFun(
         () => getVendorOptions(search),
-        "select"
+        "select",
       );
       let arr = [];
       if (response.success) {
@@ -105,7 +105,7 @@ const CompletedPo = () => {
       "/purchaseOrder/fetchComponentList4PO",
       {
         poid,
-      }
+      },
     );
     seViewLoading(false);
     if (response.success) {
@@ -219,78 +219,7 @@ const CompletedPo = () => {
       ],
     },
   ];
-  const additional = () => (
-    <Space>
-      <div style={{ width: 150 }}>
-        <MySelect
-          size="default"
-          options={wiseOptions}
-          defaultValue={wiseOptions.filter((o) => o.value === wise)[0]}
-          onChange={setWise}
-          value={wise}
-          setSearchString={setSearchInput}
-        />
-      </div>
-      <div style={{ width: 300 }}>
-        {wise === "single_date_wise" ? (
-          <MyDatePicker
-            size="default"
-            setDateRange={setSearchDateRange}
-            dateRange={searchDateRange}
-            value={searchDateRange}
-          />
-        ) : wise === "po_wise" ? (
-          <Input
-            style={{ width: "100%" }}
-            type="text"
-            size="default"
-            placeholder="Enter Po Number"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        ) : (
-          wise === "vendor_wise" && (
-            <div>
-              <MyAsyncSelect
-                selectLoading={selectLoading}
-                size="default"
-                onBlur={() => setAsyncOptions([])}
-                value={searchInput}
-                onChange={(value) => setSearchInput(value)}
-                loadOptions={getVendors}
-                optionsState={asyncOptions}
-                defaultOptions
-                placeholder="Select Vendor..."
-              />
-            </div>
-          )
-        )}
-      </div>
-      <Button
-        disabled={
-          wise === "single_date_wise"
-            ? searchDateRange === ""
-              ? true
-              : false
-            : !searchInput
-            ? true
-            : false
-        }
-        type="primary"
-        loading={searchLoading}
-        onClick={getSearchResults}
-        id="submit"
-        // className="primary-button search-wise-btn"
-      >
-        Search
-      </Button>
-      <CommonIcons
-        action="downloadButton"
-        onClick={() => downloadCSV(rows, columns, "Completed PO Report")}
-        disabled={rows.length == 0}
-      />
-    </Space>
-  );
+
   useEffect(() => {
     getVendors(vendorSearchInput);
   }, [vendorSearchInput]);
@@ -303,15 +232,8 @@ const CompletedPo = () => {
   }, [wise]);
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row
-        justify="space-between"
-        style={{
-          padding: "0px 10px",
-          paddingBottom: 5,
-          width: "100%",
-        }}
-      >
+    <div style={{ height: "calc(100vh - 135px)", margin: "10px" }}>
+      <Row justify="space-between">
         <Col className="left">
           <Space>
             <div style={{ width: 150 }}>
@@ -367,8 +289,8 @@ const CompletedPo = () => {
                     ? true
                     : false
                   : !searchInput
-                  ? true
-                  : false
+                    ? true
+                    : false
               }
               type="primary"
               onClick={getSearchResults}
@@ -388,12 +310,12 @@ const CompletedPo = () => {
           </Space>
         </Col>
       </Row>
-      <div style={{
-          height: "calc(100vh - 200px)",
-      
-          padding: "0 10px",
+      <div
+        style={{
+          height: "calc(100vh - 180px)",
+          marginTop: "10px",
         }}
-        >
+      >
         <MyDataTable
           loading={loading || viewLoading}
           data={rows}

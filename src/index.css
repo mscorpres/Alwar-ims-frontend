@@ -49,7 +49,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Inter, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-family:
+    Inter,
+    -apple-system,
+    system-ui,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif !important;
   list-style: none;
 }
 a {
@@ -330,8 +336,12 @@ td.ant-picker-cell:hover .ant-picker-cell-inner,
   background-color: #0d9489 !important;
   color: #ffffff !important;
 }
-.ant-picker-cell-in-view.ant-picker-cell-range-hover-start:not(.ant-picker-cell-range-start)::after,
-.ant-picker-cell-in-view.ant-picker-cell-range-hover-end:not(.ant-picker-cell-range-end)::after,
+.ant-picker-cell-in-view.ant-picker-cell-range-hover-start:not(
+    .ant-picker-cell-range-start
+  )::after,
+.ant-picker-cell-in-view.ant-picker-cell-range-hover-end:not(
+    .ant-picker-cell-range-end
+  )::after,
 .ant-picker-cell-in-view.ant-picker-cell-range-hover::after {
   background-color: rgba(210, 245, 113, 0.3) !important;
 }
@@ -441,7 +451,7 @@ textarea {
 .nav-footer {
   left: 0;
   background-color: white;
-  box-shadow: 0px 2px 4px  #00001a;
+  box-shadow: 0px 2px 4px #00001a;
 }
 .ant-layout-header,
 .ant-menu.ant-menu-dark .ant-menu-sub {
@@ -600,29 +610,45 @@ textarea.ant-input {
 .ant-card-body {
   border-radius: 0 !important;
 }
-/* Focus and hover border color - remove blue outline and shadow */
-.ant-input:hover,
+/* Hover: teal border only; focus/focused: border + teal ring */
+.ant-input:hover {
+  border: 2px solid #0d9489 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
 .ant-input:focus,
 .ant-input-focused {
   border: 2px solid #0d9489 !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
+  outline: none !important;
+}
+.ant-select:hover .ant-select-selector {
+  border: 2px solid #0d9489 !important;
   box-shadow: none !important;
   outline: none !important;
 }
-.ant-select:hover .ant-select-selector,
 .ant-select-focused .ant-select-selector,
 .ant-select:focus .ant-select-selector {
   border: 2px solid #0d9489 !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
 }
-.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
-  box-shadow: none !important;
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
 }
-textarea.ant-input:hover,
-textarea.ant-input:focus {
+textarea.ant-input:hover {
   border: 2px solid #0d9489 !important;
   box-shadow: none !important;
+  outline: none !important;
+}
+textarea.ant-input:focus,
+textarea.ant-input-focused {
+  border: 2px solid #0d9489 !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
 }
 .ant-input-number:hover,
@@ -632,11 +658,15 @@ textarea.ant-input:focus {
   box-shadow: none !important;
   outline: none !important;
 }
-.ant-input-affix-wrapper:hover,
+.ant-input-affix-wrapper:hover {
+  border: 2px solid #0d9489 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
 .ant-input-affix-wrapper:focus,
 .ant-input-affix-wrapper-focused {
   border: 2px solid #0d9489 !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
 }
 .ant-input-affix-wrapper .ant-input,
@@ -657,12 +687,16 @@ textarea.ant-input:focus {
   box-shadow: none !important;
   outline: none !important;
 }
-/* Remove all input focus shadows and outlines globally */
+/* Focus-visible ring for input, select, textarea (affix wrapper); number/picker unchanged */
 .ant-input:focus-visible,
 .ant-select-selector:focus-visible,
+.ant-input-affix-wrapper:focus-visible,
+textarea.ant-input:focus-visible {
+  box-shadow: 0 0 0 1px #0d9489 !important;
+  outline: none !important;
+}
 .ant-input-number:focus-visible,
-.ant-picker:focus-visible,
-.ant-input-affix-wrapper:focus-visible {
+.ant-picker:focus-visible {
   box-shadow: none !important;
   outline: none !important;
 }
@@ -670,9 +704,7 @@ textarea.ant-input:focus {
   font-size: 0.8rem;
   font-weight: bold !important;
 }
-.MuiTableCell-head {
-  /* padding: 5px 5px !important; */
-}
+
 .css-z139qr-MuiTableCell-root {
   padding: 2px 5px !important;
 }

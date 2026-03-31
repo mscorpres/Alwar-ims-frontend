@@ -22,15 +22,17 @@ import MyButton from "../../../../Components/MyButton";
 import { v4 } from "uuid";
 import SingleDatePicker from "../../../../Components/SingleDatePicker";
 import dayjs from "dayjs";
+import { mergeMsmeYearOptions } from "../../../../utils/indianFinancialYear";
 
 const msmeOptions = [
   { text: "Yes", value: "Y" },
   { text: "No", value: "N" },
 ];
-const msmeYearOptions = [
+const MSME_YEAR_LEGACY = [
   { text: "2023-2024", value: "2023-2024" },
   { text: "2024-2025", value: "2024-2025" },
 ];
+const msmeYearOptions = mergeMsmeYearOptions(MSME_YEAR_LEGACY);
 const msmeTypeOptions = [
   { text: "Micro", value: "Micro" },
   { text: "Small", value: "Small" },

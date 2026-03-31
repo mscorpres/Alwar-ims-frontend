@@ -46,6 +46,11 @@ import SettingDrawer from "./Components/SettingDrawer.jsx";
 import { logoutUser } from "./Features/loginSlice/logoutSlice.js";
 import { useToast } from "./hooks/useToast.js";
 import AlwarFooter from "./Components/footer/AlwarFooter.jsx";
+import {
+  buildMergedSessionSelectOptions,
+  getCurrentIndianFinancialYearSession,
+  LEGACY_SESSION_CODES,
+} from "./utils/indianFinancialYear.js";
 
 const App = () => {
   const { showToast } = useToast();
@@ -452,7 +457,8 @@ dispatch(logoutUser());
 
       imsAxios.defaults.headers["Company-Branch"] =
         user.company_branch || "BRALWR36";
-      imsAxios.defaults.headers["Session"] = user.session || "25-26";
+      imsAxios.defaults.headers["Session"] =
+        user.session || getCurrentIndianFinancialYearSession();
       socket.emit("fetch_notifications", {
         source: "react",
       });
@@ -713,7 +719,7 @@ dispatch(logoutUser());
   };
 
   const options = [{ label: "B36 [ALWAR]", value: "BRALWR36" }];
-  const sessionOptions = [{ label: "Session 25-26", value: "25-26" }];
+  const sessionOptions = buildMergedSessionSelectOptions(LEGACY_SESSION_CODES);
 
   const locationBranchOptions = {
     alwar: [{ label: "B36 [ALWAR]", value: "BRALWR36" }],

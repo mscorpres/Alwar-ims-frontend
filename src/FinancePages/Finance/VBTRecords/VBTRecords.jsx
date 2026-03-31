@@ -12,13 +12,21 @@ import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyDataTable from "../../../Components/MyDataTable.jsx";
+import { getCurrentIndianFinancialYearSession } from "../../../utils/indianFinancialYear";
+
+function vbtMinSearchPrefix(sessionCode) {
+  return `MIN/${sessionCode}/`;
+}
+
 function VBTRecords() {
   const { showToast } = useToast();
   const [wise, setWise] = useState("datewise");
   const [rows, setRows] = useState([]);
 
   const [searchDateRange, setSearchDateRange] = useState("");
-  const [searchInput, setSearchInput] = useState("MIN/25-26/");
+  const [searchInput, setSearchInput] = useState(() =>
+    vbtMinSearchPrefix(getCurrentIndianFinancialYearSession()),
+  );
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [vbtOption, setVbtOption] = useState("ALL");
@@ -156,12 +164,14 @@ function VBTRecords() {
   useEffect(() => {
     setRows([]);
     if (wise == "minwise") {
-      setSearchInput("MIN/25-26/");
+      const session =
+        user?.session ?? getCurrentIndianFinancialYearSession();
+      setSearchInput(vbtMinSearchPrefix(session));
     } else {
       setSearchInput("");
     }
     setSearchDateRange("");
-  }, [wise]);
+  }, [wise, user?.session]);
   return (
     <div style={{ height: "100%", padding:10 }}>
       <Row
