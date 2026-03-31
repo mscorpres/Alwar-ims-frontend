@@ -76,7 +76,7 @@ const initialState = {
 //             setting: data.data.settings,
 //           })
 //         );
-//         imsAxios.defaults.headers["x-csrf-token"] = data.data.token;
+
 //         imsAxios.defaults.headers["Company-Branch"] = "B-36 Alwar";
 //         return await {
 //           ...data.data,
@@ -97,15 +97,7 @@ const loginSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logout: (state, action) => {
-      let branchData = JSON.parse(localStorage.getItem("branchData"));
-      branchData = { ...branchData, currentLink: state.user.currentLink };
-      state.user = null;
-      state.message = "User Logged Out!";
-      localStorage.removeItem("loggedInUser");
-      localStorage.removeItem("newToken");
-      localStorage.setItem("branchData", JSON.stringify(branchData));
-    },
+ 
     addNotification: (state, action) => {
       state.notifications = [
         ...state.notifications,
@@ -225,7 +217,7 @@ const loginSlice = createSlice({
 export const selectUserDepartment = (state) => state;
 
 export const {
-  logout,
+
   addNotification,
   removeNotification,
   setNotifications,
