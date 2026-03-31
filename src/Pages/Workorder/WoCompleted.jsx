@@ -130,8 +130,8 @@ const WoCompleted = () => {
   }, [wise]);
 
   return (
-    <div style={{ height: "100%" }}>
-      <Row style={{ padding: 5, paddingTop: 0 }} justify="space-between">
+    <div style={{ height: "calc(100vh - 180px)", margin: "10px" }}>
+      <Row justify="space-between">
         <Col>
           <Space>
             <div style={{ paddingBottom: "10px" }}>
@@ -188,7 +188,7 @@ const WoCompleted = () => {
           }}
         />
       </Row>
-      <div style={{ height: "90%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "calc(100vh - 185px)", marginTop: "10px" }}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}

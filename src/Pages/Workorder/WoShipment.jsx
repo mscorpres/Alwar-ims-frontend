@@ -312,7 +312,7 @@ const WoShipment = () => {
     }
   }, [wise]);
   return (
-    <div style={{ height: "90%", paddingRight: 10, paddingLeft: 10 }}>
+    <div style={{ height: "calc(100vh - 180px)", margin: "10px" }}>
       {loading === "fetch" && <Loading />}
       <Drawer
         title={`${viewRtnChallan?.shipmentId}`}
@@ -400,7 +400,7 @@ const WoShipment = () => {
           </Col>
         </Row>
       </Col>
-      <div style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}>
+      <div style={{ height: "100%", }}>
         <MyDataTable
           data={rows}
           columns={
