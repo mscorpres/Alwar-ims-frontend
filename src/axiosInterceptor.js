@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getGlobalToast } from "./context/ToastContext";
 import { v4 as uuidv4 } from 'uuid';
+import { getCurrentIndianFinancialYearSession } from "./utils/indianFinancialYear";
 let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
 
 // Function to get the current API base URL dynamically
@@ -64,7 +65,8 @@ imsAxios.interceptors.request.use(
       JSON.parse(localStorage.getItem("branchData"))?.company_branch ??
       "BRALWR36";
     let session =
-      JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26";
+      JSON.parse(localStorage.getItem("branchData"))?.session ??
+      getCurrentIndianFinancialYearSession();
     config.headers["Company-Branch"] = branch;
     config.headers["Session"] = session;
     config.headers["x-window-url"] = window.location.href;
@@ -117,7 +119,8 @@ imsAxios.interceptors.response.use(
 let branch =
   JSON.parse(localStorage.getItem("branchData"))?.company_branch ?? "BRALWR36";
 let session =
-  JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26";
+  JSON.parse(localStorage.getItem("branchData"))?.session ??
+  getCurrentIndianFinancialYearSession();
 
 imsAxios.defaults.headers["Company-Branch"] = branch;
 imsAxios.defaults.headers["Session"] = session;

@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { imsAxios } from "../../axiosInterceptor";
+import { getCurrentIndianFinancialYearSession } from "../../utils/indianFinancialYear";
 let fav =
   typeof JSON.parse(localStorage.getItem("loggedInUser"))?.favPages == "string"
     ? JSON.parse(JSON.parse(localStorage.getItem("loggedInUser"))?.favPages)
@@ -14,7 +15,8 @@ const initialState = {
         company_branch: JSON.parse(localStorage.getItem("branchData"))
           ?.company_branch,
         session:
-          JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26",
+          JSON.parse(localStorage.getItem("branchData"))?.session ??
+          getCurrentIndianFinancialYearSession(),
         passwordChanged: "C",
         showlegal:
           JSON.parse(localStorage.getItem("loggedInUser"))?.department ===
@@ -195,7 +197,10 @@ const loginSlice = createSlice({
       // Update axios headers with selected branch and session
       const company_branch =
         action.payload?.company_branch ?? obj.company_branch ?? "BRALWR36";
-      const session = action.payload?.session ?? obj.session ?? "25-26";
+      const session =
+        action.payload?.session ??
+        obj.session ??
+        getCurrentIndianFinancialYearSession();
 
       localStorage.setItem(
         "branchData",

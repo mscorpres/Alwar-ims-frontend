@@ -25,10 +25,13 @@ import useApi from "../../../hooks/useApi.ts";
 import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
+import { getCurrentIndianFinancialYearSession } from "../../../utils/indianFinancialYear";
 
 export default function VBTReport() {
   const { showToast } = useToast();
-  const [searchInput, setSearchInput] = useState("MIN08/25-26/");
+  const [searchInput, setSearchInput] = useState(
+    () => `MIN08/${getCurrentIndianFinancialYearSession()}/`,
+  );
 
   const [wise, setWise] = useState("minwise");
   const [vbtOption, setVbtOption] = useState("ALL");
@@ -769,7 +772,7 @@ export default function VBTReport() {
   useEffect(() => {
     setRows([]);
     if (wise == "minwise") {
-      setSearchInput("MIN08/25-26/");
+      setSearchInput(`MIN08/${getCurrentIndianFinancialYearSession()}/`);
     } else {
       setSearchInput("");
     }

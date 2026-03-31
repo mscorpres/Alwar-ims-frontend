@@ -18,6 +18,10 @@ import {
 
   Settings,
 } from "@mui/icons-material";
+import {
+  buildMergedSessionSelectOptions,
+  LEGACY_SESSION_CODES,
+} from "../../utils/indianFinancialYear";
 
 const Header = ({
   user,
@@ -29,6 +33,9 @@ const Header = ({
   showSetting,
   setShowSetting,
 }) => {
+  const sessionMenuOptions = buildMergedSessionSelectOptions(
+    LEGACY_SESSION_CODES,
+  );
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleMenu = (event) => {
@@ -105,10 +112,11 @@ const Header = ({
                 },
               }}
             >
-              <MenuItem value="22-23">Session 22-23</MenuItem>
-              <MenuItem value="23-24">Session 23-24</MenuItem>
-              <MenuItem value="24-25">Session 24-25</MenuItem>
-              <MenuItem value="25-26">Session 25-26</MenuItem>
+              {sessionMenuOptions.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
