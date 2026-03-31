@@ -47,7 +47,7 @@ const imsAxios = axios.create({
   baseURL: imsLink,
   headers: {
 
- "Authorization": `${await getToken()}`,
+ "Authorization": `${getToken()||""}`,
   
   },
 });
