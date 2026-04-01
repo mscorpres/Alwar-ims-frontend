@@ -95,7 +95,7 @@ const Login = () => {
           // Two-step login, show OTP screen
           setUserCredentials({
             username,
-            token: res?.data?.token,
+            token: res?.data?.tempToken,
             qrCode: res?.data?.qrCode,
             company_branch: inpVal.company_branch, // Store selected branch for OTP flow
           });
@@ -243,6 +243,7 @@ const Login = () => {
         setGoogleLoginLoading(false);
       }
     } catch (error) {
+      console.log(error,"data===================error")
       showToast(
         error?.message || "Google login failed. Please try again.",
         "error",
