@@ -287,16 +287,13 @@ const RequestPo = () => {
         if (!silent) {
           showToast(response.message, "error");
         }
-      } else {
-        if (!silent) {
+        else{
           showToast(response.message, "error");
         }
-      }
+      } 
     } catch (error) {
       setSearchLoading(false);
-      if (!silent) {
-        showToast("Error fetching PO list", "error");
-      }
+      showToast("Error fetching PO list", "error");
     }
   };
 
