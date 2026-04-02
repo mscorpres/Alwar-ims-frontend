@@ -181,6 +181,8 @@ import {
 } from "../FinancePages/index.jsx";
 //GST report
 import GstReport from "../FinancePages/Finance/GstReport.jsx";
+//@ts-ignore
+import ExportReport from "../Pages/Reports/ExportReport.jsx";
 import R11 from "../Pages/Reports/R/R11.jsx";
 import R12 from "../Pages/Reports/R/R12.jsx";
 import R2 from "../Pages/Reports/R/R2.jsx";
@@ -641,6 +643,11 @@ const Routes = [
   {
     path: "/query/item-location-logs",
     main: () => <ItemLocationLog />,
+  },
+  {
+    path:"/export-reports",
+    main: () => <ExportReport />,
+
   },
   {
     path: "/r1",

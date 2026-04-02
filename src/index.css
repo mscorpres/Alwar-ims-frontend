@@ -605,7 +605,7 @@ textarea.ant-input {
   border: 2px solid #e1e1e1 !important;
 }
 .ant-card-head {
-  border-radius: 0 !important;
+  border-radius: 15px !important;
 }
 .ant-card-body {
   border-radius: 0 !important;
@@ -823,7 +823,7 @@ ul.MuiDataGrid-menuList li.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root,
   .ant-input-number-input,
   .MuiTableCell-sizeSmall,
   .css-1km1ehz {
-    font-size: 0.7rem !important;
+    font-size: 0.8rem !important;
   }
   .ant-picker-input > input {
     padding: 2px 10px !important;

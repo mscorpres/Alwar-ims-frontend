@@ -57,3 +57,18 @@ export function validatePAN(
   const valid = panRegex.test(formattedPAN);
   return { valid, formattedPAN };
 }
+
+  export const normalizeSelection = (selection:any) => {
+    if (Array.isArray(selection)) return selection.map((id) => String(id));
+    if (selection && typeof selection === "object") {
+      if (Array.isArray(selection.ids)) {
+        return selection.ids.map((id:any) => String(id));
+      }
+      if (selection.ids && typeof selection.ids.forEach === "function") {
+        const ids:any = [];
+        selection.ids.forEach((id:any) => ids.push(String(id)));
+        return ids;
+      }
+    }
+    return [];
+  };
