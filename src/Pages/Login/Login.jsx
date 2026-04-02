@@ -441,7 +441,8 @@ const Login = () => {
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
 
-          maxWidth: "900px",
+          maxWidth: "50%",
+          minWidth: "50%",
           overflow: "hidden",
           // backgroundColor:"red",
           borderRadius: "20px",
@@ -685,18 +686,10 @@ const Login = () => {
                         disabled={isLoginBusy}
                       />
                     </Form.Item>
-                    <Flex justify="end">
-                      <Button
-                        onClick={() => setShowForgotPassword(true)}
-                        type="link"
-                      >
-                        Forgot Password?
-                      </Button>
-                    </Flex>
 
                     {forgotPassword === "0" ? (
                       <>
-                        <div className="flex justify-center">
+                        <div className="flex justify-center w-full">
                           <ImageCaptcha
                             key={captchaKey}
                             value={captchaInput}
@@ -705,6 +698,14 @@ const Login = () => {
                             placeholder="Enter letters above"
                             disabled={isLoginBusy}
                           />
+                          <Flex justify="end" style={{ marginTop: "12px" }}>
+                            <Button
+                              onClick={() => setShowForgotPassword(true)}
+                              type="link"
+                            >
+                              Forgot Password?
+                            </Button>
+                          </Flex>
                         </div>
                         <Form.Item wrapperCol={{ offset: 0, span: 24 }}>
                           <Button
