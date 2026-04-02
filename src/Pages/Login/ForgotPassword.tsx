@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ModalType } from "@/types/general";
 import { Button, Card, Flex, Form, Input, Modal, Typography } from "antd";
 import useApi from "@/hooks/useApi";
 import { sendOtp, verifyOtp, updatePassword } from "@/api/auth.js";
-import { InfoCircleFilled, InfoCircleOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import ImageCaptcha from "@/Components/ImageCaptcha/ImageCaptcha";
 import { useToast } from "@/hooks/useToast";
 
 interface PropTypes extends ModalType {}
+
+
+
+const emailPattern =
+  /^[a-zA-Z0-9](?:[a-zA-Z0-9._%+-]*[a-zA-Z0-9])?@[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/;
 
 let defaultTimer = 60;
 const ForgotPassword = (props: PropTypes) => {
@@ -20,13 +25,18 @@ const ForgotPassword = (props: PropTypes) => {
   const [expectedCaptchaCode, setExpectedCaptchaCode] = useState("");
   const [captchaKey, setCaptchaKey] = useState(Math.random());
 
+  const emailWatch = Form.useWatch("email", form);
+  const trimmedEmail =
+    emailWatch == null ? "" : String(emailWatch).trim();
+  const isValidEmail =
+    trimmedEmail.length > 0 && emailPattern.test(trimmedEmail);
+
   const isCaptchaValid = () =>
     captchaInput.trim() === expectedCaptchaCode;
 
   const handleSubmit = async () => {
     if (stage === 0) {
       if (!isCaptchaValid()) {
-           console.log("check", )
         showToast("Please enter the captcha text shown above", "error");
         return;
       }
@@ -56,13 +66,11 @@ const ForgotPassword = (props: PropTypes) => {
 
   const handleSendOtp = async (skipCaptcha = false) => {
     if (!skipCaptcha && !isCaptchaValid()) {
-      console.log("check", )
       showToast("Please enter the captcha text shown above", "error");
       return;
     }
     const values = await form.validateFields(["email"]);
     const response = await executeFun(() => sendOtp(values.email), "submit");
-    console.log(response);
     if (response.success) {
       setStage(1);
       startTimer();
@@ -98,22 +106,60 @@ const ForgotPassword = (props: PropTypes) => {
       onOk={handleSubmit}
       confirmLoading={loading("submit")}
       okText={
-        stage === 0
-          ? "Send OTP"
-          : stage === 1
-          ? "Verify OTP"
-          : "Update Password"
+        <span style={{ display: "inline-flex", alignItems: "center" }}>
+          {stage === 0
+            ? "Send OTP"
+            : stage === 1
+              ? "Verify OTP"
+              : "Update Password"}
+        </span>
       }
+      okButtonProps={{
+        disabled: stage === 0 && !isValidEmail,
+      }}
       onCancel={props.hide}
     >
       <Form form={form} layout="vertical">
         <Flex style={{ width: "100%" }} vertical align="center">
-          <Form.Item name="email" label="Email" style={{ width: "100%" }}>
-            <Input disabled={stage > 0} style={{ width: "100%" }} />
+          <Form.Item
+            name="email"
+            label="Email"
+            style={{ width: "100%" }}
+            rules={[
+              {
+                required: true,
+                message: "Please enter your email address",
+              },
+              {
+                validator: (_, value) => {
+                  if (value == null || String(value).trim() === "") {
+                    return Promise.resolve();
+                  }
+                  const trimmed = String(value).trim();
+                 
+                  if (!emailPattern.test(trimmed)) {
+                    return Promise.reject(
+                      new Error(
+                        "Please enter a valid email address"
+                      )
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <Input
+              disabled={stage > 0}
+              style={{ width: "100%", marginBottom: 5 }}
+              placeholder="name@example.com"
+              inputMode="email"
+              autoComplete="email"
+            />
           </Form.Item>
 
           {stage === 0 && (
-            <Form.Item style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+            <Form.Item style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 6 }}>
               <ImageCaptcha
                 key={captchaKey}
                 value={captchaInput}
