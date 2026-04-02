@@ -159,8 +159,8 @@ const JWUpdateRate = () => {
     }
   }, [file]);
   return (
-    <Row gutter={6} style={{ height: "90%" }}>
-      <Col span={4}>
+    <Row gutter={6} style={{ height: "calc(100vh - 140px)", margin: "10px" }}>
+      <Col span={6}>
         <Card>
           <Form
             initialValues={initialValues}
@@ -222,7 +222,7 @@ const JWUpdateRate = () => {
           </Form>
         </Card>
       </Col>
-      <Col span={16}>
+      <Col span={18}>
         <MyDataTable
           loading={loading === "preview"}
           columns={columns}

@@ -523,7 +523,7 @@ textarea {
   background: #187bd8 !important;
   cursor: pointer;
 }
-.ant-menu-horizontal {
+.antMenu {
   border: none !important;
   margin: 0 !important;
   margin-bottom: 5px !important;
