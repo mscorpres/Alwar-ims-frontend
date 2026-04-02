@@ -3,7 +3,7 @@ import { List, Empty, Progress, Typography } from "antd";
 import { ConfigProvider } from "antd";
 import { Link } from "react-router-dom";
 import { CommonIcons } from "../TableActions.jsx/TableActions";
-import { socketLink as axiosLink } from "../../axiosInterceptor";
+import { getSocketLink } from "../../axiosInterceptor";
 import { DeleteFilled, MoreOutlined, ReloadOutlined } from "@ant-design/icons";
 import { Delete } from "lucide-react";
 
@@ -223,7 +223,7 @@ const NotificationDropdown = ({
                         ) : (
                           <a
                             href={
-                              axiosLink.split(":")[1] +
+                              getSocketLink().split(":")[1] +
                               "/" +
                               item.file?.substring(2)
                             }

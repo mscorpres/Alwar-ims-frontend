@@ -2,7 +2,23 @@ import axios from "axios";
 import { getGlobalToast } from "./context/ToastContext";
 import { v4 as uuidv4 } from 'uuid';
 import { getCurrentIndianFinancialYearSession } from "./utils/indianFinancialYear";
-let socketLink = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
+
+function normalizeSocketUrl(url) {
+  if (url == null || typeof url !== "string") return "";
+  const t = url.trim();
+  if (!t) return "";
+  if (/^https?:\/\//i.test(t)) return t;
+  return `https://${t.replace(/^\/+/, "")}`;
+}
+
+/** Same as Oakter: localStorage currentSocketUrl, then env (socket.io needs a URL with protocol). */
+export function getSocketLink() {
+  const raw =
+    localStorage.getItem("currentSocketUrl") ||
+    import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL ||
+    "";
+  return normalizeSocketUrl(raw);
+}
 
 const isSwitchInProgress = () => localStorage.getItem("switchInProgress") === "1";
 
@@ -139,4 +155,4 @@ const session = getSessionFromStorage();
 imsAxios.defaults.headers["Company-Branch"] = branch;
 imsAxios.defaults.headers["Session"] = session;
 
-export { imsAxios, socketLink };
+export { imsAxios };
