@@ -347,6 +347,15 @@ const Login = () => {
                           width: "100%",
                           textAlign: "center",
                           marginBottom: 8,
+                          fontWeight: "bold",
+                          border: "1px solid #ccc",
+                          borderRadius: "50%",
+                          backgroundColor: "#f0f0f0",
+                          width: "50px",
+                          height: "45px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
                         }}
                         variant="subtitle2"
                       >
