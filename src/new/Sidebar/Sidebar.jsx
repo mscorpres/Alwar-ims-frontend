@@ -1,11 +1,84 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useCallback, memo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../../index.css";
 import { loadMenuConfig } from "./menuLoader";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import { PushPin } from "@mui/icons-material";
 
-const Sidebar = ({
+const SIDEBAR_INJECTED_STYLES = `
+          @keyframes slideInRight {
+            from {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+          .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+          .hide-scrollbar::-webkit-scrollbar { width: 0; height: 0; }
+          .sub-sidebar-scroll { overflow-y: auto; }
+          .sub-sidebar-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+          @media (max-width: 768px) {
+            .sub-sidebar-scroll { scrollbar-width: none; -ms-overflow-style: none; }
+            .sub-sidebar-scroll::-webkit-scrollbar { width: 0; height: 0; }
+          }
+        `;
+
+function findActiveMenuItem(items, currentPath, parentKey = null, headingKey = null) {
+  for (const item of items) {
+    if (item.path && currentPath === item.path) {
+      return { item, parentKey, headingKey };
+    }
+
+    if (item.children) {
+      const currentHeadingKey = item.isHeading ? item.key : headingKey;
+
+      const currentParentKey =
+        !item.isHeading && item.children ? item.key : parentKey;
+
+      const result = findActiveMenuItem(
+        item.children,
+        currentPath,
+        currentParentKey || item.key,
+        currentHeadingKey,
+      );
+
+      if (result) {
+        return result;
+      }
+    }
+  }
+  return null;
+}
+
+function filterItemsByIsShown(items) {
+  return items
+    .map((item) => {
+      if (item.isShown === false) {
+        return null;
+      }
+
+      const filteredItem = { ...item };
+
+      if (item.children && item.children.length > 0) {
+        const filteredChildren = filterItemsByIsShown(item.children);
+
+        if (filteredChildren.length === 0 && item.isShown !== true) {
+          return null;
+        }
+        filteredItem.children = filteredChildren;
+      }
+
+      return filteredItem;
+    })
+    .filter((item) => item !== null);
+}
+
+const SidebarInner = ({
   showSideBar,
   setShowSideBar,
   items,
@@ -21,6 +94,8 @@ const Sidebar = ({
   const [isSecondSidebarCollapsed, setIsSecondSidebarCollapsed] =
     useState(false);
   const [expandedHeading, setExpandedHeading] = useState(null);
+  const [isSecondSidebarPin, setIsSecondSidebarPin] = useState(false);
+  const [isFirstSidebarPin, setIsFirstSidebarPin] = useState(false);
 
   const config = useMemo(() => {
     if (useJsonConfig) {
@@ -34,70 +109,61 @@ const Sidebar = ({
   const sidebar1Items = config.sidebar1.items;
   const sidebar2ItemsFromConfig = config.sidebar2?.items || [];
 
-  const findActiveMenuItem = (
-    items,
-    currentPath,
-    parentKey = null,
-    headingKey = null
-  ) => {
-    for (const item of items) {
-      if (item.path && currentPath === item.path) {
-        return { item, parentKey, headingKey };
-      }
+  const filteredSidebar1Items = useMemo(
+    () => filterItemsByIsShown(sidebar1Items),
+    [sidebar1Items],
+  );
 
-      if (item.children) {
-        const currentHeadingKey = item.isHeading ? item.key : headingKey;
+  const filteredSidebar2FromConfig = useMemo(
+    () => filterItemsByIsShown(sidebar2ItemsFromConfig),
+    [sidebar2ItemsFromConfig],
+  );
 
-        const currentParentKey =
-          !item.isHeading && item.children ? item.key : parentKey;
-
-        const result = findActiveMenuItem(
-          item.children,
-          currentPath,
-          currentParentKey || item.key,
-          currentHeadingKey
-        );
-
-        if (result) {
-          return result;
-        }
-      }
-    }
-    return null;
-  };
+  const filteredItems1 = useMemo(
+    () => filterItemsByIsShown(items1 || []),
+    [items1],
+  );
 
   useEffect(() => {
-    const activeMenuItem = findActiveMenuItem(sidebar1Items, location.pathname);
+    const activeMenuItem = findActiveMenuItem(
+      filteredSidebar1Items,
+      location.pathname,
+    );
 
     if (activeMenuItem) {
       if (activeMenuItem.parentKey) {
         setActiveKey(activeMenuItem.parentKey);
 
         setIsSecondSidebarOpen(true);
-        setIsSecondSidebarCollapsed(true);
+        if (!isSecondSidebarPin) {
+          setIsSecondSidebarCollapsed(true);
+        }
 
         if (activeMenuItem.headingKey) {
           setExpandedHeading(activeMenuItem.headingKey);
         }
-      } else {
+      } else if (!isSecondSidebarPin) {
         setActiveKey(null);
         setIsSecondSidebarOpen(false);
       }
-    } else {
+    } else if (!isSecondSidebarPin) {
       setActiveKey(null);
       setIsSecondSidebarOpen(false);
       setExpandedHeading(null);
     }
-  }, [location.pathname, sidebar1Items, showSideBar, setShowSideBar]);
+  }, [location.pathname, filteredSidebar1Items, isSecondSidebarPin]);
 
   useEffect(() => {
     if (showSideBar && activeKey) {
       setIsSecondSidebarOpen(true);
-      setIsSecondSidebarCollapsed(true);
+      if (!isSecondSidebarPin) {
+        setIsSecondSidebarCollapsed(true);
+      }
     }
-  }, [showSideBar, activeKey]);
+  }, [showSideBar, activeKey, isSecondSidebarPin]);
 
-  const handleItemClick = (key, hasChildren, path, isInSubMenu = false) => {
+  const handleItemClick = useCallback(
+    (key, hasChildren, path, isInSubMenu = false) => {
     if (isInSubMenu) {
       if (!isSecondSidebarOpen) setIsSecondSidebarOpen(true);
       if (isSecondSidebarCollapsed) setIsSecondSidebarCollapsed(false);
@@ -110,6 +176,9 @@ const Sidebar = ({
         setIsSecondSidebarCollapsed(false);
       } else {
         if (activeKey === key) {
+          if (isSecondSidebarPin) {
+            return;
+          }
           if (isSecondSidebarOpen) {
             setIsSecondSidebarCollapsed(!isSecondSidebarCollapsed);
           } else {
@@ -125,66 +194,51 @@ const Sidebar = ({
     } else if (path) {
       navigate(path);
 
-      setShowSideBar(false);
-      setIsSecondSidebarCollapsed(true);
+      if (!isFirstSidebarPin) {
+        setShowSideBar(false);
+      }
+      if (!isSecondSidebarPin) {
+        setIsSecondSidebarCollapsed(true);
+      }
 
-      if (!isInSubMenu) {
+      if (!isInSubMenu && !isSecondSidebarPin) {
         setActiveKey(null);
         setIsSecondSidebarOpen(false);
       }
     } else {
-      if (!isInSubMenu) {
+      if (!isInSubMenu && !isSecondSidebarPin) {
         setActiveKey(null);
         setIsSecondSidebarOpen(false);
       }
     }
-  };
+  },
+    [
+      activeKey,
+      isSecondSidebarOpen,
+      isSecondSidebarCollapsed,
+      isSecondSidebarPin,
+      isFirstSidebarPin,
+      navigate,
+      setShowSideBar,
+    ],
+  );
 
   const hoveredItem = useMemo(() => {
-    return sidebar1Items.find((item) => item.key === activeKey);
-  }, [activeKey, sidebar1Items]);
+    return filteredSidebar1Items.find((item) => item.key === activeKey);
+  }, [activeKey, filteredSidebar1Items]);
 
-  const sidebar2Items = useMemo(() => {
-    if (useJsonConfig) {
-      return hoveredItem?.children || [];
-    }
-    return items1 || [];
-  }, [useJsonConfig, hoveredItem, items1]);
-
-  const filterItemsByIsShown = (items) => {
-    return items
-      .map((item) => {
-        if (item.isShown === false) {
-          return null;
-        }
-
-        const filteredItem = { ...item };
-
-        if (item.children && item.children.length > 0) {
-          const filteredChildren = filterItemsByIsShown(item.children);
-
-          if (filteredChildren.length === 0 && item.isShown !== true) {
-            return null;
-          }
-          filteredItem.children = filteredChildren;
-        }
-
-        return filteredItem;
-      })
-      .filter((item) => item !== null);
-  };
+  const bottomBarItems = useJsonConfig
+    ? filteredSidebar2FromConfig
+    : filteredItems1;
 
   const renderList = (arr, alwaysShowText = false, isSubMenu = false) => {
     const shouldShowText = isSubMenu
       ? alwaysShowText && !isSecondSidebarCollapsed
       : showSideBar;
 
-    // Filter items based on isShown property
-    const filteredArr = filterItemsByIsShown(arr);
-
     return (
       <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-        {filteredArr.map((c, index) => {
+        {arr.map((c, index) => {
           const hasChildren = c.children && c.children.length > 0;
           const isActive = activeKey === c.key;
 
@@ -338,61 +392,63 @@ const Sidebar = ({
     );
   };
 
-  const subSidebarOpen =
-    hoveredItem && hoveredItem.children && isSecondSidebarOpen;
+  const subSidebarOpen = useMemo(
+    () =>
+      Boolean(
+        hoveredItem &&
+          hoveredItem.children != null &&
+          isSecondSidebarOpen,
+      ),
+    [hoveredItem, isSecondSidebarOpen],
+  );
   const secondSidebarWidth = isSecondSidebarCollapsed ? 56 : 280;
 
-  let rootWidth = 56;
+  const rootWidth = useMemo(() => {
+    if (showSideBar && subSidebarOpen) {
+      return 280 + secondSidebarWidth;
+    }
+    if (showSideBar && !subSidebarOpen) {
+      return 280;
+    }
+    if (!showSideBar && subSidebarOpen) {
+      return 56 + secondSidebarWidth;
+    }
+    return 56;
+  }, [showSideBar, subSidebarOpen, secondSidebarWidth]);
 
-  if (showSideBar && subSidebarOpen) {
-    rootWidth = 280 + secondSidebarWidth;
-  } else if (showSideBar && !subSidebarOpen) {
-    // Only main sidebar is open
-    rootWidth = 280;
-  } else if (!showSideBar && subSidebarOpen) {
-    // Only second sidebar is open
-    rootWidth = 56 + secondSidebarWidth;
-  } else {
-    // Both collapsed
-    rootWidth = 56;
-  }
+  useEffect(() => {
+    onWidthChange?.(rootWidth);
+  }, [rootWidth, onWidthChange]);
 
-  React.useEffect(() => {
-    if (onWidthChange) onWidthChange(rootWidth);
-  }, [rootWidth]);
+  const toggleSidebar = useCallback(() => {
+    setShowSideBar((open) => !open);
+   setIsFirstSidebarPin(false);
+  }, [setShowSideBar]);
 
-  const toggleSidebar = () => {
-    setShowSideBar(!showSideBar);
-  };
+  const toggleSecondSidebarCollapse = useCallback(() => {
+    setIsSecondSidebarCollapsed((c) => !c);
+    setIsSecondSidebarPin(false);
+  }, []);
 
-  const toggleSecondSidebarCollapse = () => {
-    setIsSecondSidebarCollapsed(!isSecondSidebarCollapsed);
-  };
+  const pinSecondSidebar = useCallback(() => {
+    setIsSecondSidebarPin((p) => !p);
+  }, []);
+
+  const pinFirstSidebar = useCallback(() => {
+    setIsFirstSidebarPin((wasPinned) => {
+      if (wasPinned) {
+        setShowSideBar(false);
+        return false;
+      }
+      return true;
+    });
+  }, [setShowSideBar]);
+
+
 
   return (
     <>
-      <style>
-        {`
-          @keyframes slideInRight {
-            from {
-              transform: translateX(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-          .hide-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
-          .hide-scrollbar::-webkit-scrollbar { width: 0; height: 0; }
-          .sub-sidebar-scroll { overflow-y: auto; }
-          .sub-sidebar-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
-          @media (max-width: 768px) {
-            .sub-sidebar-scroll { scrollbar-width: none; -ms-overflow-style: none; }
-            .sub-sidebar-scroll::-webkit-scrollbar { width: 0; height: 0; }
-          }
-        `}
-      </style>
+      <style>{SIDEBAR_INJECTED_STYLES}</style>
       <div
         className="flex fixed left-0 z-[5] transition-[width] duration-300 ease-in-out"
         style={{
@@ -443,28 +499,97 @@ const Sidebar = ({
                 width: showSideBar ? 220 : 32,
                 height: 40,
                 objectFit: "contain",
-    aspectRatio: "5 / 1",
+                aspectRatio: "5 / 1",
               }}
             />
           </div>
 
           {/* Main Menu Items */}
-          <div style={{ padding: "8px 0" }}>{renderList(sidebar1Items)}</div>
+          <div style={{ padding: "8px 0" }}>
+            {renderList(filteredSidebar1Items)}
+          </div>
 
           {/* Bottom Section - Show sidebar2 items from config or items1 */}
-          {(useJsonConfig
-            ? sidebar2ItemsFromConfig.length > 0
-            : sidebar2Items.length > 0) && (
+          {bottomBarItems.length > 0 && (
             <div
               style={{ position: "absolute", bottom: 60, left: 0, right: 0 }}
             >
-              {renderList(
-                useJsonConfig ? sidebar2ItemsFromConfig : sidebar2Items
-              )}
+              {renderList(bottomBarItems)}
             </div>
           )}
 
-          {/* Collapse/Expand Button */}
+       {
+        showSideBar && (
+             <button
+            type="button"
+            onClick={() => {
+              if (!showSideBar) {
+                setShowSideBar(true);
+              } else {
+                pinFirstSidebar();
+              }
+            }}
+            style={{
+              position: "absolute",
+              bottom: "16px",
+              left: "12px",
+              width: "32px",
+              height: "32px",
+              borderRadius: "6px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "16px",
+              transition: "all 0.2s ease",
+              zIndex: 101,
+              ...(showSideBar
+                ? {
+                    background: isFirstSidebarPin ? "orange" : "none",
+                    border: "none",
+                    color: isFirstSidebarPin ? "white" : "#666",
+                    boxShadow: "none",
+                  }
+                : {
+                    backgroundColor: "#0d9488",
+                    border: "none",
+                    color: "white",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                  }),
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.05)";
+              if (!showSideBar) {
+                e.currentTarget.style.backgroundColor = "#0f766e";
+              } else {
+                e.currentTarget.style.backgroundColor = "#e0e0e0";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              if (!showSideBar) {
+                e.currentTarget.style.backgroundColor = "#0d9488";
+              } else {
+                e.currentTarget.style.backgroundColor = isFirstSidebarPin
+                  ? "orange"
+                  : "transparent";
+              }
+            }}
+            title={
+              !showSideBar
+                ? "Expand sidebar"
+                : isFirstSidebarPin
+                  ? "Unpin main sidebar (allow auto-collapse on navigate)"
+                  : "Pin main sidebar (stay expanded on navigate)"
+            }
+          >
+          
+         
+              <PushPin fontSize="small" />
+           
+          </button>
+        )
+       }
           <button
             onClick={toggleSidebar}
             style={{
@@ -552,6 +677,7 @@ const Sidebar = ({
                   transition: "all 0.3s ease",
                   whiteSpace: "nowrap",
                   overflow: "hidden",
+                  fontWeight: "bold",
                 }}
               >
                 {typeof hoveredItem?.label === "string"
@@ -560,13 +686,19 @@ const Sidebar = ({
               </span>
               <div style={{ display: "flex", gap: "8px" }}>
                 <button
-                  onClick={toggleSecondSidebarCollapse}
+                  onClick={()=> {
+                    if (isSecondSidebarCollapsed) {
+                     toggleSecondSidebarCollapse();
+                    } else {
+                      pinSecondSidebar();
+                    }
+                  }}
                   style={{
                     cursor: "pointer",
-                    background: "none",
+                    background: isSecondSidebarPin ? "orange" : "none",
                     border: "none",
                     fontSize: 14,
-                    color: "#666",
+                    color: isSecondSidebarPin ? "#fff" : "#666",
                     padding: "4px",
                     borderRadius: "4px",
                     transition: "background-color 0.2s ease",
@@ -575,29 +707,30 @@ const Sidebar = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    
                   }}
+               
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = "#e0e0e0";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.backgroundColor = isSecondSidebarPin
+                      ? "orange"
+                      : "transparent";
                   }}
                   title={
                     isSecondSidebarCollapsed
                       ? "Expand submenu"
-                      : "Collapse submenu"
+                      : isSecondSidebarPin
+                        ? "Unpin submenu (allow auto-close)"
+                        : "Pin submenu (keep open while navigating)"
                   }
                 >
-                  <KeyboardArrowLeftIcon
-                    fontSize="small"
-                    style={{
-                      transform: isSecondSidebarCollapsed
-                        ? "rotate(180deg)"
-                        : "rotate(0deg)",
-                      transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      display: "inline-block",
-                    }}
-                  />
+                  {!isSecondSidebarCollapsed ? (
+                    <PushPin fontSize="small" />
+                  ) : (
+                    <KeyboardArrowRightIcon fontSize="small" />
+                  )}
                 </button>
               </div>
             </div>
@@ -608,7 +741,7 @@ const Sidebar = ({
                 isSecondSidebarCollapsed ? "hide-scrollbar" : ""
               }`}
               style={{
-                height: "calc(100% - 56px)",
+                height: "calc(100% - 120px)",
                 padding: "8px 0 64px 0",
                 overflowY: isSecondSidebarCollapsed ? "hidden" : "auto",
               }}
@@ -657,6 +790,7 @@ const Sidebar = ({
               title={
                 isSecondSidebarCollapsed ? "Expand submenu" : "Collapse submenu"
               }
+            
             >
               <KeyboardArrowLeftIcon
                 fontSize="small"
@@ -676,4 +810,5 @@ const Sidebar = ({
   );
 };
 
+const Sidebar = memo(SidebarInner);
 export default Sidebar;

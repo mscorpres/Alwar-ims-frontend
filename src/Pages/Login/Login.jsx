@@ -654,7 +654,7 @@ const Login = () => {
                         {
                           required: true,
                           message:
-                            "Please provide either your email or phone number or CRN Nunber",
+                            "Please provide either your email or phone number or CRN Number",
                         },
                       ]}
                     >
@@ -876,7 +876,7 @@ const Login = () => {
                         {
                           required: true,
                           message:
-                            "Please provide either your email or phone number or CRN Nunber",
+                            "Please provide either your email or phone number or CRN Number",
                         },
                       ]}
                     >
