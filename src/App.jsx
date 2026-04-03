@@ -808,7 +808,7 @@ dispatch(logoutUser());
   }
 
   return (
-    <div style={{ height: "100vh", backgroundColor: isAuthShellPath ? "#dff7fe" : "white" }}>
+    <div style={{ height: "100vh", backgroundColor: isAuthShellPath ? "#fcf9f7" : "white" }}>
       <Layout
         style={{
           width: "100%",

@@ -120,9 +120,21 @@ const SignUp = () => {
                     required: true,
                     message: "Please provide phone number.",
                   },
+                  {
+                    pattern: /^[0-9]+$/,
+                    message: "Mobile number must contain digits only.",
+                  },
                 ]}
               >
-                <Input size="large" />
+                <Input
+                  size="large"
+                  inputMode="numeric"
+                  maxLength={10}
+                  onChange={(e) => {
+                    const onlyDigits = e.target.value.replace(/[^0-9]/g, "");
+                    signUp.setFieldsValue({ number: onlyDigits });
+                  }}
+                />
               </Form.Item>
               <Form.Item
                 label="Email Address"

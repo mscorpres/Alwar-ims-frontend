@@ -258,7 +258,7 @@ const Login = () => {
               }}
               level={4}
             >
-              Log in to your account
+              Log In to your account
             </Title>
             <Form
               name="basic"
@@ -268,12 +268,12 @@ const Login = () => {
               form={loginForm}
             >
               <Form.Item
-                label="Username / Mobile / CRN Number"
+                label="Email / Mobile / CRN Number"
                 name="username"
                 rules={[
                   {
                     required: true,
-                    message: "Please provide either your email or phone number or CRN Number",
+                    message: "Please provide either your email / mobile number or CRN Number",
                   },
                 ]}
               >
