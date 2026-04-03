@@ -2,13 +2,19 @@ table,
 th,
 td {
   /* border: 0.9px solid; */
-  padding: 5px;
+  padding: 0px;
 }
 .table-col {
-  padding: 2px;
-  background-color: #ccc;
+  padding: 8px;
+  background-color: #e5e7e7;
   color: rgb(0, 0, 0);
 }
+
+.delete-icon {
+  cursor: pointer;
+  margin-right: 5px;
+}
+
 
 table {
   width: 100%;
