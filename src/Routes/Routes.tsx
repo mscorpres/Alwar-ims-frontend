@@ -4,6 +4,8 @@ import {
   Material,
   PendingApproval,
   Login,
+  SignUp,
+  LoginOtp,
   // MaterialTransaction,
   TransactionIn,
   TransactionOut,
@@ -266,6 +268,14 @@ const Routes = [
   {
     path: "/login",
     main: () => <Login />,
+  },
+  {
+    path: "/login/otp",
+    main: () => <LoginOtp />,
+  },
+  {
+    path: "/signup",
+    main: () => <SignUp />,
   },
   {
     path: "/ims/login",

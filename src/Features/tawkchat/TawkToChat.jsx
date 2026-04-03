@@ -8,6 +8,8 @@ const TAWK_WIDGET_ID = "1jk5ah6r5";
 const TAWK_DEPARTMENT = "Oakter";
 const HIDE_TAWK_PATHS = [
   "/login",
+  "/signup",
+  "/login/otp",
   "/forgot-password",
   "/verify-otp",
   "/password-recovery",

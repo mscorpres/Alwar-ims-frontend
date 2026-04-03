@@ -66,6 +66,15 @@ a:hover {
   color: #203624 !important;
   text-decoration: none !important;
 }
+
+/* Login / signup shell: global `a` uses dark green + no underline; restore link styling */
+.auth-shell-footer-link,
+.auth-shell-footer-link:hover,
+.auth-shell-footer-link:focus {
+  color: #1677ff !important;
+  text-decoration: underline !important;
+}
+
 /* Sidebar menu links should be visible on dark background */
 .ant-drawer-footer {
   background-color: #f1f1f1d5 !important;

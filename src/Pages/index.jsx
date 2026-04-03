@@ -1,4 +1,6 @@
 export { default as Login } from "./Login/Login";
+export { default as SignUp } from "./Login/SignUp";
+export { default as LoginOtp } from "./Login/LoginOtp";
 export { default as ProductDetail } from "../Pages/Store/ProductDetail";
 // export { default as MaterialTransaction } from "./Store/MaterialTransaction/MaterialTransaction";
 

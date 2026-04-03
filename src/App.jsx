@@ -87,6 +87,17 @@ const App = () => {
   const [loadingSwitch, setLoadingSwitch] = useState(isSwitchFlow);
   const [newNotification, setNewNotification] = useState(null);
   const { pathname } = useLocation();
+
+  const authPublicPaths = React.useMemo(
+    () =>
+      new Set(["/login", "/signup", "/login/otp", "/ims/login", "/first-login"]),
+    [],
+  );
+  const isAuthPublicPath = (p) => authPublicPaths.has(p);
+  const isAuthShellPath =
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/login/otp";
     
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
@@ -258,7 +269,7 @@ dispatch(logoutUser());
         setShowSideBar(false);
       }
     });
-    if (!user) {
+    if (!user && !isAuthPublicPath(pathname)) {
       navigate("/login");
     }
     if (user) {
@@ -430,7 +441,7 @@ dispatch(logoutUser());
     }
   }, []);
   useEffect(() => {
-    if (!user) {
+    if (!user && !isAuthPublicPath(pathname)) {
       navigate("/login");
     } else if (user) {
       let branch = JSON.parse(
@@ -441,16 +452,19 @@ dispatch(logoutUser());
       }
       // handleSelectSession("23-24");
     }
-  }, [user]);
+  }, [user, pathname]);
+
   useEffect(() => {
-    if (pathname === "/login" && user) {
-      const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
-      if (user.passwordChanged === "P") {
-        navigate("/first-login");
-      } else {
-        navigate(link ?? "/");
-      }
+    if (!isAuthShellPath || !user) return;
+    const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
+    if (user.passwordChanged === "P") {
+      navigate("/first-login");
+    } else {
+      navigate(link ?? "/");
     }
+  }, [user, pathname, isAuthShellPath, navigate]);
+
+  useEffect(() => {
     if (user && user.token) {
       const tokenToUse = localStorage.getItem("newToken") || user.token;
       imsAxios.defaults.headers["Authorization"] = `${tokenToUse}`;
@@ -980,11 +994,11 @@ dispatch(logoutUser());
                 <div
                   style={{
                     height: (() => {
-                      const headerHeight = pathname === "/login" ? 10 : 50;
+                      const headerHeight = isAuthShellPath ? 10 : 50;
                       const bannerHeight = isBannerVisible ? 0 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
-                        pathname === "/auth/profile" || pathname === "/login"
+                        pathname === "/auth/profile" || isAuthShellPath
                           ? 0
                           : 50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
