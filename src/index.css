@@ -140,10 +140,7 @@ a:hover {
 .ant-layout {
   background-color: white !important;
 }
-body {
-  height: 100vh;
-  overflow-y: hidden;
-}
+
 button {
   cursor: pointer;
 }

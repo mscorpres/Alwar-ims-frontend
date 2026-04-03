@@ -808,7 +808,7 @@ dispatch(logoutUser());
   }
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "100vh", backgroundColor: isAuthShellPath ? "#dff7fe" : "white" }}>
       <Layout
         style={{
           width: "100%",
@@ -1000,7 +1000,7 @@ dispatch(logoutUser());
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath
                           ? 0
-                          : 50;
+                          :50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",
