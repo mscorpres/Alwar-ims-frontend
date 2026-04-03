@@ -4,8 +4,7 @@ import { Typography } from "antd";
 const { Text } = Typography;
 
 const shellStyle = {
-  backgroundImage:
-    "linear-gradient(rgba(237, 255, 255, 0.8), rgba(237, 255, 255, 0.8)), url(//janparichay.meripehchaan.gov.in/v1/pehchaan/images/NSSO/india.jpg)",
+  backgroundImage:"url('/assets/images/login_bg.svg')",
   backgroundSize: "cover",
   backgroundPosition: "center",
   backgroundRepeat: "no-repeat",
@@ -20,11 +19,11 @@ const cardStyle = {
   minWidth: "50%",
   overflow: "hidden",
   borderRadius: "20px",
-  border: "1px solid #ccc",
+  border: "1px solid #e9e1e1",
   gap: 20,
   padding: 40,
   position: "relative",
-  boxShadow: "0px 0px 6px 1px #41768b",
+  boxShadow: "0px 0px 6px 1px #a4a8aa",
 };
 
 /**
