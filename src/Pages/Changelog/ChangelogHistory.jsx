@@ -94,6 +94,10 @@ const ChangelogHistory = () => {
 
   // Month options - all months
   const allMonths = [
+    {
+label:"All",
+value:"all"
+    },
     { label: "January", value: 1 },
     { label: "February", value: 2 },
     { label: "March", value: 3 },
@@ -393,20 +397,21 @@ const ChangelogHistory = () => {
 
                       {/* Timeline Container */}
                       <Box sx={{ position: "relative", ml: 2 }}>
-                        {/* Vertical Line */}
-                        <Box
-                          sx={{
-                            position: "absolute",
-                            left: 50,
-                            top: 0,
-                            bottom: 0,
-                            width: 3,
-                            backgroundColor: customColor.newBgColor,
-                            zIndex: 0,
-                          }}
-                        />
+                        {groupedData[year][month].length > 1 && (
+                          <Box
+                            sx={(theme) => ({
+                              position: "absolute",
+                              left: 50,
+                              top: 0,
+                              bottom: theme.spacing(4),
+                              width: 3,
+                              backgroundColor: customColor.newBgColor,
+                              zIndex: 0,
+                            })}
+                          />
+                        )}
 
-                        {/* Timeline Items */}
+                     
                         {groupedData[year][month].map((item, index) => {
                           const dateInfo = formatDate(item.date);
                           return (
