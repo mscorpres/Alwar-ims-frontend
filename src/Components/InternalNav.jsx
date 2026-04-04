@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux/es/exports";
 import internalLinks from "../Pages/internalLinks";
 import { customColor } from "../utils/customColor";
 import { isShowIconsPath } from "../utils/general";
+import { triggerReportNavDetailedDownload } from "../utils/reportNavDetailedDownload";
 
 export default function InternalNav({
   // links,
@@ -98,18 +99,21 @@ const shouldShowIcon = useMemo(() => {
       />
 
       {shouldShowIcon && (
-       <Tooltip title="Generate brief file" placement="left" >
-         <span
-          style={{
-            color: customColor.tertiaryColor,
-            cursor: "pointer",
-            marginRight: 20,
-            width: 60,
-          }}
-        >
-          <img src="/download.png" alt="logo" height="30px" width="30px" />
-        </span>
-       </Tooltip>
+        <Tooltip title="Download brief report" placement="left">
+          <span
+            role="button"
+            onClick={() => triggerReportNavDetailedDownload()}
+       
+            style={{
+              color: customColor.tertiaryColor,
+              cursor: "pointer",
+              marginRight: 20,
+              width: 60,
+            }}
+          >
+            <img src="/download.png" alt="Download brief report" height="30px" width="30px" />
+          </span>
+        </Tooltip>
       )}
     </div>
   );
