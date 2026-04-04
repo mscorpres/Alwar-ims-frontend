@@ -233,7 +233,8 @@ function CustomNoRowsOverlay() {
 
 export default function MyDataTable(props) {
   // Omit 'rules' so it's never passed to DataGrid (Form.Item expects array; prevents rules.some error when used inside Form)
-  const { rules: _rules, ...dataTableProps } = props;
+  const { rules: _rules, components: userComponents = {}, ...dataTableProps } =
+    props;
 
   // Ensure every column has a unique `field` so DataGrid gets valid keys (fixes "unique key" warning)
   const columnsWithKeys = useMemo(() => {
@@ -294,6 +295,7 @@ export default function MyDataTable(props) {
           Toolbar: CustomToolbar,
           NoRowsOverlay: CustomNoRowsOverlay,
           Pagination: CustomPagination,
+          ...userComponents,
         }}
         componentsProps={{
           footer: { rows: props.data },

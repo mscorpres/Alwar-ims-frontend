@@ -27,7 +27,7 @@ import {
 import useApi from "../../../hooks/useApi.ts";
 import NavFooter from "../../../Components/NavFooter.jsx";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import { AiOutlineMinusSquare } from "react-icons/ai";
+import { Delete } from "@mui/icons-material";
 import { uploadMinInvoice } from "../../../api/store/material-in.js";
 import SuccessPage from "../../Store/MaterialIn/SuccessPage.jsx";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses.jsx";
@@ -366,16 +366,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
       sortable: false,
       renderCell: ({ row }) => [
         <GridActionsCellItem
-          icon={
-            <AiOutlineMinusSquare
-            // style={{
-            //   fontSize: "1.7rem",
-            //    pointerEvents:
-            //     journalRows.length === 3 || row.total ? "none" : "all",
-            //   opacity: journalRows.length === 3 || row.total ? 0.5 : 1,
-            // }} cursor: "pointer",
-            />
-          }
+          icon={<Delete color="error" sx={{ fontSize: "1.7rem", cursor: "pointer" }} />}
           onClick={() => {
             removeRow(row.id);
           }}

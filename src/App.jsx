@@ -661,20 +661,7 @@ dispatch(logoutUser());
       }
     }
   }, [navigate, user]);
-  useEffect(() => {
-    window.addEventListener("offline", (e) => {
-      showToast(
-        "You are no longer connected to the Internet, please check your connection and try again.",
-        "error",
-      );
-    });
-    window.addEventListener("online", (e) => {
-      showToast(
-        "The internet has been restored. Kindly review your progress to ensure there is no duplication of data.",
-      );
-      window.location.reload();
-    });
-  }, []);
+  
 
   useEffect(() => {
     if (user && user.passwordChanged === "C") {

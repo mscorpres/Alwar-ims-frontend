@@ -132,7 +132,7 @@ const columns = (
 ) => [
   {
     headerName: "HSN Code",
-    flex: 1,
+   width:"160px",
     name: "code",
     field: () => (
       <MyAsyncSelect

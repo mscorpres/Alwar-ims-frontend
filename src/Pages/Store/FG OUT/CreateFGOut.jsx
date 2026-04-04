@@ -8,6 +8,7 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import NavFooter from "../../../Components/NavFooter.jsx";
 import MySelect from "../../../Components/MySelect.jsx";
+import { Add, Delete } from "@mui/icons-material";
 
 const { TextArea } = Input;
 const CreateFGOut = () => {
@@ -48,7 +49,7 @@ const CreateFGOut = () => {
 
   const plusRow = () => {
     setAddRowData((addRowData) => [
-      ...addRowData,
+   
       {
         id: v4(),
         product: "",
@@ -57,6 +58,7 @@ const CreateFGOut = () => {
         total: "",
         remarks: "",
       },
+         ...addRowData,
     ]);
   };
 
@@ -221,30 +223,40 @@ const CreateFGOut = () => {
   const columns = [
     {
       headerName: (
-        <span onClick={plusRow}>
-          <PlusCircleTwoTone
-            style={{
-              cursor: "pointer",
-              fontSize: "1.2rem",
-            }}
+      <div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",   // vertical centering
+    width: "100%",          // take full cell width
+    height: "100%",         // take full cell height
+  }}
+>
+         <span onClick={plusRow} style={{ cursor: "pointer",  }}>
+          <Add
+          color="success"
+         
           />
           {/* <PlusSquareFilled style={{ cursor: "pointer", fontSize: "1.5rem" }} /> */}
         </span>
+        </div>
       ),
       width: 80,
       field: "add",
+      
 
       // width: "5
       sortable: false,
       renderCell: ({ row }) =>
         addRowData.findIndex((r) => r.id == row.id) >= 1 && (
-          <MinusCircleTwoTone
-            onClick={() => minusRow(row?.id)}
-            style={{
-              fontSize: "1.1rem",
-              cursor: "pointer",
-            }}
+              <div style={{ display: "flex", justifyContent: "center",}}>
+         <span onClick={() => minusRow(row?.id)} style={{ cursor: "pointer",  }}>
+          <Delete
+          color="error"
+         
           />
+        </span>
+        </div>
         ),
       // sortable: false,
     },
