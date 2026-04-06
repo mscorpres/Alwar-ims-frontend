@@ -96,7 +96,7 @@ const ChangelogHistory = () => {
   const allMonths = [
     {
 label:"All",
-value:"all"
+value:""
     },
     { label: "January", value: 1 },
     { label: "February", value: 2 },
