@@ -275,7 +275,7 @@ value:""
         display: "flex",
         gap: 3,
         p: 3,
-        height: "calc(100vh - 160px)",
+        height: "calc(100vh - 100px)",
       }}
     >
       {/* Left Section - Timeline */}
