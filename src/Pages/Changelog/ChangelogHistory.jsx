@@ -121,7 +121,7 @@ value:""
       }
       
       // For current year, only show up to current month
-      if (filterYear === currentYear && month.value > currentMonth) {
+      if (filterYear === currentYear && month.value > currentMonth +1 ) {
         return false;
       }
       
