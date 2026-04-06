@@ -133,7 +133,6 @@ const Login = () => {
           if (payload.settings) dispatch(setSettings(payload.settings));
           showToast("Login successful!");
           navigate("/");
-          window.location.reload();
         }
       } else {
         setCaptchaInput("");
@@ -208,7 +207,6 @@ const Login = () => {
 
         showToast("Login successful!");
         navigate("/");
-        window.location.reload();
       } else {
         showToast(response?.message || "Google login failed. Please try again.", "error");
         setGoogleLoginLoading(false);
