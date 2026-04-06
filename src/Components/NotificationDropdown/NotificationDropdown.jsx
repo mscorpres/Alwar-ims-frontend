@@ -2,27 +2,30 @@ import React, { useEffect, useState } from "react";
 import { List, Empty, Progress, Typography } from "antd";
 import { ConfigProvider } from "antd";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { CommonIcons } from "../TableActions.jsx/TableActions";
 import { getSocketLink } from "../../axiosInterceptor";
-import { DeleteFilled, MoreOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Delete } from "lucide-react";
+import { Delete, Refresh } from "@mui/icons-material";
+import ConfirmationNotifyModal from "./ConfirmationNotifyModal";
+import { setNotifications } from "../../Features/loginSlice/loginSlice.js";
+import { deleteAllNotifications } from "../../api/notifications.js";
+import socket from "../socket.js";
+import { useToast } from "../../hooks/useToast.js";
 
-const NotificationDropdown = ({
-  open,
-  onClose,
-  notifications,
-  deleteNotification,
-  
-  anchorRef,
-}) => {
+const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
+  const dispatch = useDispatch();
+  const { showToast } = useToast();
+  const allNotifications = useSelector((state) => state.login.notifications);
   const [position, setPosition] = useState({ top: 0, right: 0 });
   const [isPositioned, setIsPositioned] = useState(false);
+  const [isConfirmModal, setIsConfirmModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     if (open && anchorRef?.current) {
       const calculatePosition = () => {
         if (!anchorRef?.current) return;
-        
+
         const rect = anchorRef.current.getBoundingClientRect();
         const dropdownWidth = 420;
         const viewportWidth = window.innerWidth;
@@ -74,13 +77,38 @@ const NotificationDropdown = ({
       const timeoutId = setTimeout(() => {
         document.addEventListener("mousedown", handleClickOutside);
       }, 100);
-      
+
       return () => {
         clearTimeout(timeoutId);
         document.removeEventListener("mousedown", handleClickOutside);
       };
     }
   }, [open, anchorRef, onClose]);
+
+  const handleDeleteAllNotifications = async () => {
+    try {
+      setDeleteLoading(true);
+      const res = await deleteAllNotifications();
+      if (res?.success === false) {
+        showToast(res?.message || "Could not delete notifications", "error");
+        return;
+      }
+      dispatch(
+        setNotifications(
+          allNotifications.filter((n) => n?.type === "message"),
+        ),
+      );
+      socket.emit("fetch_notifications", { source: "react" });
+      showToast("Notifications deleted", "success");
+      setIsConfirmModal(false);
+    } catch (e) {
+      const msg =
+        e?.message || e?.data?.message || "Could not delete notifications";
+      showToast(msg, "error");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   if (!open) return null;
 
@@ -101,6 +129,7 @@ const NotificationDropdown = ({
       />
     </div>
   );
+  const handleRefreshNotification = () => {};
 
   return (
     <>
@@ -187,8 +216,27 @@ const NotificationDropdown = ({
             className="flex justify-end items-center"
             style={{ gap: 12, cursor: "pointer" }}
           >
-            <DeleteFilled  style={{color:"red"}} />
-             <ReloadOutlined  style={{color:"black"}}/>
+            <ConfirmationNotifyModal
+              setOpen={setIsConfirmModal}
+              open={isConfirmModal}
+              onConfirm={handleDeleteAllNotifications}
+              confirmLoading={deleteLoading}
+            >
+              <span
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") e.currentTarget.click();
+                }}
+                style={{ display: "inline-flex", alignItems: "center" }}
+              >
+                <Delete fontSize="small" color="error"  />
+              </span>
+            </ConfirmationNotifyModal>
+            <span onClick={handleRefreshNotification}>
+              {" "}
+              <Refresh fontSize="small" />
+            </span>
           </div>
         </div>
         <div

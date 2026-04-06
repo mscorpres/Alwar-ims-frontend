@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import { Input, Row, Space } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -16,6 +16,10 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import useApi from "../../../hooks/useApi.ts";
 import { downloadAttachement } from "../../../api/store/material-in";
 import { downloadFromLink } from "../../../utils/general.ts";
+import {
+  registerReportNavDetailedDownload,
+  unregisterReportNavDetailedDownload,
+} from "../../../utils/reportNavDetailedDownload";
 const TransactionIn = () => {
   const { showToast } = useToast();
   const [wise, setWise] = useState("M");
@@ -111,9 +115,8 @@ const TransactionIn = () => {
     { headerName: "Cost Center", field: "COSTCENTER", width: 150 },
     { headerName: "By", field: "ISSUEBY", width: 120 },
   ];
-  const handleDownloadingCSV = () => {
-    let newId = v4();
-
+  const handleDownloadingCSV = useCallback(() => {
+    const newId = v4();
     socket.emit("trans_in", {
       otherdata: JSON.stringify({
         date: searchInput,
@@ -122,7 +125,12 @@ const TransactionIn = () => {
       }),
       notificationId: newId,
     });
-  };
+  }, [searchInput, wise, user?.company_branch]);
+
+  useEffect(() => {
+    registerReportNavDetailedDownload(handleDownloadingCSV);
+    return () => unregisterReportNavDetailedDownload();
+  }, [handleDownloadingCSV]);
   const handleSimmpleDownloadingCSV = () => {
     downloadCSV(rows, columns, "MIN Register Report");
   };
@@ -169,13 +177,7 @@ const TransactionIn = () => {
         </Space>
         <Space>
           <CommonIcons
-            tooltip="Download Detailed Report"
-            onClick={handleDownloadingCSV}
-            action="downloadButton"
-          />
-          <CommonIcons
             tooltip="Download Brief Report"
-       
             onClick={handleSimmpleDownloadingCSV}
             action="downloadButton"
           />
