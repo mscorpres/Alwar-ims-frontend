@@ -98,17 +98,23 @@ const Login = () => {
         const isTwoStep = res?.data?.isTwoStep;
         if (isTwoStep === "Y") {
           showToast("OTP sent to your registered email address", "success");
-          navigate("/login/otp", {
-            replace: true,
-            state: {
-              userCredentials: {
-                username,
-                token: res?.data?.tempToken,
-                qrCode: res?.data?.qrCode,
-                company_branch: inpVal.company_branch,
+          navigate(
+            {
+              pathname: "/login/otp",
+              search: location.search || undefined,
+            },
+            {
+              replace: true,
+              state: {
+                userCredentials: {
+                  username,
+                  token: res?.data?.tempToken,
+                  qrCode: res?.data?.qrCode,
+                  company_branch: inpVal.company_branch,
+                },
               },
             },
-          });
+          );
         } else {
           const payload = res?.data ?? res;
           const obj = {
@@ -132,7 +138,6 @@ const Login = () => {
           dispatch(setUser(obj));
           if (payload.settings) dispatch(setSettings(payload.settings));
           showToast("Login successful!");
-          navigate("/");
         }
       } else {
         setCaptchaInput("");
@@ -206,7 +211,6 @@ const Login = () => {
         if (payload.settings) dispatch(setSettings(payload.settings));
 
         showToast("Login successful!");
-        navigate("/");
       } else {
         showToast(response?.message || "Google login failed. Please try again.", "error");
         setGoogleLoginLoading(false);

@@ -53,9 +53,11 @@ const LoginOtp = () => {
   useEffect(() => {
     if (!userCredentials?.token) {
       showToast("Session expired. Please sign in again.", "error");
-      navigate("/login", { replace: true });
+    navigate({ pathname: "/login", search: location.search }, {
+        replace: true,
+      });
     }
-  }, [userCredentials, navigate, showToast]);
+  }, [userCredentials, navigate, showToast, location.search]);
 
   useEffect(() => {
     let interval = null;
@@ -65,10 +67,12 @@ const LoginOtp = () => {
       }, 1000);
     } else if (otpTimer === 0) {
       showToast("OTP has expired. Please login again.", "error");
-      navigate("/login", { replace: true });
+    navigate({ pathname: "/login", search: location.search }, {
+        replace: true,
+      });
     }
     return () => clearInterval(interval);
-  }, [userCredentials?.token, otpTimer, navigate, showToast]);
+  }, [userCredentials?.token, otpTimer, navigate, showToast,  location.search]);
 
   const handleOtpChange = (index, value) => {
     if (value.length <= 1 && /^\d*$/.test(value)) {
@@ -118,7 +122,9 @@ const LoginOtp = () => {
 
     if (!userCredentials?.token) {
       showToast("Session expired. Please login again.", "error");
-      navigate("/login", { replace: true });
+   navigate({ pathname: "/login", search: location.search }, {
+        replace: true,
+      });
       return;
     }
 
@@ -160,8 +166,7 @@ const LoginOtp = () => {
         dispatch(setUser(obj));
         if (payload.settings) dispatch(setSettings(payload.settings));
         showToast("Login successful!");
-        navigate("/");
-        window.location.reload();
+  
       } else {
         showToast(res?.message || "Invalid OTP. Please try again.", "error");
         setOtpCode(["", "", "", "", "", ""]);
@@ -185,7 +190,10 @@ const LoginOtp = () => {
   useEffect(() => {
     if (!isLeavingToLogin) return undefined;
     const t = window.setTimeout(() => {
-      navigate("/login", { state: { fromOtp: true } });
+         navigate(
+        { pathname: "/login", search: location.search },
+        { state: { fromOtp: true } },
+      );
     }, 450);
     return () => window.clearTimeout(t);
   }, [isLeavingToLogin, navigate]);

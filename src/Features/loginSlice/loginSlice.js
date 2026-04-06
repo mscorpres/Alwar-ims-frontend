@@ -219,6 +219,12 @@ const loginSlice = createSlice({
     },
     setUser: (state, action) => {
       let obj = { ...state.user, ...action.payload };
+      const pc = obj.passwordChanged;
+      obj = {
+        ...obj,
+        passwordChanged:
+          pc === "P" || String(pc).toUpperCase() === "P" ? "P" : "C",
+      };
       state.user = obj;
       localStorage.setItem("loggedInUser", JSON.stringify(obj));
 
