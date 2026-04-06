@@ -384,8 +384,9 @@ const links = [
   ],
   // vendor master links
   [
-    { routeName: "Add Vendor", routePath: "/create-vendor" },
+  
     { routeName: "Vendor", routePath: "/vendor" },
+      { routeName: "Add Vendor", routePath: "/create-vendor" },
   ],
   // MR approved transactionlinks
   [

@@ -28,14 +28,16 @@ const SIDEBAR_INJECTED_STYLES = `
           }
         `;
 
-function findActiveMenuItem(items, currentPath, parentKey = null, headingKey = null) {
+function findActiveMenuItem(items, currentPath, parentKey = null, headingKeys = []) {
   for (const item of items) {
     if (item.path && currentPath === item.path) {
-      return { item, parentKey, headingKey };
+      return { item, parentKey, headingKeys };
     }
 
     if (item.children) {
-      const currentHeadingKey = item.isHeading ? item.key : headingKey;
+      const nextHeadingKeys = item.isHeading
+        ? [...headingKeys, item.key]
+        : headingKeys;
 
       const currentParentKey =
         !item.isHeading && item.children ? item.key : parentKey;
@@ -44,7 +46,7 @@ function findActiveMenuItem(items, currentPath, parentKey = null, headingKey = n
         item.children,
         currentPath,
         currentParentKey || item.key,
-        currentHeadingKey,
+        nextHeadingKeys,
       );
 
       if (result) {
@@ -93,7 +95,7 @@ const SidebarInner = ({
   const [isSecondSidebarOpen, setIsSecondSidebarOpen] = useState(false);
   const [isSecondSidebarCollapsed, setIsSecondSidebarCollapsed] =
     useState(false);
-  const [expandedHeading, setExpandedHeading] = useState(null);
+  const [expandedHeadings, setExpandedHeadings] = useState([]);
   const [isSecondSidebarPin, setIsSecondSidebarPin] = useState(false);
   const [isFirstSidebarPin, setIsFirstSidebarPin] = useState(false);
 
@@ -139,9 +141,7 @@ const SidebarInner = ({
           setIsSecondSidebarCollapsed(true);
         }
 
-        if (activeMenuItem.headingKey) {
-          setExpandedHeading(activeMenuItem.headingKey);
-        }
+        setExpandedHeadings(activeMenuItem.headingKeys || []);
       } else if (!isSecondSidebarPin) {
         setActiveKey(null);
         setIsSecondSidebarOpen(false);
@@ -149,7 +149,7 @@ const SidebarInner = ({
     } else if (!isSecondSidebarPin) {
       setActiveKey(null);
       setIsSecondSidebarOpen(false);
-      setExpandedHeading(null);
+      setExpandedHeadings([]);
     }
   }, [location.pathname, filteredSidebar1Items, isSecondSidebarPin]);
 
@@ -170,7 +170,9 @@ const SidebarInner = ({
     }
     if (hasChildren) {
       if (isInSubMenu) {
-        setExpandedHeading((prev) => (prev === key ? null : key));
+        setExpandedHeadings((prev) =>
+          prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+        );
 
         setIsSecondSidebarOpen(true);
         setIsSecondSidebarCollapsed(false);
@@ -244,7 +246,7 @@ const SidebarInner = ({
 
           const isPathActive = c.path && location.pathname === c.path;
           const isHeading = c.isHeading;
-          const isHeadingExpanded = expandedHeading === c.key;
+          const isHeadingExpanded = expandedHeadings.includes(c.key);
 
           const reactKey = `${c.key}-${isSubMenu ? "sub" : "main"}-${index}`;
 
