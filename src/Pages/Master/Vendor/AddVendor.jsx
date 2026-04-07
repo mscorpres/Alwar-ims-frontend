@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import {
   Row,
@@ -10,7 +10,10 @@ import {
   Modal,
   InputNumber,
   Typography,
+  Tooltip,
+  Spin,
 } from "antd";
+import { CopyOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import NavFooter from "../../../Components/NavFooter";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -20,6 +23,12 @@ import SingleProduct from "./SingleProduct";
 import { validatePAN } from "../../../utils/general";
 import { getVendorBranchBankOptions } from "./vendorBranchBankOptions";
 import { mergeMsmeYearOptions } from "../../../utils/indianFinancialYear";
+import GstRegisteredAddressesModal from "./GstRegisteredAddressesModal";
+
+const vendorTypeOptions = [
+  { text: "Import", value: "IMPT" },
+  { text: "Domestic", value: "DOM" },
+];
 
 const msmeOptions = [
   { text: "Yes", value: "Y" },
@@ -51,11 +60,23 @@ const transactionTypeOptions = [
   { text: "N/A", value: "na" },
 ];
 
+const GSTIN_LENGTH = 15;
+const GSTIN_FETCH_DEBOUNCE_MS = 450;
+
+const normalizeGstinInput = (value) =>
+  String(value ?? "")
+    .replace(/[^A-Za-z0-9]/g, "")
+    .toUpperCase()
+    .slice(0, GSTIN_LENGTH);
+
 const AddVendor = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [files, setFiles] = useState([]);
+  const [gstDetails, setGstDetails] = useState(null);
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [gstSearchLoading, setGstSearchLoading] = useState(false);
   const [currencies, setCurrencies] = useState([]);
   const [addVendorForm] = Form.useForm();
   const [selectLoading, setSelectLoading] = useState(false);
@@ -65,7 +86,11 @@ const AddVendor = () => {
   const einvoice = Form.useWatch("applicability", addVendorForm);
   const transactionType = Form.useWatch("transactionType", addVendorForm);
   const bankNameWatch = Form.useWatch("bankName", addVendorForm);
+  const vendorType = Form.useWatch("vendorType", addVendorForm);
+  const gstinWatch = Form.useWatch("gstin", addVendorForm);
 
+  const gstFetchDebounceRef = useRef(null);
+  const lastFetchedGstinRef = useRef("");
 
   // const [groupOptions, setGroupOptions] = useState([]);
 
@@ -153,20 +178,24 @@ const AddVendor = () => {
 
     const obj = {
       vendor: {
-        vendorname: values.vendorName,
-        panno: values.panno.toUpperCase(),
-        cinno: !values.cinno
+        type: values.vendorType,
+        name: values.vendorName,
+        pan:
+          values.panno != null && String(values.panno).trim() !== ""
+            ? String(values.panno).toUpperCase()
+            : "",
+        cin: !values.cinno
           ? "--"
           : values.cinno === ""
           ? "--"
           : values.cinno.toUpperCase(),
-        term_days: values.paymentTerms ?? 30,
-        msme_status: values.msmeStatus,
-        msme_year: values.year,
-        msme_id: values.msmeId,
-        msme_type: values.type,
-        msme_activity: values.activity,
-        msme_effective_from: values.msmeEffectiveFrom || "--",
+        termDays: values.paymentTerms ?? 30,
+        msmeStatus: values.msmeStatus,
+        msmeYear: values.year,
+        msmeId: values.msmeId,
+        msmeType: values.type,
+        msmeActivity: values.activity,
+        msmeEffectiveFrom: values.msmeEffectiveFrom || "--",
         eInvoice: values.applicability,
         dateOfApplicability:
           values.applicability === "Y" ? values.dobApplicabilty : "--",
@@ -182,23 +211,229 @@ const AddVendor = () => {
         address: values.address,
         state: values.state?.value || values.state,
         city: values.city,
-        pincode: values.pincode,
-     fax: values.fax === "" ? "--" : values.fax,
+        pinCode: values.pincode,
+        fax: values.fax === "" ? "--" : values.fax,
         mobile: values.mobile,
-       email: values.email === "" ? "--" : values.email,
-        gstin: values.gstin.toUpperCase(),
-        transaction_type: values.transactionType,
-        account_no: values.accountNo,
-        ifs_code: values.ifsCode,
-        bank_name: values.bankName,
-        bank_branch: values.bankBranch,
-        ledger_currency: values.ledgerCurrency,
+        email: values.email === "" ? "--" : values.email,
+        gstin:
+          values.gstin != null && String(values.gstin).trim() !== ""
+            ? String(values.gstin).toUpperCase()
+            : "--",
+        transactionType: values.transactionType,
+        ledgerCurrency: values.ledgerCurrency,
+        bank: {
+          accountNo: values.accountNo,
+          ifsc: values.ifsCode,
+          name: values.bankName,
+          branch: values.bankBranch,
+        },
       },
     };
 
     formData.append("vendor", JSON.stringify(obj.vendor));
     formData.append("branch", JSON.stringify(obj.branch));
     setShowSubmitConfirmModal(formData);
+  };
+
+  const fetchGstDetailsForGstin = async (gstinValue) => {
+    setGstSearchLoading(true);
+    try {
+      const { data } = await imsAxios.get("/vendor/check/gstin/details", {
+        params: { gstin: gstinValue },
+      });
+
+      const currentGstin = normalizeGstinInput(
+        addVendorForm.getFieldValue("gstin")
+      );
+      if (currentGstin !== gstinValue) {
+        return;
+      }
+
+      const gstData = data?.data || data || {};
+      setGstDetails(gstData);
+      setShowAddressModal(false);
+
+      const primaryAddr =
+        gstData.pradr?.addr ||
+        (Array.isArray(gstData.adadr) && gstData.adadr[0]?.addr) ||
+        gstData.principalPlaceAddress ||
+        gstData.addr ||
+        gstData.address ||
+        {};
+
+      const vendorName =
+        gstData.tradeNam ||
+        gstData.tradeName ||
+        gstData.lgnm ||
+        gstData.legalName ||
+        gstData.trade_name ||
+        gstData.legal_name;
+
+      const addressString =
+        gstData.principalPlaceAddress ||
+        gstData.addr ||
+        [
+          primaryAddr.bnm,
+          primaryAddr.bno,
+          primaryAddr.st,
+          primaryAddr.loc,
+          primaryAddr.locality,
+          primaryAddr.dst,
+          primaryAddr.stcd,
+          primaryAddr.pncd,
+        ]
+          .filter(Boolean)
+          .join(", ");
+
+      const stateCode =
+        gstData.stateCode ||
+        gstData.state ||
+        primaryAddr.stcd ||
+        primaryAddr.state;
+
+      const city =
+        primaryAddr.loc ||
+        primaryAddr.locality ||
+        primaryAddr.dst ||
+        "";
+
+      const pincode =
+        primaryAddr.pncd ||
+        primaryAddr.pincode ||
+        primaryAddr.pin ||
+        primaryAddr.pincodeNumber ||
+        "";
+
+      const newValues = {};
+      if (vendorName) newValues.vendorName = vendorName;
+      if (addressString) newValues.address = addressString;
+      if (city) newValues.city = city;
+      if (pincode) newValues.pincode = pincode;
+      if (stateCode) {
+        newValues.state = { label: stateCode, value: stateCode };
+      }
+      if (gstData.pan) newValues.panno = gstData.pan.toUpperCase();
+
+      const vType = addVendorForm.getFieldValue("vendorType");
+      if (vType === "DOM") {
+        const einv =
+          gstData.einvoiceStatus ??
+          gstData.eInvoiceStatus ??
+          gstData.eInvoice;
+        if (einv != null && String(einv).trim() !== "") {
+          const ev = String(einv).trim().toLowerCase();
+          if (
+            ev === "yes" ||
+            ev === "y" ||
+            ev === "true" ||
+            ev === "1"
+          ) {
+            newValues.applicability = "Y";
+          } else if (
+            ev === "no" ||
+            ev === "n" ||
+            ev === "false" ||
+            ev === "0"
+          ) {
+            newValues.applicability = "N";
+          }
+        }
+      }
+
+      if (Object.keys(newValues).length > 0) {
+        addVendorForm.setFieldsValue(newValues);
+      }
+
+      lastFetchedGstinRef.current = gstinValue;
+      showToast("GST details fetched successfully", "success");
+    } catch (error) {
+      setGstDetails(null);
+      lastFetchedGstinRef.current = "";
+      showToast("Could not fetch GST details", "error");
+    } finally {
+      setGstSearchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (vendorType === "IMPT") {
+      if (gstFetchDebounceRef.current) {
+        clearTimeout(gstFetchDebounceRef.current);
+        gstFetchDebounceRef.current = null;
+      }
+      lastFetchedGstinRef.current = "";
+      setGstDetails(null);
+      return;
+    }
+
+    const normalized = normalizeGstinInput(gstinWatch);
+
+    if (gstFetchDebounceRef.current) {
+      clearTimeout(gstFetchDebounceRef.current);
+      gstFetchDebounceRef.current = null;
+    }
+
+    if (normalized.length < GSTIN_LENGTH) {
+      lastFetchedGstinRef.current = "";
+      setGstDetails(null);
+      return;
+    }
+
+    if (normalized === lastFetchedGstinRef.current) {
+      return;
+    }
+
+    gstFetchDebounceRef.current = setTimeout(() => {
+      gstFetchDebounceRef.current = null;
+      void fetchGstDetailsForGstin(normalized);
+    }, GSTIN_FETCH_DEBOUNCE_MS);
+
+    return () => {
+      if (gstFetchDebounceRef.current) {
+        clearTimeout(gstFetchDebounceRef.current);
+        gstFetchDebounceRef.current = null;
+      }
+    };
+  }, [gstinWatch, vendorType]); // eslint-disable-line react-hooks/exhaustive-deps -- auto-fetch only on gstin / vendor type
+
+  const handleCopyVendorName = () => {
+    const name = addVendorForm.getFieldValue("vendorName");
+    const text = name != null ? String(name).trim() : "";
+    if (!text) {
+      showToast("No vendor name to copy", "error");
+      return;
+    }
+    navigator.clipboard.writeText(text).then(
+      () => showToast("Vendor name copied", "success"),
+      () => showToast("Could not copy", "error")
+    );
+  };
+
+  const handleUseGstAddress = (addr) => {
+    if (!addr) return;
+
+    const addressString = [
+      addr.bnm,
+      addr.bno,
+      addr.st,
+      addr.loc,
+      addr.locality,
+      addr.dst,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    addVendorForm.setFieldsValue({
+      address: addressString,
+      city: addr.loc || addr.locality || addr.dst || "",
+      pincode: addr.pncd || "",
+      state: addr.stcd
+        ? { label: addr.stcd, value: addr.stcd }
+        : addVendorForm.getFieldValue("state"),
+    });
+
+    setShowAddressModal(false);
+    showToast("Address filled from selected GST address", "success");
   };
 
   const reset = async () => {
@@ -236,6 +471,7 @@ const AddVendor = () => {
 
     if (transactionType === "na") {
       addVendorForm.setFieldValue("accountNo", "N/A");
+      addVendorForm.setFieldValue("confirmAccountNo", "N/A");
       addVendorForm.setFieldValue("ifsCode", "N/A");
       addVendorForm.setFieldValue("bankName", "N/A");
       addVendorForm.setFieldValue("bankBranch", "N/A");
@@ -244,6 +480,9 @@ const AddVendor = () => {
       // Clear fields when user selects a real payment type.
       if (addVendorForm.getFieldValue("accountNo") === "N/A") {
         addVendorForm.setFieldValue("accountNo", "");
+      }
+      if (addVendorForm.getFieldValue("confirmAccountNo") === "N/A") {
+        addVendorForm.setFieldValue("confirmAccountNo", "");
       }
       if (addVendorForm.getFieldValue("ifsCode") === "N/A") {
         addVendorForm.setFieldValue("ifsCode", "");
@@ -267,6 +506,12 @@ const AddVendor = () => {
         layout="vertical"
         form={addVendorForm}
       >
+        <GstRegisteredAddressesModal
+          open={showAddressModal}
+          onCancel={() => setShowAddressModal(false)}
+          gstDetails={gstDetails}
+          onUseAddress={handleUseGstAddress}
+        />
         <Modal
           title="Submit Confirm"
           open={showSubmitConfirmModal}
@@ -304,11 +549,218 @@ const AddVendor = () => {
             <Row gutter={16}>
               <Col span={6}>
                 <Form.Item
+                  label="Vendor Type"
+                  name="vendorType"
+                  rules={rules.vendorType}
+                >
+                  <MySelect options={vendorTypeOptions} />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Divider style={{ margin: "4px 0 16px" }} />
+
+            {vendorType !== "IMPT" && (
+              <>
+                <Row gutter={16}>
+                  <Col span={24}>
+                    <Typography.Text
+                      type="secondary"
+                      style={{ fontSize: "0.8rem", display: "block" }}
+                    >
+                      GST details load automatically when you enter a valid{" "}
+                      {GSTIN_LENGTH}-character GSTIN (e.g. 06ABACS5056L1Z5).
+                    </Typography.Text>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="GST Number"
+                      name="gstin"
+                      required={vendorType === "DOM"}
+                      rules={[
+                        {
+                          validator: (_, value) => {
+                            const vType =
+                              addVendorForm.getFieldValue("vendorType");
+                            if (vType === "DOM" && !value) {
+                              return Promise.reject(
+                                new Error(
+                                  "GST Number is required for Domestic vendors"
+                                )
+                              );
+                            }
+                            return Promise.resolve();
+                          },
+                        },
+                      ]}
+                    >
+                      <Input
+                        maxLength={GSTIN_LENGTH}
+                        placeholder="e.g. 06ABACS5056L1Z5"
+                        suffix={
+                          gstSearchLoading ? <Spin size="small" /> : null
+                        }
+                        onChange={(e) => {
+                          const v = normalizeGstinInput(e.target.value);
+                          addVendorForm.setFieldValue("gstin", v);
+                        }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  {vendorType === "DOM" && (
+                    <>
+                      <Col span={6}>
+                        <Form.Item
+                          label="E-Invoice Applicability"
+                          name="applicability"
+                          rules={rules.applicability}
+                        >
+                          <MySelect options={msmeOptions} />
+                        </Form.Item>
+                      </Col>
+                      {einvoice === "Y" && (
+                        <Col span={12}>
+                          <Form.Item
+                            label="Date of Applicability"
+                            name="dobApplicabilty"
+                            rules={rules.dobApplicabilty}
+                          >
+                            <SingleDatePicker
+                              size="default"
+                              setDate={(value) =>
+                                addVendorForm.setFieldValue(
+                                  "dobApplicabilty",
+                                  value
+                                )
+                              }
+                            />
+                          </Form.Item>
+                        </Col>
+                      )}
+                    </>
+                  )}
+                </Row>
+
+                {gstDetails && (
+                  <Row gutter={16} style={{ marginTop: 8 }}>
+                    <Col span={16}>
+                      <div
+                        style={{
+                          border: "1px solid #f0f0f0",
+                          borderRadius: 4,
+                          padding: 8,
+                          background: "#fafafa",
+                          fontSize: 12,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        <div>
+                          {(gstDetails.tradeNam ||
+                            gstDetails.tradeName ||
+                            gstDetails.lgnm ||
+                            gstDetails.legalName ||
+                            gstDetails.trade_name ||
+                            gstDetails.legal_name ||
+                            "") && (
+                            <div>
+                              {(gstDetails.tradeNam ||
+                                gstDetails.tradeName ||
+                                gstDetails.lgnm ||
+                                gstDetails.legalName ||
+                                gstDetails.trade_name ||
+                                gstDetails.legal_name) ?? ""}
+                            </div>
+                          )}
+                          {(gstDetails.pradr?.addr ||
+                            gstDetails.principalPlaceAddress ||
+                            gstDetails.addr ||
+                            "") && (
+                            <div>
+                              {gstDetails.pradr?.addr
+                                ? [
+                                    gstDetails.pradr.addr.bnm,
+                                    gstDetails.pradr.addr.bno,
+                                    gstDetails.pradr.addr.st,
+                                    gstDetails.pradr.addr.loc,
+                                    gstDetails.pradr.addr.locality,
+                                    gstDetails.pradr.addr.dst,
+                                    gstDetails.pradr.addr.stcd,
+                                    gstDetails.pradr.addr.pncd,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(", ")
+                                : gstDetails.principalPlaceAddress ||
+                                  gstDetails.addr}
+                            </div>
+                          )}
+                          {(gstDetails.pradr?.addr?.stcd ||
+                            gstDetails.stateCode) && (
+                            <div>
+                              State:{" "}
+                              {gstDetails.pradr?.addr?.stcd ||
+                                gstDetails.stateCode}
+                            </div>
+                          )}
+                          {gstDetails.gstin && (
+                            <div>GSTIN: {gstDetails.gstin}</div>
+                          )}
+                          {(gstDetails.einvoiceStatus ??
+                            gstDetails.eInvoiceStatus ??
+                            gstDetails.eInvoice) != null &&
+                            String(
+                              gstDetails.einvoiceStatus ??
+                                gstDetails.eInvoiceStatus ??
+                                gstDetails.eInvoice
+                            ).trim() !== "" && (
+                            <div>
+                              E-Invoice status:{" "}
+                              {String(
+                                gstDetails.einvoiceStatus ??
+                                  gstDetails.eInvoiceStatus ??
+                                  gstDetails.eInvoice
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <Typography.Link
+                          style={{ fontSize: 12, color: "#1677ff" }}
+                          onClick={() => setShowAddressModal(true)}
+                        >
+                          ...more
+                        </Typography.Link>
+                      </div>
+                    </Col>
+                  </Row>
+                )}
+              </>
+            )}
+
+            <Row gutter={16}>
+              <Col span={6}>
+                <Form.Item
                   label="Vendor Name"
                   name="vendorName"
                   rules={rules.vendorName}
                 >
-                  <Input />
+                  <Input
+                    suffix={
+                      <Tooltip title="Copy vendor name">
+                        <CopyOutlined
+                          style={{
+                            cursor: "pointer",
+                            color: "rgba(0,0,0,0.45)",
+                          }}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleCopyVendorName();
+                          }}
+                        />
+                      </Tooltip>
+                    }
+                  />
                 </Form.Item>
               </Col>
               <Col span={6}>
@@ -450,59 +902,6 @@ const AddVendor = () => {
         </Row>
 
         <Divider />
-        <Divider />
-        <Row gutter={16}>
-          <Col span={4}>
-            <Descriptions
-              size="small"
-              title={<p style={{ fontSize: "0.8rem" }}>GST Details</p>}
-            >
-              <Descriptions.Item
-                contentStyle={{
-                  fontSize: window.innerWidth < 1600 && "0.7rem",
-                }}
-              >
-                Provide GSt Details
-              </Descriptions.Item>
-            </Descriptions>
-          </Col>
-          <Col span={12}>
-            <Row gutter={16}>
-              <Col span={8}>
-                <Form.Item label="GST Number" name="gstin" rules={rules.gstin}>
-                  <Input />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item
-                  label="E-Invoice Applicability"
-                  name="applicability"
-                  rules={rules.applicability}
-                >
-                  <MySelect options={msmeOptions} />
-                </Form.Item>
-              </Col>
-              {einvoice === "Y" && (
-                <Col span={8}>
-                  <Form.Item
-                    label="Date of Applicability"
-                    name="dobApplicabilty"
-                    rules={rules.dobApplicabilty}
-                  >
-                    <SingleDatePicker
-                      size="default"
-                      setDate={(value) =>
-                        addVendorForm.setFieldValue("dobApplicabilty", value)
-                      }
-                    />
-                  </Form.Item>
-                </Col>
-              )}
-            </Row>
-          </Col>
-        </Row>
-
-        <Divider />
         <Row gutter={16}>
           <Col span={4}>
             <Descriptions
@@ -588,25 +987,20 @@ const AddVendor = () => {
               </Col>
               <Col span={20}>
                 <Row gutter={16}>
-                  <Col span={24}>
+                  <Col span={6}>
                     <Form.Item label="Type" name="transactionType">
                       <MySelect options={transactionTypeOptions} />
                     </Form.Item>
                   </Col>
-
-                  <Col span={12}>
-                    <Form.Item label="A/c No" name="accountNo">
-                      <Input />
+                  <Col span={6}>
+                    <Form.Item label="Currency of Ledger" name="ledgerCurrency">
+                      <MySelect options={currencies} />
                     </Form.Item>
                   </Col>
+                </Row>
 
-                  <Col span={12}>
-                    <Form.Item label="IFS Code" name="ifsCode">
-                      <Input />
-                    </Form.Item>
-                  </Col>
-
-                  <Col span={12}>
+                <Row gutter={16}>
+                  <Col span={8}>
                     <Form.Item label="Bank Name" name="bankName">
                       <MySelect
                         placeholder="Select bank"
@@ -614,16 +1008,46 @@ const AddVendor = () => {
                       />
                     </Form.Item>
                   </Col>
-
-                  <Col span={12}>
+                  <Col span={8}>
+                    <Form.Item label="IFS Code" name="ifsCode">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
                     <Form.Item label="Bank Branch" name="bankBranch">
                       <Input />
                     </Form.Item>
                   </Col>
+                </Row>
 
-                  <Col span={24}>
-                    <Form.Item label="Currency of Ledger" name="ledgerCurrency">
-                      <MySelect options={currencies} />
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Account Number" name="accountNo">
+                      <Input.Password
+                        autoComplete="new-password"
+                        visibilityToggle={false}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Confirm Account Number"
+                      name="confirmAccountNo"
+                      dependencies={["accountNo"]}
+                      rules={[
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (!value || getFieldValue("accountNo") === value) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error("Account numbers do not match")
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input autoComplete="off" />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -701,6 +1125,7 @@ const AddVendor = () => {
   );
 };
 const initialValues = {
+  vendorType: undefined,
   paymentTerms: 30,
   vendorName: "",
   panno: "",
@@ -713,6 +1138,7 @@ const initialValues = {
   address: "",
   transactionType: undefined,
   accountNo: "",
+  confirmAccountNo: "",
   ifsCode: "",
   bankName: "",
   bankBranch: "",
@@ -724,6 +1150,7 @@ const initialValues = {
 
 const rules = {
   // keep validation rules aligned with ims-frontend when enabled
+  vendorType: [{ required: true, message: "Please select Vendor Type" }],
 };
 
 export default AddVendor;
