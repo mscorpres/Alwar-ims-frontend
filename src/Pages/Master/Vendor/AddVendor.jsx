@@ -112,6 +112,80 @@ const AddVendor = () => {
     }
   };
 
+  const normalizeStateToken = (v) =>
+    v == null ? "" : String(v).trim().toLowerCase();
+
+  const mapStateOptionToFieldValue = (opt) => ({
+    label: opt?.text ?? opt?.label ?? opt?.value,
+    value: opt?.value ?? opt?.id ?? "",
+  });
+
+  const findStateInCurrentOptions = (stateInput) => {
+    const token = normalizeStateToken(stateInput);
+    if (!token) return null;
+    return (
+      asyncOptions.find(
+        (o) =>
+          normalizeStateToken(o?.value) === token ||
+          normalizeStateToken(o?.text) === token ||
+          normalizeStateToken(o?.label) === token
+      ) || null
+    );
+  };
+
+  const resolveStateFieldValue = async (stateInput) => {
+    const raw = stateInput == null ? "" : String(stateInput).trim();
+    if (!raw) return null;
+
+    const fromLoaded = findStateInCurrentOptions(raw);
+    if (fromLoaded) return mapStateOptionToFieldValue(fromLoaded);
+
+    try {
+      const { data } = await imsAxios.post("/backend/stateList", {
+        search: raw,
+      });
+      const fetched =
+        Array.isArray(data) && data.length > 0
+          ? data.map((d) => ({ text: d.text, value: d.id }))
+          : [];
+
+      if (fetched.length > 0) {
+        setAsyncOptions((prev) => {
+          const merged = [...prev];
+          fetched.forEach((item) => {
+            if (
+              !merged.some(
+                (p) =>
+                  normalizeStateToken(p?.value) ===
+                    normalizeStateToken(item.value) ||
+                  normalizeStateToken(p?.text) ===
+                    normalizeStateToken(item.text)
+              )
+            ) {
+              merged.push(item);
+            }
+          });
+          return merged;
+        });
+
+        const token = normalizeStateToken(raw);
+        const exact =
+          fetched.find(
+            (o) =>
+              normalizeStateToken(o?.value) === token ||
+              normalizeStateToken(o?.text) === token
+          ) || fetched[0];
+
+        return mapStateOptionToFieldValue(exact);
+      }
+    } catch (e) {
+      // no-op: fallback below
+    }
+
+    // Fallback keeps existing behavior if API lookup doesn't return a match.
+    return { label: raw, value: raw };
+  };
+
   const getCurrencies = async () => {
     try {
       const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
@@ -150,7 +224,7 @@ const AddVendor = () => {
     setLoading("submit");
     setShowSubmitConfirmModal(false);
     const response = await imsAxios.post(
-      "/vendor/addVendor",
+      "/vendor/add",
       showSubmitConfirmModal
     );
     setLoading(false);
@@ -310,7 +384,10 @@ const AddVendor = () => {
       if (city) newValues.city = city;
       if (pincode) newValues.pincode = pincode;
       if (stateCode) {
-        newValues.state = { label: stateCode, value: stateCode };
+        const resolvedState = await resolveStateFieldValue(stateCode);
+        if (resolvedState) {
+          newValues.state = resolvedState;
+        }
       }
       if (gstData.pan) newValues.panno = gstData.pan.toUpperCase();
 
@@ -409,7 +486,7 @@ const AddVendor = () => {
     );
   };
 
-  const handleUseGstAddress = (addr) => {
+  const handleUseGstAddress = async (addr) => {
     if (!addr) return;
 
     const addressString = [
@@ -423,13 +500,15 @@ const AddVendor = () => {
       .filter(Boolean)
       .join(", ");
 
+    const resolvedState = await resolveStateFieldValue(
+      addr.stcd || addr.state || ""
+    );
+
     addVendorForm.setFieldsValue({
       address: addressString,
       city: addr.loc || addr.locality || addr.dst || "",
       pincode: addr.pncd || "",
-      state: addr.stcd
-        ? { label: addr.stcd, value: addr.stcd }
-        : addVendorForm.getFieldValue("state"),
+      state: resolvedState || addVendorForm.getFieldValue("state"),
     });
 
     setShowAddressModal(false);
