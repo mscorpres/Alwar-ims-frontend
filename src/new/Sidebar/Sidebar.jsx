@@ -7,6 +7,12 @@ import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import { PushPin } from "@mui/icons-material";
 
+/** Chevron graphic for nested sub-menu rows (Component and deeper); parents use menu icons larger. */
+const MENU_CHILD_CHEVRON_SRC = `${import.meta.env.BASE_URL}assets/images/menu-child-chevron.svg`;
+const SUB_MENU_PARENT_LEAD_SIZE = 18;
+const SUB_MENU_CHILD_CHEVRON_SIZE = 14;
+const SUB_MENU_DEEP_CHEVRON_SIZE = 12;
+
 const SIDEBAR_INJECTED_STYLES = `
           @keyframes slideInRight {
             from {
@@ -233,10 +239,54 @@ const SidebarInner = ({
     ? filteredSidebar2FromConfig
     : filteredItems1;
 
-  const renderList = (arr, alwaysShowText = false, isSubMenu = false) => {
+  /** Each nested menu level steps down one tier (Master → Component → links → deeper). */
+  const menuTierFontSize = (nestLevel) => {
+    if (nestLevel <= 0) return 14;
+    if (nestLevel === 1) return 12;
+    if (nestLevel === 2) return 11;
+    return 10;
+  };
+
+  const subMenuChevronImg = (px) => (
+    <img
+      src={MENU_CHILD_CHEVRON_SRC}
+      alt=""
+      width={px}
+      height={px}
+      style={{
+        display: "block",
+        width: px,
+        height: px,
+        objectFit: "contain",
+        flexShrink: 0,
+      }}
+      draggable={false}
+    />
+  );
+
+  const renderList = (
+    arr,
+    alwaysShowText = false,
+    isSubMenu = false,
+    nestLevel = 0,
+  ) => {
     const shouldShowText = isSubMenu
       ? alwaysShowText && !isSecondSidebarCollapsed
       : showSideBar;
+
+    const headingFontSize = menuTierFontSize(nestLevel);
+    /** Leaf rows use the size of their depth under the parent heading (same tier index as sibling headings). */
+    const leafFontSize = menuTierFontSize(nestLevel);
+    const headingPlayArrowSize =
+      isSubMenu && nestLevel === 0 ? 18 : isSubMenu ? 16 : 20;
+    /** Link rows always use menu icons; the image chevron is only for accordion headings (see isHeading branch). */
+    const leafIconBoxSize = !isSubMenu
+      ? 18
+      : nestLevel <= 1
+        ? 18
+        : nestLevel === 2
+          ? 16
+          : 14;
 
     return (
       <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
@@ -260,7 +310,7 @@ const SidebarInner = ({
                   style={{
                     padding: "16px 16px 8px 16px",
                     color: "#474545",
-                    fontSize: 13,
+                    fontSize: headingFontSize,
                     fontWeight: "600",
                     textTransform: "uppercase",
                     letterSpacing: "0.5px",
@@ -283,11 +333,49 @@ const SidebarInner = ({
                     }
                   }}
                 >
-                  <span>{c.label}</span>
+                  {isSubMenu ? (
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        flex: 1,
+                        minWidth: 0,
+                      }}
+                    >
+                      {nestLevel === 0 ? (
+                        <span
+                          style={{
+                            width: SUB_MENU_PARENT_LEAD_SIZE,
+                            height: SUB_MENU_PARENT_LEAD_SIZE,
+                            display: "inline-flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            fontSize: SUB_MENU_PARENT_LEAD_SIZE,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {c.icon}
+                        </span>
+                      ) : (
+                        subMenuChevronImg(
+                          nestLevel === 1
+                            ? SUB_MENU_CHILD_CHEVRON_SIZE
+                            : SUB_MENU_DEEP_CHEVRON_SIZE,
+                        )
+                      )}
+                      <span style={{ lineHeight: 1.3 }}>{c.label}</span>
+                    </span>
+                  ) : (
+                    <span>{c.label}</span>
+                  )}
                   {hasChildren && (
                     <PlayArrowIcon
-                      fontSize="small"
                       style={{
+                        fontSize: headingPlayArrowSize,
+                        width: headingPlayArrowSize,
+                        height: headingPlayArrowSize,
+                        flexShrink: 0,
                         transform: isHeadingExpanded
                           ? "rotate(90deg)"
                           : "rotate(0deg)",
@@ -298,7 +386,12 @@ const SidebarInner = ({
                 </div>
                 {hasChildren && isHeadingExpanded && (
                   <div style={{ padding: "8px 0" }}>
-                    {renderList(c.children, true, true)}
+                    {renderList(
+                      c.children,
+                      alwaysShowText,
+                      isSubMenu,
+                      nestLevel + 1,
+                    )}
                   </div>
                 )}
               </li>
@@ -337,7 +430,7 @@ const SidebarInner = ({
                   display: "flex",
                   alignItems: "center",
                   gap: shouldShowText ? 12 : 0,
-                  fontSize: 13,
+                  fontSize: leafFontSize,
                   fontWeight: "600",
                   backgroundColor:
                     isActive || isPathActive
@@ -355,12 +448,14 @@ const SidebarInner = ({
               >
                 <span
                   style={{
-                    width: 18,
-                    height: 18,
+                    width: leafIconBoxSize,
+                    height: leafIconBoxSize,
+                    minWidth: leafIconBoxSize,
                     display: "inline-flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    fontSize: 18,
+                    fontSize: leafIconBoxSize,
+                    flexShrink: 0,
                   }}
                 >
                   {c.icon}
@@ -750,11 +845,11 @@ const SidebarInner = ({
             >
               {!isSecondSidebarCollapsed ? (
                 <div style={{ padding: "8px 0" }}>
-                  {renderList(hoveredItem.children, true, true)}
+                  {renderList(hoveredItem.children, true, true, 0)}
                 </div>
               ) : (
                 <div style={{ padding: "8px 0" }}>
-                  {renderList(hoveredItem.children, false, true)}
+                  {renderList(hoveredItem.children, false, true, 0)}
                 </div>
               )}
             </div>
