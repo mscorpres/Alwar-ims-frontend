@@ -51,6 +51,7 @@ import {
   getCurrentIndianFinancialYearSession,
   LEGACY_SESSION_CODES,
 } from "./utils/indianFinancialYear.js";
+import SupportFooter from "./Components/footer/SupportFooter.jsx";
 
 const App = () => {
   const { showToast } = useToast();
@@ -808,7 +809,7 @@ dispatch(logoutUser());
   }
 
   return (
-    <div style={{ height: "100vh", backgroundColor: isAuthShellPath ? "#fcf9f7" : "white" }}>
+    <div style={{ height: "calc(100vh - 0px)", backgroundColor: isAuthShellPath ? "#fcf9f7" : "white" }}>
       <Layout
         style={{
           width: "100%",
@@ -988,7 +989,7 @@ dispatch(logoutUser());
                 minWidth: 0,
               }}
             >
-              <Content style={{ height: "100%" }}>
+              <Content style={{ height: "100%", display: "flex", flexDirection: "column", minHeight: 0 }}>
                 <InternalNav links={internalLinks} />
 
                 <div
@@ -1009,24 +1010,36 @@ dispatch(logoutUser());
                       testPage && user?.type != "developer" ? "none" : "all",
 
                     overflowX: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    minHeight: 0,
                   }}
                 >
-                  <Routes>
-                    {filteredRoutes.map((route, index) => (
-                      <Route
-                        key={index}
-                        path={route.path}
-                        element={<route.main />}
-                      />
-                    ))}
-                  </Routes>
-                  {pathname === "/" && <AlwarFooter />}
+                  <div style={{ flex: 1, minHeight: 0, overflow: "auto", overflowX: "hidden" }}>
+                    <Routes>
+                      {filteredRoutes.map((route, index) => (
+                        <Route
+                          key={index}
+                          path={route.path}
+                          element={<route.main />}
+                        />
+                      ))}
+                    </Routes>
+                    {pathname === "/" && <AlwarFooter />}
+                  </div>
+
+                  {pathname !== "/" && <SupportFooter />}
                 </div>
               </Content>
             </Layout>
           </div>
         </Layout>
+        
       </Layout>
+     
+         
+  
+  
 
       <Modal
         title={null}
