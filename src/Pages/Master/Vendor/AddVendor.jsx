@@ -316,6 +316,10 @@ const AddVendor = () => {
         params: { gstin: gstinValue },
       });
 
+      if (data?.success === false || data?.status === "error") {
+        throw new Error(data?.message || "Could not fetch GST details from NIC");
+      }
+
       const currentGstin = normalizeGstinInput(
         addVendorForm.getFieldValue("gstin")
       );
@@ -324,6 +328,9 @@ const AddVendor = () => {
       }
 
       const gstData = data?.data || data || {};
+      if (!gstData || Object.keys(gstData).length === 0) {
+        throw new Error("No GST details found for this GSTIN");
+      }
       setGstDetails(gstData);
       setShowAddressModal(false);
 
@@ -426,7 +433,7 @@ const AddVendor = () => {
     } catch (error) {
       setGstDetails(null);
       lastFetchedGstinRef.current = "";
-      showToast("Could not fetch GST details", "error");
+      showToast(error?.message || "Could not fetch GST details", "error");
     } finally {
       setGstSearchLoading(false);
     }
