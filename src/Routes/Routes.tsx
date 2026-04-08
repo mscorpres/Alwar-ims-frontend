@@ -4,6 +4,8 @@ import {
   Material,
   PendingApproval,
   Login,
+  SignUp,
+  LoginOtp,
   // MaterialTransaction,
   TransactionIn,
   TransactionOut,
@@ -67,6 +69,7 @@ import {
   CreateJW,
   POAnalysis,
   JwRmChallan,
+  RMPartCodeConversion,
   JwIssue,
   JwsfInward,
   JwrmReturn,
@@ -265,6 +268,14 @@ const Routes = [
   {
     path: "/login",
     main: () => <Login />,
+  },
+  {
+    path: "/login/otp",
+    main: () => <LoginOtp />,
+  },
+  {
+    path: "/signup",
+    main: () => <SignUp />,
   },
   {
     path: "/ims/login",
@@ -1353,6 +1364,10 @@ const Routes = [
   {
     path: "/warehouse/part-code-conversion/report",
     main: () => <PartCodeConversionReport />,
+  },
+  {
+    path: "/warehouse/rm-part-code-conversion",
+    main: () => <RMPartCodeConversion />,
   },
   {
     path: "/warehouse/e-way/:typeId/:jwId",

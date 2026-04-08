@@ -29,7 +29,7 @@ export default function ComponentImages({ showImages, setShowImages }) {
       component: showImages.partNumber,
     });
     if (response.success) {
-      setImages(data.data);
+      setImages(response.data);
     } else {
       setImages([]);
       showToast(response.message?.msg || response.message, "error");

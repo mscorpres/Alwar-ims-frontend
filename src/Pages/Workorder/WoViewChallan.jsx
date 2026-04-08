@@ -674,16 +674,12 @@ const WoViewChallan = () => {
 
   return (
     <>
-      <div style={{ height: "90%", paddingRight: 10, paddingLeft: 10 }}>
+      <div style={{ height: "calc(100vh - 180px)", margin: "10px" }}>
         <Col span={24}>
           <Row>
             <Col>
               <div
-                style={{
-                  paddingBottom: "10px",
-                  paddingTop: "10px",
-                  paddingLeft: "2px",
-                }}
+          
               >
                 <Space>
                   <div style={{ width: 200 }}>
@@ -750,21 +746,8 @@ const WoViewChallan = () => {
             </Col>
           </Row>
         </Col>
-        <div style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}>
-          {/* {challantype === "Scrape Challan" ? (
-            <MyDataTable
-              loading={loading === "fetch"}
-              data={rows}
-              columns={[actionColumn, ...scrapeColumns]}
-            />
-          ) : (
-            <MyDataTable
-              loading={loading === "fetch"}
-              data={rows}
-              columns={[actionColumn, ...columns]}
-            />
-
-          )} */}
+        <div style={{ height: "calc(100vh - 180px)", marginTop: 10 }}>
+      
           <MyDataTable
             loading={loading === "fetch"}
             data={rows}

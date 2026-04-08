@@ -1,4 +1,6 @@
 export { default as Login } from "./Login/Login";
+export { default as SignUp } from "./Login/SignUp";
+export { default as LoginOtp } from "./Login/LoginOtp";
 export { default as ProductDetail } from "../Pages/Store/ProductDetail";
 // export { default as MaterialTransaction } from "./Store/MaterialTransaction/MaterialTransaction";
 
@@ -160,7 +162,7 @@ export { default as MapProcesses } from "./MES/Process/Map";
 
 // Part code conversion
 export { default as PartCodeConversion } from "../Pages/Store/PartCodeConversion";
-
+export { default as RMPartCodeConversion } from "./Store/RMPartCodeConversion/index.jsx";
 //challan window Branch Transfer
 export { default as CreateBranchTransferChallan } from "./Store/branchtransfer/CreateDC/CreateBranchTransferChallan.jsx";
 export { default as ViewBranchTransfer } from "./Store/branchtransfer/ViewBranchTransfer.jsx";

@@ -419,12 +419,12 @@ const CreateScrapeChallan = () => {
   return (
     <>
       <Form
-        style={{ height: "100%" }}
+        style={{ height: "calc(100vh - 120px)", margin:10 }}
         layout="vertical"
         form={challanForm}
         initialValues={defaultValues}
       >
-        <Row gutter={8} style={{ height: "95%", overflow: "hidden" }}>
+        <Row gutter={8} style={{ height: "100%", overflow: "hidden" }}>
           <Col span={6} style={{ height: "90%", overflow: "hidden" }}>
             <Row gutter={[0, 6]} style={{ overflow: "auto", height: "100%" }}>
               <Col span={24}>
@@ -595,8 +595,8 @@ const CreateScrapeChallan = () => {
             </Row>
           </Col>
 
-          <Col span={18}>
-            <Card style={{ height: "100%", overflow: "hidden" }}>
+          <Col span={18} style={{ height: "90%", overflow: "hidden" }}>
+            <Card style={{ height: "calc(100vh - 180px)", overflow: "hidden" }}>
               <FormTable2
                 removableRows={true}
                 nonRemovableColumns={1}

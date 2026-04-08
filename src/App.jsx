@@ -15,7 +15,6 @@ import "buffer";
 import AppHeader from "./new/Header/AppHeader.jsx";
 import NotificationDropdown from "./Components/NotificationDropdown/NotificationDropdown";
 import {
-  logout,
   setNotifications,
   setTestPages,
   setCompanyBranch,
@@ -44,9 +43,14 @@ import { imsAxios } from "./axiosInterceptor";
 import internalLinks from "./Pages/internalLinks.jsx";
 import TicketsModal from "./Components/TicketsModal/TicketsModal";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
-
+import { logoutUser } from "./Features/loginSlice/logoutSlice.js";
 import { useToast } from "./hooks/useToast.js";
 import AlwarFooter from "./Components/footer/AlwarFooter.jsx";
+import {
+  buildMergedSessionSelectOptions,
+  getCurrentIndianFinancialYearSession,
+  LEGACY_SESSION_CODES,
+} from "./utils/indianFinancialYear.js";
 
 const App = () => {
   const { showToast } = useToast();
@@ -55,6 +59,7 @@ const App = () => {
   const sessionFromUrl = searchParams.get("session");
   const branchFromUrl = searchParams.get("branch");
   const comFromUrl = searchParams.get("company");
+  const type = searchParams.get("type")
   const { user, testPages } = useSelector((state) => state.login);
 
 
@@ -76,9 +81,23 @@ const App = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showSideBar, setShowSideBar] = useState(false);
-  const [loadingSwitch, setLoadingSwitch] = useState(false);
+  const isSwitchFlow = Boolean(
+    tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl && type,
+  );
+  const [loadingSwitch, setLoadingSwitch] = useState(isSwitchFlow);
   const [newNotification, setNewNotification] = useState(null);
   const { pathname } = useLocation();
+
+  const authPublicPaths = React.useMemo(
+    () =>
+      new Set(["/login", "/signup", "/login/otp", "/ims/login", "/first-login"]),
+    [],
+  );
+  const isAuthPublicPath = (p) => authPublicPaths.has(p);
+  const isAuthShellPath =
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/login/otp";
     
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
@@ -100,7 +119,7 @@ const App = () => {
   const [hisList, setHisList] = useState([]);
   const logoutHandler = () => {
     setShowBlackScreen(false);
-    dispatch(logout());
+dispatch(logoutUser());
   };
 
   const handleSelectCompanyBranch = (value) => {
@@ -189,13 +208,15 @@ const App = () => {
     };
   }, []);
 
-  const fetchUserDeatils = async (token, session, com, branch) => {
+  const fetchUserDeatils = async (token, session, com, branch, type) => {
     setLoadingSwitch(true);
+    localStorage.setItem("switchInProgress", "1");
 
     try {
       const response = await imsAxios.get(
-        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}`,
+        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}&type=${type}`,
       );
+
       if (response?.success) {
         const payload = response?.data;
         const obj = {
@@ -219,25 +240,25 @@ const App = () => {
         localStorage.setItem("loggedInUser", JSON.stringify(obj));
         dispatch(setUser(obj));
         if (payload.settings) dispatch(setSettings(payload.settings));
-        setLoadingSwitch(false);
         setSearchParams({}, { replace: true });
       } else {
-        setLoadingSwitch(false);
         showToast(response?.message, "error");
         window.location.replace("https://oakter.mscorpres.com/");
       }
     } catch (error) {
-      setLoadingSwitch(false);
-      showToast(response?.message, "error");
+      showToast(error?.message, "error");
       window.location.replace("https://oakter.mscorpres.com/");
+    } finally {
+      localStorage.removeItem("switchInProgress");
+      setLoadingSwitch(false);
     }
   };
 
   useEffect(() => {
-    if (tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl) {
-      fetchUserDeatils(tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl);
+    if (tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl && type) {
+      fetchUserDeatils(tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type);
     }
-  }, [tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl]);
+  }, [tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type]);
 
   useEffect(() => {
     if (Notification.permission == "default") {
@@ -248,7 +269,7 @@ const App = () => {
         setShowSideBar(false);
       }
     });
-    if (!user) {
+    if (!user && !isAuthPublicPath(pathname)) {
       navigate("/login");
     }
     if (user) {
@@ -420,7 +441,7 @@ const App = () => {
     }
   }, []);
   useEffect(() => {
-    if (!user) {
+    if (!user && !isAuthPublicPath(pathname)) {
       navigate("/login");
     } else if (user) {
       let branch = JSON.parse(
@@ -431,22 +452,27 @@ const App = () => {
       }
       // handleSelectSession("23-24");
     }
-  }, [user]);
+  }, [user, pathname]);
+
   useEffect(() => {
-    if (pathname === "/login" && user) {
-      const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
-      if (user.passwordChanged === "P") {
-        navigate("/first-login");
-      } else {
-        navigate(link ?? "/");
-      }
+    if (!isAuthShellPath || !user) return;
+    const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
+    if (user.passwordChanged === "P") {
+      navigate("/first-login");
+    } else {
+      navigate(link ?? "/");
     }
+  }, [user, pathname, isAuthShellPath, navigate]);
+
+  useEffect(() => {
     if (user && user.token) {
       const tokenToUse = localStorage.getItem("newToken") || user.token;
-      imsAxios.defaults.headers["x-csrf-token"] = tokenToUse;
+      imsAxios.defaults.headers["Authorization"] = `${tokenToUse}`;
+
       imsAxios.defaults.headers["Company-Branch"] =
         user.company_branch || "BRALWR36";
-      imsAxios.defaults.headers["Session"] = user.session || "25-26";
+      imsAxios.defaults.headers["Session"] =
+        user.session || getCurrentIndianFinancialYearSession();
       socket.emit("fetch_notifications", {
         source: "react",
       });
@@ -707,7 +733,7 @@ const App = () => {
   };
 
   const options = [{ label: "B36 [ALWAR]", value: "BRALWR36" }];
-  const sessionOptions = [{ label: "Session 25-26", value: "25-26" }];
+  const sessionOptions = buildMergedSessionSelectOptions(LEGACY_SESSION_CODES);
 
   const locationBranchOptions = {
     alwar: [{ label: "B36 [ALWAR]", value: "BRALWR36" }],
@@ -736,6 +762,7 @@ const App = () => {
       urlParams.append("company", company);
       urlParams.append("branch", branch);
       urlParams.append("session", session);
+      urlParams.append("type","switch")
     }
 
     const redirectUrl = `${targetUrl}?${urlParams.toString()}`;
@@ -781,7 +808,7 @@ const App = () => {
   }
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "100vh", backgroundColor: isAuthShellPath ? "#fcf9f7" : "white" }}>
       <Layout
         style={{
           width: "100%",
@@ -967,13 +994,13 @@ const App = () => {
                 <div
                   style={{
                     height: (() => {
-                      const headerHeight = pathname === "/login" ? 10 : 50;
+                      const headerHeight = isAuthShellPath ? 10 : 50;
                       const bannerHeight = isBannerVisible ? 0 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
-                        pathname === "/auth/profile" || pathname === "/login"
+                        pathname === "/auth/profile" || isAuthShellPath
                           ? 0
-                          : 50;
+                          :50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",

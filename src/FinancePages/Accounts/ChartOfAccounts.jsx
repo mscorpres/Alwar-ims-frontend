@@ -210,7 +210,7 @@ export default function ChartOfAccounts() {
           <Col span={20}>
             {/* <Card size="small" style={{ height: "100%" }}> */}
               <TableContainer sx={{ maxHeight: "calc(100vh - 210px)" }}>
-                {loading && <Loading size="large" />}
+                {loading && <Loading />}
                 <Table
                   stickyHeader
                   sx={{ width: "100%", backgroundColor:"#f1f7fc" }}

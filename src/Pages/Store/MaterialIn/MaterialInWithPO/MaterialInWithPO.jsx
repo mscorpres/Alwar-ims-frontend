@@ -590,7 +590,7 @@ export default function MaterialInWithPO({}) {
       field: "c_partno",
       renderCell: ({ row }) => <ToolTipEllipses text={row.c_partno} />,
       sortable: false,
-      width: 80,
+      width: 120,
     },
     {
       headerName: "MFG Code ",
@@ -611,7 +611,7 @@ export default function MaterialInWithPO({}) {
       field: "gstqty",
       sortable: false,
       renderCell: (params) => QuantityCell(params, inputHandler),
-      width: 120,
+      width: 220,
     },
     {
       headerName: "Pending / Ord. QTY",
@@ -762,7 +762,7 @@ export default function MaterialInWithPO({}) {
           placeholder="Select Vendor..."
         />
       </div>
-      <div style={{ width: 150 }}>
+      <div style={{ width: 200 }}>
         <Input
           allowClear
           placeholder="PO Number"
@@ -852,7 +852,7 @@ export default function MaterialInWithPO({}) {
                 placeholder="Select Vendor..."
               />
             </div>
-            <div style={{ width: 150 }}>
+            <div style={{ width: 200 }}>
               <Input
                 allowClear
                 placeholder="PO Number"

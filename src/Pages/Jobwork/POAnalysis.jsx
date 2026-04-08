@@ -225,17 +225,7 @@ const POAnalysis = () => {
                   />
                 )}
               </Form>
-              <Row justify="end" style={{marginTop:8}}>
-                <Space>
-                  <CommonIcons
-                    action="downloadButton"
-                    tooltip="Download CSV"
-                    onClick={() =>
-                      downloadCSV(rows, columns, "PO Analysis Report")
-                    }
-                    disabled={rows.length == 0}
-                  />
-                </Space>
+              <Row justify="end" style={{ marginTop: 8 }}>
                 <Space>
                   {wise?.value === "vendorwise" && (
                     <Tooltip title="Download vendor-wise report">
@@ -250,6 +240,17 @@ const POAnalysis = () => {
                   <MyButton variant="search" type="primary" onClick={getRows}>
                     Fetch
                   </MyButton>
+                  {rows.length > 0 && (
+                    <Space>
+                      <CommonIcons
+                        action="downloadButton"
+                        tooltip="Download CSV"
+                        onClick={() =>
+                          downloadCSV(rows, columns, "PO Analysis Report")
+                        }
+                      />
+                    </Space>
+                  )}
                 </Space>
               </Row>
             </Card>

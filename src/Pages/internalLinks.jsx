@@ -384,8 +384,9 @@ const links = [
   ],
   // vendor master links
   [
-    { routeName: "Add Vendor", routePath: "/create-vendor" },
+  
     { routeName: "Vendor", routePath: "/vendor" },
+      { routeName: "Add Vendor", routePath: "/create-vendor" },
   ],
   // MR approved transactionlinks
   [
@@ -647,11 +648,15 @@ const links = [
   //
   [
     {
-      routeName: "Part Code Conversion",
+      routeName: "SF Part Code Conversion",
       routePath: "/warehouse/part-code-conversion",
     },
 
     // to be added
+    {
+      routeName: "RM Part Code Conversion",
+      routePath: "/warehouse/rm-part-code-conversion",
+    },
     {
       routeName: "Part Code Conversion Report",
       routePath: "/warehouse/part-code-conversion/report",

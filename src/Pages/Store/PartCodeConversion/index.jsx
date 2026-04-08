@@ -335,6 +335,7 @@ const PartCodeConversion = () => {
       const response = await imsAxios.post("/conversion/saveConversion", {
         ...payload,
         ...remarks,
+        type:"sf"
       });
       const { data } = response;
      
@@ -716,4 +717,4 @@ const defaultValues = {
   qtyOut: "",
   locationOut: null,
 };
-export default PartCodeConversion;
+export default PartCodeConversion; 

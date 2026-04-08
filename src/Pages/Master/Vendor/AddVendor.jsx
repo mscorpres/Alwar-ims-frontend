@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import {
   Row,
@@ -9,77 +9,128 @@ import {
   Divider,
   Modal,
   InputNumber,
-  Button,
   Typography,
 } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import NavFooter from "../../../Components/NavFooter";
 import { imsAxios } from "../../../axiosInterceptor";
-import UploadDocs from "../../Store/MaterialIn/MaterialInWithPO/UploadDocs";
 import MySelect from "../../../Components/MySelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import SingleProduct from "./SingleProduct";
+import { validatePAN } from "../../../utils/general";
+import { getVendorBranchBankOptions } from "./vendorBranchBankOptions";
+import { mergeMsmeYearOptions } from "../../../utils/indianFinancialYear";
+
+const msmeOptions = [
+  { text: "Yes", value: "Y" },
+  { text: "No", value: "N" },
+];
+const MSME_YEAR_LEGACY = [
+  { text: "2023-2024", value: "2023-2024" },
+  { text: "2024-2025", value: "2024-2025" },
+  { text: "2025-2026", value: "2025-2026" },
+  { text: "2026-2027", value: "2026-2027" },
+];
+const msmeYearOptions = mergeMsmeYearOptions(MSME_YEAR_LEGACY);
+const msmeTypeOptions = [
+  { text: "Micro", value: "Micro" },
+  { text: "Small", value: "Small" },
+  { text: "Medium", value: "Medium" },
+];
+const msmeActivityOptions = [
+  { text: "Manufacturing", value: "Manufacturing" },
+  { text: "Service", value: "Service" },
+  { text: "Trading", value: "Trading" },
+];
+
+const transactionTypeOptions = [
+  { text: "Cheque", value: "cheque" },
+  { text: "e-Fund Transfer", value: "transfer" },
+  { text: "UPI", value: "upi" },
+  { text: "Other", value: "other" },
+  { text: "N/A", value: "na" },
+];
 
 const AddVendor = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [files, setFiles] = useState([]);
+  const [currencies, setCurrencies] = useState([]);
   const [addVendorForm] = Form.useForm();
   const [selectLoading, setSelectLoading] = useState(false);
   const [showSubmitConfirmModal, setShowSubmitConfirmModal] = useState(false);
   const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
-  const [effective, setEffective] = useState("");
-  // const [msmeStat, setMsmeStat] = useState("");
   const msmeStat = Form.useWatch("msmeStatus", addVendorForm);
   const einvoice = Form.useWatch("applicability", addVendorForm);
-  console.log("okkk", einvoice);
-  const components = Form.useWatch("components", {
-    form: addVendorForm,
-    preserve: true,
-  });
-  // setMsmeStat(msmsStatus);
-  const [searchTerm, setSearchTerm] = useState("");
+  const transactionType = Form.useWatch("transactionType", addVendorForm);
+  const bankNameWatch = Form.useWatch("bankName", addVendorForm);
+
+
+  // const [groupOptions, setGroupOptions] = useState([]);
+
   const getFetchState = async (e) => {
     if (e.length > 2) {
       setSelectLoading(true);
-      const response = await imsAxios.post("/backend/stateList", {
+      const { data } = await imsAxios.post("/backend/stateList", {
         search: e,
       });
       setSelectLoading(false);
-      if (response.success && response.data) {
-        let arr = response.data.map((d) => {
+      let arr = [];
+      if (data && Array.isArray(data)) {
+        arr = data.map((d) => {
           return { text: d.text, value: d.id };
         });
-        setAsyncOptions(arr);
       }
+      setAsyncOptions(arr);
+      // return arr;
     }
   };
 
+  const getCurrencies = async () => {
+    try {
+      const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+      const arr =
+        data?.data?.map((d) => ({
+          text: d.currency_symbol,
+          value: d.currency_id,
+          notes: d.currency_notes,
+        })) || [];
+      setCurrencies([{ text: "N/A", value: "N/A" }, ...arr]);
+    } catch (e) {
+      setCurrencies([{ text: "N/A", value: "N/A" }]);
+    }
+  };
+
+  // const getGroupOptions = async () => {
+  //   try {
+  //     const response = await imsAxios.post("/groups/groupSelect2");
+  //     const { data } = response;
+  //     if (data?.code === 200) {
+  //       const arr = data.data.map((row) => ({
+  //         text: row.text,
+  //         value: row.id,
+  //       }));
+  //       setGroupOptions(arr);
+  //     } else if (data?.message?.msg) {
+  //       toast.error(data.message.msg);
+  //     }
+  //   } catch (error) {
+  //     setGroupOptions([]);
+  //   }
+  // };
+
+
   const submitHandler = async () => {
-    // const formData = new FormData();
-    // formData.append("vendor", JSON.stringify(showSubmitConfirmModal.vendor));
-    // formData.append("branch", JSON.stringify(showSubmitConfirmModal.branch));
-
-    // let uploadedFie = addVendorForm.getFieldValue("components");
-    // console.log("uploadedFie", uploadedFie);
-    // let a = uploadedFie?.map((r) => {
-    //   r.file[0].originFileObj;
-    // });
-    // console.log("a", a);
-    // formData.append("uploadfile", uploadedFie?.file?.originFileObj);
-    // console.log("formData", formData);
-
     setLoading("submit");
     setShowSubmitConfirmModal(false);
-    // return;
     const response = await imsAxios.post(
       "/vendor/addVendor",
       showSubmitConfirmModal
     );
     setLoading(false);
     if (response.success) {
-      showToast(response.message, "success");
+      showToast(response?.message, "success");
       reset();
     } else {
       setShowSubmitConfirmModal(false);
@@ -90,24 +141,17 @@ const AddVendor = () => {
   const validateHandler = async () => {
     const formData = new FormData();
     const values = await addVendorForm.validateFields();
-    console.log("files", values);
 
-    // let uploadedFie = addVendorForm.getFieldValue("components");
-    let uploadedFie = addVendorForm.getFieldValue("components");
-    // console.log("uploadedFie", uploadedFie);
-    // let a = uploadedFie?.map((r) => {
-    //   console.log("rrrrrrrrr", r);
+    const uploadedFie = addVendorForm.getFieldValue("components");
+    if (values.components && Array.isArray(values.components)) {
+      values.components.map((comp) => {
+        if (comp.file && Array.isArray(comp.file) && comp.file[0]) {
+          formData.append("file", comp.file[0]?.originFileObj);
+        }
+      });
+    }
 
-    //   formData.append("file", r.file[0].originFileObj);
-    // });
-    values.components.map((comp) => {
-      formData.append("file", comp?.file?.[0]?.originFileObj);
-    });
-    // formData.append("file", values.components[0].file[0].originFileObj);
-    // console.log("a-----", uploadedFie[0].file[0].originFileObj);
-    // console.log("values", values);
-    // if
-    let obj = {
+    const obj = {
       vendor: {
         vendorname: values.vendorName,
         panno: values.panno.toUpperCase(),
@@ -122,36 +166,43 @@ const AddVendor = () => {
         msme_id: values.msmeId,
         msme_type: values.type,
         msme_activity: values.activity,
+        msme_effective_from: values.msmeEffectiveFrom || "--",
         eInvoice: values.applicability,
         dateOfApplicability:
           values.applicability === "Y" ? values.dobApplicabilty : "--",
-        documentName: uploadedFie.map((r) => r.documentName),
+        group: values.group,
+        documentName:
+          uploadedFie && Array.isArray(uploadedFie)
+            ? uploadedFie.map((r) => r.documentName)
+            : [],
         // file: formData,
       },
       branch: {
         branch: values.branch,
         address: values.address,
-        state: values.state,
+        state: values.state?.value || values.state,
         city: values.city,
         pincode: values.pincode,
-        fax: values.fax == "" && "--",
+     fax: values.fax === "" ? "--" : values.fax,
         mobile: values.mobile,
-        email: values.email == "" && "--",
+       email: values.email === "" ? "--" : values.email,
         gstin: values.gstin.toUpperCase(),
+        transaction_type: values.transactionType,
+        account_no: values.accountNo,
+        ifs_code: values.ifsCode,
+        bank_name: values.bankName,
+        bank_branch: values.bankBranch,
+        ledger_currency: values.ledgerCurrency,
       },
     };
-    // console.log("this is the obj", obj);
+
     formData.append("vendor", JSON.stringify(obj.vendor));
     formData.append("branch", JSON.stringify(obj.branch));
-
-    // console.log("formData", formData);
-    // console.log("obj", obj);
     setShowSubmitConfirmModal(formData);
   };
 
   const reset = async () => {
     setShowSubmitConfirmModal(false);
-
     addVendorForm.resetFields();
     setFiles([]);
   };
@@ -162,28 +213,6 @@ const AddVendor = () => {
   //   }
   // }, [msmsStatus]);
 
-  const msmeOptions = [
-    { text: "Yes", value: "Y" },
-    { text: "No", value: "N" },
-  ];
-  const accOptions = [
-    { text: "Yes", value: "Y" },
-    { text: "No", value: "N" },
-  ];
-  const msmeYearOptions = [
-    { text: "2023-2024", value: "2023-2024" },
-    { text: "2024-2025", value: "2024-2025" },
-  ];
-  const msmeTypeOptions = [
-    { text: "Micro", value: "Micro" },
-    { text: "Small", value: "Small" },
-    { text: "Medium", value: "Medium" },
-  ];
-  const msmeActivityOptions = [
-    { text: "Manufacturing", value: "Manufacturing" },
-    { text: "Service", value: "Service" },
-    { text: "Trading", value: "Trading" },
-  ];
   // const changeMSmeStatus = (value) => {
   //   console.log("value", value);
   //   setMsmeStat(value);
@@ -192,8 +221,47 @@ const AddVendor = () => {
   //       setMsmeStat(value);
   // }, [third]);
 
+  useEffect(() => {
+    // getGroupOptions();
+  }, []);
+
+  // Load currencies for "Currency of Ledger"
+  useEffect(() => {
+    getCurrencies();
+  }, []);
+
+  // Keep bank fields in sync with Type = N/A
+  useEffect(() => {
+    if (!transactionType) return;
+
+    if (transactionType === "na") {
+      addVendorForm.setFieldValue("accountNo", "N/A");
+      addVendorForm.setFieldValue("ifsCode", "N/A");
+      addVendorForm.setFieldValue("bankName", "N/A");
+      addVendorForm.setFieldValue("bankBranch", "N/A");
+      addVendorForm.setFieldValue("ledgerCurrency", "N/A");
+    } else {
+      // Clear fields when user selects a real payment type.
+      if (addVendorForm.getFieldValue("accountNo") === "N/A") {
+        addVendorForm.setFieldValue("accountNo", "");
+      }
+      if (addVendorForm.getFieldValue("ifsCode") === "N/A") {
+        addVendorForm.setFieldValue("ifsCode", "");
+      }
+      if (addVendorForm.getFieldValue("bankName") === "N/A") {
+        addVendorForm.setFieldValue("bankName", "");
+      }
+      if (addVendorForm.getFieldValue("bankBranch") === "N/A") {
+        addVendorForm.setFieldValue("bankBranch", "");
+      }
+      if (addVendorForm.getFieldValue("ledgerCurrency") === "N/A") {
+        addVendorForm.setFieldValue("ledgerCurrency", "");
+      }
+    }
+  }, [transactionType, addVendorForm]);
+
   return (
-    <div style={{ height: "calc(100vh - 165px)", overflow: "auto" , padding:10}}>
+    <div style={{ height: "calc(100vh - 165px)", overflow: "auto", padding: 10 }}>
       <Form
         initialValues={initialValues}
         layout="vertical"
@@ -203,7 +271,7 @@ const AddVendor = () => {
           title="Submit Confirm"
           open={showSubmitConfirmModal}
           onOk={submitHandler}
-          // confirmLoading={loading === "submit"}
+          confirmLoading={loading === "submit"}
           onCancel={() => setShowSubmitConfirmModal(false)}
         >
           <p>Are you sure you want to create this vendor?</p>
@@ -245,7 +313,23 @@ const AddVendor = () => {
               </Col>
               <Col span={6}>
                 <Form.Item label="Pan Number" name="panno" rules={rules.panno}>
-                  <Input />
+                  <Input
+                    maxLength={10}
+                    onChange={(e) => {
+                      const raw = e.target.value
+                        .replace(/[^A-Za-z0-9]/g, "")
+                        .slice(0, 10)
+                        .toUpperCase();
+                      const { valid, formattedPAN } = validatePAN(raw);
+                      addVendorForm.setFieldValue("panno", formattedPAN);
+                      if (!valid && formattedPAN.length === 10) {
+                        showToast(
+                          "Invalid Pan Number! Please Enter Valid Pan Number.",
+                          "error"
+                        );
+                      }
+                    }}
+                  />
                 </Form.Item>
               </Col>
               <Col span={6}>
@@ -272,6 +356,11 @@ const AddVendor = () => {
             </Row>
 
             <Row gutter={16}>
+              {/* <Col span={6}>
+                <Form.Item label="Group" name="group">
+                  <MySelect options={groupOptions} />
+                </Form.Item>
+              </Col> */}
               <Col span={6}>
                 <Form.Item label="Email" name="email">
                   <Input />
@@ -295,11 +384,7 @@ const AddVendor = () => {
                       name="msmeStatus"
                       rules={rules.status}
                     >
-                      <MySelect
-                        options={msmeOptions}
-                        // value={msmeStat}
-                        // onChange={(value) => changeMSmeStatus(value)}
-                      />
+                      <MySelect options={msmeOptions} />
                     </Form.Item>
                   </Col>
                   {msmeStat === "Y" && (
@@ -340,6 +425,22 @@ const AddVendor = () => {
                           <MySelect options={msmeActivityOptions} />
                         </Form.Item>
                       </Col>
+                      <Col span={5}>
+                        <Form.Item
+                          label="Effective From"
+                          name="msmeEffectiveFrom"
+                        >
+                          <SingleDatePicker
+                            size="default"
+                            setDate={(value) =>
+                              addVendorForm.setFieldValue(
+                                "msmeEffectiveFrom",
+                                value
+                              )
+                            }
+                          />
+                        </Form.Item>
+                      </Col>
                     </>
                   )}
                 </Row>
@@ -347,6 +448,8 @@ const AddVendor = () => {
             </Row>
           </Col>
         </Row>
+
+        <Divider />
         <Divider />
         <Row gutter={16}>
           <Col span={4}>
@@ -376,16 +479,11 @@ const AddVendor = () => {
                   name="applicability"
                   rules={rules.applicability}
                 >
-                  <MySelect
-                    options={msmeOptions}
-                    // value={msmeStat}
-                    // onChange={(value) => changeMSmeStatus(value)}
-                  />
+                  <MySelect options={msmeOptions} />
                 </Form.Item>
               </Col>
               {einvoice === "Y" && (
                 <Col span={8}>
-                  {" "}
                   <Form.Item
                     label="Date of Applicability"
                     name="dobApplicabilty"
@@ -393,7 +491,6 @@ const AddVendor = () => {
                   >
                     <SingleDatePicker
                       size="default"
-                      // setDate={setEffective}
                       setDate={(value) =>
                         addVendorForm.setFieldValue("dobApplicabilty", value)
                       }
@@ -404,8 +501,8 @@ const AddVendor = () => {
             </Row>
           </Col>
         </Row>
-        <Divider />
 
+        <Divider />
         <Row gutter={16}>
           <Col span={4}>
             <Descriptions
@@ -443,9 +540,6 @@ const AddVendor = () => {
                     onBlur={() => setAsyncOptions([])}
                     optionsState={asyncOptions}
                     loadOptions={getFetchState}
-                    // value={state.value}
-                    // value={addVendor.branch.state}
-                    // onChange={(e) => inputHandler("state", e)}
                   />
                 </Form.Item>
               </Col>
@@ -476,6 +570,66 @@ const AddVendor = () => {
                 </Form.Item>
               </Col>
             </Row>
+
+            <Row gutter={16}>
+              <Col span={4}>
+                <Descriptions
+                  size="small"
+                  title={<p style={{ fontSize: "0.8rem" }}>Bank Details</p>}
+                >
+                  <Descriptions.Item
+                    contentStyle={{
+                      fontSize: window.innerWidth < 1600 && "0.7rem",
+                    }}
+                  >
+                    Provide Bank Details
+                  </Descriptions.Item>
+                </Descriptions>
+              </Col>
+              <Col span={20}>
+                <Row gutter={16}>
+                  <Col span={24}>
+                    <Form.Item label="Type" name="transactionType">
+                      <MySelect options={transactionTypeOptions} />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item label="A/c No" name="accountNo">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item label="IFS Code" name="ifsCode">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item label="Bank Name" name="bankName">
+                      <MySelect
+                        placeholder="Select bank"
+                        options={getVendorBranchBankOptions(bankNameWatch)}
+                      />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={12}>
+                    <Form.Item label="Bank Branch" name="bankBranch">
+                      <Input />
+                    </Form.Item>
+                  </Col>
+
+                  <Col span={24}>
+                    <Form.Item label="Currency of Ledger" name="ledgerCurrency">
+                      <MySelect options={currencies} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+
           </Col>
         </Row>
         <Row gutter={16}>
@@ -496,16 +650,11 @@ const AddVendor = () => {
           <Col span={20}>
             <Row gutter={16}>
               <Col span={24}>
-                {/* <div
-                  className="remove-table-footer"
-                  style={{ height: "50%", opacity: loading ? 0.5 : 1 }}
-                > */}
                 <div style={{ flex: 1 }}>
                   <Col
                     span={24}
                     style={{
                       height: "14rem",
-                      // overflowX: "hidden",
                       overflowY: "auto",
                     }}
                   >
@@ -514,7 +663,7 @@ const AddVendor = () => {
                         <>
                           <Col>
                             {fields.map((field, index) => (
-                              <Form.Item noStyle>
+                              <Form.Item key={field.key} noStyle>
                                 <SingleProduct
                                   fields={fields}
                                   field={field}
@@ -527,14 +676,17 @@ const AddVendor = () => {
                                 />
                               </Form.Item>
                             ))}
-                   
+                            <Row justify="center">
+                              <Typography.Text type="secondary">
+                                ----End of the List----
+                              </Typography.Text>
+                            </Row>
                           </Col>
                         </>
                       )}
                     </Form.List>
                   </Col>
                 </div>
-                {/* </div> */}
               </Col>
             </Row>
           </Col>
@@ -544,7 +696,6 @@ const AddVendor = () => {
         resetFunction={() => setShowResetConfirmModal(true)}
         submitFunction={validateHandler}
         nextLabel="Submit"
-        // disabled={{ reset: loading }}
       />
     </div>
   );
@@ -560,119 +711,19 @@ const initialValues = {
   city: "",
   pincode: "",
   address: "",
+  transactionType: undefined,
+  accountNo: "",
+  ifsCode: "",
+  bankName: "",
+  bankBranch: "",
+  ledgerCurrency: "",
   msmeStatus: "N",
+  group: undefined,
   components: [{}],
 };
 
 const rules = {
-  // vendorName: [
-  //   {
-  //     required: true,
-  //     message: "Please select the Vendor Name",
-  //   },
-  // ],
-  // panno: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the PAN number",
-  //   },
-  // ],
-  // year: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the year",
-  //   },
-  // ],
-  // msmeId: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the MSME Id",
-  //   },
-  // ],
-  // status: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the MSME status",
-  //   },
-  // ],
-  // type: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the MSME type.",
-  //   },
-  // ],
-  // gstin: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the gstin.",
-  //   },
-  // ],
-  // msmeId: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the MSME Id.",
-  //   },
-  // ],
-  // activity: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the MSME Activity.",
-  //   },
-  // ],
-  // branch: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the branchName.",
-  //   },
-  // ],
-  // state: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the state.",
-  //   },
-  // ],
-  // mobile: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the mobile.",
-  //   },
-  // ],
-  // city: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the city.",
-  //   },
-  // ],
-  // pincode: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the pin code.",
-  //   },
-  // ],
-  // address: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the address.",
-  //   },
-  // ],
-  // paymentTerms: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the payment Terms.",
-  //   },
-  // ],
-  // dobApplicabilty: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the date of applicabilty.",
-  //   },
-  // ],
-  // dobApplicable: [
-  //   {
-  //     required: true,
-  //     message: "Please provide the applicabilty Status.",
-  //   },
-  // ],
+  // keep validation rules aligned with ims-frontend when enabled
 };
 
 export default AddVendor;

@@ -147,10 +147,9 @@ const PartCodeConversionReport = () => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const response = await imsAxios.post("/conversion/fetchConversion", {
-        wise: wise,
-        data: searchInput,
-      });
+      const response = await imsAxios.get(
+        `/conversion/fetch/conversion?wise=${wise}&data=${searchInput}`
+      );
 
       if (response.success) {
         SetfetchConversion(response.data);
@@ -327,7 +326,6 @@ const PartCodeConversionReport = () => {
                 {wise === wiseOptions[1].value && (
                   <MyDatePicker setDateRange={setSearchInput} />
                 )}
-
                 <MyButton
                   variant="search"
                   onClick={handleSubmit}

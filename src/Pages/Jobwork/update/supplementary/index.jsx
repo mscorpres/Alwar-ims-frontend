@@ -572,7 +572,7 @@ function UpdateJW() {
 
   return (
     <>
-      <div style={{}}>
+      <div style={{ margin:"10px"}}>
       
         <Row gutter={16}>
           <Col span={24}>

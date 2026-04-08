@@ -1007,7 +1007,7 @@ export default function ProductMIN() {
           asyncOptions,
           selectLoading,
         ),
-      width: 300,
+      width: 400,
     },
     {
       headerName: "Qty",
