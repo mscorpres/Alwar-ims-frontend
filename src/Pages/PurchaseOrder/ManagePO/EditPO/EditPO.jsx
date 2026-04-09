@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useToast } from "../../../../hooks/useToast.js";
 import EditComponents from "./EditComponents";
 import NavFooter from "../../../../Components/NavFooter";
@@ -25,7 +25,7 @@ import { v4 } from "uuid";
 import {
   getCostCentresOptions,
   getVendorOptions,
-  getProjectOptions
+  getProjectOptions,
 } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
@@ -45,8 +45,37 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
   const [showDetailsCondirm, setShowDetailsConfirm] = useState(false);
   const [projectDesc, setProjectDesc] = useState("");
   const [pageLoading, setPageLoading] = useState(false);
+  const [poCurrencies, setPoCurrencies] = useState([]);
   const [form] = Form.useForm();
   const { executeFun, loading: loading1 } = useApi();
+
+  const poCurrencyWatched = Form.useWatch("po_currency", form);
+  const showPoExchangeField =
+    String(poCurrencyWatched ?? "364907247") !== "364907247";
+
+  const syncLineItemsCurrencyFromHeader = useCallback(
+    (currencyId, exchangeRate) => {
+      const isInr = String(currencyId) === "364907247";
+      const ex = isInr ? 1 : Number(exchangeRate) || 1;
+      const sym =
+        poCurrencies.find((c) => String(c.value) === String(currencyId))
+          ?.text ?? "";
+      setRowCount((rows) =>
+        (rows || []).map((r) => {
+          const rateNum = Number(r.rate || 0);
+          return {
+            ...r,
+            currency: currencyId,
+            exchange_rate: ex,
+            symbol: sym,
+            foreginValue: Number(r.inrValue || 0) * ex,
+            localPrice: +Number(ex).toFixed(2) * +Number(rateNum).toFixed(2),
+          };
+        }),
+      );
+    },
+    [poCurrencies],
+  );
   const inputHandler = (name, value) => {
     setPurchaseOrder((purchaseOrder) => {
       return {
@@ -57,6 +86,35 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
   };
 
   const selectInputHandler = async (name, value) => {
+    if (name === "po_currency" && value != null && value !== "") {
+      const isInr = String(value) === "364907247";
+      const nextEx = isInr
+        ? 1
+        : Number(form.getFieldValue("po_exchange_rate")) || 1;
+      form.setFieldsValue({ po_currency: value, po_exchange_rate: nextEx });
+      setPurchaseOrder((prev) => ({
+        ...(prev || {}),
+        po_currency: value,
+        po_exchange_rate: nextEx,
+      }));
+      syncLineItemsCurrencyFromHeader(value, nextEx);
+      return;
+    }
+    if (name === "po_exchange_rate") {
+      const cur = form.getFieldValue("po_currency") ?? "364907247";
+      if (String(cur) === "364907247") return;
+      const ex =
+        value === null || value === undefined || value === ""
+          ? 1
+          : Number(value) || 1;
+      form.setFieldsValue({ po_exchange_rate: ex });
+      setPurchaseOrder((prev) => ({
+        ...(prev || {}),
+        po_exchange_rate: ex,
+      }));
+      syncLineItemsCurrencyFromHeader(cur, ex);
+      return;
+    }
     if (value) {
       let obj = purchaseOrder;
       if (name == "addrbillid") {
@@ -168,7 +226,7 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
   const getCostCenteres = async (search) => {
     const response = await executeFun(
       () => getCostCentresOptions(search),
-      "select"
+      "select",
     );
     let arr = [];
     if (response.success) arr = convertSelectOptions(response.data);
@@ -210,6 +268,43 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
       setVendorBranches(arr);
     }
   };
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
+        if (cancelled || !data?.data) return;
+        setPoCurrencies(
+          data.data.map((d) => ({
+            text: d.currency_symbol,
+            value: d.currency_id,
+            notes: d.currency_notes,
+          })),
+        );
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!updatePoId?.orderid || !poCurrencies.length) return;
+    const cur = form.getFieldValue("po_currency") ?? "364907247";
+    const ex =
+      String(cur) === "364907247"
+        ? 1
+        : Number(form.getFieldValue("po_exchange_rate")) || 1;
+    syncLineItemsCurrencyFromHeader(cur, ex);
+  }, [
+    updatePoId?.orderid,
+    poCurrencies.length,
+    syncLineItemsCurrencyFromHeader,
+  ]);
+
   useEffect(() => {
     getShippingId();
     getBillTo();
@@ -225,7 +320,7 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
     obj.shipaddress = (updatePoId.shipaddress || "").replaceAll("<br>", "\n");
     obj.vendoraddress = (updatePoId.vendoraddress || "").replaceAll(
       "<br>",
-      "\n"
+      "\n",
     );
     obj.billaddress = (updatePoId.billaddress || "").replaceAll("<br>", "\n");
 
@@ -255,32 +350,28 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
         };
       }
     }
-
-    setPurchaseOrder(obj);
-    setResetDetailsData(obj);
-
     if (obj.vendorcode?.value) {
       getVendorBranches(obj.vendorcode.value);
     }
-
-    form.setFieldsValue(obj);
-
-    // Fetch project description if project exists
     if (obj.projectname) {
-      const projectName = typeof obj.projectname === "object" 
-        ? obj.projectname.value || obj.projectname.label
-        : obj.projectname;
-      
+      const projectName =
+        typeof obj.projectname === "object"
+          ? obj.projectname.value || obj.projectname.label
+          : obj.projectname;
+
       if (projectName) {
-        imsAxios.post("/backend/projectDescription", {
-          project_name: projectName,
-        }).then((response) => {
-          if (response.success && response.data?.description) {
-            setProjectDesc(response.data.description);
-          }
-        }).catch((error) => {
-          console.error("Error fetching project description:", error);
-        });
+        imsAxios
+          .post("/backend/projectDescription", {
+            project_name: projectName,
+          })
+          .then((response) => {
+            if (response.success && response.data?.description) {
+              setProjectDesc(response.data.description);
+            }
+          })
+          .catch((error) => {
+            console.error("Error fetching project description:", error);
+          });
       }
     }
 
@@ -288,10 +379,14 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
     const materialsArr =
       updatePoId.materials?.map((row) => ({
         id: v4(),
-        currency: row.currency,
-        exchange_rate: row.exchangerate == "" ? 1 : row.exchangerate,
+        currency: String(row.currency),
+        exchange_rate:
+          row.exchangerate === "" || row.exchangerate == null
+            ? 1
+            : Number(row.exchangerate) || 1,
+        symbol: "",
         component: {
-          label:'['+ row.part_no +']' + " " + row.component,
+          label: "[" + row.part_no + "]" + " " + row.component,
           value: row.componentKey,
         },
         qty: row.orderqty,
@@ -317,7 +412,22 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
         po_ord_qty: row.po_ord_qty,
         last_rate: row.last_rate || 0,
         part_no: row.part_no,
+        po_bom_qty: row.po_bom_qty ?? row.bom_qty ?? "",
       })) || [];
+
+    const firstRow = materialsArr[0];
+    const headerCur = firstRow ? String(firstRow.currency) : "364907247";
+    const headerEx = firstRow
+      ? String(headerCur) === "364907247"
+        ? 1
+        : Number(firstRow.exchange_rate) || 1
+      : 1;
+    obj.po_currency = headerCur;
+    obj.po_exchange_rate = headerEx;
+
+    setPurchaseOrder(obj);
+    setResetDetailsData({ ...obj });
+    form.setFieldsValue(obj);
 
     setRowCount(materialsArr);
     setResetRowsDetailsData(materialsArr);
@@ -344,7 +454,7 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
           : purchaseOrder.addrshipid;
 
       const shippingOption = shippingOptions.find(
-        (opt) => String(opt.value) === String(shippingId)
+        (opt) => String(opt.value) === String(shippingId),
       );
 
       if (shippingOption) {
@@ -387,16 +497,20 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
   };
 
   const handleFetchProjectOptions = async (search) => {
-    const response = await executeFun(() => getProjectOptions(search), "select");
+    const response = await executeFun(
+      () => getProjectOptions(search),
+      "select",
+    );
     setAsyncOptions(response.data);
   };
 
   const handleProjectChange = async (value) => {
-    const projectValue = typeof value === "object" ? value : { value: value, label: value };
-    
+    const projectValue =
+      typeof value === "object" ? value : { value: value, label: value };
+
     // Update form value to ensure it's synced
     form.setFieldsValue({ projectname: projectValue });
-    
+
     setPurchaseOrder((prev) => ({
       ...prev,
       projectname: projectValue,
@@ -407,13 +521,15 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
       project_name: typeof value === "object" ? value.value : value,
     });
     setPageLoading(false);
-    
+
     const data = response?.data;
     if (data) {
       if (response.success) {
         setProjectDesc(data.description);
 
-        await handleProjectCostCenter(typeof value === "object" ? value.value : value);
+        await handleProjectCostCenter(
+          typeof value === "object" ? value.value : value,
+        );
       } else {
         showToast(data.message, "error");
       }
@@ -427,9 +543,16 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
         project_name: projectName,
       });
       setPageLoading(false);
-      const responseData = response?.success !== undefined ? response : response?.data || response;
+      const responseData =
+        response?.success !== undefined ? response : response?.data || response;
 
-      if (responseData && responseData.success && responseData.data && Array.isArray(responseData.data) && responseData.data.length > 0) {
+      if (
+        responseData &&
+        responseData.success &&
+        responseData.data &&
+        Array.isArray(responseData.data) &&
+        responseData.data.length > 0
+      ) {
         const costCenterData = responseData.data[0];
         const costCenterOption = {
           value: costCenterData.id,
@@ -442,7 +565,10 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
           costcenter: costCenterOption,
         }));
       } else {
-        showToast(responseData?.message || "Failed to fetch cost center", "error");
+        showToast(
+          responseData?.message || "Failed to fetch cost center",
+          "error",
+        );
       }
     } catch (error) {
       setPageLoading(false);
@@ -602,6 +728,43 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
                   </Row>
                 </Col>
               </Row>
+              <Row gutter={16} style={{ marginTop: 8 }}>
+                <Col span={6}>
+                  <Form.Item
+                    name="po_currency"
+                    label="PO Currency"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select PO currency!",
+                      },
+                    ]}
+                  >
+                    <MySelect options={poCurrencies} />
+                  </Form.Item>
+                </Col>
+                {showPoExchangeField && (
+                  <Col span={6}>
+                    <Form.Item
+                      name="po_exchange_rate"
+                      label="Exchange rate (to INR)"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter exchange rate!",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        min={0}
+                        step={0.0001}
+                        style={{ width: "100%" }}
+                        size="small"
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+              </Row>
               <Divider />
 
               <Row>
@@ -655,31 +818,30 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
                     {" "}
                     <Col span={6}>
                       {/* <Form.Item name="projectname" label="Project"> */}
-                        {/* <Input size="default" value={purchaseOrder?.projectname} /> */}
-                        <Form.Item
-                          name="projectname"
-                          
-                          label={
-                            <div
-                              style={{
-                                fontSize: window.innerWidth < 1600 && "0.7rem",
-                                display: "flex",
-                                justifyContent: "space-between",
-                                width: 350,
-                              }}
-                            >
-                              Project
-                            </div>
-                          }
-                        >
-                          <MyAsyncSelect
-                            selectLoading={loading1("select")}
-                            onBlur={() => setAsyncOptions([])}
-                            loadOptions={handleFetchProjectOptions}
-                            optionsState={asyncOptions}
-                            onChange={handleProjectChange}
-                          />
-                        </Form.Item>
+                      {/* <Input size="default" value={purchaseOrder?.projectname} /> */}
+                      <Form.Item
+                        name="projectname"
+                        label={
+                          <div
+                            style={{
+                              fontSize: window.innerWidth < 1600 && "0.7rem",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              width: 350,
+                            }}
+                          >
+                            Project
+                          </div>
+                        }
+                      >
+                        <MyAsyncSelect
+                          selectLoading={loading1("select")}
+                          onBlur={() => setAsyncOptions([])}
+                          loadOptions={handleFetchProjectOptions}
+                          optionsState={asyncOptions}
+                          onChange={handleProjectChange}
+                        />
+                      </Form.Item>
                       {/* </Form.Item> */}
                     </Col>
                     <Col span={6}>
@@ -950,14 +1112,14 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
                             optionsState={asyncOptions}
                             onChange={async (val) => {
                               const branches = await getVendorBranches(
-                                val.value
+                                val.value,
                               );
                               const { data } = await imsAxios.post(
                                 "/backend/vendorAddress",
                                 {
                                   vendorcode: val.value,
                                   branchcode: branches[0]?.value,
-                                }
+                                },
                               );
                               form.setFieldsValue({
                                 ship_vendor_branch: branches[0] || null,
@@ -988,7 +1150,7 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
                                 {
                                   vendorcode: vendor.value,
                                   branchcode: branch.value,
-                                }
+                                },
                               );
                               form.setFieldsValue({
                                 shipaddress:
@@ -1088,6 +1250,8 @@ export default function EditPO({ updatePoId, setUpdatePoId, getRows }) {
             purchaseOrder={purchaseOrder}
             setActiveTab={setActiveTab}
             resetRowsDetailsData={resetRowsDetailsData}
+            form={form}
+            poCurrencies={poCurrencies}
           />
         </Tabs.TabPane>
       </Tabs>

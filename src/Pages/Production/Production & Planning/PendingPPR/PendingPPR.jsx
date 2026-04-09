@@ -17,6 +17,8 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import ExecutePPR from "./ExecutePPR";
 import ViewComponents from "./ViewComponents";
 import MyButton from "../../../../Components/MyButton";
+import RaisePprQtyRequestModal from "../RaisePprQtyRequestModal";
+import PprQtyLogsModal from "../PprQtyLogsModal";
 
 const PendingPPR = () => {
   const { showToast } = useToast();
@@ -30,6 +32,8 @@ const PendingPPR = () => {
   const [rows, setRows] = useState([]);
   const [wise, setWise] = useState("pprno");
   const [asyncOptions, setAsyncOptions] = useState([]);
+  const [showRaiseQty, setShowRaiseQty] = useState(null);
+  const [showQtyLogs, setShowQtyLogs] = useState(null); 
   const pprWiseOptions = [
     { text: "New", value: "new" },
     { text: "Repair", value: "repair" },
@@ -142,7 +146,25 @@ const PendingPPR = () => {
             });
           }}
         />,
+         <TableActions
+          showInMenu={true}
+          action="add"
+          label="Raise Qty Request"
+          onClick={() => setShowRaiseQty(row.prod_transaction)}
+        />,
+        <TableActions
+          showInMenu={true}
+          action="view"
+          label="View Qty Logs"
+          onClick={() =>
+            setShowQtyLogs({
+              ppr_no: row.prod_transaction,
+              project_id: row.prod_project,
+            })
+          }
+        />,
       ],
+      
     },
     { headerName: "#", width: 30, field: "serial_no" },
     {
@@ -345,6 +367,16 @@ const PendingPPR = () => {
       <div style={{ height: "calc(100% - 40px)", marginTop: 10 }}>
         <MyDataTable columns={columns} data={rows} loading={searchLoading} />
       </div>
+       <RaisePprQtyRequestModal
+        open={!!showRaiseQty}
+        pprNo={showRaiseQty}
+        onClose={() => setShowRaiseQty(null)}
+      />
+      <PprQtyLogsModal
+        open={!!showQtyLogs}
+        onClose={() => setShowQtyLogs(null)}
+        initialFilters={showQtyLogs}
+      />
     </div>
   );
 };

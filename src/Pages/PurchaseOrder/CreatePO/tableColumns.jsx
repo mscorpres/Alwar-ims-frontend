@@ -13,7 +13,7 @@ export const componentSelect = (
   loadOptions,
   setAsyncOptions,
   asyncOptions,
-  selectLoading
+  selectLoading,
 ) => (
   <MyAsyncSelect
     selectLoading={selectLoading}
@@ -37,7 +37,7 @@ export const quantityCell = ({ row }, inputHandler) => (
     placement="topLeft"
     classNames={{ root: "numeric-input" }}
     color="red"
-    open={row.qtyApproval ? undefined : false} 
+    open={row.qtyApproval ? undefined : false}
   >
     <Input
       style={{ borderColor: row.qtyApproval && "red" }}
@@ -47,21 +47,14 @@ export const quantityCell = ({ row }, inputHandler) => (
     />
   </Tooltip>
 );
-export const rateCell = ({ row }, inputHandler, currencies) => (
-  <Input.Group compact>
-    <Input
-      style={{ width: "62%", borderColor: row.approval && "red" }}
-      value={row.rate}
-      onChange={(e) => inputHandler("rate", e.target.value, row.id)}
-    />
-    <div style={{ width: "35%" , marginLeft: "1px"}}>
-      <MySelect
-        options={currencies}
-        value={row.currency}
-        onChange={(value) => inputHandler("currency", value, row.id)}
-      />
-    </div>
-  </Input.Group>
+export const rateCell = ({ row }, inputHandler) => (
+  <Input
+    style={{ width: "100%", borderColor: row.approval && "red" }}
+    value={row.rate}
+    onKeyDown={blockSpaceKey}
+    onChange={(e) => inputHandler("rate", stripSpaces(e.target.value), row.id)}
+    suffix={row.symbol ?? ""}
+  />
 );
 export const disabledCell = ({ row }, value, inputHandler, suffix) => (
   <Input
@@ -74,12 +67,11 @@ export const taxableCell = ({ row }) => {
   return <Input disabled={true} value={Number(row.inrValue).toFixed(2)} />;
 };
 export const foreignCell = ({ row }) => {
+  const isInr = String(row?.currency) === "364907247";
   return (
     <Input
       disabled={true}
-      value={
-        row?.currency == 364907247 ? 0 : Number(row?.foreginValue).toFixed(2)
-      }
+      value={isInr ? 0 : Number(row?.foreginValue).toFixed(2)}
     />
   );
 };
@@ -138,5 +130,16 @@ export const internalRemarkCell = ({ row }, inputHandler) => (
     value={row.internal_remark || ""}
     onChange={(e) => inputHandler("internal_remark", e.target.value, row.id)}
     // style={{ backgroundColor: "#fffbe6" }}
+  />
+);
+
+export const bomQtyCell = ({ row }, inputHandler) => (
+  <Input
+    value={row.po_bom_qty ?? ""}
+    onKeyDown={blockSpaceKey}
+    onChange={(e) =>
+      inputHandler("po_bom_qty", stripSpaces(e.target.value), row.id)
+    }
+    placeholder="BOM qty"
   />
 );

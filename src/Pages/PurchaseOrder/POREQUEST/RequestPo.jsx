@@ -191,6 +191,13 @@ const RequestPo = () => {
       minWidth: 150,
       flex: 1,
     },
+     {
+      headerName: "PPR No",
+      field: "ppr_no",
+      renderCell: ({ row }) => <ToolTipEllipses text={row.ppr_no} copy={true} />,
+      minWidth: 130,
+      flex: 1,
+    },
     {
       headerName: "Requested By",
       field: "requested_by",

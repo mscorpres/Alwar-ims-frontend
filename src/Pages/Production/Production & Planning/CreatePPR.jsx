@@ -8,9 +8,14 @@ import {
   Modal,
   Row,
   Typography,
+  DatePicker,
+  Space,
+  Tooltip,
 } from "antd";
 import { useToast } from "../../../hooks/useToast.js";
+import dayjs from "dayjs";
 import MySelect from "../../../Components/MySelect";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import InputMask from "react-input-mask";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import NavFooter from "../../../Components/NavFooter";
@@ -21,6 +26,23 @@ import { getProductsOptions, getProjectOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 
 const { TextArea } = Input;
+
+const PLANNING_MONTH_NEXT_AVAILABLE_FROM_DAY = 25;
+
+const isPlanningMonthDisabled = (current) => {
+  if (!current) return false;
+  const today = dayjs();
+  const monthStart = current.startOf("month");
+  const thisMonthStart = today.startOf("month");
+  const nextMonthStart = today.add(1, "month").startOf("month");
+
+  if (monthStart.isBefore(thisMonthStart, "month")) return true;
+  if (monthStart.isSame(thisMonthStart, "month")) return false;
+  if (monthStart.isSame(nextMonthStart, "month")) {
+    return today.date() < PLANNING_MONTH_NEXT_AVAILABLE_FROM_DAY;
+  }
+  return true;
+};
 
 const CreatePPR = () => {
   const { showToast } = useToast();
@@ -58,7 +80,7 @@ const CreatePPR = () => {
     const response = await imsAxios.get("ppr/ppr_section_location");
     const locArr = [];
     response.data.map((a) =>
-      locArr.push({ text: `(${a.name}) ${a.address}`, value: a.location_key })
+      locArr.push({ text: `(${a.name}) ${a.address}`, value: a.location_key }),
     );
     setLocationn(locArr);
   };
@@ -66,7 +88,7 @@ const CreatePPR = () => {
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
     setAsyncOptions(response.data);
   };
@@ -80,10 +102,7 @@ const CreatePPR = () => {
     const { data } = response;
     if (data) {
       if (response.success) {
-        createPPRForm.setFieldValue(
-          "projectDescription",
-          data.description
-        );
+        createPPRForm.setFieldValue("projectDescription", data.description);
       } else {
         showToast(response.message?.msg || response.message, "error");
       }
@@ -93,7 +112,7 @@ const CreatePPR = () => {
   const handleFetchProductOptions = async (searchInput) => {
     const response = await executeFun(
       () => getProductsOptions(searchInput, true),
-      "select"
+      "select",
     );
     setAsyncOptions(response.data);
   };
@@ -114,7 +133,7 @@ const CreatePPR = () => {
       setBomList(bomArr);
       createPPRForm.setFieldValue(
         "existingQty",
-        data?.other?.existingplanedQty
+        data?.other?.existingplanedQty,
       );
       createPPRForm.setFieldValue("stock", data?.other?.stockInHand);
       createPPRForm.setFieldValue("uom", data?.other?.uom);
@@ -130,6 +149,9 @@ const CreatePPR = () => {
       requesttype: values.type,
       customer: values.customer,
       duedate: values.dueDate,
+      plannedMonth: values.planningMonth
+        ? dayjs(values.planningMonth).format("YYYY-MM")
+        : undefined,
       location: values.section,
       product: values.product.value,
       projectinfo: values.projectDescription,
@@ -151,12 +173,12 @@ const CreatePPR = () => {
     try {
       setLoading("submit");
       const response = await imsAxios.post("/ppr/createPPR", payload);
-        if (response.success) {
-          showToast(response.message, "success");
-          resetFunction();
-        } else {
-          showToast( response.message, "error");
-        }
+      if (response.success) {
+        showToast(response.message, "success");
+        resetFunction();
+      } else {
+        showToast(response.message, "error");
+      }
     } catch (error) {
     } finally {
       setLoading(false);
@@ -182,7 +204,7 @@ const CreatePPR = () => {
     }
   }, [project]);
   return (
-    <div style={{ height: "100%", padding:10 }}>
+    <div style={{ height: "100%", padding: 10 }}>
       <Row gutter={0}>
         {loading === "page" && <Loading />}
         <Form
@@ -306,6 +328,34 @@ const CreatePPR = () => {
                     />
                   </Form.Item>
                 </Col>
+                 <Col span={6}>
+                  <Form.Item
+                    rules={rules.planningMonth}
+                    name="planningMonth"
+                    label={
+                      <Space size={6} align="center">
+                        <span>Planning Month</span>
+                        <Tooltip
+                          title={`Next month opens for planning from day ${PLANNING_MONTH_NEXT_AVAILABLE_FROM_DAY} of the current month onward.`}
+                        >
+                          <InfoCircleOutlined
+                            style={{
+                              color: "rgba(0, 0, 0, 0.45)",
+                              cursor: "help",
+                            }}
+                          />
+                        </Tooltip>
+                      </Space>
+                    }
+                  >
+                    <DatePicker
+                      picker="month"
+                      format="MM-YYYY"
+                      style={{ width: "100%" }}
+                      disabledDate={isPlanningMonthDisabled}
+                    />
+                  </Form.Item>
+                </Col>
                 <Col span={6}>
                   <Form.Item
                     rules={rules.section}
@@ -358,6 +408,7 @@ const initialValues = {
   dueDate: "",
   section: undefined,
   customer: undefined,
+  planningMonth: dayjs().startOf("month"),
 };
 
 const rules = {
@@ -401,6 +452,12 @@ const rules = {
     {
       required: true,
       message: "Please enter due date",
+    },
+  ],
+   planningMonth: [
+    {
+      required: true,
+      message: "Please select planning month",
     },
   ],
   section: [

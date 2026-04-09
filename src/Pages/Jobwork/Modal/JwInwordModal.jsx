@@ -47,6 +47,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   const { all, row } = editModal;
   const [mainData, setMainData] = useState([]);
   const [eWayBill, setEWayBill] = useState("");
+   const [challanDate, setChallanDate] = useState(null);
   const [bomList, setBomList] = useState([]);
   const [showBomList, setShowBomList] = useState(false);
   const [conrem, setConRem] = useState("");
@@ -468,6 +469,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     getFetchData();
     // getLocation();
     setEWayBill("");
+      setChallanDate(null);
     setShowBomList(false);
     setBomList([]);
   };
@@ -497,6 +499,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       remark: mainData[0].remark,
       qrScan: isScan == true ? "Y" : "N",
       pick_location: pickLocation,
+          challan_date: challanDate,
     };
     setModalUploadLoad(true);
     const response = await executeFun(() => savejwsfinward(payload), "select");
@@ -672,7 +675,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       setShowBomList(false);
       setBomList([]);
       newMinFunction();
-      // getPickLocation();
+       setChallanDate(null);
     }
   }, [editModal]);
 
@@ -799,6 +802,30 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                           size="small"
                           value={eWayBill}
                           onChange={(e) => setEWayBill(e.target.value)}
+                        />
+                      </Form.Item>
+                    </Form>
+                     <Form size="small" >
+                      <Form.Item
+                        label="Challan Date"
+                        name="challanDate"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Challan Date",
+                          },
+                        ]}
+                          style={{ width: "315px" }}
+                      >
+                        <SingleDatePicker
+                          size="medium"
+                          value={challanDate}
+                          setDate={(date) => {setChallanDate(date)
+                            Form.setFieldsValue({ challanDate: date });
+                          }}
+                          placeholder="Select Challan Date"
+                          format={"DD-MM-YYYY"}
+                        
                         />
                       </Form.Item>
                     </Form>

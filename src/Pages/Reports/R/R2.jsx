@@ -67,6 +67,11 @@ const R2 = () => {
       headerName: "Po Order Id",
       width: 120,
     },
+    {
+      field: "po_bom_qty",
+      headerName: "BOM Qty",
+      width: 120,
+    },
     { field: "part_no", headerName: "Part", width: 100 },
     { field: "new_partno", headerName: "Cat Part Code", width: 150 },
     {
@@ -114,6 +119,11 @@ const R2 = () => {
     {
       field: "po_project",
       headerName: "Project Name",
+      width: 120,
+    },
+    {
+      field: "ppr_no",
+      headerName: "PPR No",
       width: 120,
     },
     {
@@ -172,7 +182,7 @@ const R2 = () => {
       headerName: "Pending Qty",
       width: 150,
     },
-  
+
     {
       field: "vendor_code",
       headerName: "Vendor Code",
@@ -228,7 +238,7 @@ const R2 = () => {
     let response;
     if (type == "JW") {
       response = await imsAxios.get(
-        `/JWReport?wise=${wise}&data=${searchTerm}`
+        `/JWReport?wise=${wise}&data=${searchTerm}`,
       );
       if (response.success) {
         let arr = response.data.map((row, index) => {
@@ -251,7 +261,7 @@ const R2 = () => {
         data: searchTerm,
         wise: wise,
       });
-    
+
       if (response.success) {
         showToast(response.message, "success");
         let arr = response.data.map((row, index) => {
@@ -273,7 +283,7 @@ const R2 = () => {
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
     setAsyncOptions(response.data);
   };

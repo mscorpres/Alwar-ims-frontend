@@ -48,7 +48,7 @@ const ManagePO = () => {
     { value: "single_date_wise", text: "Date Wise" },
     { value: "po_wise", text: "PO ID Wise" },
     { value: "vendor_wise", text: "Vendor Wise" },
-    {value: "requestPo", text:"Requested PR"},
+    { value: "requestPo", text: "Requested PR" },
   ];
   const printFun = async (poid) => {
     setLoading(true);
@@ -169,13 +169,11 @@ const ManagePO = () => {
       minWidth: 150,
     },
     {
-      headerName:"PO ACCEPTANCE",
-      field:"poacceptstatus",
-      renderCell:({row})=>(
-        <ToolTipEllipses text={row.poacceptstatus} />
-      ),
-      flex:1,
-      minWidth:150
+      headerName: "PO ACCEPTANCE",
+      field: "poacceptstatus",
+      renderCell: ({ row }) => <ToolTipEllipses text={row.poacceptstatus} />,
+      flex: 1,
+      minWidth: 150,
     },
 
     {
@@ -207,6 +205,15 @@ const ManagePO = () => {
       field: "project_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.project_name} />,
       minWidth: 150,
+      flex: 1,
+    },
+    {
+      headerName: "PPR No",
+      field: "ppr_no",
+      renderCell: ({ row }) => (
+        <ToolTipEllipses text={row.ppr_no} copy={true} />
+      ),
+      minWidth: 130,
       flex: 1,
     },
     {
@@ -280,14 +287,14 @@ const ManagePO = () => {
             wise == "vendor_wise"
               ? searchInput
               : wise == "po_wise"
-              ? searchInput.trim()
-              : wise == "single_date_wise" && searchDateRange,
+                ? searchInput.trim()
+                : wise == "single_date_wise" && searchDateRange,
           wise: wise,
-        }
+        },
       );
-    
+
       if (response.success) {
-          setSearchLoading(false);
+        setSearchLoading(false);
         let arr = response?.data?.map((row, index) => ({
           ...row,
           id: row.po_transaction,
@@ -295,18 +302,18 @@ const ManagePO = () => {
         }));
         setRows(arr);
       } else {
-         setSearchLoading(false);
+        setSearchLoading(false);
         showToast(response.message, "error");
       }
     } else {
       if (wise == "single_date_wise" && searchDateRange == null) {
-         setSearchLoading(false);
+        setSearchLoading(false);
         showToast("Please select start and end dates for the results", "error");
       } else if (wise == "po_wise") {
-         setSearchLoading(false);
+        setSearchLoading(false);
         showToast("Please enter a PO id", "error");
       } else if (wise == "vendor_wise") {
-         setSearchLoading(false);
+        setSearchLoading(false);
         showToast("Please select a vendor", "error");
       }
     }
@@ -316,7 +323,7 @@ const ManagePO = () => {
     if (search?.length > 2) {
       const response = await executeFun(
         () => getVendorOptions(search),
-        "select"
+        "select",
       );
       let arr = [];
       if (response.success) {
@@ -332,7 +339,7 @@ const ManagePO = () => {
       "/purchaseOrder/fetchComponentList4PO",
       {
         poid,
-      }
+      },
     );
     setViewLoading(false);
     if (response.success) {
@@ -384,17 +391,21 @@ const ManagePO = () => {
         ...response.data.vendor[0],
       });
     } else {
-        setLoading(false);
+      setLoading(false);
       showToast(response?.message, "error");
     }
   };
 
-
   return (
-    <div className="manage-po" style={{ position: "relative", height: "calc(100vh - 135px)", margin: "10px" }}>
-      <Row
-        justify="space-between"
-      >
+    <div
+      className="manage-po"
+      style={{
+        position: "relative",
+        height: "calc(100vh - 135px)",
+        margin: "10px",
+      }}
+    >
+      <Row justify="space-between">
         <Col>
           <Space>
             <div style={{ width: 150 }}>
@@ -438,8 +449,8 @@ const ManagePO = () => {
                     ? true
                     : false
                   : !searchInput
-                  ? true
-                  : false
+                    ? true
+                    : false
               }
               type="primary"
               loading={searchLoading}
@@ -483,10 +494,10 @@ const ManagePO = () => {
         setAsyncOptions={setAsyncOptions}
       />
       <div
-       style={{
+        style={{
           height: "calc(100% - 45px)",
           marginTop: "10px",
-      }}
+        }}
       >
         <MyDataTable
           loading={loading || viewLoading || searchLoading}

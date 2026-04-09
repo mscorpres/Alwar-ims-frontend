@@ -6,7 +6,11 @@ import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { useSelector } from "react-redux";
+import {
+  getComponentOptions,
+  getProjectOptions,
+} from "../../../api/general.ts";
+import { convertSelectOptions } from "../../../utils/general.ts";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import { Add, Delete } from "@mui/icons-material";
@@ -15,7 +19,6 @@ const { paragraph } = Typography;
 const { TextArea } = Input;
 function MaterialTransfer({ type }) {
   const { showToast } = useToast();
-  // console.log(type)
   type == "sftorej"
     ? (document.title = "SF to REJ")
     : (document.title = "SF to SF");
@@ -25,12 +28,14 @@ function MaterialTransfer({ type }) {
   });
   const { executeFun, loading: loading1 } = useApi();
   const [asyncOptions, setAsyncOptions] = useState([]);
-  // console.log(allData)
   const [submitLoading, setSubmitLoading] = useState(false);
   const [locationData, setLocationData] = useState([]);
-
   const [locDetail, setLocDetail] = useState("");
   const [locRejDetail, setLocRejDetail] = useState("");
+  const [project, setProject] = useState(null);
+  const [projectAsyncOptions, setProjectAsyncOptions] = useState([]);
+  const [pprOptions, setPprOptions] = useState([]);
+  const [isPPRLoading, setIsPPRLoading] = useState(false);
 
   const [rows, setRows] = useState([
     {
@@ -83,6 +88,43 @@ function MaterialTransfer({ type }) {
       });
       setAsyncOptions(arr);
     }
+  };
+
+  const handleFetchProjectOptions = async (search) => {
+    const response = await executeFun(
+      () => getProjectOptions(search),
+      "select",
+    );
+    setProjectAsyncOptions(response?.data ?? []);
+  };
+
+  const fetchPPROptions = async (projectKey) => {
+    if (!projectKey) {
+      setPprOptions([]);
+      return;
+    }
+    try {
+      setIsPPRLoading(true);
+      const response = await imsAxios.post("/purchaseOrder/pprList", {
+        project_name: projectKey,
+      });
+      if (response?.data?.status === "success") {
+        setPprOptions(convertSelectOptions(response?.data?.data));
+      } else {
+        setPprOptions([]);
+      }
+    } catch {
+      setPprOptions([]);
+      toast.error("Error fetching PPR options");
+    } finally {
+      setIsPPRLoading(false);
+    }
+  };
+
+  const resolveProjectId = () => {
+    const p = project;
+    if (p == null || p === "") return "";
+    return typeof p === "object" ? (p?.value ?? "") : p;
   };
 
   const getRowComponentDetail = async (rowIndex, componentValue) => {
@@ -140,34 +182,55 @@ function MaterialTransfer({ type }) {
       if (!r.componentName)
         return showToast(`Row ${i + 1}: Please select Component`, "error");
       if (!r.qty) return showToast(`Row ${i + 1}: Please enter Qty`, "error");
-      if (!r.rejLoc)
-        return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
+
       if (r.rejLoc == allData.locationSel)
         return showToast(`Row ${i + 1}: Both Location Same`, "error");
+    }
+    if (type == "sftorej") {
+      const projectId = resolveProjectId();
+      if (!projectId) return toast.error("Please select Project");
+      if (!allData.pprId && !pprOptions.length)
+        return toast.error("Please select PPR");
     }
 
     const components = rows.map((r) => r.componentName);
     const tolocations = rows.map((r) => r.rejLoc);
     const qtys = rows.map((r) => r.qty);
     const comments = rows.map((r) => r.comment || "");
+    const payload =
+      type == "sftorej"
+        ? {
+            pickLocation: allData.locationSel,
+            component: components,
+            remark: comments,
+            qty: qtys,
+            type: "SF2REJ",
+            dropLocation: allData.dropLoc,
+            project_id: resolveProjectId(),
+            ppr_id: allData.pprId,
+          }
+        : {
+            pickLocation: allData.locationSel,
+            component: components,
+            remark: comments,
+            qty: qtys,
+            type: "SF2SF",
+            dropLocation: allData.dropLoc,
+          };
 
     setLoading(true);
     const response = await imsAxios.post(
       type == "sftorej" ? "/godown/transferSF2REJ" : "/godown/transferSF2SF",
-      {
-        comments: comments,
-        fromlocation: allData.locationSel,
-        component: components,
-        tolocation: tolocations,
-        qty: qtys,
-        type: type == "sftorej" ? "SF2REJ" : "SF2SF",
-      },
+      payload,
     );
 
     if (response.success) {
       setAllData({
-        locationSel: "",
+        locationSel: "",  dropBranch: "",
+
       });
+          setProject(null);
+    setPprOptions([]);
       setRows([
         {
           componentName: "",
@@ -285,6 +348,40 @@ function MaterialTransfer({ type }) {
               <Col span={24} style={{ padding: "5px" }}>
                 <TextArea disabled value={locDetail} />
               </Col>
+                           {type == "sftorej" && (
+                <>
+                  <Col span={24} style={{ padding: "5px" }}>
+                    <span>Project</span>
+                    <MyAsyncSelect
+                      loadOptions={handleFetchProjectOptions}
+                      onBlur={() => setProjectAsyncOptions([])}
+                      placeholder="Project ID / name"
+                      optionsState={projectAsyncOptions}
+                      selectLoading={loading1("select")}
+                      value={project}
+                      onChange={(value) => {
+                        setProject(value);
+                        const key =
+                          value && typeof value === "object"
+                            ? value.value
+                            : value;
+                        fetchPPROptions(key);
+                      }}
+                    />
+                  </Col>
+                  <Col span={24} style={{ padding: "5px" }}>
+                    <span>PPR</span>
+                    <MySelect
+                      options={pprOptions}
+                      placeholder="Select PPR"
+                      value={allData.pprId}
+                      onChange={(value) =>
+                        setAllData((prev) => ({ ...prev, pprId: value }))
+                      }
+                    />
+                  </Col>
+                </>
+              )}
             </Row>
           </Card>
         </Col>

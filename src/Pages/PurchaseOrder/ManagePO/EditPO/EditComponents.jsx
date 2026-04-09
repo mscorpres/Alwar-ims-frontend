@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { v4 } from "uuid";
-import CurrenceModal from "../CurrenceModal";
 import { useToast } from "../../../../hooks/useToast.js";
 import NavFooter from "../../../../Components/NavFooter";
 import {
@@ -19,6 +18,7 @@ import {
   rateCell,
   SGSTCell,
   taxableCell,
+  bomQtyCell,
 } from "./TableColumns";
 import Loading from "../../../../Components/Loading";
 import { Button, Card, Col, Modal, Popconfirm, Row, Typography } from "antd";
@@ -32,6 +32,15 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
+
+function formatTaxDetailRowTotal(rawSum) {
+  const n = Number(rawSum);
+  if (Number.isNaN(n)) return "0.00";
+  return n.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
 export default function EditComponent({
   rowCount,
   setRowCount,
@@ -41,6 +50,8 @@ export default function EditComponent({
   resetRowsDetailsData,
   updatePoId,
   getRows,
+  form,
+  poCurrencies = [],
 }) {
   const { showToast } = useToast();
   const [asynOptions, setAsyncOptions] = useState([]);
@@ -55,12 +66,21 @@ export default function EditComponent({
     useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const addRows = () => {
+    const headerCur = form?.getFieldValue("po_currency") ?? "364907247";
+    const headerEx =
+      String(headerCur) === "364907247"
+        ? 1
+        : Number(form?.getFieldValue("po_exchange_rate")) || 1;
+    const sym =
+      poCurrencies.find((c) => String(c.value) === String(headerCur))?.text ??
+      "";
     const newRow = {
       index: rowCount.length + 1,
       new: true,
       id: v4(),
-      currency: "364907247",
-      exchange_rate: 1,
+      currency: headerCur,
+      exchange_rate: headerEx,
+      symbol: sym,
       component: "",
       qty: 1,
       rate: 0,
@@ -78,6 +98,7 @@ export default function EditComponent({
       foreginValue: 0,
       unit: "",
       updaterow: "",
+      po_bom_qty: "",
     };
     setRowCount((rowCount) => [...rowCount, newRow]);
   };
@@ -85,24 +106,7 @@ export default function EditComponent({
     const arr = rowCount?.filter((c) => c.id != id);
     setRowCount(arr);
   };
-  const changeCurrencyToINR = () => {
-    let arr = rowCount.map((row) => {
-      let obj = row;
-      if (row.id == showCurrencyUpdateConfirmModal.id) {
-        obj = {
-          ...obj,
-          currency: showCurrencyUpdateConfirmModal.value,
-          exchange_rate: 1,
-          foreginValue: 0,
-        };
-        return obj;
-      } else {
-        return obj;
-      }
-    });
-    setShowCurrencyUpdateConfirmModal(false);
-    setRowCount(arr);
-  };
+
   const inputHandler = async (name, value, id) => {
     let arr = rowCount;
     arr = arr.map((row) => {
@@ -144,10 +148,14 @@ export default function EditComponent({
               +Number(value).toFixed(2) > +Number(obj.project_rate)
                 ? true
                 : diff > +Number(obj.tol_price).toFixed(2)
-                ? true
-                : false,
+                  ? true
+                  : false,
           };
-        } else if (name == "hsncode" || name == "duedate") {
+        } else if (
+          name == "hsncode" ||
+          name == "duedate" ||
+          name === "po_bom_qty"
+        ) {
           obj = {
             ...obj,
             [name]: value,
@@ -202,30 +210,6 @@ export default function EditComponent({
               igst: (obj.inrValue * percentage) / 100,
             };
           }
-        } else if (name == "exchange_rate") {
-          obj = {
-            ...obj,
-            exchange_rate: value.rate,
-            currency: value.currency,
-            foreginValue: row.inrValue * value.rate,
-            project_rate: row.project_rate,
-            localPrice:
-              +Number(value.rate).toFixed(2) * +Number(row.rate).toFixed(2),
-            tol_price: +Number((row.project_rate * 1) / 100).toFixed(2),
-          };
-        } else if (name == "currency") {
-          if (value != 364907247) {
-            setShowCurrencyModal({
-              currency: value,
-              price: row.inrValue,
-              exchange_rate: row.exchange_rate,
-              symbol: currencies.filter((cur) => cur.value == value)[0].text,
-              rowId: id,
-              inputHandler: inputHandler,
-            });
-          } else if (value == "364907247") {
-            setShowCurrencyUpdateConfirmModal({ value: value, id: id });
-          }
         } else if (name == "gstrate") {
           if (row.gsttype == "L" && name != "gsttype") {
             let percentage = value / 2;
@@ -251,7 +235,13 @@ export default function EditComponent({
             };
           }
         }
-        if (row.gsttype.value == "L" && name != "gsttype" && name != "remark" && name != "internal_remark") {
+        if (
+          row.gsttype.value == "L" &&
+          name != "gsttype" &&
+          name != "remark" &&
+          name != "internal_remark" &&
+          name != "po_bom_qty"
+        ) {
           let percentage = obj.gstrate / 2;
           obj = {
             ...obj,
@@ -259,7 +249,13 @@ export default function EditComponent({
             sgst: (obj.inrValue * percentage) / 100,
             igst: 0,
           };
-        } else if (row.gsttype.value == "I" && name != "gsttype" && name != "remark" && name != "internal_remark") {
+        } else if (
+          row.gsttype.value == "I" &&
+          name != "gsttype" &&
+          name != "remark" &&
+          name != "internal_remark" &&
+          name != "po_bom_qty"
+        ) {
           let percentage = obj.gstrate;
           obj = {
             ...obj,
@@ -284,7 +280,7 @@ export default function EditComponent({
         "/component/getComponentDetailsByCode",
         {
           component_code: value.value,
-        }
+        },
       );
       if (componentResponse.success) {
         let arr1 = rowCount;
@@ -297,7 +293,10 @@ export default function EditComponent({
                 component: value,
                 rate: componentResponse.data.rate,
                 unit: componentResponse.data.unit,
-                inrValue: componentResponse.data.rate * row?.qty * parseInt(row?.exchange),
+                inrValue:
+                  componentResponse.data.rate *
+                  row?.qty *
+                  parseInt(row?.exchange),
                 hsncode: componentResponse.data.hsn,
                 gstrate: componentResponse.data.gstrate,
                 cgst: (row?.inrValue * percentage) / 100,
@@ -312,7 +311,10 @@ export default function EditComponent({
                 component: value,
                 rate: componentResponse.data.rate,
                 unit: componentResponse.data.unit,
-                inrValue: componentResponse.data.rate * row.qty * parseInt(row?.exchange),
+                inrValue:
+                  componentResponse.data.rate *
+                  row.qty *
+                  parseInt(row?.exchange),
                 hsncode: componentResponse.data.hsn,
                 gstrate: componentResponse.data.gstrate,
                 sgst: 0,
@@ -326,7 +328,10 @@ export default function EditComponent({
                 unit: componentResponse.data.unit,
                 gstrate: componentResponse.data.gstrate,
                 hsncode: componentResponse.data.hsn,
-                inrValue: componentResponse.data.rate * row.qty * parseInt(row?.exchange),
+                inrValue:
+                  componentResponse.data.rate *
+                  row.qty *
+                  parseInt(row?.exchange),
               };
             }
           } else {
@@ -358,100 +363,134 @@ export default function EditComponent({
     setRowCount(resetRowsDetailsData);
     setConfirmReset(false);
   };
- const validateData = () => {
-  let validation = true;
+  const validateData = () => {
+    let validation = true;
 
-  // Basic required field check
-  rowCount.forEach((row) => {
-    if (!row.component || !row.qty || !row.rate || !row.hsncode || !row.gsttype) {
-      validation = false;
+    // Basic required field check
+    rowCount.forEach((row) => {
+      if (
+        !row.component ||
+        !row.qty ||
+        !row.rate ||
+        !row.hsncode ||
+        !row.gsttype
+      ) {
+        validation = false;
+      }
+    });
+
+    if (!validation) {
+      showToast("Please fill all required component fields", "error");
+      return;
     }
-  });
 
-  if (!validation) {
-    showToast("Please fill all required component fields", "error");
-    return;
-  }
+    // Build components arrays
+    const components = {
+      component: [],
+      qty: [],
+      rate: [],
+      currency: [],
+      exchange_rate: [],
+      date: [],
+      hsn: [],
+      gsttype: [],
+      gstrate: [],
+      sgst: [],
+      igst: [],
+      cgst: [],
+      remark: [],
+      internal_remark: [],
+      updaterow: [],
+      rate_cap: [],
+      project_qty: [],
+      exq_po_qty: [],
+       po_bom_qty: [],
+    };
 
-  // Build components arrays
-  const components = {
-    component: [], qty: [], rate: [], currency: [], exchange_rate: [],
-    date: [], hsn: [], gsttype: [], gstrate: [], sgst: [], igst: [], cgst: [],
-    remark: [], internal_remark: [], updaterow: [], rate_cap: [], project_qty: [], exq_po_qty: []
+    rowCount.forEach((row) => {
+      components.component.push(row.component?.value);
+      components.qty.push(row.qty);
+      components.rate.push(row.rate);
+      components.currency.push(row.currency);
+      components.exchange_rate.push(row.exchange_rate);
+      components.date.push(row.duedate || "");
+      components.hsn.push(row.hsncode);
+      components.gsttype.push(row.gsttype);
+      components.gstrate.push(row.gstrate);
+      components.sgst.push(row.sgst);
+      components.igst.push(row.igst);
+      components.cgst.push(row.cgst);
+      components.remark.push(row.remark);
+      components.internal_remark.push(row.internal_remark || "");
+      components.updaterow.push(row.updateRow || row.updaterow || "");
+      components.rate_cap.push(row.project_rate || 0);
+      components.project_qty.push(row.project_qty || 0);
+      components.exq_po_qty.push(row.po_ord_qty || 0);
+          components.po_bom_qty.push(row.po_bom_qty ?? "");
+
+    });
+
+    if (
+      [...new Set(components.currency)].length > 1 ||
+      [...new Set(components.gsttype)].length > 1
+    ) {
+      showToast("All items must have same Currency and GST Type", "error");
+      return;
+    }
+    console.log(purchaseOrder, "values");
+
+    let finalPO = {
+      poid: updatePoId?.orderid,
+      vendor_name:
+        purchaseOrder?.vendorcode?.value || purchaseOrder?.vendorcode,
+      vendor_type: purchaseOrder?.vendortype_value,
+      vendor_branch:
+        purchaseOrder?.vendorbranch?.value || purchaseOrder?.vendorbranch,
+      vendor_address: purchaseOrder?.vendoraddress?.trim(),
+      paymentterms: purchaseOrder?.paymentterms?.trim(),
+      quotationterms: purchaseOrder?.termsofquotation?.trim(),
+      termsandcondition: purchaseOrder?.termsofcondition?.trim(),
+      costcenter: purchaseOrder?.costcenter?.value || purchaseOrder?.costcenter,
+      projectname:
+        typeof purchaseOrder?.projectname === "object"
+          ? purchaseOrder?.projectname?.value?.trim()
+          : purchaseOrder?.projectname?.trim(),
+      pocomment: purchaseOrder?.pocomment?.trim(),
+      bill_address_id: purchaseOrder.addrbillid,
+      billaddress: purchaseOrder.billaddress,
+      advancePayment: purchaseOrder.advancePayment || 0,
+      termsday: purchaseOrder.paymenttermsday || 30,
+
+      ship_type: purchaseOrder.ship_type,
+
+      ...(purchaseOrder.ship_type === "saved" && {
+        ship_address_id:
+          purchaseOrder.addrshipid?.value || purchaseOrder.addrshipid,
+      }),
+
+      ...(purchaseOrder.ship_type === "vendor" && {
+        ship_vendor: purchaseOrder.ship_vendor?.value,
+        ship_vendor_branch: purchaseOrder.ship_vendor_branch?.value,
+        ship_address_id:
+          purchaseOrder.ship_vendor?.value || purchaseOrder.ship_vendor,
+      }),
+
+      // Manual mode → no IDs, only address
+      ship_address:
+        purchaseOrder.ship_type === "manual"
+          ? purchaseOrder.shipaddress?.trim()
+          : purchaseOrder.shipaddress?.trim() || "--",
+      ship_other_pan: purchaseOrder.shippanno?.trim(),
+      ship_other_gstin: purchaseOrder.shipgstid?.trim(),
+      ship_partyname: purchaseOrder.ship_partyname?.trim(),
+    };
+
+    // Always spread components at the end
+    Object.assign(finalPO, components);
+    finalPO.materials = null;
+
+    setSubmitConfirm(finalPO);
   };
-
-  rowCount.forEach(row => {
-    components.component.push(row.component?.value);
-    components.qty.push(row.qty);
-    components.rate.push(row.rate);
-    components.currency.push(row.currency);
-    components.exchange_rate.push(row.exchange_rate);
-    components.date.push(row.duedate || "");
-    components.hsn.push(row.hsncode);
-    components.gsttype.push(row.gsttype);
-    components.gstrate.push(row.gstrate);
-    components.sgst.push(row.sgst);
-    components.igst.push(row.igst);
-    components.cgst.push(row.cgst);
-    components.remark.push(row.remark);
-    components.internal_remark.push(row.internal_remark || "");
-    components.updaterow.push(row.updateRow || row.updaterow || "");
-    components.rate_cap.push(row.project_rate || 0);
-    components.project_qty.push(row.project_qty || 0);
-    components.exq_po_qty.push(row.po_ord_qty || 0);
-  });
-
- 
-  if ([...new Set(components.currency)].length > 1 || [...new Set(components.gsttype)].length > 1) {
-    showToast("All items must have same Currency and GST Type", "error");
-    return;
-  }
-  console.log(purchaseOrder, "values")
-
-  let finalPO = {
-    poid: updatePoId?.orderid,
-    vendor_name: purchaseOrder?.vendorcode?.value || purchaseOrder?.vendorcode,
-    vendor_type: purchaseOrder?.vendortype_value,
-    vendor_branch: purchaseOrder?.vendorbranch?.value || purchaseOrder?.vendorbranch,
-    vendor_address: purchaseOrder?.vendoraddress?.trim(),
-    paymentterms: purchaseOrder?.paymentterms?.trim(),
-    quotationterms: purchaseOrder?.termsofquotation?.trim(),
-    termsandcondition: purchaseOrder?.termsofcondition?.trim(),
-    costcenter: purchaseOrder?.costcenter?.value || purchaseOrder?.costcenter,
-    projectname: typeof purchaseOrder?.projectname === "object" ? purchaseOrder?.projectname?.value?.trim() : purchaseOrder?.projectname?.trim(),
-    pocomment: purchaseOrder?.pocomment?.trim(),
-    bill_address_id: purchaseOrder.addrbillid,
-    billaddress: purchaseOrder.billaddress,
-    advancePayment: purchaseOrder.advancePayment || 0,
-    termsday: purchaseOrder.paymenttermsday || 30,
-
-    ship_type: purchaseOrder.ship_type,  
-
-    ...(purchaseOrder.ship_type === "saved" && {
-      ship_address_id: purchaseOrder.addrshipid?.value || purchaseOrder.addrshipid,
-    }),
-
-    ...(purchaseOrder.ship_type === "vendor" && {
-      ship_vendor: purchaseOrder.ship_vendor?.value,
-      ship_vendor_branch: purchaseOrder.ship_vendor_branch?.value,
-      ship_address_id: purchaseOrder.ship_vendor?.value || purchaseOrder.ship_vendor, 
-    }),
-
-    // Manual mode → no IDs, only address
-    ship_address: purchaseOrder.ship_type === "manual" 
-      ? purchaseOrder.shipaddress?.trim() 
-      : purchaseOrder.shipaddress?.trim() || "--",
-    ship_other_pan: purchaseOrder.shippanno?.trim(),
-    ship_other_gstin: purchaseOrder.shipgstid?.trim(),
-    ship_partyname: purchaseOrder.ship_partyname?.trim(),
-  };
-
-  // Always spread components at the end
-  Object.assign(finalPO, components);
-  finalPO.materials = null;
-
-  setSubmitConfirm(finalPO);
-};
   const submitHandler = async () => {
     if (submitConfirm) {
       setSubmitLoading(true);
@@ -472,21 +511,7 @@ export default function EditComponent({
     }
   };
   //getting currencies on page load
-  const getCurrencies = async () => {
-    const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
-    let arr = [];
-    if (response.success) {
-      arr = response.data.map((d) => {
-        return {
-          text: d.currency_symbol,
-          value: d.currency_id,
-          notes: d.currency_notes,
-        };
-      });
-    }
-    setCurrencies(arr);
-  };
   const removePart = async (row) => {
     if (!row.new) {
       const obj = {
@@ -508,7 +533,10 @@ export default function EditComponent({
           showToast(data?.message ?? "Part removed successfully.", "success");
           removeRows(row.id);
         } else {
-          showToast(data?.message?.msg ?? data?.message ?? "Failed to remove part", "error");
+          showToast(
+            data?.message?.msg ?? data?.message ?? "Failed to remove part",
+            "error",
+          );
         }
       } catch (err) {
         setRemovePartLoading(false);
@@ -575,7 +603,7 @@ export default function EditComponent({
           inputHandler,
           getComponents,
           setAsyncOptions,
-          asynOptions
+          asynOptions,
         ),
     },
     {
@@ -583,6 +611,13 @@ export default function EditComponent({
       width: 250,
       sortable: false,
       renderCell: (params) => itemDescriptionCell(params, inputHandler),
+    },
+    {
+      headerName: "BOM Qty",
+      width: 120,
+      field: "po_bom_qty",
+      sortable: false,
+      renderCell: (params) => bomQtyCell(params, inputHandler),
     },
     {
       headerName: "Ord. Qty",
@@ -596,7 +631,7 @@ export default function EditComponent({
       width: 180,
       field: "rate",
       sortable: false,
-      renderCell: (params) => rateCell(params, inputHandler, currencies),
+   renderCell: (params) => rateCell(params, inputHandler),
     },
     {
       headerName: "Last rate",
@@ -720,11 +755,8 @@ export default function EditComponent({
       sortable: false,
       renderCell: (params) => internalRemarkCell(params, inputHandler),
     },
-   
   ];
-  useEffect(() => {
-    getCurrencies();
-  }, []);
+
   useEffect(() => {
     let obj = [
       {
@@ -755,14 +787,20 @@ export default function EditComponent({
             Number(row.inrValue) +
             Number(row.sgst) +
             Number(row.cgst) +
-            Number(row.igst)
+            Number(row.igst),
         ),
       },
     ];
     setTotaTaxValue(obj);
   }, [rowCount]);
   return (
-    <div style={{ height: "calc(100vh - 160px)", overflowY: "auto", overflowX: "hidden" }}>
+    <div
+      style={{
+        height: "calc(100vh - 160px)",
+        overflowY: "auto",
+        overflowX: "hidden",
+      }}
+    >
       {/* po update confirm modal */}
       <Modal
         title="Confirm Update PO!"
@@ -785,13 +823,7 @@ export default function EditComponent({
         <p>Are you sure you want to update this Purchase Order?</p>
       </Modal>
       {submitLoading && <Loading />}
-      {showCurrencyModal != null && (
-        <CurrenceModal
-          showCurrency={showCurrencyModal}
-          setShowCurrencyModal={setShowCurrencyModal}
-        />
-      )}
-      {/* po reset confirm modal */}
+
       <Modal
         title="Confirm Reset!"
         open={confirmReset}
@@ -810,28 +842,7 @@ export default function EditComponent({
           to the details it was created with?
         </p>
       </Modal>
-      {/* currency changed to inr confirm modal */}
-      <Modal
-        title="Confirm Currency Change!"
-        open={showCurrencyUpdateConfirmModal}
-        onCancel={() => setShowCurrencyUpdateConfirmModal(false)}
-        footer={[
-          <Button
-            key="back"
-            onClick={() => setShowCurrencyUpdateConfirmModal(false)}
-          >
-            No
-          </Button>,
-          <Button key="submit" type="primary" onClick={changeCurrencyToINR}>
-            Yes
-          </Button>,
-        ]}
-      >
-        <p>
-          Are you sure you want to change the currency to INR for this
-          component. The exchange rate will change to 1.
-        </p>
-      </Modal>
+
       <Row gutter={8} style={{ height: "100%" }}>
         <Col span={6} style={{ height: "99%" }}>
           <Row gutter={[0, 4]} style={{ height: "100%" }}>
@@ -948,11 +959,11 @@ export default function EditComponent({
                                   totalTaxValue.length - 1 && 600,
                             }}
                           >
-                            {Number(
+                            {formatTaxDetailRowTotal(
                               row.values?.reduce((partialSum, a) => {
                                 return partialSum + Number(a);
-                              }, 0)
-                            ).toFixed(2)}
+                              }, 0),
+                            )}
                           </span>
                         </Col>
                       </Row>
@@ -963,9 +974,7 @@ export default function EditComponent({
             </Col>
           </Row>
         </Col>
-        <Col
-          span={18}
-        >
+        <Col span={18}>
           <MyDataTable columns={columns} data={rowCount} />
         </Col>
       </Row>
