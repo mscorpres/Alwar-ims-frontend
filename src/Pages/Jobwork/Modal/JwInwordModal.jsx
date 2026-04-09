@@ -31,7 +31,7 @@ import {
 import useApi from "../../../hooks/useApi.ts";
 import NavFooter from "../../../Components/NavFooter";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import { AiOutlineMinusSquare } from "react-icons/ai";
+import { Delete } from "@mui/icons-material";
 import { uploadMinInvoice } from "../../../api/store/material-in";
 import SuccessPage from "../../Store/MaterialIn/SuccessPage";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
@@ -374,16 +374,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       sortable: false,
       renderCell: ({ row }) => [
         <GridActionsCellItem
-          icon={
-            <AiOutlineMinusSquare
-            // style={{
-            //   fontSize: "1.7rem",
-            //    pointerEvents:
-            //     journalRows.length === 3 || row.total ? "none" : "all",
-            //   opacity: journalRows.length === 3 || row.total ? 0.5 : 1,
-            // }} cursor: "pointer",
-            />
-          }
+          icon={<Delete color="error" sx={{ fontSize: "1.7rem", cursor: "pointer" }} />}
           onClick={() => {
             removeRow(row.id);
           }}

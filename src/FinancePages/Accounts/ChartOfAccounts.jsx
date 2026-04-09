@@ -28,6 +28,7 @@ export default function ChartOfAccounts() {
   const [charts, setCharts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState("");
+   const [hoveredRow, setHoveredRow] = useState(null);
   const [summary, setSummary] = useState([
     { title: "From - To", description: "" },
     { title: "Closing", description: "" },
@@ -42,7 +43,7 @@ export default function ChartOfAccounts() {
       date: dateRange,
     });
     setLoading(false);
-    const { data , summary, success} = response;
+    const { data, summary, success } = response;
     if (success) {
       setCharts(flatArray(data));
 
@@ -88,8 +89,8 @@ export default function ChartOfAccounts() {
             ? "Master"
             : "Sub Group"
           : !row.type
-          ? "Ledger"
-          : row.type,
+            ? "Ledger"
+            : row.type,
         Opening: row.opening ?? "--",
         Debit: row.debit && row.debit,
         Credit: row.credit && row.credit,
@@ -159,8 +160,8 @@ export default function ChartOfAccounts() {
             ? "Master"
             : "Sub Group"
           : !row.type
-          ? "Ledger"
-          : row.type,
+            ? "Ledger"
+            : row.type,
         lable:
           row.label &&
           row.label
@@ -178,7 +179,7 @@ export default function ChartOfAccounts() {
           position: "relative",
           width: "100%",
           height: "100%",
-          padding:10,
+          padding: 10,
           overflow: "hidden",
         }}
       >
@@ -209,106 +210,131 @@ export default function ChartOfAccounts() {
           </Col>
           <Col span={20}>
             {/* <Card size="small" style={{ height: "100%" }}> */}
-              <TableContainer sx={{ maxHeight: "calc(100vh - 210px)" }}>
-                {loading && <Loading />}
+            <TableContainer
+              style={{
+                height: "calc(100vh - 180px)",
+                border: "1px solid white",
+                borderRadius: "0px",
+              }}
+            >
+              {loading && <Loading />}
+
+              <div
+                size="small"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "0px",
+                  border: "1px solid #ccc",
+                }}
+              >
+                {" "}
                 <Table
                   stickyHeader
-                  sx={{ width: "100%", backgroundColor:"#f1f7fc" }}
+                  sx={{ width: "100%", overflowX: "auto" }}
                   size="small"
                   aria-label="a dense table"
                 >
                   <TableHead>
-                    <TableRow>
-                      <TableCell>Code</TableCell>
-                      <TableCell>Name</TableCell>
-                      <TableCell>Type</TableCell>
-                      <TableCell>Opening</TableCell>
-                      <TableCell>Debit</TableCell>
-                      <TableCell>Credit</TableCell>
-                      <TableCell>Closing</TableCell>
+                    <TableRow  >
+                      <TableCell className="accountTable " >Code</TableCell>
+                      <TableCell className="accountTable">Name</TableCell>
+                      <TableCell className="accountTable">Type</TableCell>
+                      <TableCell className="accountTable">Opening</TableCell>
+                      <TableCell className="accountTable">Debit</TableCell>
+                      <TableCell className="accountTable">Credit</TableCell>
+                      <TableCell className="accountTable">Closing</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {charts.map((row) => (
-                      <TableRow
-                        key={row.name}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        {/* code */}
-                        <TableCell
-                          style={{
-                            fontWeight: row.type === "End Total" && "bold",
+                    {charts.map((row, idx) => {
+                      const rowColor = idx % 2 === 0 ? "#ffffff" : "#f8f9fa";
+                      return (
+                        <TableRow
+                          key={row.name}
+                          sx={{
+                            backgroundColor:
+                                hoveredRow === row.id ? "#fffaec" : rowColor,
+                            "&:last-child td, &:last-child th": { border: 0 },
                           }}
-                          component="th"
-                          scope="row"
+                               onMouseEnter={() => setHoveredRow(idx)}
+                            onMouseLeave={() => setHoveredRow(null)}
                         >
-                          {row.code}
-                        </TableCell>
-                        {/* name */}
-                        <TableCell
-                          style={{
-                            fontWeight: row.type === "End Total" && "bold",
-                          }}
-                        >
-                          {row.label}
-                        </TableCell>
-                        {/* type */}
-                        <TableCell
-                          style={{
-                            fontWeight: row.type === "End Total" && "bold",
-                          }}
-                        >
-                          {row.parent
-                            ? row.parent == "--"
-                              ? "Master"
-                              : "Sub Group"
-                            : !row.type
-                            ? "Ledger"
-                            : row.type}
-                        </TableCell>
-                        {/* opening */}
-                        <TableCell
-                          style={{
-                            fontWeight: row.type === "End Total" && "bold",
-                          }}
-                        >
-                          {/* {row.opening} */}
-                          {row.opening}
-                        </TableCell>
-                        {/* debit */}
-                        <TableCell
-                          style={{
-                            fontWeight: row.type === "End Total" && "bold",
-                          }}
-                        >
-                          {/* {row.debit} */}
-                          {row.debit}
-                        </TableCell>
-                        {/* credit */}
-                        <TableCell
-                          style={{
-                            fontWeight: row.type === "End Total" && "bold",
-                          }}
-                        >
-                          {/* {row.credit} */}
-                          {row.credit}
-                        </TableCell>
-                        {/* closing */}
-                        <TableCell
-                          style={{
-                            fontWeight: row.type === "End Total" && "bold",
-                          }}
-                        >
-                          {/* {row.closing} */}
-                          {row.closing}
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          {/* code */}
+                          <TableCell
+                            style={{
+                              fontWeight: row.type === "End Total" && "bold",
+                            }}
+                            component="th"
+                            scope="row"
+                          >
+                            {row.code}
+                          </TableCell>
+                          {/* name */}
+                          <TableCell
+                            style={{
+                              fontWeight: row.type === "End Total" && "bold",
+                            }}
+                          >
+                            {row.label}
+                          </TableCell>
+                          {/* type */}
+                          <TableCell
+                            style={{
+                              fontWeight: row.type === "End Total" && "bold",
+                            }}
+                          >
+                            {row.parent
+                              ? row.parent == "--"
+                                ? "Master"
+                                : "Sub Group"
+                              : !row.type
+                                ? "Ledger"
+                                : row.type}
+                          </TableCell>
+                          {/* opening */}
+                          <TableCell
+                            style={{
+                              fontWeight: row.type === "End Total" && "bold",
+                            }}
+                          >
+                            {/* {row.opening} */}
+                            {row.opening}
+                          </TableCell>
+                          {/* debit */}
+                          <TableCell
+                            style={{
+                              fontWeight: row.type === "End Total" && "bold",
+                            }}
+                          >
+                            {/* {row.debit} */}
+                            {row.debit}
+                          </TableCell>
+                          {/* credit */}
+                          <TableCell
+                            style={{
+                              fontWeight: row.type === "End Total" && "bold",
+                            }}
+                          >
+                            {/* {row.credit} */}
+                            {row.credit}
+                          </TableCell>
+                          {/* closing */}
+                          <TableCell
+                            style={{
+                              fontWeight: row.type === "End Total" && "bold",
+                            }}
+                          >
+                            {/* {row.closing} */}
+                            {row.closing}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
-              </TableContainer>
+              </div>
+            </TableContainer>
             {/* </Card> */}
           </Col>
         </Row>

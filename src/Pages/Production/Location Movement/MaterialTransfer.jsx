@@ -270,7 +270,7 @@ function MaterialTransfer({ type }) {
           <Card>
             <Row>
               <Col span={24} style={{ padding: "5px" }}>
-                <span>PICK LOCATION</span>
+                <span>Pick Location</span>
                 <MySelect
                   options={locationData}
                   placeholder="Check Location"

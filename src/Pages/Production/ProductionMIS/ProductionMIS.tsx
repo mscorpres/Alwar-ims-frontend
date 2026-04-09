@@ -135,7 +135,7 @@ function ProductionMIS() {
           </Card>
         </Col>
         <Col
-          span={12}
+          span={16}
           style={{ paddingBottom: 20, height: "100%", overflow: "auto" }}
         >
           <Form.List name="shifts">
