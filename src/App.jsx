@@ -1001,7 +1001,7 @@ dispatch(logoutUser());
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath
                           ? 0
-                          :50;
+                          :47;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",

@@ -3,7 +3,7 @@ import menuConfig from "./menu.json";
 import { renderIcon } from "./iconsMapper";
 
 const processMenuItems = (items) => {
-  return items.map((item) => ({
+return items.map((item) => ({
     ...item,
     icon: renderIcon(item.icon),
     children: item.children ? processMenuItems(item.children) : undefined,
