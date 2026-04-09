@@ -5,13 +5,7 @@ import { imsAxios } from "../axiosInterceptor";
 //@ts-ignore
 import { getGlobalToast } from "../context/ToastContext";
 
-
-
-
-
-
-
-export const uplaodFGFileInMINInward = async (formdata:any) => {
+export const uplaodFGFileInMINInward = async (formdata: any) => {
   try {
     const response = await imsAxios.post("fgMIN/upload/item", formdata);
     return response;
@@ -20,9 +14,7 @@ export const uplaodFGFileInMINInward = async (formdata:any) => {
   }
 };
 
-
-export const getVendorOptions = async (search:any) => {
-  
+export const getVendorOptions = async (search: any) => {
   try {
     const response = await imsAxios.post("/backend/vendorList", {
       search,
@@ -162,8 +154,8 @@ export const getCostCentresOptions = async (search: any) => {
   return response;
 };
 
-export const getBomOptions = async (search: any) => {
-  const response = await imsAxios.post("/backend/bomRecipe", {
+export const getBomOptions = async (search, type = "all") => {
+  const response = await imsAxios.post(`/backend/bomRecipe?type=${type}`, {
     search,
   });
   return response;
@@ -314,12 +306,12 @@ export const getMINOptions = async (search) => {
   return response;
 };
 
-export const getFGMINOptions = async (search:any) => {
+export const getFGMINOptions = async (search: any) => {
   const response = await imsAxios.post("/fgMinPrint/getFGMinsTransaction", {
     searchTerm: search,
   });
 
-  let arr:any = [];
+  let arr: any = [];
   if (response.success) {
     arr = convertSelectOptions(response.data);
   }

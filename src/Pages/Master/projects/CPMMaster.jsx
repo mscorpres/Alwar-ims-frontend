@@ -53,7 +53,12 @@ function CPMMaster() {
         showToast(response.message, "error");
       }
     } catch (error) {
-      showToast("Failed to update the project. Please try again.", "error");
+      showToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to update the project. Please try again.",
+        "error",
+      );
     }
   };
 
@@ -61,7 +66,7 @@ function CPMMaster() {
     downloadCSVnested2(rows, columns, "All Projects");
   };
 
-  const disableValidateHandler = async (row,status) => {
+  const disableValidateHandler = async (row, status) => {
     const payload = {
       project: row.project,
       status: status ? "1" : "0",
@@ -79,7 +84,7 @@ function CPMMaster() {
   const disableSubmitHandler = async (values) => {
     const response = await imsAxios.put(
       `/backend/project/status/${values.project}`,
-      values
+      values,
     );
     if (response.success) {
       if (response.success) {
@@ -92,13 +97,75 @@ function CPMMaster() {
     }
   };
 
+  const getBomList = (row) => {
+    const raw = row?.bomSubject ?? row?.bom;
+    if (Array.isArray(raw)) return raw;
+    return raw ? [raw] : [];
+  };
+
+  const getBomName = (item) =>
+    item?.display_text ?? item?.subject_name ?? item?.name ?? item?.text ?? "";
+
+  const getRecipeType = (item) => {
+    const label = String(item?.bom_type_label ?? "")
+      .trim()
+      .toLowerCase();
+    if (label === "sfg") return "semi";
+    if (label === "fg") return "default";
+    return String(
+      item?.bom_recipe_type ??
+        item?.recipe_type ??
+        item?.type ??
+        item?.bom_recipe ??
+        "",
+    )
+      .trim()
+      .toLowerCase();
+  };
+  const isFgType = (type) => ["default", "fg", "finished"].includes(type);
+  const isSfgType = (type) =>
+    ["semi", "sfg", "semi-fg", "semifg"].includes(type);
+  const getFgSfgBom = (row) => {
+    const list = getBomList(row);
+    const fgByType = list.find((item) => isFgType(getRecipeType(item)));
+    const sfgByType = list.find((item) => isSfgType(getRecipeType(item)));
+    if (fgByType || sfgByType) {
+      return { fg: fgByType ?? null, sfg: sfgByType ?? null };
+    }
+    // Backend often sends [SFG, FG] when type is missing.
+    if (list.length >= 2) {
+      return { fg: list[1], sfg: list[0] };
+    }
+    return { fg: list[0] ?? null, sfg: null };
+  };
+
   const columns = [
     { field: "index", headerName: "Sr. No", width: 80 },
     { field: "project", headerName: "Project Id", width: 180 },
     { field: "description", headerName: "Project Name", flex: 1 },
-    {field:"qty",headerName:"Quantity",width:180,flex:1},
+    { field: "qty", headerName: "Quantity", width: 180, flex: 1 },
     { field: "costcenter", headerName: "Cost Center", width: 180, flex: 1 },
-    {field:"bomSubject",headerName:"BOM",width:180,flex:1},
+    { field: "bomSubject", headerName: "BOM", width: 180, flex: 1 },
+    {
+      field: "fgBomName",
+      headerName: "FG BOM",
+      width: 200,
+      flex: 1,
+      valueGetter: (_value, row) => {
+        const { fg } = getFgSfgBom(_value?.row ?? row);
+        return getBomName(fg) || "";
+      },
+    },
+    {
+      field: "sfgBomName",
+      headerName: "SFG BOM",
+      width: 200,
+      flex: 1,
+      valueGetter: (_value, row) => {
+        const { sfg } = getFgSfgBom(_value?.row ?? row);
+        return getBomName(sfg) || "";
+      },
+    },
     { field: "insert_dt", headerName: "Insert Date", flex: 1 },
     {
       headerName: "Status",

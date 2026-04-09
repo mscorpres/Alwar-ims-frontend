@@ -2,72 +2,158 @@ import { useState, useEffect } from "react";
 import { Drawer, Input, Button, Form, message } from "antd";
 //@ts-ignore
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-//@ts-ignore
-import { getBomOptions, getCostCentresOptions } from "../../../api/general.ts";
+import { getCostCentresOptions, getBomOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "@/utils/general";
 import useApi from "@/hooks/useApi";
 
-const UpdateProjectModal = ({ 
-  data, 
-  setIsModalVisible, 
-  isModalVisible, 
-  onUpdate 
-}:any) => {
+const UpdateProjectModal = ({
+  data,
+  setIsModalVisible,
+  isModalVisible,
+  onUpdate,
+}: any) => {
   const [form] = Form.useForm();
-
-
-  const [bomOptions, setBomOptions] = useState([]);           
-  const [costCenterOptions, setCostCenterOptions] = useState([]); 
+  const [fgBomOptions, setFgBomOptions] = useState([]);
+  const [sfgBomOptions, setSfgBomOptions] = useState([]);
+  const [costCenterOptions, setCostCenterOptions] = useState([]);
 
   const { executeFun } = useApi();
+  const getRecipeType = (row: any) => {
+    const label = String(row?.bom_type_label ?? "")
+      .trim()
+      .toLowerCase();
+    if (label === "sfg") return "semi";
+    if (label === "fg") return "default";
+    return String(
+      row?.bom_recipe_type ??
+        row?.recipe_type ??
+        row?.type ??
+        row?.bom_recipe ??
+        "",
+    )
+      .trim()
+      .toLowerCase();
+  };
+  const isFgType = (type: string) =>
+    ["default", "fg", "finished"].includes(type);
+  const isSfgType = (type: string) =>
+    ["semi", "sfg", "semi-fg", "semifg"].includes(type);
+  const toSelectOptions = (rows: any[]) =>
+    (rows ?? []).map((row: any) => ({
+      text: row?.text ?? row?.subject_name ?? row?.name ?? "",
+      value: row?.id ?? row?.subject_id ?? row?.value,
+    }));
+
+  const loadFgBomOptions = async (search: any) => {
+    const response = await executeFun(
+      () => getBomOptions(search, "default"),
+      "select",
+    );
+    if (response.success) {
+      const options = toSelectOptions(response.data ?? []);
+      setFgBomOptions(options);
+    } else {
+      setFgBomOptions([]);
+    }
+  };
 
   // Load BOM options
-  const loadBomOptions = async (search:any) => {
-    const response = await executeFun(() => getBomOptions(search), "select");
+  const loadSfgBomOptions = async (search: any) => {
+    const response = await executeFun(
+      () => getBomOptions(search, "semi"),
+      "select",
+    );
     if (response.success) {
-      const options:any = convertSelectOptions(response.data); 
-      setBomOptions(options);
+      const options = toSelectOptions(response.data ?? []);
+      setSfgBomOptions(options);
     } else {
-      setBomOptions([]);
+      setSfgBomOptions([]);
     }
   };
 
   // Load Cost Center options
-  const loadCostCenterOptions = async (search:any) => {
-    const response = await executeFun(() => getCostCentresOptions(search), "select");
+  const loadCostCenterOptions = async (search: any) => {
+    const response = await executeFun(
+      () => getCostCentresOptions(search),
+      "select",
+    );
     if (response.success) {
-      const options:any = convertSelectOptions(response.data);
+      const options: any = convertSelectOptions(response.data);
       setCostCenterOptions(options);
     } else {
       setCostCenterOptions([]);
     }
   };
+  const normalizeBomsForPrefill = (projectData: any) => {
+    const raw = projectData?.bomSubject ?? projectData?.bom ?? null;
+    const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
 
-  // Populate form when modal opens with selected project data
+    const parsed = list
+      .map((item: any) => {
+        const recipeType = getRecipeType(item);
+        return {
+          type: recipeType,
+          value: item?.subject_id ?? item?.id ?? item?.value ?? null,
+          label:
+            item?.display_text ??
+            item?.subject_name ??
+            item?.name ??
+            item?.label ??
+            item?.text ??
+            "",
+        };
+      })
+      .filter((row: any) => row.value !== null && row.value !== undefined);
+
+    let fg = parsed.find((row: any) => isFgType(row.type));
+    let sfg = parsed.find((row: any) => isSfgType(row.type));
+
+    if (!fg && !sfg && parsed.length >= 2) {
+      // Backend may return [SFG, FG] when type is absent.
+      fg = parsed[1];
+      sfg = parsed[0];
+    } else if (!fg && !sfg && parsed.length === 1) {
+      fg = parsed[0];
+    } else {
+      if (!fg && sfg && parsed.length > 1) {
+        fg = parsed.find((row: any) => String(row.value) !== String(sfg.value));
+      }
+      if (!sfg && fg && parsed.length > 1) {
+        sfg = parsed.find((row: any) => String(row.value) !== String(fg.value));
+      }
+    }
+
+    return { fg, sfg };
+  };
   useEffect(() => {
     if (data && isModalVisible) {
+      const { fg, sfg } = normalizeBomsForPrefill(data);
       form.setFieldsValue({
         project: data.project,
         description: data.description || "",
         qty: data.qty || 1,
-        
-        bom: data.bomSubject || null,        
+        fgBom: fg ? { value: fg.value, label: fg.label } : null,
+        sfgBom: sfg ? { value: sfg.value, label: sfg.label } : null,
         costcenter: data.costcenter || null,
       });
 
-    
-      if (data.bomSubject) {
-        setBomOptions([{ label: data.bomSubject, value: data.bomSubject } ] as any);
-      }
+      if (fg) setFgBomOptions([{ value: fg.value, text: fg.label }]);
+      if (sfg) setSfgBomOptions([{ value: sfg.value, text: sfg.label }]);
       if (data.costcenter) {
-        setCostCenterOptions([{ label: data.costcenter, value: data.costcenter }] as any);
+        setCostCenterOptions([
+          {
+            value: data.costcenter?.cost_center_key,
+            text: data.costcenter?.cost_center_name,
+          },
+        ]);
       }
     }
   }, [data, isModalVisible, form]);
 
   const handleCancel = () => {
     form.resetFields();
-    setBomOptions([]);
+    setFgBomOptions([]);
+    setSfgBomOptions([]);
     setCostCenterOptions([]);
     setIsModalVisible(false);
   };
@@ -75,13 +161,20 @@ const UpdateProjectModal = ({
   const handleSubmit = () => {
     form
       .validateFields()
-      .then((values) => {        
+      .then((values) => {
+        const fgBomId = values?.fgBom?.value ?? values?.fgBom ?? null;
+        const sfgBomId = values?.sfgBom?.value ?? values?.sfgBom ?? null;
+
+        if (fgBomId && sfgBomId && String(fgBomId) === String(sfgBomId)) {
+          message.error("FG and SFG BOM must be different");
+          return;
+        }
         const updatedData = {
           project: values.project,
           description: values.description?.trim(),
-          qty: values.qty,
-          bomSubject: values.bom || null,        
-          costcenter: values.costcenter || null, 
+          qty: values.qty ? Number(values.qty) : 0,
+          bomSubject: [fgBomId ?? null, sfgBomId ?? null],
+          costcenter: values.costcenter || null,
         };
 
         onUpdate(updatedData); // Send to parent
@@ -94,7 +187,7 @@ const UpdateProjectModal = ({
   return (
     <Drawer
       title="Update Project"
-      open={isModalVisible}           
+      open={isModalVisible}
       onClose={handleCancel}
       width={600}
       placement="right"
@@ -110,43 +203,52 @@ const UpdateProjectModal = ({
       }
     >
       <Form form={form} layout="vertical">
-        <Form.Item 
-          name="project" 
-          label="Project ID" 
+        <Form.Item
+          name="project"
+          label="Project ID"
           rules={[{ required: true }]}
         >
           <Input disabled />
         </Form.Item>
-
         <Form.Item
           name="description"
           label="Project Description"
-          rules={[{ required: true, message: "Please enter project description" }]}
+          rules={[
+            { required: true, message: "Please enter project description" },
+          ]}
         >
-          <Input.TextArea rows={3} placeholder="Enter project name/description" />
+          <Input.TextArea
+            rows={3}
+            placeholder="Enter project name/description"
+          />
         </Form.Item>
-
         <Form.Item name="qty" label="Quantity" rules={[{ required: true }]}>
           <Input type="number" min={1} />
         </Form.Item>
-
-        {/* BOM Field - Uses its own options */}
-        <Form.Item name="bom" label="BOM">
+        <Form.Item name="fgBom" label="FG BOM">
           <MyAsyncSelect
-            placeholder="Search and select BOM..."
-            loadOptions={loadBomOptions}
-            optionsState={bomOptions}           
-            onBlur={() => setBomOptions([])}  
-            allowClear
+            placeholder="Search and select FG BOM..."
+            loadOptions={loadFgBomOptions}
+            optionsState={fgBomOptions}
+            onBlur={() => setFgBomOptions([])}
+            labelInValue={true}
+          />
+        </Form.Item>{" "}
+        <Form.Item name="sfgBom" label="SFG BOM">
+          <MyAsyncSelect
+            placeholder="Search and select SFG BOM..."
+            loadOptions={loadSfgBomOptions}
+            optionsState={sfgBomOptions}
+            onBlur={() => setSfgBomOptions([])}
+            labelInValue={true}
           />
         </Form.Item>
-
         {/* Cost Center Field - Uses its own options */}
         <Form.Item name="costcenter" label="Cost Center">
           <MyAsyncSelect
             placeholder="Search and select Cost Center..."
             loadOptions={loadCostCenterOptions}
-            optionsState={costCenterOptions}       
+            optionsState={costCenterOptions}
             onBlur={() => setCostCenterOptions([])}
             allowClear
           />

@@ -1,6 +1,6 @@
-export const prsampleFile  = [
+export const prsampleFile = [
   {
-      PART_CODE: "P0001",
+    PART_CODE: "P0001",
     ITEM_DESCRIPTION: "description 2",
     PO_BOM_QTY: 10,
     QTY: 14,
@@ -11,9 +11,9 @@ export const prsampleFile  = [
     INTERNAL_REMARK: "testing purpose",
   },
   {
-      PART_CODE: "P0002",
+    PART_CODE: "P0002",
     ITEM_DESCRIPTION: "description 2",
-       PO_BOM_QTY: 8,
+    PO_BOM_QTY: 8,
     QTY: 12,
     RATE: 22,
     HSN: 123456,
@@ -21,4 +21,4 @@ export const prsampleFile  = [
     GST_RATE: "18",
     INTERNAL_REMARK: "testing purpose",
   },
-]
+];

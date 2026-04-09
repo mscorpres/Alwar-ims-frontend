@@ -11,7 +11,6 @@ import {
   getProjectOptions,
 } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
-import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import { Add, Delete } from "@mui/icons-material";
 const { paragraph } = Typography;
@@ -25,6 +24,9 @@ function MaterialTransfer({ type }) {
 
   const [allData, setAllData] = useState({
     locationSel: "",
+     dropBranch: "",
+    dropLoc: "",
+    pprId: "",
   });
   const { executeFun, loading: loading1 } = useApi();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -186,12 +188,7 @@ function MaterialTransfer({ type }) {
       if (r.rejLoc == allData.locationSel)
         return showToast(`Row ${i + 1}: Both Location Same`, "error");
     }
-    if (type == "sftorej") {
-      const projectId = resolveProjectId();
-      if (!projectId) return toast.error("Please select Project");
-      if (!allData.pprId && !pprOptions.length)
-        return toast.error("Please select PPR");
-    }
+   
 
     const components = rows.map((r) => r.componentName);
     const tolocations = rows.map((r) => r.rejLoc);
@@ -206,8 +203,8 @@ function MaterialTransfer({ type }) {
             qty: qtys,
             type: "SF2REJ",
             dropLocation: allData.dropLoc,
-            project_id: resolveProjectId(),
-            ppr_id: allData.pprId,
+       project_id: resolveProjectId() || null,
+            ppr_id: allData.pprId || null,
           }
         : {
             pickLocation: allData.locationSel,
@@ -226,11 +223,13 @@ function MaterialTransfer({ type }) {
 
     if (response.success) {
       setAllData({
-        locationSel: "",  dropBranch: "",
-
+        locationSel: "",
+        dropBranch: "",
+        dropLoc: "",
+        pprId: "",
       });
-          setProject(null);
-    setPprOptions([]);
+      setProject(null);
+      setPprOptions([]);
       setRows([
         {
           componentName: "",
@@ -253,6 +252,9 @@ function MaterialTransfer({ type }) {
   const reset = () => {
     setAllData({
       locationSel: "",
+       dropBranch: "",
+      dropLoc: "",
+      pprId: "",
     });
     setRows([
       {
@@ -348,7 +350,7 @@ function MaterialTransfer({ type }) {
               <Col span={24} style={{ padding: "5px" }}>
                 <TextArea disabled value={locDetail} />
               </Col>
-                           {type == "sftorej" && (
+              {type == "sftorej" && (
                 <>
                   <Col span={24} style={{ padding: "5px" }}>
                     <span>Project</span>
