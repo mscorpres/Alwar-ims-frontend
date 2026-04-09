@@ -34,6 +34,17 @@ export default function NewProjectForm() {
     if (response.success) arr = convertSelectOptions(response.data);
     setCostCenterOptions(arr);
   };
+    const getFgBom = async (search) => {
+    const response = await executeFun(
+      () => getBomOptions(search, "default"),
+      "select"
+    );
+    let arr = [];
+    if (response.success) {
+      arr = toSelectOptions(response.data ?? []);
+    }
+    setFgBomOptions(arr);
+  };
 
   const getSfgBom = async (search) => {
     const response = await executeFun(
