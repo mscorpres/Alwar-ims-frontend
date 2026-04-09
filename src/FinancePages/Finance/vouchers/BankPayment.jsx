@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { v4 } from "uuid";
 import NavFooter from "../../../Components/NavFooter";
 import { useToast } from "../../../hooks/useToast.js";
-import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Card, Col, DatePicker, Form, Input, Modal, Row } from "antd";
@@ -14,6 +13,7 @@ import dayjs from "dayjs";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
 import FormTable from "../../../Components/FormTable.jsx";
+import { Add, Delete } from "@mui/icons-material";
 
 export default function BankPayment() {
   const { showToast } = useToast();
@@ -56,7 +56,7 @@ export default function BankPayment() {
   const addRows = () => {
     setBankPaymentRows((rows) => {
       return [
-        ...rows,
+    
         {
           id: v4(),
           glCode: "",
@@ -66,6 +66,7 @@ export default function BankPayment() {
           exchangeRate: 1,
           foreignValue: 0,
         },
+            ...rows,
       ];
     });
   };
@@ -77,44 +78,26 @@ export default function BankPayment() {
   const BankPaymentTable = [
     {
       headerName: (
-        <span>
-          <AiOutlinePlusSquare
-            onClick={addRows}
-            style={{
-              cursor: "pointer",
-              fontSize: "1.7rem",
-              marginTop: 10,
-              opacity: "0.7",
-            }}
-          />
+        <span onClick={addRows} style={{ cursor: "pointer" }}>
+          <Add color="success" />
         </span>
       ),
       width: 50,
       type: "actions",
       field: "add",
       sortable: false,
-      renderCell: ({ row }) => [
-        <GridActionsCellItem
-          icon={
-            <AiOutlineMinusSquare
-              style={{
-                fontSize: "1.7rem",
-                cursor: "pointer",
-                pointerEvents:
-                  bankPaymentRows.indexOf(row) <= 0 ? "none" : "all",
-                opacity: bankPaymentRows.indexOf(row) <= 0 ? 0.5 : 1,
-              }}
-            />
-          }
-          onClick={() => {
-            let del = null;
-            del = bankPaymentRows.indexOf(row) > 0;
-
-            del && removeRow(row.id);
-          }}
-          label="Delete"
-        />,
-      ],
+      renderCell: ({ row }) =>
+        bankPaymentRows.length > 1 && !row.total ? (
+              <div
+                style={{ display: "flex", justifyContent: "center", width: "100%" }}
+              >
+                <GridActionsCellItem
+                  icon={<Delete color="error" />}
+                  onClick={() => removeRow(row.id)}
+                  label="Delete"
+                />
+              </div>
+            ) : null,
     },
     {
       headerName: "Particulars",
@@ -234,7 +217,7 @@ export default function BankPayment() {
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
     setAsyncOptions(response.data);
   };
@@ -263,7 +246,7 @@ export default function BankPayment() {
           obj = {
             ...obj,
             debit: +Number(+Number(value) * +Number(row.exchangeRate)).toFixed(
-              2
+              2,
             ),
           };
         } else if (name === "currency" && value === "364907247") {
@@ -276,7 +259,7 @@ export default function BankPayment() {
           obj = {
             ...obj,
             debit: +Number(+Number(value) * +Number(row.foreignValue)).toFixed(
-              2
+              2,
             ),
           };
         }
@@ -381,7 +364,7 @@ export default function BankPayment() {
   useEffect(() => {
     let totalINR = bankPaymentRows.map((row) => +Number(row.debit).toFixed(2));
     let totalForeign = bankPaymentRows.map(
-      (row) => +Number(row.foreignValue).toFixed(2)
+      (row) => +Number(row.foreignValue).toFixed(2),
     );
     let totalINRValue = () => {
       let sum = 0;
@@ -406,7 +389,7 @@ export default function BankPayment() {
     <div
       style={{
         height: "calc(100vh - 115px)",
-        padding:10
+        padding: 10,
       }}
     >
       <Modal
@@ -420,14 +403,13 @@ export default function BankPayment() {
       >
         <p>Are you sure you want to create this bank payment voucher</p>
       </Modal>
-      <Row gutter={8} style={{ height: "100%", }}>
+      <Row gutter={8} style={{ height: "100%" }}>
         <Col
           span={6}
           style={{
             maxHeight: "90%",
             overflowY: "auto",
             overflowX: "hidden",
-         
           }}
         >
           <Row gutter={[0, 6]}>
@@ -500,7 +482,6 @@ export default function BankPayment() {
         <Col
           style={{
             height: "92%",
-           
           }}
           span={18}
         >

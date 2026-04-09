@@ -614,6 +614,7 @@ textarea.ant-input {
   border-radius: 0 !important;
 }
 .ant-card-body {
+  padding: 16px !important;
   border-radius: 0 !important;
 }
 /* Hover: teal border only; focus/focused: border + teal ring */

@@ -23,6 +23,7 @@ import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
 import FormTable from "../../../Components/FormTable.jsx";
+import { Add, Remove } from "@mui/icons-material";
 
 export default function ReqWithoutBom() {
   const { showToast } = useToast();
@@ -338,18 +339,21 @@ export default function ReqWithoutBom() {
   // table columns
   const columns = [
     {
-      headerName: <CommonIcons action="addRow" onClick={addRows} />,
+      headerName: <span style={{ cursor: "pointer" }} onClick={addRows}><Add color="success" /></span>,
       width: 120,
       type: "rowChange",
       field: "add",
       renderCell: ({ row }) =>
         rows.length > 1 && (
-          <div style={{ width: "100%" }}>
-            <CommonIcons
-              action="removeRow"
-              onClick={() => removeRows(row?.id)}
-            />
-          </div>
+          // <div style={{ width: "100%" }}>
+          //   <CommonIcons
+          //     action="removeRow"
+          //     onClick={() => removeRows(row?.id)}
+          //   />
+          // </div>
+          <span onClick={() => removeRows(row?.id)} style={{cursor:"pointer"}}>
+            <Remove color="error" />
+          </span>
         ),
     },
     {

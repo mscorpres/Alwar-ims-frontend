@@ -51,6 +51,10 @@ import {
   getCurrentIndianFinancialYearSession,
   LEGACY_SESSION_CODES,
 } from "./utils/indianFinancialYear.js";
+import {
+  getSafeInternalRedirect,
+  POST_LOGIN_REDIRECT_STORAGE_KEY,
+} from "./utils/postLoginRedirect.js";
 
 const App = () => {
   const { showToast } = useToast();
@@ -86,7 +90,7 @@ const App = () => {
   );
   const [loadingSwitch, setLoadingSwitch] = useState(isSwitchFlow);
   const [newNotification, setNewNotification] = useState(null);
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   const authPublicPaths = React.useMemo(
     () =>
@@ -442,7 +446,8 @@ dispatch(logoutUser());
   }, []);
   useEffect(() => {
     if (!user && !isAuthPublicPath(pathname)) {
-      navigate("/login");
+      const returnTo = `${pathname}${search}`;
+      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`);
     } else if (user) {
       let branch = JSON.parse(
         localStorage.getItem("branchData"),
@@ -452,17 +457,29 @@ dispatch(logoutUser());
       }
       // handleSelectSession("23-24");
     }
-  }, [user, pathname]);
+  }, [user, pathname, search]);
 
   useEffect(() => {
     if (!isAuthShellPath || !user) return;
-    const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
+    const redirectParam = searchParams.get("redirect");
+    const safeRedirect = getSafeInternalRedirect(redirectParam);
+    const link = JSON.parse(localStorage.getItem("branchData") || "{}")
+      ?.currentLink;
     if (user.passwordChanged === "P") {
-      navigate("/first-login");
+      if (safeRedirect) {
+        sessionStorage.setItem(POST_LOGIN_REDIRECT_STORAGE_KEY, safeRedirect);
+      }
+      navigate("/first-login", { replace: true });
     } else {
-      navigate(link ?? "/");
+      navigate(safeRedirect ?? link ?? "/", { replace: true });
     }
-  }, [user, pathname, isAuthShellPath, navigate]);
+  }, [
+    user,
+    pathname,
+    isAuthShellPath,
+    navigate,
+    searchParams,
+  ]);
 
   useEffect(() => {
     if (user && user.token) {
@@ -661,23 +678,10 @@ dispatch(logoutUser());
       }
     }
   }, [navigate, user]);
-  useEffect(() => {
-    window.addEventListener("offline", (e) => {
-      showToast(
-        "You are no longer connected to the Internet, please check your connection and try again.",
-        "error",
-      );
-    });
-    window.addEventListener("online", (e) => {
-      showToast(
-        "The internet has been restored. Kindly review your progress to ensure there is no duplication of data.",
-      );
-      window.location.reload();
-    });
-  }, []);
+  
 
   useEffect(() => {
-    if (user && user.passwordChanged === "C") {
+    if (user && user.passwordChanged !== "P") {
       const timer = setTimeout(() => {
         setShowBlackScreen(true);
       }, 1500);
@@ -840,7 +844,7 @@ dispatch(logoutUser());
           />
         )} */}
         {/* <Information /> */}
-        {user && user.passwordChanged === "C" && (
+        {user && user.passwordChanged !== "P" && (
           <Layout style={{ height: "100%" }}>
             <AppHeader
               onToggleSidebar={() => setShowSideBar((open) => !open)}
@@ -947,14 +951,14 @@ dispatch(logoutUser());
             style={{
               display: "flex",
               height: "100%",
-              paddingTop: user && user.passwordChanged === "C" ? 45 : 0,
+              paddingTop: user && user.passwordChanged !== "P" ? 45 : 0,
             }}
           >
             <TicketsModal
               open={showTickets}
               handleClose={() => dispatch(setShowTickets(false))}
             />
-            {user && user.passwordChanged === "C" && (
+            {user && user.passwordChanged !== "P" && (
               <>
                 <Sidebar
                   className="site-layout-background"
@@ -979,7 +983,7 @@ dispatch(logoutUser());
                 height: "100%",
 
                 marginLeft:
-                  user && user.passwordChanged === "C"
+                  user && user.passwordChanged !== "P"
                     ? showSideBar
                       ? 230
                       : 60

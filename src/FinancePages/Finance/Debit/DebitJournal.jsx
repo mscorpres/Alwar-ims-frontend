@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
-import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
+import { Add, Delete } from "@mui/icons-material";
 import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -160,39 +160,29 @@ export default function JournalPosting() {
   const columns = [
     {
       headerName: (
-        <span onClick={addRows}>
-          <AiOutlinePlusSquare
-            style={{
-              cursor: "pointer",
-              fontSize: "1.7rem",
-              opacity: "0.7",
-            }}
-          />
+        <span
+          onClick={addRows}
+          style={{ cursor: "pointer" }}
+      
+        >
+          <Add color="success" />
         </span>
       ),
       width: 80,
       type: "actions",
       field: "add",
       sortable: false,
-      renderCell: ({ row }) => [
-        <GridActionsCellItem
-          icon={
-            <AiOutlineMinusSquare
-              style={{
-                fontSize: "1.7rem",
-                cursor: "pointer",
-                pointerEvents:
-                  journalRows.length === 3 || row.total ? "none" : "all",
-                opacity: journalRows.length === 3 || row.total ? 0.5 : 1,
-              }}
-            />
-          }
-          onClick={() => {
-            journalRows.length > 3 && removeRow(row.id);
-          }}
-          label="Delete"
-        />,
-      ],
+       renderCell: ({ row }) =>
+            journalRows.findIndex((r) => r.id == row.id) >= 1 && !row.total ? (
+                  <div style={{ display: "flex", justifyContent: "center",}}>
+             <span onClick={() => removeRow(row?.id)} style={{ cursor: "pointer",  }}>
+              <Delete
+              color="error"
+             
+              />
+            </span>
+            </div>
+            ) : null,
     },
 
     {

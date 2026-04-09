@@ -1,5 +1,4 @@
 import {
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -7,11 +6,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { Card } from "antd";
 import React, { useEffect, useState } from "react";
-import Loading from "./Loading";
 
 export default function FormTable({ columns, data, loading }) {
+  const [hoveredRow, setHoveredRow] = useState(null);
   const [headers, setHeaders] = useState([]);
   const [cells, setCells] = useState([]);
   useEffect(() => {
@@ -26,25 +24,21 @@ export default function FormTable({ columns, data, loading }) {
   }, [columns]);
 
   return (
-    // <TableContainer
-    //   sx={{ height: "100%", width: "100vw", overflowX: "scroll" }}
-    // >
-    <TableContainer style={{ height: "100%", border: "1px solid white" }}>
-      <Card
+    <TableContainer
+      style={{ height: "100%", border: "1px solid white", borderRadius: "0px" }}
+    >
+      {/* <div
         size="small"
-        style={{ width: "100%", height: "100%" }}
-        styles={{
-          body: {
-            padding: 0,
-            height: "100%",
-            width: "100%",
-            overflow: "auto",
-          },
+        style={{
+          width: "100%",
+          height: "100%",
+          borderRadius: "0px",
+          border: "1px solid #ccc",
         }}
-      >
+      > */}
         <Table
           stickyHeader
-          sx={{ width: "100%", overflowX: "auto" }}
+          sx={{ width: "100%", overflowX: "auto",    border: "1px solid #ccc", }}
           size="small"
           aria-label="a dense table"
         >
@@ -56,9 +50,13 @@ export default function FormTable({ columns, data, loading }) {
                     width: `${row.width && row.width}px !important`,
                     maxWidth: `${row.width && row.width}px !important`,
                     minWidth: `${row.width && row.width}px !important`,
-                    background: "rgb(240, 240, 240)",
-                    padding: "0px 10px",
-                    // textAlign: "center",
+                    backgroundColor: "#f1f7fc",
+                    padding: "0px",
+                    textAlign: "center",
+                    fontSize: "14px",
+                    border: "1px solid white",
+                    borderBottom: "1px solid #c6def4",
+                    overflow: "hidden",
                   }}
                   key={index}
                   component="th"
@@ -69,30 +67,40 @@ export default function FormTable({ columns, data, loading }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((row, rowIndex) => (
-              <TableRow key={row?.id ?? `row-${rowIndex}`}>
-                {columns.map((col, index) => (
-                  <TableCell
-                    key={index}
-                    size="small"
-                    sx={{
-                      width: `${row.width && row.width}px !important`,
-                      justifyContent: "center",
-                      padding: "2px 5px",
-                      border: "none",
-                    }}
-                  >
-                    <div style={{ display: "contents" }}>
-                      {col.renderCell({ row })}
-                    </div>
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+            {data?.map((row, rowIndex) => {
+              const rowColor = rowIndex % 2 === 0 ? "#ffffff" : "#f8f9fa";
+              return (
+                <TableRow
+                  key={row?.id ?? `row-${rowIndex}`}
+                  style={{
+                    backgroundColor:
+                      hoveredRow === row.id ? "#fffaec" : rowColor,
+                  }}
+                  onMouseEnter={() => setHoveredRow(row.id)}
+                  onMouseLeave={() => setHoveredRow(null)}
+                >
+                  {columns.map((col, index) => (
+                    <TableCell
+                      key={index}
+                      size="small"
+                      sx={{
+                        width: `${row.width && row.width}px !important`,
+                        justifyContent: "center",
+                        padding: "2px 5px",
+                        border: "none",
+                      }}
+                    >
+                      <div style={{ display: "contents" }}>
+                        {col.renderCell({ row })}
+                      </div>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
-      </Card>
+    
     </TableContainer>
-    // {/* </TableContainer> */}
   );
 }

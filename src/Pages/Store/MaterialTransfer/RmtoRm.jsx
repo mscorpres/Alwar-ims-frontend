@@ -16,6 +16,7 @@ const { TextArea } = Input;
 function RmtoRm() {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [hoveredRow, setHoveredRow] = useState(null);
   const [allData, setAllData] = useState({
     locationFrom: "",
     companyBranch: "",
@@ -29,7 +30,7 @@ function RmtoRm() {
       locationTo: "",
       stockQty: "00",
       unit: "",
-      avrRate: "",
+      avrRate: "00",
       address: "",
       comment: "",
     },
@@ -52,7 +53,7 @@ function RmtoRm() {
         locationTo: "",
         stockQty: "00",
         unit: "",
-        avrRate: "",
+        avrRate: "00",
         address: "",
         comment: "",
       },
@@ -286,7 +287,7 @@ function RmtoRm() {
           <Card>
             <Row gutter={10}>
               <Col span={24} style={{ width: "100%" }}>
-                <span>PICK LOCATION</span>
+                <span>Pick Location</span>
               </Col>
               <Col span={24}>
                 <Select
@@ -313,176 +314,171 @@ function RmtoRm() {
             <Col span={24}>
               <div
                 style={{
-                  marginTop: "10px",
-                  border: "1px solid #ccc",
-                  padding: 0,
+                  overflowY: "auto",
+                  height: "calc(100vh - 200px)",
                 }}
               >
-                <div
-                  style={{
-                    overflowY: "auto",
-                    height: "calc(100vh - 200px)",
-                  }}
-                >
-                  <table>
-                    <thead>
-                      <tr>
-                        <th className="table-col" style={{ width: "10vw" }}>
-                          Action
-                        </th>
-                        <th className="table-col" style={{ width: "18vw" }}>
-                          Component / Part No.
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          Stock QTY
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          Transfering QTY
-                        </th>
-                        <th className="table-col" style={{ width: "16vw" }}>
-                          DROP (+) Loc
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          WAR
-                        </th>
-                        <th className="table-col" style={{ width: "16vw" }}>
-                          Comment
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rows.map((row, index) => {
-                        const rowColor =
-                          index % 2 === 0 ? "#ffffff" : "#efefef";
-                        return (
-                          <React.Fragment key={row.id}>
-                            <tr style={{ backgroundColor: rowColor }}>
-                              <td style={{ width: "2vw", textAlign: "center" }}>
-                                {index > 0 && (
-                                  <span
-                                    onClick={() => removeRow(row.id)}
-                                    className="delete-icon"
-                                  >
-                                    <Delete color="error" />
-                                  </span>
-                                )}
-                                {index === 0 && (
-                                  <span
-                                    onClick={addRow}
-                                    style={{ cursor: "pointer" }}
-                                  >
-                                    <Add color="success" />
-                                  </span>
-                                )}
-                              </td>
-                              <td style={{ width: "18vw" }}>
-                                <MyAsyncSelect
-                                  style={{ width: "100%" }}
-                                  loadOptions={getComponentList}
-                                  onBlur={() => setAsyncOptions([])}
-                                  onInputChange={(e) => setSearch(e)}
-                                  placeholder="Part Name/Code"
-                                  value={row.component}
-                                  optionsState={asyncOptions}
-                                  onChange={(e) => {
-                                    setRows((prev) => {
-                                      const updated = [...prev];
-                                      updated[index] = {
-                                        ...updated[index],
-                                        component: e,
-                                      };
-                                      return updated;
-                                    });
-                                    getQtyFuction(index, e);
-                                  }}
-                                />
-                              </td>
-                              <td
-                                style={{ width: "12vw", textAlign: "center" }}
-                              >
-                                <span>
-                                  {row.stockQty ?? "0"} {row.unit ?? ""}
+                <table style={{ border: "1px solid #ccc" }}>
+                  <thead >
+                    <tr>
+                      <th className="table-col" style={{ width: "10vw" }}>
+                        #
+                      </th>
+                      <th className="table-col" style={{ width: "18vw" }}>
+                        Component / Part No.
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        Stock QTY
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        Transfering QTY
+                      </th>
+                      <th className="table-col" style={{ width: "16vw" }}>
+                        DROP (+) Loc
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        WAR
+                      </th>
+                      <th className="table-col" style={{ width: "16vw" }}>
+                        Comment
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row, index) => {
+                      const rowColor = index % 2 === 0 ? "#ffffff" : "#f8f9fa";
+                      return (
+                        <React.Fragment key={row.id}>
+                          <tr
+                            style={{
+                              backgroundColor:
+                                hoveredRow === row.id ? "#fffaec" : rowColor,
+                            }}
+                            onMouseEnter={() => setHoveredRow(row.id)}
+                            onMouseLeave={() => setHoveredRow(null)}
+                          >
+                            <td style={{ width: "2vw", textAlign: "center" }}>
+                              {index > 0 && (
+                                <span
+                                  onClick={() => removeRow(row.id)}
+                                  className="delete-icon"
+                                >
+                                  <Delete color="error" />
                                 </span>
-                              </td>
-                              <td style={{ width: "12vw" }}>
-                                <Input
-                                  type="number"
-                                  value={row.qty1}
-                                  onChange={(e) => {
-                                    setRows((prev) => {
-                                      const updated = [...prev];
-                                      updated[index] = {
-                                        ...updated[index],
-                                        qty1: e.target.value,
-                                      };
-                                      return updated;
-                                    });
-                                  }}
-                                  suffix={row.unit || ""}
-                                />
-                              </td>
-                              <td style={{ width: "16vw" }}>
-                                <Select
+                              )}
+                              {index === 0 && (
+                                <span
+                                  onClick={addRow}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <Add color="success" />
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ width: "18vw" }}>
+                              <MyAsyncSelect
+                                style={{ width: "100%" }}
+                                loadOptions={getComponentList}
+                                onBlur={() => setAsyncOptions([])}
+                                onInputChange={(e) => setSearch(e)}
+                                placeholder="Part Name/Code"
+                                value={row.component}
+                                optionsState={asyncOptions}
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      component: e,
+                                    };
+                                    return updated;
+                                  });
+                                  getQtyFuction(index, e);
+                                }}
+                              />
+                            </td>
+                            <td style={{ width: "12vw", textAlign: "center" }}>
+                              <span>
+                                {row.stockQty ?? "00"} {row.unit ?? ""}
+                              </span>
+                            </td>
+                            <td style={{ width: "12vw" }}>
+                              <Input
+                                type="number"
+                                value={row.qty1}
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      qty1: e.target.value,
+                                    };
+                                    return updated;
+                                  });
+                                }}
+                                suffix={row.unit || ""}
+                              />
+                            </td>
+                            <td style={{ width: "16vw" }}>
+                              <Select
+                                style={{ width: "100%" }}
+                                options={locDataTo}
+                                value={row.locationTo}
+                                placeholder="Location"
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      locationTo: e,
+                                    };
+                                    return updated;
+                                  });
+                                  getLocationName(index, e);
+                                }}
+                              />
+                            </td>
+                            <td style={{ width: "12vw", textAlign: "center" }}>
+                              {/* <Input disabled value={row.avrRate} /> */}
+                              <span>{row.avrRate ?? "00"}</span>
+                            </td>
+                            <td style={{ width: "16vw" }}>
+                              <Input
+                                value={row.comment}
+                                placeholder="Comment Optional"
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      comment: e.target.value,
+                                    };
+                                    return updated;
+                                  });
+                                }}
+                              />
+                            </td>
+                          </tr>
+                          {row.locationTo && row.address && (
+                            <tr>
+                              <td colSpan="7" style={{ padding: "8px" }}>
+                                <TextArea
+                                  disabled
+                                  value={row.address}
+                                  placeholder={`Row ${
+                                    index + 1
+                                  } - Location Address`}
+                                  rows={2}
                                   style={{ width: "100%" }}
-                                  options={locDataTo}
-                                  value={row.locationTo}
-                                  placeholder="Location"
-                                  onChange={(e) => {
-                                    setRows((prev) => {
-                                      const updated = [...prev];
-                                      updated[index] = {
-                                        ...updated[index],
-                                        locationTo: e,
-                                      };
-                                      return updated;
-                                    });
-                                    getLocationName(index, e);
-                                  }}
-                                />
-                              </td>
-                              <td
-                                style={{ width: "12vw", textAlign: "center" }}
-                              >
-                                <Input disabled value={row.avrRate} />
-                              </td>
-                              <td style={{ width: "16vw" }}>
-                                <Input
-                                  value={row.comment}
-                                  placeholder="Comment Optional"
-                                  onChange={(e) => {
-                                    setRows((prev) => {
-                                      const updated = [...prev];
-                                      updated[index] = {
-                                        ...updated[index],
-                                        comment: e.target.value,
-                                      };
-                                      return updated;
-                                    });
-                                  }}
                                 />
                               </td>
                             </tr>
-                            {row.locationTo && row.address && (
-                              <tr>
-                                <td colSpan="7" style={{ padding: "8px" }}>
-                                  <TextArea
-                                    disabled
-                                    value={row.address}
-                                    placeholder={`Row ${
-                                      index + 1
-                                    } - Location Address`}
-                                    rows={2}
-                                    style={{ width: "100%" }}
-                                  />
-                                </td>
-                              </tr>
-                            )}
-                          </React.Fragment>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </Col>
           </Row>
