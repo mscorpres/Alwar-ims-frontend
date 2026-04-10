@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { v4 } from "uuid";
 import AddComponent from "./AddComponents";
 import { useToast } from "../../../hooks/useToast.js";
@@ -101,6 +101,7 @@ export default function CreatePo() {
   const [billToOptions, setBillTopOptions] = useState([]);
   const [shipToOptions, setShipToOptions] = useState([]);
   const [vendorBranches, setVendorBranches] = useState([]);
+  const [selectedVendorBranch, setSelectedVendorBranch] = useState("");
   const [selectLoading, setSelectLoading] = useState(false);
   const [stateCode, setStateCode] = useState("");
   const [showQtyWarning, setShowQtyWarning] = useState(false);
@@ -145,6 +146,7 @@ export default function CreatePo() {
   const [successData, setSuccessData] = useState(false);
   const [projectDesc, setProjectDesc] = useState("");
   const [sameAsBilling, setSameAsBilling] = useState(false);
+  const lastHandledFieldRef = useRef({ name: "", value: "" });
 
   const [form] = Form.useForm();
   const termsCondition = Form.useWatch("termscondition", form);
@@ -176,6 +178,7 @@ export default function CreatePo() {
   const { executeFun, loading: loading1 } = useApi();
   const validatePO = () => {
     const formValues = form.getFieldsValue();
+    console.log(formValues,"data form values============")
     const formProjectName = form.getFieldValue("project_name");
     const currentPurchaseOrder = {
       ...newPurchaseOrder,
@@ -728,12 +731,12 @@ export default function CreatePo() {
 
       setSubmitLoading(false);
       const responseData = response?.data || response;
-      if (responseData) {
+      if (response?.success) {
         const warningsFromApi =
           responseData?.data?.warnings || responseData?.warnings || null;
 
         if (
-          (responseData.code === 400 && responseData.status === "warning") ||
+          (response?.code === 400 && responseData.status === "warning") ||
           (Array.isArray(warningsFromApi) && warningsFromApi.length > 0)
         ) {
           setShowSubmitConfirm(null);
@@ -770,6 +773,8 @@ export default function CreatePo() {
         } else {
           showToast(response.message, "error");
         }
+      } else {
+        showToast(response.message, "error");
       }
     } catch (error) {
       setSubmitLoading(false);
@@ -820,19 +825,35 @@ export default function CreatePo() {
       if (showPageLoading) setPageLoading(false);
     }
   };
+  const getFieldChangeKey = (fieldName, fieldValue) => {
+    const safeValue =
+      fieldValue !== undefined ? JSON.stringify(fieldValue) : "undefined";
+    return `${fieldName}::${safeValue}`;
+  };
+
+  const getDefaultBranchValue = (branches = []) => branches?.[0]?.value || "";
+
+  const getVendorPrimaryDetails = async (vendorValue) => {
+    const branches = await getVendorBracnch(vendorValue?.value, {
+      showPageLoading: false,
+    });
+    const defaultBranchValue = getDefaultBranchValue(branches);
+    const { address, gstin, statecode } = await getVendorAddress({
+      vendorCode: vendorValue,
+      vendorBranch: defaultBranchValue,
+    });
+    return { defaultBranchValue, address, gstin, statecode };
+  };
+
   const selectInputHandler = async (name, value) => {
     if (!value) return;
 
     if (name === "vendorname") {
       setPageLoading(true);
       try {
-        const branches = await getVendorBracnch(value.value, {
-          showPageLoading: false,
-        });
-        const { address, gstin, statecode } = await getVendorAddress({
-          vendorCode: value,
-          vendorBranch: branches[0]?.value,
-        });
+        const { defaultBranchValue, address, gstin, statecode } =
+          await getVendorPrimaryDetails(value);
+        setSelectedVendorBranch(defaultBranchValue);
 
         const termsData = await getPaymentTermsDay(value.value, {
           showPageLoading: false,
@@ -840,7 +861,7 @@ export default function CreatePo() {
 
         const updated = {
           vendorname: value,
-          vendorbranch: branches[0]?.value || "",
+          vendorbranch: defaultBranchValue || selectedVendorBranch,
           vendoraddress: address?.replaceAll("<br>", "\n") || "",
           gstin: gstin || "",
           venCode: statecode || "",
@@ -860,6 +881,7 @@ export default function CreatePo() {
         vendorCode: newPurchaseOrder.vendorname,
         vendorBranch: value,
       });
+      setSelectedVendorBranch(value || "");
 
       const updated = {
         vendorbranch: value,
@@ -1242,6 +1264,7 @@ export default function CreatePo() {
     setIsPPRLoading(false);
     setProjectDesc("");
     setSameAsBilling(false);
+    setSelectedVendorBranch("");
     setShowDetailsConfirm(false);
     setPendingPOData(null);
     setQtyWarningData(null);
@@ -1304,7 +1327,7 @@ export default function CreatePo() {
         project_name: typeof value === "object" ? value.value : value,
       });
       const data = response?.data;
-      if (data) {
+    
         if (response.success) {
           setProjectDesc(data.description);
 
@@ -1318,7 +1341,7 @@ export default function CreatePo() {
         } else {
           showToast(data.message, "error");
         }
-      }
+  
     } finally {
       setPageLoading(false);
     }
@@ -1332,8 +1355,8 @@ export default function CreatePo() {
       });
       let arr = [];
 
-      if (response?.data?.status === "success") {
-        arr = convertSelectOptions(response?.data?.data);
+      if (response?.success) {
+        arr = convertSelectOptions(response?.data);
 
         setPpROptions(arr);
         setIsPPRLoading(false);
@@ -1672,9 +1695,27 @@ export default function CreatePo() {
                       initialValues={newPurchaseOrder}
                       onFinish={finish}
                       onFieldsChange={(value, allFields) => {
-                        if (value.length == 1) {
-                          selectInputHandler(value[0].name[0], value[0].value);
-                        }
+                        if (value.length !== 1) return;
+                        const changedField = value[0];
+                        const fieldName = changedField?.name?.[0];
+                        if (!fieldName) return;
+                        if (changedField?.touched === false) return;
+
+                        const dedupeKey = getFieldChangeKey(
+                          fieldName,
+                          changedField?.value,
+                        );
+                        const lastKey = getFieldChangeKey(
+                          lastHandledFieldRef.current.name,
+                          lastHandledFieldRef.current.value,
+                        );
+                        if (dedupeKey === lastKey) return;
+
+                        lastHandledFieldRef.current = {
+                          name: fieldName,
+                          value: changedField?.value,
+                        };
+                        selectInputHandler(fieldName, changedField?.value);
                       }}
                     >
                       <Row>
@@ -2483,17 +2524,11 @@ export default function CreatePo() {
                                     optionsState={asyncOptions}
                                     onChange={async (value) => {
                                       if (!value) return;
-                                      const branches = await getVendorBracnch(
-                                        value.value,
-                                      );
-                                      const { address, gstin } =
-                                        await getVendorAddress({
-                                          vendorCode: value,
-                                          vendorBranch: branches[0]?.value,
-                                        });
+                                      const { defaultBranchValue, address, gstin } =
+                                        await getVendorPrimaryDetails(value);
                                       form.setFieldsValue({
                                         ship_vendor_branch:
-                                          branches[0]?.value || "",
+                                          defaultBranchValue,
                                         shipaddress:
                                           address?.replaceAll("<br>", "\n") ||
                                           "",
@@ -2503,7 +2538,7 @@ export default function CreatePo() {
                                         ...prev,
                                         ship_vendor: value,
                                         ship_vendor_branch:
-                                          branches[0]?.value || "",
+                                          defaultBranchValue,
                                         shipaddress:
                                           address?.replaceAll("<br>", "\n") ||
                                           "",

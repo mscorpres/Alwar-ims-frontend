@@ -754,7 +754,7 @@ export default function AddComponents({
       arr1 = arr1.map((row) => {
         if (row.id == id) {
           let obj = row;
-               const rawLastRate = data?.data?.rate;
+               const rawLastRate = response?.data?.rate;
           const newLastRate =
             rawLastRate != null && rawLastRate !== ""
               ? String(rawLastRate).trim()
@@ -806,9 +806,9 @@ export default function AddComponents({
             rate_cap: response.data.project_rate,
             project_req_qty: response.data.project_req_qty,
             po_exec_qty: response.data.po_exec_qty,
-            closing_stock: response.data.closing_stock || 0,
-              ppr_plan_qty: data.data.ppr_plan_qty || 0,
-            ppr_executed_qty: data.data.ppr_executed_qty || 0,
+            closing_stock: response.data.closing_stock ?? 0,
+              ppr_plan_qty: response.data.ppr_plan_qty ?? 0,
+            ppr_executed_qty: response.data.ppr_executed_qty ?? 0,
             tol_price: Number((response.data.project_rate * 1) / 100).toFixed(
               2,
             ),
@@ -982,7 +982,7 @@ export default function AddComponents({
       sortable: false,
 
       renderCell: (params) =>
-        disabledCell(params, params.row.last_rate, inputHandler),
+        disabledCell(params, params.row.last_rate ?? 0, inputHandler),
     },
     // {
     //   headerName: "Rate Cap",

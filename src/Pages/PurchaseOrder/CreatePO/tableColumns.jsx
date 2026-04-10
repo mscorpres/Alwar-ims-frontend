@@ -6,6 +6,10 @@ const gstTypeOptions = [
   { value: "I", text: "INTER STATE" },
   { value: "L", text: "LOCAL" },
 ];
+const blockSpaceKey = (e) => {
+  if (e.key === " ") e.preventDefault();
+};
+const stripSpaces = (v) => String(v ?? "").replaceAll(/\s/g, "");
 
 export const componentSelect = (
   { row },
@@ -57,6 +61,7 @@ export const rateCell = ({ row }, inputHandler) => (
   />
 );
 export const disabledCell = ({ row }, value, inputHandler, suffix) => (
+
   <Input
     disabled
     value={value}
@@ -141,5 +146,6 @@ export const bomQtyCell = ({ row }, inputHandler) => (
       inputHandler("po_bom_qty", stripSpaces(e.target.value), row.id)
     }
     placeholder="BOM qty"
+    type="number"
   />
 );
