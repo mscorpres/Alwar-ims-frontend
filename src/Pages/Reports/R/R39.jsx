@@ -32,14 +32,15 @@ const R39 = () => {
     setLoading(true);
     setRows([]);
     try {
-      const { data } = await imsAxios.post("/report39", {
+      const response = await imsAxios.post("/report39", {
         project_name:
           project != null && String(project).trim() !== ""
             ? String(project).trim()
             : "",
       });
-      if (data?.code === 200 && data?.response?.data) {
-        const arr = data.response.data.map((row, index) => ({
+     
+      if (response.success) {
+        const arr = response?.data.map((row, index) => ({
           ...row,
           id: index + 1,
         }));
@@ -49,11 +50,11 @@ const R39 = () => {
         }
       } else {
         const msg =
-          data?.message?.msg ?? data?.message ?? "Failed to load report";
+          response?.message ?? "Failed to load report";
         showToast(msg, "error");
       }
-    } catch {
-      showToast("Error fetching report", "error");
+    } catch (error) {
+      showToast( error?.message , "error");
     } finally {
       setLoading(false);
     }

@@ -24,7 +24,7 @@ function MaterialTransfer({ type }) {
 
   const [allData, setAllData] = useState({
     locationSel: "",
-     dropBranch: "",
+    dropBranch: "",
     dropLoc: "",
     pprId: "",
   });
@@ -33,6 +33,7 @@ function MaterialTransfer({ type }) {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [locationData, setLocationData] = useState([]);
   const [locDetail, setLocDetail] = useState("");
+  const [locDetailTo, setLocDetailTo] = useState("");
   const [locRejDetail, setLocRejDetail] = useState("");
   const [project, setProject] = useState(null);
   const [projectAsyncOptions, setProjectAsyncOptions] = useState([]);
@@ -110,14 +111,14 @@ function MaterialTransfer({ type }) {
       const response = await imsAxios.post("/purchaseOrder/pprList", {
         project_name: projectKey,
       });
-      if (response?.data?.status === "success") {
-        setPprOptions(convertSelectOptions(response?.data?.data));
+      if (response?.success) {
+        setPprOptions(convertSelectOptions(response?.data));
       } else {
         setPprOptions([]);
       }
     } catch {
       setPprOptions([]);
-      toast.error("Error fetching PPR options");
+      showToast("Error fetching PPR options", "error");
     } finally {
       setIsPPRLoading(false);
     }
@@ -160,19 +161,18 @@ function MaterialTransfer({ type }) {
     }
   };
 
-  const getRowDropLocationDetail = async (rowIndex, rejLocValue) => {
-    const row = rows[rowIndex];
-    const rejLoc = rejLocValue ?? row?.rejLoc;
-    if (!rejLoc) return;
-    const response = await imsAxios.post("/godown/fetchLocationDetail_to", {
-      location_key: rejLoc,
+  const getLocationDetailTo = async () => {
+    const response = await imsAxios.post("godown/fetchLocationDetail_to", {
+      location_key: allData.dropLoc,
     });
-    setRows((prev) => {
-      const updated = [...prev];
-      updated[rowIndex] = { ...updated[rowIndex], address: response.data };
-      return updated;
-    });
+    setLocDetailTo(response.data);
   };
+
+  useEffect(() => {
+    if (allData.dropLoc) {
+      getLocationDetailTo();
+    }
+  }, [allData.dropLoc]);
 
   const submitHandler = async () => {
     // validations
@@ -188,7 +188,6 @@ function MaterialTransfer({ type }) {
       if (r.rejLoc == allData.locationSel)
         return showToast(`Row ${i + 1}: Both Location Same`, "error");
     }
-   
 
     const components = rows.map((r) => r.componentName);
     const tolocations = rows.map((r) => r.rejLoc);
@@ -203,7 +202,7 @@ function MaterialTransfer({ type }) {
             qty: qtys,
             type: "SF2REJ",
             dropLocation: allData.dropLoc,
-       project_id: resolveProjectId() || null,
+            project_id: resolveProjectId() || null,
             ppr_id: allData.pprId || null,
           }
         : {
@@ -252,7 +251,7 @@ function MaterialTransfer({ type }) {
   const reset = () => {
     setAllData({
       locationSel: "",
-       dropBranch: "",
+      dropBranch: "",
       dropLoc: "",
       pprId: "",
     });
@@ -350,6 +349,20 @@ function MaterialTransfer({ type }) {
               <Col span={24} style={{ padding: "5px" }}>
                 <TextArea disabled value={locDetail} />
               </Col>
+              <Col span={24} style={{ padding: "5px" }}>
+                <span>DROP Location</span>
+                <MySelect
+                  options={locRejDetail}
+                  placeholder="Location"
+                  value={allData.dropLoc}
+                  onChange={async (e) => {
+                    setAllData((prev) => ({ ...prev, dropLoc: e }));
+                  }}
+                />
+              </Col>
+              <Col span={24} style={{ padding: "5px" }}>
+                <TextArea disabled value={locDetailTo} />
+              </Col>
               {type == "sftorej" && (
                 <>
                   <Col span={24} style={{ padding: "5px" }}>
@@ -412,9 +425,7 @@ function MaterialTransfer({ type }) {
                     <th className="table-col" style={{ width: "14vw" }}>
                       Transfer Qty
                     </th>
-                    <th className="table-col" style={{ width: "18vw" }}>
-                      DROP (+) Loc
-                    </th>
+
                     <th className="table-col" style={{ width: "20vw" }}>
                       Weighted Average Rate
                     </th>
@@ -491,21 +502,7 @@ function MaterialTransfer({ type }) {
                             }
                           />
                         </td>
-                        <td style={{ width: "18vw" }}>
-                          <MySelect
-                            options={locRejDetail}
-                            placeholder="Check Location"
-                            value={r.rejLoc}
-                            onChange={async (e) => {
-                              setRows((prev) => {
-                                const updated = [...prev];
-                                updated[idx] = { ...updated[idx], rejLoc: e };
-                                return updated;
-                              });
-                              await getRowDropLocationDetail(idx, e);
-                            }}
-                          />
-                        </td>
+
                         <td style={{ width: "14vw" }}>
                           <Input disabled value={r?.restDetail?.avr_rate} />
                         </td>
