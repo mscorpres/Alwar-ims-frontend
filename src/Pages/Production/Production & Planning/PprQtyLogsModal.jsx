@@ -15,14 +15,10 @@ const statusOptions = [
   { text: "APPLIED", value: "APPLIED" },
 ];
 
-export default function PprQtyLogsModal({
-  open,
-  onClose,
-  initialFilters,
-}) {
+export default function PprQtyLogsModal({ open, onClose, initialFilters }) {
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
-  const {showToast} =useToast();
+  const { showToast } = useToast();
 
   const [filters, setFilters] = useState({
     ppr_no: initialFilters?.ppr_no ?? "",
@@ -113,9 +109,9 @@ export default function PprQtyLogsModal({
         payload.to_date = filters.dateRange.substring(11, 21);
       }
 
-      const { data } = await imsAxios.post("/ppr/fetchPprQtyLogs", payload);
-      if (data?.code === 200) {
-        const arr = (data?.data || data?.response?.data || []).map((r, idx) => ({
+      const response = await imsAxios.post("/ppr/fetchPprQtyLogs", payload);
+      if (response.success) {
+        const arr = (response?.data || []).map((r, idx) => ({
           id: idx + 1,
           log_id:
             r?.id ??
@@ -128,12 +124,12 @@ export default function PprQtyLogsModal({
           ...r,
         }));
         setRows(arr);
-        if (!arr.length) toast.info("No logs found");
+        if (!arr.length) showToast("No data found", "error");
       } else {
-        showToast(data?.message?.msg || data?.message, "error");
+        showToast(response?.message, "error");
       }
     } catch (e) {
-     showToast(e?.message, "error");
+      showToast(e?.message, "error");
     } finally {
       setLoading(false);
     }
@@ -179,7 +175,10 @@ export default function PprQtyLogsModal({
           />
         </Col>
         <Col span={6}>
-          <MyDatePicker value={filters.dateRange} setDateRange={(v) => setFilters((p) => ({ ...p, dateRange: v }))} />
+          <MyDatePicker
+            value={filters.dateRange}
+            setDateRange={(v) => setFilters((p) => ({ ...p, dateRange: v }))}
+          />
         </Col>
         <Col span={4}>
           <Space>

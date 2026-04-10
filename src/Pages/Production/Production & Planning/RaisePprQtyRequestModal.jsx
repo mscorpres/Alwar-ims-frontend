@@ -25,17 +25,17 @@ export default function RaisePprQtyRequestModal({
     const values = await form.validateFields();
     setLoading(true);
     try {
-      const { data } = await imsAxios.post("/ppr/raisePprQtyRequest", {
+      const response = await imsAxios.post("/ppr/raisePprQtyRequest", {
         ppr_no: pprNo,
         add_qty: values.add_qty,
         remark: values.remark || "",
       });
-      if (data?.code === 200) {
-        showToast(data?.message || "Request raised", "success");
+      if (response.success) {
+        showToast(response?.message || "Request raised", "success");
         onClose?.();
         onSuccess?.();
       } else {
-        showToast(data?.message?.msg || data?.message || "Failed to raise request", "error");
+        showToast(response?.message || "Failed to raise request", "error");
       }
     } catch {
       showToast("Error raising request", "error");

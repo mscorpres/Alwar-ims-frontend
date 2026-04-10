@@ -140,16 +140,16 @@ function CPMMaster() {
   };
 
   const columns = [
-    { field: "index", headerName: "Sr. No", width: 80 },
-    { field: "project", headerName: "Project Id", width: 180 },
-    { field: "description", headerName: "Project Name", flex: 1 },
-    { field: "qty", headerName: "Quantity", width: 180, flex: 1 },
-    { field: "costcenter", headerName: "Cost Center", width: 180, flex: 1 },
-    { field: "bomSubject", headerName: "BOM", width: 180, flex: 1 },
+    { field: "index", headerName: "Sr. No", minWidth: 80 },
+    { field: "project", headerName: "Project Id", minWidth: 180 },
+    { field: "description", headerName: "Project Name", minWidth: 180},
+    { field: "qty", headerName: "Quantity", minWidth: 110 },
+    { field: "costcenter", headerName: "Cost Center", minWidth: 110, renderCell: ({row}) =>   row.costcenter?.cost_center_name ? row.costcenter?.cost_center_name : "" },
+    { field: "bomSubject", headerName: "BOM", minWidth: 140,  renderCell: ({row}) =>   row.bomSubject?.subject_name ? row.bomSubject?.subject_name : ""  },
     {
       field: "fgBomName",
       headerName: "FG BOM",
-      width: 200,
+      minWidth: 200,
       flex: 1,
       valueGetter: (_value, row) => {
         const { fg } = getFgSfgBom(_value?.row ?? row);
@@ -159,23 +159,23 @@ function CPMMaster() {
     {
       field: "sfgBomName",
       headerName: "SFG BOM",
-      width: 200,
+      minWidth: 200,
       flex: 1,
       valueGetter: (_value, row) => {
         const { sfg } = getFgSfgBom(_value?.row ?? row);
         return getBomName(sfg) || "";
       },
     },
-    { field: "insert_dt", headerName: "Insert Date", flex: 1 },
+    { field: "insert_dt", headerName: "Insert Date", minWidth: 180 },
     {
       headerName: "Status",
       field: "projectStatus",
-      width: 100,
+      minWidth: 100,
       renderCell: ({ row }) => <>{row.status === 1 ? "Active" : "InActive"}</>,
     },
     {
       headerName: "Modify Status",
-      width: 180,
+      minWidth: 180,
       field: "status",
       type: "actions",
       renderCell: ({ row }) => (
@@ -192,7 +192,7 @@ function CPMMaster() {
     {
       field: "actions",
       headerName: "Actions",
-      width: 100,
+      minWidth: 100,
       type: "actions",
       getActions: ({ row }) => [
         // Edit icon
@@ -220,7 +220,7 @@ function CPMMaster() {
 
   return (
     <Row gutter={10} style={{ height: "100%", padding: 10 }}>
-      <Col span={6}>
+      <Col span={4}>
         <Card
           size="small"
           style={{ marginTop: "8%" }}
@@ -241,7 +241,7 @@ function CPMMaster() {
           {/* )} */}
         </Card>
       </Col>
-      <Col style={{ height: "95%" }} span={18}>
+      <Col style={{ height: "95%" }} span={20}>
         <Row justify="end" style={{ margin: "5x 0" }}>
           <CommonIcons
             disabled={rows.length === 0}

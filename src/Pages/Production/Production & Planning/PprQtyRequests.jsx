@@ -139,9 +139,9 @@ export default function PprQtyRequests() {
         payload.from_date = filters.dateRange.substring(0, 10);
         payload.to_date = filters.dateRange.substring(11, 21);
       }
-      const { data } = await imsAxios.post("/ppr/fetchPprQtyLogs", payload);
-      if (data?.code === 200) {
-        const arr = (data?.data || data?.response?.data || []).map((r, idx) => ({
+      const response= await imsAxios.post("/ppr/fetchPprQtyLogs", payload);
+      if (response.success) {
+        const arr = (response?.data  ||  []).map((r, idx) => ({
           id: idx + 1, // grid serial
           log_id:
             r?.id ??
@@ -155,7 +155,7 @@ export default function PprQtyRequests() {
         }));
         setRows(arr);
       } else {
-        showToast(data?.message?.msg || data?.message || "Failed to fetch", "error");
+        showToast(response?.message || "Failed to fetch", "error");
       }
     } catch {
       showToast("Error fetching requests", "error");
