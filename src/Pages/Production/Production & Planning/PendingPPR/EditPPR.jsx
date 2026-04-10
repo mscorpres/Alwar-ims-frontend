@@ -74,17 +74,17 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
       setLoading("fetch");
       setSqdComponents([]);
       const response = await imsAxios.post("/ppr/fetchData4Update", pprDetails);
-      const { data } = response;
-      if (data) {
+    
+
         if (response.success) {
-          const { product } = data.data;
+          const { product } = response.data;
           let obj = {
-            type: data.data.type,
+            type: response.data.type,
             project: {
-              label: data.data.project.text,
-              value: data.data.project.id,
+              label: response.data.project.text,
+              value: response.data.project.id,
             },
-            remark: data.data.remark,
+            remark: response.data.remark,
             product: {
               label: product.sku.text,
               value: product.sku.id,
@@ -107,7 +107,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
           setEditPPR(null);
           showToast(response.message?.msg || response.message, "error");
         }
-      }
+  
     } catch (error) {
     } finally {
       setLoading(false);
@@ -233,15 +233,15 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
       );
 
       const { data } = response;
-      if (data) {
+    
         if (response.success) {
           showToast(response.message, "success");
           setShowSubmitConfirmModal(false);
           setEditPPR(false);
         } else {
-          showToast(response.message?.msg || response.message, "error");
+          showToast( response.message, "error");
         }
-      }
+ 
     } catch (error) {
     } finally {
       setLoading(false);
