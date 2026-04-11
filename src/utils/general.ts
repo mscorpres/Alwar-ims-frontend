@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 export const normalizePprForApiPayload = (
   ppr: unknown,
   pprId: unknown
-): { ppr: string | null; pprId: string | null } => {
+): { pprId?: string; ppr?: string } => {
   const isNoPpr = (v: unknown) =>
     v === undefined ||
     v === null ||
@@ -26,10 +26,9 @@ export const normalizePprForApiPayload = (
 
   const raw = rawFrom(pprId) ?? rawFrom(ppr);
   if (raw === null || isNoPpr(raw)) {
-    return { ppr: null, pprId: null };
+    return { pprId: undefined, ppr: undefined };
   }
-  const s = String(raw);
-  return { ppr: s, pprId: s };
+  return { pprId: String(raw) };
 };
 export const normalizeFormRules = (rules: unknown): unknown[] =>
   Array.isArray(rules) ? rules : [];
