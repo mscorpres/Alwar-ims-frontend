@@ -134,7 +134,7 @@ const UpdateProjectModal = ({
         qty: data.qty || 1,
         fgBom: fg ? { value: fg.value, label: fg.label } : null,
         sfgBom: sfg ? { value: sfg.value, label: sfg.label } : null,
-        costcenter: data.costcenter || null,
+        costcenter: data?.costcenter?.cost_center_key || null,
       });
 
       if (fg) setFgBomOptions([{ value: fg.value, text: fg.label }]);
