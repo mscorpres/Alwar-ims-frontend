@@ -2217,6 +2217,11 @@ export default function CreatePo() {
                                 <MySelect
                                   options={pprOptions}
                                   selectLoading={isPPRLoading}
+                                  onChange={(value) => {
+                                     form.setFieldsValue({ ppr: value });
+
+                                    
+                                  }}
                                 />
                               </Form.Item>
                             </Col>
