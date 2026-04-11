@@ -173,17 +173,18 @@ export default function PprQtyRequests() {
     if (!decideModal?.log_id) return;
     setLoading(true);
     try {
-      const { data } = await imsAxios.post("/ppr/decidePprQtyRequest", {
+      const response = await imsAxios.post("/ppr/decidePprQtyRequest", {
         log_id: decideModal.log_id,
         decision: decideModal.decision,
         remark: decideModal.remark || "",
       });
-      if (data?.code === 200) {
-        showToast(data?.message || "Decision saved", "success");
+      if (response.success) {
+   
+        showToast(response?.message || "Decision saved", "success");
         setDecideModal(null);
         await fetchRows();
       } else {
-        showToast(data?.message?.msg || data?.message || "Failed to decide", "error");
+        showToast(response?.message || "Failed to decide", "error");
       }
     } catch {
       showToast("Error updating decision", "error");
