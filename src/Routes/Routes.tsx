@@ -590,11 +590,11 @@ const Routes = [
     exact: true,
     main: () => <ReportQC />,
   },
-  // {
-  //   path: "/warehouse/physical/create",
-  //   exact: true,
-  //   main: () => <CreatePhysical />,
-  // },
+  {
+    path: "/warehouse/physical/create",
+    exact: true,
+    main: () => <CreatePhysical />,
+  },
   {
     path: "/warehouse/physical/pending",
     exact: true,
