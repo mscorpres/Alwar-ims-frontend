@@ -20,7 +20,7 @@ const links = [
       routePath: "/procurement/create",
       key: 0,
     },
-     {
+    {
       routeName: "Requested PR",
       routePath: "/procurement/request",
       key: 0,
@@ -87,7 +87,7 @@ const links = [
     },
   ],
   // ledger report links
- 
+
   // VBT links
   [
     {
@@ -314,7 +314,7 @@ const links = [
   ],
   // UOM links
   [{ routeName: "UoM", routePath: "/uom" }],
-    [{ routeName: "Cost Center", routePath: "/masters/cost-center" }],
+  [{ routeName: "Cost Center", routePath: "/masters/cost-center" }],
   // components links
   [
     { routeName: "Materials", routePath: "/material" },
@@ -328,6 +328,24 @@ const links = [
     //   routePath: "/stockControl",
     // },
   ],
+  [
+    {
+      routeName: "Create Physical Stock",
+      routePath: "/warehouse/physical/create",
+    },
+    {
+      routeName: "Pending Physical Stock",
+      routePath: "/warehouse/physical/pending",
+    },
+    {
+      routeName: "Rejected Physical Stock",
+      routePath: "/warehouse/physical/rejected",
+    },
+    {
+      routeName: "View Physical Stock",
+      routePath: "/warehouse/physical/view",
+    },
+  ],
   // product links
   [
     {
@@ -338,7 +356,7 @@ const links = [
       routeName: "SFG Product",
       routePath: "/masters/products/sfg",
     },
-      {
+    {
       routeName: "AddSKUOpeningRate",
       routePath: "/masters/sku-opening-rate",
     },
@@ -346,8 +364,9 @@ const links = [
   // hsn map links
   [{ routeName: "HSN Map", routePath: "/hsn-map" }],
   // group links
-  [{ routeName: "Groups", routePath: "/group" },
-    { routeName: "Sub Groups", routePath: "/sub-group" }
+  [
+    { routeName: "Groups", routePath: "/group" },
+    { routeName: "Sub Groups", routePath: "/sub-group" },
   ],
 
   [
@@ -378,9 +397,8 @@ const links = [
   ],
   // vendor master links
   [
-  
     { routeName: "Vendor", routePath: "/vendor" },
-      { routeName: "Add Vendor", routePath: "/create-vendor" },
+    { routeName: "Add Vendor", routePath: "/create-vendor" },
   ],
   // MR approved transactionlinks
   [
@@ -424,7 +442,7 @@ const links = [
   // ],
   // FG inward links
   [
-     {
+    {
       routeName: "Completed Finish Goods",
       routePath: "/warehouse/fg/complete",
     },
@@ -432,7 +450,6 @@ const links = [
       routeName: "Pending ",
       routePath: "/warehouse/fg/pending",
     },
-   
   ],
   // FG Out links
   [
@@ -459,8 +476,11 @@ const links = [
       routePath: "/material-transfer/rm-to-rm/view-transaction",
     },
   ],
-    [
-    { routeName: "FG To FG", routePath: "/warehouse/material-transfer/fg-to-fg" },
+  [
+    {
+      routeName: "FG To FG",
+      routePath: "/warehouse/material-transfer/fg-to-fg",
+    },
     // { routeName: "SF to Rej", routePath: "/sf-to-rm" },
     {
       routeName: "View Transaction",
@@ -862,7 +882,7 @@ const links = [
 
       placeholder: "Job Work Inventory Report",
     },
-     {
+    {
       routeName: "R38",
       routePath: "/fg-register-report",
 
@@ -876,7 +896,7 @@ const links = [
       routeName: "View and Print MIN Label",
       routePath: "/warehouse/print-view-min",
     },
-        {
+    {
       routeName: "View and Print FG MIN",
       routePath: "/warehouse/print-view-fg-min",
     },
