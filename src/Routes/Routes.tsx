@@ -260,10 +260,10 @@ import R37 from "@/Pages/Reports/R/R37.jsx";
 import QcScan from "@/Pages/Production/mes/qca/scan/index.js";
 import Products from "@/Pages/R&D/products/index.js";
 import ApprovalList from "@/Pages/R&D/products/approvalList.js";
+import AddCostCenter from "../Pages/Master/AddCostCenter.jsx";
 import BOMCreate from "@/Pages/R&D/bom/create/index.js";
 import BOMList from "@/Pages/R&D/bom/list/index.js";
 import VersionDownload from "@/Pages/Version/VersionDownload.jsx";
-
 const Routes = [
   {
     path: "/login",
@@ -594,6 +594,11 @@ const Routes = [
     path: "/warehouse/physical/create",
     exact: true,
     main: () => <CreatePhysical />,
+  },
+   {
+    path: "/masters/cost-center",
+    exact: true,
+    main: () => <AddCostCenter />,
   },
   {
     path: "/warehouse/physical/pending",

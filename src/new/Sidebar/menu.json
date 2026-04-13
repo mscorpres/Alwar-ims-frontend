@@ -575,6 +575,13 @@
                   }
                 ]
               },
+                 {
+                "key": "B123123",
+                "label": "Cost Center",
+                "icon": "ExtensionIcon",
+                "path": "/masters/cost-center",
+                "isShown": true
+              },
               {
                 "key": "B123",
                 "label": "Stock Control",

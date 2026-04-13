@@ -314,6 +314,7 @@ const links = [
   ],
   // UOM links
   [{ routeName: "UoM", routePath: "/uom" }],
+    [{ routeName: "Cost Center", routePath: "/masters/cost-center" }],
   // components links
   [
     { routeName: "Materials", routePath: "/material" },
@@ -348,14 +349,7 @@ const links = [
   [{ routeName: "Groups", routePath: "/group" },
     { routeName: "Sub Groups", routePath: "/sub-group" }
   ],
-  // master cost center links
-  [
-    {
-      routeName: "Cost Center",
-      routePath: "/cost-center",
-    },
-  ],
-  // billing address links
+
   [
     {
       routeName: "Billing Address",
