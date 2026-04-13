@@ -21,6 +21,7 @@ function CPMMaster() {
   const [loading, setLoading] = useState(false);
   const [editProject, setEditProject] = useState(false);
   const [viewProject, setViewProject] = useState(false);
+  const [isUpdateLoading, setIsUpdateLoading] = useState(false);
 
   const getAllDetailFun = async () => {
     setLoading("table");
@@ -43,16 +44,20 @@ function CPMMaster() {
   };
 
   const handleSubmit = async (updatedData) => {
+    setIsUpdateLoading(true);
     try {
       const response = await imsAxios.put("/ppr/update/project", updatedData);
       if (response.success) {
         showToast("Project updated successfully!", "success");
+        setIsUpdateLoading(false);
         setIsModalVisible(false);
-        getAllDetailFun(); // Refresh the data after successful update
+        getAllDetailFun(); 
       } else {
+        setIsUpdateLoading(false);
         showToast(response.message, "error");
       }
     } catch (error) {
+      setIsUpdateLoading(false);
       showToast(
         error?.response?.data?.message ||
           error?.message ||
@@ -220,7 +225,7 @@ function CPMMaster() {
 
   return (
     <Row gutter={10} style={{ height: "100%", padding: 10 }}>
-      <Col span={4}>
+      <Col span={6}>
         <Card
           size="small"
           style={{ marginTop: "8%" }}
@@ -230,18 +235,12 @@ function CPMMaster() {
             style={{ marginBottom: 30, marginTop: 10 }}
             level={4}
           ></Typography.Title>
-          {/* {editProject ? (
-            <EditProjectForm
-              editProject={editProject}
-              setEditProject={setEditProject}
-              getAllDetailFun={getAllDetailFun}
-            />
-          ) : ( */}
-          <NewProjectForm />
-          {/* )} */}
+         
+          <NewProjectForm refetchData={getAllDetailFun} />
+       
         </Card>
       </Col>
-      <Col style={{ height: "95%" }} span={20}>
+      <Col style={{ height: "95%" }} span={18}>
         <Row justify="end" style={{ margin: "5x 0" }}>
           <CommonIcons
             disabled={rows.length === 0}
@@ -267,6 +266,7 @@ function CPMMaster() {
         setIsModalVisible={setIsModalVisible}
         isModalVisible={isModalVisible}
         onUpdate={handleSubmit}
+        isUpdateLoading={isUpdateLoading}
       />
       <ViewBomOfProject
         show={isViewModalVisible}

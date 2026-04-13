@@ -5,17 +5,21 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { getCostCentresOptions, getBomOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "@/utils/general";
 import useApi from "@/hooks/useApi";
+import { useToast } from "@/hooks/useToast";
 
 const UpdateProjectModal = ({
   data,
   setIsModalVisible,
   isModalVisible,
   onUpdate,
+  isUpdateLoading,
 }: any) => {
   const [form] = Form.useForm();
+  const { showToast } = useToast();
   const [fgBomOptions, setFgBomOptions] = useState([]);
   const [sfgBomOptions, setSfgBomOptions] = useState([]);
   const [costCenterOptions, setCostCenterOptions] = useState([]);
+
 
   const { executeFun } = useApi();
   const getRecipeType = (row: any) => {
@@ -158,7 +162,8 @@ const UpdateProjectModal = ({
     setIsModalVisible(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+   
     form
       .validateFields()
       .then((values) => {
@@ -177,10 +182,11 @@ const UpdateProjectModal = ({
           costcenter: values.costcenter || null,
         };
 
-        onUpdate(updatedData); // Send to parent
+        onUpdate(updatedData); 
+     
       })
       .catch((info) => {
-        message.error("Please fill in all required fields.");
+        showToast("Please fill in all required fields.", "error");
       });
   };
 
@@ -196,7 +202,7 @@ const UpdateProjectModal = ({
           <Button key="cancel" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button key="submit" type="primary" onClick={handleSubmit}>
+          <Button key="submit" type="primary" onClick={handleSubmit} loading={isUpdateLoading}>
             Update Project
           </Button>
         </div>

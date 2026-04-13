@@ -9,7 +9,7 @@ import { getCostCentresOptions, getBomOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 
-export default function NewProjectForm() {
+export default function NewProjectForm({refetchData}) {
   const { showToast } = useToast();
   const [submitConfirm, setSubmitConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -85,6 +85,7 @@ export default function NewProjectForm() {
     if (response?.success) {
       showToast(response.message, "success");
       resetHandler();
+      refetchData();
     } else {
       showToast(response.message, "error");
     }
