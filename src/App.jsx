@@ -90,7 +90,7 @@ const App = () => {
   );
   const [loadingSwitch, setLoadingSwitch] = useState(isSwitchFlow);
   const [newNotification, setNewNotification] = useState(null);
-  const { pathname, search } = useLocation();
+  const { pathname, search, hash } = useLocation();
 
   const authPublicPaths = React.useMemo(
     () =>
@@ -274,7 +274,10 @@ dispatch(logoutUser());
       }
     });
     if (!user && !isAuthPublicPath(pathname)) {
-      navigate("/login");
+      const returnTo = `${pathname}${search}${hash}`;
+      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`, {
+        replace: true,
+      });
     }
     if (user) {
       if (user.company_branch) {
@@ -446,8 +449,10 @@ dispatch(logoutUser());
   }, []);
   useEffect(() => {
     if (!user && !isAuthPublicPath(pathname)) {
-      const returnTo = `${pathname}${search}`;
-      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`);
+      const returnTo = `${pathname}${search}${hash}`;
+      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`, {
+        replace: true,
+      });
     } else if (user) {
       let branch = JSON.parse(
         localStorage.getItem("branchData"),
@@ -457,7 +462,7 @@ dispatch(logoutUser());
       }
       // handleSelectSession("23-24");
     }
-  }, [user, pathname, search]);
+  }, [user, pathname, search, hash]);
 
   useEffect(() => {
     if (!isAuthShellPath || !user) return;
