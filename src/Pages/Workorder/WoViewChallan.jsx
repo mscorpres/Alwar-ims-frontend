@@ -73,7 +73,6 @@ const WoViewChallan = () => {
         ref_id: "--",
       };
       const arr = await printreturnChallan(payload);
-      console.log(arr,"data response")
       printFunction(arr.data.buffer.data);
       setLoading(false);
     } else if (
@@ -87,7 +86,7 @@ const WoViewChallan = () => {
           ref_id: "--",
         }
       );
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
       setLoading(false);
     } else {
       const response = await imsAxios.post("/wo_challan/printScrapChallan", {
