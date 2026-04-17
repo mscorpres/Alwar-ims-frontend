@@ -121,11 +121,11 @@ const CreateScrapeChallan = () => {
         code: clientcode,
       });
       if (response.success) {
-        challanForm.setFieldValue("address", data.data.address);
-        showToast(response.message, "error");
+        challanForm.setFieldValue("address", response?.data.address);
+       
       }
     } catch (error) {
-      showToast(error, "error");
+      showToast(error?.message || error, "error");
     } finally {
       setLoading(false);
     }
