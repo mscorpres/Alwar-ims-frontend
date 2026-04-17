@@ -289,14 +289,14 @@ const Manual = () => {
 
   return (
     <div>
-      <div style={{ height: "79%" }}>
-        <div style={{ height: "75vh", margin: "10px" }}>
+    
+        <div style={{ height: "75vh",  }}>
           <MyDataTable data={addrow} columns={columns} hideHeaderMenu />
-        </div>
+     
       </div>
       <Row gutter={16}>
         <Col span={24}>
-          <div style={{ textAlign: "end", margin: "10px" }}>
+          <div style={{ textAlign: "end", marginTop: "10px" }}>
             <MyButton
               variant="reset"
               onClick={resetFunction}

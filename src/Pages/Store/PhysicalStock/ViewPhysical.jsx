@@ -54,9 +54,10 @@ function ViewPhysical() {
       () => getVerifiedStocks(values.wise, values.data),
       "fetchRows"
     );
+   
     let arr = [];
     if (response.success) {
-      arr = response.data.data.map((row, index) => ({
+      arr = response.data.map((row, index) => ({
         id: index + 1,
         component: row.name,
         partCode: row.part,
