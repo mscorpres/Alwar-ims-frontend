@@ -73,6 +73,7 @@ const WoViewChallan = () => {
         ref_id: "--",
       };
       const arr = await printreturnChallan(payload);
+      console.log(arr,"data response")
       printFunction(arr.data.buffer.data);
       setLoading(false);
     } else if (
@@ -93,7 +94,7 @@ const WoViewChallan = () => {
         challan_id: row.challan_id,
         ref_id: "--",
       });
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
       setLoading(false);
     }
   };
@@ -130,7 +131,7 @@ const WoViewChallan = () => {
         challan_id: row.challan_id,
         ref_id: "--",
       });
-      downloadFunction(response.data.data.buffer.data, row.challan_id);
+      downloadFunction(response.data.buffer.data, row.challan_id);
       // console.log(response);
       setLoading(false);
     }
