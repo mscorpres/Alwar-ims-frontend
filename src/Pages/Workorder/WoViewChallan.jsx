@@ -122,7 +122,7 @@ const WoViewChallan = () => {
           ref_id: "--",
         }
       );
-      downloadFunction(response.data.data.buffer.data, row.challan_id);
+      downloadFunction(response.data.buffer.data, row.challan_id);
       // console.log(response);
       setLoading(false);
     } else {
