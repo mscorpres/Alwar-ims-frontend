@@ -317,16 +317,15 @@ const CreateScrapeChallan = () => {
         remark: values.components.map((r) => r.remarks),
       },
     };
-    console.log("editPayload", editPayload);
-    // navigate("/wo/view-challan");
-    // return;
+
+   
     if (editScrapeChallan === "edit") {
-      // console.log("her");
+   
       response = await imsAxios.post(
         "/wo_challan/updateWO_ScrapChallan",
         editPayload
       );
-      console.log("response of edit ", response);
+     
       let { data } = response;
       if (response.success ) {
         showToast(response.message, "success");
@@ -343,7 +342,7 @@ const CreateScrapeChallan = () => {
         "select"
       );
     }
-    // console.log(response);
+  
     if (response.success) {
       setLoading(true);
       challanForm.resetFields();
@@ -356,33 +355,27 @@ const CreateScrapeChallan = () => {
     const response = await imsAxios.post("/wo_challan/editWO_ScrapChallan", {
       challan_no: challan,
     });
-    console.log("response", response);
     setEditScrapeChallan("edit");
-    const { data } = response;
+    
     if (response.success ) {
-      // console.log(" data.header.challan_remark", data.header.challan_remark);
-      challanForm.setFieldValue("clientname", data.header.clientcode.label);
-      challanForm.setFieldValue("clientnameCode", data.header.clientcode.value);
-      challanForm.setFieldValue("clientbranch", data.header.client_branch);
-      // challanForm.setFieldValue(
-      //   "clientbranchid",
-      //   data.header.clientaddress?.value
-      // );
-      challanForm.setFieldValue("nature", data.header.eway_no);
-      challanForm.setFieldValue("pd", data.header.ship_doc_no);
-      challanForm.setFieldValue("vn", data.header.vehicle);
-      challanForm.setFieldValue("or", data.header.other_ref);
-      challanForm.setFieldValue("address", data.header.clientaddress?.label);
-      // challanForm.setFieldValue("addressid", data.header.clientaddress?.value);
-      challanForm.setFieldValue("billingid", data.header.billing_info);
-      challanForm.setFieldValue("billingaddress", data.header.billing_address);
-      challanForm.setFieldValue("dispatchid", data.header.dispatch_info);
-      ModalForm.setFieldValue("remark", data.header.challan_remark);
+      challanForm.setFieldValue("clientname", response.header.clientcode.label);
+      challanForm.setFieldValue("clientnameCode", response.header.clientcode.value);
+      challanForm.setFieldValue("clientbranch", response.header.client_branch);
+     
+      challanForm.setFieldValue("nature", response.header.eway_no);
+      challanForm.setFieldValue("pd", response.header.ship_doc_no);
+      challanForm.setFieldValue("vn", response.header.vehicle);
+      challanForm.setFieldValue("or", response.header.other_ref);
+      challanForm.setFieldValue("address", response.header.clientaddress?.label);
+      challanForm.setFieldValue("billingid", response.header.billing_info);
+      challanForm.setFieldValue("billingaddress", response.header.billing_address);
+      challanForm.setFieldValue("dispatchid", response.header.dispatch_info);
+      ModalForm.setFieldValue("remark", response.header.challan_remark);
       challanForm.setFieldValue(
         "shippingaddress",
-        data.header.dispatch_address
+        response.header.dispatch_address
       );
-      let arr = data.material.map((r) => {
+      let arr = response.material.map((r) => {
         return {
           component: r.component_name,
           qty: r.out_qty,
@@ -392,14 +385,13 @@ const CreateScrapeChallan = () => {
           remarks: r.remarks,
           rowID: r.row_id,
           componentKey: r.component_key,
-          clientBranchId: data.header?.clientaddress?.value,
+          clientBranchId: response.header?.clientaddress?.value,
         };
       });
-      console.log("arr", arr);
+    
 
       challanForm.setFieldValue("components", arr);
-      // const fields = challanForm.getFieldsValue();
-      // fields.components = arr;
+  
     }
   };
   useEffect(() => {
