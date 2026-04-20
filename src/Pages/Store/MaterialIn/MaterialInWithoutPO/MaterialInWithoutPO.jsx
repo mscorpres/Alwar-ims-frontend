@@ -729,7 +729,7 @@ export default function MaterialInWithoutPO() {
         ...r,
         mfgCode: r.Manualmfgcode,
         hsnCode: r.hsn,
-        autoConsumption: r.Autoconsump == "Y" ? "Yes" : "No",
+        autoConsumption: r.Autoconsump == "1" ? "Yes" : "No",
       };
     });
 
