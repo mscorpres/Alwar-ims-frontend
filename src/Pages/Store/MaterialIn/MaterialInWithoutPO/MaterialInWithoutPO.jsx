@@ -127,7 +127,7 @@ export default function MaterialInWithoutPO() {
       RATE: "--",
       HSN: "123456",
       LOCATION: "--",
-      AUTO_CONSUMP: "N",
+      AUTO_CONSUMP: "0",
       REMARK: "test",
       GST_TYPE: "LOCAL",
       GST_RATE: "18",
