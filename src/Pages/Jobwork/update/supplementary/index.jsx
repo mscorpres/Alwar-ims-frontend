@@ -186,6 +186,7 @@ function UpdateJW() {
           component: value,
         }
       );
+      const { data } = response;
 
       setComponent((com) =>
         com.map((v) => {
@@ -193,10 +194,10 @@ function UpdateJW() {
             {
               return {
                 ...v,
-                component_name: data?.data?.name,
-                component_part: data?.data?.part,
-                component_uom: data?.data?.unit,
-                component_key: data?.data?.key,
+                component_name: data?.name,
+                component_part: data?.part,
+                component_uom: data?.unit,
+                component_key: data?.key,
               };
             }
           } else {
