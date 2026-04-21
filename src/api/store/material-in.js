@@ -60,7 +60,7 @@ export const materialInWithoutPo = async (values, fileName, vendorType) => {
   });
   values.components = newComp;
   const payload = {
-    attachment: vendorType !== "p01" ? fileName ?? "" : undefined,
+    attachment: vendorType !== "p01" ? (fileName ?? "") : undefined,
     vendor: values.vendorName.value ?? "--",
     vendorbranch: values.vendorBranch ?? "--",
     address: values.vendorAddress,
@@ -88,7 +88,13 @@ export const materialInWithoutPo = async (values, fileName, vendorType) => {
     igst: values.components.map((row) => row.igst),
     remark: values.components.map((row) => row.remarks),
     location: values.components.map((row) => row.location.value),
-    out_location: values.components.map((row) => row.autoConsumption),
+    out_location: values.components.map((row) =>
+      row.autoConsumption == "No"
+        ? 0
+        : row.autoConsumption == "Yes"
+          ? 1
+          : row.autoConsumption,
+    ),
   };
 
   const response = await imsAxios.post("/transaction/min_transaction", payload);
