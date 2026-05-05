@@ -86,14 +86,14 @@ const WoViewChallan = () => {
           ref_id: "--",
         }
       );
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
       setLoading(false);
     } else {
       const response = await imsAxios.post("/wo_challan/printScrapChallan", {
         challan_id: row.challan_id,
         ref_id: "--",
       });
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
       setLoading(false);
     }
   };
@@ -121,7 +121,7 @@ const WoViewChallan = () => {
           ref_id: "--",
         }
       );
-      downloadFunction(response.data.data.buffer.data, row.challan_id);
+      downloadFunction(response.data.buffer.data, row.challan_id);
       // console.log(response);
       setLoading(false);
     } else {
@@ -130,7 +130,7 @@ const WoViewChallan = () => {
         challan_id: row.challan_id,
         ref_id: "--",
       });
-      downloadFunction(response.data.data.buffer.data, row.challan_id);
+      downloadFunction(response.data.buffer.data, row.challan_id);
       // console.log(response);
       setLoading(false);
     }
