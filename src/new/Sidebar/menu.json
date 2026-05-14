@@ -1254,6 +1254,13 @@
                 "icon": "AssessmentIcon",
                 "path": "/woreport",
                 "isShown": true
+              },
+              {
+                "key": "B79",
+                "label": "Update Supplementary",
+                "icon": "UpdateIcon",
+                "path": "/wo/update/supplementary",
+                "isShown": true
               }
             ]
           },

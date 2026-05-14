@@ -130,7 +130,7 @@ export { default as CreateWo } from "./Workorder/CreateWo";
 export { default as WoAnalysis } from "./Workorder/WoAnalysis";
 export { default as WoCompleted } from "./Workorder/WoCompleted";
 export { default as WoCreateChallan } from "./Workorder/WoCreateChallan";
-
+export { default as WoUpdateSupplementary } from "./Workorder/supplementary/WorkOrderUpdate.jsx";
 export { default as WoViewChallan } from "./Workorder/WoViewChallan";
 export { default as AddClientInfo } from "./Master/workorder/AddClientInfo";
 export { default as ViewandEditClient } from "./Master/workorder/ViewandEditClient";
