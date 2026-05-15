@@ -3,7 +3,7 @@ import { Button, Col, Input, Row, Select, Skeleton } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect.jsx";
 import { v4 } from "uuid";
 import { PlusCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
-import MyDataTable from "../../../Components/MyDataTable.jsx";
+import FormTable from "../../../Components/FormTable.jsx";
 import { imsAxios } from "../../../axiosInterceptor.js";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
@@ -186,10 +186,10 @@ function WoUpdateSupplementary() {
             {
               return {
                 ...v,
-                component_name: data?.data?.name,
-                component_part: data?.data?.part,
-                component_uom: data?.data?.unit,
-                component_key: data?.data?.key,
+                component_name: data?.name,
+                component_part: data?.part,
+                component_uom: data?.unit,
+                component_key: data?.key,
               };
             }
           } else {
@@ -499,7 +499,7 @@ function WoUpdateSupplementary() {
           };
         });
 
-      const { data } = await imsAxios.post(
+      const response = await imsAxios.post(
         "/woSupplementary/updateWORecipe",
         {
           original_po: updateData?.poType,
@@ -512,7 +512,7 @@ function WoUpdateSupplementary() {
         },
       );
 
-      if (data.code == 200) {
+      if (response?.success) {
         setComponent([]);
         setUpdateData({
           selectType: "",
@@ -521,10 +521,10 @@ function WoUpdateSupplementary() {
           compName: "",
           comment: "",
         });
-        showToast(data.message, "success");
+        showToast(response?.message, "success");
         setLoadingUpdate(false);
-      } else if (data.code == 500) {
-        showToast(data.message.msg, "error");
+      } else  {
+        showToast(response?.message, "error");
         setLoadingUpdate(false);
       }
     }
@@ -633,7 +633,7 @@ function WoUpdateSupplementary() {
           <Skeleton loading={loadingUpdate}>
             <div style={{ height: "94%" }}>
               <div style={{ height: "68vh", margin: "10px" }}>
-                <MyDataTable columns={getColumns()} data={component} />
+                <FormTable columns={getColumns()} data={component} />
               </div>
             </div>
 
