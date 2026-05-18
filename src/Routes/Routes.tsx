@@ -264,6 +264,8 @@ import AddCostCenter from "../Pages/Master/AddCostCenter.jsx";
 import BOMCreate from "@/Pages/R&D/bom/create/index.js";
 import BOMList from "@/Pages/R&D/bom/list/index.js";
 import VersionDownload from "@/Pages/Version/VersionDownload.jsx";
+import WoUpdateSupplementary from "@/Pages/Workorder/supplementary/WorkOrderUpdate.jsx";
+
 const Routes = [
   {
     path: "/login",
@@ -1027,6 +1029,10 @@ const Routes = [
   {
     path: "/wo/view-challan",
     main: () => <WoViewChallan />,
+  },
+  {
+    path: "/wo/update/supplementary",
+    main: () => <WoUpdateSupplementary />,
   },
   // {
   //   path: "/addClient",

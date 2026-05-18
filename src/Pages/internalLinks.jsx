@@ -591,6 +591,7 @@ const links = [
     { routeName: "COMPLETED", routePath: "/wocompleted" },
     //
     { routeName: "REPORT", routePath: "/woreport" },
+    { routeName: "UPDATE SUPPLEMENTARY", routePath: "/wo/update/supplementary" },
   ],
   //branch transfer link
   [
