@@ -150,6 +150,7 @@ function MaterialTransfer({ type }) {
     const tolocations = rows.map((r) => r.rejLoc);
     const qtys = rows.map((r) => r.qty);
     const comments = rows.map((r) => r.comment || "");
+    const rates = rows.map((r) => r.rate || "");
 
     setLoading(true);
     const response = await imsAxios.post(
@@ -161,6 +162,7 @@ function MaterialTransfer({ type }) {
         tolocation: tolocations,
         qty: qtys,
         type: type == "sftorej" ? "SF2REJ" : "SF2SF",
+        rate: rates,
       },
     );
 

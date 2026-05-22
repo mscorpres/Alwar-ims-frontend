@@ -1023,8 +1023,29 @@ export default function CreateWO({}) {
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Form.Item name="insertDate" label="Insert Date">
-                  <Input size="default" type="date" />
+                <Form.Item
+                  name="insertDate"
+                  label="Insert Date"
+                  rules={[
+                    {
+                      validator: (_, value) => {
+                        if (!value) return Promise.resolve();
+                        const today = new Date().toISOString().split("T")[0];
+                        if (value > today) {
+                          return Promise.reject(
+                            new Error("Insert date cannot be a future date")
+                          );
+                        }
+                        return Promise.resolve();
+                      },
+                    },
+                  ]}
+                >
+                  <Input
+                    size="default"
+                    type="date"
+                    max={new Date().toISOString().split("T")[0]}
+                  />
                 </Form.Item>
               </Col>
             </Row>

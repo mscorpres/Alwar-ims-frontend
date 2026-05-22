@@ -156,9 +156,7 @@ export const getVendorBranchDetails = async (
   return response;
 };
 export const getCostCentresOptions = async (search: any) => {
-  const response = await imsAxios.post("/backend/costCenter", {
-    search,
-  });
+  const response = await imsAxios.get(`/backend/costcenter?search=${search}`);
   return response;
 };
 

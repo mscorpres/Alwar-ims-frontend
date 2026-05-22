@@ -804,24 +804,7 @@ export default function ProductMIN() {
     setVendorBranchOptions(arr);
     return arr;
   };
-  // const getCostCenteres = async (searchInput) => {
-  //   if (searchInput.length > 2) {
-  //     setSelectLoading(true);
-  //     const response = await imsAxios.post("/backend/costCenter", {
-  //       search: searchInput,
-  //     });
-  //     setSelectLoading(false);
-  //     let arr = [];
-  //     if (!data.msg) {
-  //       arr = data.map((d) => {
-  //         return { text: d.text, value: d.id };
-  //       });
-  //       setAsyncOptions(arr);
-  //     } else {
-  //       setAsyncOptions([]);
-  //     }
-  //   }
-  // };
+
 
   const closeDrawer = () => {
     setPreview(false);
