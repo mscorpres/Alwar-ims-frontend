@@ -258,6 +258,13 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     });
   };
 
+  const exceedsPendingStock = (row) => {
+    const rqd = Number(row.rqdQty);
+    const pending = Number(row.pendingStock);
+    if (row.rqdQty === "" || row.rqdQty == null) return false;
+    return !Number.isNaN(rqd) && !Number.isNaN(pending) && rqd > pending;
+  };
+
   const columns = [
     {
       field: "componentname",
@@ -418,7 +425,22 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       field: "rqdQty",
       headerName: "Required Qty",
       width: 120,
-      renderCell: ({ row }) => <Input value={row.rqdQty} />,
+      renderCell: ({ row }) => {
+        const exceeds = exceedsPendingStock(row);
+        return (
+          <Input
+            value={row.rqdQty}
+            type="number"
+            status={exceeds ? "error" : undefined}
+            style={
+              exceeds
+                ? { borderColor: "#ff4d4f", backgroundColor: "#fff1f0" }
+                : undefined
+            }
+            onChange={(e) => inputHandler("rqdQty", row.id, e.target.value)}
+          />
+        );
+      },
     },
     // {
     //   field: "pendingWithjobwork",
@@ -863,6 +885,11 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                       data={bomList}
                       columns={bomcolumns}
                       loading={loading}
+                      getRowStyle={(row) =>
+                        exceedsPendingStock(row)
+                          ? { backgroundColor: "#fff1f0" }
+                          : {}
+                      }
                     />
 
                   ) : (

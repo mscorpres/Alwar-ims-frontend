@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-export default function FormTable({ columns, data, loading }) {
+export default function FormTable({ columns, data, loading, getRowStyle }) {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [headers, setHeaders] = useState([]);
   const [cells, setCells] = useState([]);
@@ -69,12 +69,19 @@ export default function FormTable({ columns, data, loading }) {
           <TableBody>
             {data?.map((row, rowIndex) => {
               const rowColor = rowIndex % 2 === 0 ? "#ffffff" : "#f8f9fa";
+              const customStyle = getRowStyle?.(row) ?? {};
+              const hasHighlight = Boolean(customStyle.backgroundColor);
+              const backgroundColor = hoveredRow === row.id
+                ? hasHighlight
+                  ? "#ffccc7"
+                  : "#fffaec"
+                : customStyle.backgroundColor ?? rowColor;
               return (
                 <TableRow
                   key={row?.id ?? `row-${rowIndex}`}
                   style={{
-                    backgroundColor:
-                      hoveredRow === row.id ? "#fffaec" : rowColor,
+                    backgroundColor,
+                    ...customStyle,
                   }}
                   onMouseEnter={() => setHoveredRow(row.id)}
                   onMouseLeave={() => setHoveredRow(null)}
