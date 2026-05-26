@@ -617,7 +617,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                 ? { borderColor: "#ff4d4f", backgroundColor: "#fff1f0" }
                 : undefined
             }
-            onChange={(e) => inputHandler("rqdQty", row.id, e.target.value)}
+            // onChange={(e) => inputHandler("rqdQty", row.id, e.target.value)}
           />
         );
       },
