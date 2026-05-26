@@ -88,7 +88,7 @@ export const savefginward = async (final: any) => {
 };
 export const getBomItem = async (finalObj: any) => {
   try {
-    const response = await imsAxios.post("/jobwork/getBomItem", finalObj);
+    const response = await imsAxios.post("/jobwork/bom-items", finalObj);
     return response;
   } catch (error) {
     console.error("something happened wrong", error);

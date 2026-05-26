@@ -16,7 +16,15 @@ import {
   Modal,
   Checkbox,
 } from "antd";
-import { CloseCircleFilled, InboxOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  CloseCircleFilled,
+  CloudUploadOutlined,
+  DownloadOutlined,
+  FileExcelOutlined,
+  FormOutlined,
+  InboxOutlined,
+} from "@ant-design/icons";
 import MySelect from "../../../Components/MySelect";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -24,10 +32,10 @@ import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import useLoading from "../../../hooks/useLoading";
 import {
-  getBomItem,
   getComponentOptions,
   savejwsfinward,
 } from "../../../api/general.ts";
+import * as XLSX from "xlsx";
 import useApi from "../../../hooks/useApi.ts";
 import NavFooter from "../../../Components/NavFooter";
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -58,9 +66,13 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   const [isScan, setIsScan] = useState(false);
   // const [pickLocationOptions, setPickLocationOptions] = useState([]);
   const [modalForm] = Form.useForm();
+  const [excelUploadForm] = Form.useForm();
 
   const fileComponents = Form.useWatch("fileComponents", modalForm);
   const [uplaoaClicked, setUploadClicked] = useState(false);
+  const [consumptionStep, setConsumptionStep] = useState("details");
+  const [consumptionMode, setConsumptionMode] = useState("");
+  const [excelRows, setExcelRows] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
   const getFetchData = async () => {
     setModalLoad("fetch", true);
@@ -165,6 +177,10 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         })
       );
     } else if (name == "rate") {
+      if (value !== "" && Number(value) < 0) {
+        showToast("Rate should not be negative", "error");
+        value = 0;
+      }
       setMainData((a) =>
         a.map((aa) => {
           if (aa.id == id) {
@@ -225,15 +241,12 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         })
       );
     } else if (name == "rqdQty") {
-      setMainData((a) =>
+      setBomList((a) =>
         a.map((aa) => {
           if (aa.id == id) {
-            {
-              return { ...aa, rqdQty: value };
-            }
-          } else {
-            return aa;
+            return { ...aa, rqdQty: value };
           }
+          return aa;
         })
       );
     } else if (name == "irn") {
@@ -263,6 +276,171 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     const pending = Number(row.pendingStock);
     if (row.rqdQty === "" || row.rqdQty == null) return false;
     return !Number.isNaN(rqd) && !Number.isNaN(pending) && rqd > pending;
+  };
+
+  const formatBomRows = (rows = []) =>
+    rows.map((r, id) => ({
+      id: id + 1,
+      bomQty: r.bom_qty,
+      partName: r.part_name,
+      cat_part_code: r.cat_part_code,
+      partNo: r.part_no,
+      pendingStock: r.pending_jw_qty,
+      rqdQty: r.rqd_qty,
+      pending_jw_qty: r.pending_jw_qty,
+      uom: r.uom,
+      key: r.key,
+      conRemark: r.remark ?? r.conRemark ?? "",
+    }));
+
+  const applyExcelRemarks = (rows, payload) => {
+    const remarkByPart = (payload?.part ?? []).reduce((acc, part, index) => {
+      acc[String(part).trim()] = payload?.remark?.[index] ?? "";
+      return acc;
+    }, {});
+
+    return rows.map((row) => ({
+      ...row,
+      conRemark:
+        row.conRemark ||
+        remarkByPart[String(row.partNo).trim()] ||
+        remarkByPart[String(row.key).trim()] ||
+        "",
+    }));
+  };
+
+  const getApiPayload = (response) => {
+    if (response?.data && typeof response.data === "object") {
+      return response.data;
+    }
+    return response;
+  };
+
+  const getApiMessage = (response) => {
+    const payload = getApiPayload(response);
+    return (
+      payload?.message?.msg ||
+      payload?.message ||
+      response?.message?.msg ||
+      response?.message ||
+      "Something went wrong"
+    );
+  };
+
+  const isSaveSuccessResponse = (response) => {
+    const payload = getApiPayload(response);
+    if (payload?.success === false || payload?.status === false) return false;
+    if (payload?.status === "error" || payload?.status === "failed") return false;
+    if (payload?.code && payload.code !== 200) return false;
+    return (
+      payload?.success === true ||
+      payload?.status === "success" ||
+      payload?.code === 200
+    );
+  };
+
+  const fetchBomItems = async (type, payload) => {
+    const isExcelUpload = type === "excel";
+    const response = await imsAxios({
+      // Browsers drop GET request bodies, so Excel uses POST to send part/remark.
+      method: "POST",
+      url: "/jobwork/bom-items",
+      params: {
+        jwID: header?.jobworkID,
+        sfgCreateQty: mainData[0]?.orderqty,
+        type,
+      },
+      ...(isExcelUpload
+        ? {
+            data: payload,
+          }
+        : {}),
+    });
+    return response;
+  };
+
+  const getBomRowsFromResponse = (response) => {
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.data?.data)) return response.data.data;
+    return [];
+  };
+
+  const isBomResponseSuccess = (response) =>
+    response?.success ||
+    response?.status === "success" ||
+    response?.code == 200 ||
+    response?.data?.status === "success" ||
+    response?.data?.code == 200;
+
+  const readExcelRows = (file) =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const workbook = XLSX.read(event.target.result, { type: "array" });
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+          const formattedRows = rows
+            .map((row, index) => {
+              const partcode =
+                row.partcode ??
+                row.Partcode ??
+                row.PartCode ??
+                row["Part Code"] ??
+                row["Part code"] ??
+                row.part_code ??
+                row.PART_CODE ??
+                row.PARTCODE ??
+                "";
+              const remark = row.remark ?? row.Remark ?? row.REMARK ?? "";
+              return {
+                id: index + 1,
+                partcode: String(partcode).trim(),
+                remark: String(remark).trim(),
+              };
+            })
+            .filter((row) => row.partcode || row.remark);
+          resolve(formattedRows);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+
+  const excelUploadProps = {
+    name: "file",
+    multiple: false,
+    maxCount: 1,
+    accept: ".xlsx,.xls",
+    beforeUpload() {
+      return false;
+    },
+  };
+
+  const normFile = (e) => {
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
+
+  const downloadExcelSample = () => {
+    const worksheet = XLSX.utils.json_to_sheet([
+      {
+        partcode: "P4881",
+        remark: "urgent",
+      },
+      {
+        partcode: "P4882",
+        remark: "low stock",
+      },
+    ]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sample");
+    XLSX.writeFile(workbook, "jw-sf-inward-sample.xlsx");
   };
 
   const columns = [
@@ -304,7 +482,8 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       renderCell: ({ row }) => (
         <Input
           type="number"
-          //  value={row.orderqty}
+          min={0}
+          value={row.rate ?? ""}
           placeholder="Rate"
           onChange={(e) => inputHandler("rate", row.id, e.target.value)}
         />
@@ -315,12 +494,9 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       headerName: "Value",
       width: 120,
       renderCell: ({ row }) => (
-        <Input
-          disabled
-          value={row.orderqty * row.rate ? row.orderqty * row.rate : "--"}
-          placeholder="Value"
-          onChange={(e) => inputHandler("value", row.id, e.target.value)}
-        />
+        <Typography.Text>
+          {row.orderqty * row.rate ? row.orderqty * row.rate : "--"}
+        </Typography.Text>
       ),
     },
     {
@@ -376,6 +552,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     {
       headerName: "",
       width: 50,
+      fixed: "left",
       type: "actions",
       field: "add",
       sortable: false,
@@ -393,33 +570,36 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       field: "id",
       headerName: "#",
       width: 50,
+      fixed: "left",
       renderCell: ({ row }) => <Typography.Text>{row.id}</Typography.Text>,
     },
     {
       field: "partNo",
       headerName: "Part No.",
-      width: 50,
+      minWidth: 130,
+      fixed: "left",
       renderCell: ({ row }) => <Typography.Text>{row.partNo}</Typography.Text>,
     },
     {
-      field: "catPartName",
+      field: "cat_part_code",
       headerName: "Cat Part No.",
-      width: 50,
+      minWidth: 160,
+      fixed: "left",
       renderCell: ({ row }) => (
-        <Typography.Text>{row.catPartName}</Typography.Text>
+        <Typography.Text>{row.cat_part_code}</Typography.Text>
       ),
     },
     {
       field: "partName",
       headerName: "Part Name",
       width: 320,
-      renderCell: ({ row }) => <Input disabled value={row.partName} />,
+      renderCell: ({ row }) => <ToolTipEllipses text={row.partName} />,
     },
     {
       field: "bomQty",
       headerName: "Bom Qty",
       width: 150,
-      renderCell: ({ row }) => <Input disabled value={row.bomQty} />,
+      renderCell: ({ row }) => <Typography.Text>{row.bomQty}</Typography.Text>,
     },
     {
       field: "rqdQty",
@@ -442,14 +622,6 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         );
       },
     },
-    // {
-    //   field: "pendingWithjobwork",
-    //   headerName: "Pending with Jw",
-    //   width: 120,
-    //   renderCell: ({ row }) => (
-    //     <Typography.Text>{row.pendingWithjobwork}</Typography.Text>
-    //   ),
-    // },
     {
       field: "uom",
       headerName: "Uom",
@@ -462,10 +634,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       width: 150,
       renderCell: ({ row }) => (
         <Input
-          // value={row.conRemark}
-          // onChange={(e) => {
-          //   setConRem(e.target.value);
-          // }}
+          value={row.conRemark}
           onChange={(e) => inputHandler("conRemark", row.id, e.target.value)}
         />
       ),
@@ -474,15 +643,49 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       field: "pendingStock",
       headerName: "JW Pending Stock",
       width: 180,
-      renderCell: ({ row }) => <Input disabled value={row.pendingStock} />,
+      renderCell: ({ row }) => (
+        <Typography.Text
+          type={exceedsPendingStock(row) ? "danger" : undefined}
+          strong={exceedsPendingStock(row)}
+        >
+          {row.pendingStock}
+        </Typography.Text>
+      ),
+    },
+  ];
+  const excelPreviewColumns = [
+    {
+      field: "id",
+      headerName: "#",
+      width: 50,
+      renderCell: ({ row }) => <Typography.Text>{row.id}</Typography.Text>,
+    },
+    {
+      field: "partcode",
+      headerName: "Part Code",
+      width: 180,
+      renderCell: ({ row }) => <Typography.Text>{row.partcode}</Typography.Text>,
+    },
+    {
+      field: "remark",
+      headerName: "Remark",
+      width: 260,
+      renderCell: ({ row }) => <Typography.Text>{row.remark}</Typography.Text>,
     },
   ];
   const prev = async () => {
-    getFetchData();
-    // getLocation();
-    setEWayBill("");
+    setConsumptionStep(consumptionMode === "excel" ? "excelPreview" : "method");
     setShowBomList(false);
     setBomList([]);
+  };
+
+  const resetConsumptionFlow = () => {
+    setConsumptionStep("details");
+    setConsumptionMode("");
+    setShowBomList(false);
+    setBomList([]);
+    setExcelRows([]);
+    excelUploadForm.resetFields();
   };
 
   const saveFunction = async (fetchAttachment) => {
@@ -512,15 +715,15 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       pick_location: pickLocation,
     };
     setModalUploadLoad(true);
-    const response = await executeFun(() => savejwsfinward(payload), "select");
-    const minNum = response.message;
+    const response = await savejwsfinward(payload);
+    const responseMessage = getApiMessage(response);
 
-    if (response.success) {
+    if (isSaveSuccessResponse(response)) {
       setModalUploadLoad(false);
       const pattern = /\[(.*?)\]/;
       let getMin;
       // Using match() method to find the first match of the pattern in the input string
-      const match = minNum.match(pattern);
+      const match = responseMessage?.match?.(pattern);
       if (match) {
         setModalUploadLoad(false);
         // console.log(); // Output the text inside square brackets
@@ -529,7 +732,8 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         setModalUploadLoad(false);
       }
       setModalUploadLoad(false);
-      showToast(response.message, "success");
+      showToast(responseMessage, "success");
+      setUploadClicked(false);
       // setEditModal(false);
       setModalUploadLoad(false);
       setShowBomList(false);
@@ -549,45 +753,35 @@ export default function JwInwordModal({ editModal, setEditModal }) {
             // invoiceDate: mainData[0].invoice,
             location: mainData[0].location,
             poQuantity: row.rqdQty,
-            pendingWithjobwork: row.pendingWithjobwork,
+            pending_jw_qty: row.pending_jw_qty,
           };
         }),
       });
     } else {
       setModalUploadLoad(false);
-      showToast(response.message, "error");
+      showToast(responseMessage, "error");
     }
   };
-  const getBomList = async () => {
+  const getBomList = async (type = "manual", payload) => {
     setLoading(true);
-    let final = {
-      jwID: header?.jobworkID,
-      sfgCreateQty: mainData[0].orderqty,
-    };
  try {
-
-     const response = await executeFun(() => getBomItem(final), "select");
+     const response = await executeFun(
+       () => fetchBomItems(type, payload),
+       "select"
+     );
    
-    if (response.success) {
-      let arr = response.data.map((r, id) => {
-        return {
-          id: id + 1,
-          bomQty: r.bom_qty,
-          partName: r.part_name,
-          catPartName: r.catPartName,
-          partNo: r.part_no,
-          pendingStock: r.pendingWithjobwork,
-          rqdQty: r.rqd_qty,
-          pendingWithjobwork: r.pendingWithjobwork,
-          uom: r.uom,
-          key: r.key,
-        };
-      });
+    if (isBomResponseSuccess(response)) {
+      let arr = formatBomRows(getBomRowsFromResponse(response));
+      if (type === "excel") {
+        arr = applyExcelRemarks(arr, payload);
+      }
       setBomList(arr);
       setLoading(false);
       setShowBomList(true);
+      setConsumptionMode(type);
+      setConsumptionStep("bomPreview");
     } else {
-      showToast(response.data.message.msg, "error");
+      showToast(response?.data?.message?.msg || response?.message, "error");
       setLoading(false);
     
     }
@@ -598,6 +792,55 @@ export default function JwInwordModal({ editModal, setEditModal }) {
  }
 
  
+  };
+
+  const handleManualEntry = () => {
+    if (loading) return;
+    getBomList("manual");
+  };
+
+  const handleNextFromDetails = () => {
+    const sfgCreateQty = mainData[0]?.orderqty;
+    if (sfgCreateQty === "" || sfgCreateQty == null) {
+      showToast("The sfgCreateQty field is required.", "error");
+      return;
+    }
+    setConsumptionStep("method");
+  };
+
+  const handleExcelPreview = async () => {
+    const values = excelUploadForm.getFieldsValue();
+    const file = values.files?.[0]?.originFileObj;
+    if (!file) {
+      showToast("Please select an Excel file", "error");
+      return;
+    }
+    try {
+      setLoading(true);
+      const rows = await readExcelRows(file);
+      if (!rows.length) {
+        showToast("Excel should have partcode and remark columns", "error");
+        return;
+      }
+      setExcelRows(rows);
+      setConsumptionStep("excelPreview");
+    } catch (error) {
+      showToast("Unable to read Excel file", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExcelSubmit = () => {
+    if (!excelRows.length) {
+      showToast("Please preview Excel data first", "error");
+      return;
+    }
+    const payload = {
+      part: excelRows.map((row) => row.partcode),
+      remark: excelRows.map((row) => row.remark ?? ""),
+    };
+    getBomList("excel", payload);
   };
 
   // const addAttachmentModal = async () => {
@@ -655,25 +898,31 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     setMaterialInSuccess(false);
   };
   const submitHandler = async () => {
-    setUploadClicked(false);
-    const formData = new FormData();
-    const values = await modalForm.validateFields();
-    let fileName;
-    values.fileComponents.map((comp) => {
-      formData.append("files", comp.file[0]?.originFileObj);
-    });
-    const fileResponse = await executeFun(
-      () => uploadMinInvoice(formData),
-      "submit"
-    );
-    if (fileResponse.success) {
-      // API returns { success, data: "filename.pdf" } - attachment is in data
-      const fetchAttachment =
-        typeof fileResponse.data === "string"
-          ? fileResponse.data
-          : fileResponse.data?.data;
-      setAttachment(fetchAttachment);
-      saveFunction(fetchAttachment);
+    try {
+      setModalUploadLoad(true);
+      const formData = new FormData();
+      const values = await modalForm.validateFields();
+      let fileName;
+      values.fileComponents.map((comp) => {
+        formData.append("files", comp.file[0]?.originFileObj);
+      });
+      const fileResponse = await executeFun(
+        () => uploadMinInvoice(formData),
+        "submit"
+      );
+      if (fileResponse.success) {
+        // API returns { success, data: "filename.pdf" } - attachment is in data
+        const fetchAttachment =
+          typeof fileResponse.data === "string"
+            ? fileResponse.data
+            : fileResponse.data?.data;
+        setAttachment(fetchAttachment);
+        saveFunction(fetchAttachment);
+      } else {
+        setModalUploadLoad(false);
+      }
+    } catch (error) {
+      setModalUploadLoad(false);
     }
   };
 
@@ -682,8 +931,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       getFetchData();
       // getLocation();
       setEWayBill("");
-      setShowBomList(false);
-      setBomList([]);
+      resetConsumptionFlow();
       newMinFunction();
       // getPickLocation();
     }
@@ -698,10 +946,584 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   const text = "Are you sure to update this jw sf Inward?";
   const closeModal = () => {
     setEditModal(false);
-    setShowBomList(false);
-    setBomList([]);
+    resetConsumptionFlow();
     modalForm.resetFields();
   };
+
+  const infoItems = [
+    { label: "JW PO ID", value: header?.jobworkID },
+    { label: "Jobwork ID", value: header?.jobworkID },
+    {
+      label: "FG/SFG Name & SKU",
+      value: `${header?.product?.name || ""} / ${header?.product?.sku || ""}`,
+    },
+    { label: "JW PO created by", value: header?.createdBy },
+    { label: "FG/SFG BOM of Recipe", value: header?.bom?.name },
+    { label: "Registered Date & Time", value: header?.registereDt },
+    { label: "FG/SFG Ord Qty", value: header?.orderedQty },
+    { label: "Job ID Status", value: header?.jwStatus },
+    { label: "FG/SFG processed Qty", value: header?.proceedQty },
+    { label: "Job Worker", value: header?.vendor?.name },
+  ];
+
+  const renderLeftInfo = () => (
+    <Card type="inner" title={header?.jobworkID} style={{ height: "100%" }}>
+      <Row gutter={[0, 10]}>
+        {infoItems.map((item) => (
+          <Col span={24} key={item.label}>
+            <Typography.Text strong style={{ fontSize: 12 }}>
+              {item.label}:{" "}
+            </Typography.Text>
+            <Typography.Text style={{ fontSize: 12 }}>
+              {item.value || "--"}
+            </Typography.Text>
+          </Col>
+        ))}
+        <Col span={24}>
+          <Form size="small" layout="vertical">
+            <Form.Item label="E-Way Bill No.">
+              <Input
+                style={{ width: "100%" }}
+                size="small"
+                value={eWayBill}
+                onChange={(e) => setEWayBill(e.target.value)}
+              />
+            </Form.Item>
+          </Form>
+        </Col>
+        {isApplicable == "Y" && (
+          <Col span={24}>
+            <Checkbox
+              checked={isScan}
+              onChange={(e) => setIsScan(e.target.checked)}
+            />
+            <Typography.Text
+              style={{
+                fontSize: 11,
+                marginLeft: "4px",
+                fontWeight: 700,
+              }}
+            >
+              Scan with QR Code
+            </Typography.Text>
+            <Form size="small" layout="vertical" style={{ marginTop: 5 }}>
+              <Form.Item label="Acknowledgment Number">
+                <Input
+                  size="small"
+                  style={{ width: "100%" }}
+                  value={irnNo}
+                  onChange={(e) => setIrnNo(e.target.value)}
+                  disabled={isScan}
+                />
+              </Form.Item>
+            </Form>
+          </Col>
+        )}
+      </Row>
+    </Card>
+  );
+
+  const renderDetailsStep = () => (
+    <div
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        minHeight: 0,
+      }}
+    >
+      <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
+        <FormTable data={mainData} columns={columns} />
+      </div>
+      <Row style={{ marginTop: 10 }}>
+        <Col span={24}>
+          <div style={{ textAlign: "end" }}>
+            <NavFooter
+              loading={loading}
+              submitFunction={handleNextFromDetails}
+              backFunction={closeModal}
+              nextLabel="Next"
+            />
+          </div>
+        </Col>
+      </Row>
+    </div>
+  );
+
+  const renderMethodStep = () => (
+    <Card
+      bordered={false}
+      style={{
+        minHeight: "100%",
+        borderRadius: 18,
+        background:
+          "linear-gradient(135deg, #f7fbff 0%, #eef6ff 50%, #fff7ed 100%)",
+        boxShadow: "0 14px 35px rgba(24, 144, 255, 0.12)",
+      }}
+      styles={{ body: { minHeight: "100%", padding: 28 } }}
+    >
+      <div style={{ textAlign: "center", marginBottom: 32 }}>
+        <Typography.Title level={3} style={{ marginBottom: 6 }}>
+          Choose Consumption Entry Type
+        </Typography.Title>
+        <Typography.Text type="secondary">
+          Select how you want to build the consumption list for this inward.
+        </Typography.Text>
+      </div>
+
+      <Row gutter={[24, 24]} justify="center" align="middle">
+        <Col xs={24} md={10}>
+          <Card
+            hoverable
+            bordered={false}
+            onClick={handleManualEntry}
+            style={{
+              minHeight: 240,
+              borderRadius: 18,
+              background: "#ffffff",
+              boxShadow: "0 16px 38px rgba(15, 23, 42, 0.10)",
+              cursor: "pointer",
+            }}
+            styles={{ body: { padding: 26, textAlign: "center" } }}
+          >
+            <div
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 22,
+                margin: "0 auto 18px",
+                display: "grid",
+                placeItems: "center",
+                background: "linear-gradient(135deg, #e6f4ff, #bae0ff)",
+                color: "#1677ff",
+                fontSize: 34,
+              }}
+            >
+              <FormOutlined />
+            </div>
+            <Typography.Title level={4} style={{ marginBottom: 8 }}>
+              Manual Entry
+            </Typography.Title>
+            <Typography.Paragraph type="secondary" style={{ minHeight: 44 }}>
+              Fetch BOM consumption directly for the entered SFG quantity.
+            </Typography.Paragraph>
+            <Button
+              type="primary"
+              size="large"
+              loading={loading}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleManualEntry();
+              }}
+              style={{ borderRadius: 10, minWidth: 130 }}
+            >
+              Continue
+            </Button>
+          </Card>
+        </Col>
+        <Col xs={24} md={10}>
+          <Card
+            hoverable
+            bordered={false}
+            onClick={() => {
+              setConsumptionMode("excel");
+              setConsumptionStep("excelUpload");
+            }}
+            style={{
+              minHeight: 240,
+              borderRadius: 18,
+              background: "#ffffff",
+              boxShadow: "0 16px 38px rgba(15, 23, 42, 0.10)",
+              cursor: "pointer",
+            }}
+            styles={{ body: { padding: 26, textAlign: "center" } }}
+          >
+            <div
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 22,
+                margin: "0 auto 18px",
+                display: "grid",
+                placeItems: "center",
+                background: "linear-gradient(135deg, #f6ffed, #b7eb8f)",
+                color: "#389e0d",
+                fontSize: 34,
+              }}
+            >
+              <FileExcelOutlined />
+            </div>
+            <Typography.Title level={4} style={{ marginBottom: 8 }}>
+              Upload from Excel
+            </Typography.Title>
+            <Typography.Paragraph type="secondary" style={{ minHeight: 44 }}>
+              Upload an Excel file with partcode and remark columns.
+            </Typography.Paragraph>
+            <Button
+              size="large"
+              style={{ borderRadius: 10, minWidth: 130 }}
+              icon={<CloudUploadOutlined />}
+            >
+              Upload Excel
+            </Button>
+          </Card>
+        </Col>
+      </Row>
+      <Row justify="center" style={{ marginTop: 30 }}>
+        <Button
+          size="large"
+          onClick={() => setConsumptionStep("details")}
+          style={{ borderRadius: 10, minWidth: 120 }}
+        >
+          Back
+        </Button>
+      </Row>
+    </Card>
+  );
+
+  const renderExcelUploadStep = () => (
+    <Card
+      bordered={false}
+      style={{
+        minHeight: "100%",
+        borderRadius: 18,
+        background: "linear-gradient(135deg, #f8fbff 0%, #f0f7ff 100%)",
+        boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+      }}
+      styles={{ body: { padding: 28 } }}
+    >
+      <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <div
+          style={{
+            width: 68,
+            height: 68,
+            borderRadius: 22,
+            margin: "0 auto 14px",
+            display: "grid",
+            placeItems: "center",
+            background: "linear-gradient(135deg, #e6fffb, #87e8de)",
+            color: "#08979c",
+            fontSize: 32,
+          }}
+        >
+          <CloudUploadOutlined />
+        </div>
+        <Typography.Title level={3} style={{ marginBottom: 4 }}>
+          Upload Consumption Excel
+        </Typography.Title>
+        <Typography.Text type="secondary">
+          Use two clean columns only: partcode and remark. Preview before submit.
+        </Typography.Text>
+      </div>
+      <Form form={excelUploadForm} layout="vertical">
+        <Form.Item>
+          <Form.Item
+            name="files"
+            valuePropName="fileList"
+            getValueFromEvent={normFile}
+            noStyle
+          >
+            <Upload.Dragger
+              name="files"
+              {...excelUploadProps}
+              style={{
+                borderRadius: 18,
+                padding: "30px 20px",
+                background: "#ffffff",
+                border: "1px dashed #69b1ff",
+                boxShadow: "inset 0 0 0 1px rgba(24, 144, 255, 0.04)",
+              }}
+            >
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined style={{ color: "#1677ff", fontSize: 48 }} />
+              </p>
+              <p className="ant-upload-text" style={{ fontWeight: 700 }}>
+                Click or drag Excel file to upload
+              </p>
+              <p className="ant-upload-hint">
+                Required columns: partcode, remark
+              </p>
+            </Upload.Dragger>
+          </Form.Item>
+        </Form.Item>
+      </Form>
+      <Card
+        size="small"
+        bordered={false}
+        style={{
+          marginTop: 18,
+          borderRadius: 14,
+          background: "rgba(255, 255, 255, 0.78)",
+        }}
+      >
+        <Row gutter={[12, 12]}>
+          {["Column 1: partcode", "Column 2: remark", "Preview first, then submit"].map(
+            (text) => (
+              <Col xs={24} md={8} key={text}>
+                <Typography.Text>
+                  <CheckCircleOutlined style={{ color: "#52c41a" }} /> {text}
+                </Typography.Text>
+              </Col>
+            )
+          )}
+        </Row>
+      </Card>
+      <Row justify="space-between" align="middle" style={{ marginTop: 20 }}>
+        <Button
+          size="large"
+          icon={<DownloadOutlined />}
+          onClick={downloadExcelSample}
+          style={{ borderRadius: 10 }}
+        >
+          Download Sample
+        </Button>
+        <Space>
+          <Button
+            size="large"
+            onClick={() => setConsumptionStep("method")}
+            style={{ borderRadius: 10 }}
+          >
+            Back
+          </Button>
+          <Button
+            type="primary"
+            size="large"
+            loading={loading}
+            onClick={handleExcelPreview}
+            style={{ borderRadius: 10, minWidth: 130 }}
+          >
+            Preview
+          </Button>
+        </Space>
+      </Row>
+    </Card>
+  );
+
+  const renderExcelPreviewStep = () => (
+    <Card
+      bordered={false}
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 18,
+        background: "#ffffff",
+        boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+      }}
+      styles={{
+        body: {
+          padding: 18,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+        },
+      }}
+    >
+      <Row justify="space-between" align="middle" style={{ marginBottom: 10 }}>
+        <Col>
+          <Typography.Title level={3} style={{ margin: 0 }}>
+            Excel Preview
+          </Typography.Title>
+          <Typography.Text type="secondary">
+            Review {excelRows.length} rows before creating consumption preview.
+          </Typography.Text>
+        </Col>
+        <Col>
+          <div
+            style={{
+              padding: "8px 14px",
+              borderRadius: 999,
+              background: "#f6ffed",
+              color: "#389e0d",
+              fontWeight: 700,
+            }}
+          >
+            {excelRows.length} rows ready
+          </div>
+        </Col>
+      </Row>
+      <Card
+        size="small"
+        bordered={false}
+        style={{
+          flex: 1,
+          minHeight: 0,
+          borderRadius: 16,
+          border: "1px solid #e6f4ff",
+          overflow: "hidden",
+        }}
+        styles={{ body: { padding: 0, height: "100%" } }}
+      >
+        <div
+          style={{
+            height: "100%",
+            maxHeight: "100%",
+            overflow: "auto",
+          }}
+        >
+          <FormTable
+            data={excelRows}
+            columns={excelPreviewColumns}
+            headText="left"
+            cellText="left"
+          />
+        </div>
+      </Card>
+      <Row justify="space-between" align="middle" style={{ marginTop: 12 }}>
+        <Typography.Text type="secondary">
+          Next will call getBomItem with part and remark in body.
+        </Typography.Text>
+        <Space>
+          <Button
+            size="large"
+            onClick={() => setConsumptionStep("excelUpload")}
+            style={{ borderRadius: 10 }}
+          >
+            Back
+          </Button>
+          <Button
+            type="primary"
+            size="large"
+            loading={loading}
+            onClick={handleExcelSubmit}
+            style={{ borderRadius: 10, minWidth: 150 }}
+          >
+            Next
+          </Button>
+        </Space>
+      </Row>
+    </Card>
+  );
+
+  const renderBomPreviewStep = () => (
+    <Card
+      bordered={false}
+      style={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 18,
+        background: "#ffffff",
+        boxShadow: "0 14px 35px rgba(15, 23, 42, 0.08)",
+      }}
+      styles={{
+        body: {
+          padding: 18,
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: 0,
+        },
+      }}
+    >
+      <Row justify="space-between" align="middle" style={{ marginBottom: 10 }}>
+        <Col>
+          <Typography.Title level={3} style={{ margin: 0 }}>
+            Consumption Preview
+          </Typography.Title>
+          <Typography.Text type="secondary">
+            Confirm consumption quantities and remarks before saving inward.
+          </Typography.Text>
+        </Col>
+        <Col>
+          <div
+            style={{
+              padding: "8px 14px",
+              borderRadius: 999,
+              background: "#e6f4ff",
+              color: "#1677ff",
+              fontWeight: 700,
+            }}
+          >
+            {bomList.length} components
+          </div>
+        </Col>
+      </Row>
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          border: "1px solid #e6f4ff",
+          borderRadius: 16,
+          overflow: "hidden",
+        }}
+      >
+        <FormTable
+          data={bomList}
+          columns={bomcolumns}
+          loading={loading}
+          headText="left"
+          cellText="left"
+          getRowStyle={(row) =>
+            exceedsPendingStock(row) ? { backgroundColor: "#fff1f0" } : {}
+          }
+        />
+      </div>
+      <Row style={{ marginTop: 12 }}>
+        <Col span={24}>
+          <div style={{ textAlign: "end" }}>
+            <Space>
+              <Button size="large" onClick={prev} style={{ borderRadius: 10 }}>
+                Back
+              </Button>
+              <Button
+                type="primary"
+                size="large"
+                onClick={() => setUploadClicked(true)}
+                loading={modalUploadLoad}
+                style={{ borderRadius: 10, minWidth: 130 }}
+              >
+                Submit
+              </Button>
+            </Space>
+          </div>
+        </Col>
+      </Row>
+    </Card>
+  );
+
+  const renderRightContent = () => {
+    if (consumptionStep === "method") return renderMethodStep();
+    if (consumptionStep === "excelUpload") return renderExcelUploadStep();
+    if (consumptionStep === "excelPreview") return renderExcelPreviewStep();
+    if (consumptionStep === "bomPreview") return renderBomPreviewStep();
+    return renderDetailsStep();
+  };
+  const renderModalLoader = () =>
+    loading ? (
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 30,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "rgba(255, 255, 255, 0.55)",
+          backdropFilter: "blur(3px)",
+          borderRadius: 12,
+        }}
+      >
+        <div
+          style={{
+            height: 110,
+            width: 110,
+            display: "grid",
+            placeItems: "center",
+            background: "#fff",
+            borderRadius: 16,
+            boxShadow: "0 16px 40px rgba(15, 23, 42, 0.18)",
+          }}
+        >
+          <img
+            src="/loading.gif"
+            alt="loading"
+            style={{ width: 76, height: "auto" }}
+          />
+        </div>
+      </div>
+    ) : null;
   return (
     <Space>
       <Drawer
@@ -718,6 +1540,11 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         open={editModal}
         getContainer={false}
         destroyOnClose={true}
+        bodyStyle={{
+          height: "calc(100vh - 55px)",
+          padding: 8,
+          overflow: "hidden",
+        }}
         style={
           {
             //  position: "absolute",
@@ -725,13 +1552,34 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         }
         extra={
           <Space>
-            <CloseCircleFilled onClick={() => setEditModal(false)} />
+            <CloseCircleFilled onClick={closeModal} />
           </Space>
         }
       >
         <>
           {!materialInSuccess && (
             <Skeleton active loading={modalLoad("fetch")}>
+              <Row
+                gutter={10}
+                style={{ height: "100%", minHeight: 0, position: "relative" }}
+              >
+                {renderModalLoader()}
+                <Col span={6} style={{ height: "100%", overflow: "auto" }}>
+                  {renderLeftInfo()}
+                </Col>
+                <Col
+                  span={18}
+                  style={{
+                    height: "100%",
+                    minHeight: 0,
+                    overflow: "hidden",
+                  }}
+                >
+                  {renderRightContent()}
+                </Col>
+              </Row>
+              {false && (
+                <>
               <Card type="inner" title={header?.jobworkID}>
                 <Row gutter={10}>
                   <Col
@@ -926,6 +1774,8 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                   </div>
                 </Col>
               </Row>
+                </>
+              )}
             </Skeleton>
           )}
 
@@ -941,6 +1791,9 @@ export default function JwInwordModal({ editModal, setEditModal }) {
             open={uplaoaClicked}
             width={700}
             title={"Upload Document"}
+            maskClosable={false}
+            keyboard={false}
+            confirmLoading={modalUploadLoad}
             // destroyOnClose={true}
             onOk={() => submitHandler()}
             onCancel={() => setUploadClicked(false)}
@@ -1007,7 +1860,7 @@ const successColumns = [
   { headerName: "SFG Quantity", field: "poQuantity", flex: 1 },
   { headerName: "In Quantity", field: "inQuantity", flex: 1 },
   { headerName: "Invoice Number", field: "invoiceNumber", flex: 1 },
-  { headerName: "Pending With Jobwork", field: "pendingWithjobwork", flex: 1 },
+  { headerName: "Pending With Jobwork", field: "pending_jw_qty", flex: 1 },
   // { headerName: "Invoice Date", field: "invoiceDate", flex: 1 },
   // { headerName: "Location", field: "location", flex: 1 },
 ];

@@ -8,10 +8,43 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-export default function FormTable({ columns, data, loading, getRowStyle }) {
+export default function FormTable({
+  columns,
+  data,
+  loading,
+  getRowStyle,
+  headText = "center",
+  cellText = "left",
+}) {
   const [hoveredRow, setHoveredRow] = useState(null);
   const [headers, setHeaders] = useState([]);
   const [cells, setCells] = useState([]);
+  const getColumnWidth = (column) => column.width ?? column.minWidth ?? 120;
+  const fixedLefts = columns.reduce((acc, column, index) => {
+    const previousIndex = index - 1;
+    const previousLeft = previousIndex >= 0 ? acc[previousIndex] ?? 0 : 0;
+    const previousWidth =
+      previousIndex >= 0 && columns[previousIndex]?.fixed === "left"
+        ? getColumnWidth(columns[previousIndex])
+        : 0;
+    acc[index] = previousLeft + previousWidth;
+    return acc;
+  }, {});
+  const getColumnSizeStyles = (column) => {
+    if (column.width) {
+      return {
+        width: `${column.width}px !important`,
+        maxWidth: `${column.width}px !important`,
+        minWidth: `${column.width}px !important`,
+      };
+    }
+    if (column.minWidth) {
+      return {
+        minWidth: `${column.minWidth}px !important`,
+      };
+    }
+    return {};
+  };
   useEffect(() => {
     let arr = columns.map((row) => {
       return row.headerName;
@@ -25,7 +58,12 @@ export default function FormTable({ columns, data, loading, getRowStyle }) {
 
   return (
     <TableContainer
-      style={{ height: "100%", border: "1px solid white", borderRadius: "0px" }}
+      style={{
+        height: "100%",
+        border: "1px solid white",
+        borderRadius: "0px",
+        overflow: "auto",
+      }}
     >
       {/* <div
         size="small"
@@ -38,7 +76,12 @@ export default function FormTable({ columns, data, loading, getRowStyle }) {
       > */}
         <Table
           stickyHeader
-          sx={{ width: "100%", overflowX: "auto",    border: "1px solid #ccc", }}
+          sx={{
+            width: "100%",
+            minWidth: "max-content",
+            overflowX: "auto",
+            border: "1px solid #ccc",
+          }}
           size="small"
           aria-label="a dense table"
         >
@@ -47,16 +90,22 @@ export default function FormTable({ columns, data, loading, getRowStyle }) {
               {columns.map((row, index) => (
                 <TableCell
                   sx={{
-                    width: `${row.width && row.width}px !important`,
-                    maxWidth: `${row.width && row.width}px !important`,
-                    minWidth: `${row.width && row.width}px !important`,
+                    ...getColumnSizeStyles(row),
                     backgroundColor: "#f1f7fc",
                     padding: "0px",
-                    textAlign: "center",
+                    textAlign: row.headText || headText,
                     fontSize: "14px",
                     border: "1px solid white",
                     borderBottom: "1px solid #c6def4",
                     overflow: "hidden",
+                    ...(row.fixed === "left"
+                      ? {
+                          position: "sticky",
+                          left: fixedLefts[index],
+                          zIndex: 5,
+                          boxShadow: "2px 0 6px rgba(15, 23, 42, 0.08)",
+                        }
+                      : {}),
                   }}
                   key={index}
                   component="th"
@@ -91,10 +140,20 @@ export default function FormTable({ columns, data, loading, getRowStyle }) {
                       key={index}
                       size="small"
                       sx={{
-                        width: `${row.width && row.width}px !important`,
+                        ...getColumnSizeStyles(col),
                         justifyContent: "center",
+                        textAlign: col.align || cellText,
                         padding: "2px 5px",
                         border: "none",
+                        ...(col.fixed === "left"
+                          ? {
+                              position: "sticky",
+                              left: fixedLefts[index],
+                              zIndex: 4,
+                              backgroundColor,
+                              boxShadow: "2px 0 6px rgba(15, 23, 42, 0.06)",
+                            }
+                          : {}),
                       }}
                     >
                       <div style={{ display: "contents" }}>
