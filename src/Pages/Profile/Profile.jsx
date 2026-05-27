@@ -262,17 +262,7 @@ export default function Profile() {
                   }}
                 /> */}
               </div>
-              <Typography.Text
-                style={{
-                  color: "#666",
-                  fontSize: 14,
-                  display: "block",
-                  marginBottom: 30,
-                }}
-              >
-                Basic info, like your name and phone number, that you use on
-                BharatPay Platform.
-              </Typography.Text>
+          
 
               {skeletonLoading ? (
                 <Skeleton active paragraph={{ rows: 3 }} />
