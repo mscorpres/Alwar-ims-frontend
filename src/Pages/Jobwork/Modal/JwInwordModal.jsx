@@ -309,36 +309,6 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     }));
   };
 
-  const getApiPayload = (response) => {
-    if (response?.data && typeof response.data === "object") {
-      return response.data;
-    }
-    return response;
-  };
-
-  const getApiMessage = (response) => {
-    const payload = getApiPayload(response);
-    return (
-      payload?.message?.msg ||
-      payload?.message ||
-      response?.message?.msg ||
-      response?.message ||
-      "Something went wrong"
-    );
-  };
-
-  const isSaveSuccessResponse = (response) => {
-    const payload = getApiPayload(response);
-    if (payload?.success === false || payload?.status === false) return false;
-    if (payload?.status === "error" || payload?.status === "failed") return false;
-    if (payload?.code && payload.code !== 200) return false;
-    return (
-      payload?.success === true ||
-      payload?.status === "success" ||
-      payload?.code === 200
-    );
-  };
-
   const fetchBomItems = async (type, payload) => {
     const isExcelUpload = type === "excel";
     const response = await imsAxios({
@@ -716,50 +686,35 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     };
     setModalUploadLoad(true);
     const response = await savejwsfinward(payload);
-    const responseMessage = getApiMessage(response);
 
-    if (isSaveSuccessResponse(response)) {
+    if (response.success === true || response.status === "success") {
+      const successComponents = bomList.map((row) => ({
+        id: row.id,
+        componentName: row.partName,
+        partNo: row.partNo,
+        inQuantity: row.bomQty,
+        invoiceNumber: mainData[0]?.invoice,
+        location: mainData[0]?.location,
+        poQuantity: row.rqdQty,
+        pending_jw_qty: row.pending_jw_qty,
+      }));
+
       setModalUploadLoad(false);
-      const pattern = /\[(.*?)\]/;
-      let getMin;
-      // Using match() method to find the first match of the pattern in the input string
-      const match = responseMessage?.match?.(pattern);
-      if (match) {
-        setModalUploadLoad(false);
-        // console.log(); // Output the text inside square brackets
-        getMin = match[1];
-      } else {
-        setModalUploadLoad(false);
-      }
-      setModalUploadLoad(false);
-      showToast(responseMessage, "success");
       setUploadClicked(false);
-      // setEditModal(false);
-      setModalUploadLoad(false);
       setShowBomList(false);
       modalForm.resetFields();
       setBomList([]);
+      showToast(response.message, "success");
+
       setMaterialInSuccess({
-        materialInId: getMin,
-        poId: mainData[0].jobwork_id,
+        materialInId: response.data.txn,
+        poId: mainData[0]?.jobwork_id || header?.jobworkID,
         vendor: row?.vendor,
-        components: bomList.map((row) => {
-          return {
-            id: row.id,
-            componentName: row.partName,
-            partNo: row.partNo,
-            inQuantity: row.bomQty,
-            invoiceNumber: mainData[0].invoice,
-            // invoiceDate: mainData[0].invoice,
-            location: mainData[0].location,
-            poQuantity: row.rqdQty,
-            pending_jw_qty: row.pending_jw_qty,
-          };
-        }),
+        components: successComponents,
       });
     } else {
       setModalUploadLoad(false);
-      showToast(responseMessage, "error");
+      showToast(response.message, "error");
     }
   };
   const getBomList = async (type = "manual", payload) => {
