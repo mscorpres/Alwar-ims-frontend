@@ -12,9 +12,7 @@ import {
   Space,
   Typography,
 } from "antd";
-import TableActions, {
-  CommonIcons,
-} from "../../../Components/TableActions.jsx/TableActions";
+
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
@@ -335,6 +333,7 @@ const PartCodeConversion = () => {
       const response = await imsAxios.post("/conversion/saveConversion", {
         ...payload,
         ...remarks,
+        type:"sf"
       });
       const { data } = response;
      

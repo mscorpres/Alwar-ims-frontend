@@ -25,6 +25,7 @@ import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import Spreadsheet from "react-spreadsheet";
 import { customColor } from "../../../utils/customColor.js";
+import { Add, Delete } from "@mui/icons-material";
 const { TextArea } = Input;
 
 function JwToJw() {
@@ -43,7 +44,7 @@ function JwToJw() {
       id: v4(),
       component: null,
       qty1: "",
-      stockQty: "",
+      stockQty: "00",
       unit: "",
     },
   ]);
@@ -58,6 +59,7 @@ function JwToJw() {
   const [showCsvModal, setShowCsvModal] = useState(false);
   const [showExcelWarning, setShowExcelWarning] = useState(false);
   const [addRowCount, setAddRowCount] = useState("");
+  const [hoveredRow, setHoveredRow] = useState(null);
 
   // react-spreadsheet data format: array of rows, each row is array of cell objects with { value: "" }
   const createEmptySpreadsheetData = (rowCount = 10) => {
@@ -66,13 +68,14 @@ function JwToJw() {
       .map(() => [{ value: "" }]);
   };
   const [spreadsheetData, setSpreadsheetData] = useState(
-    createEmptySpreadsheetData(10)
+    createEmptySpreadsheetData(10),
   );
   const columnLabels = ["Part Code"];
 
   // Check if any row has qty exceeding stock
   const hasQtyExceeded = rows.some(
-    (row) => row.qty1 && row.stockQty && Number(row.qty1) > Number(row.stockQty)
+    (row) =>
+      row.qty1 && row.stockQty && Number(row.qty1) > Number(row.stockQty),
   );
 
   // Add row functionality
@@ -82,7 +85,7 @@ function JwToJw() {
         id: v4(),
         component: null,
         qty1: "",
-        stockQty: "",
+        stockQty: "00",
         unit: "",
       },
       ...prev,
@@ -118,7 +121,7 @@ function JwToJw() {
   const getJwPoOptions = async (vendorId) => {
     try {
       const response = await imsAxios.get(
-        `/godown/transfer/jw-jw/po/${vendorId}`
+        `/godown/transfer/jw-jw/po/${vendorId}`,
       );
       let v = [];
       if (response?.data && Array.isArray(response.data)) {
@@ -135,7 +138,7 @@ function JwToJw() {
             value: ad.jobworkID,
             title: ad.jobworkID,
             searchText: `${ad.jobworkID} ${ad.createdDate}`,
-          })
+          }),
         );
       }
       setJwPoOptions(v);
@@ -151,7 +154,7 @@ function JwToJw() {
 
   const getLocationFunctionTo = async (vendorId) => {
     const response = await imsAxios.get(
-      `/backend/fetchVendorJWLocation?vendor=${vendorId}`
+      `/backend/fetchVendorJWLocation?vendor=${vendorId}`,
     );
     let v = [];
     if (response?.data && Array.isArray(response.data)) {
@@ -164,7 +167,7 @@ function JwToJw() {
     if (e?.length > 2 && allData.jwPo) {
       try {
         const response = await imsAxios.get(
-          `/godown/transfer/jw-jw/stock?part=${e}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`
+          `/godown/transfer/jw-jw/stock?part=${e}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`,
         );
 
         if (response?.success && response?.data) {
@@ -235,7 +238,7 @@ function JwToJw() {
     if (response.success) {
       showToast(
         response.message.toString()?.replaceAll("<br/>", ""),
-        "success"
+        "success",
       );
       // Reset form
       setAllData({
@@ -345,7 +348,7 @@ function JwToJw() {
 
       // Call stock API with part codes
       const response = await imsAxios.get(
-        `/godown/transfer/jw-jw/stock?part=${partCodes}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`
+        `/godown/transfer/jw-jw/stock?part=${partCodes}&jw=${allData.jwPo}&vendor=${allData.jwVendor}`,
       );
 
       if (response?.success && response?.data) {
@@ -422,8 +425,8 @@ function JwToJw() {
       <Row gutter={10}>
         <Col span={6}>
           <Card>
-            <Row gutter={0} >
-              <Col span={24} style={{ marginBottom: "10px"}}>
+            <Row gutter={0}>
+              <Col span={24} style={{ marginBottom: "10px" }}>
                 <span>SELECT JW VENDOR</span>
               </Col>
               <Col span={24}>
@@ -474,7 +477,7 @@ function JwToJw() {
                 span={24}
                 style={{ marginTop: "15px", marginBottom: "10px" }}
               >
-                <span>SELECT PICK LOCATION</span>
+                <span>Pick Location</span>
               </Col>
               <Col span={24}>
                 <Select
@@ -559,88 +562,69 @@ function JwToJw() {
                 >
                   Open Excel Grid
                 </Button>
-              </div>
+              </div>{" "}
               <div
                 style={{
+                  overflow: "auto",
+                  height: "calc(100vh - 230px)",
                   marginTop: "10px",
-                  border: "1px solid #ccc",
-                  padding: 4,
                 }}
               >
-                {" "}
-                <div
+                <table
                   style={{
-                    overflow: "auto",
-                    height: "calc(100vh - 230px)",
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    minWidth: 900,
                   }}
                 >
-                  <table
-                    style={{
-                      tableLayout: "fixed",
-                      width: "100%",
-                      minWidth: 900,
-                    }}
-                  >
-                    <thead>
-                      <tr>
-                        <th className="table-col" style={{ width: "5vw" }}>
-                          Action
-                        </th>
-                        <th className="table-col" style={{ width: "25vw" }}>
-                          Component / Part No.
-                        </th>
-                        <th className="table-col" style={{ width: "15vw" }}>
-                          Stock QTY
-                        </th>
-                        <th className="table-col" style={{ width: "15vw" }}>
-                          Transfering QTY
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rows.map((row, index) => (
-                        <tr key={row.id}>
-                          <td style={{ width: "5vw", textAlign: "center" }}>
-                            {index === 0 ? (
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  gap: 4,
-                                }}
+                  <thead>
+                    <tr>
+                      <th className="table-col" style={{ width: "5vw" }}>
+                        #
+                      </th>
+                      <th className="table-col" style={{ width: "25vw" }}>
+                        Component / Part No.
+                      </th>
+                      <th className="table-col" style={{ width: "15vw" }}>
+                        Stock QTY
+                      </th>
+                      <th className="table-col" style={{ width: "15vw" }}>
+                        Transfering QTY
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row, index) => {
+                      const rowColor = index % 2 === 0 ? "#ffffff" : "#f8f9fa";
+                      return (
+                        <tr
+                          key={row.id}
+                          style={{
+                            backgroundColor:
+                              hoveredRow === row.id ? "#fffaec" : rowColor,
+                          }}
+                          onMouseEnter={() => setHoveredRow(row.id)}
+                          onMouseLeave={() => setHoveredRow(null)}
+                        >
+                          <td style={{ width: "2vw", textAlign: "center" }}>
+                            {index > 0 && (
+                              <span
+                                onClick={() => removeRow(row.id)}
+                                className="delete-icon"
                               >
-                                <Tooltip title="Delete Row">
-                                  <Button
-                                    danger
-                                    size="small"
-                                    icon={<DeleteOutlined />}
-                                    onClick={() => removeRow(row.id)}
-                                    disabled={rows.length === 1}
-                                  />
-                                </Tooltip>
-                                <span style={{ color: "#ccc" }}>|</span>
-                                <Tooltip title="Add Row">
-                                  <Button
-                                    size="small"
-                                    icon={<PlusOutlined />}
-                                    onClick={addRow}
-                                    style={{ color: customColor.newBgColor }}
-                                  />
-                                </Tooltip>
-                              </div>
-                            ) : (
-                              <Tooltip title="Delete Row">
-                                <Button
-                                  danger
-                                  size="small"
-                                  icon={<DeleteOutlined />}
-                                  onClick={() => removeRow(row.id)}
-                                  disabled={rows.length === 1}
-                                />
-                              </Tooltip>
+                                <Delete color="error" />
+                              </span>
+                            )}
+                            {index === 0 && (
+                              <span
+                                onClick={addRow}
+                                style={{ cursor: "pointer" }}
+                              >
+                                <Add color="success" />
+                              </span>
                             )}
                           </td>
+
                           <td style={{ width: "25vw" }}>
                             <MyAsyncSelect
                               style={{ width: "100%" }}
@@ -655,7 +639,7 @@ function JwToJw() {
                               onChange={(selected) => {
                                 // Find selected option to get unit and stock
                                 const selectedOption = asyncOptions.find(
-                                  (opt) => opt.value === selected?.value
+                                  (opt) => opt.value === selected?.value,
                                 );
                                 setRows((prev) => {
                                   const updated = [...prev];
@@ -670,7 +654,7 @@ function JwToJw() {
                               }}
                             />
                           </td>
-                          <td style={{ width: "15vw" }}>
+                          <td style={{ width: "15vw", textAlign: "center" }}>
                             {/* <Input
                                 disabled
                                 value={row.stockQty || "0"}
@@ -706,10 +690,10 @@ function JwToJw() {
                             />
                           </td>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </Col>
           </Row>

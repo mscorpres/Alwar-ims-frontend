@@ -49,7 +49,13 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Inter, -apple-system, system-ui, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  font-family:
+    Inter,
+    -apple-system,
+    system-ui,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif !important;
   list-style: none;
 }
 a {
@@ -60,6 +66,15 @@ a:hover {
   color: #203624 !important;
   text-decoration: none !important;
 }
+
+/* Login / signup shell: global `a` uses dark green + no underline; restore link styling */
+.auth-shell-footer-link,
+.auth-shell-footer-link:hover,
+.auth-shell-footer-link:focus {
+  color: #1677ff !important;
+  text-decoration: underline !important;
+}
+
 /* Sidebar menu links should be visible on dark background */
 .ant-drawer-footer {
   background-color: #f1f1f1d5 !important;
@@ -125,10 +140,7 @@ a:hover {
 .ant-layout {
   background-color: white !important;
 }
-body {
-  height: 100vh;
-  overflow-y: hidden;
-}
+
 button {
   cursor: pointer;
 }
@@ -330,8 +342,12 @@ td.ant-picker-cell:hover .ant-picker-cell-inner,
   background-color: #0d9489 !important;
   color: #ffffff !important;
 }
-.ant-picker-cell-in-view.ant-picker-cell-range-hover-start:not(.ant-picker-cell-range-start)::after,
-.ant-picker-cell-in-view.ant-picker-cell-range-hover-end:not(.ant-picker-cell-range-end)::after,
+.ant-picker-cell-in-view.ant-picker-cell-range-hover-start:not(
+    .ant-picker-cell-range-start
+  )::after,
+.ant-picker-cell-in-view.ant-picker-cell-range-hover-end:not(
+    .ant-picker-cell-range-end
+  )::after,
 .ant-picker-cell-in-view.ant-picker-cell-range-hover::after {
   background-color: rgba(210, 245, 113, 0.3) !important;
 }
@@ -441,7 +457,7 @@ textarea {
 .nav-footer {
   left: 0;
   background-color: white;
-  box-shadow: 0px 2px 4px  #00001a;
+  box-shadow: 0px 2px 4px #00001a;
 }
 .ant-layout-header,
 .ant-menu.ant-menu-dark .ant-menu-sub {
@@ -513,7 +529,7 @@ textarea {
   background: #187bd8 !important;
   cursor: pointer;
 }
-.ant-menu-horizontal {
+.antMenu {
   border: none !important;
   margin: 0 !important;
   margin-bottom: 5px !important;
@@ -598,31 +614,49 @@ textarea.ant-input {
   border-radius: 0 !important;
 }
 .ant-card-body {
+  padding: 16px !important;
   border-radius: 0 !important;
 }
-/* Focus and hover border color - remove blue outline and shadow */
-.ant-input:hover,
+/* Hover: teal border only; focus/focused: border + teal ring */
+.ant-input:hover {
+  border: 2px solid #0d9489 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
 .ant-input:focus,
 .ant-input-focused {
   border: 2px solid #0d9489 !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
+  outline: none !important;
+}
+.ant-select:hover .ant-select-selector {
+  border: 2px solid #0d9489 !important;
   box-shadow: none !important;
   outline: none !important;
 }
-.ant-select:hover .ant-select-selector,
 .ant-select-focused .ant-select-selector,
 .ant-select:focus .ant-select-selector {
   border: 2px solid #0d9489 !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
 }
-.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input) .ant-select-selector {
-  box-shadow: none !important;
+.ant-select-focused:not(.ant-select-disabled).ant-select:not(
+    .ant-select-customize-input
+  )
+  .ant-select-selector {
+  box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
+    background-color: #ffffce !important;
 }
-textarea.ant-input:hover,
-textarea.ant-input:focus {
+textarea.ant-input:hover {
   border: 2px solid #0d9489 !important;
   box-shadow: none !important;
+  outline: none !important;
+}
+textarea.ant-input:focus,
+textarea.ant-input-focused {
+  border: 2px solid #0d9489 !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
 }
 .ant-input-number:hover,
@@ -632,10 +666,23 @@ textarea.ant-input:focus {
   box-shadow: none !important;
   outline: none !important;
 }
-.ant-input-affix-wrapper:hover,
+.ant-input-affix-wrapper:hover {
+  border: 2px solid #0d9489 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
 .ant-input-affix-wrapper:focus,
 .ant-input-affix-wrapper-focused {
   border: 2px solid #0d9489 !important;
+  box-shadow: 0 0 0 1px #0d9489 !important;
+  outline: none !important;
+}
+.ant-input-affix-wrapper .ant-input,
+.ant-input-affix-wrapper .ant-input:hover,
+.ant-input-affix-wrapper .ant-input:focus,
+.ant-input-affix-wrapper .ant-input-focused,
+.ant-input-affix-wrapper-focused .ant-input {
+  border: none !important;
   box-shadow: none !important;
   outline: none !important;
 }
@@ -647,13 +694,19 @@ textarea.ant-input:focus {
   border: 2px solid #0d9489 !important;
   box-shadow: none !important;
   outline: none !important;
+    background-color: #ffffce !important;
 }
-/* Remove all input focus shadows and outlines globally */
+/* Focus-visible ring for input, select, textarea (affix wrapper); number/picker unchanged */
 .ant-input:focus-visible,
 .ant-select-selector:focus-visible,
+.ant-input-affix-wrapper:focus-visible,
+textarea.ant-input:focus-visible {
+  box-shadow: 0 0 0 1px #0d9489 !important;
+  background-color: #ffffce !important;
+  outline: none !important;
+}
 .ant-input-number:focus-visible,
-.ant-picker:focus-visible,
-.ant-input-affix-wrapper:focus-visible {
+.ant-picker:focus-visible {
   box-shadow: none !important;
   outline: none !important;
 }
@@ -661,9 +714,7 @@ textarea.ant-input:focus {
   font-size: 0.8rem;
   font-weight: bold !important;
 }
-.MuiTableCell-head {
-  /* padding: 5px 5px !important; */
-}
+
 .css-z139qr-MuiTableCell-root {
   padding: 2px 5px !important;
 }

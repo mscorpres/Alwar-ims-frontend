@@ -2,7 +2,11 @@ import { Button, Col, Form, Input, Row, Typography } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import React from "react";
 import { imsAxios } from "../../axiosInterceptor";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {
+  getSafeInternalRedirect,
+  POST_LOGIN_REDIRECT_STORAGE_KEY,
+} from "../../utils/postLoginRedirect.js";
 import { useToast } from "../../hooks/useToast.js";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import { useEffect } from "react";
@@ -13,7 +17,6 @@ function FirstLogin() {
   const { showToast } = useToast();
   const [changePasswordForm] = useForm();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const [loading, setLoading] = useState(false);
   const { user } = useSelector((state) => state.login);
   const dispatch = useDispatch();
@@ -35,7 +38,9 @@ function FirstLogin() {
         dispatch(setUser({ passwordChanged: "C" }));
         showToast(response.message, "success");
 
-        navigate("/r1");
+        const raw = sessionStorage.getItem(POST_LOGIN_REDIRECT_STORAGE_KEY);
+        sessionStorage.removeItem(POST_LOGIN_REDIRECT_STORAGE_KEY);
+        navigate(getSafeInternalRedirect(raw) ?? "/r1");
       } else {
         showToast(response.message?.msg || response.message, "error");
       }
@@ -43,10 +48,12 @@ function FirstLogin() {
     console.log(values);
   };
   useEffect(() => {
-    if (user.passwordChanged != "P") {
-      navigate("/r1");
+    if (user?.passwordChanged != "P") {
+      const raw = sessionStorage.getItem(POST_LOGIN_REDIRECT_STORAGE_KEY);
+      sessionStorage.removeItem(POST_LOGIN_REDIRECT_STORAGE_KEY);
+      navigate(getSafeInternalRedirect(raw) ?? "/r1");
     }
-  }, []);
+  }, [user?.passwordChanged, navigate]);
   return (
     <div style={{ height: "100%" }}>
       <Row

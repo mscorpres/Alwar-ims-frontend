@@ -39,7 +39,7 @@ const Alter = ({
 
     // console.log(data.data);
     let arr = [];
-    arr = data.data?.map((vList) => {
+    arr = response.data?.map((vList) => {
       return { text: vList.text, value: vList.id };
     });
     setDropdown(arr);

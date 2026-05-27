@@ -9,7 +9,7 @@ import {
 import React from "react";
 import { Link } from "react-router-dom";
 import { CommonIcons } from "./TableActions.jsx/TableActions";
-import { socketLink as axiosLink } from "../axiosInterceptor";
+import { getSocketLink } from "../axiosInterceptor";
 import { useEffect } from "react";
 
 export default function Notifications({
@@ -51,7 +51,7 @@ export default function Notifications({
                       ) : (
                         <a
                           href={
-                            axiosLink.split(":")[1] +
+                            getSocketLink().split(":")[1] +
                             "/" +
                             item.file?.substring(2)
                           }

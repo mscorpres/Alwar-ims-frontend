@@ -15,7 +15,6 @@ import "buffer";
 import AppHeader from "./new/Header/AppHeader.jsx";
 import NotificationDropdown from "./Components/NotificationDropdown/NotificationDropdown";
 import {
-  logout,
   setNotifications,
   setTestPages,
   setCompanyBranch,
@@ -46,11 +45,18 @@ import { imsAxios } from "./axiosInterceptor";
 import internalLinks from "./Pages/internalLinks.jsx";
 import TicketsModal from "./Components/TicketsModal/TicketsModal";
 import SettingDrawer from "./Components/SettingDrawer.jsx";
-import CalculatorDrawer from "./Components/Calculator/CalculatorDrawer.jsx";
-import { customColor } from "./utils/customColor.js";
-import Information from "./Pages/Master/Components/Information.jsx";
+import { logoutUser } from "./Features/loginSlice/logoutSlice.js";
 import { useToast } from "./hooks/useToast.js";
 import AlwarFooter from "./Components/footer/AlwarFooter.jsx";
+import {
+  buildMergedSessionSelectOptions,
+  getCurrentIndianFinancialYearSession,
+  LEGACY_SESSION_CODES,
+} from "./utils/indianFinancialYear.js";
+import {
+  getSafeInternalRedirect,
+  POST_LOGIN_REDIRECT_STORAGE_KEY,
+} from "./utils/postLoginRedirect.js";
 
 const App = () => {
   const { showToast } = useToast();
@@ -59,6 +65,7 @@ const App = () => {
   const sessionFromUrl = searchParams.get("session");
   const branchFromUrl = searchParams.get("branch");
   const comFromUrl = searchParams.get("company");
+  const type = searchParams.get("type")
   const { user, testPages } = useSelector((state) => state.login);
 
 
@@ -81,9 +88,23 @@ const App = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showSideBar, setShowSideBar] = useState(false);
-  const [loadingSwitch, setLoadingSwitch] = useState(false);
+  const isSwitchFlow = Boolean(
+    tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl && type,
+  );
+  const [loadingSwitch, setLoadingSwitch] = useState(isSwitchFlow);
   const [newNotification, setNewNotification] = useState(null);
-  const { pathname } = useLocation();
+  const { pathname, search, hash } = useLocation();
+
+  const authPublicPaths = React.useMemo(
+    () =>
+      new Set(["/login", "/signup", "/login/otp", "/ims/login", "/first-login"]),
+    [],
+  );
+  const isAuthPublicPath = (p) => authPublicPaths.has(p);
+  const isAuthShellPath =
+    pathname === "/login" ||
+    pathname === "/signup" ||
+    pathname === "/login/otp";
     
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
@@ -105,7 +126,7 @@ const App = () => {
   const [hisList, setHisList] = useState([]);
   const logoutHandler = () => {
     setShowBlackScreen(false);
-    dispatch(logout());
+dispatch(logoutUser());
   };
 
   const handleSelectCompanyBranch = (value) => {
@@ -194,13 +215,15 @@ const App = () => {
     };
   }, []);
 
-  const fetchUserDeatils = async (token, session, com, branch) => {
+  const fetchUserDeatils = async (token, session, com, branch, type) => {
     setLoadingSwitch(true);
+    localStorage.setItem("switchInProgress", "1");
 
     try {
       const response = await imsAxios.get(
-        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}`,
+        `/auth/switch?next=alwar.mscorpres.com&company=${com}&token=${token}&session=${session}&branch=${branch}&type=${type}`,
       );
+
       if (response?.success) {
         const payload = response?.data;
         const obj = {
@@ -224,25 +247,25 @@ const App = () => {
         localStorage.setItem("loggedInUser", JSON.stringify(obj));
         dispatch(setUser(obj));
         if (payload.settings) dispatch(setSettings(payload.settings));
-        setLoadingSwitch(false);
         setSearchParams({}, { replace: true });
       } else {
-        setLoadingSwitch(false);
         showToast(response?.message, "error");
         window.location.replace("https://oakter.mscorpres.com/");
       }
     } catch (error) {
-      setLoadingSwitch(false);
-      showToast(response?.message, "error");
+      showToast(error?.message, "error");
       window.location.replace("https://oakter.mscorpres.com/");
+    } finally {
+      localStorage.removeItem("switchInProgress");
+      setLoadingSwitch(false);
     }
   };
 
   useEffect(() => {
-    if (tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl) {
-      fetchUserDeatils(tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl);
+    if (tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl && type) {
+      fetchUserDeatils(tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type);
     }
-  }, [tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl]);
+  }, [tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type]);
 
   useEffect(() => {
     if (Notification.permission == "default") {
@@ -270,15 +293,11 @@ const App = () => {
         dispatch(setShowCalculator(false));
       }
     };
-
-    // Use capture phase to catch the event earlier
-    window.addEventListener("keydown", handleKeyPress, true);
-    
-    return () => {
-      window.removeEventListener("keydown", handleKeyPress, true);
-    };
-    if (!user) {
-      navigate("/login");
+    if (!user && !isAuthPublicPath(pathname)) {
+      const returnTo = `${pathname}${search}${hash}`;
+      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`, {
+        replace: true,
+      });
     }
     if (user) {
       if (user.company_branch) {
@@ -449,8 +468,11 @@ const App = () => {
     }
   }, []);
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
+    if (!user && !isAuthPublicPath(pathname)) {
+      const returnTo = `${pathname}${search}${hash}`;
+      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`, {
+        replace: true,
+      });
     } else if (user) {
       let branch = JSON.parse(
         localStorage.getItem("branchData"),
@@ -460,22 +482,39 @@ const App = () => {
       }
       // handleSelectSession("23-24");
     }
-  }, [user]);
+  }, [user, pathname, search, hash]);
+
   useEffect(() => {
-    if (pathname === "/login" && user) {
-      const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
-      if (user.passwordChanged === "P") {
-        navigate("/first-login");
-      } else {
-        navigate(link ?? "/");
+    if (!isAuthShellPath || !user) return;
+    const redirectParam = searchParams.get("redirect");
+    const safeRedirect = getSafeInternalRedirect(redirectParam);
+    const link = JSON.parse(localStorage.getItem("branchData") || "{}")
+      ?.currentLink;
+    if (user.passwordChanged === "P") {
+      if (safeRedirect) {
+        sessionStorage.setItem(POST_LOGIN_REDIRECT_STORAGE_KEY, safeRedirect);
       }
+      navigate("/first-login", { replace: true });
+    } else {
+      navigate(safeRedirect ?? link ?? "/", { replace: true });
     }
+  }, [
+    user,
+    pathname,
+    isAuthShellPath,
+    navigate,
+    searchParams,
+  ]);
+
+  useEffect(() => {
     if (user && user.token) {
       const tokenToUse = localStorage.getItem("newToken") || user.token;
-      imsAxios.defaults.headers["x-csrf-token"] = tokenToUse;
+      imsAxios.defaults.headers["Authorization"] = `${tokenToUse}`;
+
       imsAxios.defaults.headers["Company-Branch"] =
         user.company_branch || "BRALWR36";
-      imsAxios.defaults.headers["Session"] = user.session || "25-26";
+      imsAxios.defaults.headers["Session"] =
+        user.session || getCurrentIndianFinancialYearSession();
       socket.emit("fetch_notifications", {
         source: "react",
       });
@@ -664,23 +703,10 @@ const App = () => {
       }
     }
   }, [navigate, user]);
-  useEffect(() => {
-    window.addEventListener("offline", (e) => {
-      showToast(
-        "You are no longer connected to the Internet, please check your connection and try again.",
-        "error",
-      );
-    });
-    window.addEventListener("online", (e) => {
-      showToast(
-        "The internet has been restored. Kindly review your progress to ensure there is no duplication of data.",
-      );
-      window.location.reload();
-    });
-  }, []);
+  
 
   useEffect(() => {
-    if (user && user.passwordChanged === "C") {
+    if (user && user.passwordChanged !== "P") {
       const timer = setTimeout(() => {
         setShowBlackScreen(true);
       }, 1500);
@@ -736,7 +762,7 @@ const App = () => {
   };
 
   const options = [{ label: "B36 [ALWAR]", value: "BRALWR36" }];
-  const sessionOptions = [{ label: "Session 25-26", value: "25-26" }];
+  const sessionOptions = buildMergedSessionSelectOptions(LEGACY_SESSION_CODES);
 
   const locationBranchOptions = {
     alwar: [{ label: "B36 [ALWAR]", value: "BRALWR36" }],
@@ -765,6 +791,7 @@ const App = () => {
       urlParams.append("company", company);
       urlParams.append("branch", branch);
       urlParams.append("session", session);
+      urlParams.append("type","switch")
     }
 
     const redirectUrl = `${targetUrl}?${urlParams.toString()}`;
@@ -810,7 +837,7 @@ const App = () => {
   }
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div style={{ height: "100vh", backgroundColor: isAuthShellPath ? "#fcf9f7" : "white" }}>
       <Layout
         style={{
           width: "100%",
@@ -842,7 +869,7 @@ const App = () => {
           />
         )} */}
         {/* <Information /> */}
-        {user && user.passwordChanged === "C" && (
+        {user && user.passwordChanged !== "P" && (
           <Layout style={{ height: "100%" }}>
             <AppHeader
               onToggleSidebar={() => setShowSideBar((open) => !open)}
@@ -949,14 +976,14 @@ const App = () => {
             style={{
               display: "flex",
               height: "100%",
-              paddingTop: user && user.passwordChanged === "C" ? 45 : 0,
+              paddingTop: user && user.passwordChanged !== "P" ? 45 : 0,
             }}
           >
             <TicketsModal
               open={showTickets}
               handleClose={() => dispatch(setShowTickets(false))}
             />
-            {user && user.passwordChanged === "C" && (
+            {user && user.passwordChanged !== "P" && (
               <>
                 <Sidebar
                   className="site-layout-background"
@@ -981,7 +1008,7 @@ const App = () => {
                 height: "100%",
 
                 marginLeft:
-                  user && user.passwordChanged === "C"
+                  user && user.passwordChanged !== "P"
                     ? showSideBar
                       ? 230
                       : 60
@@ -1002,13 +1029,13 @@ const App = () => {
                 <div
                   style={{
                     height: (() => {
-                      const headerHeight = pathname === "/login" ? 10 : 50;
+                      const headerHeight = isAuthShellPath ? 10 : 50;
                       const bannerHeight = isBannerVisible ? 0 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
-                        pathname === "/auth/profile" || pathname === "/login"
+                        pathname === "/auth/profile" || isAuthShellPath
                           ? 0
-                          : 50;
+                          :50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",

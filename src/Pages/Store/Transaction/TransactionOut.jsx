@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import { Button, Col, Popover, Row, Space } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -12,11 +12,14 @@ import {
   downloadCSVCustomColumns,
 } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
-import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { DownloadOutlined } from "@ant-design/icons";
 import MyButton from "../../../Components/MyButton/index.jsx";
 import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect.jsx";
+import {
+  registerReportNavDetailedDownload,
+  unregisterReportNavDetailedDownload,
+} from "../../../utils/reportNavDetailedDownload";
 
 const wiseOptions = [
   { text: "Issue", value: "ISSUE" },
@@ -72,13 +75,18 @@ const TransactionOut = () => {
     { field: "ISSUEBY", headerName: "Approved By", width: 160 },
   ];
 
-  const handleDownloadingCSV = () => {
-    let newId = v4();
+  const handleDownloadingCSV = useCallback(() => {
+    const newId = v4();
     socket.emit("trans_out", {
       otherdata: JSON.stringify({ date: datee, branch: user.company_branch }),
       notificationId: newId,
     });
-  };
+  }, [datee, user?.company_branch]);
+
+  useEffect(() => {
+    registerReportNavDetailedDownload(handleDownloadingCSV);
+    return () => unregisterReportNavDetailedDownload();
+  }, [handleDownloadingCSV]);
   const handleSimmpleDownloadingCSV = () => {
     downloadCSV(dateData, columns, "RM Register Report");
   };
@@ -157,12 +165,6 @@ const TransactionOut = () => {
         {/* {dateData.length > 0 && ( */}
         <Col>
           <Space>
-            <CommonIcons
-              tooltip="Download Detailed Report"
-              onClick={handleDownloadingCSV}
-              action="downloadButton"
-            />
-
             <Button
               tooltip="Download Brief Report"
               onClick={handleSimmpleDownloadingCSV}

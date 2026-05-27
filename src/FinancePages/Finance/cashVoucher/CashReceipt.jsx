@@ -5,13 +5,10 @@ import SingleDatePicker from "../../../Components/SingleDatePicker";
 import NavFooter from "../../../Components/NavFooter";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import {
-  AiOutlineMinusSquare,
-  AiOutlinePlusSquare,
-} from "react-icons/ai";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import FormTable from "../../../Components/FormTable.jsx";
+import { Add, Delete } from "@mui/icons-material";
 
 function CashReceipt() {
   const { showToast } = useToast();
@@ -48,13 +45,14 @@ function CashReceipt() {
   const addRows = () => {
     setCashPaymentRows((rows) => {
       return [
-        ...rows,
+   
         {
           id: v4(),
           glCode: "",
           cash: "",
           comment: "",
         },
+             ...rows,
       ];
     });
   };
@@ -68,49 +66,27 @@ function CashReceipt() {
   const CashPaymentTable = [
     {
       headerName: (
-        <span>
-          <AiOutlinePlusSquare
-            onClick={addRows}
-            style={{
-              cursor: "pointer",
-              fontSize: "1.7rem",
-              marginTop: 10,
-              opacity: "0.7",
-            }}
-          />
-        </span>
+          <span
+                                  onClick={addRows}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <Add color="success" />
+                                </span>
       ),
       width: 150,
       type: "actions",
       field: "add",
       sortable: false,
-      renderCell: ({ row }) => [
-        <GridActionsCellItem
-          icon={
-            <AiOutlineMinusSquare
-              style={{
-                fontSize: "1.7rem",
-                cursor: "pointer",
-                pointerEvents:
-                  cashPaymentRows.indexOf(row) <= 0
-                    ? "none"
-                    : "all",
-                opacity:
-                  cashPaymentRows.indexOf(row) <= 0
-                    ? 0.5
-                    : 1,
-              }}
-            />
-          }
-          onClick={() => {
-            let del = null;
-            del = cashPaymentRows.indexOf(row) > 0;
-
-            del && removeRow(row.id);
-          }}
-          label="Delete"
-        />,
-      ],
+ renderCell: ({ row }) =>
+  cashPaymentRows.length > 1 ? (
+    <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+      <GridActionsCellItem
+        icon={<Delete color="error" />}
+        onClick={() => removeRow(row.id)}
+        label="Delete"
+      />
+    </div>
+  ) : null,
     },
     {
       headerName: "Particulars",

@@ -23,6 +23,7 @@ import { getComponentOptions } from "../../../api/general.ts";
 
 import useApi from "../../../hooks/useApi.ts";
 import FormTable from "../../../Components/FormTable.jsx";
+import { Add, Remove } from "@mui/icons-material";
 
 export default function ReqWithoutBom() {
   const { showToast } = useToast();
@@ -32,8 +33,6 @@ export default function ReqWithoutBom() {
   const [loading, setLoading] = useState(false);
 
   const [pickLocationLoadingMessage, contextHolder] = message.useMessage();
-  const [headerLocationMessage, headerLocationcontextHolder] =
-    message.useMessage();
 
   const [requestForm] = Form.useForm();
   const { executeFun, loading: loading1 } = useApi();
@@ -75,16 +74,13 @@ export default function ReqWithoutBom() {
   ////
   const getHeaderLocationOptions = async () => {
     setHeaderLocationOptions([]);
-    headerLocationMessage.open({
-      type: "loading",
-      content: "Fetching pick locations",
-    });
+ 
     setLoading("fetching");
     const response = await imsAxios.post(
       "/production/fetchLocationForWitoutBom"
     );
     setLoading(false);
-    headerLocationMessage.destroy();
+
     if (response.success) {
       const arr = response.data.map((row) => ({
         value: row.id,
@@ -220,10 +216,7 @@ export default function ReqWithoutBom() {
   // getting pick location options
   const getPickLocationOptions = async (search) => {
     setLoading("fetching");
-    pickLocationLoadingMessage.open({
-      type: "loading",
-      content: "Fetching pick locations",
-    });
+  
     const response = await imsAxios.post("/transaction/getLocationInMin", {
       search: search,
     });
@@ -346,18 +339,21 @@ export default function ReqWithoutBom() {
   // table columns
   const columns = [
     {
-      headerName: <CommonIcons action="addRow" onClick={addRows} />,
+      headerName: <span style={{ cursor: "pointer" }} onClick={addRows}><Add color="success" /></span>,
       width: 120,
       type: "rowChange",
       field: "add",
       renderCell: ({ row }) =>
         rows.length > 1 && (
-          <div style={{ width: "100%" }}>
-            <CommonIcons
-              action="removeRow"
-              onClick={() => removeRows(row?.id)}
-            />
-          </div>
+          // <div style={{ width: "100%" }}>
+          //   <CommonIcons
+          //     action="removeRow"
+          //     onClick={() => removeRows(row?.id)}
+          //   />
+          // </div>
+          <span onClick={() => removeRows(row?.id)} style={{cursor:"pointer"}}>
+            <Remove color="error" />
+          </span>
         ),
     },
     {
@@ -440,7 +436,7 @@ export default function ReqWithoutBom() {
   return (
     <Row gutter={12} style={{ height: "100%", padding: "10px" }}>
       {contextHolder}
-      {headerLocationcontextHolder}
+ 
       {loading === "fetching" && <Loading />}
       <Col span={6}>
         <Card size="small" title="Header Details">

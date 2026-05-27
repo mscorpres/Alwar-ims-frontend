@@ -19,17 +19,19 @@ import SingleDatePicker from "../../../Components/SingleDatePicker";
 import SingleProduct from "./SingleProduct";
 import { validatePAN } from "../../../utils/general";
 import { getVendorBranchBankOptions } from "./vendorBranchBankOptions";
+import { mergeMsmeYearOptions } from "../../../utils/indianFinancialYear";
 
 const msmeOptions = [
   { text: "Yes", value: "Y" },
   { text: "No", value: "N" },
 ];
-const msmeYearOptions = [
+const MSME_YEAR_LEGACY = [
   { text: "2023-2024", value: "2023-2024" },
   { text: "2024-2025", value: "2024-2025" },
   { text: "2025-2026", value: "2025-2026" },
   { text: "2026-2027", value: "2026-2027" },
 ];
+const msmeYearOptions = mergeMsmeYearOptions(MSME_YEAR_LEGACY);
 const msmeTypeOptions = [
   { text: "Micro", value: "Micro" },
   { text: "Small", value: "Small" },

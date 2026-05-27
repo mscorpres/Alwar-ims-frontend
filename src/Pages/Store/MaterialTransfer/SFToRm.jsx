@@ -165,7 +165,7 @@ function SFToRM() {
         <Col span={6}>
           <Row gutter={10} style={{ margin: "5px" }}>
             <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
-              <span>PICK LOCATION</span>
+              <span>Pick Location</span>
             </Col>
             <Col span={24}>
               <Select

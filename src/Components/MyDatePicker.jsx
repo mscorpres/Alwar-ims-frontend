@@ -42,10 +42,17 @@ const MyDatePicker = ({
   const days = Math.floor(hours / 24);
   hours = hours - days * 24;
 
-  ///for R35 since the  date selected should no be of before 1 april 2024
+
+  const disabledR35MinDate = (current) =>
+    current && current < dayjs().subtract(days, "d");
+
+  const disabledFutureDate = (current) =>
+    current && current.isAfter(dayjs(), "day");
+
   const disabledDate = (current) => {
-    // Can not select days before today and today
-    return current && current < dayjs().subtract(days, "d");
+    if (disabledFutureDate(current)) return true;
+    if (disabledtheDate == "true" && disabledR35MinDate(current)) return true;
+    return false;
   };
 
   return (
@@ -62,7 +69,7 @@ const MyDatePicker = ({
           : [dayjs().startOf("month"), dayjs()]
       }
       format={format}
-      disabledDate={disabledtheDate == "true" ? disabledDate : ""}
+      disabledDate={disabledDate}
       onChange={(e) => {
         setDateRange(getDateFormatted(e));
       }}

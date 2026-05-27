@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import MyDatePicker from "../../../../../Components/MyDatePicker";
 import { getChallanList } from "../../../../../api/sales/salesOrder";
 import useApi from "../../../../../hooks/useApi.ts";
-import MyDataTable from "../../../../gstreco/myDataTable";
 import ToolTipEllipses from "../../../../../Components/ToolTipEllipses";
 import { downloadCSV } from "../../../../../Components/exportToCSV";
 import { CommonIcons } from "../../../../../Components/TableActions.jsx/TableActions";
@@ -14,6 +13,7 @@ import MyButton from "../../../../../Components/MyButton";
 import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
 import { convertSelectOptions } from "../../../../../utils/general.ts";
 import { getClientsOptions } from "../../../../../api/finance/clients";
+import MyDataTable from "../../../../../Components/MyDataTable.jsx";
 
 const wiseOptions = [
   {

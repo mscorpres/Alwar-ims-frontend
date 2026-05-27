@@ -75,7 +75,7 @@ const RejectedPhysicalStock = () => {
     handleGetRows();
   }, []);
   return (
-    <div style={{ height: "95%", padding: 10 }}>
+    <div style={{ height: "98%", padding: 10 }}>
       <UpdateModal
         open={showUpdateModal}
         hide={hideUpdateModal}
@@ -84,7 +84,7 @@ const RejectedPhysicalStock = () => {
         loading={loading("submit")}
       />
       <Row style={{ height: "100%" }} >
-        <Col span={20}>
+        <Col span={24}>
           <MyDataTable
             loading={loading("fetch") || loading("updateStatus")}
             data={rows}

@@ -1,4 +1,6 @@
 export { default as Login } from "./Login/Login";
+export { default as SignUp } from "./Login/SignUp";
+export { default as LoginOtp } from "./Login/LoginOtp";
 export { default as ProductDetail } from "../Pages/Store/ProductDetail";
 // export { default as MaterialTransaction } from "./Store/MaterialTransaction/MaterialTransaction";
 
@@ -128,7 +130,7 @@ export { default as CreateWo } from "./Workorder/CreateWo";
 export { default as WoAnalysis } from "./Workorder/WoAnalysis";
 export { default as WoCompleted } from "./Workorder/WoCompleted";
 export { default as WoCreateChallan } from "./Workorder/WoCreateChallan";
-
+export { default as WoUpdateSupplementary } from "./Workorder/supplementary/WorkOrderUpdate.jsx";
 export { default as WoViewChallan } from "./Workorder/WoViewChallan";
 export { default as AddClientInfo } from "./Master/workorder/AddClientInfo";
 export { default as ViewandEditClient } from "./Master/workorder/ViewandEditClient";

@@ -7,7 +7,8 @@ export const verifyToken = async (token) => {
 
     {
       headers: {
-        "x-csrf-token": token.replaceAll(" ", "+"),
+       
+        "Authorization": `${token.replaceAll(" ", "+")}`,
       },
     }
   );

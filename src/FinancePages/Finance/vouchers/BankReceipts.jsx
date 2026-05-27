@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { v4 } from "uuid";
-import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import axios from "axios";
 import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
@@ -16,6 +15,7 @@ import dayjs from "dayjs";
 import useApi from "../../../hooks/useApi.ts";
 import { getProjectOptions } from "../../../api/general.ts";
 import FormTable from "../../../Components/FormTable.jsx";
+import { Add, Delete } from "@mui/icons-material";
 
 export default function BankReceits() {
   const { showToast } = useToast();
@@ -60,7 +60,7 @@ export default function BankReceits() {
   const addRows = () => {
     setBankPaymentRows((rows) => {
       return [
-        ...rows,
+   
         {
           id: v4(),
           glCode: "",
@@ -70,6 +70,7 @@ export default function BankReceits() {
           exchangeRate: 1,
           foreignValue: 0,
         },
+             ...rows,
       ];
     });
   };
@@ -81,41 +82,23 @@ export default function BankReceits() {
   const BankPaymentTable = [
     {
       headerName: (
-        <span>
-          <AiOutlinePlusSquare
-            onClick={addRows}
-            style={{
-              cursor: "pointer",
-              fontSize: "1.7rem",
-              marginTop: 10,
-              opacity: "0.7",
-            }}
-          />
+        <span onClick={addRows} style={{ cursor: "pointer" }}>
+          <Add color="success" />
         </span>
       ),
       width: 50,
-      renderCell: ({ row }) => [
-        <GridActionsCellItem
-          icon={
-            <AiOutlineMinusSquare
-              style={{
-                fontSize: "1.7rem",
-                cursor: "pointer",
-                pointerEvents:
-                  bankPaymentRows.indexOf(row) <= 0 ? "none" : "all",
-                opacity: bankPaymentRows.indexOf(row) <= 0 ? 0.5 : 1,
-              }}
+      renderCell: ({ row }) =>
+        bankPaymentRows.length > 1 && !row.total ? (
+          <div
+            style={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
+            <GridActionsCellItem
+              icon={<Delete color="error" />}
+              onClick={() => removeRow(row.id)}
+              label="Delete"
             />
-          }
-          onClick={() => {
-            let del = null;
-            del = bankPaymentRows.indexOf(row) > 0;
-
-            del && removeRow(row.id);
-          }}
-          label="Delete"
-        />,
-      ],
+          </div>
+        ) : null,
     },
     {
       headerName: "Particulars",
@@ -239,7 +222,7 @@ export default function BankReceits() {
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
     setAsyncOptions(response.data);
   };
@@ -383,7 +366,7 @@ export default function BankReceits() {
   useEffect(() => {
     let totalINR = bankPaymentRows.map((row) => +Number(row.credit).toFixed(2));
     let totalForeign = bankPaymentRows.map(
-      (row) => +Number(row.foreignValue).toFixed(2)
+      (row) => +Number(row.foreignValue).toFixed(2),
     );
     let totalINRValue = () => {
       let sum = 0;
@@ -405,7 +388,7 @@ export default function BankReceits() {
     });
   }, [bankPaymentRows]);
   return (
-    <div style={{ height: "100%" , padding:10}}>
+    <div style={{ height: "100%", padding: 10 }}>
       <Modal
         title="Create Bank Receipt Confirm!"
         open={showSubmitConfirmModal}
@@ -417,7 +400,7 @@ export default function BankReceits() {
       >
         <p>Are you sure you want to create this bank receipt voucher?</p>
       </Modal>
-      <Row style={{  height: "100%" }} gutter={8}>
+      <Row style={{ height: "100%" }} gutter={8}>
         <Col
           span={6}
           style={{
@@ -498,7 +481,6 @@ export default function BankReceits() {
           span={18}
           style={{
             height: "90%",
-         
           }}
         >
           <FormTable

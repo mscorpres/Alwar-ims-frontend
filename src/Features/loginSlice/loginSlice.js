@@ -1,20 +1,49 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { imsAxios } from "../../axiosInterceptor";
+import {
+  getCurrentIndianFinancialYearSession,
+  resolveSessionToCurrentFinancialYearIfStale,
+} from "../../utils/indianFinancialYear";
+const rawLoggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+const branchDataForInit = JSON.parse(
+  localStorage.getItem("branchData") || "{}",
+);
+const effectiveStoredSession =
+  branchDataForInit?.session ?? rawLoggedInUser?.session;
+const resolvedSessionForInit = resolveSessionToCurrentFinancialYearIfStale(
+  effectiveStoredSession,
+);
+if (resolvedSessionForInit !== effectiveStoredSession) {
+  localStorage.setItem(
+    "branchData",
+    JSON.stringify({
+      ...branchDataForInit,
+      session: resolvedSessionForInit,
+    }),
+  );
+  if (rawLoggedInUser) {
+    localStorage.setItem(
+      "loggedInUser",
+      JSON.stringify({ ...rawLoggedInUser, session: resolvedSessionForInit }),
+    );
+  }
+  imsAxios.defaults.headers["Session"] = resolvedSessionForInit;
+}
+
 let fav =
-  typeof JSON.parse(localStorage.getItem("loggedInUser"))?.favPages == "string"
-    ? JSON.parse(JSON.parse(localStorage.getItem("loggedInUser"))?.favPages)
-    : JSON.parse(localStorage.getItem("loggedInUser"))?.favPages;
+  typeof rawLoggedInUser?.favPages == "string"
+    ? JSON.parse(rawLoggedInUser?.favPages)
+    : rawLoggedInUser?.favPages;
 
 const initialState = {
-  user: JSON.parse(localStorage.getItem("loggedInUser"))
+  user: rawLoggedInUser
     ? {
         ...JSON.parse(localStorage.getItem("loggedInUser")),
         favPages: fav,
         company_branch: JSON.parse(localStorage.getItem("branchData"))
           ?.company_branch,
-        session:
-          JSON.parse(localStorage.getItem("branchData"))?.session ?? "25-26",
+        session: resolvedSessionForInit,
         passwordChanged: "C",
         showlegal:
           JSON.parse(localStorage.getItem("loggedInUser"))?.department ===
@@ -74,7 +103,7 @@ const initialState = {
 //             setting: data.data.settings,
 //           })
 //         );
-//         imsAxios.defaults.headers["x-csrf-token"] = data.data.token;
+
 //         imsAxios.defaults.headers["Company-Branch"] = "B-36 Alwar";
 //         return await {
 //           ...data.data,
@@ -95,15 +124,7 @@ const loginSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logout: (state, action) => {
-      let branchData = JSON.parse(localStorage.getItem("branchData"));
-      branchData = { ...branchData, currentLink: state.user.currentLink };
-      state.user = null;
-      state.message = "User Logged Out!";
-      localStorage.removeItem("loggedInUser");
-      localStorage.removeItem("newToken");
-      localStorage.setItem("branchData", JSON.stringify(branchData));
-    },
+ 
     addNotification: (state, action) => {
       state.notifications = [
         ...state.notifications,
@@ -183,19 +204,37 @@ const loginSlice = createSlice({
         "branchData",
         JSON.stringify({ ...existingBranchData, session: user.session })
       );
+      const persistedUser = JSON.parse(
+        localStorage.getItem("loggedInUser") || "null",
+      );
+      if (persistedUser) {
+        localStorage.setItem(
+          "loggedInUser",
+          JSON.stringify({ ...persistedUser, session: user.session }),
+        );
+      }
     },
     setCurrentLink: (state, action) => {
       state.user = { ...state.user, currentLink: action.payload };
     },
     setUser: (state, action) => {
       let obj = { ...state.user, ...action.payload };
+      const pc = obj.passwordChanged;
+      obj = {
+        ...obj,
+        passwordChanged:
+          pc === "P" || String(pc).toUpperCase() === "P" ? "P" : "C",
+      };
       state.user = obj;
       localStorage.setItem("loggedInUser", JSON.stringify(obj));
 
       // Update axios headers with selected branch and session
       const company_branch =
         action.payload?.company_branch ?? obj.company_branch ?? "BRALWR36";
-      const session = action.payload?.session ?? obj.session ?? "25-26";
+      const session =
+        action.payload?.session ??
+        obj.session ??
+        getCurrentIndianFinancialYearSession();
 
       localStorage.setItem(
         "branchData",
@@ -220,7 +259,7 @@ const loginSlice = createSlice({
 export const selectUserDepartment = (state) => state;
 
 export const {
-  logout,
+
   addNotification,
   removeNotification,
   setNotifications,

@@ -10,7 +10,7 @@ export const normalizeFormRules = (rules: unknown): unknown[] =>
 export const convertSelectOptions = (
   arr: [],
   label?: string,
-  value?: string
+  value?: string,
 ) => {
   if (arr.map) {
     return arr.map((row) => ({
@@ -44,9 +44,10 @@ export const downloadFromLink = (uri) => {
   // delete link;
 };
 
-export function validatePAN(
-  pan: string
-): { valid: boolean; formattedPAN: string } {
+export function validatePAN(pan: string): {
+  valid: boolean;
+  formattedPAN: string;
+} {
   const formattedPAN = (pan ?? "").trim().toUpperCase();
 
   if (formattedPAN.length !== 10) {
@@ -57,3 +58,11 @@ export function validatePAN(
   const valid = panRegex.test(formattedPAN);
   return { valid, formattedPAN };
 }
+
+
+
+export const isShowIconsPath = [
+  "/reports/transaction-in",
+  "/reports/transaction-out",
+  "/jw-rm-consumption-report",
+];

@@ -2,7 +2,7 @@ import { Col, Drawer, Form, Input, Row } from "antd";
 import React, { useEffect, useState } from "react";
 import NavFooter from "../../Components/NavFooter";
 import { imsAxios } from "../../axiosInterceptor";
-import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
+import { Delete } from "@mui/icons-material";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { v4 } from "uuid";
@@ -238,19 +238,6 @@ function SFTransferDrawer({
   const colms = [
     {
       headerName: "",
-      //   (
-      // <span>
-      //   <AiOutlinePlusSquare
-      //     onClick={addRows}
-      //     style={{
-      //       cursor: "pointer",
-      //       fontSize: "1.7rem",
-      //       marginTop: 10,
-      //       opacity: "0.7",
-      //     }}
-      //   />
-      // </span>
-      //   ),
       width: 150,
       type: "actions",
       field: "add",
@@ -258,8 +245,9 @@ function SFTransferDrawer({
       renderCell: ({ row }) => [
         <GridActionsCellItem
           icon={
-            <AiOutlineMinusSquare
-              style={{
+            <Delete
+              color="error"
+              sx={{
                 fontSize: "1.7rem",
                 cursor: "pointer",
                 pointerEvents: rows.indexOf(row) <= 0 ? "none" : "all",

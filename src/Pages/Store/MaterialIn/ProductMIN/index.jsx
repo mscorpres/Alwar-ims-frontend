@@ -60,6 +60,7 @@ import MyDataTable from "../../../../Components/MyDataTable.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect.jsx";
 import SingleDatePicker from "../../../../Components/SingleDatePicker.jsx";
+import { Add, Delete } from "@mui/icons-material";
 
 const sampleData = [
   {
@@ -335,7 +336,7 @@ export default function ProductMIN() {
 
           const data = response?.data;
           setSubmitLoading(false);
-          if (response?.success || data?.success ) {
+          if (response?.success || data?.success) {
             setActiveTab("1");
             setShowSuccessPage({
               materialInId: data?.data?.txn ?? data?.txn,
@@ -982,16 +983,28 @@ export default function ProductMIN() {
   };
   const columns = [
     {
-      headerName: <CommonIcons action="addRow" onClick={addRow} />,
+      headerName: <span
+              onClick={addRow}
+              style={{ cursor: "pointer" }}
+            >
+              <Add color="success" />
+            </span>,
       width: 80,
       field: "add",
       sortable: false,
       renderCell: ({ row }) => (
-        <span>
+        <>
           {materialInward.indexOf(row) >= 1 ? (
-            <CommonIcons action="removeRow" onClick={() => removeRow(row?.id)} />
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <span
+              onClick={() => removeRow(row?.id)}
+              style={{ cursor: "pointer" }}
+            >
+              <Delete color="error" />
+            </span>
+              </div>
           ) : null}
-        </span>
+        </>
       ),
     },
     {
@@ -1196,7 +1209,7 @@ export default function ProductMIN() {
     }
   }, [vendorDetails.vendorType]);
   return (
-    <div style={{ height: "calc(100%  - 10px)", overflow: "hidden" }}>
+    <div style={{ height: "calc(100%  - 0px)", overflow: "hidden" }}>
       {/* <TaxModal bottom={-80} visibleBottom={110} totalValues={totalValues} /> */}
       {showCurrency != null && (
         <CurrenceModal
@@ -1250,7 +1263,7 @@ export default function ProductMIN() {
         <Row
           gutter={8}
           style={{
-            height: "92%",
+            height: "100%",
             padding: "0px 10px",
           }}
         >

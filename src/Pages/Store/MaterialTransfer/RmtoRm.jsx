@@ -9,13 +9,14 @@ import NavFooter from "../../../Components/NavFooter";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import { v4 } from "uuid";
-import { AiOutlineMinusSquare } from "react-icons/ai";
-import { Add } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
+import { Add, Delete } from "@mui/icons-material";
 const { TextArea } = Input;
 
 function RmtoRm() {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [hoveredRow, setHoveredRow] = useState(null);
   const [allData, setAllData] = useState({
     locationFrom: "",
     companyBranch: "",
@@ -27,9 +28,9 @@ function RmtoRm() {
       component: "",
       qty1: "",
       locationTo: "",
-      stockQty: "",
+      stockQty: "00",
       unit: "",
-      avrRate: "",
+      avrRate: "00",
       address: "",
       comment: "",
     },
@@ -45,18 +46,18 @@ function RmtoRm() {
   // Add row functionality
   const addRow = () => {
     setRows((prev) => [
-      ...prev,
       {
         id: v4(),
         component: "",
         qty1: "",
         locationTo: "",
-        stockQty: "",
+        stockQty: "00",
         unit: "",
-        avrRate: "",
+        avrRate: "00",
         address: "",
         comment: "",
       },
+      ...prev,
     ]);
   };
 
@@ -173,7 +174,7 @@ function RmtoRm() {
     if (response.success) {
       showToast(
         response.message.toString()?.replaceAll("<br/>", ""),
-        "success"
+        "success",
       );
       // Reset form
       setAllData({
@@ -218,7 +219,7 @@ function RmtoRm() {
         prev.map((row) => ({
           ...row,
           locationTo: "", // Reset location when branch changes
-        }))
+        })),
       );
     } catch (error) {
       showToast("Failed to fetch drop locations for selected branch", "error");
@@ -286,7 +287,7 @@ function RmtoRm() {
           <Card>
             <Row gutter={10}>
               <Col span={24} style={{ width: "100%" }}>
-                <span>PICK LOCATION</span>
+                <span>Pick Location</span>
               </Col>
               <Col span={24}>
                 <Select
@@ -313,52 +314,67 @@ function RmtoRm() {
             <Col span={24}>
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
+                  overflowY: "auto",
+                  height: "calc(100vh - 200px)",
                 }}
               >
-                <Button type="primary" onClick={addRow}>
-                  Add Row
-                </Button>
-              </div>
-
-              <div style={{ marginTop: "10px", border: "1px solid #ccc", padding:4 }}>
-                <div
-                  style={{
-                    overflowY: "auto",
-                    height: "calc(100vh - 230px)",
-                  }}
-                >
-                  <table>
-                    <thead>
-                      <tr>
-                        <th className="table-col" style={{ width: "18vw" }}>
-                          Component / Part No.
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          Stock QTY
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          Transfering QTY
-                        </th>
-                        <th className="table-col" style={{ width: "16vw" }}>
-                          DROP (+) Loc
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          WAR
-                        </th>
-                        <th className="table-col" style={{ width: "16vw" }}>
-                          Comment
-                        </th>
-                        <th className="table-col" style={{ width: "10vw" }}>
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rows.map((row, index) => (
+                <table style={{ border: "1px solid #ccc" }}>
+                  <thead >
+                    <tr>
+                      <th className="table-col" style={{ width: "10vw" }}>
+                        #
+                      </th>
+                      <th className="table-col" style={{ width: "18vw" }}>
+                        Component / Part No.
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        Stock QTY
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        Transfering QTY
+                      </th>
+                      <th className="table-col" style={{ width: "16vw" }}>
+                        DROP (+) Loc
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        WAR
+                      </th>
+                      <th className="table-col" style={{ width: "16vw" }}>
+                        Comment
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row, index) => {
+                      const rowColor = index % 2 === 0 ? "#ffffff" : "#f8f9fa";
+                      return (
                         <React.Fragment key={row.id}>
-                          <tr>
+                          <tr
+                            style={{
+                              backgroundColor:
+                                hoveredRow === row.id ? "#fffaec" : rowColor,
+                            }}
+                            onMouseEnter={() => setHoveredRow(row.id)}
+                            onMouseLeave={() => setHoveredRow(null)}
+                          >
+                            <td style={{ width: "2vw", textAlign: "center" }}>
+                              {index > 0 && (
+                                <span
+                                  onClick={() => removeRow(row.id)}
+                                  className="delete-icon"
+                                >
+                                  <Delete color="error" />
+                                </span>
+                              )}
+                              {index === 0 && (
+                                <span
+                                  onClick={addRow}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <Add color="success" />
+                                </span>
+                              )}
+                            </td>
                             <td style={{ width: "18vw" }}>
                               <MyAsyncSelect
                                 style={{ width: "100%" }}
@@ -381,15 +397,14 @@ function RmtoRm() {
                                 }}
                               />
                             </td>
-                            <td style={{ width: "12vw" }}>
-                            
-                               <span>
-                              {row.stockQty ?? "0"} {row.unit ?? ""}
-                            </span>
+                            <td style={{ width: "12vw", textAlign: "center" }}>
+                              <span>
+                                {row.stockQty ?? "00"} {row.unit ?? ""}
+                              </span>
                             </td>
                             <td style={{ width: "12vw" }}>
                               <Input
-                              type="number"
+                                type="number"
                                 value={row.qty1}
                                 onChange={(e) => {
                                   setRows((prev) => {
@@ -424,11 +439,11 @@ function RmtoRm() {
                               />
                             </td>
                             <td style={{ width: "12vw", textAlign: "center" }}>
-                              <Input disabled value={row.avrRate} />
+                              {/* <Input disabled value={row.avrRate} /> */}
+                              <span>{row.avrRate ?? "00"}</span>
                             </td>
                             <td style={{ width: "16vw" }}>
-                              <TextArea
-                                rows={2}
+                              <Input
                                 value={row.comment}
                                 placeholder="Comment Optional"
                                 onChange={(e) => {
@@ -442,17 +457,6 @@ function RmtoRm() {
                                   });
                                 }}
                               />
-                            </td>
-                            <td style={{ width: "2vw", textAlign: "center" }}>
-                              <Button
-                                danger
-                                size="small"
-                                icon={<DeleteOutlined />}
-                                onClick={() => removeRow(row.id)}
-                                disabled={rows.length === 1}
-                                title="Delete Row"
-                              />
-                            
                             </td>
                           </tr>
                           {row.locationTo && row.address && (
@@ -471,10 +475,10 @@ function RmtoRm() {
                             </tr>
                           )}
                         </React.Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </Col>
           </Row>

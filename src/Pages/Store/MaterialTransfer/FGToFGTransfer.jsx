@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Select, Button, Input } from "antd";
+import { Col, Row, Select, Button, Input, Card } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect.jsx";
 import "./Modal/style.css";
@@ -11,6 +11,7 @@ import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading.jsx";
+import { Add, Delete } from "@mui/icons-material";
 const { TextArea } = Input;
 
 function FGToFGTransfer() {
@@ -40,11 +41,11 @@ function FGToFGTransfer() {
   const [branchName, setbBanchName] = useState([]);
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+    const [hoveredRow, setHoveredRow] = useState(null);
 
   // Add row functionality
   const addRow = () => {
     setRows((prev) => [
-      ...prev,
       {
         id: v4(),
         component: "",
@@ -56,6 +57,7 @@ function FGToFGTransfer() {
         address: "",
         comment: "",
       },
+      ...prev,
     ]);
   };
 
@@ -179,16 +181,16 @@ function FGToFGTransfer() {
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       if (!row.component) {
-        return showToast(`Row ${i + 1}: Please select Component`, "error"); 
+        return showToast(`Row ${i + 1}: Please select Component`, "error");
       }
       if (!row.qty1) {
-        return showToast(`Row ${i + 1}: Please enter Qty`, "error"); 
+        return showToast(`Row ${i + 1}: Please enter Qty`, "error");
       }
       if (!row.locationTo) {
-        return showToast(`Row ${i + 1}: Please select Drop Location`, "error"); 
+        return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
       }
       if (row.locationTo === allData.locationFrom) {
-        return showToast(`Row ${i + 1}: Both Location Same`, "error"); 
+        return showToast(`Row ${i + 1}: Both Location Same`, "error");
       }
     }
 
@@ -224,7 +226,7 @@ function FGToFGTransfer() {
             : (res?.data ?? res);
 
         if (body?.success !== true && body?.status !== "success") {
-        showToast(body?.message || "Transfer failed", "error");
+          showToast(body?.message || "Transfer failed", "error");
           setLoading(false);
           return;
         }
@@ -253,7 +255,7 @@ function FGToFGTransfer() {
       ]);
       setbBanchName("");
     } catch (err) {
-    showToast(err?.message || "Server Error", "error");
+      showToast(err?.message || "Server Error", "error");
     } finally {
       setLoading(false);
     }
@@ -320,30 +322,32 @@ function FGToFGTransfer() {
 
   return (
     <div style={{ height: "95%" }}>
-        {(loading || isLoading) && <Loading size="large" />}
+      {(loading || isLoading) && <Loading />}
       <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
         <Col span={6}>
-          <Row gutter={10} style={{ margin: "5px" }}>
-            <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
-              <span>PICK LOCATION</span>
-            </Col>
-            <Col span={24}>
-              <Select
-                placeholder="Please Select Location"
-                style={{ width: "100%" }}
-                options={locData}
-                value={allData.locationFrom}
-                onChange={(e) =>
-                  setAllData((allData) => {
-                    return { ...allData, locationFrom: e };
-                  })
-                }
-              />
-            </Col>
-            <Col span={24} style={{ marginTop: "10px" }}>
-              <TextArea rows={2} disabled value={branchName} />
-            </Col>
-          </Row>
+          <Card>
+            <Row gutter={10} >
+              <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
+                <span>Pick Location</span>
+              </Col>
+              <Col span={24}>
+                <Select
+                  placeholder="Please Select Location"
+                  style={{ width: "100%" }}
+                  options={locData}
+                  value={allData.locationFrom}
+                  onChange={(e) =>
+                    setAllData((allData) => {
+                      return { ...allData, locationFrom: e };
+                    })
+                  }
+                />
+              </Col>
+              <Col span={24} style={{ marginTop: "10px" }}>
+                <TextArea rows={2} disabled value={branchName} />
+              </Col>
+            </Row>
+          </Card>
         </Col>
 
         <Col span={18}>
@@ -351,176 +355,173 @@ function FGToFGTransfer() {
             <Col span={24}>
               <div
                 style={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  marginBottom: 10,
-                }}
-              >
-                <Button type="primary" onClick={addRow}>
-                  Add Row
-                </Button>
-              </div>
-              <div
-                style={{
-                  overflowX: "auto",
                   overflowY: "auto",
-                  maxHeight: "38vh",
+                  height: "calc(100vh - 200px)",
                 }}
               >
-                <table
-                  style={{
-                    tableLayout: "fixed",
-                    width: "100%",
-                    minWidth: 1200,
-                  }}
-                >
+                <table style={{ border: "1px solid #ccc", minWidth: 1500 }}>
                   <thead>
                     <tr>
-                      <th className="an" style={{ width: "18vw" }}>
+                      <th className="table-col" style={{ width: "2vw" }}>
+                        #
+                      </th>
+                      <th className="table-col" style={{ width: "18vw" }}>
                         Product/Sku Code.
                       </th>
-                      <th className="an" style={{ width: "12vw" }}>
+                      <th className="table-col" style={{ width: "12vw" }}>
                         STOCK QUANTITY
                       </th>
-                      <th className="an" style={{ width: "12vw" }}>
+                      <th className="table-col" style={{ width: "12vw" }}>
                         TRANSFERING QTY
                       </th>
-                      <th className="an" style={{ width: "16vw" }}>
+                      <th className="table-col" style={{ width: "16vw" }}>
                         DROP (+) Loc
                       </th>
-                      <th className="an" style={{ width: "12vw" }}>
+                      <th className="table-col" style={{ width: "12vw" }}>
                         Weighted Average Rate
                       </th>
-                      <th className="an" style={{ width: "16vw" }}>
+                      <th className="table-col" style={{ width: "16vw" }}>
                         Comment
-                      </th>
-                      <th className="an" style={{ width: "2vw" }}>
-                        Action
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {rows.map((row, index) => (
-                      <React.Fragment key={row.id}>
-                        <tr>
-                          <td style={{ width: "18vw" }}>
-                            <MyAsyncSelect
-                              style={{ width: "100%" }}
-                              loadOptions={getComponentList}
-                              onBlur={() => setAsyncOptions([])}
-                           
-                              placeholder="Part Name/Code"
-                              value={row.component}
-                              optionsState={asyncOptions}
-                              onChange={(e) => {
-                                setRows((prev) => {
-                                  const updated = [...prev];
-                                  updated[index] = {
-                                    ...updated[index],
-                                    component: e,
-                                  };
-                                  return updated;
-                                });
-                                getQtyFuction(index, e);
-                              }}
-                            />
-                          </td>
-                          <td style={{ width: "12vw" }}>
-                            <Input
-                              suffix={row.unit}
-                              disabled
-                              value={
-                                row.stockQty
-                                  ? `${row.stockQty} ${row.unit}`
-                                  : "0"
-                              }
-                            />
-                          </td>
-                          <td style={{ width: "12vw" }}>
-                            <Input
-                              type="number"
-                              value={row.qty1}
-                              onChange={(e) => {
-                                setRows((prev) => {
-                                  const updated = [...prev];
-                                  updated[index] = {
-                                    ...updated[index],
-                                    qty1: e.target.value,
-                                  };
-                                  return updated;
-                                });
-                              }}
-                              suffix={row.unit}
-                            />
-                          </td>
-                          <td style={{ width: "16vw" }}>
-                            <Select
-                              style={{ width: "100%" }}
-                              options={locDataTo}
-                              value={row.locationTo}
-                              placeholder="Location"
-                              onChange={(e) => {
-                                setRows((prev) => {
-                                  const updated = [...prev];
-                                  updated[index] = {
-                                    ...updated[index],
-                                    locationTo: e,
-                                  };
-                                  return updated;
-                                });
-                                getLocationName(index, e);
-                              }}
-                            />
-                          </td>
-                          <td style={{ width: "12vw", textAlign: "center" }}>
-                            <Input disabled value={row.avrRate} />
-                          </td>
-                          <td style={{ width: "16vw" }}>
-                            <TextArea
-                              rows={2}
-                              value={row.comment}
-                              placeholder="Comment Optional"
-                              onChange={(e) => {
-                                setRows((prev) => {
-                                  const updated = [...prev];
-                                  updated[index] = {
-                                    ...updated[index],
-                                    comment: e.target.value,
-                                  };
-                                  return updated;
-                                });
-                              }}
-                            />
-                          </td>
-                          <td style={{ width: "2vw", textAlign: "center" }}>
-                            <Button
-                              type="text"
-                              danger
-                              size="small"
-                              icon={<DeleteOutlined />}
-                              onClick={() => removeRow(row.id)}
-                              disabled={rows.length === 1}
-                              title="Delete Row"
-                            />
-                          </td>
-                        </tr>
-                        {row.locationTo && row.address && (
-                          <tr>
-                            <td colSpan="7" style={{ padding: "8px" }}>
-                              <TextArea
-                                disabled
-                                value={row.address}
-                                placeholder={`Row ${
-                                  index + 1
-                                } - Location Address`}
-                                rows={2}
+                    {rows.map((row, index) => {
+                      const rowColor = index % 2 === 0 ? "#ffffff" : "#f8f9fa";
+                      return (
+                        <React.Fragment key={row.id}>
+                          <tr
+                            style={{
+                              backgroundColor:
+                                hoveredRow === row.id ? "#fffaec" : rowColor,
+                            }}
+                            onMouseEnter={() => setHoveredRow(row.id)}
+                            onMouseLeave={() => setHoveredRow(null)}
+                          >
+                            <td style={{ width: "2vw", textAlign: "center" }}>
+                              {index > 0 && (
+                                <span
+                                  onClick={() => removeRow(row.id)}
+                                  className="delete-icon"
+                                >
+                                  <Delete color="error" />
+                                </span>
+                              )}
+                              {index === 0 && (
+                                <span
+                                  onClick={addRow}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <Add color="success" />
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ width: "18vw" }}>
+                              <MyAsyncSelect
                                 style={{ width: "100%" }}
+                                loadOptions={getComponentList}
+                                onBlur={() => setAsyncOptions([])}
+                                placeholder="Part Name/Code"
+                                value={row.component}
+                                optionsState={asyncOptions}
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      component: e,
+                                    };
+                                    return updated;
+                                  });
+                                  getQtyFuction(index, e);
+                                }}
+                              />
+                            </td>
+                            <td style={{ width: "12vw" }}>
+                              <Input
+                                suffix={row.unit}
+                                disabled
+                                value={
+                                  row.stockQty
+                                    ? `${row.stockQty} ${row.unit}`
+                                    : "0"
+                                }
+                              />
+                            </td>
+                            <td style={{ width: "12vw" }}>
+                              <Input
+                                type="number"
+                                value={row.qty1}
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      qty1: e.target.value,
+                                    };
+                                    return updated;
+                                  });
+                                }}
+                                suffix={row.unit}
+                              />
+                            </td>
+                            <td style={{ width: "16vw" }}>
+                              <Select
+                                style={{ width: "100%" }}
+                                options={locDataTo}
+                                value={row.locationTo}
+                                placeholder="Location"
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      locationTo: e,
+                                    };
+                                    return updated;
+                                  });
+                                  getLocationName(index, e);
+                                }}
+                              />
+                            </td>
+                            <td style={{ width: "12vw", textAlign: "center" }}>
+                              <Input disabled value={row.avrRate} />
+                            </td>
+                            <td style={{ width: "16vw" }}>
+                              <Input
+                                value={row.comment}
+                                placeholder="Comment Optional"
+                                onChange={(e) => {
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      comment: e.target.value,
+                                    };
+                                    return updated;
+                                  });
+                                }}
                               />
                             </td>
                           </tr>
-                        )}
-                      </React.Fragment>
-                    ))}
+                          {row.locationTo && row.address && (
+                            <tr>
+                              <td colSpan="7" style={{ padding: "8px" }}>
+                                <TextArea
+                                  disabled
+                                  value={row.address}
+                                  placeholder={`Row ${
+                                    index + 1
+                                  } - Location Address`}
+                                  rows={2}
+                                  style={{ width: "100%" }}
+                                />
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
