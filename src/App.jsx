@@ -1019,10 +1019,10 @@ dispatch(logoutUser());
                 transition: "margin-right 0.3s ease",
               }}
             >
-              <CalculatorDrawer
+              {/* <CalculatorDrawer
                 open={showCalculator}
                 onClose={() => dispatch(setShowCalculator(false))}
-              />
+              /> */}
               <Content style={{ height: "100%" }}>
                 <InternalNav links={internalLinks} />
 
