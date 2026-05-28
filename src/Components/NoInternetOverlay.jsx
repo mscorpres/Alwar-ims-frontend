@@ -42,7 +42,7 @@ const NoInternetOverlay = ({ children }) => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.8)", // equivalent to bg-gray-900/80
+            backgroundColor: "rgb(255, 255, 255)", 
             zIndex: 1200,
           }}
           aria-live="polite"
