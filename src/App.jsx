@@ -55,6 +55,8 @@ import {
   getSafeInternalRedirect,
   POST_LOGIN_REDIRECT_STORAGE_KEY,
 } from "./utils/postLoginRedirect.js";
+import useVersionCheck from "./hooks/useVersionCheck.js";
+import UpdatePopup from "./Components/UpdatePopup.jsx";
 
 const App = () => {
   const { showToast } = useToast();
@@ -121,10 +123,18 @@ const App = () => {
   const [isBannerVisible, setIsBannerVisible] = useState(false);
   const [searchHis, setSearchHis] = useState("");
   const [hisList, setHisList] = useState([]);
+  const { updateAvailable } = useVersionCheck();
+  const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const logoutHandler = () => {
     setShowBlackScreen(false);
 dispatch(logoutUser());
   };
+
+  useEffect(() => {
+    if (updateAvailable) {
+      setShowUpdatePopup(true);
+    }
+  }, [updateAvailable]);
 
   const handleSelectCompanyBranch = (value) => {
     dispatch(setCompanyBranch(value));
@@ -1225,6 +1235,11 @@ dispatch(logoutUser());
           </div>
         )}
       </Modal>
+
+      <UpdatePopup
+        open={showUpdatePopup}
+        onRefresh={() => window.location.reload()}
+      />
     </div>
   );
 };
