@@ -42,7 +42,7 @@ const NoInternetOverlay = ({ children }) => {
             flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
-            backgroundColor: "rgb(255, 255, 255)", 
+            backgroundColor: "rgba(255, 255, 255, 0.8)",
             zIndex: 1200,
           }}
           aria-live="polite"
@@ -57,6 +57,7 @@ const NoInternetOverlay = ({ children }) => {
               border: "1px solid #ccc",
               p: 4,
               boxShadow: "0px 5px 2px 1px #c5c5c5",
+              backgroundColor: "#ffffff"
             }}
           >
             {/* Icon Left */}
@@ -89,7 +90,7 @@ const NoInternetOverlay = ({ children }) => {
             
                 }}
               >
-                Your internet connection is lost, Please check your internet connection...
+                Your internet connection has lost, check your internet connection...
               </Typography>
                 <Typography
                 variant="body2"
@@ -100,7 +101,7 @@ const NoInternetOverlay = ({ children }) => {
                   fontSize:12
                 }}
               >
-                as the internet stables this message will be automatically removed.
+                as your internet will stable this notification will automatically remove.
               </Typography>
             </Box>
           </Box>
