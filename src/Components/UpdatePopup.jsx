@@ -1,18 +1,10 @@
 import { useEffect, useState } from "react";
 
 export default function UpdatePopup({ open, onRefresh }) {
-  const [seconds, setSeconds] = useState(4);
+  const [isRefreshHover, setIsRefreshHover] = useState(false);
 
-  useEffect(() => {
-    if (!open) return;
-    setSeconds(4);
-  }, [open]);
 
-  useEffect(() => {
-    if (!open || seconds <= 0) return;
-    const timeoutId = setTimeout(() => setSeconds((prev) => prev - 1), 1000);
-    return () => clearTimeout(timeoutId);
-  }, [open, seconds]);
+
 
   if (!open) return null;
 
@@ -24,13 +16,21 @@ export default function UpdatePopup({ open, onRefresh }) {
         </div>
 
         <div style={styles.message}>
-          New update is available. Please refresh to continue on the latest
-          version.
+          New update is available. <br />
+          <span style={{ fontSize:12 }}>Please refresh to continue</span> 
         </div>
 
         <div style={styles.actions}>
-          <div style={styles.countdown}>{seconds}</div>
-          <button style={styles.tryAgainBtn} onClick={onRefresh}>
+        
+          <button
+            style={{
+              ...styles.tryAgainBtn,
+              ...(isRefreshHover ? styles.tryAgainBtnHover : {}),
+            }}
+            onMouseEnter={() => setIsRefreshHover(true)}
+            onMouseLeave={() => setIsRefreshHover(false)}
+            onClick={onRefresh}
+          >
             Refresh
           </button>
         </div>
@@ -53,7 +53,7 @@ const styles = {
   },
   notificationBanner: {
     width: "100%",
-    maxWidth: 880,
+    maxWidth: 480,
     background: "linear-gradient(135deg, #fff6e8 0%, #fff9f0 100%)",
     border: "2px solid #f5a962",
     borderRadius: 16,
@@ -86,7 +86,7 @@ const styles = {
   message: {
     flex: 1,
     color: "#e67726",
-    fontSize: 17,
+    fontSize: 16,
     lineHeight: 1.5,
     fontWeight: 500,
   },
@@ -96,28 +96,23 @@ const styles = {
     gap: 12,
     flexShrink: 0,
   },
-  countdown: {
-    width: 48,
-    height: 48,
-    background: "#fff",
-    border: "2px solid #f5a962",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 20,
-    fontWeight: 600,
-    color: "#e67726",
-  },
+
   tryAgainBtn: {
     background: "linear-gradient(135deg, #fff6e8 0%, #fff9f0 100%)",
     border: "2px solid #f5a962",
     borderRadius: 12,
-    padding: "12px 28px",
+    padding: "10px 22px",
     color: "#e67726",
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 600,
     cursor: "pointer",
     whiteSpace: "nowrap",
+    transition: "all 0.2s ease",
   },
+  tryAgainBtnHover: {
+    background: "#fff",
+    transform: "translateY(-1px)",
+    boxShadow: "0 4px 8px rgba(245, 124, 0, 0.15)",
+  },
+
 };
