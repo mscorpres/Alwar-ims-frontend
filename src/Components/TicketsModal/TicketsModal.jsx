@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { getDiagnostics } from "../../utils/diagnostics";
 import {
-  Button,
+  Button, 
   Card,
   Col,
   Drawer,
