@@ -157,8 +157,7 @@ const AppHeader = (props) => {
               </Tooltip>
             )}
             {switchModule && switchModule}
-            <span style={{color:"#fff"}}>Update version</span>
-
+          
             <div
               ref={notificationButtonRef}
               onClick={(e) => {
