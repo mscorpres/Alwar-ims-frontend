@@ -157,7 +157,7 @@ const AppHeader = (props) => {
               </Tooltip>
             )}
             {switchModule && switchModule}
-
+          
             <div
               ref={notificationButtonRef}
               onClick={(e) => {
