@@ -1093,14 +1093,14 @@
             "children": [
               {
                 "key": "B61",
-                "label": "Jobwork & Analysis",
+                "label": "Create",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/create",
                 "isShown": true
               },
               {
                 "key": "B611",
-                "label": "Jobwork Approval",
+                "label": "Approval",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/approval",
                 "isShown": true
@@ -1114,35 +1114,35 @@
               },
               {
                 "key": "B613",
-                "label": "Jobwork Issue",
+                "label": "Issue",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/issue",
                 "isShown": true
               },
               {
                 "key": "B614",
-                "label": "Jobwork issue Challan",
+                "label": "Issue Challan",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/issue-challan",
                 "isShown": true
               },
               {
                 "key": "B615",
-                "label": "Jobwork Rm Challan",
+                "label": "Rm Challan",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/challan-list",
                 "isShown": true
               },
               {
                 "key": "B616",
-                "label": "Jobwork Sf inward",
+                "label": "Sf inward",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/inward",
                 "isShown": true
               },
               {
                 "key": "B617",
-                "label": "Jobwork Rm Return",
+                "label": "Rm Return",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/return",
                 "isShown": true
@@ -1156,7 +1156,7 @@
               },
               {
                 "key": "B618",
-                "label": "Jobwork Completed",
+                "label": "Completed",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/completed",
                 "isShown": true
