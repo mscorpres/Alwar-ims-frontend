@@ -64,18 +64,22 @@ const GstReport = () => {
   return (
     <Row
       align="center"
-      style={{ height: "95%", padding: 10, paddingTop: 150 }}
+      style={{ height: "95%",  display: "flex", justifyContent: "center", alignItems: "center" }}
     >
-      <Col span={4}>
+      <Col span={8}>
         <Card size="small">
           <Form form={form} layout="vertical" initialValues={initialValues}>
-            <Form.Item
+          <Row gutter={16}>
+             <Col span={12}>
+              <Form.Item
               name="reportType"
               label="Report"
               rules={rules.reportType}
             >
               <MySelect options={reportTypeOptions} />
             </Form.Item>
+              </Col>
+            <Col span={12}>
             <Form.Item
               name="pickerType"
               label="Time Period Selection"
@@ -83,6 +87,8 @@ const GstReport = () => {
             >
               <MySelect options={datePickerTypeOptions} />
             </Form.Item>
+             </Col>
+          </Row>
             <Form.Item name="timePeriod" label="Time Period" rules={rules.date}>
               <SingleDatePicker
                 setDate={(value) => form.setFieldValue("timePeriod", value)}

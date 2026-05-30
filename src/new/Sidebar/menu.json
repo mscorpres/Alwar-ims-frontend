@@ -1107,14 +1107,14 @@
               },
               {
                 "key": "B612",
-                "label": "PO Analysis",
+                "label": "Analysis",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/analysis",
                 "isShown": true
               },
               {
                 "key": "B613",
-                "label": "Issue",
+                "label": "RM Issue",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/issue",
                 "isShown": true
@@ -1128,21 +1128,21 @@
               },
               {
                 "key": "B615",
-                "label": "Rm Challan",
+                "label": "RM Challan",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/challan-list",
                 "isShown": true
               },
               {
                 "key": "B616",
-                "label": "Sf inward",
+                "label": "SF Inward",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/inward",
                 "isShown": true
               },
               {
                 "key": "B617",
-                "label": "Rm Return",
+                "label": "RM Return",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/return",
                 "isShown": true

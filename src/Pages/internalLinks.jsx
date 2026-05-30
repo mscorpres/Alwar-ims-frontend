@@ -537,7 +537,7 @@ const links = [
       routePath: "/warehouse/job-work/issue-challan",
     },
     {
-      routeName: "Challan",
+      routeName: "RM Challan",
       routePath: "/warehouse/job-work/challan-list",
     },
     {
