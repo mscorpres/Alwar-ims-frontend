@@ -1469,6 +1469,19 @@
                     "icon": "OutputIcon",
                     "path": "/reports/transaction-out",
                     "isShown": true
+                  },
+                     {
+                    "key": "B412432",
+                    "label": "View Document",
+                    "icon": "OutputIcon",
+                    "path": "/reports/upload-document/view",
+                    "isShown": true
+                  }, {
+                    "key": "B412433",
+                    "label": "Consumption Report",
+                    "icon": "OutputIcon",
+                    "path": "/jw-rm-consumption-report",
+                    "isShown": true
                   }
                 ]
               },

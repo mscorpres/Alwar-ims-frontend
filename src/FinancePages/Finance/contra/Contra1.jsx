@@ -336,21 +336,21 @@ export default function Contra1() {
 
   return (
     <div style={{ height: "100%", padding: 10 }}>
-      <Row gutter={[16, 16]} style={{ height: "100%" }}>
-        <Col span={6}>
-          <Card title="Select Date" size="small">
+      <Row gutter={12}> 
+        <Col span={6} style={{ marginBottom: 12 }}>
+        
             <SingleDatePicker
               setDate={setContraDate}
               placeholder="Select Date.."
               selectedDate={contraDate}
             />
-          </Card>
+        
         </Col>
 
-        <Col span={18}>
-          <div style={{ height: "calc(100% - 50px)" }}>
+        <Col span={24}>
+        
             <FormTable loading={loading} data={contraRows} columns={columns} />
-          </div>
+        
         </Col>
       </Row>
       <NavFooter

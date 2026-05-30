@@ -31,29 +31,47 @@ const CompletedFgReturn = () => {
   ];
   return (
     <Row style={{ height: "100%", padding: 10 }} gutter={[12, 10]}>
-      <Col span={6}>
-        <Card size="small">
-          <Form layout="vertical" form={form}>
-            <Form.Item name="date" label="Period">
-              <MyDatePicker
-                setDateRange={(value) => form.setFieldValue("date", value)}
-              />
-            </Form.Item>
-          </Form>
-          <Row justify="center">
-            <Space>
-              <CommonIcons onClick={handleDownload} action="downloadButton" />
-              <MyButton
-                onClick={handleFetchRows}
-                variant="search"
-                text="fetch"
-                loading={loading("fetch")}
-              />
-            </Space>
-          </Row>
-        </Card>
+   <Col span={12}>
+  <Form form={form}>
+    <Row gutter={10} align="middle">
+
+      {/* Date Range */}
+      <Col span={14}>
+        <Form.Item
+          name="date"
+          label="Period"
+          style={{ marginBottom: 0 }}
+        >
+          <MyDatePicker
+            setDateRange={(value) =>
+              form.setFieldValue("date", value)
+            }
+          />
+        </Form.Item>
       </Col>
-      <Col span={18}>
+
+      {/* Download Button */}
+      <Col>
+        <CommonIcons
+          onClick={handleDownload}
+          action="downloadButton"
+        />
+      </Col>
+
+      {/* Fetch Button */}
+      <Col>
+        <MyButton
+          onClick={handleFetchRows}
+          variant="search"
+          text="fetch"
+          loading={loading("fetch")}
+        />
+      </Col>
+
+    </Row>
+  </Form>
+</Col>
+      <Col span={24} style={{ height: "calc(100% - 40px)", overflowY: "auto" }}>
         <MyDataTable columns={columns} data={rows} loading={loading("fetch")} />
       </Col>
     </Row>

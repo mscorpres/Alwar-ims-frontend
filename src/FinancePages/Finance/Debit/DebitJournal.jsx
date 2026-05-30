@@ -81,12 +81,12 @@ export default function JournalPosting() {
     setCreditTotal(
       creditArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
     setDebitTotal(
       debitArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
     setJounralRows(arr);
   };
@@ -147,12 +147,12 @@ export default function JournalPosting() {
     setCreditTotal(
       creditArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
     setDebitTotal(
       debitArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
 
     setJounralRows(arr);
@@ -160,11 +160,7 @@ export default function JournalPosting() {
   const columns = [
     {
       headerName: (
-        <span
-          onClick={addRows}
-          style={{ cursor: "pointer" }}
-      
-        >
+        <span onClick={addRows} style={{ cursor: "pointer" }}>
           <Add color="success" />
         </span>
       ),
@@ -172,17 +168,17 @@ export default function JournalPosting() {
       type: "actions",
       field: "add",
       sortable: false,
-       renderCell: ({ row }) =>
-            journalRows.findIndex((r) => r.id == row.id) >= 1 && !row.total ? (
-                  <div style={{ display: "flex", justifyContent: "center",}}>
-             <span onClick={() => removeRow(row?.id)} style={{ cursor: "pointer",  }}>
-              <Delete
-              color="error"
-             
-              />
+      renderCell: ({ row }) =>
+        journalRows.findIndex((r) => r.id == row.id) >= 1 && !row.total ? (
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <span
+              onClick={() => removeRow(row?.id)}
+              style={{ cursor: "pointer" }}
+            >
+              <Delete color="error" />
             </span>
-            </div>
-            ) : null,
+          </div>
+        ) : null,
     },
 
     {
@@ -352,17 +348,17 @@ export default function JournalPosting() {
     // setJournalDate("");
   };
   return (
-    <div style={{ height: "92%", padding:10 }}>
+    <div style={{ height: "92%", padding: 10 }}>
       <Row
         gutter={12}
         style={{
           height: "100%",
         }}
       >
-        <Col span={6}>
-          <Card title="Select Date" size="small">
+        <Col span={24} style={{ marginBottom: 12 }}>
+     
             <Row>
-              <Col span={24}>
+              <Col span={6}>
                 <SingleDatePicker
                   setDate={setJournalDate}
                   placeholder="Select Effective Date.."
@@ -370,14 +366,10 @@ export default function JournalPosting() {
                 />
               </Col>
             </Row>
-          </Card>
-        </Col>
-        <Col style={{ height: "100%", padding: 0 }} span={18}>
       
-             
-                <FormTable data={journalRows} columns={columns} />
-             
-           
+        </Col>
+        <Col style={{ height: "calc(100% - 35px)", padding: 0 }} span={24}>
+          <FormTable data={journalRows} columns={columns} />
         </Col>
       </Row>
       <NavFooter

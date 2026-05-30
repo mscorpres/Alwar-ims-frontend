@@ -25,7 +25,7 @@ const ProccessedMrRequest = () => {
     try {
       setLoading("select", true);
       const response = await imsAxios.post("/backend/fetchAllUser", { search });
- 
+
       if (response?.success) {
         let arr = response?.data.map((row) => ({
           value: row.id,
@@ -49,7 +49,7 @@ const ProccessedMrRequest = () => {
       };
       const response = await imsAxios.post(
         "/transaction/viewApprovalStatus",
-        payload
+        payload,
       );
 
       if (response?.success) {
@@ -63,7 +63,7 @@ const ProccessedMrRequest = () => {
 
         setRows(arr);
       } else {
-        showToast( response?.message, "error");
+        showToast(response?.message, "error");
       }
     } catch (error) {
     } finally {
@@ -92,38 +92,37 @@ const ProccessedMrRequest = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "calc(100vh - 120px)", padding: 10 }}>
-      <Col span={6}>
-        <Card size="small" title="Filters">
-          <Form form={filterForm} layout="vertical">
-            <Form.Item name="user" label="User">
-              <MyAsyncSelect
-                selectLoading={loading("select")}
-                onBlur={() => setAsyncOptions([])}
-                loadOptions={getUser}
-                optionsState={asyncOptions}
-              />
-            </Form.Item>
-            <Form.Item name="date" label="Select Date">
-              <SingleDatePicker
-                setDate={(value) => filterForm.setFieldValue("date", value)}
-              />
-            </Form.Item>
-
-            <Row justify="end">
-              <Space>
-                <CommonIcons action="downloadButton" onClick={handleDownload} />
-                <MyButton
-                  variant="search"
-                  loading={loading("fetch")}
-                  onClick={getRows}
+    <Row gutter={0} style={{ padding: 10, height: "100%" }}>
+      <Col span={20} style={{marginBottom: 0}}>
+        <Form form={filterForm}>
+          <Row gutter={10}>
+            <Col span={8}>
+              <Form.Item
+                name="date"
+                label="Select Date"
+                style={{ marginBottom: 0 }}
+              >
+                <SingleDatePicker
+                  setDate={(value) => filterForm.setFieldValue("date", value)}
                 />
-              </Space>
-            </Row>
-          </Form>
-        </Card>
+              </Form.Item>
+            </Col>
+
+            <Col span={2}>
+              <MyButton
+                variant="search"
+                loading={loading("fetch")}
+                onClick={getRows}
+              />
+            </Col>
+
+            <Col span={2}>
+              <CommonIcons action="downloadButton" onClick={handleDownload} />
+            </Col>
+          </Row>
+        </Form>
       </Col>
-      <Col span={18}>
+      <Col span={24} style={{ height: "calc(100% - 60px)", overflowY: "auto" }} >
         <MyDataTable data={rows} columns={[actionColumn, ...columns]} />
       </Col>
       {showDetails && (

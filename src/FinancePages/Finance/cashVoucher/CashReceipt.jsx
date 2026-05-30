@@ -29,12 +29,9 @@ function CashReceipt() {
 
   const getCash = async (search) => {
     setSelectLoading(true);
-    const response = await imsAxios.post(
-      "/tally/cash/fetch_cash",
-      {
-        search: search,
-      }
-    );
+    const response = await imsAxios.post("/tally/cash/fetch_cash", {
+      search: search,
+    });
     setSelectLoading(false);
     const arr = data.map((row) => {
       return { value: row.id, text: row.text };
@@ -45,14 +42,13 @@ function CashReceipt() {
   const addRows = () => {
     setCashPaymentRows((rows) => {
       return [
-   
         {
           id: v4(),
           glCode: "",
           cash: "",
           comment: "",
         },
-             ...rows,
+        ...rows,
       ];
     });
   };
@@ -66,27 +62,26 @@ function CashReceipt() {
   const CashPaymentTable = [
     {
       headerName: (
-          <span
-                                  onClick={addRows}
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  <Add color="success" />
-                                </span>
+        <span onClick={addRows} style={{ cursor: "pointer" }}>
+          <Add color="success" />
+        </span>
       ),
       width: 150,
       type: "actions",
       field: "add",
       sortable: false,
- renderCell: ({ row }) =>
-  cashPaymentRows.length > 1 ? (
-    <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-      <GridActionsCellItem
-        icon={<Delete color="error" />}
-        onClick={() => removeRow(row.id)}
-        label="Delete"
-      />
-    </div>
-  ) : null,
+      renderCell: ({ row }) =>
+        cashPaymentRows.length > 1 ? (
+          <div
+            style={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
+            <GridActionsCellItem
+              icon={<Delete color="error" />}
+              onClick={() => removeRow(row.id)}
+              label="Delete"
+            />
+          </div>
+        ) : null,
     },
     {
       headerName: "Particulars",
@@ -135,11 +130,7 @@ function CashReceipt() {
           <Input
             fun={inputHandler}
             onChange={(e) => {
-              inputHandler(
-                "comment",
-                e.target.value,
-                row.id
-              );
+              inputHandler("comment", e.target.value, row.id);
             }}
             value={row?.comment}
             placeholder="Enter a comment..."
@@ -150,12 +141,9 @@ function CashReceipt() {
 
   const getLedger = async (search) => {
     setSelectLoading(true);
-    const response = await imsAxios.post(
-      "/tally/ledger/ledger_options",
-      {
-        search: search,
-      }
-    );
+    const response = await imsAxios.post("/tally/ledger/ledger_options", {
+      search: search,
+    });
     setSelectLoading(false);
     if (response.success) {
       const arr = response.data.map((row) => {
@@ -218,16 +206,13 @@ function CashReceipt() {
       showToast(validating.message, "error");
     } else if (validating.status == true) {
       setLoading(true);
-      const response = await imsAxios.post(
-        "/tally/cash/insert_cashreceipt",
-        {
-          gls: gls,
-          credit: cash,
-          comment: comment,
-          account: headerCash ? headerCash : "",
-          effective_date: effectiveDate,
-        }
-      );
+      const response = await imsAxios.post("/tally/cash/insert_cashreceipt", {
+        gls: gls,
+        credit: cash,
+        comment: comment,
+        account: headerCash ? headerCash : "",
+        effective_date: effectiveDate,
+      });
       setLoading(false);
       if (response.success) {
         resetFunction();
@@ -249,13 +234,13 @@ function CashReceipt() {
   };
 
   return (
-    <div style={{ height: "100%", padding:10 }}>
-      <Row gutter={10} style={{ height: "100%",}}>
-        <Col span={6}>
-          <Card title="Cash Receipt" size="small">
-            <Form layout="vertical" size="small">
-              <Row>
-                <Col span={24}>
+    <div style={{ height: "100%", padding: 10 }}>
+      <Row gutter={10} style={{ height: "100%" }}>
+        <Col span={24}>
+      
+            <Form size="small">
+              <Row gutter={12}>
+                <Col span={6}>
                   <Form.Item
                     label="Cash"
                     rules={[
@@ -277,7 +262,7 @@ function CashReceipt() {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={24}>
+                <Col span={6}>
                   <Form.Item
                     label="Select EffectiveDate"
                     rules={[
@@ -295,13 +280,10 @@ function CashReceipt() {
                 </Col>
               </Row>
             </Form>
-          </Card>
+       
         </Col>
-        <Col span={18} style={{height: "75vh"}}>
-     
-          <FormTable    
-            data={cashPaymentRows}
-            columns={CashPaymentTable}  />
+        <Col span={24} style={{ height: "75vh" }}>
+          <FormTable data={cashPaymentRows} columns={CashPaymentTable} />
         </Col>
       </Row>
       <NavFooter

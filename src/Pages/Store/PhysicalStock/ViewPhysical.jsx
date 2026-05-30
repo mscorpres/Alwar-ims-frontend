@@ -103,7 +103,7 @@ function ViewPhysical() {
   }, [wise]);
 
   return (
-    <Row gutter={6} style={{ height: "95%", padding: 10 }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10 }}>
       <Logs
         open={showLogs}
         hide={hideLogs}
@@ -112,57 +112,79 @@ function ViewPhysical() {
         logs={logs}
         setLogs={setLogs}
       />
-      <Col span={4}>
-        <Card size="small" title="Filters">
-          <Form form={form} layout="vertical" initialValues={initialValues}>
-            <Form.Item name="wise" label="Select Filter">
-              <MySelect options={wiseOptions} />
-            </Form.Item>
-            <Form.Item
-              name="data"
-              label={`Select ${
-                wise === "datewise"
-                  ? "Date"
-                  : wise === "partwise"
-                  ? "Component"
-                  : ""
-              }`}
-            >
-              {wise === "partwise" && (
-                <MyAsyncSelect
-                  optionsState={asyncOptions}
-                  selectLoading={loading("fetchComponent")}
-                  loadOptions={handleFetchComponentOptions}
-                  onBlur={() => setAsyncOptions([])}
-                />
-              )}
-              {wise === "datewise" && (
-                <MyDatePicker
-                  setDateRange={(value) => form.setFieldValue("data", value)}
-                />
-              )}
-            </Form.Item>
+  <Col span={16}>
+  <Form
+    form={form}
+    initialValues={initialValues}
+  >
+    <Row gutter={10} align="bottom">
 
-            <Row justify="end">
-              <Space>
-                <Button
-                  onClick={handleFetchRows}
-                  type="primary"
-                  icon={<SearchOutlined />}
-                  loading={loading("fetchRows")}
-                >
-                  Fetch
-                </Button>
-                <CommonIcons
-                  action="downloadButton"
-                  onClick={handleDownloadExcel}
-                />
-              </Space>
-            </Row>
-          </Form>
-        </Card>
+      {/* Filter Select */}
+      <Col span={6}>
+        <Form.Item
+          name="wise"
+          label="Select Filter"
+          style={{ marginBottom: 0 }}
+        >
+          <MySelect options={wiseOptions} />
+        </Form.Item>
       </Col>
-      <Col span={20}>
+
+      {/* Dynamic Input */}
+      <Col span={10}>
+        <Form.Item
+          name="data"
+          label={`Select ${
+            wise === "datewise"
+              ? "Date"
+              : wise === "partwise"
+              ? "Component"
+              : ""
+          }`}
+          style={{ marginBottom: 0 }}
+        >
+          {wise === "partwise" && (
+            <MyAsyncSelect
+              optionsState={asyncOptions}
+              selectLoading={loading("fetchComponent")}
+              loadOptions={handleFetchComponentOptions}
+              onBlur={() => setAsyncOptions([])}
+            />
+          )}
+
+          {wise === "datewise" && (
+            <MyDatePicker
+              setDateRange={(value) =>
+                form.setFieldValue("data", value)
+              }
+            />
+          )}
+        </Form.Item>
+      </Col>
+
+      {/* Buttons */}
+      <Col>
+        <Space>
+          <Button
+            onClick={handleFetchRows}
+            type="primary"
+            icon={<SearchOutlined />}
+            loading={loading("fetchRows")}
+          >
+            Fetch
+          </Button>
+
+          <CommonIcons
+            action="downloadButton"
+            onClick={handleDownloadExcel}
+          />
+        </Space>
+      </Col>
+
+    </Row>
+  </Form>
+</Col>
+      <Col span={24} style={{ height: "calc(100% - 50px)", overflowY: "auto" }}>
         <MyDataTable
           data={rows}
           columns={[actionColumn, ...columns]}

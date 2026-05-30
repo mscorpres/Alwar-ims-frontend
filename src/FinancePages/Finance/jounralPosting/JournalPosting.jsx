@@ -335,17 +335,17 @@ export default function JournalPosting() {
     }
   }, [loading]);
   return (
-    <div style={{ height: "76vh", padding: 10, overflowY: "auto" }}>
+    <div style={{ height: "76vh", padding: 10,  }}>
       <Row gutter={12}>
-        <Col span={6}>
-          <Card title="Select Date" size="small">
+        <Col span={24}>
+         
             <Row>
               <Form
                 style={{ width: "100%" }}
                 layout="vertical"
                 form={addJournalForm}
               >
-                <Col span={24}>
+                <Col span={6}>
                   <Form.Item
                     label="Effective Date"
                     name="effectiveDate"
@@ -367,9 +367,9 @@ export default function JournalPosting() {
                 </Col>
               </Form>
             </Row>
-          </Card>
+      
         </Col>
-        <Col style={{ height: "100%", padding: 0 }} span={18}>
+        <Col style={{ maxHeight:"calc(100vh - 240px)", padding: 0 }} span={24}>
           <FormTable data={journalRows} columns={columns} />
         </Col>
       </Row>
