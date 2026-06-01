@@ -93,10 +93,20 @@ const ProccessedMrRequest = () => {
 
   return (
     <Row gutter={0} style={{ padding: 10, height: "100%" }}>
-      <Col span={20} style={{marginBottom: 0}}>
+      <Col span={24} style={{marginBottom: 0}}>
         <Form form={filterForm}>
           <Row gutter={10}>
-            <Col span={8}>
+              <Col span={5}>
+                <Form.Item name="user" label="User">
+              <MyAsyncSelect
+                selectLoading={loading("select")}
+                onBlur={() => setAsyncOptions([])}
+                loadOptions={getUser}
+                optionsState={asyncOptions}
+              />
+            </Form.Item>
+              </Col>
+            <Col span={6}>
               <Form.Item
                 name="date"
                 label="Select Date"
