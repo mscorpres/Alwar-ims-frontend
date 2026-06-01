@@ -888,7 +888,7 @@ dispatch(logoutUser());
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath
-                          ? 0
+                          ? 1
                           :50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),

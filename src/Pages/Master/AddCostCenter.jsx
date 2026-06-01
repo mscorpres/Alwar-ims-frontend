@@ -88,15 +88,15 @@ export default function AddCostCenter({
   return (
     <div
       style={{
-        display: "grid",
-        gap: "1rem",
-        gridTemplateColumns: "1fr 2fr",
-        padding: "20px",
+        height: "calc(100vh - 160px)",
+   
+     
+        padding: "12px",
       }}
     >
-      <div>
-        <Card title="Add Cost Center" style={{ width: "100%" }}>
-          <Form layout="vertical" style={{ height: "95%" }}>
+      <div style={{maxWidth: "100%", marginBottom: 5, display:"flex", alignItems:"center",}}>
+      
+          <Form style={{ width: "100%",display: "flex", gap: "1rem", alignItems:"center",  }} >
             <Form.Item label="Cost Center Id">
               <Input
                 inputMode="numeric"
@@ -117,26 +117,29 @@ export default function AddCostCenter({
                 placeholder="Enter Cost Center Name"
               />
             </Form.Item>
-          </Form>
-          <Row justify="end">
-            <Button
+            <Form.Item >
+                 <Button
               onClick={submitCostCenter}
               loading={submitLoading}
               type="primary"
             >
               Submit
             </Button>
-          </Row>
-        </Card>
+            </Form.Item>
+          </Form>
+       
+        
+       
+      
       </div>
-      <div className="m-2" style={{ height: "100%" }}>
-        <div style={{ height: "80vh" }}>
+      <div  style={{ height: "100%" }}>
+    
           <MyDataTable
             // loading={loading("fetch")}
             data={centerData}
             columns={columns}
           />
-        </div>
+      
       </div>
     </div>
   );

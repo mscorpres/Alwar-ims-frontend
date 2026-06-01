@@ -21,7 +21,7 @@ const HsnMap = () => {
   const getComponents = async (search: string) => {
     const response = await executeFun(
       () => getComponentOptions(search),
-      "select"
+      "select",
     );
     //@ts-ignore
     setAsyncOptions(convertSelectOptions(response.data ?? []));
@@ -37,7 +37,7 @@ const HsnMap = () => {
     const values = await form.validateFields();
     const response = await executeFun(
       () => mapHsn(values.component, values.rows),
-      "submit"
+      "submit",
     );
 
     if (response.success) {
@@ -62,34 +62,37 @@ const HsnMap = () => {
       form={form}
       style={{ height: "100%", padding: "10px" }}
     >
-      <Row gutter={16} style={{ height: "100%" }}>
-        <Col sm={8} xxl={4}>
-          <Card size="small" title="Map HSN">
-            <Form.Item
-              name="component"
-              label="Component Name"
-              rules={[{ required: true, message: "Component is required" }]}
-            >
-              <MyAsyncSelect
-                onBlur={() => setAsyncOptions([])}
-                loadOptions={getComponents}
-                optionsState={asyncOptions}
-                selectLoading={loading("select")}
-              />
-            </Form.Item>
-            <Row justify="center">
-              <MyButton
-                onClick={submitHandler}
-                loading={loading("submit")}
-                variant="submit"
-                text="Save"
-              />
-            </Row>
-          </Card>
+      <Row gutter={14}>
+        <Col span={12}>
+          <Row  gutter={12} style={{ }}>
+            <Col span={12}>
+              <Form.Item
+                name="component"
+                label="Component Name"
+                rules={[{ required: true, message: "Component is required" }]}
+              >
+                <MyAsyncSelect
+                  onBlur={() => setAsyncOptions([])}
+                  loadOptions={getComponents}
+                  optionsState={asyncOptions}
+                  selectLoading={loading("select")}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item>
+                <MyButton
+                  onClick={submitHandler}
+                  loading={loading("submit")}
+                  variant="submit"
+                  text="Save"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
         </Col>
         <Col
-          sm={16}
-          xxl={20}
+          span={24}
           className="remove-table-footer remove-cell-border"
           style={{ height: "100%" }}
         >
@@ -100,7 +103,7 @@ const HsnMap = () => {
               setAsyncOptions,
               asyncOptions,
               handleFetchHsnOptions,
-              loading
+              loading,
             )}
             addableRow={true}
             newRow={initialValues.rows[0]}
@@ -128,11 +131,11 @@ const columns = (
   //@ts-ignore
   handleFetchHsnOptions,
   //@ts-ignore
-  loading
+  loading,
 ) => [
   {
     headerName: "HSN Code",
-   width:"160px",
+    width: "160px",
     name: "code",
     field: () => (
       <MyAsyncSelect

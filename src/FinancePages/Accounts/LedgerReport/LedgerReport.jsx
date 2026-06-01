@@ -413,7 +413,6 @@ export default function LedgerReport() {
             </Row>
           </Card>
           <Card title="Reconcillations" size="small">
-            {loading1("fetch") && <Loading />}
             {recoRows.length === 0 && (
               <Flex justify="center">
                 <Typography.Text type="secondary" strong>

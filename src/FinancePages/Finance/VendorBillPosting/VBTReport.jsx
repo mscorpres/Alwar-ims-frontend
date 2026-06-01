@@ -900,6 +900,7 @@ export default function VBTReport() {
               type="primary"
               onClick={getSearchResults}
               variant="search"
+              loading={loading}
             >
               Search
             </MyButton>

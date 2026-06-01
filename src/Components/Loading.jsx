@@ -2,7 +2,7 @@ import React, { useCallback, useLayoutEffect, useState } from "react";
 
 const CONTENT_ID = "app-content-left-margin";
 
- function Loading({ size, offsetY = 0 }) {
+ function Loading({ size, offsetY = 0, isDrawerLoading = false }) {
   const [box, setBox] = useState({
     top: 0,
     left: 0,
@@ -39,6 +39,7 @@ const CONTENT_ID = "app-content-left-margin";
   }, [offsetY]);
 
   useLayoutEffect(() => {
+ 
     syncBox();
 
     const el = document.getElementById(CONTENT_ID);
@@ -73,10 +74,10 @@ const CONTENT_ID = "app-content-left-margin";
     <div
       style={{
         position: "fixed",
-        top: box.top,
-        left: box.left,
-        width: box.width,
-        height: box.height,
+        top:  isDrawerLoading ? 0 : box.top,
+        left:  isDrawerLoading ? 0 : box.left,
+        width: isDrawerLoading ? "100%" : box.width,
+        height:  isDrawerLoading ? "100%" : box.height,
         zIndex: 999,
         background: "rgba(255, 255, 255, 0.4)",
         display: "flex",

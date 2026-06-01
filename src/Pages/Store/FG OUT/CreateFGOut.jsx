@@ -49,7 +49,6 @@ const CreateFGOut = () => {
 
   const plusRow = () => {
     setAddRowData((addRowData) => [
-   
       {
         id: v4(),
         product: "",
@@ -58,7 +57,7 @@ const CreateFGOut = () => {
         total: "",
         remarks: "",
       },
-         ...addRowData,
+      ...addRowData,
     ]);
   };
 
@@ -143,8 +142,7 @@ const CreateFGOut = () => {
           }
         }),
       );
-    }else if (name == "location") {
-     
+    } else if (name == "location") {
       setAddRowData((location) =>
         location.map((h) => {
           if (h.id == id) {
@@ -154,7 +152,7 @@ const CreateFGOut = () => {
           } else {
             return h;
           }
-        })
+        }),
       );
     }
   };
@@ -172,9 +170,8 @@ const CreateFGOut = () => {
     // addRowData.map((a) => console.log(a));
     // console.log(arrQty);
 
-
     const hasEmptyLocation = addRowData.some(
-      (row) => !row.location || String(row.location).trim() === ""
+      (row) => !row.location || String(row.location).trim() === "",
     );
     if (!createFgOut.selectType) {
       showToast("Please Select Option", "error");
@@ -223,40 +220,36 @@ const CreateFGOut = () => {
   const columns = [
     {
       headerName: (
-      <div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",   // vertical centering
-    width: "100%",          // take full cell width
-    height: "100%",         // take full cell height
-  }}
->
-         <span onClick={plusRow} style={{ cursor: "pointer",  }}>
-          <Add
-          color="success"
-         
-          />
-          {/* <PlusSquareFilled style={{ cursor: "pointer", fontSize: "1.5rem" }} /> */}
-        </span>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center", // vertical centering
+            width: "100%", // take full cell width
+            height: "100%", // take full cell height
+          }}
+        >
+          <span onClick={plusRow} style={{ cursor: "pointer" }}>
+            <Add color="success" />
+            {/* <PlusSquareFilled style={{ cursor: "pointer", fontSize: "1.5rem" }} /> */}
+          </span>
         </div>
       ),
       width: 80,
       field: "add",
-      
 
       // width: "5
       sortable: false,
       renderCell: ({ row }) =>
         addRowData.findIndex((r) => r.id == row.id) >= 1 && (
-              <div style={{ display: "flex", justifyContent: "center",}}>
-         <span onClick={() => minusRow(row?.id)} style={{ cursor: "pointer",  }}>
-          <Delete
-          color="error"
-         
-          />
-        </span>
-        </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <span
+              onClick={() => minusRow(row?.id)}
+              style={{ cursor: "pointer" }}
+            >
+              <Delete color="error" />
+            </span>
+          </div>
         ),
       // sortable: false,
     },
@@ -332,9 +325,9 @@ const CreateFGOut = () => {
   return (
     <>
       <Row gutter={10} style={{ margin: "8px", height: "calc(100% - 70px)" }}>
-        <Col span={6}>
+        <Col span={16}>
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={8}>
               <Select
                 style={{
                   width: "100%",
@@ -353,9 +346,9 @@ const CreateFGOut = () => {
                 }
               />
             </Col>
-            <Col span={24}>
+            <Col span={8}>
               <TextArea
-                rows={5}
+                rows={1}
                 placeholder="Comment(Optional)"
                 className="form-control"
                 value={createFgOut.comment}
@@ -371,7 +364,7 @@ const CreateFGOut = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={18}>
+        <Col span={24} style={{ height: "calc(100% - 50px)", overflowY: "auto" }}>
           <MyDataTable
             loading={loading}
             data={addRowData}

@@ -1,4 +1,14 @@
-import { Card, Flex, Drawer, Modal, Tooltip, Radio, Skeleton, Button, Space } from "antd";
+import {
+  Card,
+  Flex,
+  Drawer,
+  Modal,
+  Tooltip,
+  Radio,
+  Skeleton,
+  Button,
+  Space,
+} from "antd";
 import { Col, Divider, Form, Input, Row, Typography } from "antd/es";
 import React, { useEffect, useState } from "react";
 import MyButton from "../../../../Components/MyButton";
@@ -36,7 +46,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       };
       const response = await imsAxios.post(
         "/storeApproval/fetchTransactionItems",
-        payload
+        payload,
       );
 
       const data = response?.data;
@@ -84,7 +94,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
     try {
       setLoading("fetchLocations", true);
       const response = await imsAxios.get(
-        "/storeApproval/fetchLocationAllotedTransApprv"
+        "/storeApproval/fetchLocationAllotedTransApprv",
       );
 
       const data = response?.data;
@@ -106,15 +116,14 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       setLoading("fetchSTock", true);
       const payload = { component, location };
       const response = await imsAxios.post("/godown/godownStocks", payload);
-        if (response.success) {
-          const qty = response.data.available_qty;
-          const rate = response?.data?.avr_rate;
-          form.setFieldValue("availableQty", qty);
-          form.setFieldValue("weightedRate", rate);
-        } else {
-          showToast( response.message, "error");
-        }
-      
+      if (response.success) {
+        const qty = response.data.available_qty;
+        const rate = response?.data?.avr_rate;
+        form.setFieldValue("availableQty", qty);
+        form.setFieldValue("weightedRate", rate);
+      } else {
+        showToast(response.message, "error");
+      }
     } catch (error) {
     } finally {
       setLoading("fetchSTock", false);
@@ -206,7 +215,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
   useEffect(() => {
     if (selectedComponent) {
       const selected = details.filter(
-        (row) => row.componentKey === selectedComponent
+        (row) => row.componentKey === selectedComponent,
       );
       if (selected[0]) {
         form.setFieldValue("requestedQty", selected[0].requestedQty);
@@ -243,6 +252,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       }
     >
       <Form layout="vertical" form={form} initialValues={initialValues}>
+        {loading("fetch") && <Loading isDrawerLoading={true} />}
         <Row gutter={6}>
           <Col span={6}>
             <Card
@@ -257,12 +267,8 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                     BOM:
                   </Typography.Text>
                   <br />
-                  {loading("fetch") && (
-                    <Skeleton.Button size="small" active block />
-                  )}
-                  {!loading("fetch") && (
-                    <Typography.Text>{headers?.bom}</Typography.Text>
-                  )}
+
+                  <Typography.Text>{headers?.bom}</Typography.Text>
                 </Col>
 
                 <Col span={24}>
@@ -270,24 +276,16 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                     Req. Location:
                   </Typography.Text>
                   <br />
-                  {loading("fetch") && (
-                    <Skeleton.Button size="small" active block />
-                  )}
-                  {!loading("fetch") && (
-                    <Typography.Text>{headers?.location}</Typography.Text>
-                  )}
+
+                  <Typography.Text>{headers?.location}</Typography.Text>
                 </Col>
                 <Col span={24}>
                   <Typography.Text strong type="secondary">
                     MFG Qty:
                   </Typography.Text>
                   <br />
-                  {loading("fetch") && (
-                    <Skeleton.Button size="small" active block />
-                  )}
-                  {!loading("fetch") && (
-                    <Typography.Text>{headers?.mfgQty}</Typography.Text>
-                  )}
+
+                  <Typography.Text>{headers?.mfgQty}</Typography.Text>
                 </Col>
               </Row>
             </Card>
@@ -318,7 +316,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                     flex: 1,
                     minHeight: "95%",
                     maxHeight: 435,
-                    margin:"4px 0px",
+                    margin: "4px 0px",
                     display: "flex",
                     overflow: "hidden",
                   }}
@@ -335,28 +333,46 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                       label="Select Part Code"
                       rules={rules.component}
                     >
-                      {loading("fetchLocations") && <Loading />}
-                      <Radio.Group 
-                        style={{ width: "100%", display: "flex", flexDirection:"column", flexWrap: "wrap", gap: "8px" }}
-                        options={Array.isArray(componentOptions) ? componentOptions
-                          .filter((row) => {
-                            const matched = row.text
-                              .toLowerCase()
-                              .includes(filterString.toLowerCase());
-                            return matched;
-                          })
-                          .map((comp) => ({
-                            label: (
-                              // <Tooltip title={comp.componentName} placement="top">
-                              <div style={{display:"flex", flexDirection:"column"}}>
-                                 <span style={{ fontSize: "0.8rem" }}>{comp.componentName}</span>
-                                  <span  style={{ fontSize: "0.7rem" }}>{comp.text}</span>
-                              </div>
-                               
-                              // </Tooltip>
-                            ),
-                            value: comp.value,
-                          })) : []}
+                      <Radio.Group
+                        style={{
+                          width: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          flexWrap: "wrap",
+                          gap: "8px",
+                        }}
+                        options={
+                          Array.isArray(componentOptions)
+                            ? componentOptions
+                                .filter((row) => {
+                                  const matched = row.text
+                                    .toLowerCase()
+                                    .includes(filterString.toLowerCase());
+                                  return matched;
+                                })
+                                .map((comp) => ({
+                                  label: (
+                                    // <Tooltip title={comp.componentName} placement="top">
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                      }}
+                                    >
+                                      <span style={{ fontSize: "0.8rem" }}>
+                                        {comp.componentName}
+                                      </span>
+                                      <span style={{ fontSize: "0.7rem" }}>
+                                        {comp.text}
+                                      </span>
+                                    </div>
+
+                                    // </Tooltip>
+                                  ),
+                                  value: comp.value,
+                                }))
+                            : []
+                        }
                       />
                     </Form.Item>
                   </div>
@@ -366,8 +382,12 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
           </Col>
 
           <Col span={8}>
-            <Card size="small"  style={{ height: "100%" }}
-              bodyStyle={{ height: "100%" }} title="Component Transfer Details">
+            <Card
+              size="small"
+              style={{ height: "100%" }}
+              bodyStyle={{ height: "100%" }}
+              title="Component Transfer Details"
+            >
               <Row justify="center" gutter={6}>
                 <Col span={24} style={{ marginBottom: 10 }}>
                   <Flex justify="end">
