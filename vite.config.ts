@@ -3,10 +3,21 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
 import tailwindcss from "@tailwindcss/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), tsconfigPaths(), tailwindcss()],
+  plugins: [
+    react(),
+    tsconfigPaths(),
+    tailwindcss(),
+    sentryVitePlugin({
+      org: "mscorpres-automation-pvt-ltd",
+      project: "alwar",
+      // Auth token from SENTRY_AUTH_TOKEN env var (set in CI/build environment)
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }),
+  ],
   resolve: {
     alias: [
       {
@@ -23,6 +34,7 @@ export default defineConfig({
     host: true,
   },
   build: {
+    sourcemap: true, // required for Sentry source maps
     rollupOptions: {
       output: {
         manualChunks: {
