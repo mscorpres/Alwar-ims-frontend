@@ -20,7 +20,6 @@ import MySelect from "../../../Components/MySelect";
 import { useToast } from "../../../hooks/useToast.js";
 import MyDatePicker from "../../../Components/MyDatePicker.jsx";
 
-
 const Q3 = () => {
   const { showToast } = useToast();
   const [searchInput, setSearchInput] = useState("");
@@ -30,13 +29,21 @@ const Q3 = () => {
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locationOptions, setLocationOptions] = useState([]);
-    const [date, setDate] = useState("");
-  
+  const [date, setDate] = useState("");
+
   const getLocations = async () => {
-    const response = await imsAxios.get("/skuQueryA/q3Location");
-    const arr = [];
-    response?.data.map((a) => arr.push({ text: a.text, value: a.id }));
-    setLocationOptions(arr);
+    try {
+      const response = await imsAxios.get("/skuQueryA/q3Location");
+      const arr = [];
+      if (!response.success) {
+        showToast(response.message, "error");
+      }
+      response?.data?.map((a) => arr.push({ text: a.text, value: a.id }));
+      setLocationOptions(arr);
+    } catch (error) {
+      console.log("Error fetching locations", error);
+      showToast("Error fetching locations", "error");
+    }
   };
 
   useEffect(() => {
@@ -51,7 +58,10 @@ const Q3 = () => {
         search,
       });
       setLoading(false);
-      arr = response?.data.map((d) => {
+      if (!response.success) {
+        showToast(response.message, "error");
+      }
+      arr = response?.data?.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -72,12 +82,15 @@ const Q3 = () => {
       const response = await imsAxios.post("/skuQueryA/fetchSKU_logs", {
         sku_code: searchInput,
         location: location,
-            date
+        date,
       });
 
       // Check if response has error status
       if (response && response.status === "error") {
-        const errorMessage = response.message?.msg || response.message || "An error occurred while fetching data";
+        const errorMessage =
+          response.message?.msg ||
+          response.message ||
+          "An error occurred while fetching data";
         showToast(errorMessage, "error");
         setLoading(false);
         return;
@@ -107,7 +120,11 @@ const Q3 = () => {
       }
     } catch (error) {
       console.log("Some error occured while fetching rows", error);
-      const errorMessage = error.response?.data?.message?.msg || error.response?.data?.message || error.message || "An error occurred while fetching rows";
+      const errorMessage =
+        error.response?.data?.message?.msg ||
+        error.response?.data?.message ||
+        error.message ||
+        "An error occurred while fetching rows";
       showToast(errorMessage, "error");
     } finally {
       setLoading(false);
@@ -130,7 +147,6 @@ const Q3 = () => {
             {/* Filters */}
             <Card size="small" title="Filters">
               <Space direction="vertical" size={12} style={{ width: "100%" }}>
-                
                 <div>
                   <Typography.Text type="secondary">
                     Product Name
@@ -145,7 +161,7 @@ const Q3 = () => {
                     value={searchInput}
                   />
                 </div>
-                     <div>
+                <div>
                   <Typography.Text type="secondary">
                     Select Date Range
                   </Typography.Text>

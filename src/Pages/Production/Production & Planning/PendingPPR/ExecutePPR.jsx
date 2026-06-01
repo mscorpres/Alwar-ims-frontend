@@ -56,35 +56,47 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
     remove(targetKey);
   };
   const getPPRData = async () => {
-    setPageLoading(true);
-    const response = await imsAxios.post("/ppr/fetchPprComponentDetails", {
-      accesstoken: editPPR.prod_randomcode,
-      pprrequest: editPPR.prod_transaction,
-      skucode: editPPR.prod_product_sku,
-    });
-    setPageLoading(false);
-    let arr1 = {
-      ...response.data.header_data,
-      location: "",
-      mfgQty: 1,
-      myComment: "",
-    };
-    if (response.success) {
-      let arr = response.data.comp_data.map((row) => {
-        return {
-          ...row,
-          id: v4(),
-          actQty: headerData.mfgQty ? row.qty * headerData.mfgQty : row.qty,
-          rej: "",
-          rem: "",
-        };
+    try {
+      setPageLoading(true);
+      const response = await imsAxios.post("/ppr/fetchPprComponentDetails", {
+        accesstoken: editPPR?.prod_randomcode,
+        pprrequest: editPPR?.prod_transaction,
+        skucode: editPPR?.prod_product_sku,
       });
-      setTableData(arr);
+      setPageLoading(false);
 
-      setHeaderData(arr1);
-    } else {
-      showToast(response.message?.msg || response.message, "error");
-      setEditPPR(null);
+      if (response.success) {
+        let arr1 = {
+          ...response?.data?.header_data,
+          location: "",
+          mfgQty: 1,
+          myComment: "",
+        };
+        let arr = response?.data?.comp_data.map((row) => {
+          return {
+            ...row,
+            id: v4(),
+            actQty: headerData.mfgQty ? row.qty * headerData.mfgQty : row.qty,
+            rej: "",
+            rem: "",
+          };
+        });
+
+        setTableData(arr);
+        setHeaderData(arr1);
+      } else {
+        
+        setEditPPR(null);
+      }
+    } catch (error) {
+      showToast(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to fetch PPR data",
+        "error",
+      );
+    } finally {
+      setPageLoading(false);
     }
   };
   const columns = [
@@ -132,11 +144,7 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
       headerName: "Average Weighted Rate",
       flex: 1,
       field: "avgRate",
-      renderCell: ({ row }) => (
-        <span>
-          {row?.avgRate}
-        </span>
-      ),
+      renderCell: ({ row }) => <span>{row?.avgRate}</span>,
     },
     {
       headerName: "Actual Cons.",
@@ -176,10 +184,17 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
     },
   ];
   const getLocations = async () => {
-    const response = await imsAxios.get("/ppr/mfg_locations");
-    const arr = [];
-    response.data.map((a) => arr.push({ text: a.text, value: a.id }));
-    setLocationOptions(arr);
+    try {
+      const response = await imsAxios.get("/ppr/mfg_locations");
+      if (!response.success) {
+        showToast(response?.message, "error");
+      }
+      const arr = [];
+      response?.data?.map((a) => arr.push({ text: a.text, value: a.id }));
+      setLocationOptions(arr);
+    } catch (error) {
+      console.error("Error fetching locations", error);
+    }
   };
   const compInputHandler = async (name, value, id) => {
     let arr = tableData;
@@ -257,16 +272,16 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
     try {
       setSubmitLoading(true);
       const response = await imsAxios.post("/ppr/executePPR", finalObj);
-     
-        if (response.success) {
-          showToast(response.message, "success");
-          getRows();
-          setTimeout(() => {
-            setEditPPR(null);
-          }, 3000);
-        } else {
-          showToast(response.message, "error");
-        }
+
+      if (response?.success) {
+        showToast(response.message, "success");
+        getRows();
+        setTimeout(() => {
+          setEditPPR(null);
+        }, 3000);
+      } else {
+        showToast(response.message, "error");
+      }
     } catch (error) {
     } finally {
       setSubmitLoading(false);
@@ -301,12 +316,12 @@ export default function ExecutePPR({ editPPR, setEditPPR, getRows }) {
           tab == "P"
             ? "Part"
             : tab == "PCK"
-            ? "Packing"
-            : tab === "PCB"
-            ? "PCB"
-            : tab == "1"
-            ? "MFG Journal"
-            : "Other",
+              ? "Packing"
+              : tab === "PCB"
+                ? "PCB"
+                : tab == "1"
+                  ? "MFG Journal"
+                  : "Other",
         key: tab,
         children:
           tab != "1" ? (
