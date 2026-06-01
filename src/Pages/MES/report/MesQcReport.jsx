@@ -196,7 +196,7 @@ function MesQcaReport() {
         }
       }
     } catch (error) {
-      showToast(error, "error");
+      showToast(error?.errorFields?.[0]?.errors?.[0] || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
