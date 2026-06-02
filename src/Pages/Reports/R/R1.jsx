@@ -1,24 +1,33 @@
 import React, { useState, useEffect } from "react";
 import "./r.css";
-import OpenR1Modal from "../Modal/OpenR1Modal";
 import "../../Store/MaterialTransfer/Modal/viewModal.css";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
-import { Row, Col, Button, Spin } from "antd";
+import { Row, Col, Button, Spin, Select, Space } from "antd";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
-import {
-  PlusCircleFilled,
-  ArrowRightOutlined,
-  FilterOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
 
 import MyDataTable from "../../../Components/MyDataTable";
 import Tooltip from "@mui/material/Tooltip";
+import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import MyDatePicker from "../../../Components/MyDatePicker";
+import { getProductsOptions } from "../../../api/general.ts";
+import useApi from "../../../hooks/useApi.ts";
+import { imsAxios } from "../../../axiosInterceptor";
+import { useToast } from "../../../hooks/useToast.js";
+import { v4 } from "uuid";
 
 const R1 = () => {
-  const [viewModal, setViewModal] = useState(false);
+  const { showToast } = useToast();
+  const { executeFun, loading: loading1 } = useApi();
   const [allResponseData, setAllResponseData] = useState([]);
   const [loading, setLoading] = useState(false);
-  // console.log(allResponseData);
+  const [asyncOptions, setAsyncOptions] = useState([]);
+  const [bomOptions, setBomOptions] = useState([]);
+  const [filters, setFilters] = useState({
+    selectProduct: undefined,
+    bom: undefined,
+    date: "",
+  });
 
   const columns = [
     { field: "sku", headerName: "SKU", width: 60 },
@@ -126,6 +135,65 @@ const R1 = () => {
     },
   ];
 
+  const getProductOptions = async (searchInput) => {
+    if (searchInput?.length > 2) {
+      const response = await executeFun(
+        () => getProductsOptions(searchInput, true),
+        "select",
+      );
+      setAsyncOptions(response?.data || []);
+    }
+  };
+
+  const getBomOptions = async (productValue) => {
+    if (!productValue) {
+      setBomOptions([]);
+      return;
+    }
+    const response = await imsAxios.post("/backend/fetchBomForProduct", {
+      search: productValue,
+    });
+    const arr = (response?.data || []).map((item) => ({
+      value: item.bomid,
+      label: item.bomname,
+    }));
+    setBomOptions(arr);
+  };
+
+  useEffect(() => {
+    getBomOptions(filters.selectProduct?.value ?? filters.selectProduct);
+  }, [filters.selectProduct]);
+
+  const handleSearch = async () => {
+    if (!filters.selectProduct?.value) {
+      showToast("Please select product", "error");
+      return;
+    }
+    if (!filters.bom?.value) {
+      showToast("Please select BOM", "error");
+      return;
+    }
+    setLoading(true);
+    setAllResponseData([]);
+    const response = await imsAxios.post("/report1", {
+      product: filters.selectProduct?.value ?? filters.selectProduct,
+      subject: filters.bom?.value ?? filters.bom,
+      date: filters.date,
+      action: "search_r1",
+    });
+    if (response.success) {
+      const arr = (response.data || []).map((row) => ({
+        ...row,
+        id: v4(),
+      }));
+      setAllResponseData(arr);
+      setLoading(false);
+    } else {
+      showToast(response.message, "error");
+      setLoading(false);
+    }
+  };
+
   const handleDownloadingCSV = () => {
     let arr = [];
     let csvData = [];
@@ -168,34 +236,73 @@ const R1 = () => {
         <Col span={24}>
           <div
             style={{
-              textAlign: "end",
-              marginRight: "15px",
+              margin: "0 15px",
             }}
           >
-            {allResponseData.length >= 1 && (
+            <Space style={{ width: "100%" }} size={10} wrap>
+              <div style={{ minWidth: 240, flex: 1 }}>
+                <MyAsyncSelect
+                  selectLoading={loading1("select")}
+                  style={{ width: "100%" }}
+                  loadOptions={getProductOptions}
+                  onBlur={() => setAsyncOptions([])}
+                  labelInValue
+                  value={filters.selectProduct}
+                  placeholder="Product Name / SKU"
+                  optionsState={asyncOptions}
+                  onChange={(value) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      selectProduct: value,
+                      bom: undefined,
+                    }))
+                  }
+                />
+              </div>
+              <div style={{ minWidth: 220 }}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select BOM"
+                  options={bomOptions}
+                  labelInValue
+                  value={filters.bom || undefined}
+                  onChange={(bom) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      bom,
+                    }))
+                  }
+                />
+              </div>
+              <div style={{ minWidth: 240 }}>
+                <MyDatePicker
+                  setDateRange={(value) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      date: value,
+                    }))
+                  }
+                  value={filters.date}
+                  size="default"
+                />
+              </div>
               <Button
-                onClick={handleDownloadingCSV}
-                style={{ marginRight: "10px" }}
-              >
-                <MdOutlineDownloadForOffline style={{ fontSize: "20px" }} />
-              </Button>
-            )}
-            {/* <Button> */}
-
-            {loading ? (
-              ""
-            ) : (
-              <FilterOutlined
-                className="cursorr"
-                onClick={() => setViewModal(true)}
+                type="primary"
+                icon={<SearchOutlined />}
+                onClick={handleSearch}
+                loading={loading}
                 style={{
-                  fontSize: "24px",
-                  // color: "#365958",
-                  color: "#04b0a8",
+                  minWidth: 110,
                 }}
-              />
-            )}
-            {/* </Button> */}
+              >
+                Search
+              </Button>
+              {allResponseData.length >= 1 && (
+                <Button onClick={handleDownloadingCSV}>
+                  <MdOutlineDownloadForOffline style={{ fontSize: "20px" }} />
+                </Button>
+              )}
+            </Space>
           </div>
         </Col>
       </Row>
@@ -238,12 +345,6 @@ const R1 = () => {
         )}
       </div>
 
-      <OpenR1Modal
-        setAllResponseData={setAllResponseData}
-        setViewModal={setViewModal}
-        viewModal={viewModal}
-        setLoading={setLoading}
-      />
     </div>
   );
 };
