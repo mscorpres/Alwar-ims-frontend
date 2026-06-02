@@ -20,8 +20,8 @@ const OpenR1Modal = ({
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [date, setDate] = useState("");
   const [dataa, setData] = useState({
-    selectProduct: "",
-    bom: "",
+    selectProduct: undefined,
+    bom: undefined,
   });
 
   const { executeFun, loading1 } = useApi();
@@ -40,8 +40,12 @@ const OpenR1Modal = ({
   };
 
   const getBom = async () => {
+    const productKey =
+      dataa?.selectProduct?.value ?? dataa?.selectProduct ?? "";
+    if (!productKey) return;
+
     const response = await imsAxios.post("/backend/fetchBomForProduct", {
-      search: dataa?.selectProduct,
+      search: productKey,
     });
     const arr = response.data.map((d) => {
       return { value: d.bomid, label: d.bomname };
@@ -55,20 +59,26 @@ const OpenR1Modal = ({
     }
   }, [dataa.selectProduct]);
 
+  useEffect(() => {
+    if (!viewModal) return;
+    if (dataa.selectProduct?.value && dataa.selectProduct?.label) {
+      setAsyncOptions([dataa.selectProduct]);
+    }
+    if (dataa.selectProduct) {
+      getBom();
+    }
+  }, [viewModal]);
+
   const generateFun = async () => {
     setLoading(true);
     setAllResponseData([]);
     const response = await imsAxios.post("/report1", {
-      product: dataa.selectProduct,
-      subject: dataa.bom,
+      product: dataa.selectProduct?.value ?? dataa.selectProduct,
+      subject: dataa.bom?.value ?? dataa.bom,
       date: date,
       action: "search_r1",
     });
     if (response.success) {
-      setData({
-        selectProduct: "",
-        bom: "",
-      });
       let arr = response.data.map((row) => {
         return {
           ...row,
@@ -108,13 +118,16 @@ const OpenR1Modal = ({
               loadOptions={getProductNameFecth}
               onBlur={() => setAsyncOptions([])}
               onInputChange={(e) => setSearch(e)}
-              value={dataa.selectProduct.value}
+              labelInValue
+              value={dataa.selectProduct}
               placeholder="Product Name / SKU"
               optionsState={asyncOptions}
               onChange={(e) =>
-                setData((dataa) => {
-                  return { ...dataa, selectProduct: e };
-                })
+                setData((prev) => ({
+                  ...prev,
+                  selectProduct: e,
+                  bom: "",
+                }))
               }
             />
           </Col>
@@ -123,11 +136,13 @@ const OpenR1Modal = ({
               style={{ width: "100%" }}
               placeholder="Select Bom"
               options={bomName}
-              value={dataa.bom.value}
-              onChange={(e) =>
-                setData((dataa) => {
-                  return { ...dataa, bom: e };
-                })
+              labelInValue
+              value={dataa.bom || undefined}
+              onChange={(bom) =>
+                setData((prev) => ({
+                  ...prev,
+                  bom,
+                }))
               }
             />
           </Col>
@@ -139,7 +154,11 @@ const OpenR1Modal = ({
             />
           </Col>
           <Col span={12} style={{ marginTop: "5px" }}>
-            <MyDatePicker setDateRange={setDate} size="default" />
+            <MyDatePicker
+              setDateRange={setDate}
+              value={date}
+              size="default"
+            />
           </Col>
         </Row>
       </Modal>
