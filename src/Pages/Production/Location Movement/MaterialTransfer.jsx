@@ -70,13 +70,11 @@ function MaterialTransfer({ type }) {
 
   const getComponent = async (e) => {
     if (e?.length > 2) {
-      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-      //   search: e,
-      // });
+   
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
       let arr = [];
-      arr = data.map((d) => {
+      arr = data?.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);

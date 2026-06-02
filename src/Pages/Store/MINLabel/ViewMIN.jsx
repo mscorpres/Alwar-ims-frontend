@@ -50,7 +50,7 @@ const ViewMIN = () => {
       "fetch"
     );
 
-    setRows(response.data);
+    setRows(response?.data);
   };
 
   const handlePrintMIN = async (minId, action) => {
