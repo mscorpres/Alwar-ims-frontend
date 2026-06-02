@@ -79,18 +79,33 @@ const CreateFGOut = () => {
   }, []);
 
   const getOption = async (productSearchInput) => {
-    if (productSearchInput?.length > 2) {
-      setSelLoading(true);
-      const response = await imsAxios.post("/fgOUT/fetchProduct", {
-        searchTerm: productSearchInput,
-      });
+    try {
+      if (productSearchInput?.length > 2) {
+        setSelLoading(true);
+        const response = await imsAxios.post("/fgOUT/fetchProduct", {
+          searchTerm: productSearchInput,
+        });
+        setSelLoading(false);
+        let arr = [];
+        if (!response?.success) {
+          showToast(
+            response?.message || "Error fetching product options",
+            "error",
+          );
+          setSelLoading(false);
+          return;
+        }
+        arr = response?.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+        // return arr;
+      }
+    } catch (error) {
       setSelLoading(false);
-      let arr = [];
-      arr = response.data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
-      // return arr;
+      showToast(error?.message || "Error fetching product options", "error");
+    } finally {
+      setSelLoading(false);
     }
   };
 
@@ -364,7 +379,10 @@ const CreateFGOut = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={24} style={{ height: "calc(100% - 50px)", overflowY: "auto" }}>
+        <Col
+          span={24}
+          style={{ height: "calc(100% - 50px)", overflowY: "auto" }}
+        >
           <MyDataTable
             loading={loading}
             data={addRowData}

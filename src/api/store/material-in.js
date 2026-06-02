@@ -142,11 +142,11 @@ export const printMIN = async (minId, action) => {
     transaction: minId,
   });
 
-  if (response.success) {
+  if (response?.success) {
     if (!action) {
-      printFunction(response.data.buffer.data);
+      printFunction(response?.data?.buffer.data);
     } else if (action === "download") {
-      downloadFunction(response.data.buffer.data, minId);
+      downloadFunction(response?.data?.buffer.data, minId);
     }
   }
 
