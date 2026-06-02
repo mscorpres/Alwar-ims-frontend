@@ -78,34 +78,19 @@ const CreateFGOut = () => {
     getLocations();
   }, []);
 
-  const getOption = async (productSearchInput) => {
-    try {
-      if (productSearchInput?.length > 2) {
-        setSelLoading(true);
-        const response = await imsAxios.post("/fgOUT/fetchProduct", {
-          searchTerm: productSearchInput,
-        });
-        setSelLoading(false);
-        let arr = [];
-        if (!response?.success) {
-          showToast(
-            response?.message || "Error fetching product options",
-            "error",
-          );
-          setSelLoading(false);
-          return;
-        }
-        arr = response?.data.map((d) => {
-          return { text: d.text, value: d.id };
-        });
-        setAsyncOptions(arr);
-        // return arr;
-      }
-    } catch (error) {
+   const getOption = async (productSearchInput) => {
+    if (productSearchInput?.length > 2) {
+      setSelLoading(true);
+      const response = await imsAxios.post("/fgOUT/fetchProduct", {
+        searchTerm: productSearchInput,
+      });
       setSelLoading(false);
-      showToast(error?.message || "Error fetching product options", "error");
-    } finally {
-      setSelLoading(false);
+      let arr = [];
+      arr = response?.data?.map((d) => {
+        return { text: d.text, value: d.id };
+      });
+      setAsyncOptions(arr);
+      // return arr;
     }
   };
 
