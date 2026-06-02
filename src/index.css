@@ -756,9 +756,17 @@ textarea.ant-input:focus-visible {
 .otp-input:focus {
   outline: 1px solid #1890ff;
 }
-/* .ant-form-item {
-  margin-bottom: 5px !important;
-} */
+
+.ant-form-horizontal .ant-form-item-row {
+  align-items: flex-start;
+}
+
+.ant-form-horizontal .ant-form-item-label {
+  padding-top: 8px; /* adjust to match input height */
+}
+.ant-form-item-explain {
+  margin-top: 4px !important;
+}
 .ant-form-item-label > label,
 ul.MuiDataGrid-menuList li.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root,
 .css-1a5j4pb-MuiDataGrid-root,

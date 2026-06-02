@@ -163,58 +163,81 @@ export default function PendingModal({
     { name: "Consume Loc", selector: (row) => row.cons_loc },
   ];
 
-  const fetchDetailWhenClickModal = async () => {
+const fetchDetailWhenClickModal = async () => {
+  try {
     setLoading(true);
-    const response = await imsAxios.post("/ppr/fetchPprComponentDetails", {
-      accesstoken: showModal.prod_randomcode,
-      pprrequest: showModal.prod_transaction,
-      sku: showModal.prod_product_sku,
-    });
-    //  let arr = tabs;
+
+    const response = await imsAxios.post(
+      "/ppr/fetchPprComponentDetails",
+      {
+        accesstoken: showModal?.prod_randomcode,
+        pprrequest: showModal?.prod_transaction,
+        sku: showModal?.prod_product_sku,
+      }
+    );
 
     let arr = tabs;
+
     if (response.success) {
-      setHeaderData(data.data.header_data);
+      setHeaderData(response.data.header_data);
+
       arr = arr.map((tab) => {
-        if (tab.name == "Part") {
+        if (tab.name === "Part") {
           return {
             ...tab,
-            data: data?.data?.comp_data?.filter((aa) => aa?.type == "P"),
-          };
-        } else if (tab.name == "Packing") {
-          return {
-            ...tab,
-            data: data?.data?.comp_data?.filter((aa) => aa?.type == "PCK"),
-          };
-        } else if (tab.name == "Other") {
-          return {
-            ...tab,
-            data: data?.data?.comp_data?.filter((aa) => aa?.type == "O"),
+            data: response.data.comp_data?.filter(
+              (item) => item?.type === "P"
+            ),
           };
         }
+
+        if (tab.name === "Packing") {
+          return {
+            ...tab,
+            data: response.data.comp_data?.filter(
+              (item) => item?.type === "PCK"
+            ),
+          };
+        }
+
+        if (tab.name === "Other") {
+          return {
+            ...tab,
+            data: response.data.comp_data?.filter(
+              (item) => item?.type === "O"
+            ),
+          };
+        }
+
+        return tab;
       });
 
-      arr = arr.map((row) => {
-        return {
-          ...row,
-          data: row.data.map((r) => {
-            return { ...r, actQty: "", rej: "", rem: "" };
-          }),
-        };
-      });
+      arr = arr.map((row) => ({
+        ...row,
+        data: row.data?.map((r) => ({
+          ...r,
+          actQty: "",
+          rej: "",
+          rem: "",
+        })) || [],
+      }));
 
-      // console.log(arr);
       setTabs(arr);
-      setLoading(false);
-
-      // setComponentData(data.data.comp_data);
-      // // console.log(data.data);
-      // toast.success(response.data.data);
-      // setLoading(false);
-
-      //  setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Error fetching component details:", error);
+
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "Failed to fetch component details";
+
+    const showToast = getGlobalToast();
+    if (showToast) showToast(message, "error");
+  } finally {
+    setLoading(false);
+  }
+};
   const getLocation = async () => {
     const response = await imsAxios.get("/ppr/mfg_locations");
     const arr = [];

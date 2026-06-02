@@ -12,8 +12,8 @@ export const convertSelectOptions = (
   label?: string,
   value?: string,
 ) => {
-  if (arr.map) {
-    return arr.map((row) => ({
+  if (arr?.map) {
+    return arr?.map((row) => ({
       text: row[label ?? "text"],
       value: row[value ?? "id"],
     }));

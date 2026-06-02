@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Card, Col, Form, Input, Row } from "antd";
+import  { useEffect, useState } from "react";
+import {  Col, Form, Input, Row } from "antd";
 //@ts-ignore
 import MyAsyncSelect from "@/Components/MyAsyncSelect.jsx";
 import { getComponentOptions, getHsnOptions } from "@/api/general";
@@ -10,12 +10,15 @@ import FormTable2 from "@/Components/FormTable2.jsx";
 //@ts-ignore
 import MyButton from "../../../Components/MyButton";
 import { getHsnList, mapHsn } from "@/api/master/component";
+//@ts-ignore
+import {useToast} from "../../../hooks/useToast";
 
 const HsnMap = () => {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const { executeFun, loading } = useApi();
   const [form] = Form.useForm();
-
+ const { showToast } = useToast();
+  
   const component = Form.useWatch("component", form);
 
   const getComponents = async (search: string) => {
@@ -24,7 +27,7 @@ const HsnMap = () => {
       "select",
     );
     //@ts-ignore
-    setAsyncOptions(convertSelectOptions(response.data ?? []));
+    setAsyncOptions(convertSelectOptions(response?.data ?? []));
   };
 
   const handleFetchHsnOptions = async (search: string) => {
@@ -34,20 +37,29 @@ const HsnMap = () => {
   };
 
   const submitHandler = async () => {
-    const values = await form.validateFields();
-    const response = await executeFun(
-      () => mapHsn(values.component, values.rows),
-      "submit",
-    );
+    try {
+      const values = await form?.validateFields();
+      const response = await mapHsn(values?.component, values?.rows);
 
-    if (response.success) {
-      form.resetFields();
+      if (response?.success) {
+        form?.resetFields();
+      }
+    } catch (error: any) {
+      showToast(
+        error?.errorFields?.[0]?.errors?.[0] ||
+          "An error occurred while mapping HSN. Please try again.",
+        "error",
+      );
     }
   };
 
   const handleFetchComponentHsn = async (key: string) => {
     const response = await executeFun(() => getHsnList(key), "fetch");
-    form.setFieldValue("rows", response.data ?? []);
+    const fetchedRows = Array.isArray(response?.data) ? response.data : [];
+    form.setFieldValue(
+      "rows",
+      fetchedRows.length > 0 ? fetchedRows : [initialValues.rows[0]],
+    );
   };
 
   useEffect(() => {
@@ -57,19 +69,19 @@ const HsnMap = () => {
   }, [component]);
   return (
     <Form
-      layout="vertical"
       initialValues={initialValues}
       form={form}
       style={{ height: "100%", padding: "10px" }}
     >
       <Row gutter={14}>
         <Col span={12}>
-          <Row  gutter={12} style={{ }}>
+          <Row gutter={12} style={{}}>
             <Col span={12}>
               <Form.Item
                 name="component"
                 label="Component Name"
-                rules={[{ required: true, message: "Component is required" }]}
+                rules={[{ required: true, message: "Component name is required" }]}
+         
               >
                 <MyAsyncSelect
                   onBlur={() => setAsyncOptions([])}
@@ -93,8 +105,8 @@ const HsnMap = () => {
         </Col>
         <Col
           span={24}
-          className="remove-table-footer remove-cell-border"
-          style={{ height: "100%" }}
+          // className="remove-table-footer remove-cell-border"
+          style={{ height: "100%", marginTop: 10 }}
         >
           <FormTable2
             form={form}

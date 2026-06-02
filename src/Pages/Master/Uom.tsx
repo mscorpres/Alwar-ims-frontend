@@ -110,7 +110,7 @@ const Uom = () => {
         <Col span={8}>
           <Card size="small" title="Create UOM">
             <Form form={form} layout="vertical">
-              <Form.Item name="name" label="Unit">
+              <Form.Item name="name" label="Unit" rules={[{ required: true, message: "Please enter unit name" }]}>
                 <Input />
               </Form.Item>
               <Form.Item name="details" label="Specification">
