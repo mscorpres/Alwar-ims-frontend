@@ -41,7 +41,7 @@ const Main = () => {
     };
   }, []);
   return (
-    <Suspense fallback={<AppLoader logo={"/assets/images/appLoader.png"} />}>
+    <Suspense fallback={<AppLoader  />}>
       <GlobalBackButtonPrevention />
       <NoInternetOverlay>
         <App />
