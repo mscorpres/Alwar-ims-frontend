@@ -249,7 +249,6 @@ export default function MaterialInWithoutPO() {
   };
   const getCurrencies = async () => {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
-
     let arr = [];
     arr = response.data.map((d) => {
       return {

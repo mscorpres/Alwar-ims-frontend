@@ -170,9 +170,9 @@ const fetchDetailWhenClickModal = async () => {
     const response = await imsAxios.post(
       "/ppr/fetchPprComponentDetails",
       {
-        accesstoken: showModal?.prod_randomcode,
+        accesstoken: showModal?.prod_randomcode ?? "--",
         pprrequest: showModal?.prod_transaction,
-        sku: showModal?.prod_product_sku,
+        sku: showModal?.prod_product_sku ,
       }
     );
 
