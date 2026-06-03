@@ -5,18 +5,11 @@ import MyButton from "../../Components/MyButton";
 //@ts-ignore
 import useApi from "../../hooks/useApi.ts";
 import { createUOM, getUOMList } from "../../api/master/uom";
-//@ts-ignore
-import { ResponseType } from "../../types/general.ts";
+import { useToast } from "../../hooks/useToast.js";
 
 const Uom = () => {
   const [uomData, setUomData] = useState([]);
-
-  // old code
-  // const [loading, setLoading] = useState(false);
-  // const [newUom, setNewUom] = useState({
-  //   uom: "",
-  //   description: "",
-  // });
+  const { showToast } = useToast();
 
   const { executeFun, loading } = useApi();
   const [form] = Form.useForm();
@@ -26,56 +19,26 @@ const Uom = () => {
     const response = await executeFun(() => getUOMList(), "fetch");
     setUomData(response.data ?? []);
 
-    // old code
-    // setLoading(true);
-    // const response = await imsAxios.get("/uom");
-    // let arr = response.data.map((row, index) => {
-    //   return {
-    //     ...row,
-    //     index: index + 1,
-    //     id: v4(),
-    //   };
-    // });
-    // setUomData(arr);
-    // setLoading(false);
   };
 
   //   add UOM
   const submitHandler = async () => {
-    const values = await form.validateFields();
-    const response: ResponseType = await executeFun(
-      () => createUOM(values),
-      "submit"
-    );
+  try {    const values = await form.validateFields();
+    const payload = {
+      name: values.name,
+      details: values.details,
+    };
+
+    const response = await executeFun(() => createUOM(payload), "fetch");
     if (response.success) {
       form.resetFields();
       handleFetchUOMList();
     }
+  } catch (error:any) {
+    showToast(error?.errorFields?.[0]?.errors?.[0] , "error");
+  }
 
-    // old code
-    // e.preventDefault();
-    // if (!newUom.uom) {
-    //   toast.error("Please Add UoM");
-    // } else if (!newUom.description) {
-    //   toast.error("Please Add Description");
-    // } else {
-    //   setLoading(true);
-    //   const response = await imsAxios.post("/uom/insert", {
-    //     uom: newUom.uom,
-    //     description: newUom.description,
-    //   });
-    //   if (response.success) {
-    //     setNewUom({
-    //       uom: "",
-    //       description: "",
-    //     });
-    //     fetchUOm();
-    //     setLoading(false);
-    //   } else {
-    //     toast.error(response.message?.msg || response.message);
-    //     setLoading(false);
-    //   }
-    // }
+
   };
 
   const resetHandler = () => {
