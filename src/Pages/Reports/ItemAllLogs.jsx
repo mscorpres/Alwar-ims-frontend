@@ -349,30 +349,7 @@ export default function ItemAllLogs() {
             />
        
 
-          {/* CHANGE: Added Pagination Component */}
-          {rows.length > 0 && (
-            <div
-              style={{
-                padding: "16px",
-                textAlign: "right",
-                borderTop: "1px solid #f0f0f0",
-              }}
-            >
-              <Pagination
-                current={currentPage}
-                pageSize={pageSize}
-                total={totalRecords}
-                onChange={handlePageChange}
-                onShowSizeChange={handlePageChange}
-                showSizeChanger
-                showTotal={(total, range) =>
-                  `${range[0]}-${range[1]} of ${total} items`
-                }
-                pageSizeOptions={[10, 25, 50, 100, 200]}
-                disabled={loading === "fetch"}
-              />
-            </div>
-          )}
+   
         </div>
       </Col>
     </Row>
