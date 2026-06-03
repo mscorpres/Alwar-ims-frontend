@@ -45,6 +45,7 @@ import { v4 } from "uuid";
 
 export default function ExportMaterialInWithPO({}) {
   const { showToast } = useToast();
+  const FIXED_CURRENCY_LABEL = "$";
   const [poData, setPoData] = useState({ materials: [] });
   const [resetPoData, setResetPoData] = useState({ materials: [] });
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -65,7 +66,6 @@ export default function ExportMaterialInWithPO({}) {
   const [totalValues, setTotalValues] = useState([
     { label: "Sub-Total value before Taxes", sign: "", values: [] },
   ]);
-  const [currencies, setCurrencies] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
@@ -155,7 +155,7 @@ export default function ExportMaterialInWithPO({}) {
             documentName: values2?.components?.map((r) => r.documentName),
             irn: irnNum,
             qrScan: isScan == true ? "Y" : "N",
-            currency: currency,
+            currency: "28567096",
           };
         });
         //uploading invoices
@@ -424,7 +424,14 @@ export default function ExportMaterialInWithPO({}) {
         notes: d.currency_notes,
       };
     });
-    setCurrencies(arr);
+    // Currency is fixed for this flow. Pick the Dollar option from master data.
+    const dollarOption = arr.find((option) => {
+      const text = String(option?.text || "").toLowerCase();
+      return text.includes("$") || text.includes("usd");
+    });
+    if (dollarOption?.value) {
+      setCurrency(dollarOption.value);
+    }
   };
 
   const getLocation = async (costCode) => {
@@ -1455,12 +1462,7 @@ export default function ExportMaterialInWithPO({}) {
                       >
                         Currency
                       </Typography.Title>
-                      <MySelect
-                        onChange={(value) => setCurrency(value)}
-                        value={currency}
-                        options={currencies}
-                        label="Currency"
-                      />
+                      <Input value={FIXED_CURRENCY_LABEL} disabled />
                     </Col>
                     <Col span={24}>
                       <Typography.Title
