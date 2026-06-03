@@ -79,20 +79,13 @@ export default function ItemAllLogs() {
     ]);
     setRows([]);
 
-    // CHANGE: Removed date range from API call, added page and limit
-    const response = await imsAxios.post("/itemQueryA/fetchRM_logs", {
-      // range: values.date, // REMOVED
-      wise: "C",
-      data: values.component,
-      page: page, // ADDED
-      limit: limit, // ADDED
-    });
+    const response = await imsAxios.get("/q1/view?wise=C&data=" + values.component + "&page=" + page + "&limit=" + limit );
 
     setLoading(false);
     if (response.success) {
-      // CHANGE: Updated to use serial_no from backend instead of index
-      const arr = response?.data?.data2.map((row) => ({
-        index: row.serial_no, // CHANGED: Use serial_no from backend
+     
+      const arr = response?.data?.body.map((row) => ({
+        index: row.serial_no,
         id: v4(),
         ...row,
       }));
@@ -105,9 +98,9 @@ export default function ItemAllLogs() {
         setTotalPages(response?.data.pagination.totalPages);
       }
       setSummaryData([
-        { title: "Component", description: response.data.data1.component },
-        { title: "Part Code", description: response.data.data1.partno },
-        { title: "Unique Id", description: response.data.data1.unique_id },
+        { title: "Component", description: response.data.header.partName },
+        { title: "Part Code", description: response.data.header.partCode },
+        { title: "Unique Id", description: response.data.header.uniqueID },
         // {
         //   title: "Closing",
         //   description:
@@ -115,9 +108,9 @@ export default function ItemAllLogs() {
         // },
         {
           title: "Last In (Date)",
-          description: response.data.data1.last_date ?? "--",
+          description: response.data.header.lastIN ?? "--",
         },
-        { title: "Last Rate", description: response.data.data1.lastRate },
+        { title: "Last Rate", description: response.data.header.lastRate },
       ]);
     }else {
       showToast(response.message, "error");
@@ -147,13 +140,13 @@ export default function ItemAllLogs() {
     },
     {
       headerName: "Date",
-      field: "date",
+      field: "transactionDate",
       width: 120,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.date} />,
+      renderCell: ({ row }) => <ToolTipEllipses text={row.transactionDate} />,
     },
     {
       headerName: "Type",
-      field: "transaction_type",
+      field: "transactionType",
       width: 30,
       renderCell: ({ row }) => (
         <div
@@ -162,44 +155,44 @@ export default function ItemAllLogs() {
             width: "15px",
             borderRadius: "50px",
             backgroundColor:
-              row.transaction_type === "CONSUMPTION"
+              row.transactionType=== "CONSUMPTION"
                 ? "#678983"
-                : row.transaction_type === "INWARD"
+                : row.transactionType === "INWARD"
                 ? "#59CE8F"
-                : row.transaction_type === "TRANSFER"
+                : row.transactionType === "TRANSFER"
                 ? "#FFB100"
-                : row.transaction_type === "ISSUE"
+                : row.transactionType === "ISSUE"
                 ? "#DD5353"
-                : row.transaction_type === "JOBWORK"
+                : row.transactionType === "JOBWORK"
                 ? "#DD5353"
-                 : row.transaction_type === "CONVERSION"
+                 : row.transactionType === "CONVERSION"
                 ? "#ff9bb9"
-                : row.transaction_type === "CANCELLED" && "#36454F",
+                : row.transactionType === "CANCELLED" && "#36454F",
           }}
         />
       ),
     },
     {
       headerName: "Transaction",
-      field: "transaction",
+      field: "transactionID",
       width: 150,
       renderCell: ({ row }) => (
-        <ToolTipEllipses text={row.transaction} copy={true} />
+        <ToolTipEllipses text={row.transactionID} copy={true} />
       ),
     },
     {
       headerName: "Qty In",
-      field: "qty_in",
+      field: "qtyIn",
       width: 120,
     },
     {
       headerName: "Qty Out",
-      field: "qty_out",
+      field: "qtyOut",
       width: 120,
     },
     {
-      headerName: "Out Rate",
-      field: "out_rate",
+      headerName: "Rate",
+      field: "rate",
       width: 120,
     },
     {
@@ -209,44 +202,44 @@ export default function ItemAllLogs() {
     },
     {
       headerName: "Method",
-      field: "mode",
+      field: "transactionMode",
       width: 120,
     },
     {
       headerName: "Loc In",
-      field: "location_in",
+      field: "locationIn",
       width: 120,
     },
     {
       headerName: "Loc Out",
-      field: "location_out",
+      field: "locationOut",
       width: 120,
     },
     {
-      headerName: "Doc Type",
-      field: "vendortype",
+      headerName: "Vendor Type",
+      field: "vendorType",
       width: 120,
     },
     {
       headerName: "Vendor",
-      field: "vendorname",
+      field: "vendorName",
       minWidth: 150,
       flex: 1,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.vendorname} />,
+      renderCell: ({ row }) => <ToolTipEllipses text={row.vendorName} />,
     },
     {
       headerName: "Vendor Code",
-      field: "vendorcode",
+      field: "vendorCode",
       minWidth: 120,
       renderCell: ({ row }) => (
-        <ToolTipEllipses text={row.vendorcode} copy={true} />
+        <ToolTipEllipses text={row.vendorCode} copy={true} />
       ),
     },
     {
       headerName: "Created/Approved By",
-      field: "doneby",
+      field: "transactionBy",
       minWidth: 150,
-      renderCell: ({ row }) => <ToolTipEllipses text={row.doneby} />,
+      renderCell: ({ row }) => <ToolTipEllipses text={row.transactionBy} />,
     },
   ];
 
