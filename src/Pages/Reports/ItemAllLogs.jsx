@@ -83,19 +83,19 @@ export default function ItemAllLogs() {
 
     setLoading(false);
     if (response.success) {
-     
-      const arr = response?.data?.body.map((row) => ({
+      const body = response?.data?.body ?? [];
+      const arr = body.map((row) => ({
         index: row.serial_no,
         id: v4(),
         ...row,
       }));
       setRows(arr);
 
-      // CHANGE: Updated pagination state from response
-      if (response.data.pagination) {
-        setCurrentPage(response?.data?.pagination.currentPage);
-        setTotalRecords(response?.data.pagination.totalRecords);
-        setTotalPages(response?.data.pagination.totalPages);
+      const pagination = response?.data?.pagination;
+      if (pagination) {
+        setCurrentPage(pagination.currentPage ?? page);
+        setTotalRecords(pagination.totalRecords ?? 0);
+        setTotalPages(pagination.totalPages ?? 0);
       }
       setSummaryData([
         { title: "Component", description: response.data.header.partName },
@@ -117,17 +117,18 @@ export default function ItemAllLogs() {
     }
   };
 
-  // CHANGE: Added pagination change handler
-  const handlePageChange = (page, pageSize) => {
-    setCurrentPage(page);
-    setPageSize(pageSize);
+  const handlePageChange = (page, size) => {
     const values = searchForm.getFieldsValue();
-    getRows(values, page, pageSize);
+    if (!values?.component) return;
+    setPageSize(size);
+    getRows(values, page, size);
   };
 
   // CHANGE: Added function to handle initial form submission
   const handleFormSubmit = (values) => {
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1);
+    setTotalRecords(0);
+    setTotalPages(0);
     getRows(values, 1, pageSize);
   };
 
@@ -341,15 +342,39 @@ export default function ItemAllLogs() {
         <div
           style={{ height: "100%", display: "flex", flexDirection: "column" }}
         >
-       
+          <div
+            className="remove-table-footer"
+            style={{ flex: 1, minHeight: 0 }}
+          >
             <MyDataTable
               loading={loading === "fetch"}
               data={rows}
               columns={columns}
+              pagination={false}
             />
-       
-
-   
+          </div>
+          {totalRecords > 0 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                padding: "8px 0",
+                flexShrink: 0,
+              }}
+            >
+              <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={totalRecords}
+                showSizeChanger
+                pageSizeOptions={[25, 50, 100]}
+                showTotal={(total, range) =>
+                  `${range[0]}-${range[1]} of ${total} records`
+                }
+                onChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </Col>
     </Row>
