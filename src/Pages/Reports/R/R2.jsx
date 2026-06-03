@@ -172,7 +172,7 @@ const R2 = () => {
       headerName: "Pending Qty",
       width: 150,
     },
-  
+
     {
       field: "vendor_code",
       headerName: "Vendor Code",
@@ -228,9 +228,9 @@ const R2 = () => {
     let response;
     if (type == "JW") {
       response = await imsAxios.get(
-        `/JWReport?wise=${wise}&data=${searchTerm}`
+        `/JWReport?wise=${wise}&data=${searchTerm}`,
       );
-      if (response.success) {
+      if (response.success && response?.data?.length > 0) {
         let arr = response.data.map((row, index) => {
           return {
             ...row,
@@ -241,7 +241,7 @@ const R2 = () => {
         setRows(arr);
         showToast(response.message, "success");
         setLoading(false);
-      } else {
+      } else if (!response.success) {
         showToast(response.message, "error");
         setLoading(false);
       }
@@ -251,9 +251,8 @@ const R2 = () => {
         data: searchTerm,
         wise: wise,
       });
-    
+
       if (response.success) {
-        showToast(response.message, "success");
         let arr = response.data.map((row, index) => {
           return {
             ...row,
@@ -273,19 +272,31 @@ const R2 = () => {
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
     setAsyncOptions(response.data);
   };
 
   const getUsers = async (search) => {
-    setLoading(true);
-    const response = await imsAxios.post("/backend/fetchAllUser", {
-      search: search,
-    });
-    setLoading(false);
-    let arr = data.map((row) => ({ text: row.text, value: row.id }));
-    setAsyncOptions(arr);
+    try {
+      setLoading(true);
+      const response = await imsAxios.post("/backend/fetchAllUser", {
+        search: search,
+      });
+     if (response.success) {
+       setLoading(false);
+      let arr = response?.data?.map((row) => ({ text: row.text, value: row.id }));
+      setAsyncOptions(arr);
+     } else {
+       showToast(response.message, "error");
+       setLoading(false);
+     }
+    } catch (e) {
+      showToast(e?.message || "Error fetching users", "error");
+      setLoading(false);
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     setRows([]);

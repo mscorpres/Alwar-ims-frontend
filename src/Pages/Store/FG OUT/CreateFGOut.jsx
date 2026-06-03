@@ -68,29 +68,50 @@ const CreateFGOut = () => {
   };
 
   const getLocations = async () => {
-    const { data } = await imsAxios.get("/ppr/mfg_locations");
-    const arr = [];
-    data?.map((a) => arr.push({ text: a.text, value: a.id }));
-    setLocationOptions(arr);
+    try {
+      const response = await imsAxios.get("/ppr/mfg_locations");
+      const arr = [];
+      if (response?.success) {
+        response?.data?.map((a) => arr.push({ text: a.text, value: a.id }));
+        setLocationOptions(arr);
+      }
+    } catch (e) {
+      showToast(e?.message || "Error fetching locations", "error");
+    }
   };
 
   useEffect(() => {
     getLocations();
   }, []);
 
-   const getOption = async (productSearchInput) => {
-    if (productSearchInput?.length > 2) {
-      setSelLoading(true);
-      const response = await imsAxios.post("/fgOUT/fetchProduct", {
-        searchTerm: productSearchInput,
-      });
+  const getOption = async (productSearchInput) => {
+    try {
+      if (productSearchInput?.length > 2) {
+        setSelLoading(true);
+        const response = await imsAxios.post("/fgOUT/fetchProduct", {
+          searchTerm: productSearchInput,
+        });
+        setSelLoading(false);
+        let arr = [];
+        if (!response?.success) {
+          showToast(
+            response?.message || "Error fetching product options",
+            "error",
+          );
+          setSelLoading(false);
+          return;
+        }
+        arr = response?.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+        // return arr;
+      }
+    } catch (error) {
       setSelLoading(false);
-      let arr = [];
-      arr = response?.data?.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
-      // return arr;
+      showToast(error?.message || "Error fetching product options", "error");
+    } finally {
+      setSelLoading(false);
     }
   };
 
@@ -101,7 +122,7 @@ const CreateFGOut = () => {
       });
       const totalValue = response?.data?.total;
       const unitValue = response?.data?.unit;
-      // console.log(totalValue);
+
       setAddRowData((product) =>
         product.map((h) => {
           if (h.id == id) {

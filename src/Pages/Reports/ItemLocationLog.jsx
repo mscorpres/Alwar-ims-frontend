@@ -24,7 +24,7 @@ import { useToast } from "../../hooks/useToast.js";
 const initialSummaryData = [
   { title: "Component", description: "--" },
   { title: "Part Code", description: "--" },
-  // { title: "Opening", description: "--" }, 
+  // { title: "Opening", description: "--" },
   {
     title: "Closing",
     description: "--",
@@ -56,8 +56,9 @@ export default function ItemLocationLog() {
   const getComponentOption = async (search) => {
     const response = await executeFun(
       () => getComponentOptions(search),
-      "select"
+      "select",
     );
+
     getData(response);
   };
 
@@ -72,19 +73,16 @@ export default function ItemLocationLog() {
 
   // getting data from response for setting async options for async select
   const getData = (response) => {
-    const { data, success, massage } = response;
+    const { data, success, message, massage } = response;
     if (success) {
-      if (data.length> 0) {
-        const arr = data.map((row) => ({
-          text: row.text,
-          value: row.id,
-        }));
+      const arr = data.map((row) => ({
+        text: row.text,
+        value: row.id,
+      }));
 
-        setAsyncOptions(arr);
-      }
+      setAsyncOptions(arr);
     } else {
-     
-      showToast(massage, "error");
+      showToast(message ?? massage, "error");
     }
   };
   const getDetails = async (values) => {
@@ -109,7 +107,7 @@ export default function ItemLocationLog() {
       const response = await imsAxios.get("/q2/view?key=" + values.component + "&location=" + values.location);
   
       getDetails(values);
-      if(response?.success == false){
+      if (response?.success == false) {
         showToast(response?.message, "error");
         setLoading(false);
         return;
@@ -124,7 +122,8 @@ export default function ItemLocationLog() {
             id: v4(),
             qty_in_rate: row.qty_in_rate ?? "-",
             weightedPurchaseRate: row.weightedPurchaseRate ?? "-",
-            weightedPurchaseRateCurrency: row.weightedPurchaseRateCurrency ?? "-",
+            weightedPurchaseRateCurrency:
+              row.weightedPurchaseRateCurrency ?? "-",
             ...row,
           }));
           let bomDetailsArr = [];
@@ -152,7 +151,8 @@ export default function ItemLocationLog() {
             // },
             {
               title: "Closing",
-              description: (header?.closingqty ?? 0) + " " + (header?.uom ?? ""),
+              description:
+                (header?.closingqty ?? 0) + " " + (header?.uom ?? ""),
             },
             {
               title: "Last In (Date)",
@@ -250,9 +250,7 @@ export default function ItemLocationLog() {
       field: "weightedPurchaseRate",
       width: 120,
       renderCell: ({ row }) => (
-        <Tooltip
-          title={row.weightedPurchaseRateCurrency}
-        >
+        <Tooltip title={row.weightedPurchaseRateCurrency}>
           {row.weightedPurchaseRate}
         </Tooltip>
       ),
@@ -427,7 +425,11 @@ export default function ItemLocationLog() {
                 ))}
               </Collapse>
             </Card>
-            <Card title="Similar Components" size="small" style={{ marginTop: 6 }}>
+            <Card
+              title="Similar Components"
+              size="small"
+              style={{ marginTop: 6 }}
+            >
               <Collapse loading={loading}>
                 {altDetails.map((row) => (
                   <Collapse.Panel
