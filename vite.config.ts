@@ -15,7 +15,7 @@ export default defineConfig({
       org: "mscorpres-automation-pvt-ltd",
       project: "alwar",
       // Auth token from SENTRY_AUTH_TOKEN env var (set in CI/build environment)
-      authToken: process.env.SENTRY_AUTH_TOKEN,
+      authToken: process.env.VITE_SENTRY_AUTH_TOKEN,
     }),
   ],
   resolve: {

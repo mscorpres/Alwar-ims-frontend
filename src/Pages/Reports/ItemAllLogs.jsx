@@ -57,8 +57,9 @@ export default function ItemAllLogs() {
   };
 
   const getData = (response) => {
-    if (response.length > 0) {
-      const arr = response.map((row) => ({
+   
+    if (response?.length > 0) {
+      const arr = response?.map((row) => ({
         text: row.text,
         value: row.id,
       }));
