@@ -122,6 +122,17 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
     socket.emit("fetch_notifications", { source: "react" });
   };
 
+  const openNotificationFile = (filePath) => {
+    if (!filePath) return;
+    const fileUrl =
+      getSocketLink().split(":")[1] + "/" + filePath.substring(2);
+    window.open(
+      fileUrl,
+      "Oakter",
+      "width=250,height=250,status=0,scrollbars=0,location=0,resizable=no",
+    );
+  };
+
   useEffect(() => {
     if (open) {
       handleRefreshNotification(true);
@@ -308,20 +319,22 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
                             percent={item.total}
                           />
                         ) : (
-                          <a
-                            href={
-                              getSocketLink().split(":")[1] +
-                              "/" +
-                              item.file?.substring(2)
-                            }
-                            download
+                          <button
+                            type="button"
+                            onClick={() => openNotificationFile(item.file)}
+                            style={{
+                              border: "none",
+                              background: "transparent",
+                              padding: 0,
+                              cursor: "pointer",
+                            }}
                           >
                             <CommonIcons
                               loading={item.loading || item.status == "pending"}
                               action="downloadButton"
                               size="small"
                             />
-                          </a>
+                          </button>
                         ))}
                       {item.type == "msg" && (
                         <span>{JSON.parse(item?.other_data)?.message}</span>
