@@ -64,7 +64,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   const [updateMSMEForm] = Form.useForm();
   const [isMSMEEdited, setIsMSMEEdited] = useState([]);
   const einvoice = Form.useWatch("applicability", updateVendorForm);
-  const transactionType = Form.useWatch("transactionType", updateVendorForm);
   let msmeStat = "";
   msmeStat = Form.useWatch("vendor_msme_status", updateVendorForm);
 
@@ -223,7 +222,6 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
     }
   };
 
-
   const getCurrencies = async () => {
     try {
       const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
@@ -242,6 +240,7 @@ const EditBranch = ({ fetchVendor, setEditVendor, editVendor }) => {
   useEffect(() => {
     if (editVendor) {
       getDetails();
+      getCurrencies();
     }
   }, [editVendor]);
 

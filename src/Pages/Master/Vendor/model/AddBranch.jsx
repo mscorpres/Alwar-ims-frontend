@@ -61,9 +61,9 @@ const AddBranch = ({ openBranch, setOpenBranch, getVendorBracnch }) => {
       const response = await imsAxios.get("/backend/fetchAllCurrecy");
       const arr =
         response?.data?.map((d) => ({
-          text: d?.currency_symbol,
-          value: d?.currency_id,
-          notes: d?.currency_notes,
+          text: d.currency_symbol,
+          value: d.currency_id,
+          notes: d.currency_notes,
         })) || [];
       setCurrencies(arr);
     } catch (error) {
