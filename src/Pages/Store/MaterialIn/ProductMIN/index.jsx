@@ -80,10 +80,36 @@ const vendorDetailsOptions = [
   { text: "Sales Return", value: "s01" },
 ];
 
+const INR_CURRENCY_ID = "364907247";
+
 const getGstTypeValue = (v) => {
   if (v == null || v === "") return "L";
   return typeof v === "object" ? (v?.value ?? v?.text ?? "L") : v;
 };
+
+const defaultMaterialRow = (currency, exchangeRate) => ({
+  id: v4(),
+  component: "",
+  orderqty: 0,
+  orderrate: 0,
+  currency: currency ?? INR_CURRENCY_ID,
+  gstrate: 0,
+  unitsname: "--",
+  gsttype: "L",
+  hsncode: "",
+  inrValue: 0,
+  cgst: 0,
+  sgst: 0,
+  igst: 0,
+  invoiceDate: "",
+  invoiceId: "",
+  location: "",
+  exchange_rate: exchangeRate ?? 1,
+  orderremark: "",
+  locationName: "",
+  autoConsumption: 0,
+  usdValue: 0,
+});
 
 export default function ProductMIN() {
   const { showToast } = useToast();
@@ -115,34 +141,15 @@ export default function ProductMIN() {
     companybranch: "BRALWR36",
     projectID: "",
     costCenter: "",
+    currency: INR_CURRENCY_ID,
+    exchangeRate: 1,
   });
   const { executeFun, loading: loading1 } = useApi();
   const [vendorBranchOptions, setVendorBranchOptions] = useState([]);
   const [preview, setPreview] = useState(false);
   const [previewRows, setPreviewRows] = useState([]);
   const [materialInward, setMaterialInward] = useState([
-    {
-      id: v4(),
-      component: "",
-      orderqty: 0,
-      orderrate: 0, //will come from backend on co mponent selection
-      currency: "364907247", //will be default at fiest, check
-      gstrate: 0,
-      unitsname: "--",
-      gsttype: "L",
-      hsncode: "",
-      inrValue: 0,
-      cgst: 0,
-      sgst: 0,
-      igst: 0,
-      invoiceDate: "",
-      invoiceId: "",
-      location: "",
-      exchange_rate: 0,
-      orderremark: "",
-      locationName: "",
-      autoConsumption: 0,
-    },
+    defaultMaterialRow(INR_CURRENCY_ID, 1),
   ]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
@@ -152,31 +159,53 @@ export default function ProductMIN() {
   const [form] = Form.useForm();
 
   const addRow = () => {
-    let arr = materialInward;
-    let newRow = {
-      id: v4(),
-      component: "",
-      orderqty: 0,
-      orderrate: 0, //will come from backend on co mponent selection
-      currency: materialInward[0].currency, //will be default at fiest, check
-      gstrate: 0,
-      unitsname: "--",
-      gsttype: "L",
-      hsncode: "",
-      inrValue: 0,
-      cgst: 0,
-      sgst: 0,
-      igst: 0,
-      invoiceDate: "",
-      invoiceId: "",
-      location: "",
-      exchange_rate: 0,
-      orderremark: "",
-      locationName: "",
-      autoConsumption: 0,
-    };
-    arr = [newRow, ...arr];
-    setMaterialInward(arr);
+    const currency = form.getFieldValue("currency") || INR_CURRENCY_ID;
+    const exchangeRate = form.getFieldValue("exchangeRate") ?? 1;
+    setMaterialInward([defaultMaterialRow(currency, exchangeRate), ...materialInward]);
+  };
+
+  const syncMaterialInwardCurrency = (currency, exchangeRate) => {
+    setMaterialInward((rows) =>
+      rows.map((row) => ({
+        ...row,
+        currency,
+        exchange_rate: exchangeRate,
+        usdValue:
+          currency === INR_CURRENCY_ID
+            ? 0
+            : (Number(row.inrValue) || 0) * exchangeRate,
+      })),
+    );
+  };
+
+  const handleCurrencyChange = (value) => {
+    form.setFieldValue("currency", value);
+    if (value === INR_CURRENCY_ID) {
+      form.setFieldValue("exchangeRate", 1);
+      syncMaterialInwardCurrency(value, 1);
+      return;
+    }
+
+    const exchangeRate = form.getFieldValue("exchangeRate") || 1;
+    syncMaterialInwardCurrency(value, exchangeRate);
+
+    const totalForeignPrice = materialInward.reduce(
+      (sum, row) =>
+        sum + (Number(row.inrValue) || getInt(row.orderqty) * getInt(row.orderrate)),
+      0,
+    );
+    const symbol = currencies.find((cur) => cur.value == value)?.text;
+
+    setShowCurrenncy({
+      currency: value,
+      price: totalForeignPrice,
+      exchange_rate: exchangeRate,
+      symbol,
+      onExchangeSubmit: (rate) => {
+        form.setFieldValue("exchangeRate", rate);
+        syncMaterialInwardCurrency(value, rate);
+      },
+    });
   };
   const removeRow = (id) => {
     let arr = materialInward;
@@ -675,30 +704,6 @@ export default function ProductMIN() {
                   : (value * row.inrValue) / 200,
             };
             return obj;
-          } else if (name == "currency") {
-            if (value == "364907247") {
-              obj = {
-                ...obj,
-                currency: value,
-                usdValue: 0,
-                exchange_rate: 1,
-              };
-            } else {
-              obj = {
-                ...obj,
-                [name]: value,
-              };
-              setShowCurrenncy({
-                currency: value,
-                price: row.inrValue,
-                exchange_rate: row.exchange_rate,
-                symbol: currencies.filter((cur) => cur.value == value)[0].text,
-                rowId: row.id,
-                inputHandler: inputHandler,
-              });
-            }
-
-            return obj;
           } else if (name == "exchange_rate") {
             obj = {
               ...obj,
@@ -828,7 +833,8 @@ export default function ProductMIN() {
     setOpen(false);
     const invoiceDate = form.getFieldValue("invoiceDate");
     const invoiceId = form.getFieldValue("invoiceId");
-    const currency = form.getFieldValue("currency") || "";
+    const currency = form.getFieldValue("currency") || INR_CURRENCY_ID;
+    const exchangeRate = form.getFieldValue("exchangeRate") || 1;
 
     const arr = previewRows.map((r) => {
       const loc = r.location;
@@ -876,7 +882,9 @@ export default function ProductMIN() {
         location: locationForRow,
         locationName:
           typeof locationForRow === "object" ? locationForRow.text : "",
-        exchange_rate: 0,
+        exchange_rate: exchangeRate,
+        usdValue:
+          currency === INR_CURRENCY_ID ? 0 : inrValue * exchangeRate,
         orderremark: r.Remark ?? r.remark ?? "",
         autoConsumption:
           r.Autoconsump === "Y" || r.autoConsName === "Yes" ? 1 : 0,
@@ -956,29 +964,11 @@ export default function ProductMIN() {
     }
   };
   const materialResetFunction = () => {
-    setMaterialInward([
-      {
-        id: v4(),
-
-        component: "",
-        orderqty: 0,
-        orderrate: 0, //will come from backend on co mponent selection
-        currency: "364907247", //will be default at fiest, check
-        gstrate: 0,
-        unitsname: "--",
-        gsttype: "L",
-        hsncode: "",
-        inrValue: 0,
-        cgst: 0,
-        sgst: 0,
-        igst: 0,
-        invoiceDate: "",
-        invoiceId: "",
-        location: "",
-        exchange_rate: 0,
-        autoConsumption: 0,
-      },
-    ]);
+    form.setFieldsValue({
+      currency: INR_CURRENCY_ID,
+      exchangeRate: 1,
+    });
+    setMaterialInward([defaultMaterialRow(INR_CURRENCY_ID, 1)]);
     setShowResetConfirm(false);
   };
   const columns = [
@@ -1033,16 +1023,9 @@ export default function ProductMIN() {
       headerName: "Rate",
       field: "orderrate",
       sortable: false,
-      renderCell: (params) => rateCell(params, inputHandler, currencies),
-      width: 180,
+      renderCell: (params) => rateCell(params, inputHandler),
+      width: 120,
     },
-    // {
-    //   headerName: "Currency",
-    //   field: "currency",
-    //   sortable: false,
-    //   renderCell: (params) => currencyCell(params, inputHandler, currencies),
-    //   width: 80,
-    // },
     {
       headerName: "Taxable Value",
       field: "inrValue",
@@ -1397,23 +1380,7 @@ export default function ProductMIN() {
                     <Form.Item label="Currency" name="currency">
                       <MySelect
                         options={currencies}
-                        onChange={(value) => {
-                          const currentRows = [...materialInward];
-                          if (value === "364907247") {
-                            const updatedRows = currentRows.map((row) => ({
-                              ...row,
-                              currency: value,
-                              exchange_rate: 0,
-                            }));
-                            setMaterialInward(updatedRows);
-                          } else {
-                            const updatedRows = currentRows.map((row) => ({
-                              ...row,
-                              currency: value,
-                            }));
-                            setMaterialInward(updatedRows);
-                          }
-                        }}
+                        onChange={handleCurrencyChange}
                       />
                     </Form.Item>
                   </Col>
