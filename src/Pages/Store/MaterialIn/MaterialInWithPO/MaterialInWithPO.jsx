@@ -173,7 +173,7 @@ export default function MaterialInWithPO({}) {
           validation = false;
           return showToast(
             "Currency of all components should be the same",
-            "error"
+            "error",
           );
         } else if (
           (componentData.gsttype.filter((v, i, a) => v === a[0]).length ===
@@ -183,7 +183,7 @@ export default function MaterialInWithPO({}) {
           validation = false;
           return showToast(
             "gst type of all components should be the same",
-            "error"
+            "error",
           );
         }
 
@@ -216,7 +216,7 @@ export default function MaterialInWithPO({}) {
       };
       const response = await executeFun(
         () => checkInvoiceforMIN(payload),
-        "select"
+        "select",
       );
 
       let data = response?.data;
@@ -246,7 +246,7 @@ export default function MaterialInWithPO({}) {
       setSubmitLoading(true);
       const response = await imsAxios.post(
         "/transaction/upload-invoice",
-        values.formData
+        values.formData,
       );
       const { data } = response;
 
@@ -295,7 +295,7 @@ export default function MaterialInWithPO({}) {
         setSubmitLoading(false);
         showToast(
           "Some error occured while uploading invoices, Please try again",
-          "error"
+          "error",
         );
       }
     }
@@ -335,7 +335,7 @@ export default function MaterialInWithPO({}) {
     setPageLoading(true);
 
     const response = await imsAxios.get(
-      "/transaction/fetchAutoConsumpLocation"
+      "/transaction/fetchAutoConsumpLocation",
     );
     setPageLoading(false);
     if (response?.success) {
@@ -504,7 +504,7 @@ export default function MaterialInWithPO({}) {
     };
     const response = await imsAxios.post(
       "/purchaseOrder/fetchVendorPO",
-      search
+      search,
     );
     setSearchLoading(false);
 
@@ -801,7 +801,7 @@ export default function MaterialInWithPO({}) {
   }, []);
   useEffect(() => {
     let grandTotal = poData?.materials.map((row) =>
-      Number(row?.cgst + row?.sgst + row?.igst + row.inrValue)
+      Number(row?.cgst + row?.sgst + row?.igst + row.inrValue),
     );
     let cgsttotal = poData?.materials.map((row) => Number(row?.cgst));
     let sgsttotal = poData?.materials.map((row) => Number(row?.sgst));
@@ -823,16 +823,16 @@ export default function MaterialInWithPO({}) {
       style={{
         height: "calc(100vh - 170px)",
         position: "relative",
-        overflow:"hidden"
-   
+        overflow: "hidden",
+        margin: "8px",
       }}
     >
       <Row
         justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
+    
       >
         {(pageLoading || submitLoading == true) && <Loading />}
-        <Col>
+        <Col span={20}>
           <Space>
             <div style={{ width: 250 }}>
               <MyAsyncSelect
@@ -877,15 +877,16 @@ export default function MaterialInWithPO({}) {
             </MyButton>
           </Space>
         </Col>
-        <Col>
-          <Space>
-            {/* <CommonIcons
-              action="downloadButton"
-              onClick={() => downloadCSV(rows, columns, "Pending PO Report")}
-              disabled={rows.length == 0}
-            /> */}
-          </Space>
-        </Col>
+       <Col>
+        <Button
+          type="primary"
+          icon={<UploadOutlined />}
+          onClick={() => setUploadClicked(true)}
+        >
+          
+          Upload Documents
+        </Button></Col>
+     
       </Row>
       {/* vendor info modal */}
       <Modal
@@ -982,22 +983,21 @@ export default function MaterialInWithPO({}) {
       {/* upload doc modal */}
 
       {!materialInSuccess && (
-        <Row gutter={8} style={{ height: "100%", padding: "0px 10px", }}>
+        <Row gutter={8} style={{ height: "100%", marginTop:8 }}>
           <Col span={6}>
             <Row
               style={{
-                height: "calc(100% - 290px)",
+                height: "calc(100% - 235px)",
                 overflow: "auto",
-                
               }}
               gutter={[0, 4]}
             >
               {/* vendor details */}
-              <Row style={{ height: "75%", width: "100%" }}>
+              <Row style={{width: "100%", padding: "10px 0px" }}>
                 <Card
                   size="small"
                   style={{ height: "100%", width: "100%" }}
-                  bodyStyle={{ overflowY: "auto", maxHeight: "90%" }}
+                  // bodyStyle={{ overflowY: "auto", maxHeight: "calc(100% - 40px)" }}
                   title="Vendor Details"
                 >
                   <Row gutter={[0, 8]}>
@@ -1085,7 +1085,7 @@ export default function MaterialInWithPO({}) {
                             text={
                               poData?.headers?.vendoraddress?.replaceAll(
                                 "<br>",
-                                " "
+                                " ",
                               ) ?? "N/A"
                             }
                           />
@@ -1257,34 +1257,7 @@ export default function MaterialInWithPO({}) {
                   </Row>
                 </Card>
               </Row>
-              <Col span={24} style={{ width: "100%", height: "20%" }}>
-                <Card
-                  size="small"
-                  style={{ width: "100%", height: "100%" }}
-                  bodyStyle={{ overflowY: "auto", maxHeight: "74%" }}
-                  title="Attachments"
-                >
-                  <Row
-                    span={24}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Col>
-                      <Button
-                        type="primary"
-                        icon={<UploadOutlined />}
-                        onClick={() => setUploadClicked(true)}
-                      >
-                        {" "}
-                        Upload Documents
-                      </Button>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
+           
               {/* tax details */}
               <Col span={24} style={{ width: "100%", height: "50%" }}>
                 <Card
@@ -1334,7 +1307,7 @@ export default function MaterialInWithPO({}) {
                               {Number(
                                 row.values?.reduce((partialSum, a) => {
                                   return partialSum + Number(a);
-                                }, 0)
+                                }, 0),
                               ).toFixed(2)}
                             </span>
                           </Col>

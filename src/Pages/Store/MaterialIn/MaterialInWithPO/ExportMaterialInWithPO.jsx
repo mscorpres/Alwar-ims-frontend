@@ -224,10 +224,10 @@ export default function ExportMaterialInWithPO({}) {
       };
       const response = await executeFun(
         () => checkInvoiceforMIN(payload),
-        "select"
+        "select",
       );
 
-      let data  = response?.data;
+      let data = response?.data;
       if (response?.success) {
         setSubmitLoading(false);
         if (data?.invoicesFound) {
@@ -243,7 +243,7 @@ export default function ExportMaterialInWithPO({}) {
         } else {
           submitMIN(values);
         }
-      } 
+      }
     } catch (error) {
     } finally {
       setSubmitLoading(false);
@@ -357,7 +357,7 @@ export default function ExportMaterialInWithPO({}) {
       setSubmitLoading(true);
       const response = await imsAxios.post(
         "/transaction/upload-invoice",
-        values.formData
+        values.formData,
       );
       if (response?.success) {
         let final = {
@@ -372,10 +372,10 @@ export default function ExportMaterialInWithPO({}) {
         final = { ...final, ...values.componentData };
         const response = await executeFun(
           () => poMINforImport(final),
-          "select"
+          "select",
         );
         // const response = await imsAxios.post("/purchaseOrder/poMIN", final);
-        let  data  = response?.data;
+        let data = response?.data;
         // setSubmitLoading(false);
         if (response.success) {
           setSearchData({
@@ -408,7 +408,7 @@ export default function ExportMaterialInWithPO({}) {
         setSubmitLoading(false);
         showToast(
           "Some error occured while uploading invoices, Please try again",
-          "error"
+          "error",
         );
       }
     }
@@ -443,7 +443,7 @@ export default function ExportMaterialInWithPO({}) {
     setPageLoading(false);
     let arr = [];
     if (response.success) {
-       arr = response.data.map((d) => {
+      arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setLocationOptions(arr);
@@ -466,7 +466,7 @@ export default function ExportMaterialInWithPO({}) {
     setPageLoading(true);
 
     const response = await imsAxios.get(
-      "/transaction/fetchAutoConsumpLocation"
+      "/transaction/fetchAutoConsumpLocation",
     );
     setPageLoading(false);
     if (response.success) {
@@ -653,7 +653,7 @@ export default function ExportMaterialInWithPO({}) {
     };
     const response = await imsAxios.post(
       "/purchaseOrder/fetchVendorPO",
-      search
+      search,
     );
     setSearchLoading(false);
 
@@ -973,14 +973,14 @@ export default function ExportMaterialInWithPO({}) {
   }, []);
   useEffect(() => {
     let grandTotal = poData?.materials.map((row) =>
-      Number(row?.total).toFixed(2)
+      Number(row?.total).toFixed(2),
     );
     let totalTaxableValue = poData?.materials.map((row) =>
-      Number(row?.taxableValue)
+      Number(row?.taxableValue),
     );
     let customTotal = poData?.materials.map((row) => Number(row?.customDuty));
     let freightTotal = poData?.materials.map((row) =>
-      Number(row?.freightValue)
+      Number(row?.freightValue),
     );
     let inrValue = poData?.materials.map((row) => Number(row?.inrValue));
     let obj = [
@@ -1004,7 +1004,7 @@ export default function ExportMaterialInWithPO({}) {
     formData.append("po_id", searchData.poNumber);
     const response = await executeFun(
       () => uploadPOExportFile(formData),
-      "fetch"
+      "fetch",
     );
 
     if (response?.success) {
@@ -1031,7 +1031,7 @@ export default function ExportMaterialInWithPO({}) {
           finalRate: item.final_rate,
           pendingQty: item.pending_qty,
           poOrderQty: item.po_order_qty,
-          value: (item.order_qty * item.import_rate).toFixed(3), 
+          value: (item.order_qty * item.import_rate).toFixed(3),
         };
       });
       // Optional: map formatted rows to final structure
@@ -1056,13 +1056,19 @@ export default function ExportMaterialInWithPO({}) {
   };
 
   return (
-    <div style={{ height: "calc(100vh - 210px)", width: "100%", position: "relative" }}>
+    <div
+      style={{
+        height: "calc(100vh - 215px)",
+        width: "100%",
+        position: "relative",
+        margin:8
+      }}
+    >
       <Row
-        justify="space-between"
-        style={{ padding: "0px 10px", paddingBottom: 5 }}
+    
       >
         {(pageLoading || submitLoading == true) && <Loading />}
-        <Col>
+        <Col  >
           <Space>
             <div style={{ width: 250 }}>
               <MyAsyncSelect
@@ -1082,9 +1088,9 @@ export default function ExportMaterialInWithPO({}) {
                 placeholder="Select Vendor..."
               />
             </div>
-            <div style={{ width: 150 }}>
+            <div style={{ width: 180 }}>
               <Input
-                allowClear
+                
                 placeholder="PO Number"
                 value={searchData.poNumber}
                 onChange={(e) =>
@@ -1107,14 +1113,27 @@ export default function ExportMaterialInWithPO({}) {
             </MyButton>
           </Space>
         </Col>
-        <Col>
-          <Space>
-            {/* <CommonIcons
-              action="downloadButton"
-              onClick={() => downloadCSV(rows, columns, "Pending PO Report")}
-              disabled={rows.length == 0}
-            /> */}
-          </Space>
+        <Col span={14} style={{display:"flex",  justifyContent:"flex-end", gap:"10px"}} >
+      
+           <MyButton
+            variant="upload"
+            text="Import"
+            onClick={() => {
+              if (searchData?.poNumber) {
+                setOpen(true);
+              } else {
+                showToast("Please enter PO Number", "error");
+              }
+            }}
+          >
+            Excel
+          </MyButton>
+     
+          <Button onClick={() => setUploadClicked(true)}>
+            {" "}
+            Upload Documents
+          </Button>
+    
         </Col>
       </Row>
       {/* vendor info modal */}
@@ -1212,23 +1231,18 @@ export default function ExportMaterialInWithPO({}) {
       {/* upload doc modal */}
 
       {!materialInSuccess && (
-        <Row gutter={8} style={{ height: "100%", padding: "0px 10px" }}>
-          <Col
-            span={6}
-            style={{ overflowY: "auto", height: "100%" }}
-          >
+        <Row gutter={8} style={{ height: "100%", marginTop: 10 }}>
+          <Col span={6} style={{ overflowY: "auto", height: "100%" }}>
             <Row
               style={{
-                height: "calc(100% - 50px)",
+                height: "calc(100% - 60px)",
               }}
               gutter={[0, 4]}
             >
-              {/* vendor details */}
-              <Row style={{ height: "80%", width: "100%" }}>
+           
+              <Row >
                 <Card
                   size="small"
-                  style={{ height: "100%", width: "100%" }}
-                  bodyStyle={{ overflowY: "auto", maxHeight: "80%" }}
                   title="Vendor Details"
                 >
                   <Row gutter={[0, 8]}>
@@ -1313,10 +1327,12 @@ export default function ExportMaterialInWithPO({}) {
                         >
                           <ToolTipEllipses
                             type="Paragraph"
-                            text={poData?.headers?.vendoraddress?.replaceAll(
-                              "<br>",
-                              " "
-                            ) ?? "N/A"}
+                            text={
+                              poData?.headers?.vendoraddress?.replaceAll(
+                                "<br>",
+                                " ",
+                              ) ?? "N/A"
+                            }
                           />
                         </Typography.Text>
                       )}
@@ -1525,51 +1541,13 @@ export default function ExportMaterialInWithPO({}) {
                   </Row>
                 </Card>
               </Row>
-              <Col span={24} style={{ width: "100%", height: "30%" }}>
-                <Card
-                  size="small"
-                  style={{ width: "100%", height: "100%" }}
-                  bodyStyle={{ overflowY: "auto", maxHeight: "74%" }}
-                  title="Upload Excel & Attachments"
-                >
-                  <Row
-                    span={24}
-                    style={{
-                      width: "100%",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Col>
-                      <MyButton
-                        variant="upload"
-                        text="Excel"
-                        onClick={() => {
-                          if (searchData?.poNumber) {
-                            setOpen(true);
-                          } else {
-                            showToast("Please enter PO Number", "error");
-                          }
-                        }}
-                      >
-                        Excel
-                      </MyButton>
-                    </Col>
-                    <Col>
-                      <Button onClick={() => setUploadClicked(true)}>
-                        {" "}
-                        Upload Documents
-                      </Button>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
+          
               {/* tax details */}
-              <Col span={24} style={{ width: "100%",  }}>
+              <Col span={24} style={{ width: "100%" }}>
                 <Card
                   size="small"
                   style={{ width: "100%", height: "100%" }}
-                  bodyStyle={{ overflowY: "auto",  }}
+                  bodyStyle={{ overflowY: "auto" }}
                   title="Tax Details"
                 >
                   <Row gutter={[0, 4]}>
@@ -1613,7 +1591,7 @@ export default function ExportMaterialInWithPO({}) {
                               {Number(
                                 row.values?.reduce((partialSum, a) => {
                                   return partialSum + Number(a);
-                                }, 0)
+                                }, 0),
                               ).toFixed(2)}
                             </span>
                           </Col>
@@ -1773,7 +1751,6 @@ export default function ExportMaterialInWithPO({}) {
                                     />
                                   </Form.Item>
                                 ))}
-                        
                               </Col>
                             </>
                           )}
@@ -1785,17 +1762,11 @@ export default function ExportMaterialInWithPO({}) {
               </Modal>
             </Row>
           </Col>
-          <Col
-            span={18}
-         
-          >
-
-            <MyDataTable 
+          <Col span={18}>
+            <MyDataTable
               columns={columns}
               data={poData?.materials}
-            
               loading={loading("select" || pageLoading)}
-          
             />
           </Col>
 
