@@ -239,7 +239,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       onClose={hide}
       footer={
         <Space style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Button onClick={hide}>Back</Button>
+          <Button onClick={hide}>Close</Button>
           <Button
             type="primary"
             onClick={validateHandler}
@@ -251,19 +251,14 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         </Space>
       }
     >
-      <Form layout="vertical" form={form} initialValues={initialValues}>
+      <Form layout="vertical" form={form} initialValues={initialValues} style={{ height: "100%" }}>
         {loading("fetch") && <Loading isDrawerLoading={true} />}
-        <Row gutter={6}>
-          <Col span={6}>
-            <Card
-              size="small"
-              title="Request Details"
-              style={{ height: "100%" }}
-              bodyStyle={{ height: "100%" }}
-            >
+        <Row gutter={6} style={{ minHeight: "100%" }}>
+          <Col span={5} style={{ borderRight: "1px solid #dadada", marginRight: 20 }}>
+       
               <Row gutter={[6, 6]}>
                 <Col span={24}>
-                  <Typography.Text strong type="secondary">
+                  <Typography.Text strong >
                     BOM:
                   </Typography.Text>
                   <br />
@@ -272,7 +267,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                 </Col>
 
                 <Col span={24}>
-                  <Typography.Text strong type="secondary">
+                  <Typography.Text strong >
                     Req. Location:
                   </Typography.Text>
                   <br />
@@ -280,7 +275,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   <Typography.Text>{headers?.location}</Typography.Text>
                 </Col>
                 <Col span={24}>
-                  <Typography.Text strong type="secondary">
+                  <Typography.Text strong >
                     MFG Qty:
                   </Typography.Text>
                   <br />
@@ -288,15 +283,10 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   <Typography.Text>{headers?.mfgQty}</Typography.Text>
                 </Col>
               </Row>
-            </Card>
+           
           </Col>
           <Col span={10}>
-            <Card
-              size="small"
-              style={{ height: "100%" }}
-              bodyStyle={{ height: "100%" }}
-              title="Request Components"
-            >
+       
               <Flex
                 vertical
                 style={{ height: "90%" }}
@@ -308,6 +298,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                     placeholder="Filter Components"
                     value={filterString}
                     onChange={(e) => setFilterString(e.target.value)}
+                    style={{ width: 400, marginBottom: 10 }}
                   />
                 </div>
                 <Flex
@@ -330,8 +321,9 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   >
                     <Form.Item
                       name="component"
-                      label="Select Part Code"
+                     label={<span style={{ fontWeight: "bold" }}>Select Part Code</span>}
                       rules={rules.component}
+                      style={{ width: "100%",  }}
                     >
                       <Radio.Group
                         style={{
@@ -378,7 +370,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   </div>
                 </Flex>
               </Flex>
-            </Card>
+       
           </Col>
 
           <Col span={8}>
