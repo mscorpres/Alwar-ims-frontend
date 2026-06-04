@@ -6,6 +6,7 @@ import {
   Collapse,
   Divider,
   Form,
+  Pagination,
   Row,
   Typography,
 } from "antd";
@@ -49,6 +50,10 @@ export default function ItemLocationLog() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [summaryData, setSummaryData] = useState(initialSummaryData);
   const { executeFun, loading: loading1 } = useApi();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   // initializing searh form
   const [searchForm] = Form.useForm();
 
@@ -98,27 +103,35 @@ export default function ItemLocationLog() {
     setLoading(false);
   };
   // getting rows
-  const getRows = async (values) => {
+  const getRows = async (values, page = 1, limit = pageSize) => {
     try {
       setLoading("fetch");
       setSummaryData(initialSummaryData);
       setRows([]);
 
-      const response = await imsAxios.get("/q2/view?key=" + values.component + "&location=" + values.location);
-  
+      const response = await imsAxios.get(
+        "/q2/view?key=" +
+          values.component +
+          "&location=" +
+          values.location +
+          "&page=" +
+          page +
+          "&limit=" +
+          limit,
+      );
+
       getDetails(values);
       if (response?.success == false) {
         showToast(response?.message, "error");
         setLoading(false);
         return;
       }
-   
+
         if (response.success) {
           const bomDetails = response?.data?.header?.bomDetails;
           const header = response.data.header;
-          const { lastRemark, lastPhysicalEntryDt, lastPhysicalEntryBy } = response?.data?.header;
-          const arr = response.data.body.map((row, index) => ({
-            index: index + 1,
+          const arr = response.data.body.map((row) => ({
+            index: row.serial_no,
             id: v4(),
             qty_in_rate: row.qty_in_rate ?? "-",
             weightedPurchaseRate: row.weightedPurchaseRate ?? "-",
@@ -140,6 +153,14 @@ export default function ItemLocationLog() {
           }
           setBomDetails(bomDetailsArr);
           setRows(arr);
+
+          const pagination = response?.pagination;
+          if (pagination) {
+            setCurrentPage(pagination.currentPage ?? page);
+            setTotalRecords(pagination.totalRecords ?? 0);
+            setTotalPages(pagination.totalPages ?? 0);
+          }
+
           setSummaryData([
             { title: "Component", description: header?.partName ?? "--" },
             { title: "Part Code", description: header?.partNo ?? "--" },
@@ -174,6 +195,20 @@ export default function ItemLocationLog() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page, size) => {
+    const values = searchForm.getFieldsValue();
+    if (!values?.component || !values?.location) return;
+    setPageSize(size);
+    getRows(values, page, size);
+  };
+
+  const handleFormSubmit = (values) => {
+    setCurrentPage(1);
+    setTotalRecords(0);
+    setTotalPages(0);
+    getRows(values, 1, pageSize);
   };
 
   // columns
@@ -310,7 +345,7 @@ export default function ItemLocationLog() {
           <Col span={24}>
             <Card size="small">
               <Form
-                onFinish={getRows}
+                onFinish={handleFormSubmit}
                 form={searchForm}
                 initialValues={initialValues}
                 layout="vertical"
@@ -340,7 +375,7 @@ export default function ItemLocationLog() {
                         onBlur={() => setAsyncOptions([])}
                         loadOptions={getLocatonOptions}
                         optionsState={asyncOptions}
-                        selectLoading={loading === "select"}
+                        // selectLoading={loading === "select"}
                       />
                     </Form.Item>
                   </Col>
@@ -462,11 +497,43 @@ export default function ItemLocationLog() {
         </Row>
       </Col>
       <Col span={18}>
-        <MyDataTable
-          loading={loading === "fetch"}
-          data={rows}
-          columns={columns}
-        />
+        <div
+          style={{ height: "100%", display: "flex", flexDirection: "column" }}
+        >
+          <div
+            className="remove-table-footer"
+            style={{ flex: 1, minHeight: 0,  }}
+          >
+            <MyDataTable
+              loading={loading === "fetch"}
+              data={rows}
+              columns={columns}
+              pagination={false}
+            />
+          </div>
+          {totalRecords > 0 && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                padding: "8px 0",
+                flexShrink: 0,
+              }}
+            >
+              <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={totalRecords}
+                showSizeChanger
+                pageSizeOptions={[25, 50, 100]}
+                showTotal={(total, range) =>
+                  `${range[0]}-${range[1]} of ${total} records`
+                }
+                onChange={handlePageChange}
+              />
+            </div>
+          )}
+        </div>
       </Col>
     </Row>
   );
