@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { List, Empty, Progress, Typography } from "antd";
+import { useEffect, useState } from "react";
+import { List, Empty, Progress, Typography, Skeleton } from "antd";
 import { ConfigProvider } from "antd";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +20,9 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
   const [isPositioned, setIsPositioned] = useState(false);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
+  const [pendingSocketRefresh, setPendingSocketRefresh] = useState(false);
 
   useEffect(() => {
     if (open && anchorRef?.current) {
@@ -98,6 +101,8 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
           allNotifications.filter((n) => n?.type === "message"),
         ),
       );
+      setPendingSocketRefresh(true);
+      setListLoading(true);
       socket.emit("fetch_notifications", { source: "react" });
       showToast("Notifications deleted", "success");
       setIsConfirmModal(false);
@@ -109,6 +114,26 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
       setDeleteLoading(false);
     }
   };
+
+  const handleRefreshNotification = (silent = false) => {
+    if (!silent) setRefreshLoading(true);
+    setListLoading(true);
+    setPendingSocketRefresh(true);
+    socket.emit("fetch_notifications", { source: "react" });
+  };
+
+  useEffect(() => {
+    if (open) {
+      handleRefreshNotification(true);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!pendingSocketRefresh) return;
+    setPendingSocketRefresh(false);
+    setRefreshLoading(false);
+    setListLoading(false);
+  }, [notifications, pendingSocketRefresh]);
 
   if (!open) return null;
 
@@ -129,10 +154,10 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
       />
     </div>
   );
-  const handleRefreshNotification = () => {};
 
   return (
     <>
+      <style>{`@keyframes rotate-refresh { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       {/* Arrow indicator - positioned relative to button */}
       {anchorRef?.current && isPositioned && (
         <div
@@ -234,8 +259,15 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
               </span>
             </ConfirmationNotifyModal>
             <span onClick={handleRefreshNotification}>
-              {" "}
-              <Refresh fontSize="small" />
+              <Refresh
+                fontSize="small"
+                style={{
+                  animation: refreshLoading
+                    ? "rotate-refresh 0.9s linear infinite"
+                    : "none",
+                  opacity: refreshLoading ? 0.7 : 1,
+                }}
+              />
             </span>
           </div>
         </div>
@@ -249,6 +281,13 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
           }}
         >
           <ConfigProvider renderEmpty={EmptyList}>
+            {listLoading ? (
+              <div style={{ padding: "16px" }}>
+                <Skeleton active title={{ width: "70%" }} paragraph={{ rows: 2 }} />
+                <Skeleton active title={{ width: "60%" }} paragraph={{ rows: 2 }} />
+                <Skeleton active title={{ width: "65%" }} paragraph={{ rows: 2 }} />
+              </div>
+            ) : (
             <List
               bordered={false}
               dataSource={notifications}
@@ -354,6 +393,7 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
                 </List.Item>
               )}
             />
+            )}
           </ConfigProvider>
         </div>
       </div>
