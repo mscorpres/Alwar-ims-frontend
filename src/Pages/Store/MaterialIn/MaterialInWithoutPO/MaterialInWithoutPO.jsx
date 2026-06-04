@@ -51,6 +51,8 @@ import SingleProduct from "../../../Master/Vendor/SingleProduct";
 import { downloadCSVCustomColumns } from "../../../../Components/exportToCSV.jsx";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
 
+const INR_CURRENCY_ID = "364907247";
+
 const defaultValues = {
   vendorType: "v01",
   vendorName: "",
@@ -61,12 +63,14 @@ const defaultValues = {
   companybranch: "BRALWR36",
   projectID: "",
   costCenter: "",
+  currency: INR_CURRENCY_ID,
+  exchangeRate: 1,
   components: [
     {
       gstType: "L",
       location: "",
       autoConsumption: 0,
-      currency: "364907247",
+      currency: INR_CURRENCY_ID,
       exchangeRate: 1,
     },
   ],
@@ -414,14 +418,56 @@ export default function MaterialInWithoutPO() {
     // setShowResetConfirm(false);
     // form.setFieldsValue(obj);
   };
+  const syncComponentsCurrency = (currency, exchangeRate) => {
+    const components = form.getFieldValue("components") || [];
+    form.setFieldValue(
+      "components",
+      components.map((row) => ({
+        ...row,
+        currency,
+        exchangeRate,
+      })),
+    );
+  };
+
+  const handleCurrencyChange = (value) => {
+    if (value === INR_CURRENCY_ID) {
+      form.setFieldValue("exchangeRate", 1);
+      syncComponentsCurrency(value, 1);
+      return;
+    }
+
+    syncComponentsCurrency(value, form.getFieldValue("exchangeRate") || 1);
+
+    const components = form.getFieldValue("components") || [];
+    const totalForeignPrice = components.reduce(
+      (sum, row) => sum + getInt(row.qty) * getInt(row.rate),
+      0,
+    );
+    const symbol = currencies.find((cur) => cur.value == value)?.text;
+
+    setShowCurrenncy({
+      currency: value,
+      price: totalForeignPrice,
+      exchange_rate: form.getFieldValue("exchangeRate") || 1,
+      symbol,
+      onExchangeSubmit: (rate) => {
+        form.setFieldValue("exchangeRate", rate);
+        syncComponentsCurrency(value, rate);
+      },
+    });
+  };
+
   const materialResetFunction = () => {
     form.setFieldsValue({
+      currency: INR_CURRENCY_ID,
+      exchangeRate: 1,
       components: [
         {
           gstType: "L",
           location: "",
           autoConsumption: 0,
-          currency: "364907247",
+          currency: INR_CURRENCY_ID,
           exchangeRate: 1,
         },
       ],
@@ -450,7 +496,7 @@ export default function MaterialInWithoutPO() {
     );
     form.setFieldValue(
       ["components", rowId, "foreignValue"],
-      currency === "364907247" ? 0 : foreignValue
+      currency === INR_CURRENCY_ID ? 0 : foreignValue
     );
   };
 
@@ -533,8 +579,6 @@ export default function MaterialInWithoutPO() {
     handleFetchPreviousRate,
     compareRates,
     form,
-    currencies,
-    setShowCurrenncy,
   }) => [
     {
       headerName: "Part Component",
@@ -608,37 +652,11 @@ export default function MaterialInWithoutPO() {
       ],
       field: (row, index) => (
         <Input
-        type="number"
+          type="number"
           onChange={(e) => compareRates(e.target.value, index)}
-          addonAfter={
-            <div style={{ width: 50 }}>
-              <Form.Item noStyle name={[index, "currency"]}>
-                <MySelect
-                  options={currencies}
-                  onChange={(value) => {
-                    value !== "364907247"
-                      ? setShowCurrenncy({
-                          currency: value,
-                          price: row.value,
-                          exchangeRate: row.exchangeRate,
-                          symbol: currencies.filter(
-                            (cur) => cur.value == value
-                          )[0].text,
-                          rowId: index,
-                          form: form,
-                        })
-                      : form.setFieldValue(
-                          ["components", index, "exchangeRate"],
-                          1
-                        );
-                  }}
-                />
-              </Form.Item>
-            </div>
-          }
         />
       ),
-      width: 200,
+      width: 120,
     },
 
     {
@@ -722,12 +740,17 @@ export default function MaterialInWithoutPO() {
     setOpen(false);
     // setSelectedRows(previewRows);
     // setRows(previewRows);
+    const currency = form.getFieldValue("currency") || INR_CURRENCY_ID;
+    const exchangeRate = form.getFieldValue("exchangeRate") || 1;
+
     let arr = previewRows.map((r) => {
       return {
         ...r,
         mfgCode: r.Manualmfgcode,
         hsnCode: r.hsn,
         autoConsumption: r.Autoconsump == "1" ? "Yes" : "No",
+        currency,
+        exchangeRate,
       };
     });
 
@@ -1111,6 +1134,14 @@ export default function MaterialInWithoutPO() {
                       </Form.Item>
                     </Col>
                     <Col span={12}>
+                      <Form.Item label="Currency" name="currency">
+                        <MySelect
+                          options={currencies}
+                          onChange={handleCurrencyChange}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
                       <Form.Item label="Invoice Date" name="invoiceDate">
                         <SingleDatePicker
                           setDate={(value) => {
@@ -1246,7 +1277,12 @@ export default function MaterialInWithoutPO() {
                   addableRow={true}
                   removableRows={true}
                   reverse={true}
-                  newRow={defaultValues.components[0]}
+                  newRow={() => ({
+                    ...defaultValues.components[0],
+                    currency:
+                      form.getFieldValue("currency") || INR_CURRENCY_ID,
+                    exchangeRate: form.getFieldValue("exchangeRate") || 1,
+                  })}
                   listName="components"
                   nonRemovableColumns={1}
                   watchKeys={[
@@ -1271,8 +1307,6 @@ export default function MaterialInWithoutPO() {
                     handleFetchPreviousRate,
                     compareRates,
                     form,
-                    currencies,
-                    setShowCurrenncy,
                   })}
                 />
               </div>
