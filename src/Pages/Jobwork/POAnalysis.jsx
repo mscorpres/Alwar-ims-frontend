@@ -67,27 +67,27 @@ const POAnalysis = () => {
     setLoading(false);
     const { data } = response;
     let arr = [];
-  
-      if (response?.success) {
-        arr = data.map((row, index) => ({
-          id: index + 1,
-          date: row.date,
-          jwId: row.po_sku_transaction,
-          vendor: row.vendor,
-          sku: row.skucode,
-          product: row.skuname,
-          reqQty: row.requiredqty,
-          status: row.po_status,
-          recipeStatus: row.bom_recipe,
-          poStatus: row.po_status,
-          skuKey: row.sku,
-          project_description: row.project_description,
-          project_name: row.project_name,
-        }));
-      } else {
-        toast.error(response.message?.msg || response.message);
-      }
-    
+
+    if (response?.success) {
+      arr = data.map((row, index) => ({
+        id: index + 1,
+        date: row.date,
+        jwId: row.po_sku_transaction,
+        vendor: row.vendor,
+        sku: row.skucode,
+        product: row.skuname,
+        reqQty: row.requiredqty,
+        status: row.po_status,
+        recipeStatus: row.bom_recipe,
+        poStatus: row.po_status,
+        skuKey: row.sku,
+        project_description: row.project_description,
+        project_name: row.project_name,
+      }));
+    } else {
+      showToast(response.message?.msg || response.message, "error");
+    }
+
     setRows(arr);
   };
 
@@ -191,14 +191,13 @@ const POAnalysis = () => {
         label="Download"
         onClick={() => handlePrint(row.jwId, "download")}
       />,
-    
     ],
   };
   const selectedWise = filterForm.getFieldValue("wise");
 
   return (
     <Row gutter={6} style={{ height: "100%", padding: 10 }}>
-      <Col span={4}>
+      <Col span={5}>
         <Row gutter={[0, 6]}>
           <Col span={24}>
             <Card size="small" title="Filters">
@@ -212,37 +211,23 @@ const POAnalysis = () => {
                 </Form.Item>
                 {valueInput(wise, filterForm)}
 
-                <Form.Item
-                  label="Advanced Filter"
-                  name="advancedFilter"
-                  valuePropName="checked"
-                  className=""
-                >
+                <Form.Item name="advancedFilter" valuePropName="checked">
                   <Checkbox
                     onChange={(e) => setAdvancedFilter(e.target.checked)}
-                  />
+                  >
+                    Advanced Filter
+                  </Checkbox>
                 </Form.Item>
 
-                {selectedWise?.value !== "datewise" && advancedFilter && (
+                {advancedFilter && (
                   <MyDatePicker
                     setDateRange={(value) => setAdvancedDate(value)}
                   />
                 )}
-
               </Form>
-              <Row justify="end">
+              <Row justify="end" style={{ marginTop: 8 }}>
                 <Space>
-                  <CommonIcons
-                    action="downloadButton"
-                    tooltip="Download CSV"
-                    onClick={() =>
-                      downloadCSV(rows, columns, "PO Analysis Report")
-                    }
-                    disabled={rows.length == 0}
-                  />
-                </Space>
-                <Space>
-                {wise?.value === "vendorwise" && (
+                  {wise?.value === "vendorwise" && (
                     <Tooltip title="Download vendor-wise report">
                       <Button
                         type="default"
@@ -255,13 +240,24 @@ const POAnalysis = () => {
                   <MyButton variant="search" type="primary" onClick={getRows}>
                     Fetch
                   </MyButton>
+                  {rows.length > 0 && (
+                    <Space>
+                      <CommonIcons
+                        action="downloadButton"
+                        tooltip="Download CSV"
+                        onClick={() =>
+                          downloadCSV(rows, columns, "PO Analysis Report")
+                        }
+                      />
+                    </Space>
+                  )}
                 </Space>
               </Row>
             </Card>
           </Col>
         </Row>
       </Col>
-      <Col span={20}>
+      <Col span={19}>
         <MyDataTable
           loading={loading === "fetch" || loading === "print"}
           columns={[actionColumn, ...columns]}
@@ -425,7 +421,7 @@ const SKUSelect = ({ wise }) => {
     setLoading(true);
     const response = await imsAxios.post(
       "/backend/getProductByNameAndNo",
-      payload
+      payload,
     );
     setLoading(false);
     let arr = [];

@@ -1,7 +1,7 @@
 import { Button, Card, Col, Row, Space, Table, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
-import { imsAxios, socketLink } from "../../../axiosInterceptor";
+import { imsAxios } from "../../../axiosInterceptor";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { Link } from "react-router-dom";

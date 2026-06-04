@@ -86,14 +86,14 @@ const WoViewChallan = () => {
           ref_id: "--",
         }
       );
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
       setLoading(false);
     } else {
       const response = await imsAxios.post("/wo_challan/printScrapChallan", {
         challan_id: row.challan_id,
         ref_id: "--",
       });
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
       setLoading(false);
     }
   };
@@ -121,7 +121,7 @@ const WoViewChallan = () => {
           ref_id: "--",
         }
       );
-      downloadFunction(response.data.data.buffer.data, row.challan_id);
+      downloadFunction(response.data.buffer.data, row.challan_id);
       // console.log(response);
       setLoading(false);
     } else {
@@ -130,7 +130,7 @@ const WoViewChallan = () => {
         challan_id: row.challan_id,
         ref_id: "--",
       });
-      downloadFunction(response.data.data.buffer.data, row.challan_id);
+      downloadFunction(response.data.buffer.data, row.challan_id);
       // console.log(response);
       setLoading(false);
     }
@@ -674,16 +674,12 @@ const WoViewChallan = () => {
 
   return (
     <>
-      <div style={{ height: "90%", paddingRight: 10, paddingLeft: 10 }}>
+      <div style={{ height: "calc(100vh - 180px)", margin: "10px" }}>
         <Col span={24}>
           <Row>
             <Col>
               <div
-                style={{
-                  paddingBottom: "10px",
-                  paddingTop: "10px",
-                  paddingLeft: "2px",
-                }}
+          
               >
                 <Space>
                   <div style={{ width: 200 }}>
@@ -750,21 +746,8 @@ const WoViewChallan = () => {
             </Col>
           </Row>
         </Col>
-        <div style={{ height: "100%", paddingRight: 5, paddingLeft: 5 }}>
-          {/* {challantype === "Scrape Challan" ? (
-            <MyDataTable
-              loading={loading === "fetch"}
-              data={rows}
-              columns={[actionColumn, ...scrapeColumns]}
-            />
-          ) : (
-            <MyDataTable
-              loading={loading === "fetch"}
-              data={rows}
-              columns={[actionColumn, ...columns]}
-            />
-
-          )} */}
+        <div style={{ height: "calc(100vh - 180px)", marginTop: 10 }}>
+      
           <MyDataTable
             loading={loading === "fetch"}
             data={rows}

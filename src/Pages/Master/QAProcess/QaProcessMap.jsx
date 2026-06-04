@@ -717,11 +717,10 @@ const QaProcessMap = () => {
         style={{  height: "100%", width: "100%" }}
       >
         <Col span={6}>
-          <Card size="small">
+    
             <Form
               style={{ width: "100%", height: "100%" }}
               size="small"
-              layout="vertical"
             >
               <Row>
                 <Col span={24}>
@@ -736,7 +735,7 @@ const QaProcessMap = () => {
                 </Col>
               </Row>
             </Form>
-          </Card>
+      
         </Col>
         <Col
           style={{
@@ -744,7 +743,7 @@ const QaProcessMap = () => {
             height: "100%",
             
           }}
-          span={18}
+          span={24}
         >
           <FormTable
             columns={columns}

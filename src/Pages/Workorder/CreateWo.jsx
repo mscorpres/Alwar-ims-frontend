@@ -410,10 +410,10 @@ export default function CreateWO({}) {
   return (
     <div
       style={{
-        height: "93%",
+        height: "calc(100vh - 180px)",
         overflowY: "scroll",
         overflowX: "hidden",
-        padding: "0vh 20px 10px",
+     margin: "10px",
       }}
     >
       {/* vendor */}

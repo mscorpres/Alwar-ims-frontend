@@ -380,9 +380,9 @@ export default function AppPaymentSetup() {
             onChange={setSearchTerm}
           />
         </Col>
-        <Col span={1}>
-          <Button onClick={getVBTRows} type="primary">
-            Fetch
+        <Col span={2}>
+          <Button onClick={getVBTRows} type="primary" loading={loading === "fetching"}>
+            Search
           </Button>
         </Col>
 

@@ -7,7 +7,6 @@ import {
   createChallanFromSo,
   listOfShipment,
 } from "../../../../../api/sales/salesOrder";
-import MyDataTable from "../../../../gstreco/myDataTable";
 import ToolTipEllipses from "../../../../../Components/ToolTipEllipses";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import CreateShipment from "../CreateShipment/CreateShipment";
@@ -21,6 +20,7 @@ import MyAsyncSelect from "../../../../../Components/MyAsyncSelect";
 import { convertSelectOptions } from "../../../../../utils/general.ts";
 import { getClientsOptions } from "../../../../../api/finance/clients";
 import MyButton from "../../../../../Components/MyButton";
+import MyDataTable from "../../../../../Components/MyDataTable.jsx";
 
 const initialValues = {
   data: "",

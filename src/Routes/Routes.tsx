@@ -4,6 +4,8 @@ import {
   Material,
   PendingApproval,
   Login,
+  SignUp,
+  LoginOtp,
   // MaterialTransaction,
   TransactionIn,
   TransactionOut,
@@ -67,6 +69,7 @@ import {
   CreateJW,
   POAnalysis,
   JwRmChallan,
+  RMPartCodeConversion,
   JwIssue,
   JwsfInward,
   JwrmReturn,
@@ -257,14 +260,24 @@ import R37 from "@/Pages/Reports/R/R37.jsx";
 import QcScan from "@/Pages/Production/mes/qca/scan/index.js";
 import Products from "@/Pages/R&D/products/index.js";
 import ApprovalList from "@/Pages/R&D/products/approvalList.js";
+import AddCostCenter from "../Pages/Master/AddCostCenter.jsx";
 import BOMCreate from "@/Pages/R&D/bom/create/index.js";
 import BOMList from "@/Pages/R&D/bom/list/index.js";
 import VersionDownload from "@/Pages/Version/VersionDownload.jsx";
+import WoUpdateSupplementary from "@/Pages/Workorder/supplementary/WorkOrderUpdate.jsx";
 
 const Routes = [
   {
     path: "/login",
     main: () => <Login />,
+  },
+  {
+    path: "/login/otp",
+    main: () => <LoginOtp />,
+  },
+  {
+    path: "/signup",
+    main: () => <SignUp />,
   },
   {
     path: "/ims/login",
@@ -579,11 +592,16 @@ const Routes = [
     exact: true,
     main: () => <ReportQC />,
   },
-  // {
-  //   path: "/warehouse/physical/create",
-  //   exact: true,
-  //   main: () => <CreatePhysical />,
-  // },
+  {
+    path: "/warehouse/physical/create",
+    exact: true,
+    main: () => <CreatePhysical />,
+  },
+   {
+    path: "/masters/cost-center",
+    exact: true,
+    main: () => <AddCostCenter />,
+  },
   {
     path: "/warehouse/physical/pending",
     exact: true,
@@ -1012,6 +1030,10 @@ const Routes = [
     path: "/wo/view-challan",
     main: () => <WoViewChallan />,
   },
+  {
+    path: "/wo/update/supplementary",
+    main: () => <WoUpdateSupplementary />,
+  },
   // {
   //   path: "/addClient",
   //   exact: true,
@@ -1353,6 +1375,10 @@ const Routes = [
   {
     path: "/warehouse/part-code-conversion/report",
     main: () => <PartCodeConversionReport />,
+  },
+  {
+    path: "/warehouse/rm-part-code-conversion",
+    main: () => <RMPartCodeConversion />,
   },
   {
     path: "/warehouse/e-way/:typeId/:jwId",

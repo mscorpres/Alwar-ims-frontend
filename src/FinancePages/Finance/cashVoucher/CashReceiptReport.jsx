@@ -227,7 +227,7 @@ function CashReceiptReport() {
                   type="primary"
                   onClick={() => fetchData("date_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>
@@ -258,7 +258,7 @@ function CashReceiptReport() {
                   type="primary"
                   onClick={() => fetchData("eff_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>
@@ -300,7 +300,7 @@ function CashReceiptReport() {
                   type="primary"
                   onClick={() => fetchData("key_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>
@@ -346,7 +346,7 @@ function CashReceiptReport() {
                   type="primary"
                   onClick={() => fetchData("ledger_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>
@@ -377,7 +377,7 @@ function CashReceiptReport() {
                   type="primary"
                   onClick={() => fetchData("date_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { useToast } from "../../../../hooks/useToast.js";
-import { Row, Col, Input } from "antd";
+import { Row, Col, Input, Button } from "antd";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import printFunction, {
@@ -9,7 +9,14 @@ import printFunction, {
 } from "../../../../Components/printFunction";
 import RequestApproveModal from "./RequestApproveModal";
 import { Form, Modal } from "antd/es";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  CloseOutlined,
+  SaveOutlined,
+} from "@ant-design/icons";
+
+import { PrinterOutlined } from "@ant-design/icons";
+import Loading from "../../../../Components/Loading.jsx";
 const PendingApproval = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState("fetch");
@@ -25,7 +32,7 @@ const PendingApproval = () => {
       };
       const response = await imsAxios.post(
         "storeApproval/fetchTransactionForApproval",
-        payload
+        payload,
       );
       const data = response?.data;
 
@@ -36,7 +43,7 @@ const PendingApproval = () => {
           requestId: row.transaction_id,
           requestDate: row.insert_full_date,
         }));
-     
+
         setRows(arr);
       } else {
         showToast(response.message, "error");
@@ -87,64 +94,111 @@ const PendingApproval = () => {
       showToast(response.message, "error");
     }
   };
-  const actionColums = {
-    headerName: "",
-    type: "actions",
-    width: 30,
-    getActions: ({ row }) => [
-      // approve Icon
-      <GridActionsCellItem
-        showInMenu
-        label="Process"
-        onClick={() =>
-          setShowApproveModal({
-            requestId: row.requestId,
-          })
-        }
-      />,
 
-      // Download icon
-      <GridActionsCellItem
-        showInMenu
-        label="Download"
-        disabled={row.approval_status === "P"}
-        onClick={() => handleDownload("download", row.requestId)}
-      />,
+  const columns = [
+    {
+      headerName: "#",
+      minWidth: 80,
+      maxWidth: 80,
+      field: "id",
+    },
+    {
+      headerName: "Requested From",
+      flex: 1,
 
-      // Print Icon
-      <GridActionsCellItem
-        showInMenu
-        label="Print"
-        onClick={() => handleDownload("print", row.requestId)}
-      />,
-      <GridActionsCellItem
-        showInMenu
-        label="Cancel"
-        onClick={() => showSubmitConfirmationModal(row)}
-      />,
-    ],
-  };
-
+      field: "requestedFrom",
+    },
+    {
+      headerName: "Request Id",
+      width: 180,
+      maxWidth: 180,
+      field: "requestId",
+    },
+    {
+      headerName: "Request Date",
+      width: 160,
+      maxWidth: 160,
+      field: "requestDate",
+    },
+    {
+      headerName: "Action",
+      type: "actions",
+      pin: "right",
+      width: 300,
+      maxWidth: 300,
+      renderCell: (params) => {
+        return (
+          <div style={{ display: "flex", gap: 10 }}>
+            <Button
+              onClick={() =>
+                setShowApproveModal({
+                  requestId: params.row.requestId,
+                })
+              }
+              style={{
+                background: "#fffdef",
+                borderColor: "#3f3e3e",
+                color: "#272727",
+              }}
+              icon={<SaveOutlined />}
+              size="small"
+            >
+              Process
+            </Button>
+            <Button
+              onClick={() => showSubmitConfirmationModal(params.row)}
+              icon={<CloseOutlined />}
+              size="small"
+              style={{
+                background: "#ffffff",
+                borderColor: "#ff8484",
+                color: "#f76565",
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => handleDownload("print", params.row.requestId)}
+              size="small"
+              style={{
+                background: "#e6f4ff",
+                borderColor: "#91caff",
+                color: "#0958d9",
+              }}
+              icon={<PrinterOutlined />}
+            />
+            {/* <MyButton
+            onClick={() =>
+              handleDownload("download", params.row.requestId)
+            }
+            type="primary"
+            variant="download"
+            size="small"
+         /> */}
+          </div>
+        );
+      },
+    },
+  ];
   const handleDownload = async (action, requestId) => {
     try {
-      setLoading("fetch");
+      setLoading("download");
       const response = await imsAxios.post("/storeApproval/print_request", {
         transaction: requestId,
       });
-      
-      const { data,success } = response;
-     
-        if (success) {
-          const buffer = data.buffer.data;
-          if (action === "print") {
-            printFunction(buffer);
-          } else {
-            downloadFunction(buffer, requestId);
-          }
+
+      const { data, success } = response;
+
+      if (success) {
+        const buffer = data.buffer.data;
+        if (action === "print") {
+          printFunction(buffer);
         } else {
-          showToast(response.message?.msg ?? response.message, "error");
+          downloadFunction(buffer, requestId);
         }
- 
+      } else {
+        showToast(response.message?.msg ?? response.message, "error");
+      }
     } catch (error) {
     } finally {
       setLoading(false);
@@ -155,15 +209,13 @@ const PendingApproval = () => {
     getRows();
   }, []);
   return (
-    <Row
-      
-      style={{ height: "100%", padding: 15 }}
-    >
+    <Row style={{ height: "100%", padding: 15 }}>
+      {loading === "download" && <Loading />}
       <Col span={24}>
         <MyDataTable
           loading={loading === "fetch"}
           data={rows}
-          columns={[actionColums, ...columns]}
+          columns={columns}
         />
       </Col>
       <RequestApproveModal
@@ -176,29 +228,3 @@ const PendingApproval = () => {
 };
 
 export default PendingApproval;
-
-const columns = [
-  {
-    headerName: "#",
-    width: 30,
-    field: "id",
-  },
-  {
-    headerName: "Requested From",
-    minWidth: 20,
-    flex: 1,
-    field: "requestedFrom",
-  },
-  {
-    headerName: "Request Id",
-    width: 250,
-    minWidth: 250,
-    flex: 1,
-    field: "requestId",
-  },
-  {
-    headerName: "Request Date",
-    width: 200,
-    field: "requestDate",
-  },
-];

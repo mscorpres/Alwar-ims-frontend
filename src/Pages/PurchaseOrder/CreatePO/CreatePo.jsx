@@ -133,8 +133,8 @@ export default function CreatePo() {
   const [successData, setSuccessData] = useState(false);
   const [projectDesc, setProjectDesc] = useState("");
   const [sameAsBilling, setSameAsBilling] = useState(false);
+  
   const [form] = Form.useForm();
-
   const termsCondition = Form.useWatch("termscondition", form);
   const advancePayment = Form.useWatch("advancePayment", form);
 
@@ -735,46 +735,58 @@ export default function CreatePo() {
       }
     }
   };
-  const getPaymentTermsDay = async (vendorCode) => {
-    setPageLoading(true);
-    const response = await imsAxios.post("/backend/vendorTerms", {
-      vendorcode: vendorCode,
-    });
-    setPageLoading(false);
-    const data = response?.data;
+  const getPaymentTermsDay = async (vendorCode, { showPageLoading = true } = {}) => {
+    if (showPageLoading) setPageLoading(true);
+    try {
+      const response = await imsAxios.post("/backend/vendorTerms", {
+        vendorcode: vendorCode,
+      });
+      const data = response?.data;
 
-    if (response.success) {
-      return data;
-    } else {
-      showToast(response.message, "error");
+      if (response.success) {
+        return data;
+      } else {
+        showToast(response.message, "error");
+      }
+    } finally {
+      if (showPageLoading) setPageLoading(false);
     }
   };
   const selectInputHandler = async (name, value) => {
     if (!value) return;
 
     if (name === "vendorname") {
-      const branches = await getVendorBracnch(value.value);
-      const { address, gstin, statecode } = await getVendorAddress({
-        vendorCode: value,
-        vendorBranch: branches[0]?.value,
-      });
+      setPageLoading(true);
+      try {
+        const branches = await getVendorBracnch(value.value, {
+          showPageLoading: false,
+        });
+        const { address, gstin, statecode } = await getVendorAddress({
+          vendorCode: value,
+          vendorBranch: branches[0]?.value,
+        });
 
-      const termsData = await getPaymentTermsDay(value.value);
+        const termsData = await getPaymentTermsDay(value.value, {
+          showPageLoading: false,
+        });
 
-      const updated = {
-        vendorname: value,
-        vendorbranch: branches[0]?.value || "",
-        vendoraddress: address?.replaceAll("<br>", "\n") || "",
-        gstin: gstin || "",
-        venCode: statecode || "",
-        paymenttermsday: termsData?.paymentterms || 30,
-        paymentterms: termsData?.po_payment_terms || "",
-        msmeType: termsData?.msme_data?.msme_type || "",
-        msmeId: termsData?.msme_data?.msme_id || "",
-      };
+        const updated = {
+          vendorname: value,
+          vendorbranch: branches[0]?.value || "",
+          vendoraddress: address?.replaceAll("<br>", "\n") || "",
+          gstin: gstin || "",
+          venCode: statecode || "",
+          paymenttermsday: termsData?.paymentterms || 30,
+          paymentterms: termsData?.po_payment_terms || "",
+          msmeType: termsData?.msme_data?.msme_type || "",
+          msmeId: termsData?.msme_data?.msme_id || "",
+        };
 
-      form.setFieldsValue(updated);
-      setnewPurchaseOrder((prev) => ({ ...prev, ...updated }));
+        form.setFieldsValue(updated);
+        setnewPurchaseOrder((prev) => ({ ...prev, ...updated }));
+      } finally {
+        setPageLoading(false);
+      }
     } else if (name === "vendorbranch") {
       const { address, gstin, statecode } = await getVendorAddress({
         vendorCode: newPurchaseOrder.vendorname,
@@ -792,6 +804,7 @@ export default function CreatePo() {
       setnewPurchaseOrder((prev) => ({ ...prev, ...updated }));
     } else if (name === "billaddressid") {
       const billingDetails = await getBillingAddress(value);
+      if (!billingDetails) return;
 
       form.setFieldsValue({
         billaddressid: value,
@@ -845,6 +858,7 @@ export default function CreatePo() {
         }));
       } else {
         const shippingDetails = await getShippingAddress(value);
+        if (!shippingDetails) return;
 
         form.setFieldsValue({
           shipaddressid: value,
@@ -852,8 +866,6 @@ export default function CreatePo() {
           shipPan: shippingDetails.pan || "",
           shipGST: shippingDetails.gstin || "",
         });
-
-        setStateCode(shippingDetails.statecode || "");
 
         setnewPurchaseOrder((prev) => ({
           ...prev,
@@ -923,7 +935,6 @@ export default function CreatePo() {
     { text: "Supplementary", value: "S" },
   ];
   const vendorDetailsOptions = [
-    { text: "JWI (Job Work In)", value: "j01" },
     { text: "Vendor", value: "v01" },
   ];
   //getting users list
@@ -967,22 +978,28 @@ export default function CreatePo() {
     }
   };
   //getting vendor branches
-  const getVendorBracnch = async (vendorCode) => {
-    setPageLoading(true);
-    const response = await imsAxios.post("/backend/vendorBranchList", {
-      vendorcode: vendorCode,
-    });
-
-    setPageLoading(false);
-    if (response.success) {
-      const arr = response.data.map((d) => {
-        return { value: d.id, text: d.text };
+  const getVendorBracnch = async (
+    vendorCode,
+    { showPageLoading = true } = {}
+  ) => {
+    if (showPageLoading) setPageLoading(true);
+    try {
+      const response = await imsAxios.post("/backend/vendorBranchList", {
+        vendorcode: vendorCode,
       });
-      setVendorBranches(arr);
-      return arr;
-    }
-    if (!response?.success) {
-      return;
+
+      if (response.success) {
+        const arr = response.data.map((d) => {
+          return { value: d.id, text: d.text };
+        });
+        setVendorBranches(arr);
+        return arr;
+      }
+      if (!response?.success) {
+        return;
+      }
+    } finally {
+      if (showPageLoading) setPageLoading(false);
     }
   };
   // getting vendor address
@@ -1045,33 +1062,43 @@ export default function CreatePo() {
     setAsyncOptions(arr);
   };
   const getBillingAddress = async (billaddressid) => {
+    if (billaddressid == null || billaddressid === "") return null;
     setPageLoading(true);
-    const response = await imsAxios.post("/backend/billingAddress", {
-      billing_code: billaddressid,
-    });
-    setPageLoading(false);
-    return {
-      gstin: response?.data?.gstin,
-      pan: response?.data?.pan,
-      address: response?.data?.address,
-      code: response.data?.statecode,
-    };
+    try {
+      const response = await imsAxios.post("/backend/billingAddress", {
+        billing_code: billaddressid,
+      });
+      return {
+        gstin: response?.data?.gstin,
+        pan: response?.data?.pan,
+        address: response?.data?.address,
+        code: response.data?.statecode,
+      };
+    } finally {
+      setPageLoading(false);
+    }
 
     // selectInputHandler("billDetails", data.data.address);
   };
   const getShippingAddress = async (shipaddressid) => {
+    if (shipaddressid == null || shipaddressid === "" || shipaddressid === "other") {
+      return null;
+    }
     setPageLoading(true);
-    const response = await imsAxios.post("/backend/shippingAddress", {
-      shipping_code: shipaddressid,
-    });
-    setPageLoading(false);
-    setStateCode(response?.data?.statecode);
+    try {
+      const response = await imsAxios.post("/backend/shippingAddress", {
+        shipping_code: shipaddressid,
+      });
+      setStateCode(response?.data?.statecode);
     // console.log("stateCodeeeeeeeeeeeeee", data.data.statecode);
-    return {
-      gstin: response.data?.gstin,
-      pan: response.data?.pan,
-      address: response.data?.address,
-    };
+      return {
+        gstin: response.data?.gstin,
+        pan: response.data?.pan,
+        address: response.data?.address,
+      };
+    } finally {
+      setPageLoading(false);
+    }
   };
   const resetFunction = () => {
     let obj = {
@@ -1159,31 +1186,37 @@ export default function CreatePo() {
     }));
 
     setPageLoading(true);
-    const response = await imsAxios.post("/backend/projectDescription", {
-      project_name: typeof value === "object" ? value.value : value,
-    });
-    setPageLoading(false);
-    const data = response?.data;
-    if (data) {
-      if (response.success) {
-        setProjectDesc(data.description);
+    try {
+      const response = await imsAxios.post("/backend/projectDescription", {
+        project_name: typeof value === "object" ? value.value : value,
+      });
+      const data = response?.data;
+      if (data) {
+        if (response.success) {
+          setProjectDesc(data.description);
 
-        await handleProjectCostCenter(
-          typeof value === "object" ? value.value : value
-        );
-      } else {
-        showToast(data.message, "error");
+          await handleProjectCostCenter(
+            typeof value === "object" ? value.value : value,
+            { showPageLoading: false }
+          );
+        } else {
+          showToast(data.message, "error");
+        }
       }
+    } finally {
+      setPageLoading(false);
     }
   };
 
-  const handleProjectCostCenter = async (projectName) => {
-    setPageLoading(true);
+  const handleProjectCostCenter = async (
+    projectName,
+    { showPageLoading = true } = {}
+  ) => {
+    if (showPageLoading) setPageLoading(true);
     try {
       const response = await imsAxios.post("/purchaseOrder/costCenter", {
         project_name: projectName,
       });
-      setPageLoading(false);
       const responseData =
         response?.success !== undefined ? response : response?.data || response;
 
@@ -1207,11 +1240,15 @@ export default function CreatePo() {
         };
         setnewPurchaseOrder(updatedPO);
       } else {
-        showToast(data?.message || "Failed to fetch cost center", "error");
+        showToast(
+          responseData?.message || "Failed to fetch cost center",
+          "error"
+        );
       }
     } catch (error) {
-      setPageLoading(false);
       showToast("Error fetching project cost center", "error");
+    } finally {
+      if (showPageLoading) setPageLoading(false);
     }
   };
 
@@ -1222,24 +1259,17 @@ export default function CreatePo() {
       }, 600000);
     }
   }, [submitLoading]);
-  //on selecting vendor from the list
   useEffect(() => {
-    if (newPurchaseOrder.vendorname) {
-      getVendorBracnch();
-    }
-  }, [newPurchaseOrder.vendorname]);
-  // useE
-  useEffect(() => {
-    getBillTo();
-    shipTo();
+    let cancelled = false;
+    (async () => {
+      await getBillTo();
+      if (cancelled) return;
+      await shipTo();
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
-  //getting complete billing address
-  useEffect(() => {
-    getBillingAddress();
-  }, [newPurchaseOrder.billaddressid]);
-  useEffect(() => {
-    getShippingAddress();
-  }, [newPurchaseOrder.shipaddressid]);
 
   useEffect(() => {
     if (sameAsBilling && newPurchaseOrder.billaddressid) {
@@ -1286,6 +1316,7 @@ export default function CreatePo() {
       style={{
         height: "calc(100vh - 180px)",
         overflow: "hidden",
+        margin: "10px",
       }}
     >
       {/* create confirm modal */}
@@ -1419,7 +1450,7 @@ export default function CreatePo() {
         <div style={{ height: "100%", overflow: "auto" }}>
           <Tabs
             style={{
-              padding: "0 10px",
+         
               height: "100%",
             }}
             activeKey={activeTab}

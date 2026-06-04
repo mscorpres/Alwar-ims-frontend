@@ -48,7 +48,7 @@ function View({
     <div style={{ height: "100%" }}>
       <Row justify="end" style={{ margin: "5x 0" }}>
         <CommonIcons
-          disabled={rows.length === 0}
+          disabled={rows?.length === 0}
           onClick={handleDownload}
           action="downloadButton"
         />

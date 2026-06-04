@@ -9,12 +9,12 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { useSelector } from "react-redux";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
+import { Add, Delete } from "@mui/icons-material";
 const { paragraph } = Typography;
 
 const { TextArea } = Input;
 function MaterialTransfer({ type }) {
   const { showToast } = useToast();
-  // console.log(type)
   type == "sftorej"
     ? (document.title = "SF to REJ")
     : (document.title = "SF to SF");
@@ -24,7 +24,6 @@ function MaterialTransfer({ type }) {
   });
   const { executeFun, loading: loading1 } = useApi();
   const [asyncOptions, setAsyncOptions] = useState([]);
-  // console.log(allData)
   const [submitLoading, setSubmitLoading] = useState(false);
   const [locationData, setLocationData] = useState([]);
 
@@ -71,13 +70,11 @@ function MaterialTransfer({ type }) {
 
   const getComponent = async (e) => {
     if (e?.length > 2) {
-      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-      //   search: e,
-      // });
+   
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
       let arr = [];
-      arr = data.map((d) => {
+      arr = data?.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -141,9 +138,7 @@ function MaterialTransfer({ type }) {
       if (!r.qty) return showToast(`Row ${i + 1}: Please enter Qty`, "error");
       if (!r.rejLoc)
         return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
-      if (
-        r.rejLoc == allData.locationSel
-      )
+      if (r.rejLoc == allData.locationSel)
         return showToast(`Row ${i + 1}: Both Location Same`, "error");
     }
 
@@ -162,7 +157,7 @@ function MaterialTransfer({ type }) {
         tolocation: tolocations,
         qty: qtys,
         type: type == "sftorej" ? "SF2REJ" : "SF2SF",
-      }
+      },
     );
 
     if (response.success) {
@@ -206,7 +201,6 @@ function MaterialTransfer({ type }) {
 
   const addRow = () => {
     setRows((prev) => [
-      ...prev,
       {
         componentName: "",
         qty: "",
@@ -215,6 +209,7 @@ function MaterialTransfer({ type }) {
         address: "",
         comment: "",
       },
+      ...prev,
     ]);
   };
 
@@ -234,7 +229,7 @@ function MaterialTransfer({ type }) {
         prev.map((row) => ({
           ...row,
           rejLoc: "", // Reset location when branch changes
-        }))
+        })),
       );
     } catch (error) {
       console.error("Error fetching locations for branch", error);
@@ -265,13 +260,13 @@ function MaterialTransfer({ type }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allData?.locationSel]);
   return (
-    <div style={{ height: "calc(100vh - 160px)", padding:10, }}>
+    <div style={{ height: "calc(100vh - 160px)", padding: 10 }}>
       <Row gutter={10}>
-        <Col span={6}>
-          <Card>
+        <Col span={12}>
+      
             <Row>
-              <Col span={24} style={{ padding: "5px" }}>
-                <span>PICK LOCATION</span>
+              <Col span={12} style={{ padding: "5px", display: "flex", gap: 5, alignItems: "center" }}>
+                <span style={{ fontWeight: "bold", minWidth: "100px" }}>Pick Location</span>
                 <MySelect
                   options={locationData}
                   placeholder="Check Location"
@@ -283,151 +278,164 @@ function MaterialTransfer({ type }) {
                   }
                 />
               </Col>
-              <Col span={24} style={{ padding: "5px" }}>
-                <TextArea disabled value={locDetail} />
+              <Col span={12} style={{ padding: "5px" }}>
+                <Input disabled value={locDetail} />
               </Col>
             </Row>
-          </Card>
+      
         </Col>
-        <Col span={18} style={{ height: "50vh" }}>
-       
+        <Col span={24} style={{ height: "50vh" }}>
+          <div
+            style={{ marginTop: "10px", border: "1px solid #ccc", padding: 0 }}
+          >
             <div
               style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                marginBottom: 10,
+                overflowY: "auto",
+                height: "calc(100vh - 250px)",
               }}
             >
-              <Button type="primary" onClick={addRow}>
-                Add Row
-              </Button>
-            </div>
-             <div style={{ marginTop: "10px", border: "1px solid #ccc", padding:4 }}>
-                <div
-                  style={{
-                    overflowY: "auto",
-                    height: "calc(100vh - 230px)",
-                  }}
-                >
-              <table
-                className="table table-hover"
-                style={{ tableLayout: "fixed", width: "100%", minWidth: 1200 }}
-              >
+              <table style={{ minWidth: 1500 }}>
                 <thead style={{ backgroundColor: "grey", color: "white" }}>
                   <tr>
-                    <th style={{ width: "20vw" }}>Component/Part</th>
-                    <th style={{ width: "14vw" }}>In Stock Qty</th>
-                    <th style={{ width: "14vw" }}>Transfer Qty</th>
-                    <th style={{ width: "18vw" }}>DROP (+) Loc</th>
-                    <th style={{ width: "14vw" }}>Weighted Average Rate</th>
-                    <th style={{ width: "24vw" }}>Address</th>
-                    <th style={{ width: "24vw" }}>Comment</th>
-                    <th style={{ width: "10vw" }}>Actions</th>
+                    <th className="table-col" style={{ width: "10vw" }}>
+                      Actions
+                    </th>
+                    <th className="table-col" style={{ width: "20vw" }}>
+                      Component/Part
+                    </th>
+                    <th className="table-col" style={{ width: "14vw" }}>
+                      In Stock Qty
+                    </th>
+                    <th className="table-col" style={{ width: "14vw" }}>
+                      Transfer Qty
+                    </th>
+                    <th className="table-col" style={{ width: "18vw" }}>
+                      DROP (+) Loc
+                    </th>
+                    <th className="table-col" style={{ width: "20vw" }}>
+                      Weighted Average Rate
+                    </th>
+                    <th className="table-col" style={{ width: "24vw" }}>
+                      Address
+                    </th>
+                    <th className="table-col" style={{ width: "24vw" }}>
+                      Comment
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((r, idx) => (
-                    <tr key={idx}>
-                      <td style={{ width: "20vw" }}>
-                        <MyAsyncSelect
-                          loadOptions={getComponent}
-                          optionsState={asyncOptions}
-                          value={r.componentName}
-                          selectLoading={loading1("select")}
-                          onChange={async (e) => {
-                            setRows((prev) => {
-                              const updated = [...prev];
-                              updated[idx] = {
-                                ...updated[idx],
-                                componentName: e,
-                              };
-                              return updated;
-                            });
-                            await getRowComponentDetail(idx, e);
-                          }}
-                        />
-                      </td>
-                      <td style={{ textAlign: "center", width: "14vw" }}>
-                        <paragraph>
-                          {r?.restDetail?.available_qty
-                            ? `${r?.restDetail?.available_qty} ${r?.restDetail?.unit}`
-                            : "0"}
-                        </paragraph>
-                      </td>
-                      <td style={{ width: "14vw" }}>
-                        <Input
-                        type="number"
-                          value={r.qty}
-                          onChange={(e) =>
-                            setRows((prev) => {
-                              const updated = [...prev];
-                              updated[idx] = {
-                                ...updated[idx],
-                                qty: e.target.value,
-                              };
-                              return updated;
-                            })
-                          }
-                        />
-                      </td>
-                      <td style={{ width: "18vw" }}>
-                        <MySelect
-                          options={locRejDetail}
-                          placeholder="Check Location"
-                          value={r.rejLoc}
-                          onChange={async (e) => {
-                            setRows((prev) => {
-                              const updated = [...prev];
-                              updated[idx] = { ...updated[idx], rejLoc: e };
-                              return updated;
-                            });
-                            await getRowDropLocationDetail(idx, e);
-                          }}
-                        />
-                      </td>
-                      <td style={{ width: "14vw" }}>
-                        <Input disabled value={r?.restDetail?.avr_rate} />
-                      </td>
-                      <td style={{ width: "24vw" }}>
-                        <TextArea
-                          disabled
-                          value={r.address}
-                          style={{ resize: "none" }}
-                        />
-                      </td>
-                      <td style={{ width: "24vw" }}>
-                        <TextArea
-                          rows={2}
-                          value={r.comment}
-                          onChange={(e) =>
-                            setRows((prev) => {
-                              const updated = [...prev];
-                              updated[idx] = {
-                                ...updated[idx],
-                                comment: e.target.value,
-                              };
-                              return updated;
-                            })
-                          }
-                          style={{ resize: "none" }}
-                        />
-                      </td>
-                      <td style={{ width: "10vw" }}>
-                        <Button
-                          danger
-                          onClick={() => removeRow(idx)}
-                          disabled={rows.length === 1}
-                        >
-                          Remove
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
+                  {rows.map((r, idx) => {
+                    const rowColor = idx % 2 === 0 ? "#ffffff" : "#efefef";
+                    return (
+                      <tr key={idx} style={{ backgroundColor: rowColor }}>
+                        <td style={{ width: "2vw", textAlign: "center" }}>
+                          {idx > 0 && (
+                            <span
+                              onClick={() => removeRow(idx)}
+                              className="delete-icon"
+                            >
+                              <Delete color="error" />
+                            </span>
+                          )}
+                          {idx === 0 && (
+                            <span
+                              onClick={addRow}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <Add color="success" />
+                            </span>
+                          )}
+                        </td>
+                        <td style={{ width: "20vw" }}>
+                          <MyAsyncSelect
+                            loadOptions={getComponent}
+                            optionsState={asyncOptions}
+                            value={r.componentName}
+                            selectLoading={loading1("select")}
+                            onChange={async (e) => {
+                              setRows((prev) => {
+                                const updated = [...prev];
+                                updated[idx] = {
+                                  ...updated[idx],
+                                  componentName: e,
+                                };
+                                return updated;
+                              });
+                              await getRowComponentDetail(idx, e);
+                            }}
+                          />
+                        </td>
+                        <td style={{ textAlign: "center", width: "14vw" }}>
+                          <paragraph>
+                            {r?.restDetail?.available_qty
+                              ? `${r?.restDetail?.available_qty} ${r?.restDetail?.unit}`
+                              : "0"}
+                          </paragraph>
+                        </td>
+                        <td style={{ width: "14vw" }}>
+                          <Input
+                            type="number"
+                            value={r.qty}
+                            onChange={(e) =>
+                              setRows((prev) => {
+                                const updated = [...prev];
+                                updated[idx] = {
+                                  ...updated[idx],
+                                  qty: e.target.value,
+                                };
+                                return updated;
+                              })
+                            }
+                          />
+                        </td>
+                        <td style={{ width: "18vw" }}>
+                          <MySelect
+                            options={locRejDetail}
+                            placeholder="Check Location"
+                            value={r.rejLoc}
+                            onChange={async (e) => {
+                              setRows((prev) => {
+                                const updated = [...prev];
+                                updated[idx] = { ...updated[idx], rejLoc: e };
+                                return updated;
+                              });
+                              await getRowDropLocationDetail(idx, e);
+                            }}
+                          />
+                        </td>
+                        <td style={{ width: "14vw" }}>
+                          <Input disabled value={r?.restDetail?.avr_rate} />
+                        </td>
+                        <td style={{ width: "24vw" }}>
+                          <Input
+                            disabled
+                            value={r.address}
+                            style={{ resize: "none" }}
+                          />
+                        </td>
+                        <td style={{ width: "24vw" }}>
+                          <Input
+                            value={r.comment}
+                            onChange={(e) =>
+                              setRows((prev) => {
+                                const updated = [...prev];
+                                updated[idx] = {
+                                  ...updated[idx],
+                                  comment: e.target.value,
+                                };
+                                return updated;
+                              })
+                            }
+                            style={{ resize: "none" }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
-              </div>
             </div>
-        
+          </div>
         </Col>
       </Row>
       <NavFooter

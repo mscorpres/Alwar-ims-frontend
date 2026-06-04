@@ -1,9 +1,10 @@
 import { Form, Row, Typography } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { normalizeFormRules } from "../utils/general";
 import { CommonIcons } from "./TableActions.jsx/TableActions";
 import { useEffect } from "react";
 import { memo } from "react";
+import { Add, Delete } from "@mui/icons-material";
 
 const FormTable2 = ({
   form,
@@ -20,107 +21,127 @@ const FormTable2 = ({
   reverse,
 }) => {
   const formValues = Form.useWatch();
-  const addRow = (newRow) => {
-    let obj = newRow;
+  const [hoveredRow, setHoveredRow] = useState(null);
+  const addRow = (rowTemplate) => {
     const names = columns.map((row) => row.name);
-    if (!newRow) {
-      names.map((name) => name !== "" && (obj[name] = ""));
+    const obj =
+      rowTemplate && typeof rowTemplate === "object"
+        ? { ...rowTemplate }
+        : {};
+    if (!rowTemplate) {
+      names.forEach((name) => {
+        if (name !== "") obj[name] = "";
+      });
     }
 
-    const rows = form.getFieldValue(listName);
-    let arr = [];
-    if (reverse) {
-      arr = [...rows, obj];
-    } else {
-      arr = [obj, ...rows];
-    }
+    const rows = form.getFieldValue(listName) ?? [];
+    const next = Array.isArray(rows) ? rows : [];
+    const arr = reverse ? [...next, obj] : [obj, ...next];
 
     form.setFieldValue(listName, arr);
   };
   return (
-    <table style={tableStyle}>
-      <thead
-        style={{
-          width: "100%",
-          display: "block",
-          marginTop: 3,
-          verticalAlign: "middle",
-          position: "sticky",
-          top: 0,
-          zIndex: 2,
-        }}
-      >
-        <tr style={tableHeaderStyle}>
-          {removableRows && (
-            <td
-              style={{
-                ...columnHeaderStyle(),
-                width: 30,
-              }}
-            >
-              {addableRow && (
-                <CommonIcons action="addRow" onClick={() => addRow(newRow)} />
-              )}
-            </td>
-          )}
-          {columns.map((col) =>
-            !col.conditional ? (
-              <td style={columnHeaderStyle(col)}>
-                <Typography.Text style={{ fontSize: "0.8rem" }} strong>
-                  {col.headerName}
-                </Typography.Text>
+    <div
+      style={{
+       
+        padding: 0,
+        overflowY: "auto",
+        height: "calc(100vh - 200px)",
+      }}
+    >
+      <table style={{ border: "1px solid #ccc", }}>
+        <thead >
+          <tr>
+            {(addableRow || removableRows) && (
+              <td
+                className="table-col"
+                style={{
+                  width: 30,
+                  minWidth: 30,
+                  textAlign: "center",
+                    
+                }}
+              >
+                {addableRow && (
+                  <span
+                    onClick={() => addRow(newRow)}
+                    style={{ cursor: "pointer" }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ")
+                        addRow(newRow);
+                    }}
+                  >
+                    <Add color="success" />
+                  </span>
+                )}
               </td>
-            ) : (
-              col.condition() && (
-                <td style={columnHeaderStyle(col)}>
+            )}
+            {columns.map((col) =>
+              !col.conditional ? (
+                <td
+                  key={col.name}
+                  className="table-col"
+             
+                >
                   <Typography.Text style={{ fontSize: "0.8rem" }} strong>
                     {col.headerName}
                   </Typography.Text>
                 </td>
-              )
-            )
-          )}
-        </tr>
-      </thead>
+              ) : (
+                col.condition() && (
+                  <td
+                    key={col.name}
+                    className="table-col"
+                
+                  >
+                    <Typography.Text style={{ fontSize: "0.8rem" }} strong>
+                      {col.headerName}
+                    </Typography.Text>
+                  </td>
+                )
+              ),
+            )}
+          </tr>
+        </thead>
 
-      <tbody
-        style={{
-          display: "block",
-          height: "99%",
-          width: "100%",
-        }}
-      >
-        <Form.List
-          name={listName}
-          style={{
-            width: "fit-content",
-            height: "100%",
-          }}
-        >
-          {(fields, { add, remove }) =>
-            fields.map((field, index) => (
-              <SingleRow
-                field={field}
-                fieldsLength={fields.length}
-                nonRemovableColumns={nonRemovableColumns}
-                removableRows={removableRows}
-                remove={remove}
-                index={index}
-                columns={columns}
-                listName={listName}
-                watchKeys={watchKeys}
-                form={form}
-                calculation={calculation}
-                formValues={formValues}
-                nonListWatchKeys={nonListWatchKeys}
-                componentRequiredRef={componentRequiredRef}
-              />
-            ))
-          }
-        </Form.List>
-     
-      </tbody>
-    </table>
+        <tbody>
+          <Form.List
+            name={listName}
+            style={{
+              width: "fit-content",
+              height: "100%",
+            }}
+          >
+            {(fields, { add, remove }) =>
+              fields.map((field, index) => (
+                <SingleRow
+                  key={field.key}
+                  field={field}
+                  fieldsLength={fields.length}
+                  nonRemovableColumns={nonRemovableColumns}
+                  removableRows={removableRows}
+                  addableRow={addableRow}
+                  remove={remove}
+                  index={index}
+                  columns={columns}
+                  listName={listName}
+                  watchKeys={watchKeys}
+                  form={form}
+                  calculation={calculation}
+                  formValues={formValues}
+                  nonListWatchKeys={nonListWatchKeys}
+                  componentRequiredRef={componentRequiredRef}
+                  hoveredRow={hoveredRow}
+                  setHoveredRow={setHoveredRow}
+                />
+              ))
+            }
+          </Form.List>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
@@ -132,24 +153,31 @@ const SingleRow = memo(
     fieldsLength,
     nonRemovableColumns = 1,
     removableRows,
+    addableRow,
     remove,
     index,
     columns,
-    watchKeys=[],
+    watchKeys = [],
     listName,
     form,
     calculation,
     nonListWatchKeys = [],
     componentRequiredRef = [],
+    hoveredRow,
+    setHoveredRow,
   }) => {
+    const rowStripe =
+      index % 2 === 0 ? "#ffffff" : "#f8f9fa";
+    const rowBg =
+      hoveredRow === field.key ? "#fffaec" : rowStripe;
     const watchValues = watchKeys?.map((val) =>
-      form.getFieldValue([listName, field.name, val])
+      form.getFieldValue([listName, field.name, val]),
     );
     const nonListWatchValues = nonListWatchKeys?.map((val) =>
-      form.getFieldValue(val)
+      form.getFieldValue(val),
     );
     const componentRequiredValues = componentRequiredRef.map((val) =>
-      form.getFieldValue([listName, field.name, val])
+      form.getFieldValue([listName, field.name, val]),
     );
     const valueObj = form.getFieldValue([listName, field.name]);
     const isComponentRequired = () => {
@@ -176,24 +204,49 @@ const SingleRow = memo(
     }, [[...watchValues, ...nonListWatchValues]]);
     return (
       <Form.Item noStyle>
-        <tr align="middle" key={field.key} style={tableColumnStyle}>
+        <tr
+          align="middle"
+          style={{  backgroundColor: rowBg }}
+          onMouseEnter={() => setHoveredRow(field.key)}
+          onMouseLeave={() => setHoveredRow(null)}
+        >
+          {addableRow && !removableRows && (
+            <td
+              style={{
+                width: 30,
+                backgroundColor: rowBg,
+            
+              }}
+            />
+          )}
           {removableRows && (
             <td
               style={{
-                whiteSpace: "nowrap",
-                width: 30,
+                width: "2vw",
+                textAlign: "center",
+                backgroundColor: rowBg,
+            
               }}
             >
-              {fieldsLength > nonRemovableColumns && (
-                <CommonIcons action="removeRow" onClick={() => remove(index)} />
+              {index > 0 && (
+                <span
+                  onClick={() => remove(field.name)}
+                  className="delete-icon"
+                >
+                  <Delete color="error" />
+                </span>
               )}
             </td>
           )}
           {columns.map((row, columnIndex) =>
             !row.conditional ? (
-              <td key={columnIndex} style={columnCellStyle(row, index)}>
+              <td key={columnIndex} style={columnCellStyle(row, rowBg)}>
                 <Form.Item
-                  rules={isComponentRequired() ? normalizeFormRules(rules[row.name]) : []}
+                  rules={
+                    isComponentRequired()
+                      ? normalizeFormRules(rules[row.name])
+                      : []
+                  }
                   name={[field.name, row.name]}
                   style={{
                     margin: 0,
@@ -208,9 +261,13 @@ const SingleRow = memo(
               </td>
             ) : (
               row.condition() && (
-                <td style={columnCellStyle(row, index)}>
+                <td style={columnCellStyle(row, rowBg)}>
                   <Form.Item
-                    rules={isComponentRequired() ? normalizeFormRules(rules[row.name]) : []}
+                    rules={
+                      isComponentRequired()
+                        ? normalizeFormRules(rules[row.name])
+                        : []
+                    }
                     name={[field.name, row.name]}
                     style={{
                       margin: 0,
@@ -224,51 +281,25 @@ const SingleRow = memo(
                   </Form.Item>
                 </td>
               )
-            )
+            ),
           )}
         </tr>
       </Form.Item>
     );
-  }
+  },
 );
-const columnHeaderStyle = (col) => ({
-  whiteSpace: "nowrap",
-  width: col?.width,
-  flex: col?.flex && 1,
-  margin: "0px 1px",
-  background: "#f5f5f5",
-  borderRadius: 3,
-});
 
-const columnCellStyle = (row, index) => ({
+
+const columnCellStyle = (row, rowBg) => ({
   whiteSpace: "nowrap",
   width: row.width,
-  flex: row.flex && 1,
-  background: index % 2 === 0 && "#f5f5f57f",
-  margin: "0px 1px",
+  minWidth: row.width,
+  maxWidth: row.maxWidth,
+  verticalAlign: "middle",
+  backgroundColor: rowBg,
+  padding: "2px 5px",
 });
-const tableStyle = {
-  display: "block",
-  height: "100%",
-  width: "100%",
-  overflowX: "scroll",
-  overflowY: "auto",
-  padding: 0,
-};
-const tableHeaderStyle = {
-  display: "flex",
-  minWidth: "100%",
-  width: "fit-content",
-  borderRadius: 5,
-};
-const tableColumnStyle = {
-  display: "flex",
-  minWidth: "100%",
-  width: "fit-content",
-
-  marginTop: 3,
-  borderRadius: 5,
-};
+const tableRowStyle = {};
 
 const rules = {
   hsn: [

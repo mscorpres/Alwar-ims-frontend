@@ -161,7 +161,6 @@ export default function VBT3() {
   const getMultipleVBTDetail = async () => {
     setLoading(true);
     let mins = selectedRows.map((row) => vbtData.filter((r) => r.id == row)[0]);
-    // console.log(mins);
     const response = await imsAxios.post("/tally/vbt03/fetch_multi_min_data", {
       mins: mins.map((row) => row.min_transaction),
     });

@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Button, Input, Space, Table, Row, Col,  Tooltip } from "antd";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
+import { Button, Input, Space, Row, Col, Tooltip } from "antd";
+import { Box, IconButton } from "@mui/material";
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { useToast } from "../../../hooks/useToast.js";
 import { downloadCSVAntTable } from "../../../Components/exportToCSV";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -9,46 +12,209 @@ import { InfoCircleFilled } from "@ant-design/icons";
 import { getProjectOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
+
+const csvExportColumns = [
+  { headerName: "Part", dataIndex: "part" },
+  { headerName: "Name", dataIndex: "name" },
+  { headerName: "Type", dataIndex: "type" },
+  { headerName: "BOM QTY", dataIndex: "bomqty" },
+  { headerName: "BOM RATE", dataIndex: "bomrate" },
+  { headerName: "UoM", dataIndex: "unit" },
+  { headerName: "PROJECT REQUIRED QTY (A)", dataIndex: "requirement" },
+  { headerName: "PO ORDERED QTY (B)", dataIndex: "order_qty" },
+  { headerName: "RECIEVED PO QTY (c)", dataIndex: "inward_qty" },
+  { headerName: "PENDING PO QTY (D = B-C)", dataIndex: "pending_qty" },
+  { headerName: "STOCK IN HAND AT 2ND FLOOR (E)", dataIndex: "branch_stock" },
+  { headerName: "STOCK AT SHOP FLOOR (F)", dataIndex: "sfFloor" },
+  { headerName: "PENDING REQUIRED QTY (G)", dataIndex: "pending_reqqty" },
+  { headerName: "OVER STOCK QTY (H = D+E+F-G)", dataIndex: "over_st_qty" },
+  { headerName: "DEBIT NOTE QTY", dataIndex: "debit_qty" },
+];
+
+const nestedColumns = [
+  { headerName: "Sr. No", field: "index", width: 80 },
+  { headerName: "Part", field: "part", width: 100 },
+  { headerName: "Code", field: "ven_code", width: 120 },
+  { headerName: "Name", field: "ven_name", flex: 1, minWidth: 200 },
+  { headerName: "PO Ord Qty", field: "total_ord", width: 120 },
+  { headerName: "Recv. Qty", field: "inward_qty", width: 120 },
+  { headerName: "Pending Qty", field: "pending_qty", width: 120 },
+];
 
 export default function CPMAnalysis() {
   const { showToast } = useToast();
   const [fileInfo, setFileInfo] = useState("");
   const [projectId, setProjectId] = useState("");
-  const [dateSearch, setDateSearch] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
-  const [selectLoading, setSelectLoaidng] = useState(false);
   const [nestedTableLoading, setNestedTableLoading] = useState(false);
   const [rows, setRows] = useState([]);
-  const [detail, setDetail] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [search, setSearch] = useState("");
-  const [dateData, setDateData] = useState([]);
-  const [dataa, setData] = useState({
-    dateValue: "",
-  });
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
 
   const { executeFun, loading } = useApi();
-  const opt = [
-    { label: "PACKING", value: "P" },
-    { label: "PART", value: "PART" },
-    { label: "OTHER", value: "O" },
-    { label: "PCB", value: "PCB" },
-  ];
+
+  const toggleExpand = useCallback((id) => {
+    setExpandedRowKeys((prev) => {
+      if (prev.includes(id)) return [];
+      return [id];
+    });
+  }, []);
+
+  const fetchRowDetails = useCallback(
+    async (record) => {
+      if (!record?.key) return;
+      const partKey = record.part;
+      setNestedTableLoading(partKey);
+      try {
+        const response = await imsAxios.post("/ppr/fetch_groupProjectBomReport", {
+          project: projectId,
+          part: record.key,
+        });
+        if (!response.success) {
+          showToast(response.message?.msg || response.message, "error");
+          return;
+        }
+        const arr1 = (response.data || []).map((row, index) => ({
+          ...row,
+          index: index + 1,
+          id: `detail-${record.id}-${index}`,
+        }));
+        setRows((prev) =>
+          prev.map((row) =>
+            row.part === partKey ? { ...row, details: arr1 } : row
+          )
+        );
+        setFilteredRows((prev) =>
+          prev.map((row) =>
+            row.part === partKey ? { ...row, details: arr1 } : row
+          )
+        );
+      } catch (e) {
+        console.error(e);
+        showToast("Failed to load BOM details", "error");
+      } finally {
+        setNestedTableLoading(false);
+      }
+    },
+    [projectId, showToast]
+  );
+
+  useEffect(() => {
+    if (expandedRowKeys.length !== 1) return;
+    const rowId = expandedRowKeys[0];
+    const record = filteredRows.find((r) => r.id === rowId);
+    if (!record || record.details !== undefined || !record.key) return;
+    fetchRowDetails(record);
+  }, [expandedRowKeys, filteredRows, fetchRowDetails]);
+
+  const columns = useMemo(
+    () => [
+      {
+        field: "_expand",
+        headerName: "",
+        width: 48,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          const open = expandedRowKeys.includes(row.id);
+          return (
+            <IconButton
+              size="small"
+              onClick={() => toggleExpand(row.id)}
+              aria-label={open ? "Collapse details" : "Expand details"}
+            >
+              {open ? (
+                <KeyboardArrowDown fontSize="small" />
+              ) : (
+                <KeyboardArrowRight fontSize="small" />
+              )}
+            </IconButton>
+          );
+        },
+      },
+      { headerName: "Part", field: "part", width: 120 },
+      { headerName: "Name", field: "name", flex: 1, minWidth: 220 },
+      { headerName: "TYPE", field: "type", width: 130 },
+      { headerName: "BOM QTY", field: "bomqty", width: 120 },
+      { headerName: "BOM RATE", field: "bomrate", width: 120 },
+      { headerName: "UoM", field: "unit", width: 100 },
+      {
+        headerName: "PROJECT REQUIRED QTY (A)",
+        field: "requirement",
+        width: 160,
+      },
+      { headerName: "PO ORDERED QTY (B)", field: "order_qty", width: 150 },
+      { headerName: "RECIEVED PO QTY (c)", field: "inward_qty", width: 150 },
+      { headerName: "PENDING PO QTY (D = B-C)", field: "pending_qty", width: 150 },
+      {
+        headerName: "STOCK IN HAND AT 2ND FLOOR (E)",
+        field: "branch_stock",
+        width: 180,
+      },
+      { headerName: "STOCK AT SHOP FLOOR (F)", field: "sfFloor", width: 160 },
+      {
+        headerName: "PENDING REQUIRED QTY (G)",
+        field: "pending_reqqty",
+        width: 170,
+      },
+      {
+        headerName: "OVER STOCK QTY (H = D+E+F-G)",
+        field: "over_st_qty",
+        width: 180,
+      },
+      { headerName: "DEBIT NOTE QTY", field: "debit_qty", width: 140 },
+      {
+        field: "_detailPanel",
+        headerName: "PO / receipt breakdown",
+        flex: 1,
+        minWidth: 520,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          if (!expandedRowKeys.includes(row.id)) return "";
+          const detailRows = row.details ?? [];
+          return (
+            <Box sx={{ width: "100%", height: 240 }}>
+              <MyDataTable
+                columns={nestedColumns}
+                data={detailRows}
+                loading={nestedTableLoading === row.part}
+                hideFooter
+                hideHeaderMenu
+              />
+            </Box>
+          );
+        },
+      },
+    ],
+    [expandedRowKeys, nestedTableLoading, toggleExpand]
+  );
+
+  const getRowHeight = useCallback(
+    (params) => {
+      if (expandedRowKeys.includes(params.id)) {
+        return 52 + 240;
+      }
+      return 52;
+    },
+    [expandedRowKeys]
+  );
+
   const getRows = async () => {
     setSearchLoading(true);
-    // setDetail([]);
     const response = await imsAxios.post("/ppr/fetch_finalProjectBomReport", {
-      // date: dataa?.dateValue,
       project: projectId,
     });
     setSearchLoading(false);
     if (response.success) {
-      setDetail(data);
-
-      let arr = response.data.map((row) => ({
+      const list = Array.isArray(response.data) ? response.data : [];
+      let arr = list.map((row, idx) => ({
         ...row,
+        id: `row-${row.key ?? row.part ?? idx}`,
         uniqueKey: row.key,
         leftQty: "--",
         requirement: Number(row.requirement)?.toLocaleString("hi-IN"),
@@ -67,375 +233,61 @@ export default function CPMAnalysis() {
         sfFloor: Number(row.sf_stock)?.toLocaleString("hi-IN") ?? 0,
         debit_qty: Number(row.dnQty)?.toLocaleString("hi-IN") ?? 0,
       }));
-      arr[0] = { ...arr[0], date: search.date };
+      if (arr.length > 0) {
+        arr[0] = { ...arr[0], date: search.date };
+      }
       setRows(arr);
       setFilteredRows(arr);
+      setExpandedRowKeys([]);
     } else {
       setRows([]);
+      setFilteredRows([]);
       showToast(response.message?.msg || response.message, "error");
     }
   };
 
-  const columns = [
-    // {
-    //   title: "Sr. No.",
-    //   dataIndex: "serial",
-    //   key: "serial",
-    //   width: 80,
-    //   sorter: (a, b) => a.age - b.age,
-    // },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          Part
-        </Row>
-      ),
-      headerName: "Part",
-      dataIndex: "part",
-      key: "part",
-      width: 120,
-      filterSearch: true,
-      filterMode: "tree",
-      onFilter: (value, record) => record.name.startsWith(value),
-      // sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          Name
-        </Row>
-      ),
-      dataIndex: "name",
-      headerName: "Name",
-      key: "name",
-      width: 300,
-      filterSearch: true,
-      filterMode: "tree",
-      onFilter: (value, record) => record.name.startsWith(value),
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          TYPE
-        </Row>
-      ),
-      headerName: "Type",
-      dataIndex: "type",
-      key: "type",
-      width: 150,
-      sorter: (a, b) => a.type.localeCompare(b.type),
-    },
-
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          BOM QTY
-        </Row>
-      ),
-      headerName: "BOM QTY",
-      dataIndex: "bomqty",
-      key: "bomqty",
-      width: 150,
-      sorter: (a, b) => a.bomqty - b.bomqty,
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          BOM RATE
-        </Row>
-      ),
-      headerName: "BOM RATE",
-      dataIndex: "bomrate",
-      key: "bomrate",
-      width: 150,
-      sorter: (a, b) => a.bomrate - b.bomrate,
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          UoM
-        </Row>
-      ),
-      headerName: "UoM",
-      dataIndex: "unit",
-      key: "unit",
-      width: 150,
-      // sorter: (a, b) => a.bomqty - b.bomqty,
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          PROJECT REQUIRED QTY <br /> (A)
-        </Row>
-      ),
-      headerName: "PROJECT REQUIRED QTY",
-      dataIndex: "requirement",
-      key: "requirement",
-      width: 150,
-      sorter: (a, b) => a.requirement.localeCompare(b.requirement),
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          PO ORDERED QTY <br />
-          (B)
-        </Row>
-      ),
-      headerName: "PO ORDERED QTY",
-      dataIndex: "order_qty",
-      key: "order_qty",
-      width: 150,
-      sorter: (a, b) => a.order_qty.localeCompare(b.order_qty),
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          RECIEVED PO QTY <br /> (c)
-        </Row>
-      ),
-      headerName: "RECIEVED PO QTY",
-      dataIndex: "inward_qty",
-      key: "inward_qty",
-      width: 150,
-      sorter: (a, b) => a.inward_qty.localeCompare(b.inward_qty),
-    },
-
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          PENDING PO QTY <br />
-          (D = B-C)
-        </Row>
-      ),
-      headerName: "PENDING PO QTY",
-      dataIndex: "pending_qty",
-      key: "pending_qty",
-      width: 150,
-      sorter: (a, b) => a.pending_qty.localeCompare(b.pending_qty),
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          STOCK IN HAND AT 2ND FLOOR <br />
-          (E)
-        </Row>
-      ),
-      headerName: "STOCK IN HAND AT 2ND FLOOR",
-      dataIndex: "branch_stock",
-      key: "branch_stock",
-      width: 150,
-      sorter: (a, b) => a.branch_stock.localeCompare(b.branch_stock),
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          STOCK AT SHOP FLOOR <br /> (F)
-        </Row>
-      ),
-      headerName: "STOCK AT SHOP FLOOR",
-      dataIndex: "sfFloor",
-      key: "sfFloor",
-      width: 150,
-      // sorter: (a, b) => a.branch_stock.localeCompare(b.sfFloor),
-    },
-    // {
-    //   title: "PO IN TRANSIT",
-    //   dataIndex: "po_transit",
-    //   key: "po_transit",
-    //   width: 150,
-    //   sorter: (a, b) => a.po_transit.localeCompare(b.po_transit),
-    // },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          PENDING REQUIRED QTY <br />
-          (G)
-        </Row>
-      ),
-      headerName: "PENDING REQUIRED QTY",
-      dataIndex: "pending_reqqty",
-      key: "pending_reqqty",
-      width: 150,
-      sorter: (a, b) => a.pending_reqqty.localeCompare(b.pending_reqqty),
-    },
-    {
-      title: (
-        <Row justify="center" style={{ width: "100%", textAlign: "center" }}>
-          OVER STOCK QTY <br />
-          (H = D+E+F-G)
-        </Row>
-      ),
-      headerName: "OVER STOCK QTY",
-      dataIndex: "over_st_qty",
-      key: "over_st_qty",
-      width: 150,
-      sorter: (a, b) => a.over_st_qty.localeCompare(b.over_st_qty),
-    },
-    {
-      title: (
-        <span>
-          DEBIT NOTE QTY <br />
-        </span>
-      ),
-      headerName: "DEBIT NOTE QTY",
-      dataIndex: "debit_qty",
-      key: "debit_qty",
-      width: 150,
-      sorter: (a, b) => a.over_st_qty.localeCompare(b.over_st_qty),
-    },
-  ];
-
-  const nestedColumns = [
-    {
-      title: "Sr. No",
-      dataIndex: "index",
-      key: "index",
-      width: "7%",
-    },
-    {
-      title: "Part",
-      dataIndex: "part",
-      key: "part",
-      width: "7.5%",
-    },
-    {
-      title: "Code",
-      dataIndex: "ven_code",
-      key: "ven_code",
-      width: "10%",
-    },
-    {
-      title: "Name",
-      dataIndex: "ven_name",
-      key: "ven_name",
-      width: "27.5%",
-    },
-    {
-      title: "PO Ord Qty",
-      dataIndex: "total_ord",
-      key: "total_ord",
-      width: "15.5%",
-    },
-    {
-      title: "Recv. Qty",
-      dataIndex: "inward_qty",
-      key: "inward_qty",
-      width: "15.5%",
-    },
-    {
-      title: "Pending Qty",
-      dataIndex: "pending_qty",
-      key: "pending_qty",
-    },
-  ];
-  const getDetails = async (record) => {
-    if (record.uniqueKey) {
-      setNestedTableLoading(record.part);
-      const response = await imsAxios.post("/ppr/fetch_groupProjectBomReport", {
-        project: projectId,
-        part: record.key,
-      });
-      setNestedTableLoading(false);
-      record.uniqueKey = null;
-      let arr = filteredRows;
-      let arr1 = response.data.map((row, index) => {
-        return {
-          ...row,
-          index: index + 1,
-        };
-      });
-      arr = arr.map((row) => {
-        if (row.part == data.data[0].part) {
-          return {
-            ...row,
-            details: arr1,
-          };
-        } else {
-          return row;
-        }
-      });
-      setRows((rows) =>
-        rows.map((row) => {
-          if (row.part == data.data[0].part) {
-            return {
-              ...row,
-              details: arr1,
-            };
-          } else {
-            return row;
-          }
-        })
-      );
-      setFilteredRows(arr);
-    }
+  const getDate = async () => {
+    const response = await imsAxios.post("/backend/fetchProjectData", {
+      search: projectId,
+    });
+    if (!response.success) return;
+    const fromOther = response.other?.detail;
+    const fromData =
+      !Array.isArray(response.data) && response.data?.other?.detail;
+    setFileInfo(fromOther || fromData || "");
   };
 
-  const handleFetchProjectOptions = async (search) => {
+  const handleFetchProjectOptions = async (searchText) => {
     const response = await executeFun(
-      () => getProjectOptions(search),
+      () => getProjectOptions(searchText),
       "select"
     );
     setAsyncOptions(response.data);
   };
 
-  const inputHandler = (name, value) => {
-    setDetail((aa) => {
-      return {
-        ...aa,
-        [name]: value,
-      };
-    });
-  };
-
-  const getUpdate = async () => {
-    const response = await imsAxios.post("/ppr/updatePPRDetail", {
-      project: projectId,
-      detail: detail?.detail,
-    });
-    if (response.success) {
-      toast.success(data.message.msg);
-    } else if (!response.success) {
-      toast.error(response.message?.msg || response.message);
-    }
-  };
-
-  const getDate = async () => {
-    // setDateData([]);
-    const response = await imsAxios.post("/backend/fetchProjectData", {
-      search: projectId,
-    });
-    const arr = response.data.map((d) => {
-      return { value: d.id, label: d.label };
-    });
-    setDateData(arr);
-    setFileInfo(data.other.detail);
-  };
-
   useEffect(() => {
-    let arr = rows;
-    let fil = [];
-    arr = arr.map((row) => {
-      if (row.part.toLowerCase().includes(filterText.toLowerCase())) {
-        fil.push(row);
-      } else if (row.name.toLowerCase().includes(filterText.toLowerCase())) {
-        fil.push(row);
-      }
-    });
+    if (!filterText) {
+      setFilteredRows(rows);
+      return;
+    }
+    const q = filterText.toLowerCase();
+    const fil = rows.filter(
+      (row) =>
+        row.part?.toLowerCase().includes(q) ||
+        row.name?.toLowerCase().includes(q)
+    );
     setFilteredRows(fil);
-  }, [filterText]);
+  }, [filterText, rows]);
 
   useEffect(() => {
     if (projectId) {
-      setData({ dateValue: "" });
       getDate();
     }
   }, [projectId]);
+
   return (
-    <div style={{height:"100%", padding:10}}>
-      <Row
-        justify="space-between"
-      >
+    <div style={{ height: "100%", padding: 10 }}>
+      <Row justify="space-between">
         <Space>
           <div style={{ width: 250 }}>
             <MyAsyncSelect
@@ -450,20 +302,6 @@ export default function CPMAnalysis() {
             />
           </div>
 
-          {/* <div style={{ width: 150 }}>
-            <Select
-              style={{ width: "100%" }}
-              placeholder="Select Date"
-              options={dateData}
-              value={dataa.dateValue}
-              onChange={(e) =>
-                setData((data) => {
-                  return { ...data, dateValue: e };
-                })
-              }
-            />
-
-          </div> */}
           <MyButton
             variant="search"
             type="primary"
@@ -479,7 +317,7 @@ export default function CPMAnalysis() {
             onClick={() =>
               downloadCSVAntTable(
                 rows,
-                columns,
+                csvExportColumns,
                 `CPM Analysis project:${rows[0]?.project}`
               )
             }
@@ -496,8 +334,6 @@ export default function CPMAnalysis() {
               disabled={fileInfo === ""}
             />
           </Tooltip>
-          {/* <InfoCircleFilled style={{ fontSize: "30px", }} /> */}
-          {/* </Button> */}
         </Space>
         <Col span={4}>
           <Input
@@ -506,34 +342,15 @@ export default function CPMAnalysis() {
           />
         </Col>
       </Row>
-      <div style={{ marginTop: "10px" }}>
-        <Table
-          bordered={true}
+      <div style={{ marginTop: 10, height: "calc(100vh - 200px)" }}>
+        <MyDataTable
           columns={columns}
-          showSorterTooltip={false}
-          expandable={{
-            expandedRowRender: (record) => {
-              getDetails(record);
-              return (
-                <Table
-                  bordered={true}
-                  className="nested-table "
-                  showSorterTooltip={false}
-                  columns={nestedColumns}
-                  pagination={false}
-                  loading={record.part == nestedTableLoading ? true : false}
-                  dataSource={
-                    filteredRows.filter((row) => row.part == record.part)[0]
-                      ?.details
-                  }
-                />
-              );
-            },
-          }}
-          scroll={{ y: "45vh" }}
-          dataSource={filteredRows}
-          pagination={false}
-          size="small"
+          data={filteredRows}
+          loading={searchLoading}
+          getRowHeight={getRowHeight}
+          disableVirtualization={expandedRowKeys.length > 0}
+          hideFooter
+          hideHeaderMenu
         />
       </div>
     </div>

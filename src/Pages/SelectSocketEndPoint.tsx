@@ -5,6 +5,12 @@ import AddIcon from '@mui/icons-material/Add';
 const STORAGE_KEY = "socketUrls";
 const CURRENT_SOCKET_URL_KEY = "currentSocketUrl";
 
+function mergeSocketOptions(urls: string[]) {
+  const envUrl = import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL;
+  const fromEnv = envUrl ? [String(envUrl).trim()] : [];
+  return Array.from(new Set([...fromEnv, ...urls]));
+}
+
 const SelectSocketEndPoint: React.FC = () => {
   const [urls, setUrls] = useState<string[]>(() => JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"));
   const [currentUrl, setCurrentUrl] = useState<string>(() => localStorage.getItem(CURRENT_SOCKET_URL_KEY) || import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL || "");
@@ -69,15 +75,8 @@ const SelectSocketEndPoint: React.FC = () => {
             value={currentUrl}
             onChange={handleChange}
           >
-            {
-              !urls.length && import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL && (
-                <MenuItem value={import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL}>
-                  {import.meta.env.VITE_REACT_APP_SOCKET_BASE_URL}
-                </MenuItem>
-              )
-            }
-            {urls.map((url, index) => (
-              <MenuItem key={index} value={url}>
+            {mergeSocketOptions(urls).map((url, index) => (
+              <MenuItem key={`${url}-${index}`} value={url}>
                 {url}
               </MenuItem>
             ))}

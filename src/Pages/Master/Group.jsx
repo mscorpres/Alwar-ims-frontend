@@ -77,9 +77,10 @@ const Group = () => {
   return (
     <div style={{ height: "100%" , padding: 10}}>
       <Row gutter={12} style={{ height: "100%" }}>
-        <Col span={8}>
-          <Card title="Add Group" size="small">
-            <Form layout="vertical">
+        <Col span={12}>
+          <Row gutter={12}  >
+           <Col span={16}>
+            <Form >
               <Form.Item label="Group Name">
                 <Input
                   placeholder="Enter Group Name.."
@@ -88,8 +89,9 @@ const Group = () => {
                 />
               </Form.Item>
             </Form>
-            <Row justify="end">
-              <Col>
+           </Col>
+       
+              <Col span={8} >
                 <Space>
                   <MyButton onClick={reset} variant="reset">
                     Reset
@@ -105,9 +107,9 @@ const Group = () => {
                 </Space>
               </Col>
             </Row>
-          </Card>
+        
         </Col>
-        <Col style={{ height: "100%" }} span={16}>
+        <Col style={{ height: "calc(100% - 50px)" }} span={24}>
           <MyDataTable
             loading={tableLoading}
             data={groupData}

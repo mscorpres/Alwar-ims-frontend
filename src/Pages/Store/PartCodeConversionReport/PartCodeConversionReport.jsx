@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Input,
-  Space,
-
-  Table,
- 
-} from "antd";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { Row, Col, Space } from "antd";
+import { Box, IconButton } from "@mui/material";
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
@@ -18,6 +13,17 @@ import Exceljs from "exceljs";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import MyButton from "../../../Components/MyButton";
+import MyDataTable from "../../../Components/MyDataTable.jsx";
+
+const consumptionColumns = [
+  { headerName: "Serial Number", field: "serial_no", width: 110 },
+  { headerName: "Consumption Part Name", field: "consump_part_name", flex: 1, minWidth: 160 },
+  { headerName: "Consumption Part Code", field: "consump_part_code", width: 150 },
+  { headerName: "Consumption Quantity", field: "consump_qty", width: 130 },
+  { headerName: "UoM", field: "uom", width: 80 },
+  { headerName: "Pick Location", field: "pick_location", flex: 1, minWidth: 120 },
+];
+
 const PartCodeConversionReport = () => {
   const { showToast } = useToast();
   const wiseOptions = [
@@ -38,122 +44,109 @@ const PartCodeConversionReport = () => {
   const [fetchConversion, SetfetchConversion] = useState([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
-  const columns = [
-    {
-      title: "Serial Number",
-      dataIndex: "serial_no",
-      key: "serial_no",
-    },
-    {
-      title: "Final label",
-      dataIndex: "final_label",
-      key: "final_label",
-    },
-    {
-      title: "Final Part",
-      dataIndex: "final_part",
-      key: "final_part",
-    },
-    {
-      title: "Final QTY",
-      dataIndex: "final_qty",
-      key: "final_qty",
-    },
-    {
-      title: "UoM",
-      dataIndex: "uom",
-      key: "uom",
-    },
-    {
-      title: "Transaction Date",
-      dataIndex: "txn_dt",
-      key: "txn_dt",
-    },
-    {
-      title: "Transaction By",
-      dataIndex: "txn_by",
-      key: "txn_by",
-    },
-    {
-      title: "Transaction Id",
-      dataIndex: "txn_id",
-      key: "txn_id",
-    },
-    {
-      title: "Drop Location",
-      dataIndex: "drop_location",
-      key: "drop_location",
-    },
-  ];
 
-  const expandedRowRender = (record) => {
-    const expendedColumn = [
-      {
-        title: "Serial Number",
-        dataIndex: "serial_no",
-        key: "serial_no",
-        width: "10%",
-      },
-      {
-        title: "Consumption Part Name",
-        dataIndex: "consump_part_name",
-        key: "consump_part_name",
-        width: "12%",
-      },
-      {
-        title: "Consumption Part Code",
-        dataIndex: "consump_part_code",
-        key: "consump_part_code",
-        width: "11.3%",
-      },
-      {
-        title: "Consumption Quantity",
-        dataIndex: "consump_qty",
-        key: "consump_qty",
-        width: "11.2%",
-      },
+  const rows = useMemo(
+    () =>
+      fetchConversion.map((record, index) => ({
+        ...record,
+        id: `row-${index}-${record.txn_id ?? record.serial_no ?? index}`,
+        consumption: (record.consumption || []).map((c, i) => ({
+          ...c,
+          id: `cons-${index}-${i}`,
+        })),
+      })),
+    [fetchConversion]
+  );
 
+  const toggleExpand = useCallback((id) => {
+    setExpandedRowKeys((prev) => {
+      if (prev.includes(id)) return [];
+      return [id];
+    });
+  }, []);
+
+  const columns = useMemo(
+    () => [
       {
-        title: "UoM",
-        dataIndex: "uom",
-        key: "uom",
-        width: "44.5%",
+        field: "_expand",
+        headerName: "",
+        width: 48,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          if (!row.consumption?.length) return null;
+          const open = expandedRowKeys.includes(row.id);
+          return (
+            <IconButton
+              size="small"
+              onClick={() => toggleExpand(row.id)}
+              aria-label={open ? "Collapse consumption rows" : "Expand consumption rows"}
+            >
+              {open ? (
+                <KeyboardArrowDown fontSize="small" />
+              ) : (
+                <KeyboardArrowRight fontSize="small" />
+              )}
+            </IconButton>
+          );
+        },
       },
-
+      { headerName: "Serial Number", field: "serial_no", width: 120 },
+      { headerName: "Final label", field: "final_label", width: 120 },
+      { headerName: "Final Part", field: "final_part", flex: 1, minWidth: 120 },
+      { headerName: "Final QTY", field: "final_qty", width: 100 },
+      { headerName: "UoM", field: "uom", width: 80 },
+      { headerName: "Transaction Date", field: "txn_dt", width: 130 },
+      { headerName: "Transaction By", field: "txn_by", width: 120 },
+      { headerName: "Transaction Id", field: "txn_id", width: 120 },
+      { headerName: "Drop Location", field: "drop_location", flex: 1, minWidth: 120 },
       {
-        title: "Pick Location",
-        dataIndex: "pick_location",
-        key: "pick_location",
+        field: "_consumptionPanel",
+        headerName: "Consumption breakdown",
+        flex: 1,
+        minWidth: 520,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          if (!expandedRowKeys.includes(row.id) || !row.consumption?.length) {
+            return "";
+          }
+          return (
+            <Box sx={{ width: "100%", height: 240 }}>
+              <MyDataTable
+                columns={consumptionColumns}
+                data={row.consumption}
+                hideFooter
+                hideHeaderMenu
+              />
+            </Box>
+          );
+        },
       },
-    ];
-    const data = record.consumption.map((consumptionItem) => ({
-      serial_no: consumptionItem.serial_no,
-      consump_part_name: consumptionItem.consump_part_name,
-      consump_qty: consumptionItem.consump_qty,
-      consump_part_code: consumptionItem.consump_part_code,
-      uom: consumptionItem.uom,
-      pick_location: consumptionItem.pick_location,
-    }));
+    ],
+    [expandedRowKeys, toggleExpand]
+  );
 
-    return (
-      <Table columns={expendedColumn} dataSource={data} pagination={false} />
-    );
-  };
-
-  const handleExpand = (expanded, record) => {
-    setExpandedRowKeys(expanded ? [record.key] : []);
-  };
+  const getRowHeight = useCallback(
+    (params) => {
+      if (expandedRowKeys.includes(params.id) && params.model.consumption?.length) {
+        return 52 + 240;
+      }
+      return 52;
+    },
+    [expandedRowKeys]
+  );
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      const response = await imsAxios.post("/conversion/fetchConversion", {
-        wise: wise,
-        data: searchInput,
-      });
+      const response = await imsAxios.get(
+        `/conversion/fetch/conversion?wise=${wise}&data=${searchInput}`
+      );
 
       if (response.success) {
         SetfetchConversion(response.data);
+        setExpandedRowKeys([]);
         showToast(response.data.status, "success");
       } else {
         showToast(response.message, "error");
@@ -168,11 +161,6 @@ const PartCodeConversionReport = () => {
 
   const handleClientOptions = async (search) => {
     try {
-      // setLoading("select");
-      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-      //   search: search,
-      // });
-      // console.log(data);
       const response = await executeFun(
         () => getComponentOptions(search),
         "select"
@@ -200,10 +188,6 @@ const PartCodeConversionReport = () => {
     const workbook = new Exceljs.Workbook();
     const sheet = workbook.addWorksheet("Part Code Conversion Report");
 
-    // sheet.getRow(1).border ={
-    //   top:{style : thick , color : {argb:''}}
-    // }
-
     sheet.getRow(1).fill = {
       pattern: "solid",
       type: "pattern",
@@ -217,7 +201,7 @@ const PartCodeConversionReport = () => {
       bold: true,
     };
 
-    const columns = [
+    const excelColumns = [
       { header: "Serial Number", key: "serial_no", width: 10 },
       { header: "Final Label", key: "final_label", width: 20 },
       { header: "Final Part", key: "final_part", width: 15 },
@@ -235,12 +219,9 @@ const PartCodeConversionReport = () => {
       { header: "Pick Location", key: "pick_location", width: 20 },
     ];
 
-    // Add columns to the worksheet
-    sheet.columns = columns;
+    sheet.columns = excelColumns;
 
-    // Add data to the worksheet
     fetchConversion.forEach((record) => {
-      // Add a row for the main record
       const rowData = {
         serial_no: record.serial_no,
         final_label: record.final_label,
@@ -252,14 +233,13 @@ const PartCodeConversionReport = () => {
         txn_id: record.txn_id,
         drop_location: record.drop_location,
         serial_no_consumption: "",
-        consump_part_name: "", // Empty values for consumption data
+        consump_part_name: "",
         consump_part_code: "",
         consump_qty: "",
         consump_uom: "",
         pick_location: "",
       };
 
-      // Add consumption data to the same row
       if (record.consumption && record.consumption.length > 0) {
         record.consumption.forEach((consumptionItem, index) => {
           const consumptionKeyPrefix = index === 0 ? "" : index;
@@ -280,7 +260,6 @@ const PartCodeConversionReport = () => {
       sheet.addRow(rowData);
     });
 
-    // Save the Excel file
     workbook.xlsx.writeBuffer().then((data) => {
       const blob = new Blob([data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheet.sheet",
@@ -295,11 +274,8 @@ const PartCodeConversionReport = () => {
   };
 
   return (
-    <div style={{height:"calc(100%-160)", padding:10}}>
-      <Row
-      
-        justify="space-between"
-      >
+    <div style={{ height: "calc(100%-160)", padding: 10 }}>
+      <Row justify="space-between">
         <Col>
           <Space>
             <div style={{ paddingBottom: "10px" }}>
@@ -327,12 +303,10 @@ const PartCodeConversionReport = () => {
                 {wise === wiseOptions[1].value && (
                   <MyDatePicker setDateRange={setSearchInput} />
                 )}
-
                 <MyButton
                   variant="search"
                   onClick={handleSubmit}
-                  // //   onClick={getRows}
-                  loading={loading === "fetch"}
+                  loading={loading}
                   type="primary"
                 >
                   Fetch
@@ -347,30 +321,17 @@ const PartCodeConversionReport = () => {
           onClick={handleDownload}
         />
       </Row>
-      <Row
-       
-      >
-        <Table
-          columns={columns}
-          bordered="false"
-          expandable={{
-            expandedRowRender,
-            expandedRowKeys,
-            onExpand: handleExpand,
-          }}
-          dataSource={fetchConversion.map((record, index) => ({
-            ...record,
-            key: index.toString(),
-          }))}
-          size="small"
-          pagination={{
-            pageSize: 50,
-          }}
-          scroll={{
-            y: 550,
-          }}
-          loading={loading}
-        />
+      <Row style={{ height: "calc(100vh - 190px)", marginTop: 8 }}>
+        <Col span={24} style={{ height: "100%" }}>
+          <MyDataTable
+            columns={columns}
+            data={rows}
+            loading={loading}
+            getRowHeight={getRowHeight}
+            disableVirtualization={expandedRowKeys.length > 0}
+            hideHeaderMenu
+          />
+        </Col>
       </Row>
     </div>
   );

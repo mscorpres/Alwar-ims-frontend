@@ -426,7 +426,7 @@ const getImage = (index) => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1, p: 2,  }}>
+      <Box sx={{ flexGrow: 1, p: 2, minHeight: "calc(100vh - 300px)" }}>
         <Box
           sx={{
             display: "flex",

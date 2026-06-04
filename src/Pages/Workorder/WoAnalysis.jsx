@@ -197,7 +197,7 @@ const WoAnalysis = () => {
     }
   }, [wise]);
   return (
-    <Row style={{ height: "90%", paddingRight: 10, paddingLeft: 10 }}>
+    <Row style={{ height: "calc(100vh - 180px)", margin: "10px" }}>
       <Col span={24}>
         <Row>
           <Col>
