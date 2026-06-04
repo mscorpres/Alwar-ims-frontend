@@ -205,7 +205,7 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
                   marginLeft: "8px",
                   fontSize: "14px",
                   fontWeight: "normal",
-                  color: "#fff",
+                  color: "#000",
                 }}
               >
                 ({notifications.length})

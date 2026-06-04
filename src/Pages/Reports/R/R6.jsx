@@ -68,18 +68,15 @@ const R6 = () => {
   return (
     <Row
       style={{
-        paddingTop: 50,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "calc(100vh - 150px)",
       }}
 
     >
-      <Col span={24}>
-        <Row justify="center">
-          <Typography.Title level={5}>
-            Select filters and click on Download{" "}
-          </Typography.Title>
-        </Row>
-      </Col>
-      <Card size="small" title="Filters">
+  
+      <Card size="small" title="RM Stock">
         <Form initialValues={initialValues} form={form} layout="vertical">
           <Form.Item label="Location" name="location">
             <MyAsyncSelect
