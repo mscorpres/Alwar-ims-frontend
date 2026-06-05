@@ -9,7 +9,7 @@ import {
   CircularProgress,
   Divider,
 } from "@mui/material";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ThemeProvider, createTheme } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Launch as LaunchIcon } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";

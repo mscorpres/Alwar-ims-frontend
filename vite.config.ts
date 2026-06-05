@@ -8,7 +8,12 @@ import { sentryVitePlugin } from "@sentry/vite-plugin";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxImportSource: "@emotion/react",
+      babel: {
+        plugins: ["@emotion/babel-plugin"],
+      },
+    }),
     tsconfigPaths(),
     tailwindcss(),
     sentryVitePlugin({
@@ -27,7 +32,15 @@ export default defineConfig({
     ],
   },
   optimizeDeps: {
-    include: ['@mui/material', '@mui/material/styles', '@emotion/react', '@emotion/styled'],
+    include: [
+      "@mui/material",
+      "@mui/material/styles",
+      "@emotion/react",
+      "@emotion/styled",
+      "@mui/material/Tooltip",
+      '@mui/material/Grid2',
+      "@mui/material/Unstable_Grid2"
+    ],
   },
   server: {
     port: 3000,
@@ -38,9 +51,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'antd': ['antd'],
-          'mui-vendor': ['@mui/material', '@mui/material/styles', '@emotion/react', '@emotion/styled'],
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          antd: ["antd"],
+          "mui-vendor": [
+            "@mui/material",
+            "@mui/material/styles",
+            "@emotion/react",
+            "@emotion/styled",
+          ],
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
         },
       },
     },
