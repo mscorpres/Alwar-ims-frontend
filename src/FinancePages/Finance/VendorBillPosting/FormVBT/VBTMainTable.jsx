@@ -35,6 +35,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
   const { executeFun, loading: loading1 } = useApi();
   const [url, setUrl] = useState("");
   const [apiUrl, setApiUrl] = useState("");
+  const [vbtScreenType, setVbtScreenType] = useState("VBT01");
   const [ModalForm] = Form.useForm();
   const [extracted, setExtracted] = useState([]);
   const [combinedData, setCombinedDate] = useState([]);
@@ -100,7 +101,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       sortable: true,
       flex: 1,
       id: "vendor code",
-          renderCell: ({ row }) => <span>{row?.venCode ?? row?.ven_code}</span>,
+      renderCell: ({ row }) => <span>{row?.venCode ?? row?.ven_code}</span>,
     },
     {
       headerName: "Transaction",
@@ -108,7 +109,9 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       sortable: true,
       flex: 1,
       id: "min id",
-       renderCell: ({ row }) => <span>{row?.min_transaction ?? row?.transaction}</span>,
+      renderCell: ({ row }) => (
+        <span>{row?.min_transaction ?? row?.transaction}</span>
+      ),
     },
     {
       headerName: "PART / SKU",
@@ -116,7 +119,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       flex: 1,
       sortable: true,
       id: "part id",
-        renderCell: ({ row }) => <span>{row?.itemCode ?? row?.part_code}</span>,
+      renderCell: ({ row }) => <span>{row?.itemCode ?? row?.part_code}</span>,
     },
     {
       headerName: "DATE",
@@ -124,7 +127,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       flex: 1,
       sortable: true,
       id: "min date",
-       renderCell: ({ row }) => <span>{row?.minDate ?? row?.min_in_date}</span>,
+      renderCell: ({ row }) => <span>{row?.minDate ?? row?.min_in_date}</span>,
     },
 
     {
@@ -134,8 +137,8 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       type: "actions",
       flex: 1,
       getActions: ({ row }) =>
-        (apiUrl == "vbt06" && (row.vbpStatus ?? row.vbp_status)== "PENDING") ||
-        (apiUrl === "vbt01" && (row.vbpStatus ?? row.vbp_status)== "PENDING")
+        (apiUrl == "vbt06" && (row.vbpStatus ?? row.vbp_status) == "PENDING") ||
+        (apiUrl === "vbt01" && (row.vbpStatus ?? row.vbp_status) == "PENDING")
           ? [
               <>
                 <GridActionsCellItem
@@ -181,7 +184,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       id: "serial-no",
       width: "120px",
     },
-     ...(showTypeColumn
+    ...(showTypeColumn
       ? [
           {
             headerName: "Type",
@@ -198,7 +201,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       sortable: true,
       flex: 1,
       id: "vendor code",
-         renderCell: ({ row }) => <span>{row?.venCode ?? row?.ven_code}</span>,
+      renderCell: ({ row }) => <span>{row?.venCode ?? row?.ven_code}</span>,
     },
     {
       headerName: "Transaction",
@@ -206,7 +209,9 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       sortable: true,
       flex: 1,
       id: "min id",
-        renderCell: ({ row }) => <span>{row?.min_transaction ?? row?.transaction}</span>,
+      renderCell: ({ row }) => (
+        <span>{row?.min_transaction ?? row?.transaction}</span>
+      ),
     },
     {
       headerName: "PART / SKU",
@@ -214,7 +219,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       flex: 1,
       sortable: true,
       id: "part id",
-            renderCell: ({ row }) => <span>{row?.itemCode ?? row?.part_code}</span>,
+      renderCell: ({ row }) => <span>{row?.itemCode ?? row?.part_code}</span>,
     },
     {
       headerName: "DATE",
@@ -222,7 +227,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       flex: 1,
       sortable: true,
       id: "min date",
-           renderCell: ({ row }) => <span>{row?.minDate ?? row?.min_in_date}</span>,
+      renderCell: ({ row }) => <span>{row?.minDate ?? row?.min_in_date}</span>,
     },
 
     {
@@ -284,10 +289,17 @@ const VBTMainTable = ({ editVbtDrawer }) => {
         data: d,
       });
     } else {
-      response = await imsAxios.post(`/tally/${apiUrl}/fetch_${apiUrl}`, {
+      const fetchBody = {
         wise: wise,
         data: d,
-      });
+      };
+      if (apiUrl === "vbt01") {
+        fetchBody.vbt_type = vbtScreenType;
+      }
+      response = await imsAxios.post(
+        `/tally/${apiUrl}/fetch_${apiUrl}`,
+        fetchBody,
+      );
     }
 
     const { data } = response;
@@ -329,8 +341,14 @@ const VBTMainTable = ({ editVbtDrawer }) => {
 
   const disableVbt = async (singleRow) => {
     if (singleRow) {
-      ModalForm.setFieldValue("min_transaction", singleRow.transaction ?? singleRow.min_transaction);
-      ModalForm.setFieldValue("part_code", singleRow.itemCode ?? singleRow.part_code);
+      ModalForm.setFieldValue(
+        "min_transaction",
+        singleRow.transaction ?? singleRow.min_transaction,
+      );
+      ModalForm.setFieldValue(
+        "part_code",
+        singleRow.itemCode ?? singleRow.part_code,
+      );
     }
 
     Modal.confirm({
@@ -424,7 +442,6 @@ const VBTMainTable = ({ editVbtDrawer }) => {
       <MapVBTModal mapVBT={mapVBT} setMapVBT={setMapVBT} />
       <div
         style={{
-          position: "relative",
           height: "100%",
           overflow: "hidden",
         }}
@@ -442,6 +459,8 @@ const VBTMainTable = ({ editVbtDrawer }) => {
             setEditingVBT={setEditingVBT}
             setApiUrl={setApiUrl}
             apiUrl={apiUrl}
+            pageRoute={url}
+            vbtScreenType={vbtScreenType}
           />
         ) : (
           <VBT01Report
@@ -450,6 +469,8 @@ const VBTMainTable = ({ editVbtDrawer }) => {
             setEditingVBT={setEditingVBT}
             setApiUrl={setApiUrl}
             apiUrl={apiUrl}
+            pageRoute={url}
+            vbtScreenType={vbtScreenType}
           />
         )}
         <Row justify="space-between">
@@ -523,18 +544,7 @@ const VBTMainTable = ({ editVbtDrawer }) => {
                   Create VBT
                 </Button>
               )}
-              {/* {confirmModal && (
-                <ConfirmModal
-                  open={open}
-                  setOpen={setOpen}
-                  // submitHandler={submitHandler}
-                  loading={loading}
-                  setCreateVBT={setCreateVBT}
-                  createVBT={createVBT}
-                  setEditingVBT={setEditingVBT}
-                  editingVBT={editingVBT}
-                />
-              )} */}
+         
             </Space>
           </div>
           <Space>

@@ -41,7 +41,7 @@ const links = [
     placeholder: "Expenses",
   },
   { routeName: "VBT7", routePath: "/tally/vendor-bill-posting/vb-7", key: 7 },
-  { routeName: "VBT8", routePath: "/tally/vendorbillposting/VB8", key: 8 },
+  { routeName: "VBT8", routePath: "/tally/vendorbillposting/vb-8", key: 8 },
   { routeName: "VBT9", routePath: "/tally/vendorbillposting/VB9", key: 9 },
   { routeName: "VBT10", routePath: "/tally/vendorbillposting/VB10", key: 10 },
 ];

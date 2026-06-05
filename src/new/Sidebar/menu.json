@@ -144,6 +144,13 @@
                 "isShown": true
               },
               {
+                "key": "D316234",
+                "label": "VBT8",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-8",
+                "isShown": true
+              },
+              {
                 "key": "D32",
                 "label": "VBT Records",
                 "icon": "ListAltIcon",

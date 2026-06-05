@@ -5,7 +5,7 @@ import { useToast } from "../../../hooks/useToast.js";
 import ViewVBTReport from "./ViewVBTReport";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { Button, Col, Input, Modal,  Row, Space } from "antd";
+import { Button, Col, Input, Modal, Row, Space } from "antd";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import printFunction, {
@@ -26,6 +26,11 @@ import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 import { getCurrentIndianFinancialYearSession } from "../../../utils/indianFinancialYear";
+import {
+  getTallyApiPrefix,
+  getVbtApiFromCode,
+  getVbtScreenType,
+} from "../../../utils/vbtGenral.js";
 
 export default function VBTReport() {
   const { showToast } = useToast();
@@ -80,22 +85,23 @@ export default function VBTReport() {
   ];
 
   const printFun = async (vbtId) => {
-   try {
-     setLoading(true);
-    const response = await imsAxios.post("/tally/vbt_report/print_vbt_report", {
-      vbt_key: vbtId,
-    });
+    try {
+      setLoading(true);
+      const response = await imsAxios.post(
+        "/tally/vbt_report/print_vbt_report",
+        {
+          vbt_key: vbtId,
+        },
+      );
 
-    if (response?.data?.buffer) {
-         printFunction(response?.data.buffer?.data);
-    setLoading(false);
+      if (response?.data?.buffer) {
+        printFunction(response?.data.buffer?.data);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
- 
-    
-   } catch (error) {
-    console.log(error);
-    setLoading(false);
-   }
   };
   const handleDownload = async (id) => {
     setLoading(true);
@@ -138,7 +144,6 @@ export default function VBTReport() {
   };
   const confirmDelete = () => {};
 
-
   const submitVerifyHandler = async (row) => {
     let vbtKey = row.vbt_code;
     let id = row.ID;
@@ -151,7 +156,6 @@ export default function VBTReport() {
       getSearchResults();
     }
   };
- 
 
   const columns = [
     {
@@ -199,7 +203,6 @@ export default function VBTReport() {
           label="Download"
         />,
 
-   
         <GridActionsCellItem
           showInMenu
           disabled={loading}
@@ -207,7 +210,6 @@ export default function VBTReport() {
             setDebitNoteDrawer(row);
           }}
           label="Create Debit Note"
-
         />,
       ],
     },
@@ -447,7 +449,6 @@ export default function VBTReport() {
     },
   ];
   const downloadcolumns = [
-   
     {
       headerName: "VBT Code",
       field: "vbt_code",
@@ -708,12 +709,12 @@ export default function VBTReport() {
           wise == "vendorwise"
             ? searchInput
             : wise == "minwise"
-            ? searchInput.trim()
-            : wise == "vbtwise"
-            ? searchInput.trim()
-            : wise == "datewise"
-            ? searchDateRange
-            : wise == "effectivewise" && searchDateRange,
+              ? searchInput.trim()
+              : wise == "vbtwise"
+                ? searchInput.trim()
+                : wise == "datewise"
+                  ? searchDateRange
+                  : wise == "effectivewise" && searchDateRange,
         wise: wise,
         vbt_type: vbtOption,
       });
@@ -779,36 +780,26 @@ export default function VBTReport() {
     setSearchDateRange("");
   }, [wise]);
 
-
   return (
     <div style={{ height: "100%", padding: 10 }}>
       {editVbtDrawer ? (
-        editvbturl === "vbt03" ? (
-          <VBT01Report
-            setEditVbtDrawer={setEditVbtDrawer}
-            editVbtDrawer={editVbtDrawer}
-          />
-        ) : (
-          <VBT01Report
-            setEditVbtDrawer={setEditVbtDrawer}
-            editVbtDrawer={editVbtDrawer}
-          />
-        )
+        <VBT01Report
+          setEditVbtDrawer={setEditVbtDrawer}
+          editVbtDrawer={editVbtDrawer}
+          apiUrl={getTallyApiPrefix(getVbtApiFromCode(editVbtDrawer))}
+          vbtScreenType={getVbtScreenType(getVbtApiFromCode(editVbtDrawer))}
+        />
       ) : (
         ""
       )}
 
- 
       <ViewVBTReport
         viewReportData={viewReportData}
         setViewReportData={setViewReportData}
         getSearchResults={getSearchResults}
       />
-    
-      <Row
-        justify="space-between"
-       
-      >
+
+      <Row justify="space-between">
         <Col>
           <Space>
             <div style={{ width: 150 }}>
@@ -894,8 +885,8 @@ export default function VBTReport() {
                     ? true
                     : false
                   : !searchInput
-                  ? true
-                  : false
+                    ? true
+                    : false
               }
               type="primary"
               onClick={getSearchResults}
@@ -929,7 +920,6 @@ export default function VBTReport() {
 
       <div style={{ height: "calc(100vh - 180px)", marginTop: 10 }}>
         <MyDataTable
-      
           checkboxSelection={wise == "vendorwise"}
           loading={loading}
           columns={columns}
