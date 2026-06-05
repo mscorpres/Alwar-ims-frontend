@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Select, Button, Input } from "antd";
+import { Col, Row, Select, Button, Input, Card } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect.jsx";
 import "./Modal/style.css";
@@ -41,6 +41,7 @@ function FGToFGTransfer() {
   const [branchName, setbBanchName] = useState([]);
   const { showToast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+    const [hoveredRow, setHoveredRow] = useState(null);
 
   // Add row functionality
   const addRow = () => {
@@ -323,50 +324,46 @@ function FGToFGTransfer() {
     <div style={{ height: "95%" }}>
       {(loading || isLoading) && <Loading />}
       <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
-        <Col span={6}>
-          <Row gutter={10} style={{ margin: "5px" }}>
-            <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
-              <span>PICK LOCATION</span>
-            </Col>
-            <Col span={24}>
-              <Select
-                placeholder="Please Select Location"
-                style={{ width: "100%" }}
-                options={locData}
-                value={allData.locationFrom}
-                onChange={(e) =>
-                  setAllData((allData) => {
-                    return { ...allData, locationFrom: e };
-                  })
-                }
-              />
-            </Col>
-            <Col span={24} style={{ marginTop: "10px" }}>
-              <TextArea rows={2} disabled value={branchName} />
-            </Col>
-          </Row>
+        <Col span={16} style={{ marginBottom: 10 }}>
+       
+            <Row gutter={10} >
+              <Col span={4} style={{ marginBottom: "10px", width: "100%" }}>
+                <span>Pick Location</span>
+              </Col>
+              <Col span={6}>
+                <Select
+                  placeholder="Please Select Location"
+                  style={{ width: "100%" }}
+                  options={locData}
+                  value={allData.locationFrom}
+                  onChange={(e) =>
+                    setAllData((allData) => {
+                      return { ...allData, locationFrom: e };
+                    })
+                  }
+                />
+              </Col>
+              <Col span={10} >
+                <TextArea rows={1} disabled value={branchName} />
+              </Col>
+            </Row>
+    
         </Col>
 
-        <Col span={18}>
+        <Col span={24}>
           <Row gutter={10}>
             <Col span={24}>
               <div
                 style={{
-                  overflowX: "auto",
                   overflowY: "auto",
-                  height: "calc(100vh - 200px)",
-                  border: "1px solid #ccc",
+                  height: "calc(100vh - 220px)",
                 }}
               >
-                <table
-                  style={{
-                    minWidth: 1500,
-                  }}
-                >
+                <table style={{ border: "1px solid #ccc", minWidth: 1500 }}>
                   <thead>
                     <tr>
                       <th className="table-col" style={{ width: "2vw" }}>
-                        Action
+                        #
                       </th>
                       <th className="table-col" style={{ width: "18vw" }}>
                         Product/Sku Code.
@@ -390,10 +387,17 @@ function FGToFGTransfer() {
                   </thead>
                   <tbody>
                     {rows.map((row, index) => {
-                      const rowColor = index % 2 === 0 ? "#ffffff" : "#efefef";
+                      const rowColor = index % 2 === 0 ? "#ffffff" : "#f8f9fa";
                       return (
                         <React.Fragment key={row.id}>
-                          <tr style={{ backgroundColor: rowColor }}>
+                          <tr
+                            style={{
+                              backgroundColor:
+                                hoveredRow === row.id ? "#fffaec" : rowColor,
+                            }}
+                            onMouseEnter={() => setHoveredRow(row.id)}
+                            onMouseLeave={() => setHoveredRow(null)}
+                          >
                             <td style={{ width: "2vw", textAlign: "center" }}>
                               {index > 0 && (
                                 <span
@@ -484,8 +488,7 @@ function FGToFGTransfer() {
                               <Input disabled value={row.avrRate} />
                             </td>
                             <td style={{ width: "16vw" }}>
-                              <TextArea
-                                rows={2}
+                              <Input
                                 value={row.comment}
                                 placeholder="Comment Optional"
                                 onChange={(e) => {

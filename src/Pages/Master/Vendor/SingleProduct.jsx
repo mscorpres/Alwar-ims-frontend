@@ -1,5 +1,7 @@
 import { Button, Col, Form, Input, Row, Upload } from "antd";
 import UploadDocs from "../../Store/MaterialIn/MaterialInWithPO/UploadDocs";
+import {  DeleteFilled, } from "@ant-design/icons";
+import { Add, Delete } from "@mui/icons-material";
 
 export default function SingleProduct({
   index,
@@ -15,11 +17,9 @@ export default function SingleProduct({
   // optionState,
   // setOptionState,
 }) {
-  console.log("Upload event:");
   const component =
     Form.useWatch(["components", field.name, "component"], form) ?? 0;
   const normFile = (e) => {
-    console.log("Upload event:", e);
     if (Array.isArray(e)) {
       return e;
     }
@@ -34,7 +34,7 @@ export default function SingleProduct({
         marginTop: 5,
         maxHeight: "50%",
         height: "50%",
-        overflowY: "scroll",
+        overflowY: "hidden",
       }}
       gutter={[6, 10]}
       key={field.key}
@@ -67,20 +67,30 @@ export default function SingleProduct({
         </Form.Item> */}
       </Col>
       <Col span={12}>
-        <Row justify="end" align="middle" style={{ height: "100%" }}>
+        <Row justify="end" align="middle" style={{ height: "100%", gap: 10 }}>
           {fields.length > 1 && (
             <Button
               onClick={() => remove(field.name)}
-              danger
-              type="text"
+               style={{
+              background: "#ffffff",
+              borderColor: "#ff8484",
+              color: "#f76565",
+            }}
               size="small"
-            >
-              - Remove Document
-            </Button>
+              icon={<Delete fontSize="small"  />}
+           />
+            
           )}
-          <Button size="small" type="link" onClick={() => add()}>
-            + Add Document
-          </Button>
+          <Button
+            size="small"
+            style={{
+              background: "#e4f8df",
+              borderColor: "#5ab137",
+              color: "#158015",
+            }}
+            onClick={() => add()}
+            icon={<Add fontSize="small" />}
+          />
         </Row>
       </Col>
     </Row>

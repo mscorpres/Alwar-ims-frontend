@@ -78,7 +78,6 @@ const defaultValues = {
 };
 
 const vendorDetailsOptions = [
-  { text: "JWI (Job Work In)", value: "j01" },
   { text: "Vendor", value: "v01" },
   { text: "Production Return", value: "p01" },
 ];
@@ -127,7 +126,7 @@ export default function MaterialInWithoutPO() {
       RATE: "--",
       HSN: "123456",
       LOCATION: "--",
-      AUTO_CONSUMP: "N",
+      AUTO_CONSUMP: "0",
       REMARK: "test",
       GST_TYPE: "LOCAL",
       GST_RATE: "18",
@@ -250,7 +249,6 @@ export default function MaterialInWithoutPO() {
   };
   const getCurrencies = async () => {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
-
     let arr = [];
     arr = response.data.map((d) => {
       return {
@@ -729,7 +727,7 @@ export default function MaterialInWithoutPO() {
         ...r,
         mfgCode: r.Manualmfgcode,
         hsnCode: r.hsn,
-        autoConsumption: r.Autoconsump == "Y" ? "Yes" : "No",
+        autoConsumption: r.Autoconsump == "1" ? "Yes" : "No",
       };
     });
 
@@ -1057,13 +1055,13 @@ export default function MaterialInWithoutPO() {
                         />
                       </Form.Item>
                     </Col>{" "}
-                    {vendorType === "j01" && (
+                    {/* {vendorType === "j01" && (
                       <Col span={24}>
                         <Form.Item name="ewaybill" label="E-Way Bill Number">
                           <Input size="default" />
                         </Form.Item>
                       </Col>
-                    )}
+                    )} */}
                     {isApplicable == "Y" && (
                       <>
                         <Col span={24}>

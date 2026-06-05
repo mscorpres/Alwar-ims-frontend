@@ -50,7 +50,7 @@ const ViewMIN = () => {
       "fetch"
     );
 
-    setRows(response.data);
+    setRows(response?.data);
   };
 
   const handlePrintMIN = async (minId, action) => {
@@ -148,58 +148,94 @@ const ViewMIN = () => {
         selectLoading={loading("select")}
         preSelected={preselected}
       />
-      <Col span={4}>
-        <Card size="small">
-          <Form
-            form={form}
-            layout="vertical"
-            initialValues={initialFilterValues}
-          >
-            <Form.Item name="wise" label="Select Wise" rules={rules.wise}>
-              <MySelect options={wiseOptions} />
-            </Form.Item>
-            <Form.Item
-              name="value"
-              label={selectedWise === "datewise" ? "Select Date" : "Select MIN"}
-              rules={selectedWise === "datewise" ? rules.date : rules.minId}
-            >
-              {selectedWise === "datewise" && (
-                <SingleDatePicker
-                  setDate={(value) => form.setFieldValue("value", value)}
-                />
-              )}
-              {selectedWise === "minwise" && (
-                <MyAsyncSelect
-                  selectLoading={loading("select")}
-                  onBlur={() => setAsyncOptions([])}
-                  loadOptions={handleFetchMINOptions}
-                  optionsState={asyncOptions}
-                />
-              )}
-            </Form.Item>
-            <Flex justify="end" gap={8}>
-              <Tooltip title="Download Labels">
-                <Button
-                  onClick={() => setShowLabelDrawer(true)}
-                  shape="circle"
-                  icon={<PrinterFilled />}
-                />
-              </Tooltip>
-              <CommonIcons
-                action="downloadButton"
-                onClick={() => downloadCSV(rows, columns, "MIN Report")}
-              />
+  <Col span={24}>
+ 
+    <Form
+      form={form}
+      
+      initialValues={initialFilterValues}
+    >
+      <Row gutter={8}>
 
-              <MyButton
-                variant="search"
-                loading={loading("fetch")}
-                onClick={handleFetchRows}
+        {/* Wise */}
+        <Col span={6}>
+          <Form.Item
+            name="wise"
+            label="Select Wise"
+            rules={rules.wise}
+            style={{ marginBottom: 8 }}
+          >
+            <MySelect options={wiseOptions} />
+          </Form.Item>
+        </Col>
+
+        {/* Value */}
+        <Col span={6}>
+          <Form.Item
+            name="value"
+            label={
+              selectedWise === "datewise"
+                ? "Select Date"
+                : "Select MIN"
+            }
+            rules={
+              selectedWise === "datewise"
+                ? rules.date
+                : rules.minId
+            }
+            style={{ marginBottom: 8 }}
+          >
+            {selectedWise === "datewise" && (
+              <SingleDatePicker
+                setDate={(value) =>
+                  form.setFieldValue("value", value)
+                }
               />
-            </Flex>
-          </Form>
-        </Card>
-      </Col>
-      <Col span={20}>
+            )}
+
+            {selectedWise === "minwise" && (
+              <MyAsyncSelect
+                selectLoading={loading("select")}
+                onBlur={() => setAsyncOptions([])}
+                loadOptions={handleFetchMINOptions}
+                optionsState={asyncOptions}
+              />
+            )}
+          </Form.Item>
+        </Col>
+
+        {/* Actions */}
+        <Col span={4}>
+          <Flex justify="end" gap={8}>
+               <MyButton
+              variant="search"
+              loading={loading("fetch")}
+              onClick={handleFetchRows}
+            />
+            <Tooltip title="Download Labels">
+              <Button
+                onClick={() => setShowLabelDrawer(true)}
+                shape="circle"
+                icon={<PrinterFilled />}
+              />
+            </Tooltip>
+
+            <CommonIcons
+              action="downloadButton"
+              onClick={() =>
+                downloadCSV(rows, columns, "MIN Report")
+              }
+            />
+
+         
+          </Flex>
+        </Col>
+
+      </Row>
+    </Form>
+
+</Col>
+      <Col span={24} style={{ height: "calc(100% - 60px)", overflowY: "auto" }} >
         <MyDataTable
           loading={loading("fetch") || loading("print")}
           columns={[...actionColumns, ...columns]}

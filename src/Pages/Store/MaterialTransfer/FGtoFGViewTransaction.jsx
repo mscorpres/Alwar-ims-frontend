@@ -117,7 +117,7 @@ function FGToFGViewTransaction() {
           />
         </Col>
       </Row>
-      <div style={{ height: "90%", margin: "10px" }}>
+      <div style={{ height: "100%", margin: "10px" }}>
         <MyDataTable
           loading={loading}
           data={dataComesFromDateWise}

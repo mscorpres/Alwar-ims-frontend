@@ -12,37 +12,36 @@
         "key": "D",
         "label": "Finance",
         "icon": "BiMoney",
-      
+
+        "children": [
+          {
+            "key": "account-internal-links",
+            "label": "Accounts master",
+            "icon": "MdAccountBox",
+            "isHeading": true,
             "children": [
               {
-                "key": "account-internal-links",
-                "label": "Accounts master",
+                "key": "D31",
+                "label": "Create Master",
                 "icon": "MdAccountBox",
-                "isHeading": true,
-                "children": [
-                  {
-                    "key": "D31",
-                    "label": "Create Master",
-                    "icon": "MdAccountBox",
-                    "path": "/tally/create-master",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D41",
-                    "label": "Create Ledger",
-                    "icon": "MdAccountBox",
-                    "path": "/tally/ledger",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D11",
-                    "label": "Chart of Accounts",
-                    "icon": "MdAccountBox",
-                    "path": "/tally/chart-accounts",
-                    "isShown": true
-                  }
-                ]
-           
+                "path": "/tally/create-master",
+                "isShown": true
+              },
+              {
+                "key": "D41",
+                "label": "Create Ledger",
+                "icon": "MdAccountBox",
+                "path": "/tally/ledger",
+                "isShown": true
+              },
+              {
+                "key": "D11",
+                "label": "Chart of Accounts",
+                "icon": "MdAccountBox",
+                "path": "/tally/chart-accounts",
+                "isShown": true
+              }
+            ]
           },
           {
             "key": "D2",
@@ -86,73 +85,72 @@
             "label": "Vendor Bills",
             "icon": "RiBillFill",
             "isHeading": true,
-        
-                "children": [
-                  {
-                    "key": "D317",
-                    "label": "Purchase Register",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/report",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D31",
-                    "label": "Vendor Bill Posting",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/vb-1",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D311",
-                    "label": "VBT2",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/vb-2",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D312",
-                    "label": "VBT3",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/vb-3",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D313",
-                    "label": "VBT4",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/vb-4",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D314",
-                    "label": "VBT5",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/vb-5",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D315",
-                    "label": "VBT6",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/vb-6",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D316",
-                    "label": "VBT7",
-                    "icon": "ReceiptIcon",
-                    "path": "/tally/vendor-bill-posting/vb-7",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D32",
-                    "label": "VBT Records",
-                    "icon": "ListAltIcon",
-                    "path": "/tally/vendor-bill-posting/vendor-bill-records",
-                    "isShown": true
-                  }
-                ]
-           
+
+            "children": [
+              {
+                "key": "D317",
+                "label": "Purchase Register",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/report",
+                "isShown": true
+              },
+              {
+                "key": "D31",
+                "label": "Vendor Bill Posting",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-1",
+                "isShown": true
+              },
+              {
+                "key": "D311",
+                "label": "VBT2",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-2",
+                "isShown": true
+              },
+              {
+                "key": "D312",
+                "label": "VBT3",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-3",
+                "isShown": true
+              },
+              {
+                "key": "D313",
+                "label": "VBT4",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-4",
+                "isShown": true
+              },
+              {
+                "key": "D314",
+                "label": "VBT5",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-5",
+                "isShown": true
+              },
+              {
+                "key": "D315",
+                "label": "VBT6",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-6",
+                "isShown": true
+              },
+              {
+                "key": "D316",
+                "label": "VBT7",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-7",
+                "isShown": true
+              },
+              {
+                "key": "D32",
+                "label": "VBT Records",
+                "icon": "ListAltIcon",
+                "path": "/tally/vendor-bill-posting/vendor-bill-records",
+                "isShown": true
+              }
+            ]
           },
           {
             "key": "D4",
@@ -356,73 +354,72 @@
             "label": "Report",
             "icon": "AlignRightOutlined",
             "isHeading": true,
-           
-                "children": [
-                  {
-                    "key": "reports/trial-balance",
-                    "label": "Trial Balance Report",
-                    "icon": "BalanceIcon",
-                    "path": "/tally/reports/trial-balance-report",
-                    "isShown": true
-                  },
-                  {
-                    "key": "reports/balance-sheet",
-                    "label": "Balance Sheet",
-                    "icon": "TableChartIcon",
-                    "path": "/tally/reports/balance-sheet",
-                    "isShown": true
-                  },
-                  {
-                    "key": "reports/profitloss-report",
-                    "label": "P & L Report",
-                    "icon": "TrendingUpIcon",
-                    "path": "/tally/reports/profitloss-report",
-                    "isShown": true
-                  },
-                  {
-                    "key": "reports/day-book",
-                    "label": "Day Book",
-                    "icon": "TodayIcon",
-                    "path": "/tally/reports/day-book",
-                    "isShown": true
-                  },
-                  {
-                    "key": "reports/ageing",
-                    "label": "Ageing Report",
-                    "icon": "ScheduleIcon",
-                    "path": "/tally/vouchers/reference/payable-report",
-                    "isShown": true
-                  },
-                  {
-                    "key": "reports/tdsReport",
-                    "label": "TDS Report",
-                    "icon": "DescriptionIcon",
-                    "path": "/tally/vouchers/reference/tds-report",
-                    "isShown": true
-                  },
-                  {
-                    "key": "/gst/gstReport1",
-                    "label": "GSTR1",
-                    "icon": "ReceiptLongIcon",
-                    "path": "/tally/vouchers/reference/gst/report",
-                    "isShown": true
-                  },
-                  {
-                    "key": "reports/misReport",
-                    "label": "MIS Report",
-                    "icon": "AnalyticsIcon",
-                    "path": "/tally/vouchers/reference/mis-report",
-                    "isShown": true
-                  },
-                  {
-                    "key": "D12",
-                    "label": "Ledger Report",
-                    "icon": "AssessmentIcon",
-                    "path": "/tally/ledger-report",
-                    "isShown": true
-                  }
-                ]
-      
+
+            "children": [
+              {
+                "key": "reports/trial-balance",
+                "label": "Trial Balance Report",
+                "icon": "BalanceIcon",
+                "path": "/tally/reports/trial-balance-report",
+                "isShown": true
+              },
+              {
+                "key": "reports/balance-sheet",
+                "label": "Balance Sheet",
+                "icon": "TableChartIcon",
+                "path": "/tally/reports/balance-sheet",
+                "isShown": true
+              },
+              {
+                "key": "reports/profitloss-report",
+                "label": "P & L Report",
+                "icon": "TrendingUpIcon",
+                "path": "/tally/reports/profitloss-report",
+                "isShown": true
+              },
+              {
+                "key": "reports/day-book",
+                "label": "Day Book",
+                "icon": "TodayIcon",
+                "path": "/tally/reports/day-book",
+                "isShown": true
+              },
+              {
+                "key": "reports/ageing",
+                "label": "Ageing Report",
+                "icon": "ScheduleIcon",
+                "path": "/tally/vouchers/reference/payable-report",
+                "isShown": true
+              },
+              {
+                "key": "reports/tdsReport",
+                "label": "TDS Report",
+                "icon": "DescriptionIcon",
+                "path": "/tally/vouchers/reference/tds-report",
+                "isShown": true
+              },
+              {
+                "key": "/gst/gstReport1",
+                "label": "GSTR1",
+                "icon": "ReceiptLongIcon",
+                "path": "/tally/vouchers/reference/gst/report",
+                "isShown": true
+              },
+              {
+                "key": "reports/misReport",
+                "label": "MIS Report",
+                "icon": "AnalyticsIcon",
+                "path": "/tally/vouchers/reference/mis-report",
+                "isShown": true
+              },
+              {
+                "key": "D12",
+                "label": "Ledger Report",
+                "icon": "AssessmentIcon",
+                "path": "/tally/ledger-report",
+                "isShown": true
+              }
+            ]
           },
           {
             "key": "D9",
@@ -574,6 +571,13 @@
                     "isShown": true
                   }
                 ]
+              },
+              {
+                "key": "B123123",
+                "label": "Cost Center",
+                "icon": "ExtensionIcon",
+                "path": "/masters/cost-center",
+                "isShown": true
               },
               {
                 "key": "B123",
@@ -992,11 +996,40 @@
                 ]
               },
               {
-                "key": "B40",
-                "label": "Physical Stock (Store)",
+                "key": "physical-internal-links",
+                "label": "Stock (Store)",
                 "icon": "InventoryIcon",
-                "path": "/warehouse/physical/create",
-                "isShown": true
+                "isHeading": true,
+                "children": [
+                  {
+                    "key": "stock-Bryur361",
+                    "label": "Create Physical Stock",
+                    "icon": "InventoryIcon",
+                    "path": "/warehouse/physical/create",
+                    "isShown": true
+                  },
+                  {
+                    "key": "stock-B3sdf61",
+                    "label": "Pending Physical Stock",
+                    "icon": "InventoryIcon",
+                    "path": "/warehouse/physical/pending",
+                    "isShown": true
+                  },
+                  {
+                    "key": "STOCK-B361124",
+                    "label": "Rejected Physical Stock",
+                    "icon": "InventoryIcon",
+                    "path": "/warehouse/physical/rejected",
+                    "isShown": true
+                  },
+                  {
+                    "key": "stock-B3618e7e",
+                    "label": "View Physical Stock",
+                    "icon": "InventoryIcon",
+                    "path": "/warehouse/physical/view",
+                    "isShown": true
+                  }
+                ]
               },
               {
                 "key": "part-code-internal-links",
@@ -1060,56 +1093,56 @@
             "children": [
               {
                 "key": "B61",
-                "label": "Jobwork & Analysis",
+                "label": "Create",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/create",
                 "isShown": true
               },
               {
                 "key": "B611",
-                "label": "Jobwork Approval",
+                "label": "Approval",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/approval",
                 "isShown": true
               },
               {
                 "key": "B612",
-                "label": "PO Analysis",
+                "label": "Analysis",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/analysis",
                 "isShown": true
               },
               {
                 "key": "B613",
-                "label": "Jobwork Issue",
+                "label": "RM Issue",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/issue",
                 "isShown": true
               },
               {
                 "key": "B614",
-                "label": "Jobwork issue Challan",
+                "label": "Issue Challan",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/issue-challan",
                 "isShown": true
               },
               {
                 "key": "B615",
-                "label": "Jobwork Rm Challan",
+                "label": "RM Challan",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/challan-list",
                 "isShown": true
               },
               {
                 "key": "B616",
-                "label": "Jobwork Sf inward",
+                "label": "SF Inward",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/inward",
                 "isShown": true
               },
               {
                 "key": "B617",
-                "label": "Jobwork Rm Return",
+                "label": "RM Return",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/return",
                 "isShown": true
@@ -1123,7 +1156,7 @@
               },
               {
                 "key": "B618",
-                "label": "Jobwork Completed",
+                "label": "Completed",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/completed",
                 "isShown": true
@@ -1220,6 +1253,13 @@
                 "label": "Report",
                 "icon": "AssessmentIcon",
                 "path": "/woreport",
+                "isShown": true
+              },
+              {
+                "key": "B79",
+                "label": "Update Supplementary",
+                "icon": "UpdateIcon",
+                "path": "/wo/update/supplementary",
                 "isShown": true
               }
             ]
@@ -1333,38 +1373,37 @@
             "label": "Sales Order",
             "icon": "TbReportAnalytics",
             "isHeading": true,
-       
-                "children": [
-                  {
-                    "key": "C52",
-                    "label": "Create order",
-                    "icon": "AddIcon",
-                    "path": "/sales-order/create",
-                    "isShown": true
-                  },
-                  {
-                    "key": "E51",
-                    "label": "Register",
-                    "icon": "ListIcon",
-                    "path": "/sales-order/register",
-                    "isShown": true
-                  },
-                  {
-                    "key": "C54",
-                    "label": "Shipment",
-                    "icon": "LocalShippingIcon",
-                    "path": "/sales-order/shipments",
-                    "isShown": true
-                  },
-                  {
-                    "key": "C53",
-                    "label": "Challan",
-                    "icon": "ReceiptIcon",
-                    "path": "/sales-order/challan",
-                    "isShown": true
-                  }
-                ]
-           
+
+            "children": [
+              {
+                "key": "C52",
+                "label": "Create order",
+                "icon": "AddIcon",
+                "path": "/sales-order/create",
+                "isShown": true
+              },
+              {
+                "key": "E51",
+                "label": "Register",
+                "icon": "ListIcon",
+                "path": "/sales-order/register",
+                "isShown": true
+              },
+              {
+                "key": "C54",
+                "label": "Shipment",
+                "icon": "LocalShippingIcon",
+                "path": "/sales-order/shipments",
+                "isShown": true
+              },
+              {
+                "key": "C53",
+                "label": "Challan",
+                "icon": "ReceiptIcon",
+                "path": "/sales-order/challan",
+                "isShown": true
+              }
+            ]
           },
           {
             "key": "B4",
@@ -1429,6 +1468,19 @@
                     "label": "RM Issue Register",
                     "icon": "OutputIcon",
                     "path": "/reports/transaction-out",
+                    "isShown": true
+                  },
+                     {
+                    "key": "B412432",
+                    "label": "View Document",
+                    "icon": "OutputIcon",
+                    "path": "/reports/upload-document/view",
+                    "isShown": true
+                  }, {
+                    "key": "B412433",
+                    "label": "Consumption Report",
+                    "icon": "OutputIcon",
+                    "path": "/jw-rm-consumption-report",
                     "isShown": true
                   }
                 ]
@@ -1889,38 +1941,37 @@
             "label": "QCA",
             "icon": "CheckCircleIcon",
             "isHeading": true,
-          
-                "children": [
-                  {
-                    "key": "C131",
-                    "label": "Create Sample",
-                    "icon": "AddIcon",
-                    "path": "/qca/sample",
-                    "isShown": true
-                  },
-                  {
-                    "key": "C132",
-                    "label": "Pending Sample",
-                    "icon": "PendingIcon",
-                    "path": "/qca/pending",
-                    "isShown": true
-                  },
-                  {
-                    "key": "C133",
-                    "label": "Completed Sample",
-                    "icon": "CheckCircleIcon",
-                    "path": "/qca/completed",
-                    "isShown": true
-                  },
-                  {
-                    "key": "C134",
-                    "label": "QC Report",
-                    "icon": "AssessmentIcon",
-                    "path": "/qca/report",
-                    "isShown": true
-                  }
-                ]
-            
+
+            "children": [
+              {
+                "key": "C131",
+                "label": "Create Sample",
+                "icon": "AddIcon",
+                "path": "/qca/sample",
+                "isShown": true
+              },
+              {
+                "key": "C132",
+                "label": "Pending Sample",
+                "icon": "PendingIcon",
+                "path": "/qca/pending",
+                "isShown": true
+              },
+              {
+                "key": "C133",
+                "label": "Completed Sample",
+                "icon": "CheckCircleIcon",
+                "path": "/qca/completed",
+                "isShown": true
+              },
+              {
+                "key": "C134",
+                "label": "QC Report",
+                "icon": "AssessmentIcon",
+                "path": "/qca/report",
+                "isShown": true
+              }
+            ]
           }
         ]
       },
@@ -1928,60 +1979,59 @@
         "key": "Z",
         "label": "MES",
         "icon": "DeploymentUnitOutlined",
-      
+
+        "children": [
+          {
+            "key": "mes-qa-process-internal-links",
+            "label": "QA process",
+            "icon": "DeliveredProcedureOutlined",
+            "isHeading": true,
             "children": [
               {
-                "key": "mes-qa-process-internal-links",
-                "label": "QA process",
-                "icon": "DeliveredProcedureOutlined",
-                "isHeading": true,
-                "children": [
-                  {
-                    "key": "Z11",
-                    "label": "Create Process",
-                    "icon": "AddIcon",
-                    "path": "/master/qa-process",
-                    "isShown": true
-                  },
-                  {
-                    "key": "Z12",
-                    "label": "Create Process Map",
-                    "icon": "MapIcon",
-                    "path": "/master/qa-process-map",
-                    "isShown": true
-                  }
-                ]
+                "key": "Z11",
+                "label": "Create Process",
+                "icon": "AddIcon",
+                "path": "/master/qa-process",
+                "isShown": true
+              },
+              {
+                "key": "Z12",
+                "label": "Create Process Map",
+                "icon": "MapIcon",
+                "path": "/master/qa-process-map",
+                "isShown": true
+              }
+            ]
           },
           {
             "key": "Z2",
             "label": "QCA",
             "icon": "CheckCircleOutlined",
             "isHeading": true,
-      
-                "children": [
-                  {
-                    "key": "Z21",
-                    "label": "Print QCA Label",
-                    "icon": "PrintIcon",
-                    "path": "/print-qc-label",
-                    "isShown": true
-                  },
-                  {
-                    "key": "Z22",
-                    "label": "QC Check",
-                    "icon": "CheckCircleIcon",
-                    "path": "/qc/check",
-                    "isShown": true
-                  },
-                  {
-                    "key": "Z23",
-                    "label": "QC Report",
-                    "icon": "AssessmentIcon",
-                    "path": "/qca/report's",
-                    "isShown": true
-                  }
-                ]
-           
+
+            "children": [
+              {
+                "key": "Z21",
+                "label": "Print QCA Label",
+                "icon": "PrintIcon",
+                "path": "/print-qc-label",
+                "isShown": true
+              },
+              {
+                "key": "Z22",
+                "label": "QC Check",
+                "icon": "CheckCircleIcon",
+                "path": "/qc/check",
+                "isShown": true
+              },
+              {
+                "key": "Z23",
+                "label": "QC Report",
+                "icon": "AssessmentIcon",
+                "path": "/qca/report's",
+                "isShown": true
+              }
+            ]
           }
         ]
       },

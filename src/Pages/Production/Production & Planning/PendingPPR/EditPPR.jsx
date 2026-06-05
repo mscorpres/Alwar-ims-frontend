@@ -65,7 +65,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
     const response = await imsAxios.get("ppr/ppr_section_location");
     const locArr = [];
     response.data.map((a) =>
-      locArr.push({ text: `(${a.name}) ${a.address}`, value: a.location_key })
+      locArr.push({ text: `(${a.name}) ${a.address}`, value: a.location_key }),
     );
     setLocationOptions(locArr);
   };
@@ -130,7 +130,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
       setBomList(bomArr);
       pprDetailsForm.setFieldValue(
         "existingQty",
-        data?.other?.existingplanedQty
+        data?.other?.existingplanedQty,
       );
       pprDetailsForm.setFieldValue("stock", data?.other?.stockInHand);
       pprDetailsForm.setFieldValue("uom", data?.other?.uom);
@@ -140,7 +140,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
     try {
       const response = await executeFun(
         () => getProductsOptions(searchInput, true),
-        "select"
+        "select",
       );
 
       setAsyncOptions(response.data);
@@ -153,9 +153,13 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
-    setAsyncOptions(response.data);
+    if (response?.success) {
+      setAsyncOptions(response?.data);
+    } else {
+      showToast(response.message, "error");
+    }
   };
 
   const getProjectDescription = async (search) => {
@@ -164,16 +168,13 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
       project_name: search,
     });
     setLoading(false);
-    const { data } = response;
-    if (data) {
-      if (response.success) {
-        pprDetailsForm.setFieldValue(
-          "projectDescription",
-          data.data.description
-        );
-      } else {
-        showToast(response.message?.msg || response.message, "error");
-      }
+  
+
+    if (response?.success) {
+        const { data } = response;
+      pprDetailsForm.setFieldValue("projectDescription", data?.description);
+    } else {
+      showToast( response.message, "error");
     }
   };
 
@@ -229,7 +230,7 @@ const EditPPR = ({ editPPR, setEditPPR }) => {
       setLoading("submit");
       const response = await imsAxios.post(
         "/ppr/updatePPR",
-        showSubmitConfirmModal
+        showSubmitConfirmModal,
       );
 
       const { data } = response;

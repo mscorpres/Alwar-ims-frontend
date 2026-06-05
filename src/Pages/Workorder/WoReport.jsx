@@ -1,51 +1,43 @@
-import { useState, useEffect } from "react";
-import { Col,Row, Space,Table } from "antd";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Col, Row, Space } from "antd";
+import { Box, IconButton } from "@mui/material";
+import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import MyDatePicker from "../../Components/MyDatePicker";
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
-import { getClientOptions } from "./components/api";
 import { imsAxios } from "../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast.js";
-import printFunction, {
-  downloadFunction,
-} from "../../Components/printFunction";
 import * as XLSX from "xlsx";
 import MyButton from "../../Components/MyButton";
+import MyDataTable from "../../Components/MyDataTable.jsx";
+import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
+
+const challanColumns = [
+  { headerName: "Serial No", field: "serial_no", width: 100 },
+  { headerName: "Challan Date", field: "challan_date", width: 130 },
+  { headerName: "Challan Eway", field: "challan_eway", width: 120 },
+  { headerName: "Challan No", field: "challan_no", width: 120 },
+  { headerName: "Challan Qty", field: "challan_qty", width: 110 },
+  { headerName: "Challan Rate", field: "challan_rate", width: 110 },
+  { headerName: "Challan Value", field: "challan_value", width: 120 },
+];
+
 const WoReport = () => {
   const { showToast } = useToast();
-  const actionColumn = {
-    headerName: "",
-    field: "actions",
-    width: 10,
-    type: "actions",
-    getActions: ({ row }) => [
-      <GridActionsCellItem
-        key="print"
-        showInMenu
-        // disabled={loading}
-        onClick={() => printwocompleted(row)}
-        label="Print"
-      />,
-      <GridActionsCellItem
-        key="download"
-        showInMenu
-        // disabled={loading}
-        onClick={() => {
-          downloadwocompleted(row);
-        }}
-        label="Download"
-      />,
-    ],
-  };
   const [wise, setWise] = useState(wiseOptions[0].value);
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
-  const [accData, setAccData] = useState([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [disstate, setdisstate] = useState(false);
   const [woreportdata, setworeportdata] = useState([]);
+
+  const toggleExpand = useCallback((id) => {
+    setExpandedRowKeys((prev) =>
+      prev.includes(id) ? prev.filter((k) => k !== id) : [...prev, id]
+    );
+  }, []);
+
   const handleClientOptions = async (search) => {
     try {
       setLoading("select");
@@ -57,88 +49,78 @@ const WoReport = () => {
     }
   };
 
-  const printwocompleted = async (row) => {
-    try {
-      setLoading("fetch");
-      const response = await imsAxios.post(
-        "/createwo/print_wo_completed_list",
-        {
-          transaction: row.transactionId,
-        }
-      );
-     
-      printFunction(response.data.buffer);
-      showToast(response.message, "success");
-    } catch (error) {
-    
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const downloadwocompleted = async (row) => {
-    try {
-      setLoading("fetch");
-      const response = await imsAxios.post(
-        "/createwo/print_wo_completed_list",
-        {
-          transaction: row.transactionId,
-        }
-      );
-      const { data } = response;
-      downloadFunction(response.data.data.buffer.data);
-      showToast(response.message, "success");
-    } catch (error) {
-    
-    } finally {
-      setLoading(false);
-    }
-  };
-  const columns = [
-    { title: "ID", dataIndex: "serialno", key: "serialno" },
-    { title: "Part Code", dataIndex: "partCode", key: "partCode" },
-    { title: "Part Name", dataIndex: "partName", key: "partName" },
-    { title: "Min Id", dataIndex: "minId", key: "minId" },
-    { title: "Min Date", dataIndex: "minDate", key: "minDate" },
-    { title: "Min Eway", dataIndex: "minEway", key: "minEway" },
-    { title: "Min Qty", dataIndex: "minQty", key: "minQty" },
-    { title: "Pending qty", dataIndex: "pending_qty", key: "pending_qty" },
-    { title: "Min Rate", dataIndex: "minRate", key: "minRate" },
-    { title: "Min Value", dataIndex: "minValue", key: "minValue" },
-  ];
-  const expandedRowRender = (record) => {
-    const childColumns = [
-      { title: "Serial No", dataIndex: "serial_no", key: "serial_no" },
-      { title: "Challan Date", dataIndex: "challan_date", key: "challan_date" },
-      { title: "Challan Eway", dataIndex: "challan_eway", key: "challan_eway" },
-      { title: "Challan No", dataIndex: "challan_no", key: "challan_no" },
-      { title: "Challan Qty", dataIndex: "challan_qty", key: "challan_qty" },
-      { title: "Challan Rate", dataIndex: "challan_rate", key: "challan_rate" },
+  const columns = useMemo(
+    () => [
       {
-        title: "Challan Value",
-        dataIndex: "challan_value",
-        key: "challan_value",
+        field: "_expand",
+        headerName: "",
+        width: 48,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          if (!row.challan?.length) return null;
+          const open = expandedRowKeys.includes(row.id);
+          return (
+            <IconButton
+              size="small"
+              onClick={() => toggleExpand(row.id)}
+              aria-label={open ? "Collapse challan rows" : "Expand challan rows"}
+            >
+              {open ? (
+                <KeyboardArrowDown fontSize="small" />
+              ) : (
+                <KeyboardArrowRight fontSize="small" />
+              )}
+            </IconButton>
+          );
+        },
       },
-      // { title: 'Child Data', dataIndex: 'childData', key: 'childData' },s
-    ];
-    return (
-      <Table
-        columns={childColumns}
-        dataSource={record.challan}
-        rowKey={(record, index) => record.id || `challan-${index}-${record.challan_no || record.serial_no || index}`}
-        pagination={false}
-        // showHeader={false}
-        size="large"
-      />
-    );
-  };
-  const handleExpand = (expanded, record) => {
-    if (expanded) {
-      setExpandedRowKeys([...expandedRowKeys, record.id]);
-    } else {
-      setExpandedRowKeys(expandedRowKeys.filter((key) => key !== record.id));
-    }
-  };
+      { headerName: "ID", field: "serialno", width: 90 },
+      { headerName: "Part Code", field: "partCode", width: 120 },
+      { headerName: "Part Name", field: "partName", flex: 1, minWidth: 160 },
+      { headerName: "Min Id", field: "minId", width: 100 },
+      { headerName: "Min Date", field: "minDate", width: 120 },
+      { headerName: "Min Eway", field: "minEway", width: 100 },
+      { headerName: "Min Qty", field: "minQty", width: 90 },
+      { headerName: "Pending qty", field: "pending_qty", width: 110 },
+      { headerName: "Min Rate", field: "minRate", width: 100 },
+      { headerName: "Min Value", field: "minValue", width: 110 },
+      {
+        field: "_challanPanel",
+        headerName: "Challan breakdown",
+        flex: 1,
+        minWidth: 520,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: ({ row }) => {
+          if (!expandedRowKeys.includes(row.id) || !row.challan?.length) {
+            return "";
+          }
+          return (
+            <Box sx={{ width: "100%", height: 240 }}>
+              <MyDataTable
+                columns={challanColumns}
+                data={row.challan}
+                hideFooter
+                hideHeaderMenu
+              />
+            </Box>
+          );
+        },
+      },
+    ],
+    [expandedRowKeys, toggleExpand]
+  );
+
+  const getRowHeight = useCallback(
+    (params) => {
+      if (expandedRowKeys.includes(params.id) && params.model.challan?.length) {
+        return 52 + 240;
+      }
+      return 52;
+    },
+    [expandedRowKeys]
+  );
 
   const getRows = async () => {
     try {
@@ -167,6 +149,7 @@ const WoReport = () => {
         }));
         setRows(newArr);
         setworeportdata(response.data);
+        setExpandedRowKeys([]);
         setdisstate(true);
       } else {
         showToast(response.message, "error");
@@ -176,7 +159,6 @@ const WoReport = () => {
     } finally {
       setLoading(false);
     }
-    console.log("rows", rows);
   };
 
   const exportToExcel = () => {
@@ -284,8 +266,6 @@ const WoReport = () => {
           <Space>
             <div style={{ paddingBottom: "10px" }}>
               <Space>
-                {/* <div style={{ width: 200 }}> */}
-
                 <MyDatePicker setDateRange={setSearchInput} />
 
                 <MyButton
@@ -307,21 +287,14 @@ const WoReport = () => {
           onClick={exportToExcel}
         />
       </Row>
-      <div style={{ height: "calc(100vh - 200px)", margin: "10px" }}>
-        <Table
+      <div style={{ height: "calc(100vh - 180px)", }}>
+        <MyDataTable
           columns={columns}
-          expandedRowRender={expandedRowRender}
-          expandable={{
-            expandedRowKeys,
-            onExpand: handleExpand,
-            rowExpandable: (record) =>
-              record.challan && record.challan.length > 0,
-          }}
-          dataSource={rows}
-          rowKey={(record, index) => record.id || `row-${index}`}
-          scroll={{ x: 500, y: 1000 }}
-          bordered
-         
+          data={rows}
+          loading={loading === "fetch"}
+          getRowHeight={getRowHeight}
+          disableVirtualization={expandedRowKeys.length > 0}
+          hideHeaderMenu
         />
       </div>
     </div>

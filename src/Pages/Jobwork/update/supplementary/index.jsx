@@ -186,6 +186,7 @@ function UpdateJW() {
           component: value,
         }
       );
+      const { data } = response;
 
       setComponent((com) =>
         com.map((v) => {
@@ -193,10 +194,10 @@ function UpdateJW() {
             {
               return {
                 ...v,
-                component_name: data?.data?.name,
-                component_part: data?.data?.part,
-                component_uom: data?.data?.unit,
-                component_key: data?.data?.key,
+                component_name: data?.name,
+                component_part: data?.part,
+                component_uom: data?.unit,
+                component_key: data?.key,
               };
             }
           } else {
@@ -625,9 +626,8 @@ function UpdateJW() {
                     />
                   </Col>
                   <Col span={4}>
-                    <text style={{ fontSize: "10px" }}>Supp. PO Id</text>
+                    <text style={{ fontSize: "10px" }}>WO Id</text>
                     <Input
-                      placeholder="PO ID"
                       value={updateData?.PoID}
                       onChange={(e) =>
                         setUpdateData((updateData) => {
@@ -639,7 +639,6 @@ function UpdateJW() {
                   <Col span={6}>
                     <text style={{ fontSize: "10px" }}>Comment*</text>
                     <Input
-                      placeholder="PO ID"
                       value={updateData?.comment}
                       onChange={(e) =>
                         setUpdateData((updateData) => {

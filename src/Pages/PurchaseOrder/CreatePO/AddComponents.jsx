@@ -60,6 +60,8 @@ export default function AddComponents({
   newPurchaseOrder,
   setStateCode,
   gstState,
+  open,
+  setOpen,
 }) {
   const projectId = form.getFieldsValue()?.project_name?.value;
 
@@ -70,7 +72,7 @@ export default function AddComponents({
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [showCurrencyModal, setShowCurrencyModal] = useState(null);
 
-  const [open, setOpen] = useState(false);
+
 
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -138,7 +140,7 @@ export default function AddComponents({
 
       const gstRateNum = Number(r.gstRate ?? r.gstrate) || 0;
 
-      const rawGstType =  gstState ?? "L";
+      const rawGstType = gstState ?? "L";
 
       const gstTypeNormalized =
         typeof rawGstType === "object"
@@ -371,7 +373,6 @@ export default function AddComponents({
       ),
     },
 
-
     {
       headerName: "Remark",
 
@@ -418,7 +419,6 @@ export default function AddComponents({
 
         formData,
       );
-     
 
       if (response?.success || response?.status === "success") {
         const data = response?.data;
@@ -1212,8 +1212,7 @@ export default function AddComponents({
     <div
       style={{
         height: "100%",
-        overflow: "auto",
-        overflowX: "hidden",
+        overflow: "hidden",
       }}
     >
       {/* reset component rows */}
@@ -1347,26 +1346,7 @@ export default function AddComponents({
               </Card>
             </Col>
 
-            <Row
-              span={24}
-              style={{
-                width: "100%",
-
-                display: "flex",
-
-                justifyContent: "space-between",
-              }}
-            >
-              <Col>
-                <MyButton
-                  variant="upload"
-                  text="Excel"
-                  onClick={() => setOpen(true)}
-                >
-                  Excel
-                </MyButton>
-              </Col>
-            </Row>
+       
             {/* tax detail card */}
             <Col span={24} style={{ height: "50%" }}>
               <Card
@@ -1427,7 +1407,14 @@ export default function AddComponents({
             </Col>
           </Row>
         </Col>
-        <Col span={18}>
+        <Col
+          span={18}
+          style={{
+            maxHeight: "calc(100vh - 240px)",
+            minHeight: "calc(100vh - 240px)",
+            overflow: "auto",
+          }}
+        >
           <FormTable columns={columns} data={rowCount} />
         </Col>
       </Row>
@@ -1447,15 +1434,27 @@ export default function AddComponents({
         open={open}
         width={500}
         onCancel={() => setOpen(false)}
-        footer={[
-          <Button key="back" onClick={() => setOpen(false)}>
+        footer={<div style={{ display: "flex", justifyContent: "space-between" }}>
+         <div>
+             <MyButton
+                variant="downloadSample"
+                onClick={() =>
+                  downloadCSVCustomColumns(prsampleFile, "Purchase Order")
+                }
+              />
+         </div>
+        <div style={{ display: "flex", gap: "10px" }}>
+            <Button key="back" onClick={() => setOpen(false)}>
             Cancel
-          </Button>,
+          </Button>
 
           <Button key="submit" type="primary" onClick={uploadExcelData}>
             Preview
-          </Button>,
-        ]}
+          </Button>
+        </div>
+        </div>
+          
+        }
       >
         {loading1("fetch") && <Loading />}
 
@@ -1480,14 +1479,7 @@ export default function AddComponents({
               </Form.Item>
             </Form.Item>
 
-            <Row justify="end" style={{ marginTop: 5 }}>
-              <MyButton
-                variant="downloadSample"
-                onClick={() =>
-                  downloadCSVCustomColumns(prsampleFile, "Purchase Order")
-                }
-              />
-            </Row>
+           
           </Form>
         </Card>
       </Modal>

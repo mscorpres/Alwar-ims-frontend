@@ -64,7 +64,7 @@ function Location() {
         const current = {
           ...rest,
           parentLocation: parentNode ? parentNode.name : "--",
-          label: node.id, // backend key for actions
+          label: node.label ?? node.id ?? node.key, // backend location key
         };
         result.push(current);
 
@@ -244,16 +244,22 @@ function Location() {
       getDataTree();
       showToast(response.message, "success");
       maploc.resetFields();
+      setMapCostCenerModal(false);
     } else {
       showToast(response.message, "error");
     }
   };
   const maplocValidateHandler = async () => {
-    setMapCostCenerModal(false);
-    // console.log("row -", mapCostCenterModal);
+    const selectedLocation = mapCostCenterModal;
+    if (!selectedLocation || typeof selectedLocation !== "object") {
+      showToast("Please select a location", "error");
+      return;
+    }
+
     const values = await maploc.validateFields();
+    const locationKey = selectedLocation.label ?? selectedLocation.key;
     const payload = {
-      location: mapCostCenterModal.label,
+      location: locationKey,
       costcenter: values.costCenter.value,
     };
 
@@ -477,10 +483,10 @@ function Location() {
   return (
     <div style={{ height: "calc(100vh - 120px)", overflow: "auto" }}>
       <Modal
-        open={mapCostCenterModal}
+        open={!!mapCostCenterModal}
         footer={null}
         width={400}
-        title={`Map Cost Center with Location ${mapCostCenterModal.name} `}
+        title={`Map Cost Center with Location ${mapCostCenterModal?.name ?? ""} `}
         closable={false}
       >
         <Form

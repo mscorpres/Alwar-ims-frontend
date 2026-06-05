@@ -34,6 +34,7 @@ import {
   getVendorOptions,
 } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
+import MyButton from "../../../Components/MyButton/index.jsx";
 
 const deliveryTermOptions = [
   { label: "Within 10 days", value: "Within 10 days" },
@@ -133,7 +134,7 @@ export default function CreatePo() {
   const [successData, setSuccessData] = useState(false);
   const [projectDesc, setProjectDesc] = useState("");
   const [sameAsBilling, setSameAsBilling] = useState(false);
-  
+  const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const termsCondition = Form.useWatch("termscondition", form);
   const advancePayment = Form.useWatch("advancePayment", form);
@@ -149,9 +150,9 @@ export default function CreatePo() {
         formProjectName !== undefined && formProjectName !== null
           ? formProjectName
           : formValues.project_name !== undefined &&
-            formValues.project_name !== null
-          ? formValues.project_name
-          : newPurchaseOrder.project_name,
+              formValues.project_name !== null
+            ? formValues.project_name
+            : newPurchaseOrder.project_name,
       pocostcenter:
         formValues.pocostcenter !== undefined &&
         formValues.pocostcenter !== null
@@ -379,7 +380,7 @@ export default function CreatePo() {
       ) {
         showToast(
           "Shipping address is not populated. Please select a valid shipping address",
-          "error"
+          "error",
         );
         return;
       }
@@ -398,7 +399,7 @@ export default function CreatePo() {
       ) {
         showToast(
           "Shipping address is not populated. Please select a valid vendor branch",
-          "error"
+          "error",
         );
         return;
       }
@@ -446,7 +447,7 @@ export default function CreatePo() {
     ) {
       return showToast(
         "Please select a PR ID in case of supplementary PR",
-        "error"
+        "error",
       );
     }
 
@@ -456,7 +457,7 @@ export default function CreatePo() {
     ) {
       showToast(
         "Please enter custom delivery term when 'Other' is selected",
-        "error"
+        "error",
       );
       return;
     }
@@ -499,9 +500,9 @@ export default function CreatePo() {
         formProjectName !== undefined && formProjectName !== null
           ? formProjectName
           : formValues.project_name !== undefined &&
-            formValues.project_name !== null
-          ? formValues.project_name
-          : newPurchaseOrder.project_name,
+              formValues.project_name !== null
+            ? formValues.project_name
+            : newPurchaseOrder.project_name,
       pocostcenter:
         formValues.pocostcenter !== undefined &&
         formValues.pocostcenter !== null
@@ -735,7 +736,10 @@ export default function CreatePo() {
       }
     }
   };
-  const getPaymentTermsDay = async (vendorCode, { showPageLoading = true } = {}) => {
+  const getPaymentTermsDay = async (
+    vendorCode,
+    { showPageLoading = true } = {},
+  ) => {
     if (showPageLoading) setPageLoading(true);
     try {
       const response = await imsAxios.post("/backend/vendorTerms", {
@@ -886,12 +890,12 @@ export default function CreatePo() {
 
     if (checked) {
       const billingOption = billToOptions.find(
-        (option) => option.value === newPurchaseOrder.billaddressid
+        (option) => option.value === newPurchaseOrder.billaddressid,
       );
 
       if (billingOption) {
         const existsInShipping = shipToOptions.some(
-          (option) => option.value === billingOption.value
+          (option) => option.value === billingOption.value,
         );
         if (!existsInShipping) {
           setShipToOptions((prev) => [...prev, billingOption]);
@@ -934,10 +938,7 @@ export default function CreatePo() {
     { text: "New", value: "N" },
     { text: "Supplementary", value: "S" },
   ];
-  const vendorDetailsOptions = [
-    { text: "JWI (Job Work In)", value: "j01" },
-    { text: "Vendor", value: "v01" },
-  ];
+  const vendorDetailsOptions = [{ text: "Vendor", value: "v01" }];
   //getting users list
   const getusers = async (s) => {
     if (s?.length > 2) {
@@ -981,7 +982,7 @@ export default function CreatePo() {
   //getting vendor branches
   const getVendorBracnch = async (
     vendorCode,
-    { showPageLoading = true } = {}
+    { showPageLoading = true } = {},
   ) => {
     if (showPageLoading) setPageLoading(true);
     try {
@@ -1056,7 +1057,7 @@ export default function CreatePo() {
   const handleFetchCostCenterOptions = async (search) => {
     const response = await executeFun(
       () => getCostCentresOptions(search),
-      "select"
+      "select",
     );
     let arr = [];
     if (response.success) arr = convertSelectOptions(response.data);
@@ -1082,7 +1083,11 @@ export default function CreatePo() {
     // selectInputHandler("billDetails", data.data.address);
   };
   const getShippingAddress = async (shipaddressid) => {
-    if (shipaddressid == null || shipaddressid === "" || shipaddressid === "other") {
+    if (
+      shipaddressid == null ||
+      shipaddressid === "" ||
+      shipaddressid === "other"
+    ) {
       return null;
     }
     setPageLoading(true);
@@ -1091,7 +1096,7 @@ export default function CreatePo() {
         shipping_code: shipaddressid,
       });
       setStateCode(response?.data?.statecode);
-    // console.log("stateCodeeeeeeeeeeeeee", data.data.statecode);
+      // console.log("stateCodeeeeeeeeeeeeee", data.data.statecode);
       return {
         gstin: response.data?.gstin,
         pan: response.data?.pan,
@@ -1170,7 +1175,7 @@ export default function CreatePo() {
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
     setAsyncOptions(response.data);
   };
@@ -1198,7 +1203,7 @@ export default function CreatePo() {
 
           await handleProjectCostCenter(
             typeof value === "object" ? value.value : value,
-            { showPageLoading: false }
+            { showPageLoading: false },
           );
         } else {
           showToast(data.message, "error");
@@ -1211,7 +1216,7 @@ export default function CreatePo() {
 
   const handleProjectCostCenter = async (
     projectName,
-    { showPageLoading = true } = {}
+    { showPageLoading = true } = {},
   ) => {
     if (showPageLoading) setPageLoading(true);
     try {
@@ -1243,7 +1248,7 @@ export default function CreatePo() {
       } else {
         showToast(
           responseData?.message || "Failed to fetch cost center",
-          "error"
+          "error",
         );
       }
     } catch (error) {
@@ -1275,12 +1280,12 @@ export default function CreatePo() {
   useEffect(() => {
     if (sameAsBilling && newPurchaseOrder.billaddressid) {
       const billingOption = billToOptions.find(
-        (option) => option.value === newPurchaseOrder.billaddressid
+        (option) => option.value === newPurchaseOrder.billaddressid,
       );
 
       if (billingOption) {
         const existsInShipping = shipToOptions.some(
-          (option) => option.value === billingOption.value
+          (option) => option.value === billingOption.value,
         );
         if (!existsInShipping) {
           setShipToOptions((prev) => [...prev, billingOption]);
@@ -1448,13 +1453,24 @@ export default function CreatePo() {
         setShowAddProjectConfirm={setShowAddProjectConfirm}
       />
       {!successData && (
-        <div style={{ height: "100%", overflow: "auto" }}>
+        <div style={{ height: "100%", overflow: "hidden" }}>
           <Tabs
             style={{
-         
               height: "100%",
             }}
             activeKey={activeTab}
+            tabBarExtraContent={{
+              right:
+                activeTab === "2" ? (
+                  <MyButton
+                    variant="upload"
+                    text="Excel"
+                    onClick={() => setOpen(true)}
+                  >
+                    Excel
+                  </MyButton>
+                ) : null,
+            }}
             size="small"
             onChange={setActiveTab}
             items={[
@@ -1462,140 +1478,141 @@ export default function CreatePo() {
                 key: "1",
                 label: "Purchase Request Details",
                 children: (
-              <div
-                style={{
-                  height: "100%",
-                  overflowY: "hidden",
-                  overflowX: "hidden",
-                  padding: "0vh 20px 10px",
-                }}
-              >
-                {pageLoading && <Loading />}
-                {/* vendor */}
-                <Form
-                  form={form}
-                  size="small"
-                  scrollToFirstError={true}
-                  name="create-po"
-                  layout="vertical"
-                  initialValues={newPurchaseOrder}
-                  onFinish={finish}
-                  onFieldsChange={(value, allFields) => {
-                    if (value.length == 1) {
-                      selectInputHandler(value[0].name[0], value[0].value);
-                    }
-                  }}
-                >
-                  <Row>
-                    <Col span={4}>
-                      <Descriptions size="small" title="PR Type">
-                        <Descriptions.Item
-                          contentStyle={{
-                            fontSize: window.innerWidth < 1600 && "0.7rem",
-                          }}
-                        >
-                          Provide Purchase Order type as in
-                          <br /> (New Or Supplementary)
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Col>
-                    <Col span={20}>
-                      <Row gutter={16}>
-                        {/* PR type */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="pocreatetype"
-                            label="PR Type"
-                            rules={rules.pocreatetype}
-                          >
-                            <MySelect size="default" options={POoption} />
-                          </Form.Item>
-                        </Col>
-
-                        {newPurchaseOrder.pocreatetype == "S" && (
-                          <Col span={6}>
-                            <Form.Item
-                              name="original_po"
-                              label={
-                                <span
-                                  style={{
-                                    fontSize:
-                                      window.innerWidth < 1600 && "0.7rem",
-                                  }}
-                                >
-                                  Original PR
-                                </span>
-                              }
-                              rules={rules.original_po}
+                  <div
+                    style={{
+                      height: "100%",
+                      overflowY: "scroll",
+                      overflowX: "hidden",
+                      maxHeight: "calc(100vh - 235px)",
+                      padding: "0vh 20px 10px",
+                    }}
+                  >
+                    {pageLoading && <Loading />}
+                    {/* vendor */}
+                    <Form
+                      form={form}
+                      size="small"
+                      scrollToFirstError={true}
+                      name="create-po"
+                      layout="vertical"
+                      initialValues={newPurchaseOrder}
+                      onFinish={finish}
+                      onFieldsChange={(value, allFields) => {
+                        if (value.length == 1) {
+                          selectInputHandler(value[0].name[0], value[0].value);
+                        }
+                      }}
+                    >
+                      <Row>
+                        <Col span={4}>
+                          <Descriptions size="small" title="PR Type">
+                            <Descriptions.Item
+                              contentStyle={{
+                                fontSize: window.innerWidth < 1600 && "0.7rem",
+                              }}
                             >
-                              <MyAsyncSelect
-                                selectLoading={selectLoading}
-                                size="default"
-                                onBlur={() => setAsyncOptions([])}
-                                loadOptions={getPOs}
-                                optionsState={asyncOptions}
-                              />
-                            </Form.Item>
-                          </Col>
-                        )}
-                      </Row>
-                    </Col>
-                  </Row>
-                  <Divider />
-                  <Row>
-                    <Col span={4}>
-                      <Descriptions size="small" title="Vendor Details">
-                        <Descriptions.Item
-                          contentStyle={{
-                            fontSize: window.innerWidth < 1600 && "0.7rem",
-                          }}
-                        >
-                          Type Name or Code of the vendor
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Col>
-
-                    <Col span={20}>
-                      <Row gutter={16}>
-                        {/* vendor type */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="vendortype"
-                            label={
-                              <span
-                                style={{
-                                  fontSize:
-                                    window.innerWidth < 1600 && "0.7rem",
-                                }}
-                              >
-                                Vendor Type
-                              </span>
-                            }
-                            rules={rules.vendortype}
-                          >
-                            <MySelect
-                              size="default"
-                              options={vendorDetailsOptions}
-                            />
-                          </Form.Item>
+                              Provide Purchase Order type as in
+                              <br /> (New Or Supplementary)
+                            </Descriptions.Item>
+                          </Descriptions>
                         </Col>
-                        {/* vendor name */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="vendorname"
-                            rules={rules.vendorname}
-                            label={
-                              <div
-                                style={{
-                                  fontSize:
-                                    window.innerWidth < 1600 && "0.7rem",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  width: 350,
-                                }}
+                        <Col span={20}>
+                          <Row gutter={16}>
+                            {/* PR type */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="pocreatetype"
+                                label="PR Type"
+                                rules={rules.pocreatetype}
                               >
-                                Vendor Name
-                                {/* <span
+                                <MySelect size="default" options={POoption} />
+                              </Form.Item>
+                            </Col>
+
+                            {newPurchaseOrder.pocreatetype == "S" && (
+                              <Col span={6}>
+                                <Form.Item
+                                  name="original_po"
+                                  label={
+                                    <span
+                                      style={{
+                                        fontSize:
+                                          window.innerWidth < 1600 && "0.7rem",
+                                      }}
+                                    >
+                                      Original PR
+                                    </span>
+                                  }
+                                  rules={rules.original_po}
+                                >
+                                  <MyAsyncSelect
+                                    selectLoading={selectLoading}
+                                    size="default"
+                                    onBlur={() => setAsyncOptions([])}
+                                    loadOptions={getPOs}
+                                    optionsState={asyncOptions}
+                                  />
+                                </Form.Item>
+                              </Col>
+                            )}
+                          </Row>
+                        </Col>
+                      </Row>
+                      <Divider />
+                      <Row>
+                        <Col span={4}>
+                          <Descriptions size="small" title="Vendor Details">
+                            <Descriptions.Item
+                              contentStyle={{
+                                fontSize: window.innerWidth < 1600 && "0.7rem",
+                              }}
+                            >
+                              Type Name or Code of the vendor
+                            </Descriptions.Item>
+                          </Descriptions>
+                        </Col>
+
+                        <Col span={20}>
+                          <Row gutter={16}>
+                            {/* vendor type */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="vendortype"
+                                label={
+                                  <span
+                                    style={{
+                                      fontSize:
+                                        window.innerWidth < 1600 && "0.7rem",
+                                    }}
+                                  >
+                                    Vendor Type
+                                  </span>
+                                }
+                                rules={rules.vendortype}
+                              >
+                                <MySelect
+                                  size="default"
+                                  options={vendorDetailsOptions}
+                                />
+                              </Form.Item>
+                            </Col>
+                            {/* vendor name */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="vendorname"
+                                rules={rules.vendorname}
+                                label={
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        window.innerWidth < 1600 && "0.7rem",
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      width: 350,
+                                    }}
+                                  >
+                                    Vendor Name
+                                    {/* <span
                                   onClick={() => setShowAddVendorModal(true)}
                                   style={{
                                     color: "#1890FF",
@@ -1604,36 +1621,36 @@ export default function CreatePo() {
                                 >
                                   Add Vendor
                                 </span> */}
-                              </div>
-                            }
-                          >
-                            <MyAsyncSelect
-                              selectLoading={loading1("select")}
-                              size="default"
-                              labelInValue
-                              onBlur={() => setAsyncOptions([])}
-                              optionsState={asyncOptions}
-                              loadOptions={getVendors}
-                            />
-                          </Form.Item>
-                        </Col>
-                        {/* venodr branch */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="vendorbranch"
-                            rules={rules.vendorbranch}
-                            label={
-                              <div
-                                style={{
-                                  fontSize:
-                                    window.innerWidth < 1600 && "0.7rem",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  width: 350,
-                                }}
+                                  </div>
+                                }
                               >
-                                Vendor Branch
-                                {/* <span
+                                <MyAsyncSelect
+                                  selectLoading={loading1("select")}
+                                  size="default"
+                                  labelInValue
+                                  onBlur={() => setAsyncOptions([])}
+                                  optionsState={asyncOptions}
+                                  loadOptions={getVendors}
+                                />
+                              </Form.Item>
+                            </Col>
+                            {/* venodr branch */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="vendorbranch"
+                                rules={rules.vendorbranch}
+                                label={
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        window.innerWidth < 1600 && "0.7rem",
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      width: 350,
+                                    }}
+                                  >
+                                    Vendor Branch
+                                    {/* <span
                                   onClick={() => {
                                     newPurchaseOrder.vendorname.value
                                       ? setShowBranchModal({
@@ -1645,263 +1662,215 @@ export default function CreatePo() {
                                 >
                                   Add Branch
                                 </span> */}
-                              </div>
-                            }
-                          >
-                            <MySelect options={vendorBranches} />
-                          </Form.Item>
-                        </Col>
-                        {/* gstin */}
-                        <Col span={6}>
-                          <Form.Item name="gstin" label="GSTIN">
-                            <Input size="default" disabled />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                      <Row gutter={8}>
-                        <Col span={6}>
-                          <Form.Item name="msmeType" label="MSME Type">
-                            <Input size="default" disabled />
-                          </Form.Item>
-                        </Col>
-                        <Col span={6}>
-                          <Form.Item label="MSME Id" name="msmeId">
-                            <Input size="default" disabled />
-                          </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                          <Form.Item
-                            name="vendoraddress"
-                            label="Bill From Address"
-                            rules={rules.vendoraddress}
-                          >
-                            <TextArea
-                              value={newPurchaseOrder.vendoraddress}
-                              rows={4}
-                              style={{
-                                resize: "none",
-                                backgroundColor: "#ffffff",
-                                color: "#1f1f1f",
-                                fontWeight: 600,
-                                fontSize: "14px",
-                                lineHeight: "1.6",
-                                opacity: 1,
-                                border: "1px solid #d9d9d9",
-                                borderRadius: "6px",
-                                padding: "12px 16px",
-                                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.05)",
-                              }}
-                              disabled
-                            />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-                  <Divider />
-                  {/* PR TERMS */}
-                  <Row>
-                    <Col span={4}>
-                      <Descriptions size="small" title="PR Terms">
-                        <Descriptions.Item
-                          contentStyle={{
-                            fontSize: window.innerWidth < 1600 && "0.7rem",
-                          }}
-                        >
-                          Provide PR terms and other information
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Col>
-                    <Col span={20}>
-                      <Row gutter={16}>
-                        {/* terms and conditions */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="termscondition"
-                            label="Delivery Terms"
-                          >
-                            <MySelect
-                              options={deliveryTermOptions}
-                              onChange={(value) => {
-                                if (value !== "Other") {
-                                  form.setFieldsValue({
-                                    customDeliveryTerm: "",
-                                  });
+                                  </div>
                                 }
-                              }}
-                            />
-                          </Form.Item>
-                          <Form.Item noStyle>
-                            {termsCondition === "Other" && (
-                              <Form.Item
-                                name="customDeliveryTerm"
-                                style={{ marginTop: 8 }}
                               >
-                                <Input placeholder="Enter custom delivery term" />
+                                <MySelect options={vendorBranches} />
                               </Form.Item>
-                            )}
-                          </Form.Item>
+                            </Col>
+                            {/* gstin */}
+                            <Col span={6}>
+                              <Form.Item name="gstin" label="GSTIN">
+                                <Input size="default" disabled />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                          <Row gutter={8}>
+                            <Col span={6}>
+                              <Form.Item name="msmeType" label="MSME Type">
+                                <Input size="default" disabled />
+                              </Form.Item>
+                            </Col>
+                            <Col span={6}>
+                              <Form.Item label="MSME Id" name="msmeId">
+                                <Input size="default" disabled />
+                              </Form.Item>
+                            </Col>
+                            <Col span={12}>
+                              <Form.Item
+                                name="vendoraddress"
+                                label="Bill From Address"
+                                rules={rules.vendoraddress}
+                              >
+                                <TextArea
+                                  value={newPurchaseOrder.vendoraddress}
+                                  rows={4}
+                                  style={{
+                                    resize: "none",
+                                    backgroundColor: "#ffffff",
+                                    color: "#1f1f1f",
+                                    fontWeight: 600,
+                                    fontSize: "14px",
+                                    lineHeight: "1.6",
+                                    opacity: 1,
+                                    border: "1px solid #d9d9d9",
+                                    borderRadius: "6px",
+                                    padding: "12px 16px",
+                                    boxShadow:
+                                      "inset 0 1px 3px rgba(0,0,0,0.05)",
+                                  }}
+                                  disabled
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
                         </Col>
-                        {/* quotations */}
-                        <Col span={6}>
-                          <Form.Item name="quotationdetail" label="Quotation">
-                            <Input size="default" name="quotationdetail" />
-                          </Form.Item>
-                        </Col>
-                        {/* payment terms */}
-                        <Col span={6}>
-                          <Form.Item name="paymentterms" label="Payment Terms">
-                            <MySelect
-                              options={paymentTermOptions}
-                              onChange={(value) => {
-                                // Agar "Other" nahi select kiya to custom field clear kar do
-                                if (value !== "Other") {
-                                  form.setFieldsValue({
-                                    customPaymentTerm: "",
-                                  });
-                                  setnewPurchaseOrder((prev) => ({
-                                    ...prev,
-                                    customPaymentTerm: "",
-                                  }));
-                                }
+                      </Row>
+                      <Divider />
+                      {/* PR TERMS */}
+                      <Row>
+                        <Col span={4}>
+                          <Descriptions size="small" title="PR Terms">
+                            <Descriptions.Item
+                              contentStyle={{
+                                fontSize: window.innerWidth < 1600 && "0.7rem",
                               }}
-                            />
-                          </Form.Item>
-                          {form.getFieldValue("paymentterms") === "Other" && (
-                            <Form.Item
-                              name="customPaymentTerm"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please enter payment terms",
-                                },
-                              ]}
-                              style={{ marginTop: 8 }}
                             >
-                              <Input.TextArea
-                                rows={2}
-                                placeholder="e.g. 30% Advance, balance against delivery"
-                                onChange={(e) => {
-                                  setnewPurchaseOrder((prev) => ({
-                                    ...prev,
-                                    customPaymentTerm: e.target.value,
-                                  }));
-                                }}
-                              />
-                            </Form.Item>
-                          )}
+                              Provide PR terms and other information
+                            </Descriptions.Item>
+                          </Descriptions>
                         </Col>
+                        <Col span={20}>
+                          <Row gutter={16}>
+                            {/* terms and conditions */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="termscondition"
+                                label="Delivery Terms"
+                              >
+                                <MySelect
+                                  options={deliveryTermOptions}
+                                  onChange={(value) => {
+                                    if (value !== "Other") {
+                                      form.setFieldsValue({
+                                        customDeliveryTerm: "",
+                                      });
+                                    }
+                                  }}
+                                />
+                              </Form.Item>
+                              <Form.Item noStyle>
+                                {termsCondition === "Other" && (
+                                  <Form.Item
+                                    name="customDeliveryTerm"
+                                    style={{ marginTop: 8 }}
+                                  >
+                                    <Input placeholder="Enter custom delivery term" />
+                                  </Form.Item>
+                                )}
+                              </Form.Item>
+                            </Col>
+                            {/* quotations */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="quotationdetail"
+                                label="Quotation"
+                              >
+                                <Input size="default" name="quotationdetail" />
+                              </Form.Item>
+                            </Col>
+                            {/* payment terms */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="paymentterms"
+                                label="Payment Terms"
+                              >
+                                <MySelect
+                                  options={paymentTermOptions}
+                                  onChange={(value) => {
+                                    // Agar "Other" nahi select kiya to custom field clear kar do
+                                    if (value !== "Other") {
+                                      form.setFieldsValue({
+                                        customPaymentTerm: "",
+                                      });
+                                      setnewPurchaseOrder((prev) => ({
+                                        ...prev,
+                                        customPaymentTerm: "",
+                                      }));
+                                    }
+                                  }}
+                                />
+                              </Form.Item>
+                              {form.getFieldValue("paymentterms") ===
+                                "Other" && (
+                                <Form.Item
+                                  name="customPaymentTerm"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "Please enter payment terms",
+                                    },
+                                  ]}
+                                  style={{ marginTop: 8 }}
+                                >
+                                  <Input.TextArea
+                                    rows={2}
+                                    placeholder="e.g. 30% Advance, balance against delivery"
+                                    onChange={(e) => {
+                                      setnewPurchaseOrder((prev) => ({
+                                        ...prev,
+                                        customPaymentTerm: e.target.value,
+                                      }));
+                                    }}
+                                  />
+                                </Form.Item>
+                              )}
+                            </Col>
 
-                        {/* po due date*/}
-                        {/* <Col span={6}>
+                            {/* po due date*/}
+                            {/* <Col span={6}>
                           <Form.Item label="Due Date (in days)" name="paymenttermsday">
                             <InputNumber style={{ width: "100%" }} size="default" min={1} max={999} />
                           </Form.Item>
                         </Col> */}
-                      </Row>
-                      <Row gutter={16} style={{ marginTop: 16 }}>
-                        <Col span={5}>
-                          <Form.Item
-                            label="Advance Payment"
-                            name="advancePayment"
-                          >
-                            <Radio.Group
-                              onChange={(e) => {
-                                const isYes = e.target.value === 1;
-                                if (!isYes) {
-                                  form.setFieldsValue({
-                                    advancePercentage: null,
-                                  });
-                                  setnewPurchaseOrder((prev) => ({
-                                    ...prev,
-                                    advancePercentage: null,
-                                  }));
-                                }
-
-                                if (
-                                  isYes &&
-                                  form.getFieldValue("paymentterms") === "Other"
-                                ) {
-                                  const percent =
-                                    form.getFieldValue("advancePercentage") ||
-                                    "";
-                                  const currentText =
-                                    form.getFieldValue("customPaymentTerm") ||
-                                    "";
-                                  let newText = "";
-
-                                  if (percent) {
-                                    if (currentText.includes("% Advance")) {
-                                      newText = currentText.replace(
-                                        /\d+% Advance/,
-                                        `${percent}% Advance`
-                                      );
-                                    } else {
-                                      newText = currentText
-                                        ? `${percent}% Advance, ${currentText}`
-                                        : `${percent}% Advance`;
-                                    }
-                                  } else {
-                                    newText = currentText;
-                                  }
-
-                                  form.setFieldsValue({
-                                    customPaymentTerm: newText,
-                                  });
-                                  setnewPurchaseOrder((prev) => ({
-                                    ...prev,
-                                    customPaymentTerm: newText,
-                                  }));
-                                }
-                              }}
-                            >
-                              <Radio value={1}>Yes</Radio>
-                              <Radio value={0}>No</Radio>
-                            </Radio.Group>
-                          </Form.Item>
-                        </Col>
-                        {/* Advance Percentage Input */}
-                        <Col span={3}>
-                          <Form.Item noStyle>
-                            {advancePayment === 1 && (
+                          </Row>
+                          <Row gutter={16} style={{ marginTop: 16 }}>
+                            <Col span={5}>
                               <Form.Item
-                                name="advancePercentage"
-                                label="Advance %"
-                                rules={[{ required: true, message: "Enter %" }]}
+                                label="Advance Payment"
+                                name="advancePayment"
                               >
-                                <InputNumber
-                                  min={1}
-                                  max={100}
-                                  formatter={(v) => `${v}%`}
-                                  parser={(v) => v.replace("%", "")}
-                                  style={{ width: "100%" }}
-                                  type="number"
-                                  onChange={(value) => {
+                                <Radio.Group
+                                  onChange={(e) => {
+                                    const isYes = e.target.value === 1;
+                                    if (!isYes) {
+                                      form.setFieldsValue({
+                                        advancePercentage: null,
+                                      });
+                                      setnewPurchaseOrder((prev) => ({
+                                        ...prev,
+                                        advancePercentage: null,
+                                      }));
+                                    }
+
                                     if (
+                                      isYes &&
                                       form.getFieldValue("paymentterms") ===
-                                      "Other"
+                                        "Other"
                                     ) {
+                                      const percent =
+                                        form.getFieldValue(
+                                          "advancePercentage",
+                                        ) || "";
                                       const currentText =
                                         form.getFieldValue(
-                                          "customPaymentTerm"
+                                          "customPaymentTerm",
                                         ) || "";
                                       let newText = "";
 
-                                      if (value) {
+                                      if (percent) {
                                         if (currentText.includes("% Advance")) {
                                           newText = currentText.replace(
                                             /\d+% Advance/,
-                                            `${value}% Advance`
+                                            `${percent}% Advance`,
                                           );
                                         } else {
                                           newText = currentText
-                                            ? `${value}% Advance, ${currentText}`
-                                            : `${value}% Advance`;
+                                            ? `${percent}% Advance, ${currentText}`
+                                            : `${percent}% Advance`;
                                         }
                                       } else {
-                                        newText = currentText
-                                          .replace(/\d+% Advance,?\s*/, "")
-                                          .trim();
+                                        newText = currentText;
                                       }
 
                                       form.setFieldsValue({
@@ -1913,69 +1882,132 @@ export default function CreatePo() {
                                       }));
                                     }
                                   }}
+                                >
+                                  <Radio value={1}>Yes</Radio>
+                                  <Radio value={0}>No</Radio>
+                                </Radio.Group>
+                              </Form.Item>
+                            </Col>
+                            {/* Advance Percentage Input */}
+                            <Col span={3}>
+                              <Form.Item noStyle>
+                                {advancePayment === 1 && (
+                                  <Form.Item
+                                    name="advancePercentage"
+                                    label="Advance %"
+                                    rules={[
+                                      { required: true, message: "Enter %" },
+                                    ]}
+                                  >
+                                    <InputNumber
+                                      min={1}
+                                      max={100}
+                                      formatter={(v) => `${v}%`}
+                                      parser={(v) => v.replace("%", "")}
+                                      style={{ width: "100%" }}
+                                      type="number"
+                                      onChange={(value) => {
+                                        if (
+                                          form.getFieldValue("paymentterms") ===
+                                          "Other"
+                                        ) {
+                                          const currentText =
+                                            form.getFieldValue(
+                                              "customPaymentTerm",
+                                            ) || "";
+                                          let newText = "";
+
+                                          if (value) {
+                                            if (
+                                              currentText.includes("% Advance")
+                                            ) {
+                                              newText = currentText.replace(
+                                                /\d+% Advance/,
+                                                `${value}% Advance`,
+                                              );
+                                            } else {
+                                              newText = currentText
+                                                ? `${value}% Advance, ${currentText}`
+                                                : `${value}% Advance`;
+                                            }
+                                          } else {
+                                            newText = currentText
+                                              .replace(/\d+% Advance,?\s*/, "")
+                                              .trim();
+                                          }
+
+                                          form.setFieldsValue({
+                                            customPaymentTerm: newText,
+                                          });
+                                          setnewPurchaseOrder((prev) => ({
+                                            ...prev,
+                                            customPaymentTerm: newText,
+                                          }));
+                                        }
+                                      }}
+                                    />
+                                  </Form.Item>
+                                )}
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                          <Row gutter={16} style={{ marginTop: 16 }}>
+                            {/* project id */}
+
+                            <Col span={5}>
+                              <Form.Item
+                                name="project_name"
+                                rules={rules.project_name}
+                                label={
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        window.innerWidth < 1600 && "0.7rem",
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      width: 350,
+                                    }}
+                                  >
+                                    Project ID
+                                  </div>
+                                }
+                              >
+                                <MyAsyncSelect
+                                  selectLoading={loading1("select")}
+                                  onBlur={() => setAsyncOptions([])}
+                                  loadOptions={handleFetchProjectOptions}
+                                  optionsState={asyncOptions}
+                                  onChange={handleProjectChange}
                                 />
                               </Form.Item>
-                            )}
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                      <Row gutter={16} style={{ marginTop: 16 }}>
-                        {/* project id */}
-
-                        <Col span={5}>
-                          <Form.Item
-                            name="project_name"
-                            rules={rules.project_name}
-                            label={
-                              <div
-                                style={{
-                                  fontSize:
-                                    window.innerWidth < 1600 && "0.7rem",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  width: 350,
-                                }}
-                              >
-                                Project ID
-                              </div>
-                            }
-                          >
-                            <MyAsyncSelect
-                              selectLoading={loading1("select")}
-                              onBlur={() => setAsyncOptions([])}
-                              loadOptions={handleFetchProjectOptions}
-                              optionsState={asyncOptions}
-                              onChange={handleProjectChange}
-                            />
-                          </Form.Item>
-                        </Col>
-                        {/* project name */}
-                        <Col span={5}>
-                          <Form.Item label="Project Description">
-                            <Input
-                              size="default"
-                              disabled
-                              value={projectDesc}
-                            />
-                          </Form.Item>
-                        </Col>
-                        {/* cost center */}
-                        <Col span={4}>
-                          <Form.Item
-                            name="pocostcenter"
-                            rules={rules.pocostcenter}
-                            label={
-                              <div
-                                style={{
-                                  fontSize:
-                                    window.innerWidth < 1600 && "0.7rem",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  width: 350,
-                                }}
-                              >
-                                Cost Center
-                                {/* <span
+                            </Col>
+                            {/* project name */}
+                            <Col span={5}>
+                              <Form.Item label="Project Description">
+                                <Input
+                                  size="default"
+                                  disabled
+                                  value={projectDesc}
+                                />
+                              </Form.Item>
+                            </Col>
+                            {/* cost center */}
+                            <Col span={4}>
+                              <Form.Item
+                                name="pocostcenter"
+                                rules={rules.pocostcenter}
+                                label={
+                                  <div
+                                    style={{
+                                      fontSize:
+                                        window.innerWidth < 1600 && "0.7rem",
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      width: 350,
+                                    }}
+                                  >
+                                    Cost Center
+                                    {/* <span
                                   onClick={() => setShowAddCostModal(true)}
                                   style={{
                                     color: "#1890FF",
@@ -1984,454 +2016,463 @@ export default function CreatePo() {
                                 >
                                   Add Cost Center
                                 </span> */}
-                              </div>
-                            }
-                          >
-                            <MyAsyncSelect
-                              selectLoading={loading1("select")}
-                              onBlur={() => setAsyncOptions([])}
-                              loadOptions={handleFetchCostCenterOptions}
-                              optionsState={asyncOptions}
-                            />
-                          </Form.Item>
-                        </Col>
-                        {/* comments */}
-                        <Col span={5}>
-                          <Form.Item label="Comments" name="po_comment">
-                            <Input size="default" />
-                          </Form.Item>
-                        </Col>
-                        {/* raised by */}
-                        <Col span={5}>
-                          <Form.Item
-                            label="Requested By"
-                            name="raisedBy"
-                            rules={rules.raisedBy}
-                          >
-                            <MyAsyncSelect
-                              selectLoading={selectLoading}
-                              size="default"
-                              onBlur={() => setUserOptions([])}
-                              optionsState={userOptions}
-                              loadOptions={getusers}
-                              onChange={(value) =>
-                                selectInputHandler("raisedBy", value)
-                              }
-                            />
-                          </Form.Item>
+                                  </div>
+                                }
+                              >
+                                <MyAsyncSelect
+                                  selectLoading={loading1("select")}
+                                  onBlur={() => setAsyncOptions([])}
+                                  loadOptions={handleFetchCostCenterOptions}
+                                  optionsState={asyncOptions}
+                                />
+                              </Form.Item>
+                            </Col>
+                            {/* comments */}
+                            <Col span={5}>
+                              <Form.Item label="Comments" name="po_comment">
+                                <Input size="default" />
+                              </Form.Item>
+                            </Col>
+                            {/* raised by */}
+                            <Col span={5}>
+                              <Form.Item
+                                label="Requested By"
+                                name="raisedBy"
+                                rules={rules.raisedBy}
+                              >
+                                <MyAsyncSelect
+                                  selectLoading={selectLoading}
+                                  size="default"
+                                  onBlur={() => setUserOptions([])}
+                                  optionsState={userOptions}
+                                  loadOptions={getusers}
+                                  onChange={(value) =>
+                                    selectInputHandler("raisedBy", value)
+                                  }
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
                         </Col>
                       </Row>
-                    </Col>
-                  </Row>
 
-                  <Divider />
-                  <Row>
-                    <Col span={4}>
-                      <Descriptions size="small" title="Billing Details">
-                        <Descriptions.Item
-                          contentStyle={{
-                            fontSize: window.innerWidth < 1600 && "0.7rem",
-                          }}
-                        >
-                          Provide billing information
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Col>
-                    <Col span={20}>
-                      <Row gutter={16}>
-                        {/* billing id */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="billaddressid"
-                            label="Billing Id"
-                            rules={rules.billaddressid}
-                          >
-                            <MySelect options={billToOptions} />
-                          </Form.Item>
-                        </Col>
-                        {/* pan number */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="billPan"
-                            label="Pan No."
-                            rules={rules.billPan}
-                          >
-                            <Input
-                              size="default"
-                              value={newPurchaseOrder.billPan}
-                              disabled
-                            />
-                          </Form.Item>
-                        </Col>
-                        {/* gstin uin */}
-                        <Col span={6}>
-                          <Form.Item
-                            name="billGST"
-                            label="GSTIN / UIN"
-                            rules={rules.billGST}
-                          >
-                            <Input
-                              size="default"
-                              value={newPurchaseOrder.billGST}
-                              disabled
-                            />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                      {/* billing address */}
+                      <Divider />
                       <Row>
-                        <Col span={18}>
-                          <Form.Item
-                            name="billaddress"
-                            label="Billing Address"
-                            rules={rules.billaddress}
-                          >
-                            <TextArea
-                              value={newPurchaseOrder.billaddress}
-                              disabled
-                              rows={5}
-                              style={{
-                                resize: "none",
-                                backgroundColor: "#ffffff",
-                                color: "#1f1f1f",
-                                fontWeight: 600,
-                                fontSize: "14px",
-                                lineHeight: "1.6",
-                                opacity: 1,
-                                border: "1px solid #d9d9d9",
-                                borderRadius: "6px",
-                                padding: "12px 16px",
-                                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.05)",
-                              }}
-                              className="bold-disabled-textarea"
-                            />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Col>
-                  </Row>
-
-                  <Divider />
-                  <Row>
-                    <Col span={4}>
-                      <Descriptions size="small" title="Shipping Details">
-                        <Descriptions.Item
-                          contentStyle={{
-                            fontSize: window.innerWidth < 1600 && "0.7rem",
-                          }}
-                        >
-                          Provide shipping information
-                        </Descriptions.Item>
-                      </Descriptions>
-                    </Col>
-                    <Col span={20}>
-                      <Row gutter={16}>
-                        <Col span={10}>
-                          <Form.Item
-                            name="ship_type"
-                            label="Shipping Address Type"
-                          >
-                            <Radio.Group
-                              onChange={(e) => {
-                                const type = e.target.value;
-                                if (type === "manual") {
-                                  form.setFieldsValue({
-                                    ship_vendor: "",
-                                    ship_vendor_branch: "",
-                                    shipaddress: "",
-                                    shipPan: "",
-                                    shipGST: "",
-                                  });
-                                  setnewPurchaseOrder((prev) => ({
-                                    ...prev,
-                                    ship_type: type,
-                                    ship_vendor: "",
-                                    ship_vendor_branch: "",
-                                    shipaddress: "",
-                                    shipPan: "",
-                                    shipGST: "",
-                                  }));
-                                }
+                        <Col span={4}>
+                          <Descriptions size="small" title="Billing Details">
+                            <Descriptions.Item
+                              contentStyle={{
+                                fontSize: window.innerWidth < 1600 && "0.7rem",
                               }}
                             >
-                              <Radio value="saved">Default</Radio>
-                              <Radio value="vendor">Vendor</Radio>
-                              <Radio value="manual">Manual</Radio>
-                            </Radio.Group>
-                          </Form.Item>
+                              Provide billing information
+                            </Descriptions.Item>
+                          </Descriptions>
+                        </Col>
+                        <Col span={20}>
+                          <Row gutter={16}>
+                            {/* billing id */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="billaddressid"
+                                label="Billing Id"
+                                rules={rules.billaddressid}
+                              >
+                                <MySelect options={billToOptions} />
+                              </Form.Item>
+                            </Col>
+                            {/* pan number */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="billPan"
+                                label="Pan No."
+                                rules={rules.billPan}
+                              >
+                                <Input
+                                  size="default"
+                                  value={newPurchaseOrder.billPan}
+                                  disabled
+                                />
+                              </Form.Item>
+                            </Col>
+                            {/* gstin uin */}
+                            <Col span={6}>
+                              <Form.Item
+                                name="billGST"
+                                label="GSTIN / UIN"
+                                rules={rules.billGST}
+                              >
+                                <Input
+                                  size="default"
+                                  value={newPurchaseOrder.billGST}
+                                  disabled
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
+                          {/* billing address */}
+                          <Row>
+                            <Col span={18}>
+                              <Form.Item
+                                name="billaddress"
+                                label="Billing Address"
+                                rules={rules.billaddress}
+                              >
+                                <TextArea
+                                  value={newPurchaseOrder.billaddress}
+                                  disabled
+                                  rows={5}
+                                  style={{
+                                    resize: "none",
+                                    backgroundColor: "#ffffff",
+                                    color: "#1f1f1f",
+                                    fontWeight: 600,
+                                    fontSize: "14px",
+                                    lineHeight: "1.6",
+                                    opacity: 1,
+                                    border: "1px solid #d9d9d9",
+                                    borderRadius: "6px",
+                                    padding: "12px 16px",
+                                    boxShadow:
+                                      "inset 0 1px 3px rgba(0,0,0,0.05)",
+                                  }}
+                                  className="bold-disabled-textarea"
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
                         </Col>
                       </Row>
-                      <Col span={6}>
-                        <Form.Item label="">
-                          <Checkbox
-                            checked={sameAsBilling}
-                            onChange={(e) =>
-                              handleSameAsBilling(e.target.checked)
-                            }
-                            disabled={
-                              form.getFieldValue("ship_type") !== "saved"
-                            }
-                          >
-                            Same as Billing Address
-                          </Checkbox>
-                        </Form.Item>
-                      </Col>
 
-                      {/* Saved Mode - Original shipping address selection with Same as Billing functionality */}
-                      {form.getFieldValue("ship_type") === "saved" && (
-                        <Row gutter={16} style={{ marginTop: 16 }}>
-                          <Col span={6}>
-                            <Form.Item
-                              name="shipaddressid"
-                              label="Shipping Id"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select shipping address",
-                                },
-                              ]}
+                      <Divider />
+                      <Row>
+                        <Col span={4}>
+                          <Descriptions size="small" title="Shipping Details">
+                            <Descriptions.Item
+                              contentStyle={{
+                                fontSize: window.innerWidth < 1600 && "0.7rem",
+                              }}
                             >
-                              <MySelect
-                                options={shipToOptions}
-                                disabled={sameAsBilling}
-                              />
-                            </Form.Item>
-                          </Col>
+                              Provide shipping information
+                            </Descriptions.Item>
+                          </Descriptions>
+                        </Col>
+                        <Col span={20}>
+                          <Row gutter={16}>
+                            <Col span={10}>
+                              <Form.Item
+                                name="ship_type"
+                                label="Shipping Address Type"
+                              >
+                                <Radio.Group
+                                  onChange={(e) => {
+                                    const type = e.target.value;
+                                    if (type === "manual") {
+                                      form.setFieldsValue({
+                                        ship_vendor: "",
+                                        ship_vendor_branch: "",
+                                        shipaddress: "",
+                                        shipPan: "",
+                                        shipGST: "",
+                                      });
+                                      setnewPurchaseOrder((prev) => ({
+                                        ...prev,
+                                        ship_type: type,
+                                        ship_vendor: "",
+                                        ship_vendor_branch: "",
+                                        shipaddress: "",
+                                        shipPan: "",
+                                        shipGST: "",
+                                      }));
+                                    }
+                                  }}
+                                >
+                                  <Radio value="saved">Default</Radio>
+                                  <Radio value="vendor">Vendor</Radio>
+                                  <Radio value="manual">Manual</Radio>
+                                </Radio.Group>
+                              </Form.Item>
+                            </Col>
+                          </Row>
                           <Col span={6}>
-                            <Form.Item
-                              label="Pan No."
-                              name="shipPan"
-                              rules={rules.shipPan}
-                            >
-                              <Input
-                                size="default"
-                                disabled={
-                                  sameAsBilling ||
-                                  newPurchaseOrder.shipaddressid !== "other"
+                            <Form.Item label="">
+                              <Checkbox
+                                checked={sameAsBilling}
+                                onChange={(e) =>
+                                  handleSameAsBilling(e.target.checked)
                                 }
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col span={6}>
-                            <Form.Item
-                              name="shipGST"
-                              label="GSTIN / UIN"
-                              rules={rules.shipGST}
-                            >
-                              <Input
-                                size="default"
                                 disabled={
-                                  sameAsBilling ||
-                                  newPurchaseOrder.shipaddressid !== "other"
+                                  form.getFieldValue("ship_type") !== "saved"
                                 }
-                              />
+                              >
+                                Same as Billing Address
+                              </Checkbox>
                             </Form.Item>
                           </Col>
-                        </Row>
-                      )}
 
-                      {/* Vendor Mode - Vendor and Branch selection */}
-                      {form.getFieldValue("ship_type") === "vendor" && (
-                        <Row gutter={16} style={{ marginTop: 16 }}>
-                          <Col span={8}>
-                            <Form.Item
-                              name="ship_vendor"
-                              label="Shipping Vendor"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select shipping vendor",
-                                },
-                              ]}
-                            >
-                              <MyAsyncSelect
-                                labelInValue
-                                placeholder="Search vendor for shipping"
-                                loadOptions={getVendors}
-                                onBlur={() => setAsyncOptions([])}
-                                optionsState={asyncOptions}
-                                onChange={async (value) => {
-                                  if (!value) return;
-                                  const branches = await getVendorBracnch(
-                                    value.value
-                                  );
-                                  const { address, gstin } =
-                                    await getVendorAddress({
-                                      vendorCode: value,
-                                      vendorBranch: branches[0]?.value,
-                                    });
-                                  form.setFieldsValue({
-                                    ship_vendor_branch:
-                                      branches[0]?.value || "",
-                                    shipaddress:
-                                      address?.replaceAll("<br>", "\n") || "",
-                                    shipGST: gstin || "",
-                                  });
-                                  setnewPurchaseOrder((prev) => ({
-                                    ...prev,
-                                    ship_vendor: value,
-                                    ship_vendor_branch:
-                                      branches[0]?.value || "",
-                                    shipaddress:
-                                      address?.replaceAll("<br>", "\n") || "",
-                                    shipGST: gstin || "",
-                                  }));
-                                }}
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col span={8}>
-                            <Form.Item
-                              name="ship_vendor_branch"
-                              label="Shipping vendor Branch"
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select branch",
-                                },
-                              ]}
-                            >
-                              <MySelect
-                                options={vendorBranches}
-                                onChange={async (branch) => {
-                                  if (
-                                    !newPurchaseOrder.ship_vendor &&
-                                    !form.getFieldValue("ship_vendor")
-                                  )
-                                    return;
-                                  const vendorValue =
-                                    newPurchaseOrder.ship_vendor ||
-                                    form.getFieldValue("ship_vendor");
-                                  const { address, gstin } =
-                                    await getVendorAddress({
-                                      vendorCode: vendorValue,
-                                      vendorBranch: branch,
-                                    });
-                                  form.setFieldsValue({
-                                    shipaddress:
-                                      address?.replaceAll("<br>", "\n") || "",
-                                    shipGST: gstin || "",
-                                  });
-                                  setnewPurchaseOrder((prev) => ({
-                                    ...prev,
-                                    ship_vendor_branch: branch,
-                                    shipaddress:
-                                      address?.replaceAll("<br>", "\n") || "",
-                                    shipGST: gstin || "",
-                                  }));
-                                }}
-                              />
-                            </Form.Item>
-                          </Col>
-                          {/* <Col span={4}>
+                          {/* Saved Mode - Original shipping address selection with Same as Billing functionality */}
+                          {form.getFieldValue("ship_type") === "saved" && (
+                            <Row gutter={16} style={{ marginTop: 16 }}>
+                              <Col span={6}>
+                                <Form.Item
+                                  name="shipaddressid"
+                                  label="Shipping Id"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "Please select shipping address",
+                                    },
+                                  ]}
+                                >
+                                  <MySelect
+                                    options={shipToOptions}
+                                    disabled={sameAsBilling}
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={6}>
+                                <Form.Item
+                                  label="Pan No."
+                                  name="shipPan"
+                                  rules={rules.shipPan}
+                                >
+                                  <Input
+                                    size="default"
+                                    disabled={
+                                      sameAsBilling ||
+                                      newPurchaseOrder.shipaddressid !== "other"
+                                    }
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={6}>
+                                <Form.Item
+                                  name="shipGST"
+                                  label="GSTIN / UIN"
+                                  rules={rules.shipGST}
+                                >
+                                  <Input
+                                    size="default"
+                                    disabled={
+                                      sameAsBilling ||
+                                      newPurchaseOrder.shipaddressid !== "other"
+                                    }
+                                  />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                          )}
+
+                          {/* Vendor Mode - Vendor and Branch selection */}
+                          {form.getFieldValue("ship_type") === "vendor" && (
+                            <Row gutter={16} style={{ marginTop: 16 }}>
+                              <Col span={8}>
+                                <Form.Item
+                                  name="ship_vendor"
+                                  label="Shipping Vendor"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "Please select shipping vendor",
+                                    },
+                                  ]}
+                                >
+                                  <MyAsyncSelect
+                                    labelInValue
+                                    placeholder="Search vendor for shipping"
+                                    loadOptions={getVendors}
+                                    onBlur={() => setAsyncOptions([])}
+                                    optionsState={asyncOptions}
+                                    onChange={async (value) => {
+                                      if (!value) return;
+                                      const branches = await getVendorBracnch(
+                                        value.value,
+                                      );
+                                      const { address, gstin } =
+                                        await getVendorAddress({
+                                          vendorCode: value,
+                                          vendorBranch: branches[0]?.value,
+                                        });
+                                      form.setFieldsValue({
+                                        ship_vendor_branch:
+                                          branches[0]?.value || "",
+                                        shipaddress:
+                                          address?.replaceAll("<br>", "\n") ||
+                                          "",
+                                        shipGST: gstin || "",
+                                      });
+                                      setnewPurchaseOrder((prev) => ({
+                                        ...prev,
+                                        ship_vendor: value,
+                                        ship_vendor_branch:
+                                          branches[0]?.value || "",
+                                        shipaddress:
+                                          address?.replaceAll("<br>", "\n") ||
+                                          "",
+                                        shipGST: gstin || "",
+                                      }));
+                                    }}
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={8}>
+                                <Form.Item
+                                  name="ship_vendor_branch"
+                                  label="Shipping vendor Branch"
+                                  rules={[
+                                    {
+                                      required: true,
+                                      message: "Please select branch",
+                                    },
+                                  ]}
+                                >
+                                  <MySelect
+                                    options={vendorBranches}
+                                    onChange={async (branch) => {
+                                      if (
+                                        !newPurchaseOrder.ship_vendor &&
+                                        !form.getFieldValue("ship_vendor")
+                                      )
+                                        return;
+                                      const vendorValue =
+                                        newPurchaseOrder.ship_vendor ||
+                                        form.getFieldValue("ship_vendor");
+                                      const { address, gstin } =
+                                        await getVendorAddress({
+                                          vendorCode: vendorValue,
+                                          vendorBranch: branch,
+                                        });
+                                      form.setFieldsValue({
+                                        shipaddress:
+                                          address?.replaceAll("<br>", "\n") ||
+                                          "",
+                                        shipGST: gstin || "",
+                                      });
+                                      setnewPurchaseOrder((prev) => ({
+                                        ...prev,
+                                        ship_vendor_branch: branch,
+                                        shipaddress:
+                                          address?.replaceAll("<br>", "\n") ||
+                                          "",
+                                        shipGST: gstin || "",
+                                      }));
+                                    }}
+                                  />
+                                </Form.Item>
+                              </Col>
+                              {/* <Col span={4}>
                             <Form.Item label="Pan No." name="shipPan">
                               <Input size="default" disabled />
                             </Form.Item>
                           </Col> */}
-                          <Col span={4}>
-                            <Form.Item name="shipGST" label="GSTIN">
-                              <Input size="default" disabled />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      )}
+                              <Col span={4}>
+                                <Form.Item name="shipGST" label="GSTIN">
+                                  <Input size="default" disabled />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                          )}
 
-                      {/* Manual Mode - Editable fields */}
-                      {form.getFieldValue("ship_type") === "manual" && (
-                        <Row gutter={16} style={{ marginTop: 16 }}>
-                          <Col span={6}>
-                            <Form.Item
-                              label="Party Name"
-                              name="partyName"
-                              rules={rules.shipPan}
-                            >
-                              <Input
-                                size="default"
-                                placeholder="Enter Party Name"
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col span={6}>
-                            <Form.Item
-                              label="Pan No."
-                              name="shipPan"
-                              rules={rules.shipPan}
-                            >
-                              <Input
-                                size="default"
-                                placeholder="Enter Shipping PAN"
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col span={6}>
-                            <Form.Item
-                              name="shipGST"
-                              label="GSTIN / UIN"
-                              rules={rules.shipGST}
-                            >
-                              <Input
-                                size="default"
-                                placeholder="Enter Shipping GSTIN"
-                              />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      )}
+                          {/* Manual Mode - Editable fields */}
+                          {form.getFieldValue("ship_type") === "manual" && (
+                            <Row gutter={16} style={{ marginTop: 16 }}>
+                              <Col span={6}>
+                                <Form.Item
+                                  label="Party Name"
+                                  name="partyName"
+                                  rules={rules.shipPan}
+                                >
+                                  <Input
+                                    size="default"
+                                    placeholder="Enter Party Name"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={6}>
+                                <Form.Item
+                                  label="Pan No."
+                                  name="shipPan"
+                                  rules={rules.shipPan}
+                                >
+                                  <Input
+                                    size="default"
+                                    placeholder="Enter Shipping PAN"
+                                  />
+                                </Form.Item>
+                              </Col>
+                              <Col span={6}>
+                                <Form.Item
+                                  name="shipGST"
+                                  label="GSTIN / UIN"
+                                  rules={rules.shipGST}
+                                >
+                                  <Input
+                                    size="default"
+                                    placeholder="Enter Shipping GSTIN"
+                                  />
+                                </Form.Item>
+                              </Col>
+                            </Row>
+                          )}
 
-                      {/* Shipping Address Field - Common for all modes */}
-                      <Row style={{ marginTop: 16 }}>
-                        <Col span={18}>
-                          <Form.Item
-                            label="Shipping Address"
-                            name="shipaddress"
-                            rules={rules.shipaddress}
-                          >
-                            <TextArea
-                              rows={5}
-                              disabled={
-                                form.getFieldValue("ship_type") === "saved"
-                                  ? sameAsBilling ||
-                                    newPurchaseOrder.shipaddressid !== "other"
-                                  : form.getFieldValue("ship_type") !== "manual"
-                              }
-                              placeholder={
-                                form.getFieldValue("ship_type") === "manual"
-                                  ? "Enter complete shipping address"
-                                  : "Shipping address will be populated based on selection"
-                              }
-                              style={{
-                                resize: "none",
-                                backgroundColor: "#ffffff",
-                                color: "#1f1f1f",
-                                fontWeight: 600,
-                                fontSize: "14px",
-                                lineHeight: "1.6",
-                                opacity: 1,
-                                border: "1px solid #d9d9d9",
-                                borderRadius: "6px",
-                                padding: "12px 16px",
-                                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.05)",
-                              }}
-                            />
-                          </Form.Item>
+                          {/* Shipping Address Field - Common for all modes */}
+                          <Row style={{ marginTop: 16 }}>
+                            <Col span={18}>
+                              <Form.Item
+                                label="Shipping Address"
+                                name="shipaddress"
+                                rules={rules.shipaddress}
+                              >
+                                <TextArea
+                                  rows={5}
+                                  disabled={
+                                    form.getFieldValue("ship_type") === "saved"
+                                      ? sameAsBilling ||
+                                        newPurchaseOrder.shipaddressid !==
+                                          "other"
+                                      : form.getFieldValue("ship_type") !==
+                                        "manual"
+                                  }
+                                  placeholder={
+                                    form.getFieldValue("ship_type") === "manual"
+                                      ? "Enter complete shipping address"
+                                      : "Shipping address will be populated based on selection"
+                                  }
+                                  style={{
+                                    resize: "none",
+                                    backgroundColor: "#ffffff",
+                                    color: "#1f1f1f",
+                                    fontWeight: 600,
+                                    fontSize: "14px",
+                                    lineHeight: "1.6",
+                                    opacity: 1,
+                                    border: "1px solid #d9d9d9",
+                                    borderRadius: "6px",
+                                    padding: "12px 16px",
+                                    boxShadow:
+                                      "inset 0 1px 3px rgba(0,0,0,0.05)",
+                                  }}
+                                />
+                              </Form.Item>
+                            </Col>
+                          </Row>
                         </Col>
+                        <NavFooter
+                          submithtmlType="submit"
+                          submitButton={true}
+                          formName="create-po"
+                          resetFunction={() => setShowDetailsConfirm(true)}
+                        />
                       </Row>
-                    </Col>
-                    <NavFooter
-                      submithtmlType="submit"
-                      submitButton={true}
-                      formName="create-po"
-                      resetFunction={() => setShowDetailsConfirm(true)}
-                    />
-                  </Row>
-                </Form>
-                <Divider />
-              </div>
+                    </Form>
+                    <Divider />
+                  </div>
                 ),
               },
               {
                 key: "2",
                 label: "Add Components Details",
+                disabled: activeTab === 1 ? false : true,
                 children: (
                   <div style={{ height: "100%" }}>
                     <AddComponent
@@ -2446,6 +2487,8 @@ export default function CreatePo() {
                       submitLoading={submitLoading}
                       totalValues={totalValues}
                       setStateCode={setStateCode}
+                      open={open}
+                      setOpen={setOpen}
                       gstState={
                         newPurchaseOrder.billCode === newPurchaseOrder.venCode
                           ? "L"

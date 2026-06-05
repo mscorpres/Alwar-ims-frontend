@@ -50,12 +50,20 @@ const PendingPPR = () => {
       const response = await imsAxios.post("/backend/fetchAllProduct", {
         searchTerm: e,
       });
-      setSelectLoading(true);
-      let arr = [];
-      arr = response.data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
+
+      if (response?.success) {
+      
+        let arr = [];
+        arr = response.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+          setSelectLoading(true);
+        setAsyncOptions(arr);
+      } else {
+        setAsyncOptions([]);
+        setSelectLoading(false);
+        showToast(response.message, "error");
+      }
     }
   };
 
@@ -263,7 +271,7 @@ const PendingPPR = () => {
     }
   }, [wise]);
   return (
-    <div style={{ height: "100%", padding:10 }}>
+    <div style={{ height: "100%", padding: 10 }}>
       <ClosePPR
         setsCancelPPR={setsCancelPPR}
         cancelPPR={cancelPPR}
@@ -279,9 +287,7 @@ const PendingPPR = () => {
         viewComponents={viewComponents}
         setViewComponents={setViewComponents}
       />
-      <Row
-        justify="space-between"
-      >
+      <Row justify="space-between">
         <div>
           <Space>
             <div style={{ width: 200 }}>

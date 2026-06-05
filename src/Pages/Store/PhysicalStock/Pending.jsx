@@ -83,9 +83,9 @@ const PendingPhysicalStock = () => {
     handleGetRows();
   }, []);
   return (
-    <div style={{ height: "95%", padding: 10 }}>
-      <Row style={{ height: "100%" }} >
-        <Col span={20}>
+   
+      <Row style={{ height: "calc(100vh - 150px)", margin:10 }} >
+        <Col span={24}>
           <MyDataTable
             loading={loading("fetch") || loading("updateStatus")}
             data={rows}
@@ -93,7 +93,7 @@ const PendingPhysicalStock = () => {
           />
         </Col>
       </Row>
-    </div>
+  
   );
 };
 

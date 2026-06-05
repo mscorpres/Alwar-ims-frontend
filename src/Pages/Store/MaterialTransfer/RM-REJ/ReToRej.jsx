@@ -33,6 +33,7 @@ function ReToRej() {
       address: "",
     },
   ]);
+  const [hoveredRow, setHoveredRow] = useState(null);
   const { executeFun, loading: loading1 } = useApi();
 
   const getLocationFunction = async () => {
@@ -195,13 +196,13 @@ function ReToRej() {
       {/* <InternalNav links={MainREJ} /> */}
 
       <Row gutter={10}>
-        <Col span={6}>
-          <Card>
+        <Col span={24} style={{ marginBottom: 10 }}>
+
             <Row gutter={10}>
-              <Col span={24} style={{ width: "100%" }}>
-                <span>PICK LOCATION</span>
+              <Col span={2} style={{ width: "100%" }}>
+                <span>Pick Location</span>
               </Col>
-              <Col span={24}>
+              <Col span={6}>
                 <Select
                   placeholder="Please Select Location"
                   style={{ width: "100%" }}
@@ -214,10 +215,10 @@ function ReToRej() {
                   }
                 />
               </Col>
-              <Col span={24} style={{ marginTop: "10px" }}>
+              <Col span={6} >
                 <TextArea rows={2} disabled value={branch} />
               </Col>
-              <Col span={24} style={{ marginTop: "10px" }}>
+              <Col span={8} >
                 <TextArea
                   rows={2}
                   placeholder="Comment Optional"
@@ -230,189 +231,184 @@ function ReToRej() {
                 />
               </Col>
             </Row>
-          </Card>
+        
         </Col>
 
-        <Col span={18}>
+        <Col span={24}>
           <Row gutter={10}>
             <Col span={24}>
-              <div
-                style={{
-                  marginTop: "10px",
-                  border: "1px solid #ccc",
-                  padding: 0,
-                }}
-              >
-                {" "}
-                <div
-                  style={{ overflowY: "auto", height: "calc(100vh - 200px)" }}
+              {" "}
+              <div style={{ overflowY: "auto", height: "calc(100vh - 225px)" }}>
+                <table
+                  style={{
+                    width: "100%",
+                    minWidth: 1500,
+                    border: "1px solid #ccc",
+                  }}
                 >
-                  <table
-                    style={{
-                      width: "100%",
-                      minWidth: 1500,
-                    }}
-                  >
-                    <thead>
-                      <tr>
-                        <th className="table-col" style={{ width: "10vw" }}>
-                          Actions
-                        </th>
-                        <th className="table-col" style={{ width: "18vw" }}>
-                          Component / Part No.
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          Stock QTY
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          Transfering QTY
-                        </th>
-                        <th className="table-col" style={{ width: "14vw" }}>
-                          DROP (+) Loc
-                        </th>
-                        <th className="table-col" style={{ width: "12vw" }}>
-                          WAR
-                        </th>
-                        <th className="table-col" style={{ width: "22vw" }}>
-                          Address
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rows.map((r, idx) => {
-                        const rowColor = idx % 2 === 0 ? "#ffffff" : "#efefef";
+                  <thead>
+                    <tr>
+                      <th className="table-col" style={{ width: "10vw" }}>
+                        #
+                      </th>
+                      <th className="table-col" style={{ width: "18vw" }}>
+                        Component / Part No.
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        Stock QTY
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        Transfering QTY
+                      </th>
+                      <th className="table-col" style={{ width: "14vw" }}>
+                        DROP (+) Loc
+                      </th>
+                      <th className="table-col" style={{ width: "12vw" }}>
+                        WAR
+                      </th>
+                      <th className="table-col" style={{ width: "22vw" }}>
+                        Address
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((r, idx) => {
+                      const rowColor = idx % 2 === 0 ? "#ffffff" : "#f8f9fa";
 
-                        return (
-                          <tr key={idx} style={{ backgroundColor: rowColor }}>
-                            <td style={{ width: "2vw", textAlign: "center" }}>
-                              {idx > 0 && (
-                                <span
-                                  onClick={() => {
-                                    if (rows.length === 1) {
-                                      showToast(
-                                        "Can't delete last row",
-                                        "error",
-                                      );
-                                      return;
-                                    }
-                                    setRows((prev) =>
-                                      prev.filter((_, i) => i !== idx),
-                                    );
-                                  }}
-                                  className="delete-icon"
-                                >
-                                  <Delete color="error" />
-                                </span>
-                              )}
-                              {idx === 0 && (
-                                <span
-                                  onClick={() =>
-                                    setRows((prev) => [
-                                      {
-                                        component: "",
-                                        qty1: "",
-                                        locationTo: "",
-                                        restDetail: {},
-                                        address: "",
-                                      },
-                                      ...prev,
-                                    ])
+                      return (
+                        <tr
+                          key={idx}
+                          style={{
+                            backgroundColor:
+                              hoveredRow === idx ? "#fffaec" : rowColor,
+                          }}
+                          onMouseEnter={() => setHoveredRow(idx)}
+                          onMouseLeave={() => setHoveredRow(null)}
+                        >
+                          <td style={{ width: "2vw", textAlign: "center" }}>
+                            {idx > 0 && (
+                              <span
+                                onClick={() => {
+                                  if (rows.length === 1) {
+                                    showToast("Can't delete last row", "error");
+                                    return;
                                   }
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  <Add color="success" />
-                                </span>
-                              )}
-                            </td>
-                            <td style={{ width: "18vw" }}>
-                              <div
-                                style={{
-                                  width: "100%",
-                                  overflow: "hidden",
-                                  textOverflow: "ellipsis",
-                                  whiteSpace: "nowrap",
+                                  setRows((prev) =>
+                                    prev.filter((_, i) => i !== idx),
+                                  );
                                 }}
+                                className="delete-icon"
                               >
-                                <MyAsyncSelect
-                                  style={{ width: "100%" }}
-                                  loadOptions={getComponentList}
-                                  onInputChange={(e) => setSearch(e)}
-                                  onBlur={() => setAsyncOptions([])}
-                                  placeholder="Part Name/Code"
-                                  optionsState={asyncOptions}
-                                  value={r.component}
-                                  onChange={async (e) => {
-                                    setRows((prev) => {
-                                      const updated = [...prev];
-                                      updated[idx] = {
-                                        ...updated[idx],
-                                        component: e,
-                                      };
-                                      return updated;
-                                    });
-                                    await getRowQtyFunction(idx, e);
-                                  }}
-                                />
-                              </div>
-                            </td>
-                            <td style={{ width: "12vw", textAlign: "center" }}>
-                              <span>
-                                {r?.restDetail?.available_qty ?? "00"}{" "}
-                                {r?.restDetail?.unit ?? ""}
+                                <Delete color="error" />
                               </span>
-                            </td>
-                            <td style={{ width: "12vw" }}>
-                              <Input
-                                type="number"
-                                suffix={r?.restDetail?.unit}
-                                value={r.qty1}
-                                onChange={(e) =>
-                                  setRows((prev) => {
-                                    const updated = [...prev];
-                                    updated[idx] = {
-                                      ...updated[idx],
-                                      qty1: e.target.value,
-                                    };
-                                    return updated;
-                                  })
+                            )}
+                            {idx === 0 && (
+                              <span
+                                onClick={() =>
+                                  setRows((prev) => [
+                                    {
+                                      component: "",
+                                      qty1: "",
+                                      locationTo: "",
+                                      restDetail: {},
+                                      address: "",
+                                    },
+                                    ...prev,
+                                  ])
                                 }
-                              />
-                            </td>
-                            <td style={{ width: "14vw" }}>
-                              <Select
+                                style={{ cursor: "pointer" }}
+                              >
+                                <Add color="success" />
+                              </span>
+                            )}
+                          </td>
+                          <td style={{ width: "18vw" }}>
+                            <div
+                              style={{
+                                width: "100%",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              <MyAsyncSelect
                                 style={{ width: "100%" }}
-                                options={locDataTo}
-                                value={r.locationTo}
+                                loadOptions={getComponentList}
+                                onInputChange={(e) => setSearch(e)}
+                                onBlur={() => setAsyncOptions([])}
+                                placeholder="Part Name/Code"
+                                optionsState={asyncOptions}
+                                value={r.component}
                                 onChange={async (e) => {
                                   setRows((prev) => {
                                     const updated = [...prev];
                                     updated[idx] = {
                                       ...updated[idx],
-                                      locationTo: e,
+                                      component: e,
                                     };
                                     return updated;
                                   });
-                                  await getRowLocationName(idx, e);
+                                  await getRowQtyFunction(idx, e);
                                 }}
                               />
-                            </td>
-                            <td style={{ width: "12vw" }}>
-                              <Input disabled value={r?.restDetail?.avr_rate} />
-                            </td>
-                            <td style={{ width: "22vw" }}>
-                              <TextArea
-                                rows={2}
-                                disabled
-                                value={r.address}
-                                style={{ resize: "none" }}
-                              />
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                            </div>
+                          </td>
+                          <td style={{ width: "12vw", textAlign: "center" }}>
+                            <span>
+                              {r?.restDetail?.available_qty ?? "00"}{" "}
+                              {r?.restDetail?.unit ?? ""}
+                            </span>
+                          </td>
+                          <td style={{ width: "12vw" }}>
+                            <Input
+                              type="number"
+                              suffix={r?.restDetail?.unit}
+                              value={r.qty1}
+                              onChange={(e) =>
+                                setRows((prev) => {
+                                  const updated = [...prev];
+                                  updated[idx] = {
+                                    ...updated[idx],
+                                    qty1: e.target.value,
+                                  };
+                                  return updated;
+                                })
+                              }
+                            />
+                          </td>
+                          <td style={{ width: "14vw" }}>
+                            <Select
+                              style={{ width: "100%" }}
+                              options={locDataTo}
+                              value={r.locationTo}
+                              onChange={async (e) => {
+                                setRows((prev) => {
+                                  const updated = [...prev];
+                                  updated[idx] = {
+                                    ...updated[idx],
+                                    locationTo: e,
+                                  };
+                                  return updated;
+                                });
+                                await getRowLocationName(idx, e);
+                              }}
+                            />
+                          </td>
+                          <td style={{ width: "12vw" }}>
+                            <Input disabled value={r?.restDetail?.avr_rate} />
+                          </td>
+                          <td style={{ width: "22vw" }}>
+                            <Input
+                              disabled
+                              value={r.address}
+                              style={{ resize: "none" }}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </Col>
           </Row>

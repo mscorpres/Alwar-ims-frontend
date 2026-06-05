@@ -21,7 +21,7 @@ function CreatePhysical() {
       // type="card"
       tabPosition="left"
       size={"small"}
-      style={{ margin: 10, height: "95%" }}
+      style={{  height: "calc(100vh - 140px)" }}
       items={[
         {
           label: "Manual Entry",
@@ -289,14 +289,14 @@ const Manual = () => {
 
   return (
     <div>
-      <div style={{ height: "79%" }}>
-        <div style={{ height: "75vh", margin: "10px" }}>
+    
+        <div style={{ height: "75vh",  }}>
           <MyDataTable data={addrow} columns={columns} hideHeaderMenu />
-        </div>
+     
       </div>
       <Row gutter={16}>
         <Col span={24}>
-          <div style={{ textAlign: "end", margin: "10px" }}>
+          <div style={{ textAlign: "end", marginTop: "10px" }}>
             <MyButton
               variant="reset"
               onClick={resetFunction}

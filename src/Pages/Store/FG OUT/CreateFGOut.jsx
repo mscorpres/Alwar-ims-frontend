@@ -8,6 +8,7 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import NavFooter from "../../../Components/NavFooter.jsx";
 import MySelect from "../../../Components/MySelect.jsx";
+import { Add, Delete } from "@mui/icons-material";
 
 const { TextArea } = Input;
 const CreateFGOut = () => {
@@ -48,7 +49,6 @@ const CreateFGOut = () => {
 
   const plusRow = () => {
     setAddRowData((addRowData) => [
-      ...addRowData,
       {
         id: v4(),
         product: "",
@@ -57,6 +57,7 @@ const CreateFGOut = () => {
         total: "",
         remarks: "",
       },
+      ...addRowData,
     ]);
   };
 
@@ -67,10 +68,16 @@ const CreateFGOut = () => {
   };
 
   const getLocations = async () => {
-    const { data } = await imsAxios.get("/ppr/mfg_locations");
-    const arr = [];
-    data?.map((a) => arr.push({ text: a.text, value: a.id }));
-    setLocationOptions(arr);
+    try {
+      const response = await imsAxios.get("/ppr/mfg_locations");
+      const arr = [];
+      if (response?.success) {
+        response?.data?.map((a) => arr.push({ text: a.text, value: a.id }));
+        setLocationOptions(arr);
+      }
+    } catch (e) {
+      showToast(e?.message || "Error fetching locations", "error");
+    }
   };
 
   useEffect(() => {
@@ -78,18 +85,33 @@ const CreateFGOut = () => {
   }, []);
 
   const getOption = async (productSearchInput) => {
-    if (productSearchInput?.length > 2) {
-      setSelLoading(true);
-      const response = await imsAxios.post("/fgOUT/fetchProduct", {
-        searchTerm: productSearchInput,
-      });
+    try {
+      if (productSearchInput?.length > 2) {
+        setSelLoading(true);
+        const response = await imsAxios.post("/fgOUT/fetchProduct", {
+          searchTerm: productSearchInput,
+        });
+        setSelLoading(false);
+        let arr = [];
+        if (!response?.success) {
+          showToast(
+            response?.message || "Error fetching product options",
+            "error",
+          );
+          setSelLoading(false);
+          return;
+        }
+        arr = response?.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+        // return arr;
+      }
+    } catch (error) {
       setSelLoading(false);
-      let arr = [];
-      arr = response.data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
-      // return arr;
+      showToast(error?.message || "Error fetching product options", "error");
+    } finally {
+      setSelLoading(false);
     }
   };
 
@@ -100,7 +122,7 @@ const CreateFGOut = () => {
       });
       const totalValue = response?.data?.total;
       const unitValue = response?.data?.unit;
-      // console.log(totalValue);
+
       setAddRowData((product) =>
         product.map((h) => {
           if (h.id == id) {
@@ -141,8 +163,7 @@ const CreateFGOut = () => {
           }
         }),
       );
-    }else if (name == "location") {
-     
+    } else if (name == "location") {
       setAddRowData((location) =>
         location.map((h) => {
           if (h.id == id) {
@@ -152,7 +173,7 @@ const CreateFGOut = () => {
           } else {
             return h;
           }
-        })
+        }),
       );
     }
   };
@@ -170,9 +191,8 @@ const CreateFGOut = () => {
     // addRowData.map((a) => console.log(a));
     // console.log(arrQty);
 
-
     const hasEmptyLocation = addRowData.some(
-      (row) => !row.location || String(row.location).trim() === ""
+      (row) => !row.location || String(row.location).trim() === "",
     );
     if (!createFgOut.selectType) {
       showToast("Please Select Option", "error");
@@ -221,15 +241,20 @@ const CreateFGOut = () => {
   const columns = [
     {
       headerName: (
-        <span onClick={plusRow}>
-          <PlusCircleTwoTone
-            style={{
-              cursor: "pointer",
-              fontSize: "1.2rem",
-            }}
-          />
-          {/* <PlusSquareFilled style={{ cursor: "pointer", fontSize: "1.5rem" }} /> */}
-        </span>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center", // vertical centering
+            width: "100%", // take full cell width
+            height: "100%", // take full cell height
+          }}
+        >
+          <span onClick={plusRow} style={{ cursor: "pointer" }}>
+            <Add color="success" />
+            {/* <PlusSquareFilled style={{ cursor: "pointer", fontSize: "1.5rem" }} /> */}
+          </span>
+        </div>
       ),
       width: 80,
       field: "add",
@@ -238,13 +263,14 @@ const CreateFGOut = () => {
       sortable: false,
       renderCell: ({ row }) =>
         addRowData.findIndex((r) => r.id == row.id) >= 1 && (
-          <MinusCircleTwoTone
-            onClick={() => minusRow(row?.id)}
-            style={{
-              fontSize: "1.1rem",
-              cursor: "pointer",
-            }}
-          />
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <span
+              onClick={() => minusRow(row?.id)}
+              style={{ cursor: "pointer" }}
+            >
+              <Delete color="error" />
+            </span>
+          </div>
         ),
       // sortable: false,
     },
@@ -320,9 +346,9 @@ const CreateFGOut = () => {
   return (
     <>
       <Row gutter={10} style={{ margin: "8px", height: "calc(100% - 70px)" }}>
-        <Col span={6}>
+        <Col span={16}>
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={8}>
               <Select
                 style={{
                   width: "100%",
@@ -341,9 +367,9 @@ const CreateFGOut = () => {
                 }
               />
             </Col>
-            <Col span={24}>
+            <Col span={8}>
               <TextArea
-                rows={5}
+                rows={1}
                 placeholder="Comment(Optional)"
                 className="form-control"
                 value={createFgOut.comment}
@@ -359,7 +385,10 @@ const CreateFGOut = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={18}>
+        <Col
+          span={24}
+          style={{ height: "calc(100% - 50px)", overflowY: "auto" }}
+        >
           <MyDataTable
             loading={loading}
             data={addRowData}

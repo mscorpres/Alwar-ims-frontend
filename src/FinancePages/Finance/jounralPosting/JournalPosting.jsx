@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
-import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
 import axios from "axios";
 import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
@@ -13,6 +12,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { useLocation } from "react-router-dom";
 import dayjs from "dayjs";
 import FormTable from "../../../Components/FormTable.jsx";
+import { Add, Delete } from "@mui/icons-material";
 
 export default function JournalPosting() {
   const { showToast } = useToast();
@@ -77,12 +77,12 @@ export default function JournalPosting() {
     setCreditTotal(
       creditArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
     setDebitTotal(
       debitArr?.reduce((partialSum, a) => {
         return Number(partialSum) + Number(a);
-      }, 0)
+      }, 0),
     );
     setJounralRows(arr);
   };
@@ -127,35 +127,35 @@ export default function JournalPosting() {
   const columns = [
     {
       headerName: (
-        <span onClick={addRows}>
-          <AiOutlinePlusSquare
-            style={{ cursor: "pointer", fontSize: "1.7rem", opacity: "0.7" }}
-          />
-        </span>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <span onClick={addRows} style={{ cursor: "pointer" }}>
+            <Add color="success" />
+          </span>
+        </div>
       ),
       width: 80,
       type: "actions",
       field: "add",
       sortable: false,
-      renderCell: ({ row }) => [
-        <GridActionsCellItem
-          icon={
-            <AiOutlineMinusSquare
-              style={{
-                fontSize: "1.7rem",
-                cursor: "pointer",
-                pointerEvents:
-                  journalRows.length === 3 || row.total ? "none" : "all",
-                opacity: journalRows.length === 3 || row.total ? 0.5 : 1,
-              }}
+      renderCell: ({ row }) =>
+        journalRows.length > 3 && !row.total ? (
+          <div
+            style={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
+            <GridActionsCellItem
+              icon={<Delete color="error" />}
+              onClick={() => removeRow(row.id)}
+              label="Delete"
             />
-          }
-          onClick={() => {
-            journalRows.length > 3 && removeRow(row.id);
-          }}
-          label="Delete"
-        />,
-      ],
+          </div>
+        ) : null,
     },
 
     {
@@ -214,7 +214,7 @@ export default function JournalPosting() {
               onChange={(e) => inputHandler("debit", e.target.value, row.id)}
               disabled={row.credit?.length > 0}
               inputType="number"
-                 type="number"
+              type="number"
             />
           )}
         </>
@@ -234,7 +234,7 @@ export default function JournalPosting() {
           value={row.total ? creditTotal.toFixed(2) : row.credit}
           onChange={(e) => inputHandler("credit", e.target.value, row.id)}
           disabled={row.total || row.debit?.length > 0}
-             type="number"
+          type="number"
         />
       ),
     },
@@ -335,20 +335,17 @@ export default function JournalPosting() {
     }
   }, [loading]);
   return (
-    <div style={{ height: "76vh", padding:10, overflowY: "auto" }}>
-      <Row
-        gutter={12}
-     
-      >
-        <Col span={6}>
-          <Card title="Select Date" size="small">
+    <div style={{ height: "76vh", padding: 10,  }}>
+      <Row gutter={12}>
+        <Col span={24}>
+         
             <Row>
               <Form
                 style={{ width: "100%" }}
                 layout="vertical"
                 form={addJournalForm}
               >
-                <Col span={24}>
+                <Col span={6}>
                   <Form.Item
                     label="Effective Date"
                     name="effectiveDate"
@@ -370,13 +367,10 @@ export default function JournalPosting() {
                 </Col>
               </Form>
             </Row>
-          </Card>
+      
         </Col>
-        <Col style={{ height: "100%", padding: 0 }} span={18}>
-              
-                <FormTable data={journalRows} columns={columns} />
-          
-       
+        <Col style={{ maxHeight:"calc(100vh - 240px)", padding: 0 }} span={24}>
+          <FormTable data={journalRows} columns={columns} />
         </Col>
       </Row>
       <NavFooter

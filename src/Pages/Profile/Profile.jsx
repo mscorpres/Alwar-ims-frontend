@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import OtpVerify from "./OtpVerify";
 import { imsAxios } from "../../axiosInterceptor";
 import { setUser } from "../../Features/loginSlice/loginSlice";
+import { capitalizeWords } from "../../utils/capitallizeWords.js";
 
 export default function Profile() {
   const { showToast } = useToast();
@@ -140,7 +141,7 @@ export default function Profile() {
                 level={2}
                 style={{
                   color: "black",
-                  margin: "0 0 30px 0",
+                  margin: "0 0 20px 0",
                   fontWeight: "bold",
                   textAlign: "center",
                 }}
@@ -151,37 +152,12 @@ export default function Profile() {
               <div
                 style={{
                   width: "100%",
-                  marginBottom: 30,
-                  padding: "20px 0",
+                  padding: "10px 0",
                   borderTop: "1px solid rgba(0,0,0,0.2)",
-                  borderBottom: "1px solid rgba(0,0,0,0.2)",
+              
                 }}
-              >
-                <div style={{ marginBottom: 15 }}>
-                  <Typography.Text style={{ color: "black" }}>
-                    Department
-                  </Typography.Text>
-                  <div style={{ color: "black", fontWeight: 500 }}>
-                    {userDetails?.type || "-"}
-                  </div>
-                </div>
-                <div style={{ marginBottom: 15 }}>
-                  <Typography.Text style={{ color: "black" }}>
-                    Phone No:
-                  </Typography.Text>
-                  <div style={{ color: "black", fontWeight: 500 }}>
-                    {userDetails?.phone || "-"}
-                  </div>
-                </div>
-                <div>
-                  <Typography.Text style={{ color: "black" }}>
-                    Email
-                  </Typography.Text>
-                  <div style={{ color: "black", fontWeight: 500 }}>
-                    {userDetails?.email || "-"}
-                  </div>
-                </div>
-              </div>
+              />
+            
 
               <div style={{ width: "100%" }}>
                 <div
@@ -262,41 +238,13 @@ export default function Profile() {
                   }}
                 /> */}
               </div>
-              <Typography.Text
-                style={{
-                  color: "#666",
-                  fontSize: 14,
-                  display: "block",
-                  marginBottom: 30,
-                }}
-              >
-                Basic info, like your name and phone number, that you use on
-                BharatPay Platform.
-              </Typography.Text>
+          
 
               {skeletonLoading ? (
                 <Skeleton active paragraph={{ rows: 3 }} />
               ) : (
                 <div style={{ maxWidth: 600 }}>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "150px 1fr",
-                      gap: "20px 30px",
-                      padding: "20px 0",
-                      borderBottom: "1px solid #f0f0f0",
-                    }}
-                  >
-                    <Typography.Text
-                      strong
-                      style={{ color: "#666", fontSize: 14 }}
-                    >
-                      Name
-                    </Typography.Text>
-                    <Typography.Text style={{ fontSize: 14 }}>
-                      {userDetails?.name || "-"}
-                    </Typography.Text>
-                  </div>
+                
                   <div
                     style={{
                       display: "grid",
@@ -361,6 +309,25 @@ export default function Profile() {
                         />
                       )}
                     </div>
+                  </div>
+                    <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "150px 1fr",
+                      gap: "20px 30px",
+                      padding: "20px 0",
+                      borderBottom: "1px solid #f0f0f0",
+                    }}
+                  >
+                    <Typography.Text
+                      strong
+                      style={{ color: "#666", fontSize: 14 }}
+                    >
+                      Department
+                    </Typography.Text>
+                    <Typography.Text style={{ fontSize: 14 }}>
+                      {capitalizeWords(userDetails?.type) || "-"}
+                    </Typography.Text>
                   </div>
                 </div>
               )}

@@ -761,7 +761,7 @@ export default function Reference() {
           />
         </Col>
         <Col span={1}>
-          <MyButton onClick={getVBTRows} type="primary" variant="search">
+          <MyButton onClick={getVBTRows} type="primary" variant="search" loading={loading === "fetching"}>
             Fetch
           </MyButton>
         </Col>

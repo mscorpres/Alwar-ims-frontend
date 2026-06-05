@@ -120,7 +120,7 @@ const ViewFGMIN = () => {
     }
   }, [selectedWise]);
   return (
-    <Row style={{ height: "calc(100vh - 100px)", padding: 10 }} gutter={6}>
+    <Row style={{ height: "calc(100vh - 120px)", padding: 10 }} gutter={6}>
       <LabelDrawer
         open={showLabelDrawer}
         hide={() => setShowLabelDrawer(false)}
@@ -128,46 +128,78 @@ const ViewFGMIN = () => {
         selectLoading={loading("select")}
         preSelected={preselected}
       />
-      <Col span={4}>
-        <Card size="small">
-          <Form
-            form={form}
-            layout="vertical"
-            initialValues={initialFilterValues}
+  <Col span={16} style={{marginBottom: 12}}>
+
+    <Form
+      form={form}
+      layout="vertical"
+      initialValues={initialFilterValues}
+    >
+      <Row gutter={10} align="bottom">
+
+        {/* Wise */}
+        <Col span={6}>
+          <Form.Item
+            name="wise"
+            label="Select Wise"
+            rules={rules.wise}
+            style={{ marginBottom: 0 }}
           >
-            <Form.Item name="wise" label="Select Wise" rules={rules.wise}>
-              <MySelect options={wiseOptions} />
-            </Form.Item>
-            <Form.Item
-              name="value"
-              label={selectedWise === "datewise" ? "Select Date" : "Select MIN"}
-              rules={selectedWise === "datewise" ? rules.date : rules.minId}
-            >
-              {selectedWise === "datewise" && (
-                <SingleDatePicker
-                  setDate={(value) => form.setFieldValue("value", value)}
-                />
-              )}
-              {selectedWise === "minwise" && (
-                <MyAsyncSelect
-                  selectLoading={loading("select")}
-                  onBlur={() => setAsyncOptions([])}
-                  loadOptions={handleFetchMINOptions}
-                  optionsState={asyncOptions}
-                />
-              )}
-            </Form.Item>
-            <Flex justify="end" gap={8}>
-              <MyButton
-                variant="search"
-                loading={loading("fetch") || isLoading}
-                onClick={handleFetchRows}
+            <MySelect options={wiseOptions} />
+          </Form.Item>
+        </Col>
+
+        {/* Value */}
+        <Col span={10}>
+          <Form.Item
+            name="value"
+            label={
+              selectedWise === "datewise"
+                ? "Select Date"
+                : "Select MIN"
+            }
+            rules={
+              selectedWise === "datewise"
+                ? rules.date
+                : rules.minId
+            }
+            style={{ marginBottom: 0 }}
+          >
+            {selectedWise === "datewise" && (
+              <SingleDatePicker
+                setDate={(value) =>
+                  form.setFieldValue("value", value)
+                }
               />
-            </Flex>
-          </Form>
-        </Card>
-      </Col>
-      <Col span={20} style={{ height: "calc(100vh - 130px)", marginTop: 10 }}>
+            )}
+
+            {selectedWise === "minwise" && (
+              <MyAsyncSelect
+                selectLoading={loading("select")}
+                onBlur={() => setAsyncOptions([])}
+                loadOptions={handleFetchMINOptions}
+                optionsState={asyncOptions}
+              />
+            )}
+          </Form.Item>
+        </Col>
+
+      
+        <Col span={3}>
+          <Flex justify="end">
+            <MyButton
+              variant="search"
+              loading={loading("fetch") || isLoading}
+              onClick={handleFetchRows}
+            />
+          </Flex>
+        </Col>
+
+      </Row>
+    </Form>
+ 
+</Col>
+      <Col span={24} style={{ height: "calc(100vh - 200px)" }}>
         <MyDataTable
           loading={loading("fetch") || loading("print") || isLoading}
           columns={[...actionColumns, ...columns]}

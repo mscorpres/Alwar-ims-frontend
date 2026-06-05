@@ -93,9 +93,9 @@ const EditModal = ({ show, close, bomType }) => {
               if (comp.id === row.id) {
                 return {
                   ...comp,
-                  id: data.data.component_key,
-                  componentName: data.data.component_name,
-                  partCode: data.data.component_part,
+                  id: response.data.component_key,
+                  componentName: response.data.component_name,
+                  partCode: response.data.component_part,
                   new: false,
                 };
               } else {

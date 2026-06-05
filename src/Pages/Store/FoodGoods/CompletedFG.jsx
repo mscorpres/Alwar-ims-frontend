@@ -16,8 +16,8 @@ const CompletedFG = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [all, setAll] = useState({
-    info: "",
-    selOption: "",
+    info: "datewise",
+    selOption: "datewise",
   });
   const [asyncSelect, setAsyncSelect] = useState([]);
   const [datee, setDatee] = useState("");
@@ -131,14 +131,14 @@ const CompletedFG = () => {
   };
 
   return (
-    <div style={{ height: "calc(100vh - 130px)", margin:5 }} >
+    <div style={{ height: "calc(100vh - 140px)", margin:10 }} >
       <Row gutter={5}>
         <Col span={3}>
           <Select
             options={options}
             style={{ width: "100%" }}
             placeholder="Select Option"
-            value={all.info.value}
+            value={all.info}
             onChange={(e) =>
               setAll((all) => {
                 return { ...all, info: e };
@@ -157,7 +157,7 @@ const CompletedFG = () => {
                 Fetch
               </MyButton>
             </Col>
-            {dateData.length > 0 && (
+           
               <Col span={2} offset={12} className="gutter-row">
                 <div>
                   <Button onClick={handleDownloadingCSV}>
@@ -165,7 +165,7 @@ const CompletedFG = () => {
                   </Button>
                 </div>
               </Col>
-            )}
+       
           </>
         ) : all.info == "skuwise" ? (
           <>
@@ -235,7 +235,7 @@ const CompletedFG = () => {
           </Col>
         )} */}
       </Row>
-      <div style={{ height: "calc(100vh - 170px)", marginTop: "10px" }}>
+      <div style={{ height: "calc(100vh - 180px)", marginTop: "10px" }}>
         {all.info == "datewise" ? (
           <MyDataTable loading={loading} data={dateData} columns={columns} />
         ) : (

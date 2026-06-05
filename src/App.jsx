@@ -36,7 +36,7 @@ import {
 } from "./Features/uiSlice/uiSlice.js";
 import Layout, { Content, Header } from "antd/lib/layout/layout";
 import { Select, Modal, Button } from "antd";
-import { SearchOutlined, SwapOutlined } from "@ant-design/icons";
+import { SwapOutlined } from "@ant-design/icons";
 import { Tooltip, IconButton } from "@mui/material";
 import InternalNav from "./Components/InternalNav";
 import { imsAxios } from "./axiosInterceptor";
@@ -51,6 +51,13 @@ import {
   getCurrentIndianFinancialYearSession,
   LEGACY_SESSION_CODES,
 } from "./utils/indianFinancialYear.js";
+import {
+  getSafeInternalRedirect,
+  POST_LOGIN_REDIRECT_STORAGE_KEY,
+} from "./utils/postLoginRedirect.js";
+import ModuleSearch from "./Components/ModuleSearch/ModuleSearch.jsx";
+import useVersionCheck from "./hooks/useVersionCheck.js";
+import UpdatePopup from "./Components/UpdatePopup.jsx";
 
 const App = () => {
   const { showToast } = useToast();
@@ -86,7 +93,7 @@ const App = () => {
   );
   const [loadingSwitch, setLoadingSwitch] = useState(isSwitchFlow);
   const [newNotification, setNewNotification] = useState(null);
-  const { pathname } = useLocation();
+  const { pathname, search, hash } = useLocation();
 
   const authPublicPaths = React.useMemo(
     () =>
@@ -101,10 +108,6 @@ const App = () => {
     
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
-  const [modulesOptions, setModulesOptions] = useState([]);
-  const [searchModule, setSearchModule] = useState("");
-  const [showHisList, setShowHisList] = useState([]);
-  const [allModules, setAllModules] = useState([]);
   const notificationsRef = useRef();
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,12 +118,18 @@ const App = () => {
   const [switchSuccess, setSwitchSuccess] = useState(false);
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-  const [searchHis, setSearchHis] = useState("");
-  const [hisList, setHisList] = useState([]);
+  const { updateAvailable } = useVersionCheck();
+  const [showUpdatePopup, setShowUpdatePopup] = useState(false);
   const logoutHandler = () => {
     setShowBlackScreen(false);
 dispatch(logoutUser());
   };
+
+  useEffect(() => {
+    if (updateAvailable) {
+      setShowUpdatePopup(true);
+    }
+  }, [updateAvailable]);
 
   const handleSelectCompanyBranch = (value) => {
     dispatch(setCompanyBranch(value));
@@ -129,54 +138,6 @@ dispatch(logoutUser());
   };
   const handleSelectSession = (value) => {
     dispatch(setSession(value));
-  };
-
-  // Function to get all modules
-  const getAllModules = () => {
-    let arr = [];
-    let allModOpt = [];
-    internalLinks.map((row) => {
-      let a = row;
-      arr.push(...a);
-    });
-    arr.map((row) => {
-      if (row && row.routeName) {
-        let obj = {
-          label: row.routeName,
-          value: row.routePath,
-        };
-        allModOpt.push(obj);
-      }
-    });
-    return allModOpt;
-  };
-
-  // Load all modules on component mount
-  useEffect(() => {
-    const allMods = getAllModules();
-    setAllModules(allMods);
-    // Show all modules by default
-    setModulesOptions(allMods);
-  }, []);
-
-  const getModuleSearchOptions = (search) => {
-    let arr = [];
-    let modOpt = [];
-    internalLinks.map((row) => {
-      let a = row;
-      arr.push(...a);
-    });
-    arr.map((row) => {
-      if (row.routeName?.toLowerCase().includes(search)) {
-        let obj = {
-          label: row.routeName,
-          value: row.routePath,
-        };
-        modOpt.push(obj);
-      }
-    });
-    setSearchHis(modOpt);
-    setModulesOptions(modOpt);
   };
 
   // notifications receive handlers
@@ -270,7 +231,10 @@ dispatch(logoutUser());
       }
     });
     if (!user && !isAuthPublicPath(pathname)) {
-      navigate("/login");
+      const returnTo = `${pathname}${search}${hash}`;
+      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`, {
+        replace: true,
+      });
     }
     if (user) {
       if (user.company_branch) {
@@ -442,7 +406,10 @@ dispatch(logoutUser());
   }, []);
   useEffect(() => {
     if (!user && !isAuthPublicPath(pathname)) {
-      navigate("/login");
+      const returnTo = `${pathname}${search}${hash}`;
+      navigate(`/login?redirect=${encodeURIComponent(returnTo)}`, {
+        replace: true,
+      });
     } else if (user) {
       let branch = JSON.parse(
         localStorage.getItem("branchData"),
@@ -452,17 +419,29 @@ dispatch(logoutUser());
       }
       // handleSelectSession("23-24");
     }
-  }, [user, pathname]);
+  }, [user, pathname, search, hash]);
 
   useEffect(() => {
     if (!isAuthShellPath || !user) return;
-    const link = JSON.parse(localStorage.getItem("branchData"))?.currentLink;
+    const redirectParam = searchParams.get("redirect");
+    const safeRedirect = getSafeInternalRedirect(redirectParam);
+    const link = JSON.parse(localStorage.getItem("branchData") || "{}")
+      ?.currentLink;
     if (user.passwordChanged === "P") {
-      navigate("/first-login");
+      if (safeRedirect) {
+        sessionStorage.setItem(POST_LOGIN_REDIRECT_STORAGE_KEY, safeRedirect);
+      }
+      navigate("/first-login", { replace: true });
     } else {
-      navigate(link ?? "/");
+      navigate(safeRedirect ?? link ?? "/", { replace: true });
     }
-  }, [user, pathname, isAuthShellPath, navigate]);
+  }, [
+    user,
+    pathname,
+    isAuthShellPath,
+    navigate,
+    searchParams,
+  ]);
 
   useEffect(() => {
     if (user && user.token) {
@@ -661,23 +640,10 @@ dispatch(logoutUser());
       }
     }
   }, [navigate, user]);
-  useEffect(() => {
-    window.addEventListener("offline", (e) => {
-      showToast(
-        "You are no longer connected to the Internet, please check your connection and try again.",
-        "error",
-      );
-    });
-    window.addEventListener("online", (e) => {
-      showToast(
-        "The internet has been restored. Kindly review your progress to ensure there is no duplication of data.",
-      );
-      window.location.reload();
-    });
-  }, []);
+  
 
   useEffect(() => {
-    if (user && user.passwordChanged === "C") {
+    if (user && user.passwordChanged !== "P") {
       const timer = setTimeout(() => {
         setShowBlackScreen(true);
       }, 1500);
@@ -687,37 +653,6 @@ dispatch(logoutUser());
       setShowBlackScreen(false);
     }
   }, [user]);
-
-  useEffect(() => {
-    setModulesOptions([]);
-
-    if (searchModule.length > 2) {
-      let searching = searchHis.filter((i) => i.value === searchModule);
-
-      setHisList([...hisList, searching]);
-
-      let a = hisList.push(...hisList, ...searching);
-
-      const ids = hisList.map(({ label, text }) => label || text); // Support both formats
-
-      const filtered = hisList.filter(
-        ({ label, text }, index) => !ids.includes(label || text, index + 1),
-      );
-
-      localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
-
-      navigate(searchModule);
-    }
-  }, [searchModule]);
-
-  const showRecentSearch = () => {
-    let obj = JSON.parse(localStorage.getItem("searchHistory"));
-    let arr = obj?.filtered?.map((row) => ({
-      text: row.text,
-      value: row.value,
-    }));
-    setShowHisList(arr);
-  };
 
   const getOffsetLeft = () => {
     // if (isTestServer && isBannerVisible) {
@@ -840,7 +775,7 @@ dispatch(logoutUser());
           />
         )} */}
         {/* <Information /> */}
-        {user && user.passwordChanged === "C" && (
+        {user && user.passwordChanged !== "P" && (
           <Layout style={{ height: "100%" }}>
             <AppHeader
               onToggleSidebar={() => setShowSideBar((open) => !open)}
@@ -853,53 +788,7 @@ dispatch(logoutUser());
               onChangeBranch={(value) => handleSelectCompanyBranch(value)}
               onChangeSession={(value) => handleSelectSession(value)}
               showSearch
-              searchComponent={
-                <Select
-                  showSearch
-                  placeholder="Search..."
-                  value={searchModule || undefined}
-                  onChange={(value) => {
-                    setSearchModule(value);
-                    navigate(value);
-                  }}
-                  onSearch={(value) => {
-                    if (value && value.trim().length > 0) {
-                      getModuleSearchOptions(value.toLowerCase());
-                    } else {
-                      // Show all modules when search is cleared
-                      setModulesOptions(
-                        allModules.length > 0 ? allModules : [],
-                      );
-                    }
-                  }}
-                  options={
-                    modulesOptions?.length > 0
-                      ? modulesOptions
-                      : allModules.length > 0
-                        ? allModules
-                        : showHisList || []
-                  }
-                  filterOption={false}
-                  notFoundContent={null}
-                  style={{
-                    width: 200,
-                  }}
-                  className="header-search-select"
-                  suffixIcon={
-                    <SearchOutlined style={{ color: "rgba(0, 0, 0, 0.45)" }} />
-                  }
-                  onFocus={() => {
-                    // Show all modules when focused if no search is active
-                    if (!searchModule && allModules.length > 0) {
-                      setModulesOptions(allModules);
-                    }
-                    // Load search history if available
-                    if (showHisList.length === 0) {
-                      showRecentSearch();
-                    }
-                  }}
-                />
-              }
+              searchComponent={<ModuleSearch />}
               socketConnected={isConnected}
               socketLoading={isLoading}
               onRefreshSocket={() => refreshConnection()}
@@ -947,14 +836,14 @@ dispatch(logoutUser());
             style={{
               display: "flex",
               height: "100%",
-              paddingTop: user && user.passwordChanged === "C" ? 45 : 0,
+              paddingTop: user && user.passwordChanged !== "P" ? 45 : 0,
             }}
           >
             <TicketsModal
               open={showTickets}
               handleClose={() => dispatch(setShowTickets(false))}
             />
-            {user && user.passwordChanged === "C" && (
+            {user && user.passwordChanged !== "P" && (
               <>
                 <Sidebar
                   className="site-layout-background"
@@ -979,7 +868,7 @@ dispatch(logoutUser());
                 height: "100%",
 
                 marginLeft:
-                  user && user.passwordChanged === "C"
+                  user && user.passwordChanged !== "P"
                     ? showSideBar
                       ? 230
                       : 60
@@ -999,7 +888,7 @@ dispatch(logoutUser());
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath
-                          ? 0
+                          ? 1
                           :50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
@@ -1216,6 +1105,11 @@ dispatch(logoutUser());
           </div>
         )}
       </Modal>
+
+      <UpdatePopup
+        open={showUpdatePopup}
+        onRefresh={() => window.location.reload()}
+      />
     </div>
   );
 };

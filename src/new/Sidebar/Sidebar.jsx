@@ -13,6 +13,8 @@ const SUB_MENU_PARENT_LEAD_SIZE = 18;
 const SUB_MENU_CHILD_CHEVRON_SIZE = 14;
 const SUB_MENU_DEEP_CHEVRON_SIZE = 12;
 
+const SUB_MENU_TREE_STEP = 16;
+
 const SIDEBAR_INJECTED_STYLES = `
           @keyframes slideInRight {
             from {
@@ -31,6 +33,61 @@ const SIDEBAR_INJECTED_STYLES = `
           @media (max-width: 768px) {
             .sub-sidebar-scroll { scrollbar-width: none; -ms-overflow-style: none; }
             .sub-sidebar-scroll::-webkit-scrollbar { width: 0; height: 0; }
+          }
+          .sub-menu-tree-prefix {
+            display: inline-flex;
+            flex-shrink: 0;
+            align-self: stretch;
+          }
+          .sub-menu-tree-guide-continue,
+          .sub-menu-tree-guide-empty,
+          .sub-menu-tree-branch {
+            width: ${SUB_MENU_TREE_STEP}px;
+            position: relative;
+            flex-shrink: 0;
+            align-self: stretch;
+          }
+          .sub-menu-tree-guide-continue::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            border-left: 1px solid #bdbdbd;
+          }
+          .sub-menu-tree-branch.is-mid::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            border-left: 1px solid #bdbdbd;
+          }
+          .sub-menu-tree-branch.is-mid::after,
+          .sub-menu-tree-branch.is-last::after {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            width: 10px;
+            border-top: 1px solid #bdbdbd;
+          }
+          .sub-menu-tree-branch.is-last::before {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 0;
+            height: 50%;
+            border-left: 1px solid #bdbdbd;
+          }
+          .sub-menu-tree-row {
+            display: flex;
+            align-items: stretch;
+            min-height: 36px;
+          }
+          .sub-menu-tree-row-content {
+            flex: 1;
+            min-width: 0;
           }
         `;
 
@@ -264,11 +321,30 @@ const SidebarInner = ({
     />
   );
 
+  const renderSubMenuTreePrefix = (ancestorHasMore, isLast) => (
+    <span className="sub-menu-tree-prefix" aria-hidden="true">
+      {ancestorHasMore.map((continues, index) => (
+        <span
+          key={`tree-guide-${index}`}
+          className={
+            continues
+              ? "sub-menu-tree-guide-continue"
+              : "sub-menu-tree-guide-empty"
+          }
+        />
+      ))}
+      <span
+        className={`sub-menu-tree-branch ${isLast ? "is-last" : "is-mid"}`}
+      />
+    </span>
+  );
+
   const renderList = (
     arr,
     alwaysShowText = false,
     isSubMenu = false,
     nestLevel = 0,
+    ancestorHasMore = [],
   ) => {
     const shouldShowText = isSubMenu
       ? alwaysShowText && !isSecondSidebarCollapsed
@@ -297,42 +373,62 @@ const SidebarInner = ({
           const isPathActive = c.path && location.pathname === c.path;
           const isHeading = c.isHeading;
           const isHeadingExpanded = expandedHeadings.includes(c.key);
+          const isLast = index === arr.length - 1;
+          const showSubMenuTree = isSubMenu && shouldShowText;
+          const continuesBelow =
+            hasChildren &&
+            (isHeading ? isHeadingExpanded : false);
+          const branchIsLast = isLast && !continuesBelow;
+          const childAncestorHasMore = [
+            ...ancestorHasMore,
+            !isLast || continuesBelow,
+          ];
 
           const reactKey = `${c.key}-${isSubMenu ? "sub" : "main"}-${index}`;
 
           if (isHeading && shouldShowText) {
             return (
               <li key={reactKey}>
-                <div
-                  onClick={() =>
-                    handleItemClick(c.key, hasChildren, undefined, isSubMenu)
-                  }
-                  style={{
-                    padding: "16px 16px 8px 16px",
-                    color: "#474545",
-                    fontSize: headingFontSize,
-                    fontWeight: "600",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                    borderTop: "1px solid #e0e0e0",
-                    marginTop: 8,
-                    cursor: hasChildren ? "pointer" : "default",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    transition: "background-color 0.2s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (hasChildren) {
-                      e.currentTarget.style.backgroundColor = "#f0f0f0";
+                <div className={showSubMenuTree ? "sub-menu-tree-row" : undefined}>
+                  {showSubMenuTree &&
+                    renderSubMenuTreePrefix(ancestorHasMore, branchIsLast)}
+                  <div
+                    className={
+                      showSubMenuTree ? "sub-menu-tree-row-content" : undefined
                     }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (hasChildren) {
-                      e.currentTarget.style.backgroundColor = "transparent";
+                    onClick={() =>
+                      handleItemClick(c.key, hasChildren, undefined, isSubMenu)
                     }
-                  }}
-                >
+                    style={{
+                      padding: showSubMenuTree
+                        ? "10px 12px 10px 4px"
+                        : "16px 16px 8px 16px",
+                      color: "#474545",
+                      fontSize: headingFontSize,
+                      fontWeight: "600",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      borderTop: showSubMenuTree
+                        ? "none"
+                        : "1px solid #e0e0e0",
+                      marginTop: showSubMenuTree ? 0 : 8,
+                      cursor: hasChildren ? "pointer" : "default",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      transition: "background-color 0.2s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (hasChildren) {
+                        e.currentTarget.style.backgroundColor = "#f0f0f0";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (hasChildren) {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }
+                    }}
+                  >
                   {isSubMenu ? (
                     <span
                       style={{
@@ -383,14 +479,16 @@ const SidebarInner = ({
                       }}
                     />
                   )}
+                  </div>
                 </div>
                 {hasChildren && isHeadingExpanded && (
-                  <div style={{ padding: "8px 0" }}>
+                  <div style={{ padding: 0 }}>
                     {renderList(
                       c.children,
                       alwaysShowText,
                       isSubMenu,
                       nestLevel + 1,
+                      childAncestorHasMore,
                     )}
                   </div>
                 )}
@@ -401,51 +499,63 @@ const SidebarInner = ({
           return (
             <li key={reactKey}>
               <div
-                onMouseEnter={(e) => {
-                  if (!isActive && !isPathActive) {
-                    e.currentTarget.style.backgroundColor = isSubMenu
-                      ? "#e8f4fd"
-                      : "#d4edda";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive && !isPathActive) {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }
-                }}
-                onClick={() =>
-                  handleItemClick(c.key, hasChildren, c.path, isSubMenu)
-                }
-                title={
-                  !shouldShowText
-                    ? typeof c.label === "string"
-                      ? c.label
-                      : "Menu Item"
-                    : undefined
-                }
-                style={{
-                  padding: shouldShowText ? "8px 16px" : "8px 12px",
-                  color: isSubMenu ? "#333" : "#666",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: shouldShowText ? 12 : 0,
-                  fontSize: leafFontSize,
-                  fontWeight: "600",
-                  backgroundColor:
-                    isActive || isPathActive
-                      ? isSubMenu
-                        ? "#e8f4fd"
-                        : "#f0f0f0"
-                      : "transparent",
-                  borderLeft:
-                    isActive || isPathActive
-                      ? "3px solid #0d9489"
-                      : "3px solid transparent",
-                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                  justifyContent: shouldShowText ? "flex-start" : "center",
-                }}
+                className={showSubMenuTree ? "sub-menu-tree-row" : undefined}
               >
+                {showSubMenuTree &&
+                  renderSubMenuTreePrefix(ancestorHasMore, branchIsLast)}
+                <div
+                  className={
+                    showSubMenuTree ? "sub-menu-tree-row-content" : undefined
+                  }
+                  onMouseEnter={(e) => {
+                    if (!isActive && !isPathActive) {
+                      e.currentTarget.style.backgroundColor = isSubMenu
+                        ? "#e8f4fd"
+                        : "#d4edda";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive && !isPathActive) {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }
+                  }}
+                  onClick={() =>
+                    handleItemClick(c.key, hasChildren, c.path, isSubMenu)
+                  }
+                  title={
+                    !shouldShowText
+                      ? typeof c.label === "string"
+                        ? c.label
+                        : "Menu Item"
+                      : undefined
+                  }
+                  style={{
+                    padding: showSubMenuTree
+                      ? "8px 12px 8px 4px"
+                      : shouldShowText
+                        ? "8px 16px"
+                        : "8px 12px",
+                    color: isSubMenu ? "#333" : "#666",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: shouldShowText ? 12 : 0,
+                    fontSize: leafFontSize,
+                    fontWeight: "600",
+                    backgroundColor:
+                      isActive || isPathActive
+                        ? isSubMenu
+                          ? "#e8f4fd"
+                          : "#f0f0f0"
+                        : "transparent",
+                    borderLeft:
+                      isActive || isPathActive
+                        ? "3px solid #0d9489"
+                        : "3px solid transparent",
+                    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                    justifyContent: shouldShowText ? "flex-start" : "center",
+                  }}
+                >
                 <span
                   style={{
                     width: leafIconBoxSize,
@@ -480,6 +590,7 @@ const SidebarInner = ({
                   ) : (
                     c.label
                   )}
+                </div>
                 </div>
               </div>
             </li>
@@ -839,7 +950,7 @@ const SidebarInner = ({
               }`}
               style={{
                 height: "calc(100% - 120px)",
-                padding: "8px 0 64px 0",
+                padding: "8px 8px 64px 8px",
                 overflowY: isSecondSidebarCollapsed ? "hidden" : "auto",
               }}
             >

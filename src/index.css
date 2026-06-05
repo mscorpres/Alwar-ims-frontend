@@ -152,6 +152,13 @@ button:disabled {
   color: #fff !important;
   background-color: #0d9489 !important;
   border-color: #0d9489 !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.075rem !important;
+  border-radius: 0 !important;
+  box-shadow:
+    0 3px 1px -2px #0003,
+    0 2px 2px #00000024,
+    0 1px 5px #0000001f !important;
 }
 /* .ant-btn-default {
   background-color: #0d9489 !important;
@@ -614,6 +621,7 @@ textarea.ant-input {
   border-radius: 0 !important;
 }
 .ant-card-body {
+  padding: 16px !important;
   border-radius: 0 !important;
 }
 /* Hover: teal border only; focus/focused: border + teal ring */
@@ -645,7 +653,7 @@ textarea.ant-input {
   .ant-select-selector {
   box-shadow: 0 0 0 1px #0d9489 !important;
   outline: none !important;
-    background-color: #ffffce !important;
+  background-color: #ffffce !important;
 }
 textarea.ant-input:hover {
   border: 2px solid #0d9489 !important;
@@ -693,7 +701,7 @@ textarea.ant-input-focused {
   border: 2px solid #0d9489 !important;
   box-shadow: none !important;
   outline: none !important;
-    background-color: #ffffce !important;
+  background-color: #ffffce !important;
 }
 /* Focus-visible ring for input, select, textarea (affix wrapper); number/picker unchanged */
 .ant-input:focus-visible,
@@ -748,9 +756,17 @@ textarea.ant-input:focus-visible {
 .otp-input:focus {
   outline: 1px solid #1890ff;
 }
-/* .ant-form-item {
-  margin-bottom: 5px !important;
-} */
+
+.ant-form-horizontal .ant-form-item-row {
+  align-items: flex-start;
+}
+
+.ant-form-horizontal .ant-form-item-label {
+  padding-top: 8px; /* adjust to match input height */
+}
+.ant-form-item-explain {
+  margin-top: 4px !important;
+}
 .ant-form-item-label > label,
 ul.MuiDataGrid-menuList li.css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root,
 .css-1a5j4pb-MuiDataGrid-root,

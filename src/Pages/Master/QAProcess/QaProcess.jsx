@@ -1,4 +1,4 @@
-import { Button, Card, Col, Form, Input, Row } from "antd";
+import { Button, Form, Input } from "antd";
 import React from "react";
 import MyDataTable from "../../../Components/MyDataTable";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -14,13 +14,15 @@ function QaProcess() {
   const [loading, setLoading] = useState(false);
   const addRows = async (values) => {
     setLoading(true);
-    const response = await imsAxios.post("/qaProcessmaster/insert_Process", values);
+    const response = await imsAxios.post(
+      "/qaProcessmaster/insert_Process",
+      values,
+    );
     if (response.success) {
       showToast(response.message, "success");
       getRows();
       form.resetFields();
-    }
-    else{
+    } else {
       showToast(response.message, "error");
     }
     setLoading(false);
@@ -70,49 +72,58 @@ function QaProcess() {
   }, []);
 
   return (
-    <div style={{ height: "100%", padding:10, }}>
-      <Row gutter={10} span={24}>
-        <Col span={8}>
-          <Card>
-            <Form form={form} size="small" layout="vertical">
-              <Form.Item
-                name="processName"
-                label="Process Name"
-                rules={rules.processName}
-              >
-                <Input />
-              </Form.Item>
-              <Form.Item
-                name="processDesc"
-                label="Process Description"
-                rules={rules.processDesc}
-              >
-                <Input />
-              </Form.Item>
-            </Form>
-            <Row justify="end">
-              <Col span={4}>
-                <Button>Reset</Button>
-              </Col>
-              <Col span={4}>
-                <MyButton variant="search" type="primary" onClick={submitForm} loading={loading}>
-                  Submit
-                </MyButton>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
+    <div
+      style={{
+        height: "calc(100vh - 120px)",
+        padding: 10,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <Form
+        form={form}
+        style={{
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
+          marginBottom: 10,
+          flexShrink: 0,
+        }}
+      >
+        <Form.Item
+          name="processName"
+          label="Process Name"
+          rules={rules.processName}
+          style={{ marginBottom: 0 }}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="processDesc"
+          label="Process Description"
+          rules={rules.processDesc}
+          style={{ marginBottom: 0 }}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
+          <Button onClick={() => form.resetFields()}>Reset</Button>
+        </Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
+          <MyButton
+            variant="search"
+            type="primary"
+            onClick={submitForm}
+            loading={loading}
+          >
+            Submit
+          </MyButton>
+        </Form.Item>
+      </Form>
 
-        <Col style={{ height: "100%" }} span={16}>
-          {/* <div style={{ height: "15rem", marginTop: "20px" }}> */}
-          <MyDataTable
-            style={{ height: "82vh" }}
-            columns={columns}
-            data={rows}
-          />
-          {/* </div> */}
-        </Col>
-      </Row>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <MyDataTable columns={columns} data={rows} />
+      </div>
     </div>
   );
 }

@@ -245,7 +245,7 @@ function PIAScan() {
           padding: "0px 5px",
           height: "100%",
 
-          overflow: "hidden",
+          overflow: "auto",
         }}
       >
         <Col sm={4} xl={6} xxl={5}>

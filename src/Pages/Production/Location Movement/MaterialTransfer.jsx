@@ -15,7 +15,6 @@ const { paragraph } = Typography;
 const { TextArea } = Input;
 function MaterialTransfer({ type }) {
   const { showToast } = useToast();
-  // console.log(type)
   type == "sftorej"
     ? (document.title = "SF to REJ")
     : (document.title = "SF to SF");
@@ -25,7 +24,6 @@ function MaterialTransfer({ type }) {
   });
   const { executeFun, loading: loading1 } = useApi();
   const [asyncOptions, setAsyncOptions] = useState([]);
-  // console.log(allData)
   const [submitLoading, setSubmitLoading] = useState(false);
   const [locationData, setLocationData] = useState([]);
 
@@ -72,13 +70,11 @@ function MaterialTransfer({ type }) {
 
   const getComponent = async (e) => {
     if (e?.length > 2) {
-      // const response = await imsAxios.post("/backend/getComponentByNameAndNo", {
-      //   search: e,
-      // });
+   
       const response = await executeFun(() => getComponentOptions(e), "select");
       const { data } = response;
       let arr = [];
-      arr = data.map((d) => {
+      arr = data?.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -266,11 +262,11 @@ function MaterialTransfer({ type }) {
   return (
     <div style={{ height: "calc(100vh - 160px)", padding: 10 }}>
       <Row gutter={10}>
-        <Col span={6}>
-          <Card>
+        <Col span={12}>
+      
             <Row>
-              <Col span={24} style={{ padding: "5px" }}>
-                <span>PICK LOCATION</span>
+              <Col span={12} style={{ padding: "5px", display: "flex", gap: 5, alignItems: "center" }}>
+                <span style={{ fontWeight: "bold", minWidth: "100px" }}>Pick Location</span>
                 <MySelect
                   options={locationData}
                   placeholder="Check Location"
@@ -282,20 +278,20 @@ function MaterialTransfer({ type }) {
                   }
                 />
               </Col>
-              <Col span={24} style={{ padding: "5px" }}>
-                <TextArea disabled value={locDetail} />
+              <Col span={12} style={{ padding: "5px" }}>
+                <Input disabled value={locDetail} />
               </Col>
             </Row>
-          </Card>
+      
         </Col>
-        <Col span={18} style={{ height: "50vh" }}>
+        <Col span={24} style={{ height: "50vh" }}>
           <div
             style={{ marginTop: "10px", border: "1px solid #ccc", padding: 0 }}
           >
             <div
               style={{
                 overflowY: "auto",
-                height: "calc(100vh - 200px)",
+                height: "calc(100vh - 250px)",
               }}
             >
               <table style={{ minWidth: 1500 }}>

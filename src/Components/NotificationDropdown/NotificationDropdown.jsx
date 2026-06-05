@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { List, Empty, Progress, Typography } from "antd";
+import { useEffect, useState } from "react";
+import { List, Empty, Progress, Typography, Skeleton } from "antd";
 import { ConfigProvider } from "antd";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +20,9 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
   const [isPositioned, setIsPositioned] = useState(false);
   const [isConfirmModal, setIsConfirmModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [refreshLoading, setRefreshLoading] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
+  const [pendingSocketRefresh, setPendingSocketRefresh] = useState(false);
 
   useEffect(() => {
     if (open && anchorRef?.current) {
@@ -98,6 +101,8 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
           allNotifications.filter((n) => n?.type === "message"),
         ),
       );
+      setPendingSocketRefresh(true);
+      setListLoading(true);
       socket.emit("fetch_notifications", { source: "react" });
       showToast("Notifications deleted", "success");
       setIsConfirmModal(false);
@@ -109,6 +114,37 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
       setDeleteLoading(false);
     }
   };
+
+  const handleRefreshNotification = (silent = false) => {
+    if (!silent) setRefreshLoading(true);
+    setListLoading(true);
+    setPendingSocketRefresh(true);
+    socket.emit("fetch_notifications", { source: "react" });
+  };
+
+  const openNotificationFile = (filePath) => {
+    if (!filePath) return;
+    const fileUrl =
+      getSocketLink().split(":")[1] + "/" + filePath.substring(2);
+    window.open(
+      fileUrl,
+      "Oakter",
+      "width=250,height=250,status=0,scrollbars=0,location=0,resizable=no",
+    );
+  };
+
+  useEffect(() => {
+    if (open) {
+      handleRefreshNotification(true);
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!pendingSocketRefresh) return;
+    setPendingSocketRefresh(false);
+    setRefreshLoading(false);
+    setListLoading(false);
+  }, [notifications, pendingSocketRefresh]);
 
   if (!open) return null;
 
@@ -129,10 +165,10 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
       />
     </div>
   );
-  const handleRefreshNotification = () => {};
 
   return (
     <>
+      <style>{`@keyframes rotate-refresh { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       {/* Arrow indicator - positioned relative to button */}
       {anchorRef?.current && isPositioned && (
         <div
@@ -205,7 +241,7 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
                   marginLeft: "8px",
                   fontSize: "14px",
                   fontWeight: "normal",
-                  color: "#fff",
+                  color: "#000",
                 }}
               >
                 ({notifications.length})
@@ -234,8 +270,15 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
               </span>
             </ConfirmationNotifyModal>
             <span onClick={handleRefreshNotification}>
-              {" "}
-              <Refresh fontSize="small" />
+              <Refresh
+                fontSize="small"
+                style={{
+                  animation: refreshLoading
+                    ? "rotate-refresh 0.9s linear infinite"
+                    : "none",
+                  opacity: refreshLoading ? 0.7 : 1,
+                }}
+              />
             </span>
           </div>
         </div>
@@ -249,6 +292,13 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
           }}
         >
           <ConfigProvider renderEmpty={EmptyList}>
+            {listLoading ? (
+              <div style={{ padding: "16px" }}>
+                <Skeleton active title={{ width: "70%" }} paragraph={{ rows: 2 }} />
+                <Skeleton active title={{ width: "60%" }} paragraph={{ rows: 2 }} />
+                <Skeleton active title={{ width: "65%" }} paragraph={{ rows: 2 }} />
+              </div>
+            ) : (
             <List
               bordered={false}
               dataSource={notifications}
@@ -269,20 +319,22 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
                             percent={item.total}
                           />
                         ) : (
-                          <a
-                            href={
-                              getSocketLink().split(":")[1] +
-                              "/" +
-                              item.file?.substring(2)
-                            }
-                            download
+                          <button
+                            type="button"
+                            onClick={() => openNotificationFile(item.file)}
+                            style={{
+                              border: "none",
+                              background: "transparent",
+                              padding: 0,
+                              cursor: "pointer",
+                            }}
                           >
                             <CommonIcons
                               loading={item.loading || item.status == "pending"}
                               action="downloadButton"
                               size="small"
                             />
-                          </a>
+                          </button>
                         ))}
                       {item.type == "msg" && (
                         <span>{JSON.parse(item?.other_data)?.message}</span>
@@ -354,6 +406,7 @@ const NotificationDropdown = ({ open, onClose, notifications, anchorRef }) => {
                 </List.Item>
               )}
             />
+            )}
           </ConfigProvider>
         </div>
       </div>

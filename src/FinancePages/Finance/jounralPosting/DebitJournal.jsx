@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { v4 } from "uuid";
-import { AiOutlineMinusSquare, AiOutlinePlusSquare } from "react-icons/ai";
+import { Add, Delete } from "@mui/icons-material";
 import axios from "axios";
 import { useToast } from "../../../hooks/useToast.js";
 import NavFooter from "../../../Components/NavFooter";
@@ -163,14 +163,16 @@ export default function JournalPosting() {
   const columns = [
     {
       headerName: (
-        <span onClick={addRows}>
-          <AiOutlinePlusSquare
-            style={{
-              cursor: "pointer",
-              fontSize: "1.7rem",
-              opacity: "0.7",
-            }}
-          />
+        <span
+          onClick={addRows}
+          style={{ cursor: "pointer" }}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") addRows();
+          }}
+        >
+          <Add color="success" sx={{ fontSize: "1.7rem", opacity: 0.7 }} />
         </span>
       ),
       width: 80,
@@ -180,8 +182,9 @@ export default function JournalPosting() {
       renderCell: ({ row }) => [
         <GridActionsCellItem
           icon={
-            <AiOutlineMinusSquare
-              style={{
+            <Delete
+              color="error"
+              sx={{
                 fontSize: "1.7rem",
                 cursor: "pointer",
                 pointerEvents:

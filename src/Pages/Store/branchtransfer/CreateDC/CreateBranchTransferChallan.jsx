@@ -206,6 +206,25 @@ export default function CreateBranchTransferChallan() {
       address: validatedData?.address,
     };
   };
+  const validateDCDetails = () => {
+    if (!newGatePass.pickupbranch) {
+      return showToast("Please select Pick Up Branch", "error");
+    }
+    if (!newGatePass.dropoffbranch) {
+      return showToast("Please select Drop Off Branch", "error");
+    }
+    if (!newGatePass.vendorName || !newGatePass.vendorName?.value) {
+      return showToast("Please select a Vendor", "error");
+    }
+    if (!newGatePass.vendorBranch) {
+      return showToast("Please select a Vendor Branch", "error");
+    }
+    if (!newGatePass.billingId) {
+      return showToast("Please select a Billing Address", "error");
+    }
+    setActiveTab("2");
+  };
+
   const resetFunction = () => {
     setNewGatePass({
       passType: "",
@@ -313,6 +332,7 @@ export default function CreateBranchTransferChallan() {
                                   Pick Up Branch
                                 </span>
                               }
+                              required
                             >
                               <MySelect
                                 size="default"
@@ -338,6 +358,7 @@ export default function CreateBranchTransferChallan() {
                                   Drop Off Branch
                                 </span>
                               }
+                              required
                             >
                               <MySelect
                                 size="default"
@@ -384,6 +405,7 @@ export default function CreateBranchTransferChallan() {
                                   Vendor Name
                                 </span>
                               }
+                              required
                             >
                               <MyAsyncSelect
                                 selectLoading={loading1("select")}
@@ -417,20 +439,9 @@ export default function CreateBranchTransferChallan() {
                                   }}
                                 >
                                   Vendor Branch
-                                  {/* <span
-                        onClick={() => {
-                          newGatePass.vendorname.value
-                            ? setShowBranchModal({
-                                vendor_code: newGatePass.vendorname.value,
-                              })
-                            : showToast("Please Select a vendor first", "error");
-                        }}
-                        style={{ color: "#1890FF" }}
-                      >
-                        Add Branch
-                      </span> */}
                                 </div>
                               }
+                              required
                             >
                               <MySelect
                                 value={newGatePass.vendorBranch}
@@ -775,6 +786,7 @@ export default function CreateBranchTransferChallan() {
                                   Billing Id
                                 </span>
                               }
+                              required
                             >
                               <MySelect
                                 size="default"
@@ -873,14 +885,15 @@ export default function CreateBranchTransferChallan() {
                 </div>
                 <NavFooter
                   resetFunction={() => setShowResetConfirm(true)}
-                  submitFunction={() => setActiveTab("2")}
+                  submitFunction={validateDCDetails}
                 />
               </>
             </Tabs.TabPane>
             <Tabs.TabPane
               tab={
-                <span onClick={() => setActiveTab("2")}>Component Details</span>
+                <span>Component Details</span>
               }
+              disabled={activeTab !== "2"}
               key="2"
               style={{ height: "100%", overflowY: "hidden" }}
             >

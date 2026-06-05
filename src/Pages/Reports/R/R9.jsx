@@ -49,13 +49,14 @@ function R9() {
     }
   };
 
-  const getDataByLocation = async (e) => {
+const getDataByLocation = async (e) => {
+  try {
     const response = await imsAxios.post("/backend/fetchLocation");
     let v = [];
     response.data?.map((ad) => v.push({ text: ad.text, value: ad.id }));
     setloctionDataTo(v);
 
-    if (e.length > 3) {
+    if (e?.length > 3) {
       const response = await imsAxios.post("/backend/fetchLocation", {
         searchTerm: e,
       });
@@ -70,7 +71,16 @@ function R9() {
         setloctionDataTo(arr);
       }
     }
-  };
+  } catch (error) {
+    console.error("Error fetching location data:", error);
+    showToast(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch location data",
+      "error"
+    );
+  }
+};
 
   const getBom = async () => {
     const response = await imsAxios.post("/backend/fetchBomForProduct", {
