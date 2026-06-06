@@ -139,6 +139,14 @@ export default function MaterialInWithoutPO() {
   // console.log("fileComponents", fileComponents);
   const handleSubmit = async () => {
     const values = await form.validateFields();
+    const currency = values.currency;
+    const exchangeRate = parseFloat(form.getFieldValue("exchangeRate"));
+    if (currency !== INR_CURRENCY_ID && (isNaN(exchangeRate) || exchangeRate <= 1)) {
+      return Modal.error({
+        title: "Invalid Exchange Rate",
+        content: "Exchange rate must be greater than 1 for foreign currency.",
+      });
+    }
     Modal.confirm({
       title: "Create MIN",
       content: "Are you sure you want to create this MIN?",
@@ -181,6 +189,7 @@ export default function MaterialInWithoutPO() {
     const formData = new FormData();
     const vendorType = form.getFieldValue("vendorType");
     const values = await form.validateFields();
+    values.exchangeRate = form.getFieldValue("exchangeRate") ?? 1;
     // console.log("values", values);
     values?.fileComponents?.map((comp) => {
       formData.append("files", comp.file[0]?.originFileObj);
@@ -1471,7 +1480,7 @@ export default function MaterialInWithoutPO() {
         resetFunction={() => setShowResetConfirm(true)}
         submitFunction={handleSubmit}
         nextLabel="Submit"
-        loading={submitLoading}
+        loading={loading("submit")}
       />
       {showSuccessPage !== null && (
         <SuccessPage

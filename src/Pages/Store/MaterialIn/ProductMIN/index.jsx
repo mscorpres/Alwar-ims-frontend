@@ -224,8 +224,6 @@ export default function ProductMIN() {
     let componentData = {
       qty: [],
       rate: [],
-      currency: [],
-      exchange: [],
       hsn_code: [],
       gst_type: [],
       gstrate: [],
@@ -257,8 +255,6 @@ export default function ProductMIN() {
           ],
           qty: [...componentData.qty, row.orderqty],
           rate: [...componentData.rate, row.orderrate],
-          currency: [...componentData.currency, row.currency],
-          exchange: [...componentData.exchange, row.exchange_rate],
           hsn_code: [...componentData.hsn_code, row.hsncode ?? ""],
           gst_type: [...componentData.gst_type, getGstTypeValue(row.gsttype)],
           gstrate: [...componentData.gstrate, row.gstrate],
@@ -272,17 +268,9 @@ export default function ProductMIN() {
           ],
         };
       });
+      componentData.currency = form.getFieldValue("currency") ?? INR_CURRENCY_ID;
+      componentData.exchange = form.getFieldValue("exchangeRate") ?? 1;
       if (
-        (componentData.currency.filter((v, i, a) => v === a[0]).length ===
-          componentData.currency.length) !=
-        true
-      ) {
-        validation = false;
-        return showToast(
-          "Currency of all components should be the same",
-          "error",
-        );
-      } else if (
         (componentData.gst_type.filter((v, i, a) => v === a[0]).length ===
           componentData.gst_type.length) !=
         true
@@ -295,6 +283,14 @@ export default function ProductMIN() {
       }
       // here submit
       const vendorValues = await form.validateFields();
+      const currency = form.getFieldValue("currency") ?? INR_CURRENCY_ID;
+      const exchangeRate = parseFloat(form.getFieldValue("exchangeRate"));
+      if (currency !== INR_CURRENCY_ID && (isNaN(exchangeRate) || exchangeRate <= 1)) {
+        return Modal.error({
+          title: "Invalid Exchange Rate",
+          content: "Exchange rate must be greater than 1 for foreign currency.",
+        });
+      }
 
       Modal.confirm({
         title: "Are you sure you want to submt this MIN",
