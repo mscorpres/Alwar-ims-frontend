@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { getNetworkLogs, truncate } from "../../utils/networkLogger";
 import html2canvas from "html2canvas";
 import { getDiagnostics } from "../../utils/diagnostics";
 import {
@@ -6,6 +7,7 @@ import {
   Card,
   Col,
   Drawer,
+  Empty,
   Modal,
   Row,
   Typography,
@@ -27,6 +29,7 @@ import {
   EyeInvisibleOutlined,
   UndoOutlined,
   RedoOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { imsAxios } from "../../axiosInterceptor";
@@ -35,11 +38,102 @@ import { useToast } from "../../hooks/useToast";
 const { TextArea } = Input;
 const axiosLink = "https://support.mscorpres.com";
 
+// ── Log panel helpers ─────────────────────────────────────────────────────────
+const METHOD_STYLE = {
+  GET:    { bg: "#fff7e6", color: "#d46b08" },
+  POST:   { bg: "#f6ffed", color: "#389e0d" },
+  PATCH:  { bg: "#e6f4ff", color: "#0958d9" },
+  PUT:    { bg: "#f9f0ff", color: "#531dab" },
+  DELETE: { bg: "#fff1f0", color: "#cf1322" },
+};
+
+const formatJSON = (val) => {
+  if (val == null) return null;
+  if (typeof val === "object") {
+    try { return JSON.stringify(val, null, 2); } catch {}
+  }
+  const s = String(val);
+  try { return JSON.stringify(JSON.parse(s), null, 2); }
+  catch { return s; }
+};
+
+const buildCurl = (entry) => {
+  const method = entry.method || "GET";
+  const url = entry.url || "";
+  const headers = entry.headers || {};
+  const body = entry.requestBody;
+
+  const esc = (s) => String(s).replace(/'/g, "'\\''");
+  const parts = [`curl -X ${method} '${esc(url)}'`];
+
+  Object.entries(headers).forEach(([k, v]) => {
+    parts.push(`-H '${k}: ${esc(v)}'`);
+  });
+
+  if (body && body !== "[FormData]") {
+    let s;
+    if (typeof body === "string") {
+      try { s = JSON.stringify(JSON.parse(body)); } catch { s = body; }
+    } else {
+      s = JSON.stringify(body);
+    }
+    parts.push(`--data-raw '${esc(s)}'`);
+  }
+
+  return parts.join(" \\\n  ");
+};
+
+const truncUrl = (url, max = 50) =>
+  url && url.length > max ? url.slice(0, max) + "…" : url || "";
+
+const copyToClipboard = (text) => {
+  if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+  // Fallback for non-HTTPS / older browsers
+  const el = document.createElement("textarea");
+  el.value = text;
+  el.style.cssText = "position:fixed;top:-9999px;left:-9999px";
+  document.body.appendChild(el);
+  el.select();
+  try { document.execCommand("copy"); } catch {}
+  document.body.removeChild(el);
+  return Promise.resolve();
+};
+
 export default function TicketsModal({ open, handleClose }) {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState([]);
-  const [activeMenu, setActiveMenu] = useState("create"); // 'create' or 'fetch'
+  const [activeMenu, setActiveMenu] = useState("create");
+  const [logs, setLogs] = useState([]);
+  const [logFilter, setLogFilter] = useState("all");
+  const [methodFilter, setMethodFilter] = useState("all");
+  const [expandedId, setExpandedId] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
+  const [logUnlockExpiry, setLogUnlockExpiry] = useState(0);
+  const [pinInput, setPinInput] = useState("");
+  const [pinError, setPinError] = useState(false);
+  const [pinCountdown, setPinCountdown] = useState("");
+
+  const LOG_PIN = "@201301#";
+
+  const loadLogs = async () => {
+    const data = await getNetworkLogs();
+    setLogs(data);
+  };
+
+  const handlePinSubmit = async () => {
+    if (pinInput === LOG_PIN) {
+      const expiry = Date.now() + 3 * 60 * 1000;
+      setLogUnlockExpiry(expiry);
+      setPinInput("");
+      setPinError(false);
+      const data = await getNetworkLogs();
+      setLogs(data);
+    } else {
+      setPinError(true);
+      setPinInput("");
+    }
+  };
   const { user } = useSelector((state) => state.login);
 
   // Masters data from API
@@ -533,10 +627,30 @@ export default function TicketsModal({ open, handleClose }) {
     }
   }, [open]);
 
+  // Countdown ticker — re-renders every second while session is active
+  useEffect(() => {
+    if (!logUnlockExpiry) return;
+    const tick = () => {
+      const rem = logUnlockExpiry - Date.now();
+      if (rem <= 0) {
+        setLogUnlockExpiry(0);
+        setPinCountdown("");
+        setLogs([]);
+        return;
+      }
+      const m = Math.floor(rem / 60000);
+      const s = Math.floor((rem % 60000) / 1000);
+      setPinCountdown(`${m}:${String(s).padStart(2, "0")}`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [logUnlockExpiry]);
+
   return (
     <>
       <Drawer
-        title="Your Tickets"
+        title="Support Console"
         placement="right"
         onClose={handleClose}
         open={open}
@@ -607,7 +721,29 @@ export default function TicketsModal({ open, handleClose }) {
               <UnorderedListOutlined style={{ fontSize: 18 }} />
             </div>
 
-            <div style={{ marginTop: "auto", paddingBottom: 12 }}>
+            <div style={{ marginTop: "auto", paddingBottom: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+              <div
+                onClick={async () => {
+                  setActiveMenu("logs");
+                  await loadLogs();
+                }}
+                style={{
+                  width: 36,
+                  height: 36,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  backgroundColor:
+                    activeMenu === "logs" ? customColor.newBgColor : "transparent",
+                  color: activeMenu === "logs" ? "#fff" : "#666",
+                  transition: "all 0.2s ease",
+                }}
+                title="Logs"
+              >
+                <FileTextOutlined style={{ fontSize: 18 }} />
+              </div>
               <div
                 onClick={() => setActiveMenu("feedback")}
                 style={{
@@ -1076,6 +1212,312 @@ export default function TicketsModal({ open, handleClose }) {
                     Send
                   </Button>
                 </div>
+              </div>
+            )}
+
+            {/* Logs */}
+            {activeMenu === "logs" && (
+              <div>
+                {logUnlockExpiry <= Date.now() ? (
+                  /* ── PIN lock screen ── */
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "56px 24px" }}>
+                    <div style={{
+                      width: 64, height: 64, borderRadius: "50%",
+                      background: "#f5f5f5", border: "2px solid #e8e8e8",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 28, marginBottom: 20,
+                    }}>
+                      🔒
+                    </div>
+                    <Typography.Title level={5} style={{ margin: "0 0 4px" }}>
+                      Network Logs
+                    </Typography.Title>
+                    <Typography.Text type="secondary" style={{ fontSize: 13, marginBottom: 28 }}>
+                      Enter PIN to start a 3-minute session
+                    </Typography.Text>
+                    <Input.Password
+                      value={pinInput}
+                      onChange={(e) => { setPinInput(e.target.value); setPinError(false); }}
+                      onPressEnter={handlePinSubmit}
+                      placeholder="Enter PIN"
+                      status={pinError ? "error" : ""}
+                      style={{ width: 240, marginBottom: pinError ? 6 : 16 }}
+                      autoFocus
+                    />
+                    {pinError && (
+                      <Typography.Text type="danger" style={{ fontSize: 12, marginBottom: 14 }}>
+                        Incorrect PIN. Try again.
+                      </Typography.Text>
+                    )}
+                    <Button
+                      type="primary"
+                      onClick={handlePinSubmit}
+                      style={{ width: 240, background: customColor.newBgColor, borderColor: customColor.newBgColor }}
+                    >
+                      Unlock
+                    </Button>
+                  </div>
+                ) : (
+                  /* ── Unlocked logs view ── */
+                  <>
+                    {/* Header */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <Typography.Title level={4} style={{ margin: 0 }}>Network Logs</Typography.Title>
+                        <span style={{
+                          fontSize: 11, padding: "2px 8px", borderRadius: 10,
+                          background: "#fff7e6", color: "#d46b08", fontWeight: 600,
+                        }}>
+                          🔓 {pinCountdown}
+                        </span>
+                      </div>
+                      <Space size={8}>
+                        <Typography.Text type="secondary" style={{ fontSize: 12 }}>last 15 min</Typography.Text>
+                        <Button size="small" onClick={loadLogs}>Refresh</Button>
+                        <Button
+                          size="small"
+                          danger
+                          onClick={() => { setLogUnlockExpiry(0); setLogs([]); }}
+                        >
+                          Lock
+                        </Button>
+                      </Space>
+                    </div>
+
+                    {/* Type filter row */}
+                    <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+                      {[["all", "All"], ["xhr", "XHR / Fetch"], ["ws", "WebSocket"]].map(([key, label]) => (
+                        <button key={key} type="button"
+                          onClick={() => setLogFilter(key)}
+                          style={{
+                            padding: "3px 12px", borderRadius: 12, border: "1px solid",
+                            borderColor: logFilter === key ? customColor.newBgColor : "#d9d9d9",
+                            background: logFilter === key ? customColor.newBgColor : "transparent",
+                            color: logFilter === key ? "#fff" : "#666",
+                            cursor: "pointer", fontSize: 12, fontWeight: 500,
+                          }}
+                        >{label}</button>
+                      ))}
+                    </div>
+
+                    {/* Method filter row (hidden for WS-only) */}
+                    {logFilter !== "ws" && (
+                      <div style={{ display: "flex", gap: 5, marginBottom: 14, flexWrap: "wrap" }}>
+                        {[["all", "All Methods", null], ["GET", "GET", METHOD_STYLE.GET], ["POST", "POST", METHOD_STYLE.POST], ["PATCH", "PATCH", METHOD_STYLE.PATCH], ["PUT", "PUT", METHOD_STYLE.PUT], ["DELETE", "DELETE", METHOD_STYLE.DELETE]].map(([key, label, ms]) => {
+                          const active = methodFilter === key;
+                          return (
+                            <button key={key} type="button"
+                              onClick={() => setMethodFilter(key)}
+                              style={{
+                                padding: "2px 10px", borderRadius: 4, border: "1px solid",
+                                borderColor: active ? (ms?.color || customColor.newBgColor) : "#e8e8e8",
+                                background: active ? (ms?.bg || "#f0f7ff") : "transparent",
+                                color: active ? (ms?.color || customColor.newBgColor) : "#8c8c8c",
+                                cursor: "pointer", fontSize: 11,
+                                fontWeight: active ? 700 : 400,
+                                fontFamily: ms ? "monospace" : "inherit",
+                              }}
+                            >{label}</button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* Entries */}
+                    {(() => {
+                      const filtered = logs
+                        .filter((l) =>
+                          logFilter === "all" ? true
+                          : logFilter === "xhr" ? l.type === "xhr" || l.type === "fetch"
+                          : l.type === "ws"
+                        )
+                        .filter((l) =>
+                          methodFilter === "all" ? true : l.method === methodFilter
+                        )
+                        .slice()
+                        .reverse();
+
+                      if (filtered.length === 0)
+                        return (
+                          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}
+                            description="No matching logs"
+                            style={{ margin: "36px 0" }}
+                          />
+                        );
+
+                      return (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                          {filtered.map((entry) => {
+                            const isXhr = entry.type === "xhr" || entry.type === "fetch";
+                            const isExpanded = expandedId === entry.id;
+                            const mStyle = METHOD_STYLE[entry.method] || { bg: "#f5f5f5", color: "#595959" };
+                            const statusColor =
+                              !entry.status || entry.status === 0 ? "#8c8c8c"
+                              : entry.status < 300 ? "#389e0d"
+                              : entry.status < 400 ? "#0958d9"
+                              : entry.status < 500 ? "#d46b08"
+                              : "#cf1322";
+                            const wsColor = {
+                              connected: "#389e0d", closed: "#8c8c8c", error: "#cf1322",
+                              send: "#0958d9", receive: "#531dab",
+                            }[entry.event] || "#8c8c8c";
+                            const accentColor = isXhr ? mStyle.color : wsColor;
+
+                            return (
+                              <div key={entry.id} style={{
+                                border: "1px solid",
+                                borderColor: isExpanded ? accentColor : "#e8e8e8",
+                                borderRadius: 6, overflow: "hidden", background: "#fff",
+                                boxShadow: isExpanded ? `0 0 0 2px ${accentColor}22` : "none",
+                                transition: "border-color 0.15s, box-shadow 0.15s",
+                              }}>
+                                {/* Summary row */}
+                                <div
+                                  onClick={() => setExpandedId(isExpanded ? null : entry.id)}
+                                  style={{
+                                    display: "flex", alignItems: "center", gap: 8,
+                                    padding: "8px 12px", cursor: "pointer",
+                                    background: isExpanded ? `${accentColor}08` : "#fff",
+                                    borderLeft: `4px solid ${accentColor}`,
+                                  }}
+                                >
+                                  {/* Method badge — fixed 58px so all rows align */}
+                                  {isXhr ? (
+                                    <span style={{
+                                      background: mStyle.bg, color: mStyle.color,
+                                      padding: "2px 0", borderRadius: 4,
+                                      fontWeight: 700, fontSize: 11, letterSpacing: 0.5,
+                                      flexShrink: 0, fontFamily: "monospace",
+                                      width: 58, textAlign: "center", display: "inline-block",
+                                    }}>{entry.method || "XHR"}</span>
+                                  ) : (
+                                    <span style={{
+                                      background: `${wsColor}18`, color: wsColor,
+                                      padding: "2px 7px", borderRadius: 4,
+                                      fontWeight: 700, fontSize: 11, letterSpacing: 0.5,
+                                      flexShrink: 0, fontFamily: "monospace",
+                                    }}>WS:{entry.event}</span>
+                                  )}
+
+                                  {/* URL — hard-truncated at 65 chars, full URL in title */}
+                                  <span
+                                    title={entry.url}
+                                    style={{
+                                      flex: 1, fontSize: 12, color: "#1f2937",
+                                      whiteSpace: "nowrap", minWidth: 0,
+                                      fontFamily: "monospace",
+                                    }}
+                                  >
+                                    {truncUrl(entry.url)}
+                                  </span>
+
+                                  {/* Status — fixed 38px right-aligned */}
+                                  <span style={{
+                                    color: statusColor, fontWeight: 700, fontSize: 12,
+                                    flexShrink: 0, fontFamily: "monospace",
+                                    width: 38, textAlign: "right",
+                                  }}>
+                                    {isXhr && entry.status ? entry.status : ""}
+                                  </span>
+
+                                  {/* Duration — fixed 62px right-aligned */}
+                                  <span style={{
+                                    color: "#9ca3af", fontSize: 11, flexShrink: 0,
+                                    width: 62, textAlign: "right",
+                                  }}>
+                                    {entry.duration || ""}
+                                  </span>
+
+                                  {/* Time — fixed 80px right-aligned */}
+                                  <span style={{
+                                    color: "#d1d5db", fontSize: 11, flexShrink: 0,
+                                    width: 80, textAlign: "right",
+                                  }}>
+                                    {entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : ""}
+                                  </span>
+
+                                  {/* Chevron */}
+                                  <span style={{
+                                    color: "#9ca3af", fontSize: 10, flexShrink: 0,
+                                    display: "inline-block", transition: "transform 0.15s",
+                                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                                  }}>▼</span>
+                                </div>
+
+                                {/* Expanded body */}
+                                {isExpanded && (
+                                  <div style={{ borderTop: "1px solid #f0f0f0", padding: "12px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
+
+                                    {/* Copy cURL */}
+                                    {isXhr && (
+                                      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                                        <button type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            copyToClipboard(buildCurl(entry))
+                                              .then(() => {
+                                                setCopiedId(entry.id);
+                                                setTimeout(() => setCopiedId(null), 1800);
+                                              })
+                                              .catch(() => {});
+                                          }}
+                                          style={{
+                                            padding: "3px 12px", borderRadius: 4,
+                                            border: `1px solid ${copiedId === entry.id ? "#389e0d" : "#d9d9d9"}`,
+                                            background: copiedId === entry.id ? "#f6ffed" : "#fafafa",
+                                            color: copiedId === entry.id ? "#389e0d" : "#595959",
+                                            cursor: "pointer", fontSize: 11, fontWeight: 500,
+                                            transition: "all 0.2s",
+                                          }}
+                                        >
+                                          {copiedId === entry.id ? "✓ Copied!" : "Copy cURL"}
+                                        </button>
+                                      </div>
+                                    )}
+
+                                    {/* Request body */}
+                                    {entry.requestBody ? (
+                                      <div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", letterSpacing: 1, marginBottom: 4 }}>REQUEST BODY</div>
+                                        <pre style={{ margin: 0, padding: "8px 10px", background: "#fafafa", border: "1px solid #f0f0f0", borderRadius: 4, fontSize: 11, whiteSpace: "pre-wrap", wordBreak: "break-all", maxHeight: 200, overflowY: "auto", color: "#1f2937", lineHeight: 1.5 }}>
+                                          {formatJSON(entry.requestBody)}
+                                        </pre>
+                                      </div>
+                                    ) : null}
+
+                                    {/* Response / data */}
+                                    {(entry.response != null || entry.responseBody != null || entry.data != null) ? (
+                                      <div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: "#9ca3af", letterSpacing: 1, marginBottom: 4 }}>
+                                          {isXhr ? "RESPONSE BODY" : "DATA"}
+                                        </div>
+                                        <pre style={{ margin: 0, padding: "8px 10px", background: "#fafafa", border: "1px solid #f0f0f0", borderRadius: 4, fontSize: 11, whiteSpace: "pre-wrap", wordBreak: "break-all", maxHeight: 260, overflowY: "auto", color: "#1f2937", lineHeight: 1.5 }}>
+                                          {formatJSON(entry.response ?? entry.responseBody ?? entry.data)}
+                                        </pre>
+                                      </div>
+                                    ) : null}
+
+                                    {/* Headers (collapsible) */}
+                                    {entry.headers && Object.keys(entry.headers).length > 0 && (
+                                      <details style={{ fontSize: 11 }}>
+                                        <summary style={{ cursor: "pointer", color: "#6b7280", userSelect: "none", marginBottom: 4 }}>
+                                          Request Headers ({Object.keys(entry.headers).length})
+                                        </summary>
+                                        <pre style={{ margin: 0, padding: "8px 10px", background: "#fafafa", border: "1px solid #f0f0f0", borderRadius: 4, fontSize: 11, whiteSpace: "pre-wrap", wordBreak: "break-all", maxHeight: 160, overflowY: "auto", color: "#374151", lineHeight: 1.6 }}>
+                                          {Object.entries(entry.headers).map(([k, v]) => `${k}: ${v}`).join("\n")}
+                                        </pre>
+                                      </details>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
               </div>
             )}
 

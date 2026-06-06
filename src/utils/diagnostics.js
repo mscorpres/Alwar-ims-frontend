@@ -1,3 +1,4 @@
+import { addNetworkLog, truncate } from './networkLogger';
 
 const MAX_CONSOLE = 10;
 const MAX_NETWORK = 10;
@@ -8,12 +9,12 @@ const _store = {
   wsSockets: new Map(),
 };
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 function _serialize(a) {
   try {
-    return typeof a === "object" && a !== null ? JSON.stringify(a) : String(a);
+    return typeof a === 'object' && a !== null ? JSON.stringify(a) : String(a);
   } catch {
-    return "[unserializable]";
+    return '[unserializable]';
   }
 }
 
@@ -23,11 +24,11 @@ function _pushNetwork(entry) {
 }
 
 const _origConsole = {};
-["error", "warn", "info", "log"].forEach((level) => {
+['error', 'warn', 'info', 'log'].forEach((level) => {
   _origConsole[level] = console[level].bind(console);
   console[level] = (...args) => {
     try {
-      const message = args.map(_serialize).join(" ");
+      const message = args.map(_serialize).join(' ');
       const last = _store.consoleLogs[_store.consoleLogs.length - 1];
       if (last && last.level === level && last.message === message) {
         last.count = (last.count || 1) + 1;
@@ -41,31 +42,57 @@ const _origConsole = {};
   };
 });
 
-// ── Fetch interceptor ────────────────────────────────────────────────────────
+// ── Fetch interceptor ─────────────────────────────────────────────────────────
 const _origFetch = window.fetch;
 window.fetch = async function patchedFetch(input, init) {
   const url =
-    typeof input === "string"
+    typeof input === 'string'
       ? input
       : input instanceof Request
       ? input.url
       : String(input);
   const method = (
-    init?.method ||
-    (input instanceof Request ? input.method : "GET")
+    init?.method || (input instanceof Request ? input.method : 'GET')
   ).toUpperCase();
+
+  let requestBody = null;
+  try {
+    if (init?.body) {
+      requestBody =
+        init.body instanceof FormData ? '[FormData]' : truncate(init.body);
+    }
+  } catch {}
+
   const t0 = Date.now();
-  const entry = { type: "fetch", method, url, time: new Date().toISOString() };
+  const entry = { type: 'fetch', method, url, time: new Date().toISOString() };
   try {
     const res = await _origFetch.call(this, input, init);
     entry.status = res.status;
     entry.duration = `${Date.now() - t0}ms`;
-    _pushNetwork(entry);
+    _pushNetwork({ ...entry });
+
+    // Clone to read body without consuming the original response stream
+    res
+      .clone()
+      .text()
+      .then((text) => {
+        addNetworkLog({
+          ...entry,
+          requestBody,
+          responseBody: truncate(text),
+          timestamp: Date.now(),
+        });
+      })
+      .catch(() => {
+        addNetworkLog({ ...entry, requestBody, timestamp: Date.now() });
+      });
+
     return res;
   } catch (err) {
     entry.error = err.message;
     entry.duration = `${Date.now() - t0}ms`;
-    _pushNetwork(entry);
+    _pushNetwork({ ...entry });
+    addNetworkLog({ ...entry, requestBody, timestamp: Date.now() });
     throw err;
   }
 };
@@ -75,6 +102,7 @@ const _OrigXHR = window.XMLHttpRequest;
 function PatchedXHR() {
   const xhr = new _OrigXHR();
   const meta = {};
+  const _capturedHeaders = {};
 
   const _open = xhr.open.bind(xhr);
   xhr.open = function (method, url, ...rest) {
@@ -85,25 +113,49 @@ function PatchedXHR() {
     return _open(method, url, ...rest);
   };
 
-  xhr.addEventListener("loadend", () => {
+  // Capture request headers
+  const _setRequestHeader = xhr.setRequestHeader.bind(xhr);
+  xhr.setRequestHeader = function (name, value) {
+    _capturedHeaders[name] = value;
+    return _setRequestHeader(name, value);
+  };
+
+  // Capture request body
+  const _send = xhr.send.bind(xhr);
+  xhr.send = function (body) {
+    try {
+      meta.requestBody =
+        body == null
+          ? null
+          : body instanceof FormData
+          ? '[FormData]'
+          : truncate(body);
+    } catch {}
+    return _send.apply(this, arguments);
+  };
+
+  xhr.addEventListener('loadend', () => {
     try {
       let response = null;
       try {
         response = JSON.parse(xhr.responseText);
       } catch {
-        response = xhr.responseText
-          ? xhr.responseText.slice(0, 500)
-          : null;
+        response = xhr.responseText ? xhr.responseText.slice(0, 500) : null;
       }
-      _pushNetwork({
-        type: "xhr",
+      const entry = {
+        type: 'xhr',
         method: meta.method,
         url: meta.url,
         status: xhr.status,
         duration: `${Date.now() - (meta.t0 ?? Date.now())}ms`,
         time: meta.time,
+        headers: { ..._capturedHeaders },
+        requestBody: meta.requestBody ?? null,
         response,
-      });
+        timestamp: Date.now(),
+      };
+      _pushNetwork(entry);
+      addNetworkLog(entry);
     } catch (_) {}
   });
 
@@ -112,17 +164,17 @@ function PatchedXHR() {
 PatchedXHR.prototype = _OrigXHR.prototype;
 window.XMLHttpRequest = PatchedXHR;
 
-// ── WebSocket interceptor ────────────────────────────────────────────────────
+// ── WebSocket interceptor ─────────────────────────────────────────────────────
 const _OrigWS = window.WebSocket;
 class PatchedWebSocket extends _OrigWS {
   constructor(url, protocols) {
     super(url, protocols);
-    const urlStr = String(typeof url === "string" ? url : url);
+    const urlStr = String(url);
     const prev = _store.wsSockets.get(urlStr);
     const entry = {
-      type: "websocket",
+      type: 'websocket',
       url: urlStr,
-      status: "connecting",
+      status: 'connecting',
       attempts: (prev?.attempts ?? 0) + 1,
       firstSeen: prev?.firstSeen ?? new Date().toISOString(),
       lastAttempt: new Date().toISOString(),
@@ -130,34 +182,69 @@ class PatchedWebSocket extends _OrigWS {
     };
     _store.wsSockets.set(urlStr, entry);
 
-    this.addEventListener("open", () => {
-      entry.status = "connected";
+    this.addEventListener('open', () => {
+      entry.status = 'connected';
       entry.connectedAt = new Date().toISOString();
       entry.connectDuration = `${Date.now() - entry.t0}ms`;
+      addNetworkLog({ type: 'ws', event: 'connected', url: urlStr, timestamp: Date.now() });
     });
 
-    this.addEventListener("error", () => {
-      entry.status = "error";
+    // Incoming messages
+    this.addEventListener('message', (e) => {
+      addNetworkLog({
+        type: 'ws',
+        event: 'receive',
+        url: urlStr,
+        data: truncate(typeof e.data === 'string' ? e.data : '[binary]'),
+        timestamp: Date.now(),
+      });
+    });
+
+    this.addEventListener('error', () => {
+      entry.status = 'error';
       entry.lastError = new Date().toISOString();
+      addNetworkLog({ type: 'ws', event: 'error', url: urlStr, timestamp: Date.now() });
     });
 
-    this.addEventListener("close", (e) => {
-      entry.status = "closed";
+    this.addEventListener('close', (e) => {
+      entry.status = 'closed';
       entry.closeCode = e.code;
       entry.closeReason = e.reason || null;
+      addNetworkLog({
+        type: 'ws',
+        event: 'closed',
+        url: urlStr,
+        data: e.reason || null,
+        duration: `${Date.now() - entry.t0}ms`,
+        timestamp: Date.now(),
+      });
     });
+  }
+
+  // Outgoing messages
+  send(data) {
+    try {
+      addNetworkLog({
+        type: 'ws',
+        event: 'send',
+        url: this.url,
+        data: truncate(typeof data === 'string' ? data : '[binary]'),
+        timestamp: Date.now(),
+      });
+    } catch {}
+    super.send(data);
   }
 }
 window.WebSocket = PatchedWebSocket;
 
-// ── Public API ───────────────────────────────────────────────────────────────
+// ── Public API ────────────────────────────────────────────────────────────────
 export function getDiagnostics() {
   const ls = {};
-  const REDACT_LS = ["token", "password", "secret"];
+  const REDACT_LS = ['token', 'password', 'secret'];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (REDACT_LS.some((r) => key.toLowerCase().includes(r))) {
-      ls[key] = "[redacted]";
+      ls[key] = '[redacted]';
       continue;
     }
     try {
@@ -167,7 +254,6 @@ export function getDiagnostics() {
     }
   }
 
-  // SessionStorage
   const ss = {};
   for (let i = 0; i < sessionStorage.length; i++) {
     const key = sessionStorage.key(i);
@@ -178,10 +264,9 @@ export function getDiagnostics() {
     }
   }
 
-  // Cookies
   const cookies = {};
-  document.cookie.split(";").forEach((c) => {
-    const idx = c.indexOf("=");
+  document.cookie.split(';').forEach((c) => {
+    const idx = c.indexOf('=');
     if (idx > 0) cookies[c.slice(0, idx).trim()] = c.slice(idx + 1).trim();
   });
 
