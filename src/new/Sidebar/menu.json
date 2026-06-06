@@ -836,31 +836,35 @@
                 "children": [
                   {
                     "key": "B32",
-                    "label": "RM MATLS IN",
+                    "label": "MIN IN (Regular)",
                     "icon": "InputIcon",
                     "path": "/warehouse/material-in",
-                    "isShown": true
+                    "isShown": true,
+                    "aliases":["Material Inward", "Material Inward Register", "MIN without PO"]
                   },
                   {
                     "key": "B321",
-                    "label": "MIN PO",
+                    "label": "MIN IN (Purchase Order)",
                     "icon": "InputIcon",
                     "path": "/warehouse/material-in-po",
-                    "isShown": true
+                    "isShown": true,
+                    "aliases":["MIN with PO", "Material Inward Register", "Material Inward PO Register"]
                   },
                   {
                     "key": "B322",
-                    "label": "MIN FG/SFG",
+                    "label": "MIN IN FG/SFG",
                     "icon": "InputIcon",
                     "path": "/warehouse/material-in-product",
-                    "isShown": true
+                    "isShown": true,
+                    "aliases":["MIN FG", "MIN SFG"]
                   },
                   {
                     "key": "B323",
-                    "label": "Import MATLS IN",
+                    "label": "MIN IN (Import)",
                     "icon": "InputIcon",
                     "path": "/warehouse/export-material-in-po",
-                    "isShown": true
+                    "isShown": true,  
+                    "aliases":["MIN Import", "Material Inward Import"]
                   }
                 ]
               },
@@ -1458,24 +1462,27 @@
                 "children": [
                   {
                     "key": "B411",
-                    "label": "MIN Register",
+                    "label": "MIN Inward - Register",
                     "icon": "ListIcon",
                     "path": "/reports/transaction-in",
-                    "isShown": true
+                    "isShown": true,
+                    "aliases":["MIN Inward Report"]
                   },
                   {
                     "key": "B412",
-                    "label": "RM Issue Register",
+                    "label": "RM Outward - Register",
                     "icon": "OutputIcon",
                     "path": "/reports/transaction-out",
-                    "isShown": true
+                    "isShown": true,
+                    "aliases":["RM Outward Report"]
                   },
                      {
                     "key": "B412432",
                     "label": "View Document",
                     "icon": "OutputIcon",
                     "path": "/reports/upload-document/view",
-                    "isShown": true
+                    "isShown": true,
+                    "aliases":["MIN Attachments", "Attachment View", "Uploaded View"]
                   }, {
                     "key": "B412433",
                     "label": "Consumption Report",

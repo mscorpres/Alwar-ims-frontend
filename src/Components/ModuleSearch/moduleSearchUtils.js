@@ -1,6 +1,9 @@
 const normalizeSearchToken = (value = "") =>
   String(value).toLowerCase().trim().replace(/\s+/g, " ");
 
+export const extractQueryWords = (queryRaw) =>
+  normalizeSearchToken(queryRaw).split(/\s+/).filter(Boolean);
+
 export const buildIndexedModuleOptions = (
   items,
   parentIndex = [],
@@ -21,14 +24,17 @@ export const buildIndexedModuleOptions = (
 
     if (item?.path) {
       const breadcrumb = currentAncestors.join(" > ");
+      const aliases = Array.isArray(item.aliases) ? item.aliases : [];
       result.push({
         key: currentIndexText,
         value: item.path,
         label: currentLabel,
         breadcrumb,
+        aliases,
         searchIndex: currentIndexText,
         searchLabel: normalizeSearchToken(currentLabel),
         searchBreadcrumb: normalizeSearchToken(breadcrumb),
+        searchAliases: aliases.map(normalizeSearchToken),
       });
     }
 
@@ -47,20 +53,19 @@ export const buildIndexedModuleOptions = (
 };
 
 export const filterModuleOptions = (options, queryRaw) => {
-  const query = normalizeSearchToken(queryRaw);
-  if (!query) return [];
-
-  const digitsOnlyQuery = query.replace(/\D/g, "");
+  const words = extractQueryWords(queryRaw);
+  if (!words.length) return [];
 
   return options
-    .filter((option) => {
-      const byLabel = option.searchLabel.includes(query);
-      const byBreadcrumb = option.searchBreadcrumb.includes(query);
-      const byPath = option.value?.toLowerCase().includes(query);
-      const byIndex =
-        digitsOnlyQuery.length > 0 &&
-        option.searchIndex.includes(digitsOnlyQuery);
-      return byLabel || byBreadcrumb || byPath || byIndex;
-    })
+    .filter((option) =>
+      words.every((word) => {
+        const byLabel = option.searchLabel.includes(word);
+        const byBreadcrumb = option.searchBreadcrumb.includes(word);
+        const byPath = option.value?.toLowerCase().includes(word);
+        const byAlias = option.searchAliases?.some((a) => a.includes(word));
+        const byIndex = /^\d+$/.test(word) && option.searchIndex.includes(word);
+        return byLabel || byBreadcrumb || byPath || byAlias || byIndex;
+      }),
+    )
     .slice(0, 10);
 };

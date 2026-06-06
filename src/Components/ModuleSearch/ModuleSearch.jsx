@@ -3,7 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { Input, Empty } from "antd";
 import { SearchOutlined, CloseCircleFilled } from "@ant-design/icons";
 import menuConfig from "../../new/Sidebar/menu.json";
-import { buildIndexedModuleOptions, filterModuleOptions } from "./moduleSearchUtils";
+import { buildIndexedModuleOptions, filterModuleOptions, extractQueryWords } from "./moduleSearchUtils";
+
+const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const highlightWords = (text, words) => {
+  if (!words.length || !text) return text;
+  const parts = text.split(
+    new RegExp(`(${words.map(escapeRegex).join("|")})`, "gi"),
+  );
+  return parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <mark key={i} style={{ background: "#fef08a", borderRadius: 2, padding: "0 1px" }}>
+        {part}
+      </mark>
+    ) : (
+      part
+    ),
+  );
+};
 
 const PALETTE_STYLES = `
   .cmd-palette-overlay {
@@ -57,6 +75,8 @@ export default function ModuleSearch() {
     () => filterModuleOptions(allModules, query),
     [allModules, query],
   );
+
+  const queryWords = useMemo(() => extractQueryWords(query), [query]);
 
   const open = () => {
     setQuery("");
@@ -276,7 +296,7 @@ export default function ModuleSearch() {
                                   lineHeight: 1.1,
                                 }}
                               >
-                                {item.label}
+                                {highlightWords(item.label, queryWords)}
                               </div>
                               <div
                                 style={{
@@ -285,8 +305,20 @@ export default function ModuleSearch() {
                                   fontSize: 13,
                                 }}
                               >
-                                {item.breadcrumb}
+                                {highlightWords(item.breadcrumb, queryWords)}
                               </div>
+                              {(() => {
+                                const matched = item.aliases?.find((a, i) =>
+                                  queryWords.some((w) =>
+                                    item.searchAliases?.[i]?.includes(w),
+                                  ),
+                                );
+                                return matched ? (
+                                  <div style={{ marginTop: 2, color: "#9ca3af", fontSize: 12 }}>
+                                    Also: {highlightWords(matched, queryWords)}
+                                  </div>
+                                ) : null;
+                              })()}
                               <div
                                 style={{
                                   marginTop: 2,
@@ -331,6 +363,7 @@ export default function ModuleSearch() {
                 borderTop: "1px solid #e5e7eb",
                 padding: "8px 14px",
                 display: "flex",
+                alignItems: "center",
                 gap: 16,
                 color: "#6b7280",
                 fontSize: 13,
@@ -339,6 +372,11 @@ export default function ModuleSearch() {
               <span>↑ ↓ Navigate</span>
               <span>Enter Select</span>
               <span>Esc Close</span>
+              <span style={{ marginLeft: "auto" }}>
+                {query.trim()
+                  ? <>search match(s) <strong style={{ color: "#1f2937" }}>{results.length}</strong></>
+                  : null}
+              </span>
             </div>
           </div>
         </div>
