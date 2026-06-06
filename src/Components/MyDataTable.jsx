@@ -100,43 +100,6 @@ const StyledPagination = styled(Pagination)(({ theme }) => ({
   },
 }));
 
-const CustomPagination = () => {
-  const apiRef = useGridApiContext();
-  const page = useGridSelector(apiRef, gridPageSelector);
-  const pageCount = useGridSelector(apiRef, gridPageCountSelector);
-  const rowCount = apiRef.current.getAllRowIds().length;
-
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        // padding: (theme) => theme.spacing(1.5, 2),
-        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
-        // borderTop: (theme) => `1px solid ${alpha(theme.palette.divider, 0.1)}`,
-      }}
-    >
-      <Typography
-        variant="body2"
-        sx={{
-          color: "text.secondary",
-          fontWeight: 500,
-        }}
-      >
-        Total: {rowCount} {rowCount === 1 ? "row" : "rows"}
-      </Typography>
-      <StyledPagination
-        color="primary"
-        count={pageCount}
-        page={page + 1}
-        onChange={(event, value) => apiRef.current.setPage(value - 1)}
-        shape="rounded"
-        size="medium"
-      />
-    </Box>
-  );
-};
 
 function CustomNoRowsOverlay() {
   return (
@@ -151,16 +114,7 @@ function CustomNoRowsOverlay() {
       >
         <Box
           sx={{
-            position: "relative",
-            animation: "float 3s ease-in-out infinite",
-            "@keyframes float": {
-              "0%, 100%": {
-                transform: "translateY(0px)",
-              },
-              "50%": {
-                transform: "translateY(-10px)",
-              },
-            },
+            position: "relative"
           }}
         >
           <svg
@@ -233,7 +187,7 @@ function CustomNoRowsOverlay() {
 
 export default function MyDataTable(props) {
   // Omit 'rules' so it's never passed to DataGrid (Form.Item expects array; prevents rules.some error when used inside Form)
-  const { rules: _rules, components: userComponents = {}, ...dataTableProps } =
+  const { rules: _rules, components: userComponents = {}, footerLeft, ...dataTableProps } =
     props;
 
   // Ensure every column has a unique `field` so DataGrid gets valid keys (fixes "unique key" warning)
@@ -260,6 +214,46 @@ export default function MyDataTable(props) {
         {props.editColumns && <GridToolbarColumnsButton />}
         {props.export && <GridToolbarExport />}
       </StyledToolbarContainer>
+    );
+  }
+
+  function CustomPagination() {
+    const apiRef = useGridApiContext();
+    const page = useGridSelector(apiRef, gridPageSelector);
+    const pageCount = useGridSelector(apiRef, gridPageCountSelector);
+    const rowCount = apiRef.current.getAllRowIds().length;
+
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
+          width: "100%",
+        }}
+      >
+        <Box sx={{ flex: 1, display: "flex", alignItems: "center", pl: 2 }}>
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary", fontWeight: 500 }}
+          >
+            Total: {rowCount} {rowCount === 1 ? "row" : "rows"}
+          </Typography>
+        </Box>
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
+          <StyledPagination
+            color="primary"
+            count={pageCount}
+            page={page + 1}
+            onChange={(event, value) => apiRef.current.setPage(value - 1)}
+            shape="rounded"
+            size="medium"
+          />
+        </Box>
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "flex-end", pr: 1 }}>
+          {footerLeft}
+        </Box>
+      </Box>
     );
   }
 

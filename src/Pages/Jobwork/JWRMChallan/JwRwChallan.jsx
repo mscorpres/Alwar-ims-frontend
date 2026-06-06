@@ -1,4 +1,5 @@
 import { Button, Col, Input, Row, Space } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -35,6 +36,7 @@ function JwRwChallan() {
   const [showCancel, setShowCancel] = useState(false);
   const [showEwayBillModal, setShowEwayBillModal] = useState(null);
   const [showEwayBillCancelModal, setShowEwayBillCancelModal] = useState(null);
+  const [downloadType, setDownloadType] = useState(null);
 
   const wiseOptions = [
     { text: "Date Wise", value: "datewise" },
@@ -405,21 +407,33 @@ function JwRwChallan() {
             </MyButton>
           </Space>
         </Col>
-        <Col>
-          <Space>
-            <CommonIcons
-              action="downloadButton"
-              onClick={() => downloadCSV(rows, columns, "JW RM Challan Report")}
-              disabled={rows.length == 0}
-            />
-          </Space>
-        </Col>
       </Row>
       <div style={{ height: "92%", marginTop: "10px" }}>
         <MyDataTable
           loading={loading === "fetch" || loading === "print"}
           columns={columns}
           rows={rows}
+          footerLeft={
+            <div style={{ width: 150 }}>
+              <MySelect
+                placeholder="Download"
+                size="small"
+                showSearch={false}
+                disabled={rows.length === 0}
+                value={downloadType}
+                options={[
+                  {
+                    text: <span><DownloadOutlined style={{ marginRight: 6 }} />Download CSV</span>,
+                    value: "csv",
+                  },
+                ]}
+                onChange={(val) => {
+                  if (val === "csv") downloadCSV(rows, columns, "JW RM Challan Report");
+                  setDownloadType(null);
+                }}
+              />
+            </div>
+          }
         />
       </div>
     </div>

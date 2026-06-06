@@ -10,6 +10,7 @@ export default function MySelect({
   mode,
   placeholder,
   defaultValue,
+  showSearch = true,
 }) {
   return (
     <Select
@@ -28,7 +29,7 @@ export default function MySelect({
         width: "100%",
       }}
       fieldNames={{ label: "text" }}
-      showSearch
+      showSearch={showSearch}
       filterOption={(input, option) => {
         return (option?.text?.toString()?.toLowerCase() ?? "").includes(
           input?.toString()?.toLowerCase()
