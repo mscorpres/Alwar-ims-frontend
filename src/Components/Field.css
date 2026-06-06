@@ -1,5 +1,5 @@
 .field-validation-tooltip {
-  background: #D00000;
+  background: #ff5959;
   padding: 4px 10px;
   color: #fff;
   font-size: 12px;
@@ -25,5 +25,5 @@
   height: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-bottom: 6px solid #D00000;
+  border-bottom: 6px solid #ff5959;
 }
