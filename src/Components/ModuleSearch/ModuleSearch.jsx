@@ -22,6 +22,7 @@ const PALETTE_STYLES = `
     opacity: 1;
   }
   .cmd-palette-panel {
+    z-index: 10;
     width: min(620px, calc(100vw - 32px));
     background: #f8f9fa;
     border: 1px solid #d6dde3;
