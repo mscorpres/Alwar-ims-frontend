@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
-    "@sentry/react": "^8.0.0",
     "@coreui/react": "^4.3.1",
     "@coreui/react-chartjs": "^2.1.2",
     "@emotion/react": "^11.11.1",
@@ -27,6 +26,7 @@
     "@react-oauth/google": "^0.13.4",
     "@reduxjs/toolkit": "^1.8.5",
     "@rollup/plugin-dynamic-import-vars": "^2.1.2",
+    "@sentry/react": "^8.0.0",
     "@tailwindcss/vite": "^4.1.18",
     "antd": "^5.17.2",
     "antd-table-saveas-excel": "^2.2.1",
@@ -39,6 +39,7 @@
     "dayjs": "^1.11.7",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
+    "firebase": "^12.14.0",
     "font-awesome": "^4.7.0",
     "html2canvas": "^1.4.1",
     "i": "^0.3.7",
@@ -58,6 +59,7 @@
     "react-scripts": "5.0.1",
     "react-spreadsheet": "^0.10.1",
     "recharts": "^2.12.5",
+    "scheduler": "^0.27.0",
     "semantic-ui-react": "^2.1.4",
     "socket.io-client": "^4.5.2",
     "swiper": "^12.0.3",
@@ -66,10 +68,10 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@sentry/vite-plugin": "^2.0.0",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
     "@types/react-google-recaptcha": "^2.1.9",
-    "@sentry/vite-plugin": "^2.0.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",

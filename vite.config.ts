@@ -25,9 +25,10 @@ export default defineConfig({
         replacement: path.resolve(__dirname, "src"),
       },
     ],
+    dedupe: ['react', 'react-dom', '@emotion/react', '@emotion/styled', '@mui/material'],
   },
   optimizeDeps: {
-    include: ['@mui/material', '@mui/material/styles', '@emotion/react', '@emotion/styled'],
+    include: ['@mui/material', '@mui/material/styles', '@emotion/react', '@emotion/styled', 'firebase/app', 'firebase/messaging'],
   },
   server: {
     port: 3000,

@@ -58,6 +58,8 @@ import {
 import ModuleSearch from "./Components/ModuleSearch/ModuleSearch.jsx";
 import useVersionCheck from "./hooks/useVersionCheck.js";
 import UpdatePopup from "./Components/UpdatePopup.jsx";
+import { registerFCMToken } from "./firebase/registerFCM.js";
+import NotificationPromptDialog from "./Components/NotificationPromptDialog.jsx";
 
 const App = () => {
   const { showToast } = useToast();
@@ -443,6 +445,13 @@ dispatch(logoutUser());
     navigate,
     searchParams,
   ]);
+
+  // Register FCM device token once after login
+  useEffect(() => {
+    if (user?.token) {
+      registerFCMToken();
+    }
+  }, [user?.token]);
 
   useEffect(() => {
     if (user && user.token) {
@@ -1107,6 +1116,10 @@ dispatch(logoutUser());
           </div>
         )}
       </Modal>
+
+      {user && Notification.permission !== "granted" && (
+        <NotificationPromptDialog onGranted={registerFCMToken} />
+      )}
 
       <UpdatePopup
         open={showUpdatePopup}
