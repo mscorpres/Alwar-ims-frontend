@@ -1509,6 +1509,18 @@ const Routes = [
     main: () => <ChangelogHistory />,
   },
 
+  {
+    path: "/maintenance",
+    main: () => {
+      const Maintenance = React.lazy(() => import("../Pages/Maintenance/Maintenance"));
+      return (
+        <React.Suspense fallback={null}>
+          <Maintenance />
+        </React.Suspense>
+      );
+    },
+  },
+
   // should always be at the end
   {
     path: "*",

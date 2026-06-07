@@ -130,6 +130,10 @@ imsAxios.interceptors.response.use(
     if (axios.isCancel?.(error)) {
       return Promise.reject(error);
     }
+    if (error?.response?.status === 503) {
+      window.location.replace("/maintenance");
+      return Promise.reject(error);
+    }
     const showToast = getGlobalToast();
     
     if (error?.code === "ERR_BAD_REQUEST" && error?.response?.status === 404) {

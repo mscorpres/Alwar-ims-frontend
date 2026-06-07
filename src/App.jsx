@@ -97,7 +97,7 @@ const App = () => {
 
   const authPublicPaths = React.useMemo(
     () =>
-      new Set(["/login", "/signup", "/login/otp", "/ims/login", "/first-login"]),
+      new Set(["/login", "/signup", "/login/otp", "/ims/login", "/first-login", "/maintenance"]),
     [],
   );
   const isAuthPublicPath = (p) => authPublicPaths.has(p);
@@ -105,6 +105,7 @@ const App = () => {
     pathname === "/login" ||
     pathname === "/signup" ||
     pathname === "/login/otp";
+  const isFullPagePath = isAuthShellPath || pathname === "/maintenance";
     
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
@@ -775,7 +776,7 @@ dispatch(logoutUser());
           />
         )} */}
         {/* <Information /> */}
-        {user && user.passwordChanged !== "P" && (
+        {user && user.passwordChanged !== "P" && !isFullPagePath && (
           <Layout style={{ height: "100%" }}>
             <AppHeader
               onToggleSidebar={() => setShowSideBar((open) => !open)}
@@ -836,14 +837,14 @@ dispatch(logoutUser());
             style={{
               display: "flex",
               height: "100%",
-              paddingTop: user && user.passwordChanged !== "P" ? 45 : 0,
+              paddingTop: user && user.passwordChanged !== "P" && !isFullPagePath ? 45 : 0,
             }}
           >
             <TicketsModal
               open={showTickets}
               handleClose={() => dispatch(setShowTickets(false))}
             />
-            {user && user.passwordChanged !== "P" && (
+            {user && user.passwordChanged !== "P" && !isFullPagePath && (
               <>
                 <Sidebar
                   className="site-layout-background"
@@ -868,7 +869,7 @@ dispatch(logoutUser());
                 height: "100%",
 
                 marginLeft:
-                  user && user.passwordChanged !== "P"
+                  user && user.passwordChanged !== "P" && !isFullPagePath
                     ? showSideBar
                       ? 230
                       : 60
@@ -883,14 +884,15 @@ dispatch(logoutUser());
                 <div
                   style={{
                     height: (() => {
+                      if (isFullPagePath) return "100vh";
                       const headerHeight = isAuthShellPath ? 10 : 50;
                       const bannerHeight = isBannerVisible ? 0 : 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath
                           ? 1
-                          :50;
-                      return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
+                          : 50;
+                      return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)`;
                     })(),
                     width: "100%",
                     opacity: testPage ? 0.5 : 1,
