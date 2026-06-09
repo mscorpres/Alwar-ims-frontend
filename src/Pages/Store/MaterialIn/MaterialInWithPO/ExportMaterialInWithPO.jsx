@@ -370,14 +370,14 @@ export default function ExportMaterialInWithPO({}) {
           location: selectLocation,
         };
         final = { ...final, ...values.componentData };
-        const response = await executeFun(
+        const res = await executeFun(
           () => poMINforImport(final),
           "select",
         );
         // const response = await imsAxios.post("/purchaseOrder/poMIN", final);
-        let data = response?.data;
+        let data = res?.data;
         // setSubmitLoading(false);
-        if (response.success) {
+        if (res.success) {
           setSearchData({
             vendor: "",
             poNumber: "",
@@ -402,7 +402,7 @@ export default function ExportMaterialInWithPO({}) {
           setIrnNum("");
         } else {
           setSubmitLoading(false);
-          showToast(response.message, "error");
+          showToast(res.message, "error");
         }
       } else {
         setSubmitLoading(false);
