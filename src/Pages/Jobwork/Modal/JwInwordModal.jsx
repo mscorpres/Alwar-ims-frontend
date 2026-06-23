@@ -760,6 +760,21 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       showToast("The sfgCreateQty field is required.", "error");
       return;
     }
+    for (let i = 0; i < mainData.length; i++) {
+      const r = mainData[i];
+      if (!r.rate && r.rate !== 0) {
+        showToast(`Rate is required for row ${i + 1}.`, "error");
+        return;
+      }
+      if (!r.invoice || String(r.invoice).trim() === "") {
+        showToast(`Invoice ID is required for row ${i + 1}.`, "error");
+        return;
+      }
+      if (!r.location) {
+        showToast(`Location is required for row ${i + 1}.`, "error");
+        return;
+      }
+    }
     setConsumptionStep("method");
   };
 
