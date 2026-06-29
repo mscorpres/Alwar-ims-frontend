@@ -2,11 +2,11 @@ import {
   Col,
   Row,
   Space,
-  Button,
   Card,
   Typography,
   Divider,
   Skeleton,
+  Tooltip,
 } from "antd";
 import { useEffect, useState } from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
@@ -17,8 +17,9 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyButton from "../../../Components/MyButton";
 import MySelect from "../../../Components/MySelect";
-import { useToast } from "../../../hooks/useToast.js";
-import MyDatePicker from "../../../Components/MyDatePicker.jsx";
+import MyDatePicker from "../../../Components/MyDatePicker";
+import dayjs from "dayjs";
+import { useToast } from "../../../hooks/useToast";
 
 const Q3 = () => {
   const { showToast } = useToast();
@@ -33,16 +34,16 @@ const Q3 = () => {
 
   const getLocations = async () => {
     try {
-      const response = await imsAxios.get("/skuQueryA/q3Location");
-      const arr = [];
-      if (!response.success) {
-        showToast(response.message, "error");
+      const response = await imsAxios.get("q3/location");
+      if (response.success) {
+        const arr = [];
+        response.data.map((a) => arr.push({ text: a.text, value: a.id }));
+        setLocationOptions(arr);
+      } else {
+        showToast(response.message || "Error fetching locations", "error");
       }
-      response?.data?.map((a) => arr.push({ text: a.text, value: a.id }));
-      setLocationOptions(arr);
     } catch (error) {
-      console.log("Error fetching locations", error);
-      showToast("Error fetching locations", "error");
+      showToast(error?.message || "Error fetching locations", "error");
     }
   };
 
@@ -54,14 +55,11 @@ const Q3 = () => {
     try {
       let arr = [];
       setLoading("select");
-      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
+      const { data } = await imsAxios.post("/backend/getProductByNameAndNo", {
         search,
       });
       setLoading(false);
-      if (!response.success) {
-        showToast(response.message, "error");
-      }
-      arr = response?.data?.map((d) => {
+      arr = data.map((d) => {
         return { text: d.text, value: d.id };
       });
       setAsyncOptions(arr);
@@ -70,36 +68,45 @@ const Q3 = () => {
     }
   };
 
-  const removeHtml = (value) => {
-    return value.replace(/<[^>]*>/g, " ");
-  };
-
   const getRows = async () => {
+    if (date) {
+      const [startStr, endStr] = [
+        date.substring(0, 10),
+        date.substring(11, 21),
+      ];
+      const start = dayjs(startStr, "DD-MM-YYYY");
+      const end = dayjs(endStr, "DD-MM-YYYY");
+      if (end.diff(start, "day") > 31) {
+        showToast(
+          "Date range cannot exceed 1 month. Please select a shorter range.",
+          "error",
+        );
+        return;
+      }
+    }
     try {
       setLoading("fetch");
       setDetails({});
       setRows([]);
-      const response = await imsAxios.post("/skuQueryA/fetchSKU_logs", {
-        sku_code: searchInput,
-        location: location,
-        date,
-      });
+      const params = new URLSearchParams({ sku: searchInput });
+      if (date) params.append("date", date);
+      if (location) params.append("location", location);
+      const response = await imsAxios.get(`/q3?${params.toString()}`);
 
       // Check if response has error status
-      if (response && response.status === "error") {
+      if (response.status === "error") {
         const errorMessage =
-          response.message?.msg ||
-          response.message ||
-          "An error occurred while fetching data";
+          response.message || "An error occurred while fetching data";
         showToast(errorMessage, "error");
         setLoading(false);
         return;
       }
 
-      if (response.success) {
-        const { data1, data2 } = response?.response;
+      if (response.response) {
+        const { data1, data2 } = response.response;
         const detailsObj = {
           stock: data1.closingqty,
+          opening: data1.openingqty,
           product: data1.product,
           pending: data1.pendingfgReturnQty,
           sku: data1.sku,
@@ -107,19 +114,15 @@ const Q3 = () => {
           rate: data1.lastRate,
         };
 
-        const arr = data2?.map((row, index) => ({
+        const arr = data2.map((row) => ({
           ...row,
-          id: index + 1,
-          txn: removeHtml(row.txn),
+          id: row.serial_no,
         }));
         setRows(arr);
 
         setDetails(detailsObj);
-      } else {
-        // Handle unsuccessful response
       }
     } catch (error) {
-      console.log("Some error occured while fetching rows", error);
       const errorMessage =
         error.response?.data?.message?.msg ||
         error.response?.data?.message ||
@@ -130,9 +133,8 @@ const Q3 = () => {
       setLoading(false);
     }
   };
-
   return (
-    <div style={{ height: "92%" }}>
+    <div style={{ height: "100%", padding: 10 }}>
       <Row justify="end" style={{ padding: 8, paddingTop: 0 }}>
         <CommonIcons
           action="downloadButton"
@@ -141,7 +143,7 @@ const Q3 = () => {
         />
       </Row>
 
-      <Row style={{ height: "90%" }} gutter={8}>
+      <Row style={{ height: "calc(100% - 35px)" }} gutter={8}>
         <Col span={6} style={{ height: "100%", overflow: "auto" }}>
           <Space direction="vertical" size={16} style={{ width: "100%" }}>
             {/* Filters */}
@@ -247,9 +249,13 @@ const Q3 = () => {
                     Opening Stock:
                   </Typography.Text>
                   <br />
-                  <Typography.Text style={{ fontSize: "0.8rem" }}>
-                    --
-                  </Typography.Text>
+                  {loading !== "fetch" ? (
+                    <Typography.Text style={{ fontSize: "0.8rem" }}>
+                      {details.opening ?? "--"} {details.uom ?? ""}
+                    </Typography.Text>
+                  ) : (
+                    <Skeleton.Input size="small" block active />
+                  )}
                 </Col>
 
                 <Col span={24}>
@@ -279,6 +285,15 @@ const Q3 = () => {
   );
 };
 
+const getStatusConfig = (type) => {
+  if (type === "OUT") return { label: "OUTWARD", backgroundColor: "#FF0032" };
+  if (type === "NEUTRAL")
+    return { label: "NEUTRAL", backgroundColor: "#FFC107" };
+  if (type === "CANCELLEND")
+    return { label: "CANCELLED", backgroundColor: "grey" };
+  return { label: "INWARD", backgroundColor: "#227C70" };
+};
+
 const columns = [
   {
     headerName: "#",
@@ -294,32 +309,68 @@ const columns = [
     headerName: "Type",
     field: "transaction_type",
     width: 150,
-    renderCell: (a) =>
-      a.row.type ==
-      '<span class="d-inline-block radius-round p-2 bgc-red"></span>' ? (
-        <div
-          style={{
-            height: "15px",
-            width: "15px",
-            borderRadius: "50px",
-            backgroundColor: "#FF0032",
-          }}
-        ></div>
-      ) : (
-        <div
-          style={{
-            height: "15px",
-            width: "15px",
-            borderRadius: "50px",
-            backgroundColor: "#227C70",
-          }}
-        ></div>
-      ),
+    renderCell: ({ row }) => {
+      const status = getStatusConfig(row.type);
+      return (
+        <Tooltip title={status.label}>
+          <div
+            style={{
+              height: "15px",
+              width: "15px",
+              borderRadius: "50px",
+              backgroundColor: status.backgroundColor,
+              cursor: "pointer",
+            }}
+          ></div>
+        </Tooltip>
+      );
+    },
   },
   {
     headerName: "Transaction",
-    field: "txn",
-    renderCell: ({ row }) => <ToolTipEllipses text={row.txn} />,
+    field: "transaction_id",
+    renderCell: ({ row }) => {
+      const isCancelled = row.type === "CANCELLEND";
+      return (
+        <div
+          style={{
+            textDecoration: isCancelled ? "line-through" : "none",
+            opacity: isCancelled ? 0.7 : 1,
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
+          <Tooltip
+            placement="topLeft"
+            color="#047780"
+            overlayStyle={{ fontSize: "0.7rem" }}
+            title={
+              <span style={{ whiteSpace: "pre-line" }}>
+                {row.transaction_id}
+              </span>
+            }
+          >
+            <Typography.Text
+              style={{
+                fontSize: window.innerWidth < 1600 ? "0.7rem" : "0.8rem",
+                width: "100%",
+              }}
+              ellipsis
+            >
+              {row.transaction_id}
+            </Typography.Text>
+          </Tooltip>
+          {isCancelled ? (
+            <span
+              style={{ color: "#d32f2f", fontSize: "0.75rem", fontWeight: 600 }}
+            >
+              CANCELLED
+            </span>
+          ) : null}
+        </div>
+      );
+    },
     width: 250,
   },
   {
@@ -342,9 +393,14 @@ const columns = [
     field: "out_rate",
     width: 200,
   },
+  // {
+  //   headerName: "Weighted Average",
+  //   field: "weightedSKURate",
+  //   width: 200,
+  // },
   {
-    headerName: "Weighted Average",
-    field: "weightedSKURate",
+    headerName: "New WAR",
+    field: "newWAR",
     width: 200,
   },
   {
@@ -374,6 +430,7 @@ const columns = [
     renderCell: ({ row }) => <ToolTipEllipses text={`${row.doneby}`} />,
     flex: 1,
   },
+
   {
     headerName: "Remarks",
     field: "remark",
