@@ -79,7 +79,14 @@ export default function ItemAllLogs() {
     ]);
     setRows([]);
 
-    const response = await imsAxios.get("/q1/view?wise=C&data=" + values.component + "&page=" + page + "&limit=" + limit );
+    const response = await imsAxios.get("/q1/view", {
+      params: {
+        wise: "C",
+        data: values.component,
+        page: page,
+        limit: limit,
+      },
+    });
 
     setLoading(false);
     if (response.success) {
@@ -197,7 +204,7 @@ export default function ItemAllLogs() {
       width: 120,
     },
     {
-      field: "weightedPurchaseRate",
+      field: "tbl_weighted_rate",
       headerName: "Weighted Average Rate",
       width: 180,
     },

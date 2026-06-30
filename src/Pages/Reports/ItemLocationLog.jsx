@@ -109,16 +109,14 @@ export default function ItemLocationLog() {
       setSummaryData(initialSummaryData);
       setRows([]);
 
-      const response = await imsAxios.get(
-        "/q2/view?key=" +
-          values.component +
-          "&location=" +
-          values.location +
-          "&page=" +
-          page +
-          "&limit=" +
+      const response = await imsAxios.get("/q2/view", {
+        params: {
+          location: values.location,
+          key: values.component,
+          page,
           limit,
-      );
+        },
+      });
 
       getDetails(values);
       if (response?.success == false) {
@@ -282,13 +280,13 @@ export default function ItemLocationLog() {
     },
     {
       headerName: "Weighted Average Rate",
-      field: "weightedPurchaseRate",
+      field: "tbl_weighted_rate",
       width: 120,
-      renderCell: ({ row }) => (
-        <Tooltip title={row.weightedPurchaseRateCurrency}>
-          {row.weightedPurchaseRate}
-        </Tooltip>
-      ),
+      // renderCell: ({ row }) => (
+      //   <Tooltip title={row.weightedPurchaseRateCurrency}>
+      //     {row.weightedPurchaseRate}
+      //   </Tooltip>
+      // ),
     },
     {
       headerName: "Method",

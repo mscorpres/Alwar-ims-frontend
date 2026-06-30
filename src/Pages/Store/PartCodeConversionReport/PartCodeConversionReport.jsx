@@ -21,6 +21,7 @@ const consumptionColumns = [
   { headerName: "Consumption Part Code", field: "consump_part_code", width: 150 },
   { headerName: "Consumption Quantity", field: "consump_qty", width: 130 },
   { headerName: "UoM", field: "uom", width: 80 },
+  {headerName: "Avg. Rate", field: "avr_rate", width: 100 },
   { headerName: "Pick Location", field: "pick_location", flex: 1, minWidth: 120 },
 ];
 
@@ -216,6 +217,7 @@ const PartCodeConversionReport = () => {
       { header: "Consumption Part Code", key: "consump_part_code", width: 20 },
       { header: "Consumption Quantity", key: "consump_qty", width: 10 },
       { header: "Consumption UoM", key: "consump_uom", width: 10 },
+      { header: "Avg. Rate", key: "avr_rate", width: 10 },
       { header: "Pick Location", key: "pick_location", width: 20 },
     ];
 
@@ -254,6 +256,7 @@ const PartCodeConversionReport = () => {
           rowData[`consump_uom${consumptionKeyPrefix}`] = consumptionItem.uom;
           rowData[`pick_location${consumptionKeyPrefix}`] =
             consumptionItem.pick_location;
+            rowData[`avr_rate${consumptionKeyPrefix}`] = consumptionItem.avr_rate;
         });
       }
 

@@ -210,6 +210,7 @@ function FGToFGTransfer() {
         const product = group.map((r) => r.component);
         const qty = group.map((r) => r.qty1);
         const remark = group.map((r) => (r.comment || "").trim() || "--");
+        const rate = group.map((r) => r?.avrRate ?? 0);
 
         const res = await imsAxios.post("/godown/transferFG2FG", {
           pickLocation: allData.locationFrom,
@@ -217,6 +218,7 @@ function FGToFGTransfer() {
           product,
           qty,
           remark,
+          rate,
         });
 
         // Interceptor returns response.data when success is present, so res is already the body

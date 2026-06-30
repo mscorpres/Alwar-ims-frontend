@@ -291,6 +291,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       uom: r.uom,
       key: r.key,
       conRemark: r.remark ?? r.conRemark ?? "",
+      last_rate: r.last_rate,
     }));
 
   const applyExcelRemarks = (rows, payload) => {
@@ -610,6 +611,12 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       ),
     },
     {
+      field: "last_rate",
+      headerName: "Rate",
+      width: 180,
+      renderCell: ({ row }) => <Input disabled value={row.last_rate} />,
+    },
+    {
       field: "pendingStock",
       headerName: "JW Pending Stock",
       width: 180,
@@ -683,6 +690,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       remark: mainData[0].remark,
       qrScan: isScan == true ? "Y" : "N",
       pick_location: pickLocation,
+      consRate: bomList.map((r) => r.last_rate),
     };
     setModalUploadLoad(true);
     const response = await savejwsfinward(payload);

@@ -115,30 +115,53 @@ const CreateFGOut = () => {
     }
   };
 
-  const compInputHandler = async (name, id, value) => {
+const compInputHandler = async (name, id, value) => {
     if (name == "product") {
-      const response = await imsAxios.post("/fgOUT/fetchProductData", {
+  try {
+        const response = await imsAxios.post("/fgOUT/fetchProductData", {
         search: value,
       });
-      const totalValue = response?.data?.total;
-      const unitValue = response?.data?.unit;
-
-      setAddRowData((product) =>
-        product.map((h) => {
-          if (h.id == id) {
-            {
-              return {
-                ...h,
-                product: value,
-                total: totalValue,
-                uom: unitValue,
-              };
+         
+      if (response?.success) {
+        const totalValue = response?.data?.total;
+        const unitValue = response?.data?.unit;
+        const war = Number(response?.data?.war);
+  
+        setAddRowData((product) =>
+          product.map((h) => {
+            if (h.id == id) {
+              {
+                return {
+                  ...h,
+                  product: value,
+                  total: totalValue,
+                  uom: unitValue,
+                  rate: war,
+                };
+              }
+            } else {
+              return h;
             }
-          } else {
-            return h;
-          }
-        }),
-      );
+          }),
+        );
+      } else {
+        setAddRowData((product) =>
+          product.map((h) => {
+            if (h.id == id) {
+              {
+                return { ...h, product: value };
+              }
+            } else {
+              return h;
+            }
+          }),
+        );
+        toast.error(response?.message);
+      }
+    
+  } catch (error) {
+    toast.error(error?.response?.data?.message ?? "Something went wrong");
+  }
     } else if (name == "quantity") {
       setAddRowData((quantity) =>
         quantity.map((h) => {
@@ -187,7 +210,7 @@ const CreateFGOut = () => {
     addRowData.map((a) => arrPro.push(a.product));
     addRowData.map((a) => arrQty.push(a.quantity));
     addRowData.map((a) => arrRemark.push(a.remarks));
-    addRowData.map((a) => arrLoc.push(a.location));
+    addRowData.map((a) => arrRate.push(a.rate));
     // addRowData.map((a) => console.log(a));
     // console.log(arrQty);
 
@@ -199,23 +222,31 @@ const CreateFGOut = () => {
     } else if (hasEmptyLocation) {
       showToast("Location is mandatory for all rows", "error");
     } else {
-      setLoadingUpdate(true);
-      const response = await imsAxios.post("/fgout/createFgOut", {
-        fg_out_type: createFgOut.selectType,
-        product: arrPro,
-        qty: arrQty,
-        location: arrLoc,
-        remark: arrRemark,
-        comment: createFgOut.comment,
-      });
-      if (response?.success) {
-        resetFunction();
-
-        showToast(response.message, "success");
-        setLoadingUpdate(false);
-      } else {
-        showToast(response?.message?.msg || response?.message, "error");
-        setLoadingUpdate(false);
+     try {
+        setLoadingUpdate(true);
+        const response = await imsAxios.post("/fgout/createFgOut", {
+          fg_out_type: createFgOut.selectType,
+          product: arrPro,
+          qty: arrQty,
+          rate: arrRate,
+          location: arrLoc,
+          remark: arrRemark,
+          comment: createFgOut.comment,
+        });
+        if (response?.success) {
+          resetFunction();
+        toast.success(response.message);
+          setLoadingUpdate(false);
+        } else {
+          toast.error(
+            response.message ?? "Failed to create FG Out. Please try again.",
+          );
+          setLoadingUpdate(false);
+        }
+      } catch (error) {
+        toast.error(
+          error?.message ?? "Failed to create FG Out. Please try again.",
+        );
       }
     }
   };
@@ -300,6 +331,12 @@ const CreateFGOut = () => {
       renderCell: ({ row }) => (
         <Input suffix={row?.uom} disabled value={row?.total} />
       ),
+    },
+     {
+      headerName: "Rate",
+      field: "rate",
+      width: 170,
+
     },
     {
       headerName: "Issue Qty",
