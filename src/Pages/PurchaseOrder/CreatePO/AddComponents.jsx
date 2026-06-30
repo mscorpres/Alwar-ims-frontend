@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { v4 } from "uuid";
 import CurrenceModal from "../ManagePO/CurrenceModal";
 import NavFooter from "../../../Components/NavFooter";
@@ -7,7 +7,6 @@ import {
   componentSelect,
   disabledCell,
   foreignCell,
-  gstRate,
   gstTypeCell,
   HSNCell,
   IGSTCell,
@@ -26,15 +25,11 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import FormTable from "../../../Components/FormTable.jsx";
-import { getInt } from "../../../utils/general.ts";
-
 import MyButton from "../../../Components/MyButton/index.jsx";
-
 import { InboxOutlined } from "@ant-design/icons";
-
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV.jsx";
-
 import { prsampleFile } from "../../../utils/samplefile.js";
+import { useToast } from "../../../hooks/useToast.js";
 
 import {
   Button,
@@ -58,21 +53,19 @@ export default function AddComponents({
   totalValues,
   submitLoading,
   newPurchaseOrder,
-  setStateCode,
   gstState,
   open,
   setOpen,
+  poCurrencies = [],
 }) {
   const projectId = form.getFieldsValue()?.project_name?.value;
-
+const {showToast} = useToast();
   const venderCode = form.getFieldsValue()?.vendorname?.key;
   const [currencies, setCurrencies] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [showCurrencyModal, setShowCurrencyModal] = useState(null);
-
-
 
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -87,11 +80,20 @@ export default function AddComponents({
   const { executeFun, loading: loading1 } = useApi();
   const addRows = () => {
     const defaultGstType = gstState || "L";
+    const headerCur = form.getFieldValue("po_currency") ?? "364907247";
+    const headerEx =
+      String(headerCur) === "364907247"
+        ? 1
+        : Number(form.getFieldValue("po_exchange_rate")) || 1;
+    const sym =
+      poCurrencies.find((c) => String(c.value) === String(headerCur))?.text ??
+      "";
     const newRow = {
       id: v4(),
       index: rowCount.length + 1,
-      currency: "364907247",
-      exchange_rate: 1,
+      currency: headerCur,
+      exchange_rate: headerEx,
+         symbol: sym,
       component: "",
       qty: 1,
       rate: "",
@@ -215,7 +217,9 @@ export default function AddComponents({
 
       const componentValue =
         partcodeObj.id ?? partcodeObj.partNo ?? r.partCode ?? r.partcode ?? "";
-
+    const sym =
+        poCurrencies.find((c) => String(c.value) === String(currency))?.text ??
+        "";
       return {
         id: v4(),
 
@@ -224,6 +228,7 @@ export default function AddComponents({
         currency,
 
         exchange_rate,
+        symbol:sym,
 
         component: {
           label: componentLabel,
@@ -394,7 +399,8 @@ export default function AddComponents({
     const values = uploadForm.getFieldsValue();
 
     if (!values.files?.length || !values.files[0]?.originFileObj) {
-      toast.error("Please select a file");
+     
+      showToast("Please select a file", "error");
 
       setPreview(false);
 
@@ -487,9 +493,8 @@ export default function AddComponents({
 
         setPreviewRows(arr);
       } else {
-        toast.error(
-          response?.message?.msg ?? response?.message ?? "Upload failed",
-        );
+    
+        showToast(response?.message?.msg ?? response?.message ?? "Upload failed", "error");
 
         setLoading(false);
 
@@ -497,8 +502,7 @@ export default function AddComponents({
       }
     } catch (error) {
       setLoading(false);
-
-      toast.error(error.message || "Excel upload failed");
+      showToast(error.message || "Excel upload failed", "error");
     }
   };
 
@@ -751,10 +755,8 @@ export default function AddComponents({
         if (row.id == id) {
           let obj = row;
           let newLastRate = Number(response.data.rate.toString().trim());
-          let percentage = response.data.gstrate;
 
           if (autoGstType == "L") {
-            percentage = response.data.gstrate / 2;
             obj = {
               ...obj,
               component: value,
@@ -835,12 +837,21 @@ export default function AddComponents({
   };
   const resetFunction = () => {
     const defaultGstType = gstState || "L";
+     const headerCur = form.getFieldValue("po_currency") ?? "364907247";
+    const headerEx =
+      String(headerCur) === "364907247"
+        ? 1
+        : Number(form.getFieldValue("po_exchange_rate")) || 1;
+    const sym =
+      poCurrencies.find((c) => String(c.value) === String(headerCur))?.text ??
+      "";
     setRowCount([
       {
         id: v4(),
         index: 1,
-        currency: "364907247",
-        exchange: "1",
+        currency: headerCur,
+        exchange_rate: headerEx,
+        symbol: sym,
         component: "",
         qty: 1,
         rate: "",
@@ -1346,7 +1357,6 @@ export default function AddComponents({
               </Card>
             </Col>
 
-       
             {/* tax detail card */}
             <Col span={24} style={{ height: "50%" }}>
               <Card
@@ -1434,26 +1444,26 @@ export default function AddComponents({
         open={open}
         width={500}
         onCancel={() => setOpen(false)}
-        footer={<div style={{ display: "flex", justifyContent: "space-between" }}>
-         <div>
-             <MyButton
+        footer={
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div>
+              <MyButton
                 variant="downloadSample"
                 onClick={() =>
                   downloadCSVCustomColumns(prsampleFile, "Purchase Order")
                 }
               />
-         </div>
-        <div style={{ display: "flex", gap: "10px" }}>
-            <Button key="back" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
+            </div>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <Button key="back" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
 
-          <Button key="submit" type="primary" onClick={uploadExcelData}>
-            Preview
-          </Button>
-        </div>
-        </div>
-          
+              <Button key="submit" type="primary" onClick={uploadExcelData}>
+                Preview
+              </Button>
+            </div>
+          </div>
         }
       >
         {loading1("fetch") && <Loading />}
@@ -1478,8 +1488,6 @@ export default function AddComponents({
                 </Upload.Dragger>
               </Form.Item>
             </Form.Item>
-
-           
           </Form>
         </Card>
       </Modal>
