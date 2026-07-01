@@ -43,6 +43,7 @@ const CreateFGOut = () => {
       location: "",
       remarks: "",
       uom: "",
+      rate: 0,
     },
   ]);
   // console.log(restValue);
@@ -207,6 +208,7 @@ const compInputHandler = async (name, id, value) => {
     let arrQty = [];
     let arrRemark = [];
     let arrLoc = [];
+    let arrRate = [];
     addRowData.map((a) => arrPro.push(a.product));
     addRowData.map((a) => arrQty.push(a.quantity));
     addRowData.map((a) => arrRemark.push(a.remarks));
