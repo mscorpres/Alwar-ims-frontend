@@ -55,7 +55,6 @@ const paymentTermOptions = [
 export default function CreatePo() {
   const { showToast } = useToast();
   const [totalValues, setTotalValues] = useState([]);
-  const [pprOptions, setPpROptions] = useState([]);
   const [newPurchaseOrder, setnewPurchaseOrder] = useState({
     termscondition: "",
     customDeliveryTerm: "",
@@ -102,7 +101,6 @@ export default function CreatePo() {
   const [showQtyWarning, setShowQtyWarning] = useState(false);
   const [qtyWarningData, setQtyWarningData] = useState(null);
   const [pendingPOData, setPendingPOData] = useState(null);
-  const [isPPRLoading, setIsPPRLoading] = useState(false);
   const [poCurrencies, setPoCurrencies] = useState([]);
   const [rowCount, setRowCount] = useState([
     {
@@ -744,25 +742,26 @@ export default function CreatePo() {
     }
   };
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  const handleGetCurrency = async () => {
       try {
-        const { data } = await imsAxios.get("/backend/fetchAllCurrecy");
-        if (cancelled || !data?.data) return;
-        const arr = data.data.map((d) => ({
+        const response = await imsAxios.get("/backend/fetchAllCurrecy");
+        if(response?.success) {
+      const arr = response.data.map((d) => ({
           text: d.currency_symbol,
           value: d.currency_id,
           notes: d.currency_notes,
         }));
         setPoCurrencies(arr);
-      } catch {
-        /* ignore */
+        }
+     
+  
+      } catch (error) {
+     showToast(error.message ?? "Something went wrong", "error");
       }
-    })();
-    return () => {
-      cancelled = true;
-    };
+  }
+
+  useEffect(() => {
+   handleGetCurrency();
   }, []);
   const getPOs = async (searchInput) => {
     if (searchInput?.length > 2) {
@@ -1217,7 +1216,6 @@ export default function CreatePo() {
     setPendingPOData(null);
     setQtyWarningData(null);
     setShowQtyWarning(false);
-    setPpROptions([]);
   };
   const rowsReset = () => {
     setRowCount([
@@ -1256,28 +1254,7 @@ export default function CreatePo() {
     setAsyncOptions(response.data);
   };
 
-  const fetchPPROptions = async (key) => {
-    try {
-      setIsPPRLoading(true);
-      const response = await imsAxios.post("/purchaseOrder/pprList", {
-        project_name: key,
-      });
-      let arr = [];
 
-      if (response?.success) {
-        arr = convertSelectOptions(response?.data);
-
-        setPpROptions(arr);
-        setIsPPRLoading(false);
-      } else {
-        setPpROptions([]);
-        setIsPPRLoading(false);
-      }
-    } catch (error) {
-      setIsPPRLoading(false);
-      showToast(error.message, "error");
-    }
-  };
   const handleProjectChange = async (value) => {
     const projectValue =
       typeof value === "object" ? value : { value: value, label: value };
@@ -1304,9 +1281,7 @@ export default function CreatePo() {
             typeof value === "object" ? value.value : value,
             { showPageLoading: false },
           );
-          await fetchPPROptions(
-            typeof value === "object" ? value.value : value,
-          );
+      
         } else {
           showToast(data.message, "error");
         }
@@ -2094,30 +2069,7 @@ export default function CreatePo() {
                               </Form.Item>
                             </Col>
 
-                            <Col span={5}>
-                              <Form.Item
-                                name="ppr"
-                                rules={rules.ppr}
-                                label={
-                                  <div
-                                    style={{
-                                      fontSize:
-                                        window.innerWidth < 1600 && "0.7rem",
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      width: 350,
-                                    }}
-                                  >
-                                    PPR
-                                  </div>
-                                }
-                              >
-                                <MySelect
-                                  options={pprOptions}
-                                  selectLoading={isPPRLoading}
-                                />
-                              </Form.Item>
-                            </Col>
+                    
                             {/* project name */}
                             <Col span={5}>
                               <Form.Item label="Project Description">
