@@ -78,7 +78,6 @@ const defaultValues = {
 };
 
 const vendorDetailsOptions = [
-  { text: "JWI (Job Work In)", value: "j01" },
   { text: "Vendor", value: "v01" },
   { text: "Production Return", value: "p01" },
 ];
@@ -250,7 +249,6 @@ export default function MaterialInWithoutPO() {
   };
   const getCurrencies = async () => {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
-
     let arr = [];
     arr = response.data.map((d) => {
       return {
@@ -1057,13 +1055,13 @@ export default function MaterialInWithoutPO() {
                         />
                       </Form.Item>
                     </Col>{" "}
-                    {vendorType === "j01" && (
+                    {/* {vendorType === "j01" && (
                       <Col span={24}>
                         <Form.Item name="ewaybill" label="E-Way Bill Number">
                           <Input size="default" />
                         </Form.Item>
                       </Col>
-                    )}
+                    )} */}
                     {isApplicable == "Y" && (
                       <>
                         <Col span={24}>

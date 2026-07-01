@@ -600,9 +600,8 @@ function WoUpdateSupplementary() {
                     />
                   </Col>
                   <Col span={4}>
-                    <text style={{ fontSize: "10px" }}>Supp. PO Id</text>
+                    <text style={{ fontSize: "10px" }}>WO Id</text>
                     <Input
-                      placeholder="PO ID"
                       value={updateData?.PoID}
                       onChange={(e) =>
                         setUpdateData((updateData) => {
@@ -614,7 +613,6 @@ function WoUpdateSupplementary() {
                   <Col span={6}>
                     <text style={{ fontSize: "10px" }}>Comment*</text>
                     <Input
-                      placeholder="PO ID"
                       value={updateData?.comment}
                       onChange={(e) =>
                         setUpdateData((updateData) => {

@@ -525,11 +525,11 @@ const links = [
   ],
   // jobwork links
   [
-    { routeName: "Create JW PO", routePath: "/warehouse/job-work/create" },
-    // {
-    //   routeName: "Approval",
-    //   routePath: "/warehouse/job-work/approval"
-    // },
+    { routeName: "Create", routePath: "/warehouse/job-work/create" },
+    {
+      routeName: "Approval",
+      routePath: "/warehouse/job-work/approval"
+    },
     { routeName: "Analysis", routePath: "/warehouse/job-work/analysis" },
     { routeName: "RM Issue", routePath: "/warehouse/job-work/issue" },
     {
@@ -537,7 +537,7 @@ const links = [
       routePath: "/warehouse/job-work/issue-challan",
     },
     {
-      routeName: "Challan",
+      routeName: "RM Challan",
       routePath: "/warehouse/job-work/challan-list",
     },
     {

@@ -237,12 +237,12 @@ function CashPayment() {
 
   return (
     <div style={{ height: "calc(100vh - 160px)", padding:10 }}>
-      <Row gutter={10} style={{ height: "100%", }}>
-        <Col span={6}>
-          <Card title="Cash Payment" size="small">
-            <Form layout="vertical" size="small">
-              <Row>
-                <Col span={24}>
+      <Row gutter={12}>
+        <Col span={12} style={{ marginBottom: 4 }}>
+         
+            <Form  size="small" >
+              <Row gutter={12} >
+                <Col span={12}>
                   <Form.Item
                     label="Cash"
                     rules={[
@@ -264,7 +264,7 @@ function CashPayment() {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={24}>
+                <Col span={12}>
                   <Form.Item
                     label="Select EffectiveDate"
                     rules={[
@@ -282,14 +282,16 @@ function CashPayment() {
                 </Col>
               </Row>
             </Form>
-          </Card>
+       
         </Col>
-        <Col span={18}>
-          <FormTable
+        <Col span={24} >
+        <div style={{ height: "calc(100vh - 230px)", width: "100%" }}>
+         <FormTable
             hideHeaderMenu
             data={cashPaymentRows}
             columns={CashPaymentTable}
           />
+        </div>
         </Col>
       </Row>
       <NavFooter

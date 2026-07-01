@@ -1093,56 +1093,56 @@
             "children": [
               {
                 "key": "B61",
-                "label": "Jobwork & Analysis",
+                "label": "Create",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/create",
                 "isShown": true
               },
               {
                 "key": "B611",
-                "label": "Jobwork Approval",
+                "label": "Approval",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/approval",
                 "isShown": true
               },
               {
                 "key": "B612",
-                "label": "PO Analysis",
+                "label": "Analysis",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/analysis",
                 "isShown": true
               },
               {
                 "key": "B613",
-                "label": "Jobwork Issue",
+                "label": "RM Issue",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/issue",
                 "isShown": true
               },
               {
                 "key": "B614",
-                "label": "Jobwork issue Challan",
+                "label": "Issue Challan",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/issue-challan",
                 "isShown": true
               },
               {
                 "key": "B615",
-                "label": "Jobwork Rm Challan",
+                "label": "RM Challan",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/challan-list",
                 "isShown": true
               },
               {
                 "key": "B616",
-                "label": "Jobwork Sf inward",
+                "label": "SF Inward",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/inward",
                 "isShown": true
               },
               {
                 "key": "B617",
-                "label": "Jobwork Rm Return",
+                "label": "RM Return",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/return",
                 "isShown": true
@@ -1156,7 +1156,7 @@
               },
               {
                 "key": "B618",
-                "label": "Jobwork Completed",
+                "label": "Completed",
                 "icon": "AnalyticsIcon",
                 "path": "/warehouse/job-work/completed",
                 "isShown": true
@@ -1368,43 +1368,7 @@
               }
             ]
           },
-          {
-            "key": "C5",
-            "label": "Sales Order",
-            "icon": "TbReportAnalytics",
-            "isHeading": true,
-
-            "children": [
-              {
-                "key": "C52",
-                "label": "Create order",
-                "icon": "AddIcon",
-                "path": "/sales-order/create",
-                "isShown": true
-              },
-              {
-                "key": "E51",
-                "label": "Register",
-                "icon": "ListIcon",
-                "path": "/sales-order/register",
-                "isShown": true
-              },
-              {
-                "key": "C54",
-                "label": "Shipment",
-                "icon": "LocalShippingIcon",
-                "path": "/sales-order/shipments",
-                "isShown": true
-              },
-              {
-                "key": "C53",
-                "label": "Challan",
-                "icon": "ReceiptIcon",
-                "path": "/sales-order/challan",
-                "isShown": true
-              }
-            ]
-          },
+       
           {
             "key": "B4",
             "label": "Print",
@@ -1468,6 +1432,19 @@
                     "label": "RM Issue Register",
                     "icon": "OutputIcon",
                     "path": "/reports/transaction-out",
+                    "isShown": true
+                  },
+                     {
+                    "key": "B412432",
+                    "label": "View Document",
+                    "icon": "OutputIcon",
+                    "path": "/reports/upload-document/view",
+                    "isShown": true
+                  }, {
+                    "key": "B412433",
+                    "label": "Consumption Report",
+                    "icon": "OutputIcon",
+                    "path": "/jw-rm-consumption-report",
                     "isShown": true
                   }
                 ]
@@ -2089,6 +2066,43 @@
                 "label": "Final Invoices",
                 "icon": "UnorderedListOutlined",
                 "path": "/final-invoices",
+                "isShown": true
+              }
+            ]
+          },
+             {
+            "key": "C5",
+            "label": "Sales Order",
+            "icon": "TbReportAnalytics",
+            "isHeading": true,
+
+            "children": [
+              {
+                "key": "C52",
+                "label": "Create order",
+                "icon": "AddIcon",
+                "path": "/sales-order/create",
+                "isShown": true
+              },
+              {
+                "key": "E51",
+                "label": "Register",
+                "icon": "ListIcon",
+                "path": "/sales-order/register",
+                "isShown": true
+              },
+              {
+                "key": "C54",
+                "label": "Shipment",
+                "icon": "LocalShippingIcon",
+                "path": "/sales-order/shipments",
+                "isShown": true
+              },
+              {
+                "key": "C53",
+                "label": "Challan",
+                "icon": "ReceiptIcon",
+                "path": "/sales-order/challan",
                 "isShown": true
               }
             ]

@@ -38,7 +38,7 @@ import {
 } from "./Features/uiSlice/uiSlice.js";
 import Layout, { Content, Header } from "antd/lib/layout/layout";
 import { Select, Modal, Button } from "antd";
-import { SearchOutlined, SwapOutlined } from "@ant-design/icons";
+import { SwapOutlined } from "@ant-design/icons";
 import { Tooltip, IconButton } from "@mui/material";
 import InternalNav from "./Components/InternalNav";
 import { imsAxios } from "./axiosInterceptor";
@@ -57,6 +57,8 @@ import {
   getSafeInternalRedirect,
   POST_LOGIN_REDIRECT_STORAGE_KEY,
 } from "./utils/postLoginRedirect.js";
+import ModuleSearch from "./Components/ModuleSearch/ModuleSearch.jsx";
+
 
 const App = () => {
   const { showToast } = useToast();
@@ -108,10 +110,6 @@ const App = () => {
     
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
-  const [modulesOptions, setModulesOptions] = useState([]);
-  const [searchModule, setSearchModule] = useState("");
-  const [showHisList, setShowHisList] = useState([]);
-  const [allModules, setAllModules] = useState([]);
   const notificationsRef = useRef();
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -122,12 +120,11 @@ const App = () => {
   const [switchSuccess, setSwitchSuccess] = useState(false);
   const [showBlackScreen, setShowBlackScreen] = useState(false);
   const [isBannerVisible, setIsBannerVisible] = useState(false);
-  const [searchHis, setSearchHis] = useState("");
-  const [hisList, setHisList] = useState([]);
   const logoutHandler = () => {
     setShowBlackScreen(false);
 dispatch(logoutUser());
   };
+
 
   const handleSelectCompanyBranch = (value) => {
     dispatch(setCompanyBranch(value));
@@ -136,54 +133,6 @@ dispatch(logoutUser());
   };
   const handleSelectSession = (value) => {
     dispatch(setSession(value));
-  };
-
-  // Function to get all modules
-  const getAllModules = () => {
-    let arr = [];
-    let allModOpt = [];
-    internalLinks.map((row) => {
-      let a = row;
-      arr.push(...a);
-    });
-    arr.map((row) => {
-      if (row && row.routeName) {
-        let obj = {
-          label: row.routeName,
-          value: row.routePath,
-        };
-        allModOpt.push(obj);
-      }
-    });
-    return allModOpt;
-  };
-
-  // Load all modules on component mount
-  useEffect(() => {
-    const allMods = getAllModules();
-    setAllModules(allMods);
-    // Show all modules by default
-    setModulesOptions(allMods);
-  }, []);
-
-  const getModuleSearchOptions = (search) => {
-    let arr = [];
-    let modOpt = [];
-    internalLinks.map((row) => {
-      let a = row;
-      arr.push(...a);
-    });
-    arr.map((row) => {
-      if (row.routeName?.toLowerCase().includes(search)) {
-        let obj = {
-          label: row.routeName,
-          value: row.routePath,
-        };
-        modOpt.push(obj);
-      }
-    });
-    setSearchHis(modOpt);
-    setModulesOptions(modOpt);
   };
 
   // notifications receive handlers
@@ -717,37 +666,6 @@ dispatch(logoutUser());
     }
   }, [user]);
 
-  useEffect(() => {
-    setModulesOptions([]);
-
-    if (searchModule.length > 2) {
-      let searching = searchHis.filter((i) => i.value === searchModule);
-
-      setHisList([...hisList, searching]);
-
-      let a = hisList.push(...hisList, ...searching);
-
-      const ids = hisList.map(({ label, text }) => label || text); // Support both formats
-
-      const filtered = hisList.filter(
-        ({ label, text }, index) => !ids.includes(label || text, index + 1),
-      );
-
-      localStorage.setItem("searchHistory", JSON.stringify({ filtered }));
-
-      navigate(searchModule);
-    }
-  }, [searchModule]);
-
-  const showRecentSearch = () => {
-    let obj = JSON.parse(localStorage.getItem("searchHistory"));
-    let arr = obj?.filtered?.map((row) => ({
-      text: row.text,
-      value: row.value,
-    }));
-    setShowHisList(arr);
-  };
-
   const getOffsetLeft = () => {
     // if (isTestServer && isBannerVisible) {
     //   return 92;
@@ -882,53 +800,7 @@ dispatch(logoutUser());
               onChangeBranch={(value) => handleSelectCompanyBranch(value)}
               onChangeSession={(value) => handleSelectSession(value)}
               showSearch
-              searchComponent={
-                <Select
-                  showSearch
-                  placeholder="Search..."
-                  value={searchModule || undefined}
-                  onChange={(value) => {
-                    setSearchModule(value);
-                    navigate(value);
-                  }}
-                  onSearch={(value) => {
-                    if (value && value.trim().length > 0) {
-                      getModuleSearchOptions(value.toLowerCase());
-                    } else {
-                      // Show all modules when search is cleared
-                      setModulesOptions(
-                        allModules.length > 0 ? allModules : [],
-                      );
-                    }
-                  }}
-                  options={
-                    modulesOptions?.length > 0
-                      ? modulesOptions
-                      : allModules.length > 0
-                        ? allModules
-                        : showHisList || []
-                  }
-                  filterOption={false}
-                  notFoundContent={null}
-                  style={{
-                    width: 200,
-                  }}
-                  className="header-search-select"
-                  suffixIcon={
-                    <SearchOutlined style={{ color: "rgba(0, 0, 0, 0.45)" }} />
-                  }
-                  onFocus={() => {
-                    // Show all modules when focused if no search is active
-                    if (!searchModule && allModules.length > 0) {
-                      setModulesOptions(allModules);
-                    }
-                    // Load search history if available
-                    if (showHisList.length === 0) {
-                      showRecentSearch();
-                    }
-                  }}
-                />
-              }
+              searchComponent={<ModuleSearch />}
               socketConnected={isConnected}
               socketLoading={isLoading}
               onRefreshSocket={() => refreshConnection()}
@@ -1034,7 +906,7 @@ dispatch(logoutUser());
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath
-                          ? 0
+                          ? 1
                           :50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
@@ -1251,6 +1123,8 @@ dispatch(logoutUser());
           </div>
         )}
       </Modal>
+
+   
     </div>
   );
 };

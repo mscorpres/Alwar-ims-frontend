@@ -240,7 +240,7 @@ function CashPaymentResister() {
                   type="primary"
                   onClick={() => fetchData("date_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>
@@ -271,7 +271,7 @@ function CashPaymentResister() {
                   type="primary"
                   onClick={() => fetchData("date_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>
@@ -302,7 +302,7 @@ function CashPaymentResister() {
                   type="primary"
                   onClick={() => fetchData("eff_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>
@@ -344,7 +344,7 @@ function CashPaymentResister() {
                   type="primary"
                   onClick={() => fetchData("key_wise")}
                 >
-                  Fetch
+                  Search
                 </Button>
               </Col>
             </>

@@ -30,7 +30,7 @@ function RmtoRm() {
       locationTo: "",
       stockQty: "00",
       unit: "",
-      avrRate: "00",
+      avrRate: "",
       address: "",
       comment: "",
     },
@@ -161,6 +161,7 @@ function RmtoRm() {
     const tolocations = rows.map((row) => row.locationTo);
     const qtys = rows.map((row) => row.qty1);
     const comments = rows.map((row) => row.comment || "");
+     const rate = rows.map((row) => row.avrRate || 0);
 
     const response = await imsAxios.post("/godown/transferRM2RM", {
       comment: comments,
@@ -168,6 +169,7 @@ function RmtoRm() {
       component: components,
       tolocation: tolocations,
       qty: qtys,
+      rate: rate,
       type: "RM2RM",
     });
 
@@ -283,13 +285,13 @@ function RmtoRm() {
     <div style={{ height: "calc(100vh - 200px)", padding: 10 }}>
       {/* <InternalNav links={Main} /> */}
       <Row gutter={10}>
-        <Col span={6}>
-          <Card>
+        <Col span={16} style={{ marginBottom: 10 }}>
+   
             <Row gutter={10}>
-              <Col span={24} style={{ width: "100%" }}>
+              <Col span={3} style={{ width: "100%" }}>
                 <span>Pick Location</span>
               </Col>
-              <Col span={24}>
+              <Col span={8}>
                 <Select
                   placeholder="Please Select Location"
                   style={{ width: "100%" }}
@@ -302,20 +304,20 @@ function RmtoRm() {
                   }
                 />
               </Col>
-              <Col span={24} style={{ marginTop: "10px" }}>
-                <TextArea rows={2} disabled value={branchName} />
+              <Col span={10} >
+                <TextArea rows={1} disabled value={branchName} />
               </Col>
             </Row>
-          </Card>
+     
         </Col>
 
-        <Col span={18}>
+        <Col span={24}>
           <Row gutter={10}>
             <Col span={24}>
               <div
                 style={{
                   overflowY: "auto",
-                  height: "calc(100vh - 200px)",
+                  height: "calc(100vh - 220px)",
                 }}
               >
                 <table style={{ border: "1px solid #ccc" }}>

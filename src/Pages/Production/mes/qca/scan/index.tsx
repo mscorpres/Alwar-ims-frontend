@@ -325,7 +325,7 @@ const QcScan = (props: Props) => {
         }
         loading={loading}
       />
-      <Col lg={6} xl={4} span={4}>
+      <Col lg={6} xl={6} span={6} >
         <Flex vertical style={{ height: "100%", overflowY: "auto" }} gap={5}>
           <Card title="Header Details" size="small">
             {loading("headers") && <Loading />}
@@ -457,7 +457,7 @@ const QcScan = (props: Props) => {
           </div>
         </Flex>
       </Col>
-      <Col lg={12} xl={14} xxl={10} span={10}>
+      <Col lg={12} xl={14}  span={10} >
       
           {loading("fetchRows") && <Loading />}
           <MyDataTable
@@ -473,8 +473,8 @@ const QcScan = (props: Props) => {
             loading={loading("select")}
           />
       </Col>
-      <Col lg={6} xl={4} span={4}>
-        <Flex vertical gap={5} style={{ overflowY: "auto" }}>
+      <Col lg={6} xl={4} span={4} >
+        <Flex vertical gap={5} style={{ overflowY: "auto",  }}>
           {pprDetails && <CustomerName details={pprDetails} />}
           {selectedProcess && (
             <LocationDetails
@@ -500,7 +500,7 @@ const getCurrentProcess = (
   return proccesses.find((row) => row.process.value === key);
 };
 
-export const getCurrentScanDetails = (rows: RowType[]): currentScanDetails => {
+const getCurrentScanDetails = (rows: RowType[]): currentScanDetails => {
   return {
     currentScanned: rows.length,
     failed: rows.filter((row) => row.status === "FAIL").length,

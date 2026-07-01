@@ -46,7 +46,6 @@ const R3 = () => {
         action: "search_r3",
       });
       if (response.success) {
-        showToast(response.message, "success");
         let arr = response.data.map((row) => {
           return {
             ...row,

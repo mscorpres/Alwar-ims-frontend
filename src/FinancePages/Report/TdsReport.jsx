@@ -1,4 +1,4 @@
-import { Button, Col, Row, Space } from "antd";
+import { Button, Col, Row, Space, Card } from "antd";
 import React, { useState } from "react";
 
 import MyDatePicker from "../../Components/MyDatePicker";
@@ -29,19 +29,22 @@ const TdsReport = () => {
   };
   return (
     <div style={{ height: "100%" }}>
-      <Row gutter={16} style={{ margin: "5px" }}>
-        <Col span={5}>
+      <Row gutter={16} style={{ margin: "5px", display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+        <Card size="small" title="TDS Report">
+    <Col span={24}>
           <MyDatePicker setDateRange={setDateRange} />
         </Col>
-        <Col span={1}>
+        <Col span={24} style={{ display: "flex", justifyContent: "center", marginTop: 10 }}>
           <Button
             // loading={loading}
             type="primary"
             onClick={emitDownloadEvent}
           >
-            Fetch
+            Download Report
           </Button>
         </Col>
+        </Card>
+    
       </Row>
     </div>
   );

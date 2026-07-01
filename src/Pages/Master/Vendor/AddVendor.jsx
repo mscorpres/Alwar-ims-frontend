@@ -66,7 +66,6 @@ const AddVendor = () => {
   const transactionType = Form.useWatch("transactionType", addVendorForm);
   const bankNameWatch = Form.useWatch("bankName", addVendorForm);
 
-
   // const [groupOptions, setGroupOptions] = useState([]);
 
   const getFetchState = async (e) => {
@@ -120,13 +119,12 @@ const AddVendor = () => {
   //   }
   // };
 
-
   const submitHandler = async () => {
     setLoading("submit");
     setShowSubmitConfirmModal(false);
     const response = await imsAxios.post(
       "/vendor/addVendor",
-      showSubmitConfirmModal
+      showSubmitConfirmModal,
     );
     setLoading(false);
     if (response.success) {
@@ -158,8 +156,8 @@ const AddVendor = () => {
         cinno: !values.cinno
           ? "--"
           : values.cinno === ""
-          ? "--"
-          : values.cinno.toUpperCase(),
+            ? "--"
+            : values.cinno.toUpperCase(),
         term_days: values.paymentTerms ?? 30,
         msme_status: values.msmeStatus,
         msme_year: values.year,
@@ -183,9 +181,9 @@ const AddVendor = () => {
         state: values.state?.value || values.state,
         city: values.city,
         pincode: values.pincode,
-     fax: values.fax === "" ? "--" : values.fax,
+        fax: values.fax === "" ? "--" : values.fax,
         mobile: values.mobile,
-       email: values.email === "" ? "--" : values.email,
+        email: values.email === "" ? "--" : values.email,
         gstin: values.gstin.toUpperCase(),
         transaction_type: values.transactionType,
         account_no: values.accountNo,
@@ -261,7 +259,9 @@ const AddVendor = () => {
   }, [transactionType, addVendorForm]);
 
   return (
-    <div style={{ height: "calc(100vh - 165px)", overflow: "auto", padding: 10 }}>
+    <div
+      style={{ height: "calc(100vh - 165px)", overflow: "auto", padding: 10 }}
+    >
       <Form
         initialValues={initialValues}
         layout="vertical"
@@ -325,7 +325,7 @@ const AddVendor = () => {
                       if (!valid && formattedPAN.length === 10) {
                         showToast(
                           "Invalid Pan Number! Please Enter Valid Pan Number.",
-                          "error"
+                          "error",
                         );
                       }
                     }}
@@ -435,7 +435,7 @@ const AddVendor = () => {
                             setDate={(value) =>
                               addVendorForm.setFieldValue(
                                 "msmeEffectiveFrom",
-                                value
+                                value,
                               )
                             }
                           />
@@ -629,7 +629,6 @@ const AddVendor = () => {
                 </Row>
               </Col>
             </Row>
-
           </Col>
         </Row>
         <Row gutter={16}>
@@ -654,7 +653,7 @@ const AddVendor = () => {
                   <Col
                     span={24}
                     style={{
-                      height: "14rem",
+                      maxHeight: "calc(100vh - 20rem)",
                       overflowY: "auto",
                     }}
                   >
@@ -676,11 +675,6 @@ const AddVendor = () => {
                                 />
                               </Form.Item>
                             ))}
-                            <Row justify="center">
-                              <Typography.Text type="secondary">
-                                ----End of the List----
-                              </Typography.Text>
-                            </Row>
                           </Col>
                         </>
                       )}

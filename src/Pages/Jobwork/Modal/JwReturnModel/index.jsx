@@ -28,7 +28,6 @@ import useApi from "../../../../hooks/useApi";
 import { uplaodFileInJWReturn } from "../../../../api/general";
 import MyDataTable from "../../../../Components/MyDataTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import axios from "axios";
 
 const JwReturnModel = ({ show, close }) => {
   const { showToast } = useToast();
@@ -159,6 +158,7 @@ const JwReturnModel = ({ show, close }) => {
         partCode: row.partcode,
         uom: row.unitsname,
         pendingQty: row.pendingWithJw,
+        rate:row.last_rate ??"",
       }));
 
       setRows(componentArr);
@@ -269,11 +269,11 @@ const JwReturnModel = ({ show, close }) => {
       () => uplaodFileInJWReturn(formData),
       "fetch"
     );
-    if (response?.data?.status == "success") {
+    if (response?.success) {
       let { data } = response;
-      let rows = data.data;
+     
 
-      const formattedHeaders = data.data.headers.map((header) =>
+      const formattedHeaders = data.headers.map((header) =>
         header
           .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
             index === 0 ? match.toUpperCase() : match.toLowerCase()
@@ -282,7 +282,7 @@ const JwReturnModel = ({ show, close }) => {
       );
 
       // Map the row values to headers
-      const formattedRows = data.data.rows.map((row) => {
+      const formattedRows = data.rows.map((row) => {
         let rowObject = {};
         formattedHeaders.forEach((header, index) => {
           rowObject[header] = row[index];

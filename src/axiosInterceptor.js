@@ -11,6 +11,15 @@ function normalizeSocketUrl(url) {
   return `https://${t.replace(/^\/+/, "")}`;
 }
 
+const generateUniqueId = () => {
+  return uuidv4();
+};
+const generateTriggerUidHeader = () => {
+  const uid = generateUniqueId().replaceAll("-", "");
+  const timestamp = formatTimestamp();
+  return `${uid}:${timestamp}`;
+};
+
 /** Same as Oakter: localStorage currentSocketUrl, then env (socket.io needs a URL with protocol). */
 export function getSocketLink() {
   const raw =
@@ -80,12 +89,14 @@ imsAxios.interceptors.request.use(
     }
 
     // Generate a new UUID and timestamp for each request
-    const newId = uuidv4();
+    const newId = generateUniqueId();
     const timestamp = formatTimestamp();
+    const triggerUid = generateTriggerUidHeader();
 
     // Add headers
     config.headers["timeStamp"] = timestamp;
     config.headers["newId"] = newId;
+    config.headers["x-trigger-uid"] = triggerUid;
 
     // Use newToken if available, otherwise use loggedInUser token
     const token =  getToken();

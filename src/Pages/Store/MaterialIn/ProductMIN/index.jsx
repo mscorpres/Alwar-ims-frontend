@@ -983,12 +983,11 @@ export default function ProductMIN() {
   };
   const columns = [
     {
-      headerName: <span
-              onClick={addRow}
-              style={{ cursor: "pointer" }}
-            >
-              <Add color="success" />
-            </span>,
+      headerName: (
+        <span onClick={addRow} style={{ cursor: "pointer" }}>
+          <Add color="success" />
+        </span>
+      ),
       width: 80,
       field: "add",
       sortable: false,
@@ -997,12 +996,12 @@ export default function ProductMIN() {
           {materialInward.indexOf(row) >= 1 ? (
             <div style={{ display: "flex", justifyContent: "center" }}>
               <span
-              onClick={() => removeRow(row?.id)}
-              style={{ cursor: "pointer" }}
-            >
-              <Delete color="error" />
-            </span>
-              </div>
+                onClick={() => removeRow(row?.id)}
+                style={{ cursor: "pointer" }}
+              >
+                <Delete color="error" />
+              </span>
+            </div>
           ) : null}
         </>
       ),
@@ -1452,7 +1451,7 @@ export default function ProductMIN() {
                 }}
               >
                 <Col
-                  span={24}
+                  span={12}
                   style={{
                     height: "10%",
                     display: "flex",
@@ -1460,22 +1459,20 @@ export default function ProductMIN() {
                     gap: 10,
                   }}
                 >
-                  <Row className="material-in-upload">
-                    <UploadDocs
-                      // disable={poData?.materials?.length == 0}
-                      setFiles={setInvoices}
-                      files={invoices}
-                    />
-                  </Row>
-                  <Row className="material-in-upload">
-                    <MyButton
-                      variant="upload"
-                      text="Excel"
-                      onClick={() => setOpen(true)}
-                    >
-                      Excel
-                    </MyButton>
-                  </Row>
+                  <UploadDocs
+                    // disable={poData?.materials?.length == 0}
+                    setFiles={setInvoices}
+                    files={invoices}
+                  />
+                </Col>
+                <Col span={12}>
+                  <MyButton
+                    variant="upload"
+                    text="Excel"
+                    onClick={() => setOpen(true)}
+                  >
+                    Excel
+                  </MyButton>
                 </Col>
               </Row>
             </Card>

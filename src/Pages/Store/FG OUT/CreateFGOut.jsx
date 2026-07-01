@@ -43,13 +43,13 @@ const CreateFGOut = () => {
       location: "",
       remarks: "",
       uom: "",
+      rate: 0,
     },
   ]);
   // console.log(restValue);
 
   const plusRow = () => {
     setAddRowData((addRowData) => [
-   
       {
         id: v4(),
         product: "",
@@ -58,7 +58,7 @@ const CreateFGOut = () => {
         total: "",
         remarks: "",
       },
-         ...addRowData,
+      ...addRowData,
     ]);
   };
 
@@ -69,10 +69,16 @@ const CreateFGOut = () => {
   };
 
   const getLocations = async () => {
-    const { data } = await imsAxios.get("/ppr/mfg_locations");
-    const arr = [];
-    data?.map((a) => arr.push({ text: a.text, value: a.id }));
-    setLocationOptions(arr);
+    try {
+      const response = await imsAxios.get("/ppr/mfg_locations");
+      const arr = [];
+      if (response?.success) {
+        response?.data?.map((a) => arr.push({ text: a.text, value: a.id }));
+        setLocationOptions(arr);
+      }
+    } catch (e) {
+      showToast(e?.message || "Error fetching locations", "error");
+    }
   };
 
   useEffect(() => {
@@ -80,45 +86,83 @@ const CreateFGOut = () => {
   }, []);
 
   const getOption = async (productSearchInput) => {
-    if (productSearchInput?.length > 2) {
-      setSelLoading(true);
-      const response = await imsAxios.post("/fgOUT/fetchProduct", {
-        searchTerm: productSearchInput,
-      });
+    try {
+      if (productSearchInput?.length > 2) {
+        setSelLoading(true);
+        const response = await imsAxios.post("/fgOUT/fetchProduct", {
+          searchTerm: productSearchInput,
+        });
+        setSelLoading(false);
+        let arr = [];
+        if (!response?.success) {
+          showToast(
+            response?.message || "Error fetching product options",
+            "error",
+          );
+          setSelLoading(false);
+          return;
+        }
+        arr = response?.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+        // return arr;
+      }
+    } catch (error) {
       setSelLoading(false);
-      let arr = [];
-      arr = response.data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
-      // return arr;
+      showToast(error?.message || "Error fetching product options", "error");
+    } finally {
+      setSelLoading(false);
     }
   };
 
-  const compInputHandler = async (name, id, value) => {
+const compInputHandler = async (name, id, value) => {
     if (name == "product") {
-      const response = await imsAxios.post("/fgOUT/fetchProductData", {
+  try {
+        const response = await imsAxios.post("/fgOUT/fetchProductData", {
         search: value,
       });
-      const totalValue = response?.data?.total;
-      const unitValue = response?.data?.unit;
-      // console.log(totalValue);
-      setAddRowData((product) =>
-        product.map((h) => {
-          if (h.id == id) {
-            {
-              return {
-                ...h,
-                product: value,
-                total: totalValue,
-                uom: unitValue,
-              };
+         
+      if (response?.success) {
+        const totalValue = response?.data?.total;
+        const unitValue = response?.data?.unit;
+        const war = Number(response?.data?.war);
+  
+        setAddRowData((product) =>
+          product.map((h) => {
+            if (h.id == id) {
+              {
+                return {
+                  ...h,
+                  product: value,
+                  total: totalValue,
+                  uom: unitValue,
+                  rate: war,
+                };
+              }
+            } else {
+              return h;
             }
-          } else {
-            return h;
-          }
-        }),
-      );
+          }),
+        );
+      } else {
+        setAddRowData((product) =>
+          product.map((h) => {
+            if (h.id == id) {
+              {
+                return { ...h, product: value };
+              }
+            } else {
+              return h;
+            }
+          }),
+        );
+        toast.error(response?.message);
+      }
+    
+  } catch (error) {
+    toast.error(error?.response?.data?.message ?? "Something went wrong");
+  }
     } else if (name == "quantity") {
       setAddRowData((quantity) =>
         quantity.map((h) => {
@@ -143,8 +187,7 @@ const CreateFGOut = () => {
           }
         }),
       );
-    }else if (name == "location") {
-     
+    } else if (name == "location") {
       setAddRowData((location) =>
         location.map((h) => {
           if (h.id == id) {
@@ -154,7 +197,7 @@ const CreateFGOut = () => {
           } else {
             return h;
           }
-        })
+        }),
       );
     }
   };
@@ -165,39 +208,47 @@ const CreateFGOut = () => {
     let arrQty = [];
     let arrRemark = [];
     let arrLoc = [];
+    let arrRate = [];
     addRowData.map((a) => arrPro.push(a.product));
     addRowData.map((a) => arrQty.push(a.quantity));
     addRowData.map((a) => arrRemark.push(a.remarks));
-    addRowData.map((a) => arrLoc.push(a.location));
+    addRowData.map((a) => arrRate.push(a.rate));
     // addRowData.map((a) => console.log(a));
     // console.log(arrQty);
 
-
     const hasEmptyLocation = addRowData.some(
-      (row) => !row.location || String(row.location).trim() === ""
+      (row) => !row.location || String(row.location).trim() === "",
     );
     if (!createFgOut.selectType) {
       showToast("Please Select Option", "error");
     } else if (hasEmptyLocation) {
       showToast("Location is mandatory for all rows", "error");
     } else {
-      setLoadingUpdate(true);
-      const response = await imsAxios.post("/fgout/createFgOut", {
-        fg_out_type: createFgOut.selectType,
-        product: arrPro,
-        qty: arrQty,
-        location: arrLoc,
-        remark: arrRemark,
-        comment: createFgOut.comment,
-      });
-      if (response?.success) {
-        resetFunction();
-
-        showToast(response.message, "success");
-        setLoadingUpdate(false);
-      } else {
-        showToast(response?.message?.msg || response?.message, "error");
-        setLoadingUpdate(false);
+     try {
+        setLoadingUpdate(true);
+        const response = await imsAxios.post("/fgout/createFgOut", {
+          fg_out_type: createFgOut.selectType,
+          product: arrPro,
+          qty: arrQty,
+          rate: arrRate,
+          location: arrLoc,
+          remark: arrRemark,
+          comment: createFgOut.comment,
+        });
+        if (response?.success) {
+          resetFunction();
+        toast.success(response.message);
+          setLoadingUpdate(false);
+        } else {
+          toast.error(
+            response.message ?? "Failed to create FG Out. Please try again.",
+          );
+          setLoadingUpdate(false);
+        }
+      } catch (error) {
+        toast.error(
+          error?.message ?? "Failed to create FG Out. Please try again.",
+        );
       }
     }
   };
@@ -223,40 +274,36 @@ const CreateFGOut = () => {
   const columns = [
     {
       headerName: (
-      <div
-  style={{
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",   // vertical centering
-    width: "100%",          // take full cell width
-    height: "100%",         // take full cell height
-  }}
->
-         <span onClick={plusRow} style={{ cursor: "pointer",  }}>
-          <Add
-          color="success"
-         
-          />
-          {/* <PlusSquareFilled style={{ cursor: "pointer", fontSize: "1.5rem" }} /> */}
-        </span>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center", // vertical centering
+            width: "100%", // take full cell width
+            height: "100%", // take full cell height
+          }}
+        >
+          <span onClick={plusRow} style={{ cursor: "pointer" }}>
+            <Add color="success" />
+            {/* <PlusSquareFilled style={{ cursor: "pointer", fontSize: "1.5rem" }} /> */}
+          </span>
         </div>
       ),
       width: 80,
       field: "add",
-      
 
       // width: "5
       sortable: false,
       renderCell: ({ row }) =>
         addRowData.findIndex((r) => r.id == row.id) >= 1 && (
-              <div style={{ display: "flex", justifyContent: "center",}}>
-         <span onClick={() => minusRow(row?.id)} style={{ cursor: "pointer",  }}>
-          <Delete
-          color="error"
-         
-          />
-        </span>
-        </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <span
+              onClick={() => minusRow(row?.id)}
+              style={{ cursor: "pointer" }}
+            >
+              <Delete color="error" />
+            </span>
+          </div>
         ),
       // sortable: false,
     },
@@ -286,6 +333,12 @@ const CreateFGOut = () => {
       renderCell: ({ row }) => (
         <Input suffix={row?.uom} disabled value={row?.total} />
       ),
+    },
+     {
+      headerName: "Rate",
+      field: "rate",
+      width: 170,
+
     },
     {
       headerName: "Issue Qty",
@@ -332,9 +385,9 @@ const CreateFGOut = () => {
   return (
     <>
       <Row gutter={10} style={{ margin: "8px", height: "calc(100% - 70px)" }}>
-        <Col span={6}>
+        <Col span={16}>
           <Row gutter={16}>
-            <Col span={24}>
+            <Col span={8}>
               <Select
                 style={{
                   width: "100%",
@@ -353,9 +406,9 @@ const CreateFGOut = () => {
                 }
               />
             </Col>
-            <Col span={24}>
+            <Col span={8}>
               <TextArea
-                rows={5}
+                rows={1}
                 placeholder="Comment(Optional)"
                 className="form-control"
                 value={createFgOut.comment}
@@ -371,7 +424,10 @@ const CreateFGOut = () => {
             </Col>
           </Row>
         </Col>
-        <Col span={18}>
+        <Col
+          span={24}
+          style={{ height: "calc(100% - 50px)", overflowY: "auto" }}
+        >
           <MyDataTable
             loading={loading}
             data={addRowData}

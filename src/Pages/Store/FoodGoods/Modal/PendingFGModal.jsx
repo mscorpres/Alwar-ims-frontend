@@ -37,6 +37,7 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
       pprrequest1: fGModal.mfg_ref_transid_1,
       pprrequest2: fGModal.mfg_transaction,
       pprsku: fGModal.mfg_sku,
+      rate: fGModal.warRate ?? 0,
     });
     //  console.log(data.message)
     if (response?.success) {
@@ -47,7 +48,7 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
       setLoadingModal(false);
       setFGModal(false);
     } else {
-      showToast(response?.message?.msg || response?.message, "error");
+      showToast(response?.message, "error");
       setAllPendingData({
         qty: "",
       });
@@ -73,7 +74,17 @@ function PendingFGModal({ fGModal, setFGModal, getPendingData }) {
     >
       <Row>
         <Skeleton active loading={loadingModal}>
-          <Col span={24}>
+          <Col
+            span={24}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <span style={{ fontWeight: "bolder" }}>
+              WAR Rate: {fGModal.warRate ?? 0}
+            </span>
             <div style={{ textAlign: "end", fontWeight: "bolder" }}>
               {fGModal.mfg_ref_id}
               <CaretRightOutlined style={{ color: "red" }} />

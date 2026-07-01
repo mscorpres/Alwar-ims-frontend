@@ -210,6 +210,7 @@ function FGToFGTransfer() {
         const product = group.map((r) => r.component);
         const qty = group.map((r) => r.qty1);
         const remark = group.map((r) => (r.comment || "").trim() || "--");
+        const rate = group.map((r) => r?.avrRate ?? 0);
 
         const res = await imsAxios.post("/godown/transferFG2FG", {
           pickLocation: allData.locationFrom,
@@ -217,6 +218,7 @@ function FGToFGTransfer() {
           product,
           qty,
           remark,
+          rate,
         });
 
         // Interceptor returns response.data when success is present, so res is already the body
@@ -324,13 +326,13 @@ function FGToFGTransfer() {
     <div style={{ height: "95%" }}>
       {(loading || isLoading) && <Loading />}
       <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
-        <Col span={6}>
-          <Card>
+        <Col span={16} style={{ marginBottom: 10 }}>
+       
             <Row gutter={10} >
-              <Col span={24} style={{ marginBottom: "10px", width: "100%" }}>
+              <Col span={4} style={{ marginBottom: "10px", width: "100%" }}>
                 <span>Pick Location</span>
               </Col>
-              <Col span={24}>
+              <Col span={6}>
                 <Select
                   placeholder="Please Select Location"
                   style={{ width: "100%" }}
@@ -343,20 +345,20 @@ function FGToFGTransfer() {
                   }
                 />
               </Col>
-              <Col span={24} style={{ marginTop: "10px" }}>
-                <TextArea rows={2} disabled value={branchName} />
+              <Col span={10} >
+                <TextArea rows={1} disabled value={branchName} />
               </Col>
             </Row>
-          </Card>
+    
         </Col>
 
-        <Col span={18}>
+        <Col span={24}>
           <Row gutter={10}>
             <Col span={24}>
               <div
                 style={{
                   overflowY: "auto",
-                  height: "calc(100vh - 200px)",
+                  height: "calc(100vh - 220px)",
                 }}
               >
                 <table style={{ border: "1px solid #ccc", minWidth: 1500 }}>

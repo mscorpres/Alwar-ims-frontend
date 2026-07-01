@@ -94,43 +94,59 @@ function PendingReversal() {
         editPPR={executePPR}
         setEditPPR={setExecutePPR}
       />
-      <Col sm={6} xxl={4}>
-        <Card size="small">
-          <Form form={form} layout="vertical" initialValues={initialValues}>
-            <Form.Item name="wise" label="Select Wise">
-              <MySelect options={wiseOptions} />
-            </Form.Item>
-            <Form.Item
-              name="data"
-              label={wise === "skuwise" ? "Select Product" : "Select Date"}
-            >
-              {wise === "skuwise" ? (
-                <MyAsyncSelect
-                  loadOptions={handleFetchProductOptions}
-                  selectLoading={loading("select")}
-                  optionsState={asyncOptions}
-                  onBlur={() => setAsyncOptions([])}
-                />
-              ) : (
-                <MyDatePicker
-                  setDateRange={(value) => form.setFieldValue("data", value)}
-                />
-              )}
-            </Form.Item>
-            <Row justify="center">
-              <Space>
-                <MyButton
-                  loading={loading("fetch")}
-                  onClick={getRows}
-                  variant="search"
-                  text="Fetch"
-                />
-              </Space>
-            </Row>
-          </Form>
-        </Card>
+  <Col span={16}>
+  <Form form={form} initialValues={initialValues}>
+    <Row gutter={10} align="middle">
+
+      {/* Wise Select */}
+      <Col span={8}>
+        <Form.Item
+          name="wise"
+          label="Select Wise"
+          style={{ marginBottom: 0 }}
+        >
+          <MySelect options={wiseOptions} />
+        </Form.Item>
       </Col>
-      <Col sm={18} xxl={20}>
+
+      {/* Product / Date */}
+      <Col span={10}>
+        <Form.Item
+          name="data"
+          label={wise === "skuwise" ? "Select Product" : "Select Date"}
+          style={{ marginBottom: 0 }}
+        >
+          {wise === "skuwise" ? (
+            <MyAsyncSelect
+              loadOptions={handleFetchProductOptions}
+              selectLoading={loading("select")}
+              optionsState={asyncOptions}
+              onBlur={() => setAsyncOptions([])}
+            />
+          ) : (
+            <MyDatePicker
+              setDateRange={(value) =>
+                form.setFieldValue("data", value)
+              }
+            />
+          )}
+        </Form.Item>
+      </Col>
+
+      {/* Button */}
+      <Col span={6}>
+        <MyButton
+          loading={loading("fetch")}
+          onClick={getRows}
+          variant="search"
+          text="Fetch"
+        />
+      </Col>
+
+    </Row>
+  </Form>
+</Col>
+      <Col span={24} style={{ height: "calc(100% - 50px)", overflowY: "auto" }}>
         <MyDataTable
           loading={loading("fetch")}
           data={rows}

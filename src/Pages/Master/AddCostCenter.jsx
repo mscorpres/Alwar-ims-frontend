@@ -5,6 +5,15 @@ import { imsAxios } from "../../axiosInterceptor";
 import MyDataTable from "../../Components/MyDataTable";
 import { useToast } from "../../hooks/useToast";
 
+function parseCostCenterText(text = "") {
+  const trimmed = String(text).trim();
+  const match = trimmed.match(/^(.+?)\s*\((.+)\)\s*$/);
+  if (match) {
+    return { code: match[1].trim(), name: match[2].trim() };
+  }
+  return { code: trimmed, name: trimmed };
+}
+
 export default function AddCostCenter({
   setShowAddCostModal,
 }) {
@@ -59,13 +68,23 @@ export default function AddCostCenter({
 
   const handleFetchUOMList = useCallback(async () => {
     try {
-      const response = await imsAxios.get("backend/costCenter");
+       const response = await imsAxios.get("backend/costcenter?search=all");
 
-      if (response?.success) {
-        const formattedRows = (response?.data ?? []).map((item, index) => ({
-          ...item,
-          id: item?.uID || `${item?.name || ""}-${item?.code || ""}-${index}`,
-        }));
+     const isSuccess =
+        response?.success === true ||
+        response?.status === "success"
+
+      if (isSuccess) {
+        const formattedRows = (response?.data ?? []).map((item, index) => {
+          const { code, name } = parseCostCenterText(item?.text);
+          return {
+            ...item,
+            id: item?.id ?? item?.uID ?? `cost-center-${index}`,
+            code: item?.code ?? code,
+            name: item?.name ?? name,
+            timestamp: item?.timeStamp ?? "-",
+          };
+        });
         setCenterData(formattedRows);
       } else {
         showToast(response?.message || "Failed to fetch cost centers", "error");
@@ -88,15 +107,15 @@ export default function AddCostCenter({
   return (
     <div
       style={{
-        display: "grid",
-        gap: "1rem",
-        gridTemplateColumns: "1fr 2fr",
-        padding: "20px",
+        height: "calc(100vh - 160px)",
+   
+     
+        padding: "12px",
       }}
     >
-      <div>
-        <Card title="Add Cost Center" style={{ width: "100%" }}>
-          <Form layout="vertical" style={{ height: "95%" }}>
+      <div style={{maxWidth: "100%", marginBottom: 5, display:"flex", alignItems:"center",}}>
+      
+          <Form style={{ width: "100%",display: "flex", gap: "1rem", alignItems:"center",  }} >
             <Form.Item label="Cost Center Id">
               <Input
                 inputMode="numeric"
@@ -117,26 +136,29 @@ export default function AddCostCenter({
                 placeholder="Enter Cost Center Name"
               />
             </Form.Item>
-          </Form>
-          <Row justify="end">
-            <Button
+            <Form.Item >
+                 <Button
               onClick={submitCostCenter}
               loading={submitLoading}
               type="primary"
             >
               Submit
             </Button>
-          </Row>
-        </Card>
+            </Form.Item>
+          </Form>
+       
+        
+       
+      
       </div>
-      <div className="m-2" style={{ height: "100%" }}>
-        <div style={{ height: "80vh" }}>
+      <div  style={{ height: "100%" }}>
+    
           <MyDataTable
             // loading={loading("fetch")}
             data={centerData}
             columns={columns}
           />
-        </div>
+      
       </div>
     </div>
   );

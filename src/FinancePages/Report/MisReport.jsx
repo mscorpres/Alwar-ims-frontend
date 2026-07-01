@@ -249,7 +249,7 @@ function MisReport() {
         <Space span={1}>
           <div>
             <Button loading={loading} type="primary" onClick={fetchMisReport}>
-              Fetch
+              Search
             </Button>
           </div>
           {/* <div>

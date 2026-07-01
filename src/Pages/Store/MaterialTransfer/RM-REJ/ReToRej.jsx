@@ -196,13 +196,13 @@ function ReToRej() {
       {/* <InternalNav links={MainREJ} /> */}
 
       <Row gutter={10}>
-        <Col span={6}>
-          <Card>
+        <Col span={24} style={{ marginBottom: 10 }}>
+
             <Row gutter={10}>
-              <Col span={24} style={{ width: "100%" }}>
+              <Col span={2} style={{ width: "100%" }}>
                 <span>Pick Location</span>
               </Col>
-              <Col span={24}>
+              <Col span={6}>
                 <Select
                   placeholder="Please Select Location"
                   style={{ width: "100%" }}
@@ -215,10 +215,10 @@ function ReToRej() {
                   }
                 />
               </Col>
-              <Col span={24} style={{ marginTop: "10px" }}>
+              <Col span={6} >
                 <TextArea rows={2} disabled value={branch} />
               </Col>
-              <Col span={24} style={{ marginTop: "10px" }}>
+              <Col span={8} >
                 <TextArea
                   rows={2}
                   placeholder="Comment Optional"
@@ -231,14 +231,14 @@ function ReToRej() {
                 />
               </Col>
             </Row>
-          </Card>
+        
         </Col>
 
-        <Col span={18}>
+        <Col span={24}>
           <Row gutter={10}>
             <Col span={24}>
               {" "}
-              <div style={{ overflowY: "auto", height: "calc(100vh - 200px)" }}>
+              <div style={{ overflowY: "auto", height: "calc(100vh - 225px)" }}>
                 <table
                   style={{
                     width: "100%",
