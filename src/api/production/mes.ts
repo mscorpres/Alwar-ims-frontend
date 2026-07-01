@@ -36,6 +36,7 @@ export const getPprDetails = async (ppr: string) => {
       product: {
         value: values.product_sku,
         text: values.product_name,
+        //@ts-ignore
         label: values.product_name,
       },
       status: values.status,
@@ -110,6 +111,7 @@ export const getProcessOptions = async (sku: string) => {
         bom: {
           value: row.bom.id,
           text: row.bom.name,
+          //@ts-ignore
           label: row.bom.name,
         },
         isBomRequired: row.bomrequired === "YES",
@@ -118,22 +120,26 @@ export const getProcessOptions = async (sku: string) => {
           fail: {
             value: row.fail_loc.key,
             text: row.fail_loc.name,
+            //@ts-ignore
             label: row.fail_loc.name,
           },
           pass: {
             value: row.pass_loc.key,
             text: row.pass_loc.name,
+            //@ts-ignore
             label: row.pass_loc.name,
           },
           process: {
             value: row.process_loc.key,
             text: row.process_loc.name,
+            //@ts-ignore
             label: row.process_loc.name,
           },
         },
         lotSize: row.qa_lot_size,
         process: {
           value: row.process.key,
+          //@ts-ignore
           label: row.process.name,
           text: row.process.name,
         },

@@ -4,7 +4,6 @@ import {
   Routes,
   useNavigate,
   useLocation,
-  Link,
   useSearchParams,
 } from "react-router-dom";
 import { Box, LinearProgress } from "@mui/material";
@@ -13,7 +12,6 @@ import Rout from "./Routes/Routes";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import "buffer";
 import AppHeader from "./new/Header/AppHeader.jsx";
-import NotificationDropdown from "./Components/NotificationDropdown/NotificationDropdown";
 import {
   setNotifications,
   setTestPages,
@@ -24,20 +22,18 @@ import {
   setSettings,
 } from "./Features/loginSlice/loginSlice.js";
 import UserMenu from "./Components/UserMenu";
-import Logo from "./Components/Logo";
 import socket from "./Components/socket.js";
 import {
-  toggleNotifications,
   setShowNotifications,
   setShowMessageNotifications,
   setShowTickets,
   setShowSetting,
   setShowSwitchModule,
 } from "./Features/uiSlice/uiSlice.js";
-import Layout, { Content, Header } from "antd/lib/layout/layout";
+import Layout, { Content } from "antd/lib/layout/layout";
 import { Select, Modal, Button } from "antd";
 import { SwapOutlined } from "@ant-design/icons";
-import { Tooltip, IconButton } from "@mui/material";
+import { Tooltip } from "@mui/material";
 import InternalNav from "./Components/InternalNav";
 import { imsAxios } from "./axiosInterceptor";
 import internalLinks from "./Pages/internalLinks.jsx";
@@ -115,10 +111,7 @@ const App = () => {
   const [switchBranch, setSwitchBranch] = useState(null);
   const [switchSession, setSwitchSession] = useState(null);
   const [switchSuccess, setSwitchSuccess] = useState(false);
-  const [showBlackScreen, setShowBlackScreen] = useState(false);
-  const [isBannerVisible, setIsBannerVisible] = useState(false);
   const logoutHandler = () => {
-    setShowBlackScreen(false);
 dispatch(logoutUser());
   };
 
@@ -234,8 +227,6 @@ dispatch(logoutUser());
       }
     }
     if (user) {
-      if (!user.company_branch) {
-      }
       if (user.company_branch) {
         setBranchSelected(true);
       }
@@ -326,10 +317,6 @@ dispatch(logoutUser());
 
         let arr = [];
         for (const property in data) {
-          let obj = {
-            url: property,
-            status: data[property],
-          };
           if (property.includes("/")) {
             if (data[property] == "TEST") {
               let obj = {
@@ -513,10 +500,6 @@ dispatch(logoutUser());
 
         let arr = [];
         for (const property in data) {
-          let obj = {
-            url: property,
-            status: data[property],
-          };
           if (property.includes("/")) {
             if (data[property] == "TEST") {
               let obj = {
@@ -634,17 +617,6 @@ dispatch(logoutUser());
   }, [navigate, user]);
   
 
-  useEffect(() => {
-    if (user && user.passwordChanged !== "P") {
-      const timer = setTimeout(() => {
-        setShowBlackScreen(true);
-      }, 1500);
-
-      return () => clearTimeout(timer);
-    } else {
-      setShowBlackScreen(false);
-    }
-  }, [user]);
 
   const getOffsetLeft = () => {
     // if (isTestServer && isBannerVisible) {
@@ -740,7 +712,7 @@ dispatch(logoutUser());
         style={{
           width: "100%",
           top: 0,
-          paddingTop: isBannerVisible ? "30px" : "0px",
+          paddingTop: "0px",
         }}
       >
         {/* header start */}
@@ -876,7 +848,7 @@ dispatch(logoutUser());
                   style={{
                     height: (() => {
                       const headerHeight = isAuthShellPath ? 10 : 50;
-                      const bannerHeight = isBannerVisible ? 0 : 0;
+                      const bannerHeight =  0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath

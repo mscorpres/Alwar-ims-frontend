@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import {
   Badge,
-  Switch,
   IconButton,
   Select,
   MenuItem,
@@ -9,8 +8,6 @@ import {
   Link,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/Tune";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import HeadsetMicIcon from "@mui/icons-material/HeadsetMic";
 import { SiSocketdotio } from "react-icons/si";
@@ -35,7 +32,6 @@ const AppHeader = (props) => {
     socketConnected,
     socketLoading,
     onRefreshSocket,
-    notificationsCount = 0,
     messagesCount = 0,
     onClickMessages,
     userMenu,
