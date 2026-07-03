@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -73,7 +73,7 @@ const Login = () => {
 
   const isCaptchaValid = () => captchaInput.trim() === expectedCaptchaCode;
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     if (!isCaptchaValid()) {
       showToast("Please enter the captcha text shown above", "error");
       return;
@@ -176,7 +176,7 @@ const Login = () => {
     isPasswordSame();
   }, [
     loginForm.getFieldValue("confirmPassword"),
-    loginForm.getFieldValue("password"),
+    loginForm.getFieldValue("password"), 
   ]);
 
   const handleLoginWithGoogle = async (googleResponse) => {
@@ -346,7 +346,6 @@ const Login = () => {
                     {!loading("submit") && !googleLoginLoading && (
                       <Typography
                         style={{
-                          width: "100%",
                           textAlign: "center",
                           marginBottom: 8,
                           fontWeight: "bold",
