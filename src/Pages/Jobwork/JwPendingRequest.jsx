@@ -66,7 +66,7 @@ function JwPendingRequest() {
       setRows(arr);
     } else {
       setRows([]);
-      showToast(response?.message, "error");
+      showToast(response?.message ?? "Something went wrong", "error");
     }
     
    } catch (error) {
