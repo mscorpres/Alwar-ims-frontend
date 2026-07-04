@@ -51,7 +51,8 @@ function JwPendingRequest() {
   //   }
   // };
   const getRows = async () => {
-    setLoading("fetch");
+   try {
+     setLoading("fetch");
     const response = await imsAxios.post("/jobwork/getJobworkChallan", {
       data: searchInput,
       // wise: wise,
@@ -65,8 +66,14 @@ function JwPendingRequest() {
       setRows(arr);
     } else {
       setRows([]);
-      showToast(response.message, "error");
+      showToast(response?.message, "error");
     }
+    
+   } catch (error) {
+    setLoading(false);
+    showToast(error?.message ?? "Something went wrong", "error");
+    
+   }
   };
   const handlePrint = async (challan_id, refId, btn_status, invoice_id) => {
     setLoading("print");
