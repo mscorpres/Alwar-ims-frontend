@@ -45,6 +45,8 @@ import SuccessPage from "../../Store/MaterialIn/SuccessPage";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import SingleProduct from "../../Master/Vendor/SingleProduct";
 import FormTable from "../../../Components/FormTable.jsx";
+import SingleDatePicker from "../../../Components/SingleDatePicker.jsx";
+
 export default function JwInwordModal({ editModal, setEditModal }) {
   const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -63,6 +65,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   const [irnNo, setIrnNo] = useState("");
   const [materialInSuccess, setMaterialInSuccess] = useState(false);
   const [isApplicable, setIsApplicable] = useState(false);
+  const [challanDate, setChallanDate] = useState(null);
   const [isScan, setIsScan] = useState(false);
   // const [pickLocationOptions, setPickLocationOptions] = useState([]);
   const [modalForm] = Form.useForm();
@@ -77,11 +80,14 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   const getFetchData = async () => {
     setModalLoad("fetch", true);
     const response = await imsAxios.get(
-      `/jobwork/fetch_jw_sf_inward_components?skucode=${row.sku}&transaction=${row.transaction_id}`
+      `/jobwork/fetch_jw_sf_inward_components?skucode=${row.sku}&transaction=${row.transaction_id}`,
     );
 
     if (response.success) {
-      getLocation(response?.data.header.vendor.code,response.data.header.jobworkID);
+      getLocation(
+        response?.data.header.vendor.code,
+        response.data.header.jobworkID,
+      );
       let arr = response?.data.body.map((row, index) => {
         return {
           ...row,
@@ -120,8 +126,10 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       setAsyncOptions(arr);
     }
   };
-  const getLocation = async (vendor,jw) => {
-    const response = await imsAxios.get(`/backend/jw/warehouse/location?vendor=${vendor}&jw=${jw}`);
+  const getLocation = async (vendor, jw) => {
+    const response = await imsAxios.get(
+      `/backend/jw/warehouse/location?vendor=${vendor}&jw=${jw}`,
+    );
     let arr = [];
     arr = response.data.map((d) => {
       return { label: d.name, value: d.key };
@@ -134,7 +142,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     if (vendor) {
       try {
         const response = await imsAxios.get(
-          `/backend/fetchVendorJWLocation?vendor=${vendor}`
+          `/backend/fetchVendorJWLocation?vendor=${vendor}`,
         );
         if (response.success) {
           let arr = [];
@@ -162,7 +170,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     } else if (name == "orderqty") {
       setMainData((a) =>
@@ -174,7 +182,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     } else if (name == "rate") {
       if (value !== "" && Number(value) < 0) {
@@ -190,7 +198,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     } else if (name == "invoice") {
       setMainData((a) =>
@@ -202,7 +210,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     } else if (name == "remark") {
       setMainData((a) =>
@@ -214,7 +222,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     } else if (name == "conRemark") {
       setBomList((a) =>
@@ -226,7 +234,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     } else if (name == "location") {
       setMainData((a) =>
@@ -238,7 +246,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     } else if (name == "rqdQty") {
       setBomList((a) =>
@@ -247,7 +255,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
             return { ...aa, rqdQty: value };
           }
           return aa;
-        })
+        }),
       );
     } else if (name == "irn") {
       setMainData((a) =>
@@ -259,7 +267,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           } else {
             return aa;
           }
-        })
+        }),
       );
     }
   };
@@ -529,7 +537,12 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       sortable: false,
       renderCell: ({ row }) => [
         <GridActionsCellItem
-          icon={<Delete color="error" sx={{ fontSize: "1.7rem", cursor: "pointer" }} />}
+          icon={
+            <Delete
+              color="error"
+              sx={{ fontSize: "1.7rem", cursor: "pointer" }}
+            />
+          }
           onClick={() => {
             removeRow(row.id);
           }}
@@ -641,7 +654,9 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       field: "partcode",
       headerName: "Part Code",
       width: 180,
-      renderCell: ({ row }) => <Typography.Text>{row.partcode}</Typography.Text>,
+      renderCell: ({ row }) => (
+        <Typography.Text>{row.partcode}</Typography.Text>
+      ),
     },
     {
       field: "remark",
@@ -691,6 +706,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       qrScan: isScan == true ? "Y" : "N",
       pick_location: pickLocation,
       consRate: bomList.map((r) => r.last_rate),
+      challan_date: challanDate,
     };
     setModalUploadLoad(true);
     const response = await savejwsfinward(payload);
@@ -727,34 +743,29 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   };
   const getBomList = async (type = "manual", payload) => {
     setLoading(true);
- try {
-     const response = await executeFun(
-       () => fetchBomItems(type, payload),
-       "select"
-     );
-   
-    if (isBomResponseSuccess(response)) {
-      let arr = formatBomRows(getBomRowsFromResponse(response));
-      if (type === "excel") {
-        arr = applyExcelRemarks(arr, payload);
-      }
-      setBomList(arr);
-      setLoading(false);
-      setShowBomList(true);
-      setConsumptionMode(type);
-      setConsumptionStep("bomPreview");
-    } else {
-      showToast(response?.data?.message?.msg || response?.message, "error");
-      setLoading(false);
-    
-    }
-  
- } catch (error) {
-  
-    setLoading(false);
- }
+    try {
+      const response = await executeFun(
+        () => fetchBomItems(type, payload),
+        "select",
+      );
 
- 
+      if (isBomResponseSuccess(response)) {
+        let arr = formatBomRows(getBomRowsFromResponse(response));
+        if (type === "excel") {
+          arr = applyExcelRemarks(arr, payload);
+        }
+        setBomList(arr);
+        setLoading(false);
+        setShowBomList(true);
+        setConsumptionMode(type);
+        setConsumptionStep("bomPreview");
+      } else {
+        showToast(response?.data?.message?.msg || response?.message, "error");
+        setLoading(false);
+      }
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   const handleManualEntry = () => {
@@ -965,6 +976,33 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                 size="small"
                 value={eWayBill}
                 onChange={(e) => setEWayBill(e.target.value)}
+              />
+            </Form.Item>
+          </Form>
+          <Form size="small" layout="vertical">
+            <Form.Item
+              label="Challan Date"
+              name="challanDate"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select Challan Date",
+                },
+              ]}
+              style={{ width:  "100%" }}
+            >
+              <SingleDatePicker
+                size="medium"
+                value={challanDate}
+                setDate={(date) => setChallanDate(date)}
+                placeholder="Select Challan Date"
+                format={"DD-MM-YYYY"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select Challan Date",
+                  },
+                ]}
               />
             </Form.Item>
           </Form>
@@ -1190,7 +1228,8 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           Upload Consumption Excel
         </Typography.Title>
         <Typography.Text type="secondary">
-          Use two clean columns only: partcode and remark. Preview before submit.
+          Use two clean columns only: partcode and remark. Preview before
+          submit.
         </Typography.Text>
       </div>
       <Form form={excelUploadForm} layout="vertical">
@@ -1235,15 +1274,17 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         }}
       >
         <Row gutter={[12, 12]}>
-          {["Column 1: partcode", "Column 2: remark", "Preview first, then submit"].map(
-            (text) => (
-              <Col xs={24} md={8} key={text}>
-                <Typography.Text>
-                  <CheckCircleOutlined style={{ color: "#52c41a" }} /> {text}
-                </Typography.Text>
-              </Col>
-            )
-          )}
+          {[
+            "Column 1: partcode",
+            "Column 2: remark",
+            "Preview first, then submit",
+          ].map((text) => (
+            <Col xs={24} md={8} key={text}>
+              <Typography.Text>
+                <CheckCircleOutlined style={{ color: "#52c41a" }} /> {text}
+              </Typography.Text>
+            </Col>
+          ))}
         </Row>
       </Card>
       <Row justify="space-between" align="middle" style={{ marginTop: 20 }}>
@@ -1558,91 +1599,91 @@ export default function JwInwordModal({ editModal, setEditModal }) {
               </Row>
               {false && (
                 <>
-              <Card type="inner" title={header?.jobworkID}>
-                <Row gutter={10}>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    JW PO ID: {header?.jobworkID}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    Jobwork ID: {header?.jobworkID}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    FG/SFG Name & SKU:{" "}
-                    {`${header?.product?.name || ""} / ${
-                      header?.product?.sku || ""
-                    }`}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    JW PO created by: {header?.createdBy}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    FG/SFG BOM of Recipe: {header?.bom?.name}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    Regisered Date & Time: {header?.registereDt}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    FG/SFG Ord Qty: {header?.orderedQty}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    Job ID Status: {header?.jwStatus}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    FG/SFG processed Qty: {header?.proceedQty}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{ fontSize: "12px", fontWeight: "bolder" }}
-                  >
-                    Job Worker: {header?.vendor?.name}
-                  </Col>
-                  <Col
-                    span={8}
-                    style={{
-                      fontSize: "15px",
-                      fontWeight: "bolder",
-                      marginTop: "20px",
-                    }}
-                  >
-                    <Form size="small">
-                      <Form.Item label="E-Way Bill No.">
-                        <Input
-                          style={{ width: "15rem" }}
-                          size="small"
-                          value={eWayBill}
-                          onChange={(e) => setEWayBill(e.target.value)}
-                        />
-                      </Form.Item>
-                    </Form>
-                  </Col>
-                  {/* {showBomList && bomList && <Col
+                  <Card type="inner" title={header?.jobworkID}>
+                    <Row gutter={10}>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        JW PO ID: {header?.jobworkID}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        Jobwork ID: {header?.jobworkID}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        FG/SFG Name & SKU:{" "}
+                        {`${header?.product?.name || ""} / ${
+                          header?.product?.sku || ""
+                        }`}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        JW PO created by: {header?.createdBy}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        FG/SFG BOM of Recipe: {header?.bom?.name}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        Regisered Date & Time: {header?.registereDt}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        FG/SFG Ord Qty: {header?.orderedQty}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        Job ID Status: {header?.jwStatus}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        FG/SFG processed Qty: {header?.proceedQty}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{ fontSize: "12px", fontWeight: "bolder" }}
+                      >
+                        Job Worker: {header?.vendor?.name}
+                      </Col>
+                      <Col
+                        span={8}
+                        style={{
+                          fontSize: "15px",
+                          fontWeight: "bolder",
+                          marginTop: "20px",
+                        }}
+                      >
+                        <Form size="small">
+                          <Form.Item label="E-Way Bill No.">
+                            <Input
+                              style={{ width: "15rem" }}
+                              size="small"
+                              value={eWayBill}
+                              onChange={(e) => setEWayBill(e.target.value)}
+                            />
+                          </Form.Item>
+                        </Form>
+                      </Col>
+                      {/* {showBomList && bomList && <Col
                     span={8}
                     style={{
                       fontSize: "15px",
@@ -1656,102 +1697,101 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                       </Form.Item>
                     </Form>
                   </Col>} */}
-                  {isApplicable == "Y" && (
-                    <Col
-                      span={6}
-                      style={{ display: "flex", paddingLeft: "-2px" }}
-                    >
-                      <span>
-                        <Col span={24}>
-                          <Checkbox
-                            checked={isScan}
-                            onChange={(e) => setIsScan(e.target.checked)}
-                          />
-                          <Typography.Text
-                            style={{
-                              fontSize: 11,
-                              marginLeft: "4px",
-                              fontWeight: 700,
-                            }}
-                          >
-                            {" "}
-                            Scan with QR Code
-                          </Typography.Text>
-                        </Col>{" "}
+                      {isApplicable == "Y" && (
                         <Col
-                          span={24}
-                          style={{
-                            marginTop: "5px",
-                            fontSize: "12px",
-                            fontWeight: "bolder",
-                            // marginLeft: "8rem",
-                          }}
+                          span={6}
+                          style={{ display: "flex", paddingLeft: "-2px" }}
                         >
-                          <Form size="small">
-                            <Form.Item label="Acknowledgment Number">
-                              <Input
-                                size="small"
-                                style={{ width: "15rem" }}
-                                value={irnNo}
-                                onChange={(e) => setIrnNo(e.target.value)}
-                                disabled={isScan}
+                          <span>
+                            <Col span={24}>
+                              <Checkbox
+                                checked={isScan}
+                                onChange={(e) => setIsScan(e.target.checked)}
                               />
-                            </Form.Item>
-                          </Form>
+                              <Typography.Text
+                                style={{
+                                  fontSize: 11,
+                                  marginLeft: "4px",
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {" "}
+                                Scan with QR Code
+                              </Typography.Text>
+                            </Col>{" "}
+                            <Col
+                              span={24}
+                              style={{
+                                marginTop: "5px",
+                                fontSize: "12px",
+                                fontWeight: "bolder",
+                                // marginLeft: "8rem",
+                              }}
+                            >
+                              <Form size="small">
+                                <Form.Item label="Acknowledgment Number">
+                                  <Input
+                                    size="small"
+                                    style={{ width: "15rem" }}
+                                    value={irnNo}
+                                    onChange={(e) => setIrnNo(e.target.value)}
+                                    disabled={isScan}
+                                  />
+                                </Form.Item>
+                              </Form>
+                            </Col>
+                          </span>
                         </Col>
-                      </span>
-                    </Col>
-                  )}
-                </Row>
-              </Card>
-              <div style={{ height: "50%", marginTop: "5px" }}>
-                <div style={{ height: "100%" }}>
-                  {showBomList && bomList ? (
-                    <FormTable
-                      data={bomList}
-                      columns={bomcolumns}
-                      loading={loading}
-                      getRowStyle={(row) =>
-                        exceedsPendingStock(row)
-                          ? { backgroundColor: "#fff1f0" }
-                          : {}
-                      }
-                    />
-
-                  ) : (
-                    <FormTable data={mainData} columns={columns} />
-                  )}
-                </div>
-              </div>
-              <Row style={{ marginTop: "50px" }}>
-                <Col span={24}>
-                  <div style={{ textAlign: "end" }}>
-                    {showBomList ? (
-                      <>
-                        <Button onClick={prev}>Back</Button>
-
-                        <Button
-                          style={{ marginLeft: 4 }}
-                          type="primary"
-                          onClick={() => setUploadClicked(true)}
-                          // loading={loading}
-                          loading={modalUploadLoad}
-                        >
-                          Save
-                        </Button>
-                      </>
-                    ) : (
-                      <NavFooter
-                        loading={loading}
-                        submitFunction={getBomList}
-                        backFunction={closeModal}
-                        // resetFunction={resetHandler}
-                        nextLabel="Next"
-                      />
-                    )}
+                      )}
+                    </Row>
+                  </Card>
+                  <div style={{ height: "50%", marginTop: "5px" }}>
+                    <div style={{ height: "100%" }}>
+                      {showBomList && bomList ? (
+                        <FormTable
+                          data={bomList}
+                          columns={bomcolumns}
+                          loading={loading}
+                          getRowStyle={(row) =>
+                            exceedsPendingStock(row)
+                              ? { backgroundColor: "#fff1f0" }
+                              : {}
+                          }
+                        />
+                      ) : (
+                        <FormTable data={mainData} columns={columns} />
+                      )}
+                    </div>
                   </div>
-                </Col>
-              </Row>
+                  <Row style={{ marginTop: "50px" }}>
+                    <Col span={24}>
+                      <div style={{ textAlign: "end" }}>
+                        {showBomList ? (
+                          <>
+                            <Button onClick={prev}>Back</Button>
+
+                            <Button
+                              style={{ marginLeft: 4 }}
+                              type="primary"
+                              onClick={() => setUploadClicked(true)}
+                              // loading={loading}
+                              loading={modalUploadLoad}
+                            >
+                              Save
+                            </Button>
+                          </>
+                        ) : (
+                          <NavFooter
+                            loading={loading}
+                            submitFunction={getBomList}
+                            backFunction={closeModal}
+                            // resetFunction={resetHandler}
+                            nextLabel="Next"
+                          />
+                        )}
+                      </div>
+                    </Col>
+                  </Row>
                 </>
               )}
             </Skeleton>
@@ -1812,7 +1852,6 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                                 />
                               </Form.Item>
                             ))}
-                   
                           </Col>
                         </>
                       )}
