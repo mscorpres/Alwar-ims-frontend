@@ -53,7 +53,6 @@ import {
 } from "./utils/postLoginRedirect.js";
 import ModuleSearch from "./Components/ModuleSearch/ModuleSearch.jsx";
 
-
 const App = () => {
   const { showToast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -61,10 +60,8 @@ const App = () => {
   const sessionFromUrl = searchParams.get("session");
   const branchFromUrl = searchParams.get("branch");
   const comFromUrl = searchParams.get("company");
-  const type = searchParams.get("type")
+  const type = searchParams.get("type");
   const { user, testPages } = useSelector((state) => state.login);
-
-
 
   const { notifications } = useSelector((state) => state.login);
 
@@ -92,7 +89,13 @@ const App = () => {
 
   const authPublicPaths = React.useMemo(
     () =>
-      new Set(["/login", "/signup", "/login/otp", "/ims/login", "/first-login"]),
+      new Set([
+        "/login",
+        "/signup",
+        "/login/otp",
+        "/ims/login",
+        "/first-login",
+      ]),
     [],
   );
   const isAuthPublicPath = (p) => authPublicPaths.has(p);
@@ -100,7 +103,7 @@ const App = () => {
     pathname === "/login" ||
     pathname === "/signup" ||
     pathname === "/login/otp";
-    
+
   const [testPage, setTestPage] = useState(false);
   const [branchSelected, setBranchSelected] = useState(true);
   const notificationsRef = useRef();
@@ -112,9 +115,8 @@ const App = () => {
   const [switchSession, setSwitchSession] = useState(null);
   const [switchSuccess, setSwitchSuccess] = useState(false);
   const logoutHandler = () => {
-dispatch(logoutUser());
+    dispatch(logoutUser());
   };
-
 
   const handleSelectCompanyBranch = (value) => {
     dispatch(setCompanyBranch(value));
@@ -202,7 +204,13 @@ dispatch(logoutUser());
 
   useEffect(() => {
     if (tokenFromUrl && sessionFromUrl && comFromUrl && branchFromUrl && type) {
-      fetchUserDeatils(tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type);
+      fetchUserDeatils(
+        tokenFromUrl,
+        sessionFromUrl,
+        comFromUrl,
+        branchFromUrl,
+        type,
+      );
     }
   }, [tokenFromUrl, sessionFromUrl, comFromUrl, branchFromUrl, type]);
 
@@ -237,7 +245,7 @@ dispatch(logoutUser());
 
     if (user && user.token) {
       // getting all notifications
-      socket.on("all-notifications", (data) => {
+      const handleAllNotifications = (data) => {
         let source = Array.isArray(data)
           ? data
           : Array.isArray(data?.data)
@@ -258,12 +266,13 @@ dispatch(logoutUser());
         }));
 
         dispatch(setNotifications(arr));
-      });
+      };
+      socket.on("all-notifications", handleAllNotifications);
       socket.emit("fetch_notifications", {
         source: "react",
       });
       // getting new notification
-      socket.on("socket_receive_notification", (data) => {
+      const handleSocketReceiveNotification = (data) => {
         if (data.type == "message") {
           let arr = notificationsRef.current.filter(
             (not) => not.conversationId != data.conversationId,
@@ -295,19 +304,21 @@ dispatch(logoutUser());
           }
           setNewNotification(data);
         }
-      });
-
+      };
+      socket.on("socket_receive_notification", handleSocketReceiveNotification);
       // event for starting detail
-      socket.on("download_start_detail", (data) => {
+      const handleDownloadStartDetail = (data) => {
         showToast("Your report has been started generating");
         if (data.title || data.details) {
           let arr = notificationsRef.current;
           arr = [data, ...arr];
           dispatch(setNotifications(arr));
         }
-      });
+      };
+      socket.on("download-start-detail", handleDownloadStartDetail);
+      // event for getting page status
 
-      socket.on("getPageStatus", (data) => {
+      const handlePageStatus = (data) => {
         let pages;
         if (testPages) {
           pages = testPages;
@@ -339,8 +350,10 @@ dispatch(logoutUser());
         }
 
         setTestPage(pageIsTest);
-      });
-      socket.on("file-generate-error", (data) => {
+      };
+      socket.on("getPageStatus", handlePageStatus);
+      // event for getting file generate error
+      const handleFileGenerateError = (data) => {
         showToast(data?.message, "error");
         let arr = notificationsRef.current;
         if (arr.filter((row) => row.notificationId == data.notificationId)[0]) {
@@ -360,8 +373,9 @@ dispatch(logoutUser());
           arr = [data, ...arr];
         }
         dispatch(setNotifications(arr));
-      });
-      socket.on("getting-loading-percentage", (data) => {
+      };
+      socket.on("file-generate-error", handleFileGenerateError);
+      const handleGettingLoadingPercentage = (data) => {
         let arr = notificationsRef.current;
         if (arr.filter((row) => row.notificationId == data.notificationId)[0]) {
           arr = arr.map((row) => {
@@ -380,7 +394,23 @@ dispatch(logoutUser());
           arr = [data, ...arr];
         }
         dispatch(setNotifications(arr));
-      });
+      };
+      socket.on("getting-loading-percentage", handleGettingLoadingPercentage);
+
+      return () => {
+        socket.off("all-notifications", handleAllNotifications);
+        socket.off(
+          "socket_receive_notification",
+          handleSocketReceiveNotification,
+        );
+        socket.off("download_start_detail", handleDownloadStartDetail);
+        socket.off("getPageStatus", handlePageStatus);
+        socket.off("file-generate-error", handleFileGenerateError);
+        socket.off(
+          "getting-loading-percentage",
+          handleGettingLoadingPercentage,
+        );
+      };
     }
   }, []);
   useEffect(() => {
@@ -404,8 +434,9 @@ dispatch(logoutUser());
     if (!isAuthShellPath || !user) return;
     const redirectParam = searchParams.get("redirect");
     const safeRedirect = getSafeInternalRedirect(redirectParam);
-    const link = JSON.parse(localStorage.getItem("branchData") || "{}")
-      ?.currentLink;
+    const link = JSON.parse(
+      localStorage.getItem("branchData") || "{}",
+    )?.currentLink;
     if (user.passwordChanged === "P") {
       if (safeRedirect) {
         sessionStorage.setItem(POST_LOGIN_REDIRECT_STORAGE_KEY, safeRedirect);
@@ -414,13 +445,7 @@ dispatch(logoutUser());
     } else {
       navigate(safeRedirect ?? link ?? "/", { replace: true });
     }
-  }, [
-    user,
-    pathname,
-    isAuthShellPath,
-    navigate,
-    searchParams,
-  ]);
+  }, [user, pathname, isAuthShellPath, navigate, searchParams]);
 
   useEffect(() => {
     if (user && user.token) {
@@ -435,7 +460,7 @@ dispatch(logoutUser());
         source: "react",
       });
       // getting new notification
-      socket.on("socket_receive_notification", (data) => {
+      const handleSocketReceiveNotification = (data) => {
         if (data.type == "message") {
           let arr = notificationsRef.current.filter(
             (not) => not.conversationId != data.conversationId,
@@ -466,9 +491,10 @@ dispatch(logoutUser());
           }
           setNewNotification(data);
         }
-      });
+      };
+      socket.on("socket_receive_notification", handleSocketReceiveNotification);
       // getting all notifications
-      socket.on("all-notifications", (data) => {
+      const handleAllNotifications = (data) => {
         let arr = data.data;
         arr = arr.map((row) => {
           return {
@@ -480,17 +506,20 @@ dispatch(logoutUser());
           };
         });
         dispatch(setNotifications(arr));
-      });
+      };
+      socket.on("all-notifications", handleAllNotifications);
       // event for starting detail
-      socket.on("download_start_detail", (data) => {
+      const handleDownloadStartDetail = (data) => {
         if (data.title && data.details) {
           let arr = notificationsRef.current;
           arr = [data, ...arr];
           dispatch(setNotifications(arr));
         }
-      });
+      };
 
-      socket.on("getPageStatus", (data) => {
+      socket.on("download_start_detail", handleDownloadStartDetail);
+
+      const handleGetPageStatus = (data) => {
         let pages;
         if (testPages) {
           pages = testPages;
@@ -522,8 +551,9 @@ dispatch(logoutUser());
         }
 
         setTestPage(pageIsTest);
-      });
-      socket.on("file-generate-error", (data) => {
+      };
+      socket.on("getPageStatus", handleGetPageStatus);
+      const handleFileGenerateError = (data) => {
         showToast(data?.message, "error");
         let arr = notificationsRef.current;
         if (arr.filter((row) => row.notificationId == data.notificationId)[0]) {
@@ -543,7 +573,19 @@ dispatch(logoutUser());
           arr = [data, ...arr];
         }
         dispatch(setNotifications(arr));
-      });
+      };
+      socket.on("file-generate-error", handleFileGenerateError);
+
+      return () => {
+        socket.off(
+          "socket_receive_notification",
+          handleSocketReceiveNotification,
+        );
+        socket.off("all-notifications", handleAllNotifications);
+        socket.off("download_start_detail", handleDownloadStartDetail);
+        socket.off("getPageStatus", handleGetPageStatus);
+        socket.off("file-generate-error", handleFileGenerateError);
+      };
     }
   }, [user?.token]);
 
@@ -615,8 +657,6 @@ dispatch(logoutUser());
       }
     }
   }, [navigate, user]);
-  
-
 
   const getOffsetLeft = () => {
     // if (isTestServer && isBannerVisible) {
@@ -626,8 +666,8 @@ dispatch(logoutUser());
     // } else if (isBannerVisible) {
     //   return 70;
     // } else {
-      if(isTestServer) return 60;
-      return 40;
+    if (isTestServer) return 60;
+    return 40;
     // }
   };
 
@@ -661,7 +701,7 @@ dispatch(logoutUser());
       urlParams.append("company", company);
       urlParams.append("branch", branch);
       urlParams.append("session", session);
-      urlParams.append("type","switch")
+      urlParams.append("type", "switch");
     }
 
     const redirectUrl = `${targetUrl}?${urlParams.toString()}`;
@@ -707,7 +747,12 @@ dispatch(logoutUser());
   }
 
   return (
-    <div style={{ height: "100vh", backgroundColor: isAuthShellPath ? "#fcf9f7" : "white" }}>
+    <div
+      style={{
+        height: "100vh",
+        backgroundColor: isAuthShellPath ? "#fcf9f7" : "white",
+      }}
+    >
       <Layout
         style={{
           width: "100%",
@@ -848,12 +893,12 @@ dispatch(logoutUser());
                   style={{
                     height: (() => {
                       const headerHeight = isAuthShellPath ? 10 : 50;
-                      const bannerHeight =  0;
+                      const bannerHeight = 0;
                       const testServerHeight = isTestServer ? 15 : 0;
                       const byDefaultHeight =
                         pathname === "/auth/profile" || isAuthShellPath
                           ? 1
-                          :50;
+                          : 50;
                       return `calc(100vh - ${headerHeight}px - ${bannerHeight}px - ${testServerHeight}px - ${byDefaultHeight}px)  `;
                     })(),
                     width: "100%",
@@ -1069,8 +1114,6 @@ dispatch(logoutUser());
           </div>
         )}
       </Modal>
-
-   
     </div>
   );
 };

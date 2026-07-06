@@ -9,7 +9,6 @@ import {
   Input,
   Modal,
   Row,
-  Tabs,
   Flex,
   Typography,
   Upload,
@@ -90,7 +89,7 @@ export default function MaterialInWithoutPO() {
   const [autoConsumptionOptions, setAutoConsumptionOption] = useState([]);
   const [isScan, setIsScan] = useState(false);
   const [open, setOpen] = useState(false);
-
+const [fileName, setFileName] = useState("");
   const [totalValues, setTotalValues] = useState([
     { label: "cgst", sign: "+", values: [] },
     { label: "sgst", sign: "+", values: [] },
@@ -106,6 +105,7 @@ export default function MaterialInWithoutPO() {
   const [uplaoaClicked, setUploadClicked] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
+    const [uploadLoading, setUploadLoading] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSuccessPage, setShowSuccessPage] = useState(null);
   const [preview, setPreview] = useState(false);
@@ -147,7 +147,11 @@ export default function MaterialInWithoutPO() {
 
   const handleValidatingInvoices = async () => {
     const values = await form.validateFields();
-
+     if(!fileName) {
+    showToast("Please upload a Document", "error");
+    setSubmitLoading(false);
+    return
+  }
     const response = await executeFun(() => validateInvoice(values), "submit");
 
     if (response?.success) {
@@ -169,28 +173,15 @@ export default function MaterialInWithoutPO() {
         submitMIN(values);
       }
     } else {
-      submitMIN(values);
+         showToast(response.message || "Invoice Id not found", "error");
     }
   };
   const submitMIN = async () => {
-    let fileName;
-    const formData = new FormData();
+       setSubmitLoading(true);
     const vendorType = form.getFieldValue("vendorType");
     const values = await form.validateFields();
-    // console.log("values", values);
-    values?.fileComponents?.map((comp) => {
-      formData.append("files", comp.file[0]?.originFileObj);
-    });
-    let fileResponse;
-    if (vendorType !== "p01") {
-      fileResponse = await executeFun(
-        () => uploadMinInvoice(formData),
-        "submit"
-      );
-    }
 
-    if (fileResponse?.success || vendorType == "p01") {
-      fileName = fileResponse?.data;
+    if (fileName || vendorType == "p01") {
 
       const response = await executeFun(
         () => materialInWithoutPo(values, fileName, vendorType),
@@ -203,7 +194,6 @@ export default function MaterialInWithoutPO() {
         // The transaction ID is nested: response.data.data.txn
         const transactionId =
           data?.data?.txn || response?.data?.data?.txn || data?.txn;
-        console.log("Transaction ID:", transactionId);
         setShowSuccessPage({
           materialInId: transactionId,
           vendor: { vendorname: values.vendorName.label },
@@ -223,8 +213,10 @@ export default function MaterialInWithoutPO() {
         materialResetFunction();
         setPreviewRows([]);
         setPreview(false);
+        setSubmitLoading(false);
       } else {
         showToast(response.message, "error");
+        setSubmitLoading(false);
       }
     }
   };
@@ -561,21 +553,21 @@ export default function MaterialInWithoutPO() {
       name: "mfg",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: (_, index) => <Input disabled />,
+      field: () => <Input disabled />,
     },
     {
       headerName: "Manual MFG",
       name: "mfgCode",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: (_, index) => <Input type="string" />,
+      field: () => <Input type="string" />,
     },
     {
       headerName: "Qty",
       name: "qty",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: (_, index) => <Input type="number" />,
+      field: () => <Input type="number" />,
     },
     {
       headerName: "Rate",
@@ -583,7 +575,7 @@ export default function MaterialInWithoutPO() {
       rules: [
         {
           warningOnly: true,
-          validator: (first, value) => {
+          validator: (first) => {
             let fieldName = first.field.split(".");
             fieldName = fieldName.map((row) => {
               if (!isNaN(row)) {
@@ -692,7 +684,7 @@ export default function MaterialInWithoutPO() {
     {
       headerName: "IGST",
 
-      field: (row) => <Input disabled />,
+      field: () => <Input disabled />,
       name: "igst",
 
       width: 120,
@@ -745,7 +737,7 @@ export default function MaterialInWithoutPO() {
 
     maxCount: 1,
 
-    beforeUpload(file) {
+    beforeUpload() {
       return false;
     },
   };
@@ -901,6 +893,37 @@ export default function MaterialInWithoutPO() {
       setPreview(false);
     }
   };
+
+    const handleUploadDocument = async () => {
+    try {
+      setUploadLoading(true);
+      const formData = new FormData();
+      const vendorType = form.getFieldValue("vendorType");
+      const values = await form.validateFields();
+      values?.fileComponents?.map((comp) => {
+        formData.append("files", comp.file[0]?.originFileObj);
+      });
+      let fileResponse;
+      if (vendorType !== "p01") {
+        fileResponse = await uploadMinInvoice(formData);
+      }
+      if (fileResponse?.success) {
+
+        setFileName(fileResponse?.data);
+        setUploadClicked(false);
+        showToast(fileResponse?.message || "Upload Document success", "success");
+        setUploadLoading(false);
+      } else {
+        showToast(fileResponse?.message || "Upload Document failed", "error");
+        setUploadLoading(false);
+      }
+    } catch (error) {
+      showToast(error?.message || "Upload Document failed", "error");
+      setUploadLoading(false);
+    }finally {
+      setUploadLoading(false);
+    }
+  };
   return (
     <div style={{ height: "100%", overflow: "hidden", padding: 10 }}>
       {showCurrency != null && (
@@ -954,7 +977,7 @@ export default function MaterialInWithoutPO() {
               span={6}
               style={{ height: "100%", overflowY: "auto", overflowX: "hidden" }}
             >
-              {loading("fetch") && <Loading />}
+              {(loading("fetch") || selectLoading)  && <Loading />}
               <Flex vertical gap={6}>
                 <Card size="small">
                   <Row gutter={4}>
@@ -1003,29 +1026,29 @@ export default function MaterialInWithoutPO() {
                     <Col span={12} style={{ marginBottom: -10 }}>
                       <Form.Item
                         name="vendorBranch"
-                        extra={
-                          <p
-                            onClick={() => {
-                              vendorDetails.vendorName
-                                ? setShowBranchModal({
-                                    vendor_code: vendorDetails.vendorName,
-                                  })
-                                : showToast(
-                                    "Please Select a vendor first",
-                                    "error"
-                                  );
-                            }}
-                            style={{
-                              color: "#1890FF",
-                              cursor: "pointer",
-                              fontSize: 12,
-                              textAlign: "end",
-                              marginTop: 5,
-                            }}
-                          >
-                            Add Branch
-                          </p>
-                        }
+                        // extra={
+                        //   <p
+                        //     onClick={() => {
+                        //       vendorDetails.vendorName
+                        //         ? setShowBranchModal({
+                        //             vendor_code: vendorDetails.vendorName,
+                        //           })
+                        //         : showToast(
+                        //             "Please Select a vendor first",
+                        //             "error"
+                        //           );
+                        //     }}
+                        //     style={{
+                        //       color: "#1890FF",
+                        //       cursor: "pointer",
+                        //       fontSize: 12,
+                        //       textAlign: "end",
+                        //       marginTop: 5,
+                        //     }}
+                        //   >
+                        //     Add Branch
+                        //   </p>
+                        // }
                         label="Vendor Branch"
                         // rules={[
                         //   {
@@ -1282,9 +1305,9 @@ export default function MaterialInWithoutPO() {
               width={700}
               title={"Upload Document"}
               // destroyOnClose={true}
-              onOk={() => setUploadClicked(false)}
+            onOk={handleUploadDocument}
               onCancel={() => setUploadClicked(false)}
-              // style={{ maxHeight: "50%", height: "50%", overflowY: "scroll" }}
+           loading={uploadLoading}
             >
               {" "}
               <Card style={{ height: "20rem", overflowY: "scroll" }}>
@@ -1301,7 +1324,7 @@ export default function MaterialInWithoutPO() {
                         <>
                           <Col>
                             {fields.map((field, index) => (
-                              <Form.Item noStyle>
+                              <Form.Item noStyle key={field.key || index}>
                                 <SingleProduct
                                   fields={fields}
                                   field={field}
@@ -1437,7 +1460,7 @@ export default function MaterialInWithoutPO() {
         resetFunction={() => setShowResetConfirm(true)}
         submitFunction={handleSubmit}
         nextLabel="Submit"
-        loading={submitLoading}
+        loading={submitLoading || uploadLoading}
       />
       {showSuccessPage !== null && (
         <SuccessPage
