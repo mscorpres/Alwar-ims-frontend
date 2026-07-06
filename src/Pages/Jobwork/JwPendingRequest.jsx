@@ -55,7 +55,7 @@ function JwPendingRequest() {
      setLoading("fetch");
     const response = await imsAxios.post("/jobwork/getJobworkChallan", {
       data: searchInput,
-      // wise: wise,
+      wise: "issuedtwise",
     });
     setLoading(false);
     if (response.success) {
