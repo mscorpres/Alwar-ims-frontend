@@ -238,15 +238,15 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     };
     const response = await executeFun(() => saveCreateChallan(final), "select");
     setLoading("submit", false);
-    if (response.success) {
-      showToast(response.data.message, "success");
-      handleClose();
+    if (response.success || response.status === "success") {
+      showToast(response.message ?? response.message?.msg, "success");
+      setEditJWAll(false);
       getRows();
     } else {
-      if (response.data.message.msg) {
+      if (response.message.msg) {
         showToast(response.data.message.msg, "error");
       } else {
-        showToast(errorToast(response.data.message), "error");
+        showToast(errorToast(response?.message ?? response?.message?.msg), "error");
       }
     }
   };

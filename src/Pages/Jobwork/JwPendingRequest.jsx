@@ -1,12 +1,9 @@
-import { Button, Col, Input, Row, Space } from "antd";
+import {  Col, Row, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useToast } from "../../hooks/useToast.js";
-// import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../Components/exportToCSV";
-import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import MyDataTable from "../../Components/MyDataTable";
 import MyDatePicker from "../../Components/MyDatePicker";
-import MySelect from "../../Components/MySelect";
 import printFunction, {
   downloadFunction,
 } from "../../Components/printFunction";
@@ -24,43 +21,41 @@ import MyButton from "../../Components/MyButton";
 
 function JwPendingRequest() {
   const { showToast } = useToast();
-  const [wise, setWise] = useState("issuedtwise");
+  // const [wise, setWise] = useState("issuedtwise");
   const [searchInput, setSearchInput] = useState("");
-  const [asyncOptions, setAsyncOptions] = useState([]);
+  // const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [editingJWMaterials, setEditingJWMaterials] = useState(false);
   const [editiJWAll, setEditJWAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
 
-  const wiseOptions = [
-    { text: "Issue Request Date Wise", value: "issuedtwise" },
-  ];
-  const getAsyncOptions = async (search, type) => {
-    let link =
-      type === "sku"
-        ? "/backend/getProductByNameAndNo"
-        : type === "vendor" && "/backend/vendorList";
-    setLoading("select");
-    const response = await imsAxios.post(link, {
-      search: search,
-    });
-    setLoading(false);
-    if (response?.success) {
-      let arr = response?.data.map((row) => ({
-        text: row.text,
-        value: row.id,
-      }));
-      setAsyncOptions(arr);
-    } else {
-      setAsyncOptions([]);
-    }
-  };
+  // const getAsyncOptions = async (search, type) => {
+  //   let link =
+  //     type === "sku"
+  //       ? "/backend/getProductByNameAndNo"
+  //       : type === "vendor" && "/backend/vendorList";
+  //   setLoading("select");
+  //   const response = await imsAxios.post(link, {
+  //     search: search,
+  //   });
+  //   setLoading(false);
+  //   if (response?.success) {
+  //     let arr = response?.data.map((row) => ({
+  //       text: row.text,
+  //       value: row.id,
+  //     }));
+  //     setAsyncOptions(arr);
+  //   } else {
+  //     setAsyncOptions([]);
+  //   }
+  // };
   const getRows = async () => {
-    setLoading("fetch");
+   try {
+     setLoading("fetch");
     const response = await imsAxios.post("/jobwork/getJobworkChallan", {
       data: searchInput,
-      wise: wise,
+      wise: "issuedtwise",
     });
     setLoading(false);
     if (response.success) {
@@ -71,8 +66,14 @@ function JwPendingRequest() {
       setRows(arr);
     } else {
       setRows([]);
-      showToast(response.message, "error");
+      showToast(response?.message ?? "Something went wrong", "error");
     }
+    
+   } catch (error) {
+    setLoading(false);
+    showToast(error?.message ?? "Something went wrong", "error");
+    
+   }
   };
   const handlePrint = async (challan_id, refId, btn_status, invoice_id) => {
     setLoading("print");
@@ -197,6 +198,7 @@ function JwPendingRequest() {
         />,
         // Print Icon
         <TableActions
+        key="print"
           action="print"
           onClick={() =>
             handlePrint(
@@ -209,6 +211,7 @@ function JwPendingRequest() {
         />,
         // edit Icon
         <TableActions
+          key="edit"
           action={row.status === "create" ? "add" : "edit"}
           disabled={row.status === "cancel"}
           onClick={() =>
@@ -223,6 +226,7 @@ function JwPendingRequest() {
         />,
         // cancel Icon
         <TableActions
+        key="cancel"
           action="cancel"
           diabled={row.status === "create" ? false : true}
           onClick={() =>
@@ -238,7 +242,7 @@ function JwPendingRequest() {
   ];
   useEffect(() => {
     setSearchInput("");
-  }, [wise]);
+  }, []);
   return (
     <div style={{ height: "100%", padding:10 }}>
       <JWRMChallanEditMaterials
@@ -315,19 +319,19 @@ function JwPendingRequest() {
                   loadOptions={(value) => getAsyncOptions(value, "vendor")}
                 />
               )} */}
-              {wise === "issuedtwise" && (
+              {/* {wise === "issuedtwise" && ( */}
                 <MyDatePicker
                   size="default"
                   setDateRange={setSearchInput}
                   dateRange={searchInput}
                   value={searchInput}
                 />
-              )}
+              {/* )} */}
             </div>
             <MyButton
               variant="search"
               type="primary"
-              disabled={wise === "" || searchInput === ""}
+              disabled={ searchInput === ""}
               loading={loading === "fetch"}
               onClick={getRows}
               id="submit"
