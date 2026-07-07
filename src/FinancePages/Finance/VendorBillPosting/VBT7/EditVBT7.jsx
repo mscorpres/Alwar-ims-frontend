@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import "../../../Accounts/accounts.css";
+import  { useState } from "react";
+
 import { useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter";
 import InputMask from "react-input-mask";
 import Loading from "../../../../Components/Loading";
-import axios from "axios";
 import { v4 } from "uuid";
 import VBT7DataTable from "./VBT7DataTable";
 import TaxModal from "../../../../Components/TaxModal";
@@ -39,13 +38,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
   const backFunction = () => {
     setEditingVBT(null);
   };
-  const getOptions = async () => {
-    let arr = [];
-    arr = vbt?.gstin_option.map((o) => {
-      return { value: o, text: o };
-    });
-    return arr;
-  };
+
 
   const submitFunction = async () => {
     let cgstTotalData = Number(
@@ -171,7 +164,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
 
       if (row.tdsAmount == "0" || row.tdsAmount == "--") {
         totalVendor =
-          row.tdsAmount == "--" || "0" ? Number(row.vendorAmount) : a;
+          row.tdsAmount == "--" ||  row.tdsAmount == "0" ? Number(row.vendorAmount) : a;
       } else {
         totalVendor = a;
       }
@@ -219,25 +212,21 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
     });
     setLoading(false);
     if (response.success) {
-      showToast(data.message.msg, "success");
+      showToast(response.message, "success");
       setTimeout(() => {
         setEditingVBT(null);
       }, 2000);
     } else {
       setLoading(false);
-      for (const key in data.message) {
-        if (data.message.hasOwnProperty(key)) {
-          return showToast(data.message[key][0], "error");
-        }
-      }
+    showToast( response.message?.msg || response.message, "error");
     }
   };
 
   const getGl = async () => {
     const response = await imsAxios.get("/tally/vbt/vbtGlOptions?type=vbt07");
     let arr = [];
-    if (data.length > 0) {
-      arr = data.map((d) => {
+    if (response.success) {
+      arr = response.data.map((d) => {
         return {
           text: d.text,
           value: d.id,
@@ -461,9 +450,7 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
       });
       setVBT(editingVBT[0]);
       let arr = editingVBT?.map((row) => {
-        let tdsC = row.ven_tds?.map((r) => {
-          return { text: r.tds_name, value: r.tds_key };
-        });
+     
         let id = v4();
         return {
           id: id,
@@ -514,7 +501,6 @@ export default function EditVBT1({ editingVBT, setEditingVBT }) {
   }, [editingVBT]);
 
   useEffect(() => {
-    let freightexist = false;
     let totalVendorAmount = [];
     totalVendorAmount = rows.map(
       (row) =>
