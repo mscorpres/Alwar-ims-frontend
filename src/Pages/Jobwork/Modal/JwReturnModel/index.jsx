@@ -125,8 +125,8 @@ const JwReturnModel = ({ show, close }) => {
         transaction: transaction,
       });
 
-      const {body,header} = response?.data;
-      const headerValues = header;
+      const { data: body, header } = response ?? {};
+      const headerValues = header ?? {};
       setVendor(headerValues?.vendor?.code)
       let headerArr = [];
       const headerObj = {
