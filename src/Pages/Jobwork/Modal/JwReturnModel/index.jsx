@@ -28,6 +28,7 @@ import useApi from "../../../../hooks/useApi";
 import { uplaodFileInJWReturn } from "../../../../api/general";
 import MyDataTable from "../../../../Components/MyDataTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
+import SingleDatePicker from "../../../../Components/SingleDatePicker";
 
 const JwReturnModel = ({ show, close }) => {
   const { showToast } = useToast();
@@ -182,7 +183,8 @@ const JwReturnModel = ({ show, close }) => {
       remark: selectedRows.map((row) => row.remark ?? "--"),
       hsncode: selectedRows.map((row) => row.hsn),
       ewaybill: values.ewayBill ?? "--",
-      vendor_location:values?.vendor_location?.value
+      vendor_location:values?.vendor_location?.value,
+      challan_date: values?.challanDate, 
     };
     // console.log("finalObj", finalObj);
 
@@ -442,6 +444,27 @@ const JwReturnModel = ({ show, close }) => {
                     <Form.Item label="Vendor Location" name="vendor_location">
           <MySelect labelInValue={true} options={vendorLocationOptions} />
         </Form.Item>
+        <Form.Item
+                      label="Challan Date"
+                      name="challanDate"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select Challan Date",
+                        },
+                      ]}
+                    >
+                      <SingleDatePicker
+                        size="medium"
+                        value={form.getFieldValue("challanDate")}
+                        setDate={(date) => {
+                          form.setFieldsValue({ challanDate: date });
+                      
+                        }}
+                        placeholder="Select Challan Date"
+                        format={"DD-MM-YYYY"}
+                      />
+                    </Form.Item>
                   </Card>
                 </Col>
 
