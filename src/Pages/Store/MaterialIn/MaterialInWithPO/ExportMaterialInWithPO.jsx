@@ -1618,7 +1618,7 @@ export default function ExportMaterialInWithPO() {
 
                     <Row justify="end" style={{ marginTop: 5 }}>
                       <a
-                        href="http://imsv2.mscapi.live/files/sample/Import%20PO%20Sample%20File%20Format.xlsx"
+                        href="https://alwar.prod.mscorpres.com/files/samples/Import%20PO.xlsx"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
