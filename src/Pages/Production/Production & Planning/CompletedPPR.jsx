@@ -11,7 +11,7 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
 
-const CompletedPPR = () => {
+const CompletedPPR  =  ()  => {
   const { showToast } = useToast();
   const [wise, setWise] = useState("skuwise");
   const [asyncOptions, setAsyncOptions] = useState([]);

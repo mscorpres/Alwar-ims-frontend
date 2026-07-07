@@ -1,4 +1,4 @@
-import { Button, Col, Input, Row, Space } from "antd";
+import {  Col, Input, Row, Space } from "antd";
 import { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -10,7 +10,7 @@ import MySelect from "../../../Components/MySelect";
 import printFunction, {
   downloadFunction,
 } from "../../../Components/printFunction";
-import TableActions, {
+import  {
   CommonIcons,
 } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
@@ -33,7 +33,7 @@ function JwRwChallan() {
   const [editiJWAll, setEditJWAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-  const [showEwayBillModal, setShowEwayBillModal] = useState(null);
+  // const [showEwayBillModal, setShowEwayBillModal] = useState(null);
   const [showEwayBillCancelModal, setShowEwayBillCancelModal] = useState(null);
 
   const wiseOptions = [
@@ -66,7 +66,8 @@ function JwRwChallan() {
     }
   };
   const getRows = async () => {
-    setLoading("fetch");
+ try {
+     setLoading("fetch");
     const response = await imsAxios.post("/jobwork/getJobworkChallan", {
       data: searchInput,
       wise: wise,
@@ -80,8 +81,14 @@ function JwRwChallan() {
       setRows(arr);
     } else {
       setRows([]);
-      showToast(response.message?.msg || response.message, "error");
+      showToast(response.message?.msg ?? response.message ?? "Something went wrong", "error");
     }
+  
+ } catch (error) {
+  setLoading(false);
+  showToast(error?.message ?? "Something went wrong", "error");
+  
+ }
   };
   const handlePrint = async (challan_id, refId, btn_status, invoice_id) => {
     setLoading("print");
@@ -122,15 +129,15 @@ function JwRwChallan() {
     }
   };
 
-  const handleEwayBillPrint = async () => {
-    try {
-      setLoading("print");
-      const response = await imsAxios.post("");
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const handleEwayBillPrint = async () => {
+  //   try {
+  //     setLoading("print");
+  //     const response = await imsAxios.post("");
+  //   } catch (error) {
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const columns = [
     {
@@ -156,6 +163,7 @@ function JwRwChallan() {
           }
         />,
         <GridActionsCellItem
+          key="print"
           showInMenu
           // disabled={disabled}
           label="Print"
@@ -169,6 +177,7 @@ function JwRwChallan() {
           }
         />,
         <GridActionsCellItem
+          key="edit"
           showInMenu
           disabled={row.status === "cancel"}
           label={row.status === "create" ? "Create" : "Edit"}
@@ -183,6 +192,7 @@ function JwRwChallan() {
           }}
         />,
         <GridActionsCellItem
+          key="cancel"
           showInMenu
           disabled={row.status === "create" ? false : true}
           label="Cancel"

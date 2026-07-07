@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { useToast } from "../../../hooks/useToast.js";
-import axios from "axios";
 import MyDataTable from "../../../Components/MyDataTable";
 import VoucherView from "./VoucherView";
 import { useLocation } from "react-router-dom";
@@ -10,14 +9,14 @@ import printFunction, {
 } from "../../../Components/printFunction";
 import MySelect from "../../../Components/MySelect";
 import { v4 } from "uuid";
-import { Button, Input, Popconfirm, Row, Space, Tooltip } from "antd";
+import { Button, Input, Row, Space, Tooltip } from "antd";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import {
   CloudDownloadOutlined,
   DownloadOutlined,
   PrinterFilled,
   EyeFilled,
-  DeleteFilled,
+  // DeleteFilled,
   EditFilled,
 } from "@ant-design/icons";
 import EditBankVoucher from "./EditBankVoucher";
@@ -41,8 +40,6 @@ export default function VoucherReport() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
 
-  // console.log(voucherType);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [editVoucher, setEditVoucher] = useState(null);
 
   const wiseOptions = [
@@ -92,11 +89,13 @@ export default function VoucherReport() {
       width: 150,
       getActions: ({ row }) => [
         <GridActionsCellItem
+        key={"view"}
           icon={<EyeFilled className="view-icon" />}
           onClick={() => setDetailVoucherId(row.module_used)}
           label="Delete"
         />,
         <GridActionsCellItem
+        key={"print"}
           icon={<PrinterFilled className="view-icon" />}
           onClick={() => {
             printFun(row.module_used);
@@ -104,6 +103,7 @@ export default function VoucherReport() {
           label="Delete"
         />,
         <GridActionsCellItem
+        key={"del"}
           icon={<CloudDownloadOutlined className="view-icon" />}
           onClick={() => {
             handleDownload(row.module_used);
@@ -111,6 +111,7 @@ export default function VoucherReport() {
           label="Delete"
         />,
         <GridActionsCellItem
+        key={"edit"}
           disabled={row.status == "Deleted"}
           icon={
             <EditFilled
@@ -247,22 +248,7 @@ export default function VoucherReport() {
       width: 100,
     },
   ];
-  const deleteFun = async () => {
-    setLoading(true);
-    if (deleteConfirm) {
-      const response = await imsAxios.post("/tally/voucher/bank_delete", {
-        b_code: deleteConfirm,
-      });
-      setLoading(false);
-      if (response.success) {
-        setDeleteConfirm(null);
-        showToast(response.message, "success");
-        getRows();
-      } else {
-        showToast(response.message?.msg || response.message, "error");
-      }
-    }
-  };
+ 
   const printFun = async (id) => {
     setLoading(true);
     let link = "";
@@ -274,7 +260,7 @@ export default function VoucherReport() {
     const response = await imsAxios.post(link, {
       v_code: id,
     });
-    printFunction(data.buffer.data);
+    printFunction(response.data.buffer.data);
     // if (response.success) {
     // }
     setLoading(false);
@@ -296,7 +282,7 @@ export default function VoucherReport() {
       v_code: id,
     });
 
-    downloadFunction(data.buffer.data, filename);
+    downloadFunction(response.data.buffer.data, filename);
 
     setLoading(false);
   };

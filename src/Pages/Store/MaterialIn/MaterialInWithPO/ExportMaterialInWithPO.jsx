@@ -1,18 +1,15 @@
 import { useState, useEffect } from "react";
 import NavFooter from "../../../../Components/NavFooter.jsx";
-import axios from "axios";
 import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
   Card,
-  Checkbox,
   Col,
   Input,
   Modal,
   Row,
   Skeleton,
   Space,
-  Tooltip,
   Typography,
   Form,
   Upload,
@@ -22,7 +19,6 @@ import {
 import { remarkCell, manualMFGCode, HSNCell } from "./TableCollumns.jsx";
 import SingleProduct from "../../../Master/Vendor/SingleProduct.jsx";
 import CurrenceModal from "../CurrenceModal.jsx";
-import UploadDocs from "./UploadDocs.jsx";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect.jsx";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses.jsx";
 import { InboxOutlined } from "@ant-design/icons";
@@ -43,15 +39,15 @@ import MyButton from "../../../../Components/MyButton/index.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
 import { v4 } from "uuid";
 
-export default function ExportMaterialInWithPO({}) {
+export default function ExportMaterialInWithPO() {
   const { showToast } = useToast();
   const FIXED_CURRENCY_LABEL = "$";
   const [poData, setPoData] = useState({ materials: [] });
   const [resetPoData, setResetPoData] = useState({ materials: [] });
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [materialInward, setMaterialInward] = useState(null);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [fileName, setFileName] = useState("");
   const [preview, setPreview] = useState(false);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [irnNum, setIrnNum] = useState("");
   const [searchData, setSearchData] = useState({
     vendor: "",
@@ -61,8 +57,6 @@ export default function ExportMaterialInWithPO({}) {
   const [invoice, setInvoice] = useState("");
   const [invoiceDate, setInvoiceDate] = useState(null);
   const [showCurrency, setShowCurrenncy] = useState(null);
-  const [invoices, setInvoices] = useState([]);
-  const [autoConsumptionOptions, setAutoConsumptionOption] = useState([]);
   const [totalValues, setTotalValues] = useState([
     { label: "Sub-Total value before Taxes", sign: "", values: [] },
   ]);
@@ -77,8 +71,8 @@ export default function ExportMaterialInWithPO({}) {
   const [locationOptions, setLocationOptions] = useState([]);
   const [selectLocation, setSelectLocation] = useState(null);
   const [codeCostCenter, setCodeCostCenter] = useState("");
-  const [isScan, setIsScan] = useState(false);
   const [uplaoaClicked, setUploadClicked] = useState(false);
+  const [uploadedComponents, setUploadedComponents] = useState([]);
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
   const [uplaodForm] = Form.useForm();
@@ -123,20 +117,13 @@ export default function ExportMaterialInWithPO({}) {
       freight: [],
     };
     if (validation == true) {
-      let formData = new FormData();
-      let values = await form.validateFields();
-      let values2 = await form2.validateFields();
-      let a = values2?.components;
-      // let a = values.components.map((comp) => {
-      //   formData.append("files", comp.file[0]?.originFileObj);
-      // });
+      let a = uploadedComponents;
       if (a?.length) {
-        if (!values2?.components[0]?.file) {
-          showToast("Please upload Files", "error");
+        if (!fileName) {
+          showToast("Please upload Document", "error");
+          return;
         }
-        values2.components.map((comp) => {
-          formData.append("files", comp.file[0]?.originFileObj);
-        });
+    
         poData?.materials?.map((row) => {
           componentData = {
             component: [...componentData.component, row.componentKey],
@@ -144,7 +131,7 @@ export default function ExportMaterialInWithPO({}) {
             freight: [...componentData.freight, row.freightValue],
             qty: [...componentData.qty, row.orderQty],
             rate: [...componentData.rate, row.rate],
-            exchange: [...componentData?.exchange, row.exchangeRate],
+            exchange: [...componentData.exchange, row.exchangeRate],
             invoice: [invoice],
             // invoiceDate: [...componentData.invoiceDate, row.invoiceDate],
             hsncode: [...componentData.hsncode, row.hsn],
@@ -152,9 +139,9 @@ export default function ExportMaterialInWithPO({}) {
             // location: [...componentData.location, row.location.value],
             finalRate: [...componentData.finalRate, row.finalRate],
             // out_location: [...componentData.out_location, row.autoConsumption],
-            documentName: values2?.components?.map((r) => r.documentName),
+            documentName: uploadedComponents?.map((r) => r.documentName),
             irn: irnNum,
-            qrScan: isScan == true ? "Y" : "N",
+            qrScan: "N",
             currency: "28567096",
           };
         });
@@ -165,7 +152,6 @@ export default function ExportMaterialInWithPO({}) {
           content: "",
           onOk() {
             validateInvoices({
-              formData: formData,
               componentData: componentData,
             });
           },
@@ -194,7 +180,9 @@ export default function ExportMaterialInWithPO({}) {
   };
 
   useEffect(() => {
-    previewRows && setPoData({ materials: previewRows });
+    if (previewRows.length) {
+      setPoData((prev) => ({ ...prev, materials: previewRows }));
+    }
   }, [previewRows]);
 
   const normFile = (e) => {
@@ -237,14 +225,18 @@ export default function ExportMaterialInWithPO({}) {
             // icon: <ExclamationCircleFilled />,
             content: <Row>{data.invoicesFound.map((inv) => `${inv}, `)}</Row>,
             onOk() {
-              submitMIN(values, isScan);
+              submitMIN(values);
             },
           });
         } else {
           submitMIN(values);
         }
+      }else {
+        showToast(response?.message || "Invoice check failed", "error");
+
       }
     } catch (error) {
+            showToast(error?.message || "Invoice check failed", "error");
     } finally {
       setSubmitLoading(false);
     }
@@ -352,17 +344,14 @@ export default function ExportMaterialInWithPO({}) {
     },
   ];
 
-  const submitMIN = async (values, isScan) => {
-    if (values.formData) {
+  const submitMIN = async (values) => {
+  
       setSubmitLoading(true);
-      const response = await imsAxios.post(
-        "/transaction/upload-invoice",
-        values.formData,
-      );
-      if (response?.success) {
+  
+      if (fileName) {
         let final = {
           companybranch: "BRALWR36",
-          invoices: response?.data,
+          invoices: fileName,
           poid: searchData.poNumber,
           manual_mfg_code: poData.materials.map((row) => row.manualMfgCode),
           invoice: invoice,
@@ -382,7 +371,7 @@ export default function ExportMaterialInWithPO({}) {
             vendor: "",
             poNumber: "",
           });
-          setInvoices([]);
+          setFileName("");
           setSubmitLoading(false);
           setMaterialInSuccess({
             materialInId: data.transaction_id,
@@ -400,6 +389,7 @@ export default function ExportMaterialInWithPO({}) {
             }),
           });
           setIrnNum("");
+
         } else {
           setSubmitLoading(false);
           showToast(res.message, "error");
@@ -411,7 +401,7 @@ export default function ExportMaterialInWithPO({}) {
           "error",
         );
       }
-    }
+  
   };
   const getCurrencies = async () => {
     const response = await imsAxios.get("/backend/fetchAllCurrecy");
@@ -458,28 +448,28 @@ export default function ExportMaterialInWithPO({}) {
 
     maxCount: 1,
 
-    beforeUpload(file) {
+    beforeUpload() {
       return false;
     },
   };
-  const getAutoComnsumptionOptions = async () => {
-    setPageLoading(true);
+  // const getAutoComnsumptionOptions = async () => {
+  //   setPageLoading(true);
 
-    const response = await imsAxios.get(
-      "/transaction/fetchAutoConsumpLocation",
-    );
-    setPageLoading(false);
-    if (response.success) {
-      let arr = response?.data.map((row) => {
-        return {
-          value: row.id,
-          text: row.text,
-        };
-      });
-      arr = [{ value: 0, text: "NO" }, ...arr];
-      setAutoConsumptionOption(arr);
-    }
-  };
+  //   const response = await imsAxios.get(
+  //     "/transaction/fetchAutoConsumpLocation",
+  //   );
+  //   setPageLoading(false);
+  //   if (response.success) {
+  //     let arr = response?.data.map((row) => {
+  //       return {
+  //         value: row.id,
+  //         text: row.text,
+  //       };
+  //     });
+  //     arr = [{ value: 0, text: "NO" }, ...arr];
+  //     setAutoConsumptionOption(arr);
+  //   }
+  // };
 
   const inputHandler = (name, value, id) => {
     let arr = poData?.materials;
@@ -554,12 +544,12 @@ export default function ExportMaterialInWithPO({}) {
         } else if (name == "customDuty") {
           const qty = Number(row.orderQty) || 0;
           const rate = Number(row.rate) || 0;
-          const exchangeRate = Number(row.exchangeRate) || 0;
+          // const exchangeRate = Number(row.exchangeRate) || 0;
           const customDuty = Number(value) || 0;
           const freightValue = Number(row.freightValue) || 0;
 
           const taxableValue = qty * rate;
-          const foreignValue = taxableValue * exchangeRate;
+          // const foreignValue = taxableValue * exchangeRate;
           const total = taxableValue + customDuty + freightValue;
           const finalRate =
             qty > 0 ? rate + customDuty / qty + freightValue / qty : rate;
@@ -574,12 +564,12 @@ export default function ExportMaterialInWithPO({}) {
         } else if (name == "freightValue") {
           const qty = Number(row.orderQty) || 0;
           const rate = Number(row.rate) || 0;
-          const exchangeRate = Number(row.exchangeRate) || 0;
+          // const exchangeRate = Number(row.exchangeRate) || 0;
           const customDuty = Number(row.customDuty) || 0;
           const freightValue = Number(value) || 0;
 
           const taxableValue = qty * rate;
-          const foreignValue = taxableValue * exchangeRate;
+          // const foreignValue = taxableValue * exchangeRate;
           const total = taxableValue + customDuty + freightValue;
           const finalRate =
             qty > 0 ? rate + customDuty / qty + freightValue / qty : rate;
@@ -626,9 +616,7 @@ export default function ExportMaterialInWithPO({}) {
       };
     });
   };
-  const backFunction = () => {
-    setMaterialInward(null);
-  };
+
   const getVendors = async (search) => {
     // if (search?.length > 2) {
     const response = await executeFun(() => getVendorOptions(search), "select");
@@ -641,7 +629,7 @@ export default function ExportMaterialInWithPO({}) {
   };
   const resetFunction = () => {
     setPoData(resetPoData);
-    setInvoices([]);
+    setFileName("");
     setShowResetConfirm(false);
   };
   const getDetail = async () => {
@@ -662,7 +650,7 @@ export default function ExportMaterialInWithPO({}) {
       obj = {
         ...obj,
         poId: searchData.poNumber,
-        materials: obj.materials.map((mat, index) => {
+        materials: obj.materials.map((mat) => {
           // Calculate values
           const orderQty = mat.orderqty || 0;
           const orderRate = mat.orderrate || 0;
@@ -874,15 +862,15 @@ export default function ExportMaterialInWithPO({}) {
       headerName: "Final Rate",
       field: "finalRate",
       flex: 1,
+      minWidth: 120,
       renderCell: ({ row }) => <Input disabled={true} value={row.finalRate} />,
-      width: 100,
     },
     {
       headerName: "Total",
       field: "total",
       flex: 1,
+      minWidth: 120,
       renderCell: ({ row }) => <Input disabled={true} value={row.total} />,
-      width: 100,
     },
     {
       headerName: "HSN Code",
@@ -917,59 +905,12 @@ export default function ExportMaterialInWithPO({}) {
     setResetPoData({ materials: [] });
     window.location.reload();
   };
-  const additional = () => (
-    <Space>
-      <div style={{ width: 250 }}>
-        <MyAsyncSelect
-          allowClear
-          size="default"
-          selectLoading={selectLoading}
-          onBlur={() => setAsyncOptions([])}
-          value={searchData.vendor == "" ? null : searchData.vendor}
-          onChange={(value) =>
-            setSearchData((searchData) => ({ ...searchData, vendor: value }))
-          }
-          loadOptions={getVendors}
-          optionsState={asyncOptions}
-          placeholder="Select Vendor..."
-        />
-      </div>
-      <div style={{ width: 150 }}>
-        <Input
-          allowClear
-          placeholder="PO Number"
-          value={searchData.poNumber}
-          onChange={(e) =>
-            setSearchData((searchData) => ({
-              ...searchData,
-              poNumber: e.target.value,
-            }))
-          }
-        />
-      </div>
-      <Button
-        disabled={searchData.vendor == "" || searchData.poNumber == ""}
-        type="primary"
-        loading={searchLoading}
-        onClick={getDetail}
-        id="submit"
-      >
-        Search
-      </Button>
 
-      {/* <CommonIcons
-        action="downloadButton"
-        onClick={() => downloadCSV(rows, columns, "Pending PO Report")}
-        disabled={rows.length == 0}
-      /> */}
-    </Space>
-  );
 
   useEffect(() => {
     // getDetail();
     // getLocation();
     getCurrencies();
-    getAutoComnsumptionOptions();
   }, []);
   useEffect(() => {
     let grandTotal = poData?.materials.map((row) =>
@@ -982,7 +923,7 @@ export default function ExportMaterialInWithPO({}) {
     let freightTotal = poData?.materials.map((row) =>
       Number(row?.freightValue),
     );
-    let inrValue = poData?.materials.map((row) => Number(row?.inrValue));
+    // let inrValue = poData?.materials.map((row) => Number(row?.inrValue));
     let obj = [
       { label: "Total Taxable Value", sign: "+", values: totalTaxableValue },
       { label: "Total Custom Duty", sign: "+", values: customTotal },
@@ -1043,6 +984,7 @@ export default function ExportMaterialInWithPO({}) {
         qty: r.orderQty,
         rate: r.importRate,
         hsn: r.hsn,
+        hsncode: r.hsn,
         value: r.value,
         gstRate: r.exchangeRate, // Example, adjust as needed
         gstType: r.uom, // Example, adjust as needed
@@ -1052,6 +994,42 @@ export default function ExportMaterialInWithPO({}) {
     } else {
       showToast(response?.message, "error");
       setPreview(false);
+    }
+  };
+    const handleUploadDocument = async () => {
+    setUploadLoading(true);
+
+    try {
+      const formData = new FormData();
+      const values = await form2.validateFields();
+      if (!values?.components[0]?.file) {
+        showToast("Please upload Files", "error");
+        return;
+      }
+      values.components.map((comp) => {
+        formData.append("files", comp.file[0]?.originFileObj);
+      });
+
+      const response = await imsAxios.post(
+        "/transaction/upload-invoice",
+        formData,
+      );
+
+      if (response?.success) {
+        setFileName(response?.data);
+        setUploadedComponents(values.components);
+        setUploadClicked(false);
+        showToast(response?.message || "Upload Document success", "success");
+        setUploadLoading(false);
+      } else {
+        showToast(response?.message || "Upload Document failed", "error");
+        setUploadLoading(false);
+      }
+    } catch (error) {
+      showToast(error?.message || "Upload Document failed", "error");
+      setUploadLoading(false);
+    } finally {
+      setUploadLoading(false);
     }
   };
 
@@ -1643,7 +1621,7 @@ export default function ExportMaterialInWithPO({}) {
 
                     <Row justify="end" style={{ marginTop: 5 }}>
                       <a
-                        href="http://imsv2.mscapi.live/files/sample/Import%20PO%20Sample%20File%20Format.xlsx"
+                        href="https://alwar.prod.mscorpres.com/files/samples/Import%20PO.xlsx"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
@@ -1713,10 +1691,14 @@ export default function ExportMaterialInWithPO({}) {
                 open={uplaoaClicked}
                 layout="vertical"
                 width={700}
-                title={"Upload Document"}
+                  loading={uploadLoading}
                 // destroyOnClose={true}
-                onCancel={() => setUploadClicked(false)}
-                onOk={() => setUploadClicked(false)}
+                onCancel={() => {
+                  setFileName("");
+                  setUploadClicked(false);
+                  setUploadLoading(false);
+                }}
+                onOk={handleUploadDocument}
                 // style={{ maxHeight: "50%", height: "50%", overflowY: "scroll" }}
               >
                 <Form
@@ -1738,7 +1720,7 @@ export default function ExportMaterialInWithPO({}) {
                             <>
                               <Col>
                                 {fields.map((field, index) => (
-                                  <Form.Item noStyle>
+                                  <Form.Item noStyle key={field.key}>
                                     <SingleProduct
                                       fields={fields}
                                       field={field}
@@ -1771,7 +1753,6 @@ export default function ExportMaterialInWithPO({}) {
           </Col>
 
           <NavFooter
-            backFunction={backFunction}
             hideHeaderMenu
             nextLabel="Submit"
             loading={submitLoading}

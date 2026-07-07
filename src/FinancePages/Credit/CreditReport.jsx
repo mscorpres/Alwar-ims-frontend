@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Col,
   Input,
   Row,
-  Tooltip,
-  Popconfirm,
   Space,
 } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -46,12 +44,9 @@ const { showToast} =  useToast();
   const [searchTerm, setSearchTerm] = useState("");
   const [viewDebitDetail, setViewDebitDetail] =
     useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [editDebit, setEditDebit] = useState(null);
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectedLedger, setSelectedLedger] =
-    useState(null);
 
   const getRows = async () => {
     setRows([]);
@@ -82,27 +77,7 @@ const { showToast} =  useToast();
     }
   };
 
-  const deleteFun = async () => {
-    setLoading(true);
-    if (deleteConfirm) {
-      const response = await imsAxios.post(
-        "/tally/jv/jv_delete",
-        {
-          jv_code: deleteConfirm,
-        }
-      );
-      setLoading(false);
-      if (response.success) {
-        setDeleteConfirm(null);
-        showToast(response.message);
-    
-        getRows();
-      } else {
-        showToast(response.message?.msg || response.message, "error");
-     
-      }
-    }
-  };
+
 
   const columns = [
     {
@@ -181,6 +156,7 @@ const { showToast} =  useToast();
       getActions: ({ row }) => [
         // view voucher
         <GridActionsCellItem
+          key={"view"}
           disabled={loading}
           icon={<EyeFilled className="view-icon" />}
           onClick={() => {
@@ -189,6 +165,7 @@ const { showToast} =  useToast();
           label="view"
         />,
         <GridActionsCellItem
+          key={"print"}
           // print voucher
           disabled={loading}
           icon={<PrinterFilled className="view-icon" />}
@@ -198,6 +175,7 @@ const { showToast} =  useToast();
           label="print"
         />,
         <GridActionsCellItem
+          key={"download"}
           // download voucher
           disabled={loading}
           icon={
@@ -209,6 +187,7 @@ const { showToast} =  useToast();
           label="download"
         />,
         <GridActionsCellItem
+          key={"edit"}
           // edit voucher
           disabled={loading}
           icon={<EditFilled className="view-icon" />}

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { Drawer, Space, Tooltip } from "antd";
 import {
-  EyeFilled,
-  CloseCircleFilled,
+
   CloseOutlined,
 } from "@ant-design/icons";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -10,11 +9,10 @@ import { v4 } from "uuid";
 import MyDataTable from "../../../../Components/MyDataTable";
 
 function CashPaymentModal({ setOpen, open }) {
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState([]);
   const [header, setHeader] = useState([]);
   const getFetchData = async () => {
-    setLoading(true);
     const response = await imsAxios.post(
       "/tally/cash/cash_payment_report",
       {
@@ -22,7 +20,7 @@ function CashPaymentModal({ setOpen, open }) {
       }
     );
     if (response.success) {
-      setHeader(data.header[0]);
+      setHeader(response.data.header[0]);
       const arr = response.data.map((row) => {
         return {
           ...row,

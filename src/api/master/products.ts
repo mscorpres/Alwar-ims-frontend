@@ -1,6 +1,8 @@
+//@ts-ignore
 import { imsAxios } from "@/axiosInterceptor";
 import { ResponseType } from "../../types/general";
-import { ProductImageType, ProductType } from "@/types/master";
+
+
 
 interface GetProductList {
   p_name: string;
@@ -16,7 +18,7 @@ export const getProductsList = async (type: "fg" | "sfg") => {
   let arr = [];
   if (response.success) {
     arr = response.data.map(
-      (row: GetProductList, index): ProductType => ({
+      (row: GetProductList, index: number): any => ({
         id: index + 1,
         name: row.p_name,
         category: row.product_category,
@@ -36,7 +38,7 @@ interface AddProductType {
   units_id: string;
   p_name: string;
 }
-export const addProduct = async (values: ProductType, type: "fg" | "sfg") => {
+export const addProduct = async (values: any, type: "fg" | "sfg") => {
   let link = type === "fg" ? "/products/insertProduct" : "/products/insertSemi";
   const payload: AddProductType = {
     category: values.category,
@@ -88,7 +90,7 @@ export const getProductDetails = async (key: string) => {
     }
   );
 
-  let obj: ProductType;
+  let obj: any;
   if (response.success) {
     let values: GetProductDetailsType = response.data[0];
     obj = {
@@ -171,9 +173,9 @@ interface UpdateProductType {
   };
 }
 export const updateProductDetails = async (
-  values: ProductType,
+  values: any,
   key: string,
-  type: ProductType["type"]
+  type: any["type"]
 ) => {
   let link =
     type === "fg" ? "/products/updateProduct" : "/products/updateSemiProduct";
@@ -230,7 +232,7 @@ export const updateProductDetails = async (
   return response;
 };
 
-export const uploadImage = async (values, key: string) => {
+export const uploadImage = async (values:any, key: string) => {
   const formData = new FormData();
   formData.append("caption", values.label);
   formData.append("files", values.dragger[0].originFileObj);
@@ -262,7 +264,7 @@ export const getImages = async (key: string) => {
   let arr = [];
   if (response.success) {
     arr = response.data.map(
-      (row: GetImageType, index: number): ProductImageType => ({
+      (row: GetImageType, index: number): any => ({
         id: row.image_id,
         index: index + 1,
         name: row.image_name,

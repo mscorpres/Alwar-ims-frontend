@@ -268,7 +268,7 @@ export const getProductsOptions = async (search: string, sku?: boolean) => {
     search,
     searchTerm: search,
   });
-  let arr = [];
+  let arr:any = [];
   if (response.success) {
     arr = convertSelectOptions(response.data);
   }
@@ -279,7 +279,7 @@ export const getProductsOptions = async (search: string, sku?: boolean) => {
 };
 
 ///Query  6
-export const getClosingStockForQuery6 = async (search) => {
+export const getClosingStockForQuery6 = async (search:any) => {
   const response = await imsAxios.post(
     "/closing_stock/save_closing_stock_cif",
     {
@@ -292,7 +292,7 @@ export const getClosingStockForQuery6 = async (search) => {
   // response.data = arr;
   return response;
 };
-export const getComponentDetail = async (componentKey, vendorCode) => {
+export const getComponentDetail = async (componentKey:any, vendorCode:any) => {
   const response = await imsAxios.post("/component/getComponentDetailsByCode", {
     component_code: componentKey,
     vendorCode,
@@ -301,12 +301,12 @@ export const getComponentDetail = async (componentKey, vendorCode) => {
   return response;
 };
 
-export const getMINOptions = async (search) => {
+export const getMINOptions = async (search:any) => {
   const response = await imsAxios.post("/qrLabel/getMinsTransaction", {
     searchTerm: search,
   });
 
-  let arr = [];
+  let arr:any = [];
   if (response.success) {
     arr = convertSelectOptions(response.data);
   }
@@ -332,7 +332,7 @@ export const getHsnOptions = async (search: string) => {
     searchTerm: search,
   });
 
-  let arr = [];
+  let arr:any = [];
   if (response.success) {
     arr = convertSelectOptions(response.data);
   }
@@ -383,7 +383,7 @@ export const getPprOptions = async (search: string) => {
 
   return response;
 };
-export const deleteQcaRows = async (payload) => {
+export const deleteQcaRows = async (payload:any) => {
   const response = await imsAxios.post(
     "/createqca/delete_testing_data",
     payload,
@@ -401,7 +401,7 @@ export const getComponentMfgCodeAndType = async (components: string[]) => {
   let arr = [];
 
   if (response.success) {
-    arr = response.data.map((row) => ({
+    arr = response.data.map((row:any) => ({
       mfgCode: row.manufacturingCode,
       category: row.category,
       key: row.componentKey,
@@ -423,7 +423,7 @@ export const getComponenentAndProduct = async (search: string) => {
 
   let arr: SelectOptionType[] = [];
   if (response.success) {
-    arr = response.data.map((row) => ({
+    arr = response.data.map((row:any) => ({
       text: row.text,
       value: row.id,
       type: row.type,
