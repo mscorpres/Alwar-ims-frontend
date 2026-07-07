@@ -54,9 +54,10 @@ const RMPartCodeConversion = () => {
         () => getComponentOptions(search),
         "select",
       );
-      const { data } = response;
+   
       if (response?.success) {
         let arr = [];
+           const { data } = response;
 
         arr = data.map((d) => {
           return { text: d.text, value: d.id };
@@ -103,9 +104,10 @@ const RMPartCodeConversion = () => {
         component,
         location,
       });
-      const { data } = response;
+    
   
         if (response?.success) {
+            const { data } = response;
           setComponentStock(`${data.closingStock} ${data.uom ?? ""}`);
         } else {
           showToast(response.message, "error");

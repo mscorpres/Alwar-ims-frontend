@@ -47,10 +47,11 @@ const PartCodeConversion = () => {
         () => getComponentOptions(search),
         "select",
       );
-      const { data } = response;
+   
       if (response?.success) {
+           const { data } = response;
         let arr = [];
-        if (data.length) {
+        if (data.length > 0) {
           arr = data.map((d) => {
             return { text: d.text, value: d.id };
           });
@@ -108,9 +109,10 @@ const PartCodeConversion = () => {
         component,
         location,
       });
-      const { data } = response;
+  
     
         if (response?.success) {
+              const { data } = response;
           setComponentStock(`${data.closingStock} ${data.uom ?? ""}`);
         } else {
           showToast(response.message, "error");
@@ -344,17 +346,17 @@ const PartCodeConversion = () => {
         ...remarks,
         type: "sf",
       });
-      const { data } = response;
+     
 
-      if (data.code === 200) {
-        showToast(data.message, "success");
+      if (response?.success) {
+        showToast(response?.message || "Part Code Conversion Saved", "success");
         setAddedComponents({
           in: [],
           qty: {},
         });
         remarksForm.resetFields();
       } else {
-        showToast(data.message, "error");
+        showToast(response?.message || "Failed to Save Part Code Conversion", "error");
       }
     } catch (error) {
       showToast(error?.message ?? "Server Error", "error");
