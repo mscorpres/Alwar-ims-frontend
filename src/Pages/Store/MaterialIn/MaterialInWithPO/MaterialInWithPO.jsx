@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import NavFooter from "../..//../../Components/NavFooter";
-import axios from "axios";
 import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
@@ -12,7 +11,6 @@ import {
   Row,
   Skeleton,
   Space,
-  Tooltip,
   Typography,
   Form,
 } from "antd";
@@ -54,20 +52,19 @@ import MyButton from "../../../../Components/MyButton";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
 import { UploadOutlined } from "@ant-design/icons";
 
-export default function MaterialInWithPO({}) {
+export default function MaterialInWithPO() {
   const { showToast } = useToast();
   const [poData, setPoData] = useState({ materials: [] });
   const [resetPoData, setResetPoData] = useState({ materials: [] });
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [materialInward, setMaterialInward] = useState(null);
-  const [selectLoading, setSelectLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [fileName, setFileName] = useState("");
   const [irnNum, setIrnNum] = useState("");
   const [searchData, setSearchData] = useState({
     vendor: "",
     poNumber: "",
   });
   const [showCurrency, setShowCurrenncy] = useState(null);
-  const [invoices, setInvoices] = useState([]);
   const [autoConsumptionOptions, setAutoConsumptionOption] = useState([]);
   const [totalValues, setTotalValues] = useState([
     { label: "cgst", sign: "+", values: [] },
@@ -128,17 +125,10 @@ export default function MaterialInWithPO({}) {
     };
 
     if (validation == true) {
-      let formData = new FormData();
       let values = await form.validateFields();
       let a = values.components;
 
       if (a?.length) {
-        if (!values?.components[0]?.file) {
-          showToast("Please upload Files", "error");
-        }
-        values.components.map((comp) => {
-          formData.append("files", comp.file[0]?.originFileObj);
-        });
         poData.materials.map((row) => {
           componentData = {
             component: [...componentData.component, row.componentKey],
@@ -193,7 +183,6 @@ export default function MaterialInWithPO({}) {
           content: "",
           onOk() {
             validateInvoices({
-              formData: formData,
               componentData: componentData,
             });
           },
@@ -208,7 +197,10 @@ export default function MaterialInWithPO({}) {
   const validateInvoices = async (values) => {
     try {
       const invoices = values.componentData.invoice;
-
+      if (invoices.length == 0 || invoices == undefined || !invoices) {
+        showToast("Please add at least one invoice", "error");
+        return;
+      }
       setSubmitLoading(true);
       let payload = {
         invoice: invoices,
@@ -235,69 +227,65 @@ export default function MaterialInWithPO({}) {
         } else {
           submitMIN(values);
         }
+      } else {
+        showToast(response.message || "Invoice Id not found", "error");
+        setSubmitLoading(false);
       }
     } catch (error) {
+      showToast(error?.message || "Failed to upload document", "error");
     } finally {
       setSubmitLoading(false);
     }
   };
-  const submitMIN = async (values, isScan) => {
-    if (values.formData) {
-      setSubmitLoading(true);
-      const response = await imsAxios.post(
-        "/transaction/upload-invoice",
-        values.formData,
-      );
-      const { data } = response;
+  const submitMIN = async (values) => {
+    setSubmitLoading(true);
+    if (fileName) {
+      let final = {
+        companybranch: "BRALWR36",
+        invoices: fileName,
+        poid: poData.headers.transaction,
+        manual_mfg_code: poData.materials.map((row) => row.mfgCode),
+      };
+      final = { ...final, ...values.componentData };
+      const response = await executeFun(() => poMINforMIN(final), "select");
 
-      if (response?.success && data) {
-        let final = {
-          companybranch: "BRALWR36",
-          invoices: data,
-          poid: poData.headers.transaction,
-          manual_mfg_code: poData.materials.map((row) => row.mfgCode),
-        };
-        final = { ...final, ...values.componentData };
-        const response = await executeFun(() => poMINforMIN(final), "select");
-
-        if (response?.success) {
-          const { data } = response;
-          console.log(data, "data during min");
-          setSearchData({
-            vendor: "",
-            poNumber: "",
-          });
-          setInvoices([]);
-          setSubmitLoading(false);
-          setMaterialInSuccess({
-            materialInId: data?.txn || data?.transaction_id,
-            poId: poData.headers.transaction,
-            vendor: poData.headers.vendorcode,
-            components: poData.materials.map((row) => {
-              return {
-                id: row.c_partno,
-                componentName: row.component_fullname,
-                partNo: row.c_partno,
-                inQuantity: row.orderqty,
-                invoiceNumber: row.invoiceId,
-                invoiceDate: row.invoiceDate,
-                location: row.location.label,
-                poQuantity: row.po_order_qty,
-              };
-            }),
-          });
-          setIrnNum("");
-        } else {
-          setSubmitLoading(false);
-          showToast(response.message, "error");
-        }
+      if (response?.success) {
+        const { data } = response;
+        console.log(data, "data during min");
+        setSearchData({
+          vendor: "",
+          poNumber: "",
+        });
+        setFileName("");
+        setSubmitLoading(false);
+        setMaterialInSuccess({
+          materialInId: data?.txn || data?.transaction_id,
+          poId: poData.headers.transaction,
+          vendor: poData.headers.vendorcode,
+          components: poData.materials.map((row) => {
+            return {
+              id: row.c_partno,
+              componentName: row.component_fullname,
+              partNo: row.c_partno,
+              inQuantity: row.orderqty,
+              invoiceNumber: row.invoiceId,
+              invoiceDate: row.invoiceDate,
+              location: row.location.label,
+              poQuantity: row.po_order_qty,
+            };
+          }),
+        });
+        setIrnNum("");
       } else {
         setSubmitLoading(false);
-        showToast(
-          "Some error occured while uploading invoices, Please try again",
-          "error",
-        );
+        showToast(response.message, "error");
       }
+    } else {
+      setSubmitLoading(false);
+      showToast(
+        "Some error occured while uploading invoices, Please try again",
+        "error",
+      );
     }
   };
   const getCurrencies = async () => {
@@ -477,9 +465,7 @@ export default function MaterialInWithPO({}) {
       };
     });
   };
-  const backFunction = () => {
-    setMaterialInward(null);
-  };
+
   const getVendors = async (search) => {
     // if (search?.length > 2) {
     const response = await executeFun(() => getVendorOptions(search), "select");
@@ -492,7 +478,7 @@ export default function MaterialInWithPO({}) {
   };
   const resetFunction = () => {
     setPoData(resetPoData);
-    setInvoices([]);
+    setFileName("");
     setShowResetConfirm(false);
   };
   const getDetail = async () => {
@@ -514,7 +500,7 @@ export default function MaterialInWithPO({}) {
         ...obj,
 
         poId: searchData.poNumber,
-        materials: obj.materials.map((mat, index) => {
+        materials: obj.materials.map((mat) => {
           let percentage = mat.gstrate;
           return {
             // adding properties in materials array
@@ -745,53 +731,6 @@ export default function MaterialInWithPO({}) {
     setPoData({ materials: [] });
     setResetPoData({ materials: [] });
   };
-  const additional = () => (
-    <Space>
-      <div style={{ width: 250 }}>
-        <MyAsyncSelect
-          allowClear
-          size="default"
-          selectLoading={selectLoading}
-          onBlur={() => setAsyncOptions([])}
-          value={searchData.vendor == "" ? null : searchData.vendor}
-          onChange={(value) =>
-            setSearchData((searchData) => ({ ...searchData, vendor: value }))
-          }
-          loadOptions={getVendors}
-          optionsState={asyncOptions}
-          placeholder="Select Vendor..."
-        />
-      </div>
-      <div style={{ width: 200 }}>
-        <Input
-          allowClear
-          placeholder="PO Number"
-          value={searchData.poNumber}
-          onChange={(e) =>
-            setSearchData((searchData) => ({
-              ...searchData,
-              poNumber: e.target.value,
-            }))
-          }
-        />
-      </div>
-      <Button
-        disabled={searchData.vendor == "" || searchData.poNumber == ""}
-        type="primary"
-        loading={searchLoading}
-        onClick={getDetail}
-        id="submit"
-      >
-        Search
-      </Button>
-
-      {/* <CommonIcons
-        action="downloadButton"
-        onClick={() => downloadCSV(rows, columns, "Pending PO Report")}
-        disabled={rows.length == 0}
-      /> */}
-    </Space>
-  );
 
   useEffect(() => {
     // getDetail();
@@ -818,6 +757,41 @@ export default function MaterialInWithPO({}) {
   }, [poData]);
   // log
   const { Text } = Typography;
+  const handleUploadDocument = async () => {
+    setUploadLoading(true);
+
+    try {
+      const formData = new FormData();
+      const values = await form.validateFields();
+      if (!values?.components[0]?.file) {
+        showToast("Please upload Files", "error");
+        return;
+      }
+      values.components.map((comp) => {
+        formData.append("files", comp.file[0]?.originFileObj);
+      });
+
+      const response = await imsAxios.post(
+        "/transaction/upload-invoice",
+        formData,
+      );
+
+      if (response?.success) {
+        setFileName(response?.data);
+        setUploadClicked(false);
+        showToast(response?.message || "Upload Document success", "success");
+        setUploadLoading(false);
+      } else {
+        showToast(response?.message || "Upload Document failed", "error");
+        setUploadLoading(false);
+      }
+    } catch (error) {
+      showToast(error?.message || "Upload Document failed", "error");
+      setUploadLoading(false);
+    } finally {
+      setUploadLoading(false);
+    }
+  };
   return (
     <div
       style={{
@@ -827,10 +801,7 @@ export default function MaterialInWithPO({}) {
         margin: "8px",
       }}
     >
-      <Row
-        justify="space-between"
-    
-      >
+      <Row justify="space-between">
         {(pageLoading || submitLoading == true) && <Loading />}
         <Col span={20}>
           <Space>
@@ -877,16 +848,15 @@ export default function MaterialInWithPO({}) {
             </MyButton>
           </Space>
         </Col>
-       <Col>
-        <Button
-          type="primary"
-          icon={<UploadOutlined />}
-          onClick={() => setUploadClicked(true)}
-        >
-          
-          Upload Documents
-        </Button></Col>
-     
+        <Col>
+          <Button
+            type="primary"
+            icon={<UploadOutlined />}
+            onClick={() => setUploadClicked(true)}
+          >
+            Upload Documents
+          </Button>
+        </Col>
       </Row>
       {/* vendor info modal */}
       <Modal
@@ -983,7 +953,7 @@ export default function MaterialInWithPO({}) {
       {/* upload doc modal */}
 
       {!materialInSuccess && (
-        <Row gutter={8} style={{ height: "100%", marginTop:8 }}>
+        <Row gutter={8} style={{ height: "100%", marginTop: 8 }}>
           <Col span={6}>
             <Row
               style={{
@@ -993,7 +963,7 @@ export default function MaterialInWithPO({}) {
               gutter={[0, 4]}
             >
               {/* vendor details */}
-              <Row style={{width: "100%", padding: "10px 0px" }}>
+              <Row style={{ width: "100%", padding: "10px 0px" }}>
                 <Card
                   size="small"
                   style={{ height: "100%", width: "100%" }}
@@ -1257,7 +1227,7 @@ export default function MaterialInWithPO({}) {
                   </Row>
                 </Card>
               </Row>
-           
+
               {/* tax details */}
               <Col span={24} style={{ width: "100%", height: "50%" }}>
                 <Card
@@ -1323,9 +1293,14 @@ export default function MaterialInWithPO({}) {
                 layout="vertical"
                 width={700}
                 title={"Upload Document"}
+                loading={uploadLoading}
                 // destroyOnClose={true}
-                onCancel={() => setUploadClicked(false)}
-                onOk={() => setUploadClicked(false)}
+                onCancel={() => {
+                  setFileName("");
+                  setUploadClicked(false);
+                  setUploadLoading(false);
+                }}
+                onOk={handleUploadDocument}
                 // style={{ maxHeight: "50%", height: "50%", overflowY: "scroll" }}
               >
                 <Form
@@ -1347,7 +1322,7 @@ export default function MaterialInWithPO({}) {
                             <>
                               <Col>
                                 {fields.map((field, index) => (
-                                  <Form.Item noStyle>
+                                  <Form.Item noStyle key={field.key || index}>
                                     <SingleProduct
                                       fields={fields}
                                       field={field}
@@ -1380,7 +1355,6 @@ export default function MaterialInWithPO({}) {
           </Col>
 
           <NavFooter
-            backFunction={backFunction}
             hideHeaderMenu
             nextLabel="Submit"
             loading={submitLoading}
