@@ -72,6 +72,7 @@ export default function ExportMaterialInWithPO() {
   const [selectLocation, setSelectLocation] = useState(null);
   const [codeCostCenter, setCodeCostCenter] = useState("");
   const [uplaoaClicked, setUploadClicked] = useState(false);
+  const [uploadedComponents, setUploadedComponents] = useState([]);
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
   const [uplaodForm] = Form.useForm();
@@ -116,9 +117,7 @@ export default function ExportMaterialInWithPO() {
       freight: [],
     };
     if (validation == true) {
-      let values2 = await form2.validateFields();
-      let a = values2?.components;
-  
+      let a = uploadedComponents;
       if (a?.length) {
         if (!fileName) {
           showToast("Please upload Document", "error");
@@ -140,7 +139,7 @@ export default function ExportMaterialInWithPO() {
             // location: [...componentData.location, row.location.value],
             finalRate: [...componentData.finalRate, row.finalRate],
             // out_location: [...componentData.out_location, row.autoConsumption],
-            documentName: values2?.components?.map((r) => r.documentName),
+            documentName: uploadedComponents?.map((r) => r.documentName),
             irn: irnNum,
             qrScan: "N",
             currency: "28567096",
@@ -181,7 +180,9 @@ export default function ExportMaterialInWithPO() {
   };
 
   useEffect(() => {
-    previewRows && setPoData({ materials: previewRows });
+    if (previewRows.length) {
+      setPoData((prev) => ({ ...prev, materials: previewRows }));
+    }
   }, [previewRows]);
 
   const normFile = (e) => {
@@ -861,15 +862,15 @@ export default function ExportMaterialInWithPO() {
       headerName: "Final Rate",
       field: "finalRate",
       flex: 1,
+      minWidth: 120,
       renderCell: ({ row }) => <Input disabled={true} value={row.finalRate} />,
-      width: 100,
     },
     {
       headerName: "Total",
       field: "total",
       flex: 1,
+      minWidth: 120,
       renderCell: ({ row }) => <Input disabled={true} value={row.total} />,
-      width: 100,
     },
     {
       headerName: "HSN Code",
@@ -983,6 +984,7 @@ export default function ExportMaterialInWithPO() {
         qty: r.orderQty,
         rate: r.importRate,
         hsn: r.hsn,
+        hsncode: r.hsn,
         value: r.value,
         gstRate: r.exchangeRate, // Example, adjust as needed
         gstType: r.uom, // Example, adjust as needed
@@ -1015,6 +1017,7 @@ export default function ExportMaterialInWithPO() {
 
       if (response?.success) {
         setFileName(response?.data);
+        setUploadedComponents(values.components);
         setUploadClicked(false);
         showToast(response?.message || "Upload Document success", "success");
         setUploadLoading(false);
@@ -1618,7 +1621,7 @@ export default function ExportMaterialInWithPO() {
 
                     <Row justify="end" style={{ marginTop: 5 }}>
                       <a
-                        href="http://imsv2.mscapi.live/files/sample/Import%20PO%20Sample%20File%20Format.xlsx"
+                        href="https://alwar.prod.mscorpres.com/files/samples/Import%20PO.xlsx"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
