@@ -66,6 +66,7 @@ export default function MaterialInWithPO() {
   });
   const [showCurrency, setShowCurrenncy] = useState(null);
   const [autoConsumptionOptions, setAutoConsumptionOption] = useState([]);
+   const [uploadedComponents, setUploadedComponents] = useState([]);
   const [totalValues, setTotalValues] = useState([
     { label: "cgst", sign: "+", values: [] },
     { label: "sgst", sign: "+", values: [] },
@@ -125,9 +126,8 @@ export default function MaterialInWithPO() {
     };
 
     if (validation == true) {
-      let values = await form.validateFields();
-
-      // if (a?.length) {
+  let a = uploadedComponents;
+      if (a?.length) {
         poData.materials.map((row) => {
           componentData = {
             component: [...componentData.component, row.componentKey],
@@ -149,7 +149,7 @@ export default function MaterialInWithPO() {
             remark: [...componentData.remark, row.orderremark],
             location: [...componentData.location, row.location.value],
             out_location: [...componentData.out_location, row.autoConsumption],
-            documentName: values.components.map((r) => r.documentName),
+             documentName: uploadedComponents?.map((r) => r.documentName),
             irn: irnNum,
             qrScan: isScan == true ? "Y" : "N",
           };
@@ -186,9 +186,9 @@ export default function MaterialInWithPO() {
             });
           },
         });
-      // } else {
-      //   showToast("Please add at least one document", "error");
-      // }
+      } else {
+        showToast("Please add at least one document", "error");
+      }
     } else {
       showToast("Please Provide all the values of all the components", "error");
     }
@@ -777,6 +777,7 @@ export default function MaterialInWithPO() {
 
       if (response?.success) {
         setFileName(response?.data);
+          setUploadedComponents(values.components);
         setUploadClicked(false);
         showToast(response?.message || "Upload Document success", "success");
         setUploadLoading(false);
