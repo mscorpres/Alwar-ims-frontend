@@ -72,6 +72,7 @@ export default function ExportMaterialInWithPO() {
   const [selectLocation, setSelectLocation] = useState(null);
   const [codeCostCenter, setCodeCostCenter] = useState("");
   const [uplaoaClicked, setUploadClicked] = useState(false);
+  const [uploadedComponents, setUploadedComponents] = useState([]);
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
   const [uplaodForm] = Form.useForm();
@@ -116,9 +117,7 @@ export default function ExportMaterialInWithPO() {
       freight: [],
     };
     if (validation == true) {
-      let values2 = await form2.validateFields();
-      let a = values2?.components;
-  
+      let a = uploadedComponents;
       if (a?.length) {
         if (!fileName) {
           showToast("Please upload Document", "error");
@@ -140,7 +139,7 @@ export default function ExportMaterialInWithPO() {
             // location: [...componentData.location, row.location.value],
             finalRate: [...componentData.finalRate, row.finalRate],
             // out_location: [...componentData.out_location, row.autoConsumption],
-            documentName: values2?.components?.map((r) => r.documentName),
+            documentName: uploadedComponents?.map((r) => r.documentName),
             irn: irnNum,
             qrScan: "N",
             currency: "28567096",
@@ -1018,6 +1017,7 @@ export default function ExportMaterialInWithPO() {
 
       if (response?.success) {
         setFileName(response?.data);
+        setUploadedComponents(values.components);
         setUploadClicked(false);
         showToast(response?.message || "Upload Document success", "success");
         setUploadLoading(false);
