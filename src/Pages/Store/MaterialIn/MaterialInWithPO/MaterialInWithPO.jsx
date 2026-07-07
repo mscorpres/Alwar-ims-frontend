@@ -126,9 +126,8 @@ export default function MaterialInWithPO() {
 
     if (validation == true) {
       let values = await form.validateFields();
-      let a = values.components;
 
-      if (a?.length) {
+      // if (a?.length) {
         poData.materials.map((row) => {
           componentData = {
             component: [...componentData.component, row.componentKey],
@@ -187,9 +186,9 @@ export default function MaterialInWithPO() {
             });
           },
         });
-      } else {
-        showToast("Please add at least one document", "error");
-      }
+      // } else {
+      //   showToast("Please add at least one document", "error");
+      // }
     } else {
       showToast("Please Provide all the values of all the components", "error");
     }

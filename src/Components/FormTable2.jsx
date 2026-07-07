@@ -1,7 +1,6 @@
-import { Form, Row, Typography } from "antd";
-import React, { useState } from "react";
+import { Form, Typography } from "antd";
+import  { useState } from "react";
 import { normalizeFormRules } from "../utils/general";
-import { CommonIcons } from "./TableActions.jsx/TableActions";
 import { useEffect } from "react";
 import { memo } from "react";
 import { Add, Delete } from "@mui/icons-material";
@@ -114,7 +113,7 @@ const FormTable2 = ({
               height: "100%",
             }}
           >
-            {(fields, { add, remove }) =>
+            {(fields, { remove }) =>
               fields.map((field, index) => (
                 <SingleRow
                   key={field.key}
@@ -150,8 +149,8 @@ export default FormTable2;
 const SingleRow = memo(
   ({
     field,
-    fieldsLength,
-    nonRemovableColumns = 1,
+    // fieldsLength,
+    // nonRemovableColumns = 1,
     removableRows,
     addableRow,
     remove,
@@ -289,6 +288,8 @@ const SingleRow = memo(
   },
 );
 
+SingleRow.displayName = "SingleRow";
+
 
 const columnCellStyle = (row, rowBg) => ({
   whiteSpace: "nowrap",
@@ -299,7 +300,6 @@ const columnCellStyle = (row, rowBg) => ({
   backgroundColor: rowBg,
   padding: "2px 5px",
 });
-const tableRowStyle = {};
 
 const rules = {
   hsn: [

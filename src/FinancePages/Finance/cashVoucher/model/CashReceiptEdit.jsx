@@ -5,10 +5,8 @@ import {
   Input,
   Space,
   Row,
-  Card,
-  DatePicker,
 } from "antd";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 
 import { v4 } from "uuid";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -26,7 +24,6 @@ function CashReceiptEdit({
   const { showToast } = useToast();
   // conso/le.log(selectValueWhenFetch);
   const [allData, setAllData] = useState([]);
-  const [header, setHeader] = useState([]);
   const [effectiveDate, setEffectiveDate] = useState("");
   const [cash, setCash] = useState(null);
   const [insertDate, setInsertDate] = useState("");
@@ -44,12 +41,12 @@ function CashReceiptEdit({
       }
     );
     if (response.success) {
-      setInsertDate(data.header[0].insert_date);
-      setEffectiveDate(data.header[0].ref_date);
+      setInsertDate(response?.data.header[0].insert_date);
+      setEffectiveDate(response?.data.header[0].ref_date);
 
       let accountObj = {
-        label: data.header[0].account,
-        value: data.header[0].account_code,
+        label: response?.data.header[0].account,
+        value: response?.data.header[0].account_code,
       };
       setCash(accountObj);
       let arr = response.data.map((row, index) => {
@@ -95,7 +92,7 @@ function CashReceiptEdit({
       }
     );
     setSelectLoading(false);
-    const arr = data.map((row) => {
+    const arr = response.data.map((row) => {
       return { value: row.id, text: row.text };
     });
     setAsyncOptions(arr);
@@ -205,6 +202,7 @@ function CashReceiptEdit({
   ];
 
   const submitHandler = async () => {
+    setSubmitLoading(true);
     if (selectValueWhenFetch == "date_wise") {
       const uniqueID = [];
       const par = [];
@@ -229,10 +227,12 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("date_wise");
-        showToast(data.code, "success");
+        showToast(response.message, "success");
+        setSubmitLoading(false);
         setEdit(false);
       }  
     } else if (selectValueWhenFetch == "eff_wise") {
+    
       const uniqueID = [];
       const par = [];
       const ammount = [];
@@ -256,7 +256,8 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("eff_wise");
-        showToast(data.code, "success");
+        showToast(response?.message, "success");
+        setSubmitLoading(false);
         setEdit(false);
       } 
     } else if (selectValueWhenFetch == "key_wise") {
@@ -283,7 +284,8 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("key_wise");
-        showToast(data.code, "success");
+        showToast(response?.message, "success");
+        setSubmitLoading(false);
         setEdit(false);
       } 
     } else if (selectValueWhenFetch == "ledger_wise") {
@@ -310,10 +312,12 @@ function CashReceiptEdit({
       );
       if (response.success) {
         fetchData("ledger_wise");
-        showToast(data.code, "success");
+        showToast(response?.message, "success");
+        setSubmitLoading(false);
         setEdit(false);
       }
     }
+      setSubmitLoading(false);
   };
 
   useEffect(() => {
@@ -367,6 +371,7 @@ function CashReceiptEdit({
                 placeholder="Select Account.."
                 optionsState={asyncOptions}
                 onChange={(value) => setCash(value)}
+                selectLoading={selectLoading}
               />
             </Col>
           </Row>

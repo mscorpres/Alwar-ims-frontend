@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import "./accounts.css";
+import { useEffect, useState } from "react";
 import Tree from "../../Components/Tree";
 
-import Loading from "../../Components/Loading";
+// import Loading from "../../Components/Loading";
 import {
   Button,
   Card,
@@ -10,9 +9,7 @@ import {
   Form,
   Input,
   Row,
-  Select,
   Space,
-  Typography,
 } from "antd";
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { imsAxios } from "../../axiosInterceptor";
@@ -28,18 +25,10 @@ export default function CreateSubGroup() {
   const [subGroups, setSubGroups] = useState([]);
   // const [searchInput, setSearchInput] = useState("");
   const [subGroupAsyncOptions, setSubGroupAsyncOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
-  const { Option } = Select;
-  const subGroupOptions = [
-    { label: "Assets", values: "A" },
-    { label: "Liabilities", values: "L" },
-    { label: "Income", values: "I" },
-    { label: "Expense", values: "E" },
-    { label: "Reserves Surplus", values: "R" },
-    { label: "Bank Accounts", values: "B" },
-  ];
+
   const getSubGroupsTree = async () => {
     const response = await imsAxios.get("/tally/sub_group_tree");
     if (response.success) {
@@ -104,7 +93,6 @@ export default function CreateSubGroup() {
     getSubGroupsTree();
   }, []);
 
-  const { Title } = Typography;
   useEffect(() => {}, [subGroupAsyncOptions]);
   return (
     <div style={{ position: "relative", height: "100%", width: "100%" }}>
@@ -112,8 +100,8 @@ export default function CreateSubGroup() {
       <Row
         gutter={4}
         style={{
-          opacity: loading ? 0.5 : 1,
-          pointerEvents: loading ? "none" : "all",
+          opacity:  1,
+          pointerEvents:  "all",
           position: "relative",
           padding: "0px 5px",
           height: "100%",
@@ -186,7 +174,7 @@ export default function CreateSubGroup() {
             style={{ height: "90%", padding: 5 }}
             title="Sub Groups"
           >
-            {loading && <Loading />}
+            {/* {loading && <Loading />} */}
             {subGroups.length > 0 && <Tree subGroups={subGroups} />}
           </Card>
         </Col>
