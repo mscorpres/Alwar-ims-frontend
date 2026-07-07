@@ -181,7 +181,9 @@ export default function ExportMaterialInWithPO() {
   };
 
   useEffect(() => {
-    previewRows && setPoData({ materials: previewRows });
+    if (previewRows.length) {
+      setPoData((prev) => ({ ...prev, materials: previewRows }));
+    }
   }, [previewRows]);
 
   const normFile = (e) => {
@@ -861,15 +863,15 @@ export default function ExportMaterialInWithPO() {
       headerName: "Final Rate",
       field: "finalRate",
       flex: 1,
+      minWidth: 120,
       renderCell: ({ row }) => <Input disabled={true} value={row.finalRate} />,
-      width: 100,
     },
     {
       headerName: "Total",
       field: "total",
       flex: 1,
+      minWidth: 120,
       renderCell: ({ row }) => <Input disabled={true} value={row.total} />,
-      width: 100,
     },
     {
       headerName: "HSN Code",
@@ -983,6 +985,7 @@ export default function ExportMaterialInWithPO() {
         qty: r.orderQty,
         rate: r.importRate,
         hsn: r.hsn,
+        hsncode: r.hsn,
         value: r.value,
         gstRate: r.exchangeRate, // Example, adjust as needed
         gstType: r.uom, // Example, adjust as needed
