@@ -929,7 +929,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
                       >
                         <MySelect
                           options={[
-                            { text: "Cons021", value: "20211028124102" },
+                            { text: "AL_CONS01", value: "1765454664276" },
                           ]}
                           onChange={(value) => setConsumpLoc(value)}
                           placeholder="Select Consumption Location"
