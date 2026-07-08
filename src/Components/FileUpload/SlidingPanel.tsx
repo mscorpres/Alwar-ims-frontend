@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
-import {
-  ArrowRightOutlined,
-  ArrowLeftOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
