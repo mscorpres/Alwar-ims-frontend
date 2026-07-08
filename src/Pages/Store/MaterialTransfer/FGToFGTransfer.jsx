@@ -71,25 +71,12 @@ function FGToFGTransfer() {
   };
 
   // console.log(branchName);
-  const getLocationFunction = async () => {
-    setIsLoading(true);
-    try {
-      const response = await imsAxios.get("/skuQueryA/q3Location");
-      if (response?.success) {
-        const data = response?.data;
-        let v = [];
-        data?.map((ad) => v.push({ label: ad.text, value: ad.id }));
-        setloctionData(v);
-        setloctionDataTo(v);
-        setIsLoading(false);
-      } else {
-        showToast(response?.message || "Data Not Found", "error");
-        setIsLoading(false);
-      }
-    } catch (error) {
-      showToast(error?.message || "Server Error", "error");
-      setIsLoading(false);
-    }
+   const getLocationFunction = async () => {
+    const { data } = await imsAxios.get("/q3/location");
+    let v = [];
+    data?.map((ad) => v.push({ label: ad.text, value: ad.id }));
+    setloctionData(v);
+    setloctionDataTo(v);
   };
 
   const branchInfoFunction = async () => {
@@ -112,34 +99,32 @@ function FGToFGTransfer() {
   };
 
   const getComponentList = async (e) => {
+    if (!(e?.length > 2)) return;
     setIsLoading(true);
     try {
-      if (e?.length > 2) {
-        const response = await getProductsOptions(e);
-        if (response?.success) {
-          const data = response?.data;
-          const arr = Array.isArray(data)
-            ? data.map((d) => ({ text: d.text, value: d.value ?? d.id }))
-            : [];
-          setAsyncOptions(arr);
-          setIsLoading(false);
-        } else {
-          showToast(response?.message || "Data Not Found", "error");
-          setIsLoading(false);
-        }
+      const response = await getProductsOptions(e);
+      if (response?.success) {
+        const data = response?.data;
+        const arr = Array.isArray(data)
+          ? data.map((d) => ({ text: d.text, value: d.value ?? d.id }))
+          : [];
+        setAsyncOptions(arr);
+      } else {
+        showToast(response?.message || "Data Not Found", "error");
       }
     } catch (error) {
       showToast(error?.message || "Server Error", "error");
+    } finally {
       setIsLoading(false);
     }
   };
 
   const getQtyFuction = async (rowIndex, componentValue) => {
-    setIsLoading(true);
     const row = rows[rowIndex];
     const component = componentValue ?? row?.component;
     if (!allData.locationFrom || !component) return;
 
+    setIsLoading(true);
     try {
       const { data } = await imsAxios.post("/godown/godownStocksProduct", {
         product: component,
@@ -157,7 +142,6 @@ function FGToFGTransfer() {
         };
         return updated;
       });
-      setIsLoading(false);
     } catch (err) {
       setRows((prev) => {
         const updated = [...prev];
@@ -169,6 +153,7 @@ function FGToFGTransfer() {
         };
         return updated;
       });
+    } finally {
       setIsLoading(false);
     }
   };
