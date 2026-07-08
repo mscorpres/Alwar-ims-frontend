@@ -1514,6 +1514,9 @@ export default function ExportMaterialInWithPO() {
                         name="invoice_date"
                         onChange={(value) => setInvoiceDate(value)}
                         value={invoiceDate}
+                        disabledDate={(current) =>
+                          current && current.valueOf() > Date.now()
+                        }
                       />
                     </Col>
                   </Row>
