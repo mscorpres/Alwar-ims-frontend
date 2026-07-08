@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import NavFooter from "../../../../Components/NavFooter";
 import { useToast } from "../../../../hooks/useToast.js";
 import {
@@ -49,6 +49,7 @@ import {
 import SingleProduct from "../../../Master/Vendor/SingleProduct";
 import { downloadCSVCustomColumns } from "../../../../Components/exportToCSV.jsx";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FileUpload from "../../../../Components/FileUpload";
 
 const defaultValues = {
   vendorType: "v01",
@@ -118,6 +119,7 @@ const [fileName, setFileName] = useState("");
   const vendorBranch = Form.useWatch("vendorBranch", form);
   const vendorType = Form.useWatch("vendorType", form);
   const [uplaodForm] = Form.useForm();
+  const tableContainerRef = useRef(null);
   const sampleData = [
     {
       PART_CODE: "p0001",
@@ -925,6 +927,10 @@ const [fileName, setFileName] = useState("");
       setUploadLoading(false);
     }
   };
+ 
+  const handleFileUploadDelete = () => {};
+  const handleFileUploadChange = () => {};
+
   return (
     <div style={{ height: "100%", overflow: "hidden", padding: 10 }}>
       {showCurrency != null && (
@@ -1177,6 +1183,22 @@ const [fileName, setFileName] = useState("");
                           Excel
                         </MyButton>
                       </Col>
+                      <Col>
+                        <FileUpload
+                          accept="image/*,.pdf"
+                          multiple
+                          maxFiles={5}
+                          maxFileSize={5 * 1024 * 1024}
+                          title="Upload Documents"
+                          getContainer={() => tableContainerRef.current}
+                          onUpload={handleUploadDocument}
+                          onDelete={handleFileUploadDelete}
+                          onChange={handleFileUploadChange}
+                          loading={uploadLoading}
+                        >
+                          <MyButton variant="upload" text="New Upload" />
+                        </FileUpload>
+                      </Col>
                     </Row>
                   </Row>
                 </Card>
@@ -1263,7 +1285,17 @@ const [fileName, setFileName] = useState("");
               </Flex>
             </Col>
             <Col style={{ height: "100%" }} span={18}>
-              <div style={{ height: "98%", border: "1px solid #EEEEEE" }}>
+              <div
+                ref={tableContainerRef}
+                style={{
+                  height: "98%",
+                  border: "1px solid #EEEEEE",
+                  position: "relative",
+                  overflow: "hidden",
+                  display: "flex",
+                }}
+              >
+              <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
                 {pageLoading && <Loading />}
                 <FormTable2
                   form={form}
@@ -1299,6 +1331,7 @@ const [fileName, setFileName] = useState("");
                     setShowCurrenncy,
                   })}
                 />
+              </div>
               </div>
             </Col>
             <Modal
