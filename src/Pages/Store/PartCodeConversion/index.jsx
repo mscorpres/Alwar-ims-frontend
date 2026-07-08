@@ -29,6 +29,7 @@ const PartCodeConversion = () => {
     in: [],
     out: {},
   });
+  // const [remarks, setRemarks] = useState();
   const [editingComponent, setEditingComponent] = useState(false);
   const [componentStock, setComponentStock] = useState("--");
   const [componentRates, setComponentRates] = useState({});
@@ -36,41 +37,42 @@ const PartCodeConversion = () => {
   const [addComponentForm] = Form.useForm();
   const [remarksForm] = Form.useForm();
   const { executeFun, loading: loading1 } = useApi();
-
   const componentIn = Form.useWatch("componentIn", addComponentForm);
   const componentOut = Form.useWatch("componentOut", addComponentForm);
   const locationIn = Form.useWatch("locationIn", addComponentForm);
 
   const getComponentOption = async (search) => {
     try {
+      // setLoading("select");
+      // const response = await imsAxios.post(
+      //   "/backend/getComponentByNameAndNo",
+      //   payload
+      // );
       const response = await executeFun(
         () => getComponentOptions(search),
         "select",
       );
-   
-      if (response?.success) {
-           const { data } = response;
-        let arr = [];
-        if (data.length > 0) {
-          arr = data.map((d) => {
-            return { text: d.text, value: d.id };
-          });
-          setAsyncOptions(arr);
-          setComponentRates((curr) => {
+  
+     
+      let arr = [];
+      if (response.success) {
+            const { data } = response;
+        arr = data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
+        setAsyncOptions(arr);
+        setComponentRates((curr) => {
             const next = { ...curr };
             data.forEach((d) => {
               next[d.id] = d.rate;
             });
             return next;
           });
-        } else {
-          setAsyncOptions([]);
-        }
       } else {
         setAsyncOptions([]);
       }
     } catch (error) {
-      showToast(error?.message || "Server Error", "error");
+      showToast(error.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -85,11 +87,13 @@ const PartCodeConversion = () => {
         "/conversion/conversion_locations",
         payload,
       );
-      const { data } = response;
+    
+
+      
       if (response?.success) {
         let arr = [];
 
-        arr = data.map((d) => {
+        arr = response?.data.map((d) => {
           return { text: d.text, value: d.id };
         });
         setAsyncOptions(arr);
@@ -97,7 +101,7 @@ const PartCodeConversion = () => {
         setAsyncOptions([]);
       }
     } catch (error) {
-      showToast(error?.message || "Server Error", "error");
+      showToast(error.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -119,7 +123,7 @@ const PartCodeConversion = () => {
         }
     
     } catch (error) {
-      showToast(error?.message || "Server Error", "error");
+      showToast(error.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -284,7 +288,7 @@ const PartCodeConversion = () => {
         component_in: addedComponents.in.map((row) => row.component.value),
         qty_in: addedComponents.in.map((row) => row.qty),
         loc_in: addedComponents.in.map((row) => row.location.value),
-        rate: addedComponents.in.map(
+           rate: addedComponents.in.map(
           (row) => componentRates[row.component.value] ?? 0,
         ),
       },
@@ -292,7 +296,7 @@ const PartCodeConversion = () => {
         component_out: addedComponents.out.component.value,
         qty_out: addedComponents.out.qty,
         loc_out: addedComponents.out.location.value,
-        rate: [componentRates[addedComponents.in[0].component.value] ?? 0],
+         rate: [componentRates[addedComponents.in[0].component.value] ?? 0],
       },
     };
     Modal.confirm({
@@ -585,8 +589,8 @@ const PartCodeConversion = () => {
                         paddingBottom: 20,
                       }}
                     >
-                      {addedComponents.in.map((component, index) => (
-                        <Col span={24} key={index}>
+                      {addedComponents.in.map((component,idx) => (
+                        <Col span={24} key={component.id || idx}>
                           <Row align="middle">
                             <Col xl={5} xxl={3}>
                               {!editingComponent && (
