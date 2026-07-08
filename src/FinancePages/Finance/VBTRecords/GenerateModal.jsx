@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Button, Modal, Space } from "antd";
 const info = () => {
   Modal.info({
@@ -29,7 +29,7 @@ const warning = () => {
     content: "some messages...some messages...",
   });
 };
-const App = () => (
+const GenerateModal = () => (
   <Space wrap>
     <Button onClick={info}>Info</Button>
     <Button onClick={success}>Success</Button>

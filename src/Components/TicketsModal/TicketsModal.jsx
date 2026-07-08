@@ -909,7 +909,7 @@ export default function TicketsModal({ open, handleClose }) {
                           type="secondary"
                           style={{ fontSize: 12 }}
                         >
-                          Please don't include any sensitive information
+                          {`Please don't include any sensitive information`}
                         </Typography.Text>
                       )}
                     </>
