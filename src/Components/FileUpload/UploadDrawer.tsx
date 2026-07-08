@@ -38,6 +38,12 @@ export default function UploadDrawer({
   return (
     <SlidingPanel open={open} onClose={onClose} title={title} width={width} container={getContainer} >
       <div style={{ display: "flex", flexDirection: "column", height: "calc(100% - 0px)",  }}>
+        
+       
+        <div style={{ flexShrink: 0 }}>
+          <UploadArea accept={accept} multiple={multiple} onFilesSelected={onFilesSelected} />
+        </div>
+         <Divider style={{ margin: "12px 0" }} />
         <div style={{ flex: 1, overflowY: "auto" }}>
           {loading ? (
             <div style={{ display: "flex", justifyContent: "center", marginTop: 32 }}>
@@ -61,10 +67,6 @@ export default function UploadDrawer({
           )}
         </div>
 
-        <Divider style={{ margin: "12px 0" }} />
-        <div style={{ flexShrink: 0 }}>
-          <UploadArea accept={accept} multiple={multiple} onFilesSelected={onFilesSelected} />
-        </div>
       </div>
     </SlidingPanel>
   );

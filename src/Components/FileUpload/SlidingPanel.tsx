@@ -82,21 +82,19 @@ export default function SlidingPanel({
         gap: 20,
       }}
     >
-      <CloseOutlined
-        onClick={onClose}
-        role="button"
-        aria-label="Close"
-        title="Close"
-        style={{ cursor: "pointer", color: "#8c8c8c" }}
-      />
-
-      <ArrowLeftOutlined
-        style={{ color: "#8c8c8c" }}
-        role="button"
-        aria-label="Expend"
-        title="Expend"
-        onClick={() => setCollapsed(false)}
-      />
+   
+         
+         
+          <IconButton disabled onClick={onClose} size="small" aria-label="Close">
+            <CloseIcon fontSize="small"  />
+          </IconButton>
+             <IconButton size="small"  onClick={() => setCollapsed(false)} aria-label="Collapse">
+           <ArrowForwardIcon
+           fontSize="small"
+           style={{ transform: "rotate(180deg)" }}
+          
+          />
+         </IconButton>
     </div>
   ) : (
     <>
@@ -115,21 +113,11 @@ export default function SlidingPanel({
          <IconButton size="small"  onClick={() => setCollapsed(true)} aria-label="Collapse">
            <ArrowForwardIcon
            fontSize="small"
-            // 
-            // role="button"
-            // aria-label="Collapse"
-            // title="Collapse"
-            // style={{ cursor: "pointer", color: "#8c8c8c", fontWeight: 600 }}
+          
           />
          </IconButton>
-          <CloseOutlined
-            onClick={onClose}
-            role="button"
-            aria-label="Close"
-            title="Close"
-            style={{ cursor: "pointer", color: "#8c8c8c" }}
-          />
-          <IconButton  onClick={onClose} size="small" aria-label="Close">
+         
+          <IconButton disabled  onClick={onClose} size="small" aria-label="Close">
             <CloseIcon fontSize="small"  />
           </IconButton>
         </div>
