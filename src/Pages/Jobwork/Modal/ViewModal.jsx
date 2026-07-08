@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import {
   Button,
   Card,
@@ -6,17 +6,11 @@ import {
   Drawer,
   Dropdown,
   Row,
-  Skeleton,
   Space,
 } from "antd";
-import {
-  EyeFilled,
-  CloseCircleFilled,
-  InfoCircleTwoTone,
-} from "@ant-design/icons";
+
 import { v4 } from "uuid";
-import axios from "axios";
-import InfoModal from "./InfoModal";
+
 import MyDataTable from "../../../Components/MyDataTable";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -42,9 +36,9 @@ const ViewModal = ({ viewModalOpen, setViewModalOpen }) => {
     setLoading(false);
 
     if (response?.success) {
-      const header = response?.data?.header;
+      const header = response?.header;
       setView(Array.isArray(header) ? header[0] ?? {} : header ?? {});
-      const rows = response.data?.body ?? [];
+      const rows = response.data ?? [];
       let arr = rows.map((row, index) => {
         return {
           ...row,
