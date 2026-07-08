@@ -40,6 +40,17 @@ const PartCodeConversion = () => {
   const componentIn = Form.useWatch("componentIn", addComponentForm);
   const componentOut = Form.useWatch("componentOut", addComponentForm);
   const locationIn = Form.useWatch("locationIn", addComponentForm);
+  const qtyIn = Form.useWatch("qtyIn", addComponentForm);
+
+  // Final qty must equal initial qty — mirrors Initial, same as RM location freeze
+  useEffect(() => {
+    addComponentForm.setFieldValue("qtyOut", qtyIn ?? "");
+  }, [qtyIn]);
+
+  // SF: drop location must be the same as pick location — mirrors Initial, same as RM
+  useEffect(() => {
+    addComponentForm.setFieldValue("locationOut", locationIn ?? null);
+  }, [locationIn]);
 
   const getComponentOption = async (search) => {
     try {
@@ -52,22 +63,21 @@ const PartCodeConversion = () => {
         () => getComponentOptions(search),
         "select",
       );
-  
-     
+      const { data } = response;
+      imsAxios;
       let arr = [];
       if (response.success) {
-            const { data } = response;
         arr = data.map((d) => {
           return { text: d.text, value: d.id };
         });
         setAsyncOptions(arr);
         setComponentRates((curr) => {
-            const next = { ...curr };
-            data.forEach((d) => {
-              next[d.id] = d.rate;
-            });
-            return next;
+          const next = { ...curr };
+          data.forEach((d) => {
+            next[d.id] = d.rate;
           });
+          return next;
+        });
       } else {
         setAsyncOptions([]);
       }
@@ -150,44 +160,49 @@ const PartCodeConversion = () => {
       addComponentForm.resetFields(["componentOut", "qtyOut", "locationOut"]);
     }
   };
-  const addComponent = async (type) => {
-    if (type === "initial") {
-      const values = await addComponentForm.validateFields([
-        "componentIn",
-        "qtyIn",
-        "locationIn",
-      ]);
-
-      setAddedComponents((curr) => ({
-        in: [
-          {
-            id: v4(),
-            component: values.componentIn,
-            qty: values.qtyIn,
-            location: values.locationIn,
-          },
-          ...curr.in,
-        ],
-        out: curr.out,
-      }));
-    } else {
-      const values = await addComponentForm.validateFields([
-        "componentOut",
-        "qtyOut",
-        "locationOut",
-      ]);
-
-      setAddedComponents((curr) => ({
-        in: curr.in,
-        out: {
-          id: v4(),
-          component: values.componentOut,
-          qty: values.qtyOut,
-          location: values.locationOut,
-        },
-      }));
+  const resetAllFields = () => {
+    addComponentForm.resetFields([
+      "componentIn",
+      "qtyIn",
+      "locationIn",
+      "componentOut",
+      "qtyOut",
+      "locationOut",
+    ]);
+  };
+  const addBoth = async () => {
+    if (addedComponents.in.length >= 1) {
+      showToast(
+        "Only one Part Code can be added at a time in SF conversion.",
+        "error",
+      );
+      return;
     }
-    formResetHandler(type);
+    const values = await addComponentForm.validateFields([
+      "componentIn",
+      "qtyIn",
+      "locationIn",
+      "componentOut",
+      "qtyOut",
+      "locationOut",
+    ]);
+    setAddedComponents({
+      in: [
+        {
+          id: v4(),
+          component: values.componentIn,
+          qty: values.qtyIn,
+          location: values.locationIn,
+        },
+      ],
+      out: {
+        id: v4(),
+        component: values.componentOut,
+        qty: values.qtyOut,
+        location: values.locationOut,
+      },
+    });
+    resetAllFields();
   };
   const editComponentView = (component, type) => {
     if (type === "initial") {
@@ -254,33 +269,22 @@ const PartCodeConversion = () => {
     }
     handleCancelEditing(editingComponent.type);
   };
-  let comQtyVal = addComponentForm.getFieldValue("qtyIn");
-  const extraButtons = (isEditing, type) => {
-    if (type === isEditing.type) {
+  const stockNum = parseFloat(componentStock);
+  const isStockZero = !isNaN(stockNum) && stockNum === 0;
+  const isQtyExceedsStock = !isNaN(stockNum) && parseFloat(qtyIn) > stockNum;
+
+  const editingButtons = (type) => {
+    if (editingComponent && editingComponent.type === type) {
       return (
         <Space>
           <Button onClick={() => handleCancelEditing(type)}>Cancel</Button>
-          <Button onClick={() => saveEditing(type)} type="primary">
+          <Button onClick={() => saveEditing()} type="primary">
             Save
           </Button>
         </Space>
       );
-    } else {
-      return (
-        <Space>
-          <MyButton variant="reset" onClick={() => formResetHandler(type)} />
-          <MyButton
-            disabled={
-              (addedComponents.out?.component && type === "final") ||
-              componentStock === "0 Pcs" ||
-              comQtyVal > componentStock
-            }
-            variant="add"
-            onClick={() => addComponent(type)}
-          />
-        </Space>
-      );
     }
+    return null;
   };
   const validateHandler = async () => {
     const payload = {
@@ -350,17 +354,16 @@ const PartCodeConversion = () => {
         ...remarks,
         type: "sf",
       });
-     
 
       if (response?.success) {
-        showToast(response?.message || "Part Code Conversion Saved", "success");
+        showToast(response.message, "success");
         setAddedComponents({
           in: [],
-          qty: {},
+          out: {},
         });
         remarksForm.resetFields();
       } else {
-        showToast(response?.message || "Failed to Save Part Code Conversion", "error");
+        showToast(response?.message, "error");
       }
     } catch (error) {
       showToast(error?.message ?? "Server Error", "error");
@@ -409,7 +412,7 @@ const PartCodeConversion = () => {
             <Card
               size="small"
               title="Initial Component"
-              extra={extraButtons(editingComponent, "initial")}
+              extra={editingButtons("initial")}
               style={{ position: "relative" }}
             >
               {loading === "page" && <Loading />}
@@ -447,7 +450,7 @@ const PartCodeConversion = () => {
 
                 <Col span={6}>
                   <Form.Item
-                    label="Pick Location"
+                    label="Location (Pick = Drop)"
                     rules={rules.locationIn}
                     name="locationIn"
                   >
@@ -473,7 +476,7 @@ const PartCodeConversion = () => {
             <Card
               size="small"
               title="Final Component"
-              extra={extraButtons(editingComponent, "final")}
+              extra={editingButtons("final")}
             >
               <Row gutter={6}>
                 <Col span={14}>
@@ -507,8 +510,14 @@ const PartCodeConversion = () => {
                 <Col span={6}>
                   <Form.Item
                     label="Drop Location"
-                    rules={rules.locationOut}
                     name="locationOut"
+                    rules={[
+                      {
+                        required: true,
+                        message:
+                          "Please select a location on the Initial side first",
+                      },
+                    ]}
                   >
                     <MyAsyncSelect
                       selectLoading={loading === "select"}
@@ -516,6 +525,8 @@ const PartCodeConversion = () => {
                       labelInValue
                       loadOptions={getLocationOptions}
                       optionsState={asyncOptions}
+                      disabled
+                      placeholder="Same as Location above"
                     />
                   </Form.Item>
                 </Col>
@@ -528,6 +539,22 @@ const PartCodeConversion = () => {
             </Card>
           </Col>
         </Row>
+        {!editingComponent && (
+          <Row justify="end" style={{ marginTop: 8 }} gutter={8}>
+            <Col>
+              <MyButton variant="reset" onClick={resetAllFields} />
+            </Col>
+            <Col>
+              <MyButton
+                variant="add"
+                disabled={
+                  isStockZero || isQtyExceedsStock || !!addedComponents.in[0]
+                }
+                onClick={addBoth}
+              />
+            </Col>
+          </Row>
+        )}
       </Form>
 
       <Card
@@ -564,14 +591,17 @@ const PartCodeConversion = () => {
                   }}
                 >
                   <Row gap={6} style={{ height: "100%", overflow: "hidden" }}>
-                    <Col xl={5} xxl={3}></Col>
-                    <Col xl={10} xxl={14}>
+                    <Col xl={4} xxl={2}></Col>
+                    <Col xl={9} xxl={13}>
                       <Typography.Text strong>Component</Typography.Text>
                     </Col>
                     <Col span={3}>
                       <Typography.Text strong>Qty</Typography.Text>
                     </Col>
-                    <Col span={4}>
+                    <Col span={3}>
+                      <Typography.Text strong>Rate</Typography.Text>
+                    </Col>
+                    <Col span={3}>
                       <Typography.Text strong>Location</Typography.Text>
                     </Col>
                     {addedComponents.in.length === 0 && (
@@ -592,7 +622,7 @@ const PartCodeConversion = () => {
                       {addedComponents.in.map((component,idx) => (
                         <Col span={24} key={component.id || idx}>
                           <Row align="middle">
-                            <Col xl={5} xxl={3}>
+                            <Col xl={4} xxl={2}>
                               {!editingComponent && (
                                 <Space>
                                   <Button
@@ -613,7 +643,7 @@ const PartCodeConversion = () => {
                                 </Space>
                               )}
                             </Col>
-                            <Col xl={10} xxl={14}>
+                            <Col xl={9} xxl={13}>
                               <Typography.Text>
                                 {component.component.label}
                               </Typography.Text>
@@ -621,7 +651,12 @@ const PartCodeConversion = () => {
                             <Col span={3}>
                               <Typography.Text>{component.qty}</Typography.Text>
                             </Col>
-                            <Col span={4}>
+                            <Col span={3}>
+                              <Typography.Text>
+                                {componentRates[component.component.value] ?? "--"}
+                              </Typography.Text>
+                            </Col>
+                            <Col span={3}>
                               <Typography.Text>
                                 {component.location.label}
                               </Typography.Text>
@@ -641,14 +676,17 @@ const PartCodeConversion = () => {
                   bodyStyle={{ height: "95%", overflow: "auto" }}
                 >
                   <Row align="middle">
-                    <Col xl={5} xxl={3}></Col>
-                    <Col xl={10} xxl={14}>
+                    <Col xl={4} xxl={2}></Col>
+                    <Col xl={9} xxl={13}>
                       <Typography.Text strong>Component</Typography.Text>
                     </Col>
                     <Col span={3}>
                       <Typography.Text strong>Qty</Typography.Text>
                     </Col>
-                    <Col span={4}>
+                    <Col span={3}>
+                      <Typography.Text strong>Rate</Typography.Text>
+                    </Col>
+                    <Col span={3}>
                       <Typography.Text strong>Location</Typography.Text>
                     </Col>
                     {!addedComponents.out?.component && (
@@ -658,7 +696,7 @@ const PartCodeConversion = () => {
                         </Row>
                       </Col>
                     )}
-                    <Col xl={5} xxl={3}>
+                    <Col xl={4} xxl={2}>
                       {addedComponents.out?.component && !editingComponent && (
                         <Space>
                           <Button
@@ -672,7 +710,7 @@ const PartCodeConversion = () => {
                         </Space>
                       )}
                     </Col>
-                    <Col xl={10} xxl={14}>
+                    <Col xl={9} xxl={13}>
                       <Typography.Text>
                         {addedComponents.out?.component?.label}
                       </Typography.Text>
@@ -682,7 +720,12 @@ const PartCodeConversion = () => {
                         {addedComponents.out?.qty}
                       </Typography.Text>
                     </Col>
-                    <Col span={4}>
+                    <Col span={3}>
+                      <Typography.Text>
+                        {componentRates[addedComponents.in[0]?.component?.value] ?? "--"}
+                      </Typography.Text>
+                    </Col>
+                    <Col span={3}>
                       <Typography.Text>
                         {addedComponents.out?.location?.label}
                       </Typography.Text>
