@@ -1024,6 +1024,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
             width={700}
             title={"Upload Document"}
             // destroyOnClose={true}
+            confirmLoading={loading1("submit")}
             onOk={() => submitHandler()}
             onCancel={() => {
               setUploadClicked(false);

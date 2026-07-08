@@ -26,6 +26,7 @@ const { TextArea } = Input;
 function CreateJobChallanModel({ challanModal, setChallanModal }) {
   const { showToast } = useToast();
   const [loadChallan, setLoadChallan] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [status, setStatus] = useState(1);
   const [vendorData, setVendorData] = useState([]);
 
@@ -361,6 +362,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
   };
 
   const CreateChallan = async () => {
+    setSubmitLoading(true);
     let comArray = [];
     let qtyArray = [];
     let rateArray = [];
@@ -408,6 +410,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       remark: remarkArray,
       hsncode: hsnCodeArray,
     });
+    setSubmitLoading(false);
     if (response.status==="success" || response.success) {
       close();
     } else if (!response.success  || !response.status==="success") {
@@ -427,7 +430,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
         extra={
           <Space>
             {/* <CloseCircleFilled onClick={() => setChallanModal(false)} /> */}
-            <Button type="primary" onClick={CreateChallan}>
+            <Button type="primary" loading={submitLoading} onClick={CreateChallan}>
               Save
             </Button>
             <Button onClick={close}>Close</Button>

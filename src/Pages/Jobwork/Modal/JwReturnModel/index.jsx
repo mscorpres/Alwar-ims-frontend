@@ -65,8 +65,8 @@ const JwReturnModel = ({ show, close }) => {
 
   const getLocationOptions = async (vendor,transaction) => {
     try {
-      const response = await imsAxios.get(`/jobwork/jw_rm_return_location?vendor=${vendor}&jw=${transaction}`);
       setLoading("fetch", true);
+      const response = await imsAxios.get(`/jobwork/jw_rm_return_location?vendor=${vendor}&jw=${transaction}`);
       if (response?.success) {
         const arr = response.data.map((row) => ({
           text: row.name,
@@ -236,9 +236,14 @@ const JwReturnModel = ({ show, close }) => {
     if (show) {
       getData(show.sku, show.transaction);
       getAutoComnsumptionOptions();
-      getLocationOptions(vendor,show.transaction);
     }
-  }, [show,vendor]);
+  }, [show]);
+
+  useEffect(() => {
+    if (vendor && show) {
+      getLocationOptions(vendor, show.transaction);
+    }
+  }, [vendor]);
 
   useEffect(()=>{
     getVendorLocationOptions(vendor);
@@ -314,7 +319,7 @@ const JwReturnModel = ({ show, close }) => {
       }));
       setPreviewRows(arr);
     } else {
-      showToast(response.message.msg, "error");
+      showToast(response.message, "error");
       setPreview(false);
     }
   };
@@ -607,12 +612,17 @@ const JwReturnModel = ({ show, close }) => {
           <Button key="back" onClick={() => setOpen(false)}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={callFileUpalod}>
+          <Button
+            key="submit"
+            type="primary"
+            loading={loading1("fetch")}
+            onClick={callFileUpalod}
+          >
             Preview
           </Button>,
         ]}
       >
-        {loading("fetch") && <Loading isDrawerLoading />}
+        {loading1("fetch") && <Loading isDrawerLoading />}
         <Card>
           <Form
             // initialValues={initialValues}

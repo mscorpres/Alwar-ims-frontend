@@ -172,21 +172,18 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       setLoading("submit", true);
       const response = await imsAxios.post(link, payload);
 
-      const { data } = response;
-      if (data) {
-        if (data.success) {
-          showToast(response.message, "success");
-          getRows();
-          if (componentOptions.length <= 1) {
-            hide();
-          } else {
-            getDetails(show.requestId);
-            form.resetFields();
-            setAction(null);
-          }
+      if (response.success) {
+        showToast(response.message, "success");
+        getRows();
+        if (componentOptions.length <= 1) {
+          hide();
         } else {
-          showToast(data.message?.msg || data.message, "error");
+          getDetails(show.requestId);
+          form.resetFields();
+          setAction(null);
         }
+      } else {
+        showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
     } finally {
