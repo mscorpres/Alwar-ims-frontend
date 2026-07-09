@@ -81,7 +81,7 @@ export default function SlidingPanel({
    
          
          
-          <IconButton disabled onClick={onClose} size="small" aria-label="Close">
+          <IconButton onClick={onClose} disabled size="small" aria-label="Close">
             <CloseIcon fontSize="small"  />
           </IconButton>
              <IconButton size="small"  onClick={() => setCollapsed(false)} aria-label="Collapse">
@@ -113,7 +113,7 @@ export default function SlidingPanel({
           />
          </IconButton>
          
-          <IconButton disabled  onClick={onClose} size="small" aria-label="Close">
+          <IconButton onClick={onClose} disabled size="small" aria-label="Close">
             <CloseIcon fontSize="small"  />
           </IconButton>
         </div>

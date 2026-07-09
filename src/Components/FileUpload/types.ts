@@ -19,6 +19,7 @@ export interface FileUploadItem {
   error?: string;
   /** Original browser File, kept around to support retry/replace. */
   file?: File;
+  
   /** Whatever the onUpload promise resolved with. */
   response?: any;
 }
@@ -41,6 +42,13 @@ export interface FileUploadProps {
     file: File,
     onProgress?: (percent: number) => void,
   ) => Promise<any>;
+  /**
+   * Called once with every pending file when "Upload All" is triggered, so multiple
+   * files are sent as a single multipart request instead of one request per file.
+   * When provided, this takes priority over onUpload for the bulk upload action;
+   * onUpload is still used for single-file retry/replace.
+   */
+  onUploadBatch?: (files: File[]) => Promise<any>;
   /** Called when the user removes a file. Throw/reject to keep the file in the list. */
   onDelete?: (file: FileUploadItem) => Promise<any> | void;
   /** Fired whenever the file list changes (add, remove, status update). */

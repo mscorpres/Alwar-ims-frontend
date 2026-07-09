@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, useState } from "react";
+import { cloneElement, isValidElement, useCallback, useState } from "react";
 import type { MouseEvent, ReactElement } from "react";
 import UploadDrawer from "./UploadDrawer";
 import useFileUpload from "./hooks/useFileUpload";
@@ -11,6 +11,7 @@ export default function FileUpload({
   maxFileSize,
   defaultFiles,
   onUpload,
+  onUploadBatch,
   onDelete,
   onChange,
   children,
@@ -20,12 +21,14 @@ export default function FileUpload({
   loading,
 }: FileUploadProps) {
   const [open, setOpen] = useState(false);
-  const { items, addFiles, replaceFile, retryFile, deleteFile } = useFileUpload({
+  const handleClose = useCallback(() => setOpen(false), []);
+  const { items, addFiles, replaceFile, retryFile, deleteFile, uploadAll } = useFileUpload({
     accept,
     multiple,
     maxFiles,
     maxFileSize,
     onUpload,
+    onUploadBatch,
     onDelete,
     onChange,
     defaultFiles,
@@ -46,7 +49,7 @@ export default function FileUpload({
       {trigger}
       <UploadDrawer
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleClose}
         title={title}
         width={drawerWidth}
         getContainer={getContainer}
@@ -57,6 +60,7 @@ export default function FileUpload({
         onDelete={deleteFile}
         onReplace={replaceFile}
         onRetry={retryFile}
+        onUploadAll={uploadAll}
         loading={loading}
       />
     </>

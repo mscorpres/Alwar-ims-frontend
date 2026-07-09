@@ -16,6 +16,7 @@ type UseFileUploadArgs = Pick<
   | "maxFiles"
   | "maxFileSize"
   | "onUpload"
+  | "onUploadBatch"
   | "onDelete"
   | "onChange"
   | "defaultFiles"
@@ -27,6 +28,7 @@ export default function useFileUpload({
   maxFiles,
   maxFileSize,
   onUpload,
+  onUploadBatch,
   onDelete,
   onChange,
   defaultFiles,
@@ -43,6 +45,7 @@ export default function useFileUpload({
   itemsRef.current = items;
 
   useEffect(() => {
+  
     onChange?.(items);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
@@ -78,6 +81,13 @@ export default function useFileUpload({
         const response = await onUpload(file, (percent) =>
           updateItem(uid, { progress: percent }),
         );
+        if (response?.success === false) {
+          updateItem(uid, {
+            status: "error",
+            error: response?.message || "Upload failed",
+          });
+          return;
+        }
         updateItem(uid, {
           status: "success",
           progress: 100,
@@ -151,11 +161,8 @@ export default function useFileUpload({
       );
 
       setItems((prev) => (multiple ? [...prev, ...newItems] : newItems));
-      newItems.forEach((item) => {
-        if (item.file) uploadItem(item.uid, item.file);
-      });
     },
-    [accept, maxFiles, maxFileSize, multiple, showToast, uploadItem],
+    [accept, maxFiles, maxFileSize, multiple, showToast],
   );
 
   const replaceFile = useCallback(
@@ -208,6 +215,51 @@ export default function useFileUpload({
     [uploadItem],
   );
 
+  const uploadAll = useCallback(async () => {
+    const pending = itemsRef.current.filter(
+      (item) => (item.status === "idle" || item.status === "error") && item.file,
+    );
+    if (!pending.length) return;
+
+    if (!onUploadBatch) {
+      pending.forEach((item) => uploadItem(item.uid, item.file as File));
+      return;
+    }
+
+    pending.forEach((item) =>
+      updateItem(item.uid, { status: "uploading", progress: 0, error: undefined }),
+    );
+    try {
+      const response = await onUploadBatch(
+        pending.map((item) => item.file as File),
+      );
+      if (response?.success === false) {
+        pending.forEach((item) =>
+          updateItem(item.uid, {
+            status: "error",
+            error: response?.message || "Upload failed",
+          }),
+        );
+        return;
+      }
+      pending.forEach((item) =>
+        updateItem(item.uid, {
+          status: "success",
+          progress: 100,
+          response,
+          url: response?.url ?? response?.data?.url ?? undefined,
+        }),
+      );
+    } catch (error: any) {
+      pending.forEach((item) =>
+        updateItem(item.uid, {
+          status: "error",
+          error: error?.message || "Upload failed",
+        }),
+      );
+    }
+  }, [onUploadBatch, uploadItem, updateItem]);
+
   const deleteFile = useCallback(
     async (uid: string) => {
       const target = itemsRef.current.find((it) => it.uid === uid);
@@ -225,5 +277,5 @@ export default function useFileUpload({
     [onDelete, showToast],
   );
 
-  return { items, addFiles, replaceFile, retryFile, deleteFile };
+  return { items, addFiles, replaceFile, retryFile, deleteFile, uploadAll };
 }

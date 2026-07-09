@@ -46,7 +46,6 @@ import {
   uploadMinInvoice,
   validateInvoice,
 } from "../../../../api/store/material-in";
-import SingleProduct from "../../../Master/Vendor/SingleProduct";
 import { downloadCSVCustomColumns } from "../../../../Components/exportToCSV.jsx";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
 import FileUpload from "../../../../Components/FileUpload";
@@ -103,7 +102,6 @@ const [fileName, setFileName] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [isApplicable, setIsApplicable] = useState(false);
   const [vendorBranchOptions, setVendorBranchOptions] = useState([]);
-  const [uplaoaClicked, setUploadClicked] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
     const [uploadLoading, setUploadLoading] = useState(false);
@@ -897,39 +895,37 @@ const [fileName, setFileName] = useState("");
     }
   };
 
-    const handleUploadDocument = async () => {
-    try {
-      setUploadLoading(true);
-      const formData = new FormData();
-      const vendorType = form.getFieldValue("vendorType");
-      const values = await form.validateFields();
-      values?.fileComponents?.map((comp) => {
-        formData.append("files", comp.file[0]?.originFileObj);
-      });
-      let fileResponse;
-      if (vendorType !== "p01") {
-        fileResponse = await uploadMinInvoice(formData);
-      }
-      if (fileResponse?.success) {
 
-        setFileName(fileResponse?.data);
-        setUploadClicked(false);
-        showToast(fileResponse?.message || "Upload Document success", "success");
-        setUploadLoading(false);
-      } else {
-        showToast(fileResponse?.message || "Upload Document failed", "error");
-        setUploadLoading(false);
+
+  const handleUploadDocumentsBatch = async (files) => {
+    const vendorType = form.getFieldValue("vendorType");
+    if (vendorType === "p01") {
+      return { success: true };
+    }
+    setUploadLoading(true);
+    try {
+      const formData = new FormData();
+      files.forEach((file) => formData.append("files", file));
+      const fileResponse = await uploadMinInvoice(formData);
+      if (!fileResponse?.success) {
+        throw new Error(fileResponse?.message || "Upload Document failed");
       }
-    } catch (error) {
-      showToast(error?.message || "Upload Document failed", "error");
-      setUploadLoading(false);
-    }finally {
+      setFileName(fileResponse?.data);
+      showToast(fileResponse?.message || "Upload Document success", "success");
+      return fileResponse;
+    } finally {
       setUploadLoading(false);
     }
   };
  
   const handleFileUploadDelete = () => {};
-  const handleFileUploadChange = () => {};
+  const handleFileUploadChange = (items) => {
+  
+    form.setFieldValue(
+      "fileComponents",
+      items.map((item) => ({ documentName: item.name }))
+    );
+  };
 
   return (
     <div style={{ height: "100%", overflow: "hidden", padding: 10 }}>
@@ -1167,12 +1163,28 @@ const [fileName, setFileName] = useState("");
                         justifyContent: "space-between",
                       }}
                     >
-                      <Col>
+                      {/* <Col>
                         <MyButton
                           variant="upload"
                           text="Documents"
                           onClick={() => setUploadClicked(true)}
                         ></MyButton>
+                      </Col> */}
+                           <Col>
+                        <FileUpload
+                          accept="image/*,.pdf"
+                          multiple
+                          maxFiles={3}
+                          maxFileSize={5 * 1024 * 1024}
+                          title="Documents"
+                          getContainer={() => tableContainerRef.current}
+                          // onUpload={handleUploadDocument}
+                          onUploadBatch={handleUploadDocumentsBatch}
+                          onDelete={handleFileUploadDelete}
+                          onChange={handleFileUploadChange}
+                        >
+                          <MyButton variant="upload" text="Documents" />
+                        </FileUpload>
                       </Col>
                       <Col>
                         <MyButton
@@ -1183,22 +1195,7 @@ const [fileName, setFileName] = useState("");
                           Excel
                         </MyButton>
                       </Col>
-                      <Col>
-                        <FileUpload
-                          accept="image/*,.pdf"
-                          multiple
-                          maxFiles={5}
-                          maxFileSize={5 * 1024 * 1024}
-                          title="Upload Documents"
-                          getContainer={() => tableContainerRef.current}
-                          onUpload={handleUploadDocument}
-                          onDelete={handleFileUploadDelete}
-                          onChange={handleFileUploadChange}
-                          loading={uploadLoading}
-                        >
-                          <MyButton variant="upload" text="New Upload" />
-                        </FileUpload>
-                      </Col>
+                 
                     </Row>
                   </Row>
                 </Card>
@@ -1334,52 +1331,7 @@ const [fileName, setFileName] = useState("");
               </div>
               </div>
             </Col>
-            <Modal
-              open={uplaoaClicked}
-              width={700}
-              title={"Upload Document"}
-              // destroyOnClose={true}
-            onOk={handleUploadDocument}
-              onCancel={() => setUploadClicked(false)}
-           loading={uploadLoading}
-            >
-              {" "}
-              <Card style={{ height: "20rem", overflowY: "scroll" }}>
-                <div style={{ flex: 1 }}>
-                  <Col
-                    span={24}
-                    style={{
-                      overflowX: "hidden",
-                      overflowY: "auto",
-                    }}
-                  >
-                    <Form.List name="fileComponents">
-                      {(fields, { add, remove }) => (
-                        <>
-                          <Col>
-                            {fields.map((field, index) => (
-                              <Form.Item noStyle key={field.key || index}>
-                                <SingleProduct
-                                  fields={fields}
-                                  field={field}
-                                  index={index}
-                                  add={add}
-                                  form={form}
-                                  remove={remove}
-                                  // setFiles={setFiles}
-                                  // files={files}
-                                />
-                              </Form.Item>
-                            ))}
-                      
-                          </Col>
-                        </>
-                      )}
-                    </Form.List>
-                  </Col>
-                </div>
-              </Card>
-            </Modal>
+            
             <Modal
               title="Upload File Here"
               open={open}
