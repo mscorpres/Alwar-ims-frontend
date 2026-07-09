@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 
-import "../../../Accounts/accounts.css";
+
 import { useToast } from "../../../../hooks/useToast.js";
 import { AiFillEdit } from "react-icons/ai";
 import CreateVBT5 from "./CreateVBT5";
@@ -22,23 +22,14 @@ export default function VBT5() {
   const { showToast } = useToast();
   const [wise, setWise] = useState("min_wise");
   const [searchInput, setSearchInput] = useState("MIN/23-24/");
-  const [selectLoading, setSelectLoading] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
   const [vbtData, setVBTData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
-  const [toggleCleared, setToggleCleared] = React.useState(false);
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [editingVBT, setEditingVBT] = useState(null);
   const [mapVBT, setMapVBT] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
-
-  //////// confirm modal
-  const [checkInvoiceId, setCheckInvoiceId] = useState("");
-  // const [confirmModal, setConfirmModal] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [createVBT, setCreateVBT] = useState(false);
-  const [selectedVendors, setSelectedVendors] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
   const vbtTableColumsns = [
     {
@@ -89,10 +80,11 @@ export default function VBT5() {
       type: "actions",
       flex: 1,
       // minWidth: "20%",
-      getActions: ({ row }) => [
+      getActions: () => [
         <GridActionsCellItem
+        key={"delete"}
           icon={<AiFillEdit />}
-          onClick={() => getVBTDetail(row.min_transaction)}
+          // onClick={() => getVBTDetail(row.min_transaction)}
           label="Delete"
         />,
       ],
@@ -108,19 +100,7 @@ export default function VBT5() {
     }
     setAsyncOptions(arr);
   };
-  const getVBTDetail = async (minId) => {
-    // setLoading(true);
-    // const response = await imsAxios.post("/tally/vbt01/fetch_minData", {
-    //   min_id: minId,
-    // });
-    // if (response.success) {
-    //   setEditingVBT(data.data);
-    // } else {
-    //   toast.error(response.message?.msg || response.message);
-    //   setEditingVBT(null);
-    // }
-    // setLoading(false);
-  };
+ 
   // const checkInvoice = async (checkInvoiceId, arr) => {
   //   // console.log("invoice in checkInvoice", checkInvoiceId);
   //   console.log("arr checkInvoice", arr);
@@ -154,8 +134,7 @@ export default function VBT5() {
     });
     setLoading(false);
     if (response.success) {
-      console.log(data.data);
-      let arr = data.data;
+      let arr = response.data;
       arr = arr.map((row) => ({
         ...row,
         ven_tds: arr[0].ven_tds,
@@ -240,9 +219,7 @@ export default function VBT5() {
     }
     setVBTData([]);
   }, [wise]);
-  useEffect(() => {
-    setToggleCleared((toggleCleared) => !toggleCleared);
-  }, [vbtData]);
+ 
   return (
     <div style={{ height: "95%" }}>
       <MapVBTModal mapVBT={mapVBT} setMapVBT={setMapVBT} />

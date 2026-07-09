@@ -309,7 +309,7 @@ function FGToFGTransfer() {
 
   return (
     <div style={{ height: "95%" }}>
-      {(loading || isLoading) && <Loading />}
+      {loading && <Loading />}
       <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
         <Col span={16} style={{ marginBottom: 10 }}>
        
@@ -407,6 +407,7 @@ function FGToFGTransfer() {
                               <MyAsyncSelect
                                 style={{ width: "100%" }}
                                 loadOptions={getComponentList}
+                                selectLoading={isLoading}
                                 onBlur={() => setAsyncOptions([])}
                                 placeholder="Part Name/Code"
                                 value={row.component}

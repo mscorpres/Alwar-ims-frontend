@@ -5,17 +5,16 @@ import {
   Input,
   Row,
   Button,
-  Space,
   Modal,
   Descriptions,
-  Divider,
 } from "antd";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import MySelect from "../../../Components/MySelect";
 import NavFooter from "../../../Components/NavFooter";
 import { useToast } from "../../../hooks/useToast";
+import Loading from "../../../Components/Loading";
 
 function ClientBranchAdd({ branchAddOpen, setBranchAddOpen }) {
   const { showToast } = useToast();
@@ -174,6 +173,9 @@ function ClientBranchAdd({ branchAddOpen, setBranchAddOpen }) {
         form={addClientForm}
         onFinish={(values) => setShowSubmitConfirm(values)}
       >
+        {
+          pageLoading && <Loading />
+        }
         {/* <Row> */}
         {/* <Col span={4}>
              <Descriptions
