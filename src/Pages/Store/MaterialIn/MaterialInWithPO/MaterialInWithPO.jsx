@@ -817,9 +817,12 @@ export default function MaterialInWithPO() {
     }
   };
 
-  const handleFileUploadDelete = () => {};
+  const handleFileUploadDelete = (id) => {
+    setFilesData(filesData.filter((item) => item.id !== id));
+  };
+ 
   const handleFileUploadChange = (items) => {
-    setFilesData(pre => [...pre, ...items]);
+    setFilesData(items);
   };
 
   return (

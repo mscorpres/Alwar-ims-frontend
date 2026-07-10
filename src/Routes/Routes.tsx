@@ -115,7 +115,6 @@ import {
   UpdateComponent,
   EWayBill,
   CategoryMaster,
-  StockControl,
   AdminTasks,
   UserTasks,
   CreateSalesOrder,
