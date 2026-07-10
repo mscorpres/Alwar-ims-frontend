@@ -50,6 +50,8 @@ import { downloadCSVCustomColumns } from "../../../../Components/exportToCSV.jsx
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
 import FileUpload from "../../../../Components/FileUpload";
 
+const INR_CURRENCY_ID = "364907247";
+
 const defaultValues = {
   vendorType: "v01",
   vendorName: "",
@@ -60,12 +62,14 @@ const defaultValues = {
   companybranch: "BRALWR36",
   projectID: "",
   costCenter: "",
+  currency: INR_CURRENCY_ID,
+  exchangeRate: 1,
   components: [
     {
       gstType: "L",
       location: "",
       autoConsumption: 0,
-      currency: "364907247",
+      currency: INR_CURRENCY_ID,
       exchangeRate: 1,
     },
   ],
@@ -135,6 +139,14 @@ const [fileName, setFileName] = useState("");
   // console.log("fileComponents", fileComponents);
   const handleSubmit = async () => {
     const values = await form.validateFields();
+    const currency = values.currency;
+    const exchangeRate = parseFloat(form.getFieldValue("exchangeRate"));
+    if (currency !== INR_CURRENCY_ID && (isNaN(exchangeRate) || exchangeRate <= 1)) {
+      return Modal.error({
+        title: "Invalid Exchange Rate",
+        content: "Exchange rate must be greater than 1 for foreign currency.",
+      });
+    }
     Modal.confirm({
       title: "Create MIN",
       content: "Are you sure you want to create this MIN?",
@@ -407,14 +419,56 @@ const [fileName, setFileName] = useState("");
     // setShowResetConfirm(false);
     // form.setFieldsValue(obj);
   };
+  const syncComponentsCurrency = (currency, exchangeRate) => {
+    const components = form.getFieldValue("components") || [];
+    form.setFieldValue(
+      "components",
+      components.map((row) => ({
+        ...row,
+        currency,
+        exchangeRate,
+      })),
+    );
+  };
+
+  const handleCurrencyChange = (value) => {
+    if (value === INR_CURRENCY_ID) {
+      form.setFieldValue("exchangeRate", 1);
+      syncComponentsCurrency(value, 1);
+      return;
+    }
+
+    syncComponentsCurrency(value, form.getFieldValue("exchangeRate") || 1);
+
+    const components = form.getFieldValue("components") || [];
+    const totalForeignPrice = components.reduce(
+      (sum, row) => sum + getInt(row.qty) * getInt(row.rate),
+      0,
+    );
+    const symbol = currencies.find((cur) => cur.value == value)?.text;
+
+    setShowCurrenncy({
+      currency: value,
+      price: totalForeignPrice,
+      exchange_rate: form.getFieldValue("exchangeRate") || 1,
+      symbol,
+      onExchangeSubmit: (rate) => {
+        form.setFieldValue("exchangeRate", rate);
+        syncComponentsCurrency(value, rate);
+      },
+    });
+  };
+
   const materialResetFunction = () => {
     form.setFieldsValue({
+      currency: INR_CURRENCY_ID,
+      exchangeRate: 1,
       components: [
         {
           gstType: "L",
           location: "",
           autoConsumption: 0,
-          currency: "364907247",
+          currency: INR_CURRENCY_ID,
           exchangeRate: 1,
         },
       ],
@@ -443,7 +497,7 @@ const [fileName, setFileName] = useState("");
     );
     form.setFieldValue(
       ["components", rowId, "foreignValue"],
-      currency === "364907247" ? 0 : foreignValue
+      currency === INR_CURRENCY_ID ? 0 : foreignValue
     );
   };
 
@@ -526,8 +580,6 @@ const [fileName, setFileName] = useState("");
     handleFetchPreviousRate,
     compareRates,
     form,
-    currencies,
-    setShowCurrenncy,
   }) => [
     {
       headerName: "Part Component",
@@ -601,37 +653,11 @@ const [fileName, setFileName] = useState("");
       ],
       field: (row, index) => (
         <Input
-        type="number"
+          type="number"
           onChange={(e) => compareRates(e.target.value, index)}
-          addonAfter={
-            <div style={{ width: 50 }}>
-              <Form.Item noStyle name={[index, "currency"]}>
-                <MySelect
-                  options={currencies}
-                  onChange={(value) => {
-                    value !== "364907247"
-                      ? setShowCurrenncy({
-                          currency: value,
-                          price: row.value,
-                          exchangeRate: row.exchangeRate,
-                          symbol: currencies.filter(
-                            (cur) => cur.value == value
-                          )[0].text,
-                          rowId: index,
-                          form: form,
-                        })
-                      : form.setFieldValue(
-                          ["components", index, "exchangeRate"],
-                          1
-                        );
-                  }}
-                />
-              </Form.Item>
-            </div>
-          }
         />
       ),
-      width: 200,
+      width: 120,
     },
 
     {
@@ -715,12 +741,17 @@ const [fileName, setFileName] = useState("");
     setOpen(false);
     // setSelectedRows(previewRows);
     // setRows(previewRows);
+    const currency = form.getFieldValue("currency") || INR_CURRENCY_ID;
+    const exchangeRate = form.getFieldValue("exchangeRate") || 1;
+
     let arr = previewRows.map((r) => {
       return {
         ...r,
         mfgCode: r.Manualmfgcode,
         hsnCode: r.hsn,
         autoConsumption: r.Autoconsump == "1" ? "Yes" : "No",
+        currency,
+        exchangeRate,
       };
     });
 
@@ -1139,6 +1170,14 @@ const [fileName, setFileName] = useState("");
                       </Form.Item>
                     </Col>
                     <Col span={12}>
+                      <Form.Item label="Currency" name="currency">
+                        <MySelect
+                          options={currencies}
+                          onChange={handleCurrencyChange}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
                       <Form.Item label="Invoice Date" name="invoiceDate">
                         <SingleDatePicker
                           setDate={(value) => {
@@ -1301,7 +1340,12 @@ const [fileName, setFileName] = useState("");
                   addableRow={true}
                   removableRows={true}
                   reverse={true}
-                  newRow={defaultValues.components[0]}
+                  newRow={() => ({
+                    ...defaultValues.components[0],
+                    currency:
+                      form.getFieldValue("currency") || INR_CURRENCY_ID,
+                    exchangeRate: form.getFieldValue("exchangeRate") || 1,
+                  })}
                   listName="components"
                   nonRemovableColumns={1}
                   watchKeys={[
@@ -1326,8 +1370,6 @@ const [fileName, setFileName] = useState("");
                     handleFetchPreviousRate,
                     compareRates,
                     form,
-                    currencies,
-                    setShowCurrenncy,
                   })}
                 />
               </div>
