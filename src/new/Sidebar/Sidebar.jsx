@@ -2,6 +2,8 @@ import React, { useMemo, useState, useEffect, useCallback, memo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../../index.css";
 import { loadMenuConfig } from "./menuLoader";
+import { usePermissions } from "../permissions/PermissionsContext";
+import { filterMenuByPermissions } from "../permissions/filterMenu";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
@@ -171,8 +173,16 @@ const SidebarInner = ({
     };
   }, [useJsonConfig, items]);
 
-  const sidebar1Items = config.sidebar1.items;
-  const sidebar2ItemsFromConfig = config.sidebar2?.items || [];
+  const { permissions } = usePermissions();
+
+  const sidebar1Items = useMemo(
+    () => filterMenuByPermissions(config.sidebar1.items, permissions),
+    [config, permissions],
+  );
+  const sidebar2ItemsFromConfig = useMemo(
+    () => filterMenuByPermissions(config.sidebar2?.items || [], permissions),
+    [config, permissions],
+  );
 
   const filteredSidebar1Items = useMemo(
     () => filterItemsByIsShown(sidebar1Items),

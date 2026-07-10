@@ -11,6 +11,7 @@ import { ConfigProvider, Form } from "antd";
 import { customColor } from "./utils/customColor";
 import { normalizeFormRules } from "./utils/general";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { PermissionsProvider } from "./new/permissions/PermissionsContext";
 
 const OriginalFormItem = Form.Item;
 function PatchedFormItem(props) {
@@ -134,7 +135,9 @@ root.render(
               v7_relativeSplatPath: true,
             }}
           >
-            <Main />
+            <PermissionsProvider>
+              <Main />
+            </PermissionsProvider>
           </BrowserRouter>
         </ToastContext>
       </Provider>

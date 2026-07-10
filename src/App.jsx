@@ -10,6 +10,7 @@ import {
 import { Box, LinearProgress } from "@mui/material";
 import Sidebar from "./new/Sidebar/Sidebar.jsx";
 import Rout from "./Routes/Routes";
+import RouteGuard from "./new/permissions/RouteGuard";
 import { useSelector, useDispatch } from "react-redux/es/exports";
 import "buffer";
 import AppHeader from "./new/Header/AppHeader.jsx";
@@ -916,7 +917,11 @@ dispatch(logoutUser());
                       <Route
                         key={index}
                         path={route.path}
-                        element={<route.main />}
+                        element={
+                          <RouteGuard>
+                            <route.main />
+                          </RouteGuard>
+                        }
                       />
                     ))}
                   </Routes>

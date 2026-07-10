@@ -2183,6 +2183,13 @@
         "label": "Changelog",
         "icon": "AccessTimeIcon",
         "path": "/changelog/history"
+      },
+      {
+        "key": "SYS-PERM",
+        "label": "Permission Management",
+        "icon": "SettingsIcon",
+        "path": "/admin/permissions",
+        "isShown": true
       }
     ]
   }

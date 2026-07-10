@@ -135,6 +135,8 @@ import {
 } from "../Pages/index.jsx";
 //@ts-ignore
 import Dashboard from "../new/dashboard/Dashboard.jsx";
+//@ts-ignore
+import PermissionAdmin from "../Pages/PermissionAdmin/PermissionAdmin.jsx";
 import ViewFGMIN from "../Pages/Store/viewfgmodule/ViewFGMIN.jsx";
 import {
   CreateMaster,
@@ -286,6 +288,10 @@ const Routes = [
   {
     path: "/",
     main: () => <Dashboard />,
+  },
+  {
+    path: "/admin/permissions",
+    main: () => <PermissionAdmin />,
   },
   // {
   //   path: "/dashboardProcurement",
