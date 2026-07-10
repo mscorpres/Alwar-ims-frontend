@@ -130,7 +130,7 @@ function ImageCard({
                   style={{ opacity: isImage && thumb ? 1 : 0.35, fontSize: 13, cursor: "pointer" }}
                 />
               </Tooltip>
-              {item.status === "error" ? (
+              {/* {item.status === "error" ? (
                 <Tooltip title="Retry upload">
                   <ReloadOutlined onClick={() => onRetry(item.uid)} style={{ fontSize: 13, cursor: "pointer" }} />
                 </Tooltip>
@@ -138,7 +138,7 @@ function ImageCard({
                 <Tooltip title="Replace">
                   <UploadOutlined onClick={handleReplaceClick} style={{ fontSize: 13, cursor: "pointer" }} />
                 </Tooltip>
-              )}
+              )} */}
               <Popconfirm
                 title="Remove this file?"
                 okText="Yes"
