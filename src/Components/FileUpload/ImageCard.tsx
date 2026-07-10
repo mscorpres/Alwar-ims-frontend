@@ -131,6 +131,7 @@ function ImageCard({
                 />
               </Tooltip>
               {/* {item.status === "error" ? (
+              {item.status === "error" ? (
                 <Tooltip title="Retry upload">
                   <ReloadOutlined onClick={() => onRetry(item.uid)} style={{ fontSize: 13, cursor: "pointer" }} />
                 </Tooltip>
