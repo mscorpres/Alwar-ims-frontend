@@ -918,7 +918,9 @@ const [fileName, setFileName] = useState("");
     }
   };
  
-  const handleFileUploadDelete = () => {};
+  const handleFileUploadDelete = (id) => {
+    form.setFieldValue("fileComponents", form.getFieldValue("fileComponents").filter((item) => item.id !== id));
+  };
   const handleFileUploadChange = (items) => {
   
     form.setFieldValue(
