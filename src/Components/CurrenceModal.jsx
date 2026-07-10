@@ -7,7 +7,15 @@ export default function CurrenceModal({ showCurrency, setShowCurrencyModal }) {
   const [rate, setRate] = useState(showCurrency.exchange_rate || 0);
 
   const submitHandler = () => {
-    showCurrency.onExchangeSubmit(rate);
+    showCurrency.form.setFieldValue(
+      ["components", showCurrency.rowId, "exchangeRate"],
+      rate
+    );
+    // showCurrency.inputHandler(
+    //   "exchange_rate",
+    //   { rate: rate, currency: showCurrency.currency },
+    //   showCurrency.rowId
+    // );
     setShowCurrencyModal(null);
   };
   return (
