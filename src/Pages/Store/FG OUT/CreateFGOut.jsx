@@ -249,6 +249,9 @@ const compInputHandler = async (name, id, value) => {
           "error"
         );
       }
+      finally{
+        setLoadingUpdate(false);
+      }
     }
   };
 
