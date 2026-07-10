@@ -1,12 +1,9 @@
-import React from "react";
-import { useEffect } from "react";
 
 export default function FloatingTextBox({
   value,
   fun,
   name,
   id,
-  max,
   inputType,
 }) {
   return (

@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import { AlarmOff, WifiOff } from "@mui/icons-material";
-
-const formatTime = (seconds) => {
-  const hours = Math.floor(seconds / 3600);
-  const mins = Math.floor((seconds % 3600) / 60);
-  const secs = seconds % 60;
-  return `${hours.toString().padStart(2, "0")}:${mins
-    .toString()
-    .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-};
+import { WifiOff } from "@mui/icons-material";
 
 const NoInternetOverlay = ({ children }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);

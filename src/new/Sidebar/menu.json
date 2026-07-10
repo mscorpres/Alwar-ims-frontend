@@ -789,15 +789,9 @@
                 "icon": "CheckCircleIcon",
                 "path": "/procurement/completed",
                 "isShown": true
-              },
-
-              {
-                "key": "B25",
-                "label": "Approval",
-                "icon": "ApprovalIcon",
-                "path": "/procurement/approval",
-                "isShown": true
               }
+
+          
             ]
           },
           {
@@ -1372,43 +1366,7 @@
               }
             ]
           },
-          {
-            "key": "C5",
-            "label": "Sales Order",
-            "icon": "TbReportAnalytics",
-            "isHeading": true,
-
-            "children": [
-              {
-                "key": "C52",
-                "label": "Create order",
-                "icon": "AddIcon",
-                "path": "/sales-order/create",
-                "isShown": true
-              },
-              {
-                "key": "E51",
-                "label": "Register",
-                "icon": "ListIcon",
-                "path": "/sales-order/register",
-                "isShown": true
-              },
-              {
-                "key": "C54",
-                "label": "Shipment",
-                "icon": "LocalShippingIcon",
-                "path": "/sales-order/shipments",
-                "isShown": true
-              },
-              {
-                "key": "C53",
-                "label": "Challan",
-                "icon": "ReceiptIcon",
-                "path": "/sales-order/challan",
-                "isShown": true
-              }
-            ]
-          },
+       
           {
             "key": "B4",
             "label": "Print",
@@ -2109,6 +2067,43 @@
                 "label": "Final Invoices",
                 "icon": "UnorderedListOutlined",
                 "path": "/final-invoices",
+                "isShown": true
+              }
+            ]
+          },
+             {
+            "key": "C5",
+            "label": "Sales Order",
+            "icon": "TbReportAnalytics",
+            "isHeading": true,
+
+            "children": [
+              {
+                "key": "C52",
+                "label": "Create order",
+                "icon": "AddIcon",
+                "path": "/sales-order/create",
+                "isShown": true
+              },
+              {
+                "key": "E51",
+                "label": "Register",
+                "icon": "ListIcon",
+                "path": "/sales-order/register",
+                "isShown": true
+              },
+              {
+                "key": "C54",
+                "label": "Shipment",
+                "icon": "LocalShippingIcon",
+                "path": "/sales-order/shipments",
+                "isShown": true
+              },
+              {
+                "key": "C53",
+                "label": "Challan",
+                "icon": "ReceiptIcon",
+                "path": "/sales-order/challan",
                 "isShown": true
               }
             ]

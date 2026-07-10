@@ -459,11 +459,9 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
     },
   ];
   const prev = async () => {
-    getFetchData();
-    // getLocation();
-    setEWayBill("");
     setShowBomList(false);
     setBomList([]);
+    setEditModal(false);
   };
 
   const saveFunction = async (fetchAttachment) => {
@@ -1017,6 +1015,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
             width={700}
             title={"Upload Document"}
             // destroyOnClose={true}
+            confirmLoading={loading1("submit")}
             onOk={() => submitHandler()}
             onCancel={() => {
               setUploadClicked(false);

@@ -1,8 +1,6 @@
-import React from "react";
+
 import { Typography } from "antd";
-
 const { Text } = Typography;
-
 const shellStyle = {
   backgroundImage:"url('/assets/images/login_bg.svg')",
   backgroundSize: "cover",

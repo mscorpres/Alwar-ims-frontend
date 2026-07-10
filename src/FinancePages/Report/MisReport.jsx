@@ -1,4 +1,4 @@
-import React from "react";
+
 import MyDatePicker from "../../Components/MyDatePicker";
 import {
   Table,
@@ -7,14 +7,9 @@ import {
   TableHead,
   TableRow,
   TableContainer,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
 } from "@mui/material";
 import {
   Button,
-  Card,
-  Form,
   Row,
   Space,
   Col,
@@ -22,7 +17,7 @@ import {
   Typography,
 } from "antd";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useToast } from "../../hooks/useToast";
 
 import { imsAxios } from "../../axiosInterceptor";
 import { GridExpandMoreIcon } from "@mui/x-data-grid";
@@ -47,13 +42,12 @@ const initColumns = [
 ];
 function MisReport() {
   const [dateRange, setDateRange] = useState("");
-
+const {showToast} = useToast();
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState([]);
   const [incomeData, setIncomeData] = useState([]);
   const [months, setMonths] = useState([]);
   const [colm, setColm] = useState(initColumns);
-  const { user, notifications } = useSelector((state) => state.login);
   const [expanded, setExpanded] = useState({ panel1: false, panel2: false });
   const fetchMisReport = async () => {
     setLoading(true);
@@ -84,11 +78,6 @@ function MisReport() {
   };
 
   const handleDownloadCSV = () => {
-    console.log("this is the income data", incomeData);
-    console.log("this is the columns data", allData);
-    let a = [...incomeData, ...allData];
-    console.log(" a", a);
-    return;
     downloadCSV([...incomeData, ...allData], colm, "MIS Report");
     // downloadCSV([...incomeData, ...allData], colm, "MIS Report");
   };
@@ -111,81 +100,87 @@ function MisReport() {
     });
     return arr;
   };
-  const customFlatArrayforExpense = (row) => {
-    console.log("row->", row);
+  // const customFlatArrayforExpense = (row) => {
+   
 
-    row &&
-      row.children?.map((row) => {
-        if (
-          row.type.toLowerCase() === "group" ||
-          row.type.toLowerCase() === "master"
-        ) {
-          arrs = [...arrs, row];
-          if (row.children) {
-            let children = row.children;
-            delete row["children"];
-            arrs = [...arrs, row];
-            customFlatArrayforExpense(arrs);
-            arrs = [...arr, ...children];
-            arrs.forEach((element) => {
-              customFlatArrayforExpense(element);
-              if (row.children) {
-                //   element.forEach((e) => {
-                //     arr = [...element, ...e];
-                customFlatArrayforExpense(arrs);
-                // });
-              }
-              // if (row.children) {
-              //   let children = row.children;
-              //   delete row["children"];
-              //   arr = [...arr, row];
-              //   customFlatArray(arr);
-              //   arr = [...arr, ...children];
-              //   arr.forEach((element) => {
-              //     customFlatArray(element);
-              //   });
-              // }
-              // let arrs = [...arr, ...element];
-              // arrs.forEach((e) => {
-              //   customFlatArray(e);
-              // });
-            });
-          }
-        } else {
-          let children = row;
-          arrs = [...arrs, children];
-          // console.log("row with ledger", children);
-          //   arr.forEach((element) => {
-          //     customFlatArray(element);
-          //   });
-        }
-        // } else if (row.type.toLowerCase() === "sub group") {
-        //   console.log("children in subgrp", row);
-        //   if (row.children) {
-        //     let children = row.children;
-        //     console.log("children in subgrp", children);
-        //     delete row["children"];
-        //     arr = [...arr, row];
-        //     customFlatArray(children);
-        //     arr = [...arr, ...children];
-        //     arr.forEach((element) => {
-        //       customFlatArray(element);
-        //     });
-        //     // }
-        //   } else {
-        //     arr = [...arr, row];
-        //   }
-        // } else {
-        // }
-      });
+  //   row &&
+  //     row.children?.map((row) => {
+  //       if (
+  //         row.type.toLowerCase() === "group" ||
+  //         row.type.toLowerCase() === "master"
+  //       ) {
+  //         arrs = [...arrs, row];
+  //         if (row.children) {
+  //           let children = row.children;
+  //           delete row["children"];
+  //           arrs = [...arrs, row];
+  //           customFlatArrayforExpense(arrs);
+  //           arrs = [...arr, ...children];
+  //           arrs.forEach((element) => {
+  //             customFlatArrayforExpense(element);
+  //             if (row.children) {
+  //               //   element.forEach((e) => {
+  //               //     arr = [...element, ...e];
+  //               customFlatArrayforExpense(arrs);
+  //               // });
+  //             }
+  //             // if (row.children) {
+  //             //   let children = row.children;
+  //             //   delete row["children"];
+  //             //   arr = [...arr, row];
+  //             //   customFlatArray(arr);
+  //             //   arr = [...arr, ...children];
+  //             //   arr.forEach((element) => {
+  //             //     customFlatArray(element);
+  //             //   });
+  //             // }
+  //             // let arrs = [...arr, ...element];
+  //             // arrs.forEach((e) => {
+  //             //   customFlatArray(e);
+  //             // });
+  //           });
+  //         }
+  //       } else {
+  //         let children = row;
+  //         arrs = [...arrs, children];
+  //         // console.log("row with ledger", children);
+  //         //   arr.forEach((element) => {
+  //         //     customFlatArray(element);
+  //         //   });
+  //       }
+  //       // } else if (row.type.toLowerCase() === "sub group") {
+  //       //   console.log("children in subgrp", row);
+  //       //   if (row.children) {
+  //       //     let children = row.children;
+  //       //     console.log("children in subgrp", children);
+  //       //     delete row["children"];
+  //       //     arr = [...arr, row];
+  //       //     customFlatArray(children);
+  //       //     arr = [...arr, ...children];
+  //       //     arr.forEach((element) => {
+  //       //       customFlatArray(element);
+  //       //     });
+  //       //     // }
+  //       //   } else {
+  //       //     arr = [...arr, row];
+  //       //   }
+  //       // } else {
+  //       // }
+  //     });
 
-    //   console.log("items", items);
-    // });
+  //   //   console.log("items", items);
+  //   // });
 
-    return arrs;
-  };
+  //   return arrs;
+  // };
   let arr = [];
-  let arrs = [];
+  // let arrs = [];
+
+  const renderQuarterValue = (row, quarter) => {
+    if (row?.type !== "ledger") return "";
+    const value = row?.quarters?.[quarter];
+    return typeof value === "number" ? value.toFixed(2) : "-";
+  };
 
   const Accordion = styled((props) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -388,11 +383,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q1
-                                  ? (row.quarters?.Q1).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q1")}
                             </TableCell>
                             <TableCell
                               style={{
@@ -400,11 +391,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q2
-                                  ? (row.quarters?.Q2).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q2")}
                             </TableCell>
                             <TableCell
                               style={{
@@ -412,11 +399,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q3
-                                  ? (row.quarters?.Q3).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q3")}
                             </TableCell>
                             <TableCell
                               style={{
@@ -424,11 +407,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q4
-                                  ? (row.quarters?.Q4).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q4")}
                             </TableCell>
                             {/* //month */}
                             {/* <TableCell> */}
@@ -591,11 +570,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q1
-                                  ? (row.quarters?.Q1).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q1")}
                             </TableCell>
                             <TableCell
                               style={{
@@ -603,11 +578,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q2
-                                  ? (row.quarters?.Q2).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q2")}
                             </TableCell>
                             <TableCell
                               style={{
@@ -615,11 +586,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q3
-                                  ? (row.quarters?.Q3).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q3")}
                             </TableCell>
                             <TableCell
                               style={{
@@ -627,11 +594,7 @@ function MisReport() {
                                 color: row.type === "End Total" && "#26c426",
                               }}
                             >
-                              {row.type === "ledger"
-                                ? row && row.quarters && row.quarters?.Q4
-                                  ? (row.quarters?.Q4).toFixed(2)
-                                  : "-"
-                                : ""}
+                              {renderQuarterValue(row, "Q4")}
                             </TableCell>
                             {/* //month */}
                             {/* <TableCell> */}

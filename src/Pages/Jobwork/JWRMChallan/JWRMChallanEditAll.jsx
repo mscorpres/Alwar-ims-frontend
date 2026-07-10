@@ -220,15 +220,15 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
     };
     const response = await executeFun(() => saveCreateChallan(final), "select");
     setLoading("submit", false);
-    if (response.success) {
-      showToast(response.data.message, "success");
+    if (response.success || response.status === "success") {
+      showToast(response.message ?? response.message?.msg, "success");
       setEditJWAll(false);
       getRows();
     } else {
-      if (response.data.message.msg) {
+      if (response.message.msg) {
         showToast(response.data.message.msg, "error");
       } else {
-        showToast(errorToast(response.data.message), "error");
+        showToast(errorToast(response?.message ?? response?.message?.msg), "error");
       }
     }
   };
@@ -572,7 +572,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
       <Row style={{ height: "100%" }}>
         <Col span={9} style={{ height: "95%", overflowY: "scroll" }}>
           <Card size="small">
-            {loading("page") && <Loading />}
+            {loading("page") && <Loading isDrawerLoading />}
             <Form
               onFinish={submitHandler}
               form={createJobWorkChallanForm}
@@ -743,7 +743,7 @@ function JWRMChallanEditAll({ setEditJWAll, editiJWAll, getRows }) {
           </Card>
         </Col>
         <Col span={15} style={{ height: "95%" }}>
-          {loading("tableSpinner") || (loading1("select") && <Loading />)}
+          {(loading("tableSpinner") || loading1("select")) && <Loading isDrawerLoading />}
           <FormTableDataGrid
             data={rows}
             columns={columns}

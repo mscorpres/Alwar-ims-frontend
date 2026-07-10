@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import {
   Button,
   Col,
@@ -12,6 +12,7 @@ import { useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import {useToast} from "../../../hooks/useToast";
+import Loading from "../../../Components/Loading";
 
 const { TextArea } = Input;
 
@@ -62,9 +63,7 @@ function EditTCS({
   const updateTCS = async () => {
     const {
       desc,
-      glCode,
       glKey,
-      glName,
       name,
       percentage,
       tcsCode,
@@ -117,6 +116,7 @@ function EditTCS({
         </Button>
       }
     >
+      {selectLoading && <Loading />}
       <Row gutter={16}>
         <Col span={24}>
           <Form size="small" layout="vertical">

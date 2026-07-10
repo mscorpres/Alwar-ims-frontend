@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import links from "./links";
 import {
-  Button,
   Card,
   Col,
   Row,
@@ -21,7 +20,7 @@ import { useEffect } from "react";
 import { setCurrentLinks } from "../../../Features/loginSlice/loginSlice.js";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
-import { useLocation, useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import useApi from "../../../hooks/useApi.ts";
 import { getLedgerReport } from "../../../api/ledger";
 import MyButton from "../../../Components/MyButton/index.jsx";
@@ -36,14 +35,14 @@ export default function LedgerReport() {
   const [selectLoading, setSelectLoading] = useState(false);
   const [rows, setRows] = useState({ rows: [] });
   const [summary, setSummary] = useState({});
-  const [searchLedger, setSearchLedger] = useState(null);
+  // const [searchLedger, setSearchLedger] = useState(null);
   const [recoRows, setRecoRows] = useState([]);
 
   const [filterForm] = Form.useForm();
   const dispatch = useDispatch();
   const params = useParams();
   const { executeFun, loading: loading1 } = useApi();
-  const { Title, Link, Text } = Typography;
+  const { Title } = Typography;
 
   const getLedgerOptions = async (searchInput) => {
     setSelectLoading(true);
@@ -196,7 +195,7 @@ export default function LedgerReport() {
 
 
     const values = await filterForm.validateFields();
-    let csvData = rows.map((row, index) => {
+    let csvData = rows.map((row) => {
       return {
         "Ref Date": row.referenceDate,
         Refrence: row.reference,
@@ -255,6 +254,7 @@ export default function LedgerReport() {
   }, [params]);
   return (
     <Row gutter={6} style={{ height: "calc(100vh - 120px)", padding: 10, overflow: "hidden" }}>
+      {selectLoading && <Loading />}
       <Col span={6} style={{ height: "100%", overflow: "auto" }}>
         <Flex vertical gap={6}>
           <Card size="small">
@@ -270,7 +270,6 @@ export default function LedgerReport() {
                   onChange={(value) =>
                     filterForm.setFieldValue("vendor", value)
                   }
-                  value={searchLedger}
                 />
               </Form.Item>
               <Form.Item name="date" label="Time Period" rules={rules.date}>
@@ -427,8 +426,8 @@ export default function LedgerReport() {
                   <Typography.Text strong>Status</Typography.Text>
                 </Flex>
                 <Divider />
-                {recoRows.map((row) => (
-                  <Flex justify="space-between">
+                {recoRows.map((row, idx) => (
+                  <Flex justify="space-between" key={row.id, idx}>
                     <Typography.Text>{row.month}</Typography.Text>
                     <Typography.Text>{row.status}</Typography.Text>
                   </Flex>
