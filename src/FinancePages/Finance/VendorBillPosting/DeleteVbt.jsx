@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-
+import { useState } from "react";
 import {
   Button,
   Col,
@@ -7,23 +6,15 @@ import {
   Drawer,
   Form,
   Input,
-  Modal,
   Row,
-  Space,
-  Tooltip,
   Typography,
 } from "antd";
-
 import { imsAxios } from "../../../axiosInterceptor";
-import DescriptionsItem from "antd/es/descriptions/Item";
-import { useForm } from "rc-field-form";
-import { values } from "lodash";
 import { useToast } from "../../../hooks/useToast.js";
 
 function DeleteVbt({
   openModal,
   setOpenModal,
-  getVBTDetails,
   getSearchResults,
 }) {
   const { showToast } = useToast();
@@ -31,13 +22,11 @@ function DeleteVbt({
   const [comments, setComments] = useState([]);
   const [panel, setPanel] = useState("1");
   const [deleteVbt] = Form.useForm();
-  const [clicked, setClicked] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const deleteVBT = async () => {
     setLoading(true);
-    // const values = await deleteVbt.validateFields();
-    console.log("values-------------------------", comments);
+
 
     const response = await imsAxios.delete(
       `/tally/vbt/deleteVbt?vbtKey=${openModal.vbt_code}&reason=${comments.comment}`
@@ -146,8 +135,8 @@ function DeleteVbt({
                 <Col span={24}>
                   <Typography.Text type="warning">Please Note!</Typography.Text>
                   <Typography.Paragraph>
-                    All the existing VBT's having the above details will be
-                    deleted. The MIN Against this VBT will be Reactivated
+                    {`All the existing VBT's having the above details will be
+                    deleted. The MIN Against this VBT will be Reactivated`}
                   </Typography.Paragraph>
 
                   <Typography.Text

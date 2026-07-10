@@ -685,7 +685,7 @@ function UpdateJW() {
                   >
                     View
                   </Button>
-                  <Button type="primary" onClick={addUpdate}>
+                  <Button type="primary" loading={loadingUpdate} onClick={addUpdate}>
                     Update
                   </Button>
                 </div>

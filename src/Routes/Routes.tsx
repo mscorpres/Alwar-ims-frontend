@@ -115,7 +115,6 @@ import {
   UpdateComponent,
   EWayBill,
   CategoryMaster,
-  StockControl,
   AdminTasks,
   UserTasks,
   CreateSalesOrder,
@@ -218,7 +217,6 @@ import SalesRegister from "../Pages/Invoice/SalesRegister/SalesRegister.jsx";
 import QaProcess from "../Pages/Master/QAProcess/QaProcess.jsx";
 import QaProcessMap from "../Pages/Master/QAProcess/QaProcessMap.jsx";
 import CreateWO from "../Pages/Workorder/CreateWo.jsx";
-import Qctest from "../Pages/Production/testqca/Qctest.jsx";
 import VBTMainTable from "../FinancePages/Finance/VendorBillPosting/FormVBT/VBTMainTable.jsx";
 import TdsReport from "../FinancePages/Report/TdsReport.jsx";
 import MisReport from "../FinancePages/Report/MisReport.jsx";
@@ -851,11 +849,11 @@ const Routes = [
     path: "/procurement/completed",
     main: () => <CompletedPo />,
   },
-  {
-    path: "/procurement/approval",
-    main: () => <PoApproval />,
-    text: "Po Approval",
-  },
+  // {
+  //   path: "/procurement/approval",
+  //   main: () => <PoApproval />,
+  //   text: "Po Approval",
+  // },
   {
     path: "/vendor-pricing",
     main: () => <VendorPricingUpload />,

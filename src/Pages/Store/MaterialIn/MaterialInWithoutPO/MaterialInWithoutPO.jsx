@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import NavFooter from "../../../../Components/NavFooter";
 import { useToast } from "../../../../hooks/useToast.js";
 import {
@@ -9,7 +9,6 @@ import {
   Input,
   Modal,
   Row,
-  Tabs,
   Flex,
   Typography,
   Upload,
@@ -47,9 +46,9 @@ import {
   uploadMinInvoice,
   validateInvoice,
 } from "../../../../api/store/material-in";
-import SingleProduct from "../../../Master/Vendor/SingleProduct";
 import { downloadCSVCustomColumns } from "../../../../Components/exportToCSV.jsx";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FileUpload from "../../../../Components/FileUpload";
 
 const INR_CURRENCY_ID = "364907247";
 
@@ -94,7 +93,7 @@ export default function MaterialInWithoutPO() {
   const [autoConsumptionOptions, setAutoConsumptionOption] = useState([]);
   const [isScan, setIsScan] = useState(false);
   const [open, setOpen] = useState(false);
-
+const [fileName, setFileName] = useState("");
   const [totalValues, setTotalValues] = useState([
     { label: "cgst", sign: "+", values: [] },
     { label: "sgst", sign: "+", values: [] },
@@ -107,9 +106,9 @@ export default function MaterialInWithoutPO() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [isApplicable, setIsApplicable] = useState(false);
   const [vendorBranchOptions, setVendorBranchOptions] = useState([]);
-  const [uplaoaClicked, setUploadClicked] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
+    const [uploadLoading, setUploadLoading] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSuccessPage, setShowSuccessPage] = useState(null);
   const [preview, setPreview] = useState(false);
@@ -122,6 +121,7 @@ export default function MaterialInWithoutPO() {
   const vendorBranch = Form.useWatch("vendorBranch", form);
   const vendorType = Form.useWatch("vendorType", form);
   const [uplaodForm] = Form.useForm();
+  const tableContainerRef = useRef(null);
   const sampleData = [
     {
       PART_CODE: "p0001",
@@ -159,7 +159,11 @@ export default function MaterialInWithoutPO() {
 
   const handleValidatingInvoices = async () => {
     const values = await form.validateFields();
-
+     if(!fileName) {
+    showToast("Please upload a Document", "error");
+    setSubmitLoading(false);
+    return
+  }
     const response = await executeFun(() => validateInvoice(values), "submit");
 
     if (response?.success) {
@@ -181,29 +185,15 @@ export default function MaterialInWithoutPO() {
         submitMIN(values);
       }
     } else {
-      submitMIN(values);
+         showToast(response.message || "Invoice Id not found", "error");
     }
   };
   const submitMIN = async () => {
-    let fileName;
-    const formData = new FormData();
+       setSubmitLoading(true);
     const vendorType = form.getFieldValue("vendorType");
     const values = await form.validateFields();
-    values.exchangeRate = form.getFieldValue("exchangeRate") ?? 1;
-    // console.log("values", values);
-    values?.fileComponents?.map((comp) => {
-      formData.append("files", comp.file[0]?.originFileObj);
-    });
-    let fileResponse;
-    if (vendorType !== "p01") {
-      fileResponse = await executeFun(
-        () => uploadMinInvoice(formData),
-        "submit"
-      );
-    }
 
-    if (fileResponse?.success || vendorType == "p01") {
-      fileName = fileResponse?.data;
+    if (fileName || vendorType == "p01") {
 
       const response = await executeFun(
         () => materialInWithoutPo(values, fileName, vendorType),
@@ -216,7 +206,6 @@ export default function MaterialInWithoutPO() {
         // The transaction ID is nested: response.data.data.txn
         const transactionId =
           data?.data?.txn || response?.data?.data?.txn || data?.txn;
-        console.log("Transaction ID:", transactionId);
         setShowSuccessPage({
           materialInId: transactionId,
           vendor: { vendorname: values.vendorName.label },
@@ -236,8 +225,11 @@ export default function MaterialInWithoutPO() {
         materialResetFunction();
         setPreviewRows([]);
         setPreview(false);
+        setFileName("");
+        setSubmitLoading(false);
       } else {
         showToast(response.message, "error");
+        setSubmitLoading(false);
       }
     }
   };
@@ -614,21 +606,21 @@ export default function MaterialInWithoutPO() {
       name: "mfg",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: (_, index) => <Input disabled />,
+      field: () => <Input disabled />,
     },
     {
       headerName: "Manual MFG",
       name: "mfgCode",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: (_, index) => <Input type="string" />,
+      field: () => <Input type="string" />,
     },
     {
       headerName: "Qty",
       name: "qty",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: (_, index) => <Input type="number" />,
+      field: () => <Input type="number" />,
     },
     {
       headerName: "Rate",
@@ -636,7 +628,7 @@ export default function MaterialInWithoutPO() {
       rules: [
         {
           warningOnly: true,
-          validator: (first, value) => {
+          validator: (first) => {
             let fieldName = first.field.split(".");
             fieldName = fieldName.map((row) => {
               if (!isNaN(row)) {
@@ -719,7 +711,7 @@ export default function MaterialInWithoutPO() {
     {
       headerName: "IGST",
 
-      field: (row) => <Input disabled />,
+      field: () => <Input disabled />,
       name: "igst",
 
       width: 120,
@@ -777,7 +769,7 @@ export default function MaterialInWithoutPO() {
 
     maxCount: 1,
 
-    beforeUpload(file) {
+    beforeUpload() {
       return false;
     },
   };
@@ -933,6 +925,41 @@ export default function MaterialInWithoutPO() {
       setPreview(false);
     }
   };
+
+
+
+  const handleUploadDocumentsBatch = async (files) => {
+    const vendorType = form.getFieldValue("vendorType");
+    if (vendorType === "p01") {
+      return { success: true };
+    }
+    setUploadLoading(true);
+    try {
+      const formData = new FormData();
+      files.forEach((file) => formData.append("files", file));
+      const fileResponse = await uploadMinInvoice(formData);
+      if (!fileResponse?.success) {
+        throw new Error(fileResponse?.message || "Upload Document failed");
+      }
+      setFileName(fileResponse?.data);
+      showToast(fileResponse?.message || "Upload Document success", "success");
+      return fileResponse;
+    } finally {
+      setUploadLoading(false);
+    }
+  };
+ 
+  const handleFileUploadDelete = (id) => {
+    form.setFieldValue("fileComponents", form.getFieldValue("fileComponents").filter((item) => item.id !== id));
+  };
+  const handleFileUploadChange = (items) => {
+  
+    form.setFieldValue(
+      "fileComponents",
+      items.map((item) => ({ documentName: item.name }))
+    );
+  };
+
   return (
     <div style={{ height: "100%", overflow: "hidden", padding: 10 }}>
       {showCurrency != null && (
@@ -986,7 +1013,7 @@ export default function MaterialInWithoutPO() {
               span={6}
               style={{ height: "100%", overflowY: "auto", overflowX: "hidden" }}
             >
-              {loading("fetch") && <Loading />}
+              {(loading("fetch") || selectLoading)  && <Loading />}
               <Flex vertical gap={6}>
                 <Card size="small">
                   <Row gutter={4}>
@@ -1035,29 +1062,29 @@ export default function MaterialInWithoutPO() {
                     <Col span={12} style={{ marginBottom: -10 }}>
                       <Form.Item
                         name="vendorBranch"
-                        extra={
-                          <p
-                            onClick={() => {
-                              vendorDetails.vendorName
-                                ? setShowBranchModal({
-                                    vendor_code: vendorDetails.vendorName,
-                                  })
-                                : showToast(
-                                    "Please Select a vendor first",
-                                    "error"
-                                  );
-                            }}
-                            style={{
-                              color: "#1890FF",
-                              cursor: "pointer",
-                              fontSize: 12,
-                              textAlign: "end",
-                              marginTop: 5,
-                            }}
-                          >
-                            Add Branch
-                          </p>
-                        }
+                        // extra={
+                        //   <p
+                        //     onClick={() => {
+                        //       vendorDetails.vendorName
+                        //         ? setShowBranchModal({
+                        //             vendor_code: vendorDetails.vendorName,
+                        //           })
+                        //         : showToast(
+                        //             "Please Select a vendor first",
+                        //             "error"
+                        //           );
+                        //     }}
+                        //     style={{
+                        //       color: "#1890FF",
+                        //       cursor: "pointer",
+                        //       fontSize: 12,
+                        //       textAlign: "end",
+                        //       marginTop: 5,
+                        //     }}
+                        //   >
+                        //     Add Branch
+                        //   </p>
+                        // }
                         label="Vendor Branch"
                         // rules={[
                         //   {
@@ -1177,12 +1204,28 @@ export default function MaterialInWithoutPO() {
                         justifyContent: "space-between",
                       }}
                     >
-                      <Col>
+                      {/* <Col>
                         <MyButton
                           variant="upload"
                           text="Documents"
                           onClick={() => setUploadClicked(true)}
                         ></MyButton>
+                      </Col> */}
+                           <Col>
+                        <FileUpload
+                          accept="image/*,.pdf"
+                          multiple
+                          maxFiles={3}
+                          maxFileSize={5 * 1024 * 1024}
+                          title="Documents"
+                          getContainer={() => tableContainerRef.current}
+                          // onUpload={handleUploadDocument}
+                          onUploadBatch={handleUploadDocumentsBatch}
+                          onDelete={handleFileUploadDelete}
+                          onChange={handleFileUploadChange}
+                        >
+                          <MyButton variant="upload" text="Documents" />
+                        </FileUpload>
                       </Col>
                       <Col>
                         <MyButton
@@ -1193,6 +1236,7 @@ export default function MaterialInWithoutPO() {
                           Excel
                         </MyButton>
                       </Col>
+                 
                     </Row>
                   </Row>
                 </Card>
@@ -1279,7 +1323,17 @@ export default function MaterialInWithoutPO() {
               </Flex>
             </Col>
             <Col style={{ height: "100%" }} span={18}>
-              <div style={{ height: "98%", border: "1px solid #EEEEEE" }}>
+              <div
+                ref={tableContainerRef}
+                style={{
+                  height: "98%",
+                  border: "1px solid #EEEEEE",
+                  position: "relative",
+                  overflow: "hidden",
+                  display: "flex",
+                }}
+              >
+              <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
                 {pageLoading && <Loading />}
                 <FormTable2
                   form={form}
@@ -1319,53 +1373,9 @@ export default function MaterialInWithoutPO() {
                   })}
                 />
               </div>
+              </div>
             </Col>
-            <Modal
-              open={uplaoaClicked}
-              width={700}
-              title={"Upload Document"}
-              // destroyOnClose={true}
-              onOk={() => setUploadClicked(false)}
-              onCancel={() => setUploadClicked(false)}
-              // style={{ maxHeight: "50%", height: "50%", overflowY: "scroll" }}
-            >
-              {" "}
-              <Card style={{ height: "20rem", overflowY: "scroll" }}>
-                <div style={{ flex: 1 }}>
-                  <Col
-                    span={24}
-                    style={{
-                      overflowX: "hidden",
-                      overflowY: "auto",
-                    }}
-                  >
-                    <Form.List name="fileComponents">
-                      {(fields, { add, remove }) => (
-                        <>
-                          <Col>
-                            {fields.map((field, index) => (
-                              <Form.Item noStyle>
-                                <SingleProduct
-                                  fields={fields}
-                                  field={field}
-                                  index={index}
-                                  add={add}
-                                  form={form}
-                                  remove={remove}
-                                  // setFiles={setFiles}
-                                  // files={files}
-                                />
-                              </Form.Item>
-                            ))}
-                      
-                          </Col>
-                        </>
-                      )}
-                    </Form.List>
-                  </Col>
-                </div>
-              </Card>
-            </Modal>
+            
             <Modal
               title="Upload File Here"
               open={open}
@@ -1480,7 +1490,7 @@ export default function MaterialInWithoutPO() {
         resetFunction={() => setShowResetConfirm(true)}
         submitFunction={handleSubmit}
         nextLabel="Submit"
-        loading={loading("submit")}
+        loading={submitLoading || uploadLoading}
       />
       {showSuccessPage !== null && (
         <SuccessPage

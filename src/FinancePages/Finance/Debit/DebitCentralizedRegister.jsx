@@ -1,5 +1,5 @@
-import { Button, Col, Row, Space, Input, Tooltip } from "antd";
-import React, { useEffect, useState } from "react";
+import { Col, Row, Space, Input } from "antd";
+import { useEffect, useState } from "react";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
@@ -10,7 +10,6 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import { AiFillEdit } from "react-icons/ai";
 import {
   CloudDownloadOutlined,
   EditFilled,
@@ -31,7 +30,6 @@ function DebitCentralizedRegister() {
   const [searchTerm, setSearchTerm] = useState("DN/23-24/");
   const [wise, setWise] = useState("debit_key_wise");
   const [viewDebitDetail, setViewDebitDetail] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [editDebit, setEditDebit] = useState(null);
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
@@ -52,7 +50,7 @@ function DebitCentralizedRegister() {
     });
     setSelectLoading(false);
     let arr = [];
-    if (!data.msg) {
+    if (response.success) {
       arr = response.data.map((d) => {
         return { text: d.text, value: d.id };
       });
@@ -66,9 +64,7 @@ function DebitCentralizedRegister() {
     const response = await imsAxios.get(
       `/tally/dv/register?wise=${wise}&data=${searchTerm}`
     );
-    console.log("resonse----", response);
-    const { data } = response;
-    if (response.status === 200) {
+    if (response.success) {
       // console.log("arr-------------", arr);
       let arr = response.data.map((row, index) => {
         return {
@@ -91,7 +87,7 @@ function DebitCentralizedRegister() {
       dv_key: key,
     });
     setLoading(false);
-    printFunction(data.buffer.data);
+    printFunction(response?.data.buffer.data);
     // module_used
   };
   const handleDownloadwithout = async (id) => {
@@ -103,7 +99,7 @@ function DebitCentralizedRegister() {
     const response = await imsAxios.post(link, {
       dv_key: id,
     });
-    downloadFunction(data.buffer.data, filename);
+    downloadFunction(response?.data.buffer.data, filename);
     setLoading(false);
   };
   //debit note with  vbt functions
@@ -115,7 +111,7 @@ function DebitCentralizedRegister() {
         debit_code: id,
       }
     );
-    printFunction(data.buffer.data);
+    printFunction(response?.data.buffer.data);
     setLoading(false);
   };
   const handleSingleDownload = async (id) => {
@@ -127,7 +123,7 @@ function DebitCentralizedRegister() {
       debit_code: id,
     });
 
-    downloadFunction(data.buffer.data, filename);
+    downloadFunction(response?.data.buffer.data, filename);
     setLoading(false);
   };
 
@@ -163,6 +159,7 @@ function DebitCentralizedRegister() {
         row.docType == "without vbt"
           ? [
               <GridActionsCellItem
+                key={"view"}
                 showInMenu
                 disabled={loading}
                 icon={<EyeFilled className="view-icon" />}
@@ -173,6 +170,7 @@ function DebitCentralizedRegister() {
                 label="View"
               />,
               <GridActionsCellItem
+                key={"print"}
                 showInMenu // print voucher
                 disabled={loading}
                 icon={<PrinterFilled className="view-icon" />}
@@ -182,6 +180,7 @@ function DebitCentralizedRegister() {
                 label="Print"
               />,
               <GridActionsCellItem
+                key={"download"}
                 showInMenu
                 // download voucher
                 disabled={loading}
@@ -192,6 +191,7 @@ function DebitCentralizedRegister() {
                 label="Download"
               />,
               <GridActionsCellItem
+                key={"edit"}
                 showInMenu
                 // edit voucher
                 disabled={loading}
@@ -205,6 +205,7 @@ function DebitCentralizedRegister() {
             ]
           : [
               <GridActionsCellItem
+                key="print"
                 showInMenu
                 disabled={loading === "tableLoading"}
                 icon={<PrinterFilled className="view-icon" />}
@@ -212,6 +213,7 @@ function DebitCentralizedRegister() {
                 label="Print"
               />,
               <GridActionsCellItem
+                key="download"
                 showInMenu
                 disabled={loading === "tableLoading"}
                 icon={<CloudDownloadOutlined className="view-icon" />}

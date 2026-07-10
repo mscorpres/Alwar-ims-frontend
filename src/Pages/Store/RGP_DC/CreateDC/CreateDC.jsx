@@ -22,8 +22,10 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { getVendorOptions } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
+import { useToast } from "../../../../hooks/useToast.js";
 
 export default function CreateDC() {
+  const { showToast } = useToast();
   const [newGatePass, setNewGatePass] = useState({
     passType: "R",
     vendorName: "",
@@ -175,6 +177,22 @@ export default function CreateDC() {
       address: validatedData?.address,
     };
   };
+  const validateDCDetails = () => {
+    if (!newGatePass.passType) {
+      return showToast("Please select Pass Type", "error");
+    }
+    if (!newGatePass.vendorName || !newGatePass.vendorName?.value) {
+      return showToast("Please select a Vendor", "error");
+    }
+    if (!newGatePass.vendorBranch) {
+      return showToast("Please select a Vendor Branch", "error");
+    }
+    if (!newGatePass.billingId) {
+      return showToast("Please select a Billing Address", "error");
+    }
+    setActiveTab("2");
+  };
+
   const resetFunction = () => {
     setNewGatePass({
       passType: "R",
@@ -280,12 +298,7 @@ export default function CreateDC() {
                                   Pass Type
                                 </span>
                               }
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please Select a PO Type!",
-                                },
-                              ]}
+                              required
                             >
                               <MySelect
                                 size="default"
@@ -331,6 +344,7 @@ export default function CreateDC() {
                                   Vendor Name
                                 </span>
                               }
+                              required
                             >
                               <MyAsyncSelect
                                 selectLoading={loading1("select")}
@@ -364,20 +378,9 @@ export default function CreateDC() {
                                   }}
                                 >
                                   Vendor Branch
-                                  {/* <span
-                        onClick={() => {
-                          newGatePass.vendorname.value
-                            ? setShowBranchModal({
-                                vendor_code: newGatePass.vendorname.value,
-                              })
-                            : toast.error("Please Select a vendor first");
-                        }}
-                        style={{ color: "#1890FF" }}
-                      >
-                        Add Branch
-                      </span> */}
                                 </div>
                               }
+                              required
                             >
                               <MySelect
                                 value={newGatePass.vendorBranch}
@@ -754,6 +757,7 @@ export default function CreateDC() {
                                   Billing Id
                                 </span>
                               }
+                              required
                             >
                               <MySelect
                                 size="default"
@@ -852,15 +856,16 @@ export default function CreateDC() {
                 </div>
                 <NavFooter
                   resetFunction={() => setShowResetConfirm(true)}
-                  submitFunction={() => setActiveTab("2")}
+                  submitFunction={validateDCDetails}
                 />
               </>
             </Tabs.TabPane>
             <Tabs.TabPane
               tab={
-                <span onClick={() => setActiveTab("2")}>Component Details</span>
+                <span >Component Details</span>
               }
               key="2"
+              disabled={activeTab !== "2"}
               style={{ height: "100%", overflowY: "hidden" }}
             >
               <div style={{ height: "100%" }}>

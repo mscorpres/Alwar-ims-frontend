@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import {
   Button,
   Col,
@@ -11,7 +11,6 @@ import {
   Select,
   Skeleton,
 } from "antd";
-import axios from "axios";
 import {
   UserAddOutlined,
   ToolOutlined,
@@ -21,13 +20,13 @@ import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import { v4 } from "uuid";
 import MySelect from "../../../Components/MySelect";
-import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 const { TextArea } = Input;
 
 function CreateJobChallanModel({ challanModal, setChallanModal }) {
   const { showToast } = useToast();
   const [loadChallan, setLoadChallan] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const [status, setStatus] = useState(1);
   const [vendorData, setVendorData] = useState([]);
 
@@ -79,7 +78,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
     }
   };
 
-  const getBillingLocation = async (e) => {
+  const getBillingLocation = async () => {
     const response = await imsAxios.post("/backend/billingAddressList");
     let a = [];
     response.data.map((x) => a.push({ text: x.text, value: x.id }));
@@ -91,14 +90,14 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
     const response = await imsAxios.post("/backend/billingAddress", {
       billing_code: userData?.billingLocationValue,
     });
-    setrestBillingAddress(data?.data);
+    setrestBillingAddress(response?.data);
   };
 
   // dispatch Locatiom
   const getDispatchLocation = async () => {
     const response = await imsAxios.post("/backend/dispatchAddressList");
     let a = [];
-    data.map((x) => a.push({ text: x.text, value: x.id }));
+    response.data.map((x) => a.push({ text: x.text, value: x.id }));
     setDispatchLocation(a);
   };
 
@@ -106,7 +105,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
     const response = await imsAxios.post("/backend/dispatchAddress", {
       dispatch_code: userData?.dispatchLocationValue,
     });
-    setRestDispatchAddress(data.data);
+    setRestDispatchAddress(response?.data);
   };
 
   const inputHandler = async (name, id, value, a) => {
@@ -167,7 +166,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
         location: value,
       });
       // closingStock(data?.data);
-      let arr = data?.data?.closingStock;
+      let arr = response?.data?.closingStock;
       setProductData((a) =>
         a.map((aa) => {
           if (aa.id == id) {
@@ -363,6 +362,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
   };
 
   const CreateChallan = async () => {
+    setSubmitLoading(true);
     let comArray = [];
     let qtyArray = [];
     let rateArray = [];
@@ -410,10 +410,10 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
       remark: remarkArray,
       hsncode: hsnCodeArray,
     });
-    console.log(data);
-    if (response.success) {
+    setSubmitLoading(false);
+    if (response.status==="success" || response.success) {
       close();
-    } else if (!response.success) {
+    } else if (!response.success  || !response.status==="success") {
       showToast(response.message?.msg || response.message, "error");
     }
   };
@@ -430,7 +430,7 @@ function CreateJobChallanModel({ challanModal, setChallanModal }) {
         extra={
           <Space>
             {/* <CloseCircleFilled onClick={() => setChallanModal(false)} /> */}
-            <Button type="primary" onClick={CreateChallan}>
+            <Button type="primary" loading={submitLoading} onClick={CreateChallan}>
               Save
             </Button>
             <Button onClick={close}>Close</Button>

@@ -2,9 +2,12 @@ import { useState } from "react";
 import { ModalType } from "@/types/general";
 import { Button, Card, Flex, Form, Input, Modal, Typography } from "antd";
 import useApi from "@/hooks/useApi";
+//@ts-ignore
 import { sendOtp, verifyOtp, updatePassword } from "@/api/auth.js";
 import { InfoCircleOutlined } from "@ant-design/icons";
+//@ts-ignore
 import ImageCaptcha from "@/Components/ImageCaptcha/ImageCaptcha";
+//@ts-ignore
 import { useToast } from "@/hooks/useToast";
 
 interface PropTypes extends ModalType {}
@@ -163,7 +166,7 @@ const ForgotPassword = (props: PropTypes) => {
               <ImageCaptcha
                 key={captchaKey}
                 value={captchaInput}
-                onChange={(e) => setCaptchaInput(e.target.value)}
+                onChange={(e:any) => setCaptchaInput(e.target.value)}
                 onCodeChange={setExpectedCaptchaCode}
                 placeholder="Enter letters above"
               />

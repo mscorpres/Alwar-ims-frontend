@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { Drawer, Row, Col, Button, Switch, Form, Space, Input } from "antd";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -13,7 +13,7 @@ function EditClient({
 }) {
   const { showToast } = useToast();
   const [updateClientForm] = Form.useForm();
-  const [statusLoading, setStatusLoading] = useState(false);
+  // const [statusLoading, setStatusLoading] = useState(false);
   const [tdsOptions, setTdsOptions] = useState([]);
   const [tcsOptions, setTcsOptions] = useState([]);
   const [clientStatus, setClientStatus] = useState();

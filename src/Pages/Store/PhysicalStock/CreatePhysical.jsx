@@ -21,7 +21,7 @@ function CreatePhysical() {
       // type="card"
       tabPosition="left"
       size={"small"}
-      style={{ margin: 10, height: "95%" }}
+      style={{  height: "calc(100vh - 140px)" }}
       items={[
         {
           label: "Manual Entry",
