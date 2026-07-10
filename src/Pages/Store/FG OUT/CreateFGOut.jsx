@@ -237,17 +237,16 @@ const compInputHandler = async (name, id, value) => {
         });
         if (response?.success) {
           resetFunction();
-        toast.success(response.message);
+          showToast(response.message, "success");
           setLoadingUpdate(false);
         } else {
-          toast.error(
-            response.message ?? "Failed to create FG Out. Please try again.",
-          );
+          showToast(response.message ?? "Failed to create FG Out. Please try again.", "error");
           setLoadingUpdate(false);
         }
       } catch (error) {
-        toast.error(
+        showToast(
           error?.message ?? "Failed to create FG Out. Please try again.",
+          "error"
         );
       }
     }
