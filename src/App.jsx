@@ -54,7 +54,8 @@ import {
 } from "./utils/postLoginRedirect.js";
 import ModuleSearch from "./Components/ModuleSearch/ModuleSearch.jsx";
 import NotificationPromptDialog from "./Components/NotificationPromptDialog.jsx";
-import { registerFCMToken } from "./utils/fcmToken.js";
+import { registerFCMToken } from "./firebase/registerFCM.js";
+
 
 const App = () => {
   const { showToast } = useToast();
