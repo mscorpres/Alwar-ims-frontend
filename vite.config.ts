@@ -19,10 +19,24 @@ export default defineConfig({
       },
     ],
   },
-
+  optimizeDeps: {
+    include: [
+      '@mui/material',
+      '@mui/material/styles',
+      '@mui/system',
+      '@mui/styled-engine',
+      '@mui/icons-material',
+      '@mui/x-data-grid',
+      '@emotion/react',
+      '@emotion/styled',
+    ],
+  },
   server: {
     port: 3000,
     host: true,
+    warmup: {
+      clientFiles: ['./src/App.jsx', './src/main.jsx'],
+    },
   },
   build: {
     sourcemap: true, // required for Sentry source maps
