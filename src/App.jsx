@@ -1134,10 +1134,10 @@ const App = () => {
         <NotificationPromptDialog onGranted={registerFCMToken} />
       )}
 
-      <UpdatePopup
+      {/* <UpdatePopup
         open={showUpdatePopup}
         onRefresh={() => window.location.reload()}
-      />
+      /> */}
     </div>
   );
 };
