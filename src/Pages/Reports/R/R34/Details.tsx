@@ -96,6 +96,11 @@ const columns = [
     field: "bomQty",
     width: 100,
   },
+   {
+    headerName: "Avg. Rate",
+    field: "avgRate",
+    width: 100,
+  },
   {
     headerName: "Exec. Date",
     field: "executedDate",

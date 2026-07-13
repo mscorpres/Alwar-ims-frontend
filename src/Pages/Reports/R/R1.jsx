@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./r.css";
 import "../../Store/MaterialTransfer/Modal/viewModal.css";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
@@ -24,6 +24,7 @@ const R1 = () => {
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomOptions, setBomOptions] = useState([]);
+  const abortControllerRef = useRef(null);
   const [showValidation, setShowValidation] = useState(false);
   const [filters, setFilters] = useState({
     selectProduct: undefined,
@@ -53,7 +54,7 @@ const R1 = () => {
       // getActions: ({ row }) => [<DownloadOutlined />],
       renderCell: (a) =>
         a.row.bom_status ==
-        '<span style="color: #2db71c; font-weight: 600;">ACTIVE</span>' ? (
+        'ACTIVE' ? (
           <div
             style={{
               width: "80%",
@@ -71,7 +72,7 @@ const R1 = () => {
             </span>
           </div>
         ) : a.row.bom_status ==
-          '<span style="color: #e53935; font-weight: 600;">INACTIVE</span>' ? (
+          'INACTIVE' ? (
           <div
             style={{
               width: "80%",
@@ -89,7 +90,7 @@ const R1 = () => {
             </span>
           </div>
         ) : a.row.bom_status ==
-          '<span style="color: #ff9800; font-weight: 600;">ALTERNATIVE</span>' ? (
+          'ALTERNATIVE' ? (
           <div
             style={{
               width: "100%",
@@ -167,26 +168,49 @@ const R1 = () => {
   }, [filters.selectProduct]);
 
   const handleSearch = async () => {
+    if (!filters.selectProduct?.value) {
+      showToast("Please select product", "error");
+      return;
+    }
+    if (!filters.bom?.value) {
+      showToast("Please select BOM", "error");
+      return;
+    }
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
     setShowValidation(true);
-    if (!filters.selectProduct?.value || !filters.bom?.value) return;
     setLoading(true);
     setAllResponseData([]);
-    const response = await imsAxios.post("/report1", {
-      product: filters.selectProduct?.value ?? filters.selectProduct,
-      subject: filters.bom?.value ?? filters.bom,
-      date: filters.date,
-      action: "search_r1",
-    });
-    if (response.success) {
-      const arr = (response.data || []).map((row) => ({
-        ...row,
-        id: v4(),
-      }));
-      setAllResponseData(arr);
-      setLoading(false);
-    } else {
-      showToast(response.message, "error");
-      setLoading(false);
+    try {
+      const response = await imsAxios.post(
+        "/report1",
+        {
+          product: filters.selectProduct?.value ?? filters.selectProduct,
+          subject: filters.bom?.value ?? filters.bom,
+          date: filters.date,
+          action: "search_r1",
+        },
+        { signal: controller.signal },
+      );
+      if (response.success) {
+        const arr = (response.data || []).map((row) => ({
+          ...row,
+          id: v4(),
+        }));
+        setAllResponseData(arr);
+      } else {
+        showToast(response.message, "error");
+      }
+    } catch (error) {
+      if (error?.code !== "ERR_CANCELED") {
+        showToast(error?.message || "Something went wrong", "error");
+      }
+      return;
+    } finally {
+      if (abortControllerRef.current === controller) {
+        setLoading(false);
+      }
     }
   };
 
@@ -223,6 +247,9 @@ const R1 = () => {
     downloadCSVCustomColumns(csvData, "Bom Wise Report");
   };
   const reset = () => {
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
+    setLoading(false);
     setAllResponseData([]);
   };
 

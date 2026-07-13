@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { v4 } from "uuid";
 import AddComponent from "./AddComponents";
 import { useToast } from "../../../hooks/useToast.js";
@@ -98,10 +98,10 @@ export default function CreatePo() {
   const [shipToOptions, setShipToOptions] = useState([]);
   const [vendorBranches, setVendorBranches] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
-  const [stateCode, setStateCode] = useState("");
   const [showQtyWarning, setShowQtyWarning] = useState(false);
   const [qtyWarningData, setQtyWarningData] = useState(null);
   const [pendingPOData, setPendingPOData] = useState(null);
+  const [poCurrencies, setPoCurrencies] = useState([]);
   const [rowCount, setRowCount] = useState([
     {
       id: v4(),
@@ -138,6 +138,29 @@ export default function CreatePo() {
   const [form] = Form.useForm();
   const termsCondition = Form.useWatch("termscondition", form);
   const advancePayment = Form.useWatch("advancePayment", form);
+  const poCurrencyWatched = Form.useWatch("po_currency", form);
+  const showPoExchangeField =
+    String(poCurrencyWatched ?? "364907247") !== "364907247";
+
+  const syncLineItemsCurrencyFromHeader = useCallback(
+    (currencyId, exchangeRate) => {
+      const isInr = String(currencyId) === "364907247";
+      const ex = isInr ? 1 : Number(exchangeRate) || 1;
+      const sym =
+        poCurrencies.find((c) => String(c.value) === String(currencyId))
+          ?.text ?? "";
+      setRowCount((rows) =>
+        rows.map((r) => ({
+          ...r,
+          currency: currencyId,
+          exchange_rate: ex,
+          symbol: sym,
+          foreginValue: Number(r.inrValue || 0) * ex,
+        })),
+      );
+    },
+    [poCurrencies],
+  );
 
   const { executeFun, loading: loading1 } = useApi();
   const validatePO = () => {
@@ -718,6 +741,28 @@ export default function CreatePo() {
       showToast(errorMessage, "error");
     }
   };
+
+  const handleGetCurrency = async () => {
+      try {
+        const response = await imsAxios.get("/backend/fetchAllCurrecy");
+        if(response?.success) {
+      const arr = response.data.map((d) => ({
+          text: d.currency_symbol,
+          value: d.currency_id,
+          notes: d.currency_notes,
+        }));
+        setPoCurrencies(arr);
+        }
+     
+  
+      } catch (error) {
+     showToast(error.message ?? "Something went wrong", "error");
+      }
+  }
+
+  useEffect(() => {
+   handleGetCurrency();
+  }, []);
   const getPOs = async (searchInput) => {
     if (searchInput?.length > 2) {
       setSelectLoading(true);
@@ -879,6 +924,34 @@ export default function CreatePo() {
           shipGST: shippingDetails.gstin || "",
         }));
       }
+    } else if (name === "po_currency") {
+      const isInr = String(value) === "364907247";
+      const nextEx = isInr
+        ? 1
+        : Number(form.getFieldValue("po_exchange_rate")) || 1;
+      form.setFieldsValue({
+        po_currency: value,
+        po_exchange_rate: nextEx,
+      });
+      setnewPurchaseOrder((prev) => ({
+        ...prev,
+        po_currency: value,
+        po_exchange_rate: nextEx,
+      }));
+      syncLineItemsCurrencyFromHeader(value, nextEx);
+    } else if (name === "po_exchange_rate") {
+      const cur = form.getFieldValue("po_currency") ?? "364907247";
+      if (String(cur) === "364907247") return;
+      const ex =
+        value === null || value === undefined || value === ""
+          ? 1
+          : Number(value) || 1;
+      form.setFieldsValue({ po_exchange_rate: ex });
+      setnewPurchaseOrder((prev) => ({
+        ...prev,
+        po_exchange_rate: ex,
+      }));
+      syncLineItemsCurrencyFromHeader(cur, ex);
     } else {
       form.setFieldsValue({ [name]: value });
       setnewPurchaseOrder((prev) => ({ ...prev, [name]: value }));
@@ -1095,8 +1168,7 @@ export default function CreatePo() {
       const response = await imsAxios.post("/backend/shippingAddress", {
         shipping_code: shipaddressid,
       });
-      setStateCode(response?.data?.statecode);
-      // console.log("stateCodeeeeeeeeeeeeee", data.data.statecode);
+
       return {
         gstin: response.data?.gstin,
         pan: response.data?.pan,
@@ -1152,6 +1224,8 @@ export default function CreatePo() {
         index: 1,
         currency: "364907247",
         exchange_rate: 1,
+        symbol:
+          poCurrencies.find((c) => String(c.value) === "364907247")?.text ?? "",
         component: "",
         qty: 1,
         rate: "",
@@ -1179,6 +1253,8 @@ export default function CreatePo() {
     );
     setAsyncOptions(response.data);
   };
+
+
   const handleProjectChange = async (value) => {
     const projectValue =
       typeof value === "object" ? value : { value: value, label: value };
@@ -1205,6 +1281,7 @@ export default function CreatePo() {
             typeof value === "object" ? value.value : value,
             { showPageLoading: false },
           );
+      
         } else {
           showToast(data.message, "error");
         }
@@ -1276,6 +1353,16 @@ export default function CreatePo() {
       cancelled = true;
     };
   }, []);
+  useEffect(() => {
+    if (!poCurrencies.length) return;
+    const cur = form.getFieldValue("po_currency") ?? "364907247";
+    const ex =
+      String(cur) === "364907247"
+        ? 1
+        : Number(form.getFieldValue("po_exchange_rate")) || 1;
+    syncLineItemsCurrencyFromHeader(cur, ex);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- form instance is stable; avoid re-sync loops
+  }, [poCurrencies.length, syncLineItemsCurrencyFromHeader]);
 
   useEffect(() => {
     if (sameAsBilling && newPurchaseOrder.billaddressid) {
@@ -1497,7 +1584,7 @@ export default function CreatePo() {
                       layout="vertical"
                       initialValues={newPurchaseOrder}
                       onFinish={finish}
-                      onFieldsChange={(value, allFields) => {
+                      onFieldsChange={(value) => {
                         if (value.length == 1) {
                           selectInputHandler(value[0].name[0], value[0].value);
                         }
@@ -1981,6 +2068,8 @@ export default function CreatePo() {
                                 />
                               </Form.Item>
                             </Col>
+
+                    
                             {/* project name */}
                             <Col span={5}>
                               <Form.Item label="Project Description">
@@ -2052,6 +2141,31 @@ export default function CreatePo() {
                                 />
                               </Form.Item>
                             </Col>
+                            <Col span={6}>
+                              <Form.Item
+                                name="po_currency"
+                                label="PO Currency"
+                                rules={rules.po_currency}
+                              >
+                                <MySelect options={poCurrencies} />
+                              </Form.Item>
+                            </Col>
+                            {showPoExchangeField && (
+                              <Col span={6}>
+                                <Form.Item
+                                  name="po_exchange_rate"
+                                  label="Exchange rate (to INR)"
+                                  rules={rules.po_exchange_rate}
+                                >
+                                  <InputNumber
+                                    min={0}
+                                    step={0.0001}
+                                    style={{ width: "100%" }}
+                                    size="default"
+                                  />
+                                </Form.Item>
+                              </Col>
+                            )}
                           </Row>
                         </Col>
                       </Row>
@@ -2486,8 +2600,8 @@ export default function CreatePo() {
                       submitHandler={validatePO}
                       submitLoading={submitLoading}
                       totalValues={totalValues}
-                      setStateCode={setStateCode}
                       open={open}
+                      poCurrencies={poCurrencies}
                       setOpen={setOpen}
                       gstState={
                         newPurchaseOrder.billCode === newPurchaseOrder.venCode
