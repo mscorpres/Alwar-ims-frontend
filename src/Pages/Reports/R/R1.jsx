@@ -9,6 +9,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import MyDataTable from "../../../Components/MyDataTable";
 import Tooltip from "@mui/material/Tooltip";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import Field from "../../../Components/Field";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
@@ -24,6 +25,7 @@ const R1 = () => {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomOptions, setBomOptions] = useState([]);
   const abortControllerRef = useRef(null);
+  const [showValidation, setShowValidation] = useState(false);
   const [filters, setFilters] = useState({
     selectProduct: undefined,
     bom: undefined,
@@ -177,6 +179,7 @@ const R1 = () => {
     abortControllerRef.current?.abort();
     const controller = new AbortController();
     abortControllerRef.current = controller;
+    setShowValidation(true);
     setLoading(true);
     setAllResponseData([]);
     try {
@@ -260,7 +263,12 @@ const R1 = () => {
             }}
           >
             <Space style={{ width: "100%" }} size={10} wrap>
-              <div style={{ minWidth: 240, flex: 1 }}>
+              <Field
+                attr="required | Please select SKU"
+                value={filters.selectProduct}
+                showValidation={showValidation}
+                style={{ minWidth: 240, flex: 1 }}
+              >
                 <MyAsyncSelect
                   selectLoading={loading1("select")}
                   style={{ width: "100%" }}
@@ -270,30 +278,34 @@ const R1 = () => {
                   value={filters.selectProduct}
                   placeholder="Product Name / SKU"
                   optionsState={asyncOptions}
-                  onChange={(value) =>
+                  onChange={(value) => {
+                    setShowValidation(false);
                     setFilters((prev) => ({
                       ...prev,
                       selectProduct: value,
                       bom: undefined,
-                    }))
-                  }
+                    }));
+                  }}
                 />
-              </div>
-              <div style={{ minWidth: 220 }}>
+              </Field>
+              <Field
+                attr="required | Please select BOM"
+                value={filters.bom}
+                showValidation={showValidation}
+                style={{ minWidth: 220 }}
+              >
                 <Select
                   style={{ width: "100%" }}
                   placeholder="Select BOM"
                   options={bomOptions}
                   labelInValue
                   value={filters.bom || undefined}
-                  onChange={(bom) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      bom,
-                    }))
-                  }
+                  onChange={(bom) => {
+                    setShowValidation(false);
+                    setFilters((prev) => ({ ...prev, bom }));
+                  }}
                 />
-              </div>
+              </Field>
               <div style={{ minWidth: 240 }}>
                 <MyDatePicker
                   setDateRange={(value) =>

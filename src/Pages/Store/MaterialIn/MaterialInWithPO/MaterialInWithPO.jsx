@@ -817,9 +817,12 @@ export default function MaterialInWithPO() {
     }
   };
 
-  const handleFileUploadDelete = () => {};
+  const handleFileUploadDelete = (id) => {
+    setFilesData(filesData.filter((item) => item.id !== id));
+  };
+ 
   const handleFileUploadChange = (items) => {
-    setFilesData(pre => [...pre, ...items]);
+    setFilesData(items);
   };
 
   return (
@@ -833,7 +836,7 @@ export default function MaterialInWithPO() {
     >
       <Row justify="space-between">
         {(pageLoading || submitLoading == true) && <Loading />}
-        <Col span={20}>
+       {!materialInSuccess && <><Col span={20}>
           <Space>
             <div style={{ width: 250 }}>
               <MyAsyncSelect
@@ -878,6 +881,7 @@ export default function MaterialInWithPO() {
             </MyButton>
           </Space>
         </Col>
+      
         <Col>
           {/* <Button
             type="primary"
@@ -900,7 +904,8 @@ export default function MaterialInWithPO() {
           >
             <MyButton variant="upload" text="Documents" />
           </FileUpload>
-        </Col>
+        </Col></>
+          }
       </Row>
       {/* vendor info modal */}
       <Modal
