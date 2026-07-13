@@ -149,7 +149,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Date",
       field: "transactionDate",
-      width: 120,
+      minWidth: 160,
       renderCell: ({ row }) => <ToolTipEllipses text={row.transactionDate} />,
     },
     {
@@ -183,7 +183,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Transaction",
       field: "transactionID",
-      width: 150,
+      minWidth: 180,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.transactionID} copy={true} />
       ),
