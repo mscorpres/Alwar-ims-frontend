@@ -33,7 +33,6 @@ function MesQcaReport() {
   const ppr = Form.useWatch("ppr", qcReportForm);
   const status = Form.useWatch("status", qcReportForm);
   const processName = Form.useWatch("process", qcReportForm);
-  const [searchInput, setSearchInput] = useState("");
 
   const Generateqrforlot = async (row) => {
     try {
@@ -55,8 +54,9 @@ function MesQcaReport() {
         "qcalable/generateQcaLableforlot",
         generateqrdata
       );
-      printFunction(response.data.data.buffer.data);
+      printFunction(response.data.buffer.data);
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -122,7 +122,7 @@ function MesQcaReport() {
       });
       const { data } = response;
       if (data) {
-        sku = data.data[0].product_sku;
+        sku = data?.product_sku;
       }
 
       // getting process list from sku
@@ -135,7 +135,7 @@ function MesQcaReport() {
 
       const { data: processData } = processResponse;
       if (processData) {
-        const arr = processData.data.map((row) => ({
+        const arr = processData?.map((row) => ({
           text: row.process.name,
           value: row.process.key,
         }));
@@ -143,7 +143,7 @@ function MesQcaReport() {
         setProcessOptions(arr);
       }
     } catch (error) {
-      showToast(error, "error");
+      showToast(error?.message || "Failed to fetch", "error");
     } finally {
       setLoading(false);
     }
@@ -164,12 +164,10 @@ function MesQcaReport() {
         qca_process: values.process.value,
         data: values.date,
       });
-      const { data } = response;
-      if (data.status === "error") {
-        showToast(data.message, "error");
-      } else if (response.success ) {
-        if (data.response.data) {
-          const arr = data.response.data.map((row, index) => {
+    
+     if (response.success ) {
+     
+          const arr = response.data.map((row, index) => {
             const date = row.barcode[0].insert_dt.split(" ");
             const qty = row.barcode.length;
             return {
@@ -193,10 +191,12 @@ function MesQcaReport() {
             };
           });
           setRows(arr);
+        } else {
+          showToast(response.message, "error");
         }
-      }
+  
     } catch (error) {
-      showToast(error?.errorFields?.[0]?.errors?.[0] || "Something went wrong", "error");
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -398,7 +398,7 @@ const ViewModal = ({ show, setshow, detaildata, status }) => {
     failReason: row.fail_reason,
   }));
 
-  console.log(arr);
+
 
   const viewcolumns = [
     {
