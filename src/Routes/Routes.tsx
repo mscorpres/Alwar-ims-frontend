@@ -895,14 +895,14 @@ const Routes = [
     main: () => <Profile />,
   },
   // CPM
-  {
-    path: "/cpm/analysis",
-    main: () => <CPMAnalysis />,
-  },
-  {
-    path: "/cpm/reports",
-    main: () => <CPMReport />,
-  },
+  // {
+  //   path: "/cpm/analysis",
+  //   main: () => <CPMAnalysis />,
+  // },
+  // {
+  //   path: "/cpm/reports",
+  //   main: () => <CPMReport />,
+  // },
 
   // Jobwork
   {
