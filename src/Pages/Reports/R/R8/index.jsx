@@ -1,4 +1,4 @@
-import { Button, Col, Row, Space, Select, Input } from "antd";
+import { Space, Select, Input } from "antd";
 import { useState } from "react";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
@@ -11,14 +11,18 @@ import socket from "../../../../Components/socket";
 import { v4 } from "uuid";
 import MyButton from "../../../../Components/MyButton";
 import dayjs from "dayjs";
+import { useToast } from "../../../../hooks/useToast";
+import Field from "../../../../Components/Field";
 
 function R8() {
+  const { showToast } = useToast();
   const [searchInput, setSearchInput] = useState("");
   const [skuInput, setSkuInput] = useState("");
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [seeDetails, setSeeDetails] = useState(false);
   const [type, setType] = useState("datewise");
+  const [validation, setValidation] = useState(false);
   const options = [
     { label: "Date wise", value: "datewise" },
     { label: "SKU wise", value: "skuwise" },
@@ -26,6 +30,13 @@ function R8() {
   ];
 
   const getRows = async () => {
+    if (
+      !type ||
+      (type === "datewise" && !searchInput) ||
+      (type === "skuwise" && !skuInput) ||
+      (type === "both" && (!searchInput || !skuInput))
+    )
+      return setValidation(true);
     try {
       setLoading("fetch");
       setRows([]);
@@ -52,9 +63,8 @@ function R8() {
           id: index + 1,
         }));
         setRows(arr);
-      }
-      else{
-        toast.error(response.message);
+      } else {
+        showToast(response.message, "error");
       }
     } catch (error) {
       console.log("Some error occurred while fetching rows", error);
@@ -70,6 +80,7 @@ function R8() {
     getActions: ({ row }) => [
       // View
       <GridActionsCellItem
+        key={row.mfg_id}
         showInMenu
         label="View"
         onClick={() => setSeeDetails(row.mfg_id)}
@@ -101,38 +112,63 @@ function R8() {
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%",  paddingRight: 5, paddingLeft: 5  }}>
       <Space align="center" style={{ width: "100%", marginBottom: 8 }}>
-        <Select
-          placeholder="Select Type"
-          options={options}
+        <Field
+          attr="required | Please select Type"
           value={type}
-          onChange={(e) => setType(e)}
-          style={{ width: 150 }}
-        />
+          showValidation={validation}
+          style={{ minWidth: 240, flex: 1 }}
+        >
+          <Select
+            placeholder="Select Type"
+            options={options}
+            value={type}
+            onChange={(e) => {
+              setType(e);
+              setValidation(false);
+            }}
+            style={{ width: "100%" }}
+          />
+        </Field>
         {type === "datewise" && (
-          <MyDatePicker setDateRange={setSearchInput} style={{ width: 250 }} />
+          <MyDatePicker setDateRange={setSearchInput} value={searchInput} style={{ width: 250 }} showError={validation} />
         )}
         {type === "skuwise" && (
-          <Input
+            <Field
+          attr="required | Please enter SKU"
+          value={skuInput}
+          showValidation={validation}
+          style={{ minWidth: 240, flex: 1 }}
+        > <Input
             type="text"
             placeholder="Enter SKU"
             onChange={(e) => setSkuInput(e.target.value)}
             style={{ width: 200 }}
-          />
+          /></Field>
+         
         )}
         {type === "both" && (
           <>
             <MyDatePicker
               setDateRange={setSearchInput}
               style={{ width: 250 }}
+              showError={validation}
+              value={searchInput}
+              
             />
-            <Input
+              <Field
+          attr="required | Please enter SKU"
+          value={skuInput}
+          showValidation={validation}
+          style={{ minWidth: 240, flex: 1 }}
+        > <Input
               type="text"
               placeholder="Enter SKU"
               onClick={(e) => setSkuInput(e.target.value)}
               style={{ width: 200 }}
-            />
+            /></Field>
+           
           </>
         )}
         <MyButton
@@ -149,7 +185,9 @@ function R8() {
           action="downloadButton"
         />
       </Space>
-      <div style={{ height: "calc(100% - 60px)", paddingRight: 5, paddingLeft: 5 }}>
+      <div
+        style={{ height: "calc(100% - 60px)", paddingRight: 5, paddingLeft: 5 }}
+      >
         <MyDataTable
           loading={loading === "fetch"}
           columns={[actionMenuItem, ...columns]}
@@ -157,11 +195,17 @@ function R8() {
         />
       </div>
 
-      <DetailsModal show={seeDetails} close={() => setSeeDetails(false)} end_date={
+      <DetailsModal
+        show={seeDetails}
+        close={() => setSeeDetails(false)}
+        end_date={
           searchInput
-            ? dayjs(searchInput.substring(11, 21), "DD-MM-YYYY").format("YYYY-MM-DD")
+            ? dayjs(searchInput.substring(11, 21), "DD-MM-YYYY").format(
+                "YYYY-MM-DD",
+              )
             : null
-        } />
+        }
+      />
     </div>
   );
 }

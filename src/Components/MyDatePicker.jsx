@@ -8,17 +8,19 @@ const MyDatePicker = ({
   setDateRange,
   size,
   disabledtheDate,
+  message = "Please Select Date Range",
+  showError=false
 }) => {
-
 
   useEffect(() => {
     if (value) {
       setDateRange(value);
-    } else if (value === "") {
-      setDateRange(getDateFormatted([dayjs().startOf("month"), dayjs()]));
-    } else {
-      setDateRange(getDateFormatted([dayjs().startOf("month"), dayjs()]));
-    }
+    } 
+    // else if (value === "") {
+    //   setDateRange(getDateFormatted([dayjs().startOf("month"), dayjs()]));
+    // } else {
+    //   setDateRange(getDateFormatted([dayjs().startOf("month"), dayjs()]));
+    // }
   }, []);
   useEffect(() => {
     setTimeout(() => {
@@ -50,9 +52,12 @@ const MyDatePicker = ({
     if (disabledtheDate == "true" && disabledR35MinDate(current)) return true;
     return false;
   };
+    const isEmpty = value === undefined || value === null || value === "" || !value;
+  const showValidation = showError  && isEmpty;
 
   return (
-    <DatePicker.RangePicker
+ <div style={{ position: "relative" }}>
+     <DatePicker.RangePicker
       size={size ? size : "default"}
       style={{
         width: "100%",
@@ -83,6 +88,8 @@ const MyDatePicker = ({
         { label: "Last 90 Days", value: [dayjs().subtract(89, "d"), dayjs()] },
       ]}
     />
+       {showValidation && <span className="field-validation-tooltip">{message}</span>}
+ </div>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import "./r.css";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import { Button, Col, Row } from "antd";
@@ -15,6 +15,7 @@ const R5 = () => {
   const [responseData, setResponseData] = useState([]);
   const [selectDate, setSelectDate] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isValidation, setIsValidation] = useState(false);
 
   const columns = [
     { field: "fgtype", headerName: "Type", width: 80 },
@@ -54,7 +55,7 @@ const R5 = () => {
 
   const fetch = async () => {
     if (!selectDate) {
-      showToast("Please Select Date First Then Proceed Next Step", "error");
+      setIsValidation(true);
     } else {
       setResponseData([]);
       setLoading(true);
@@ -85,7 +86,7 @@ const R5 = () => {
       <Row gutter={10} style={{ margin: "5px" }}>
         <Col span={5}>
           {/* <SingleDatePicker setDate={setSelectDate} /> */}
-          <MyDatePicker setDateRange={setSelectDate} size="default" />
+          <MyDatePicker setDateRange={setSelectDate} size="default" value={selectDate} showError={isValidation} />
         </Col>
         <Col span={1}>
           <MyButton variant="search" type="primary" onClick={fetch}>

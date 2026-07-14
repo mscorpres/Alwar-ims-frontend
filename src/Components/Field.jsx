@@ -1,4 +1,4 @@
-import React from "react";
+
 import "./Field.css";
 
 /**
@@ -9,7 +9,11 @@ import "./Field.css";
 const Field = ({ attr = "", value, showValidation, children, style, className }) => {
   const [rule, message = "This field is required"] = attr.split("|").map((s) => s.trim());
   const isRequired = rule === "required";
-  const isEmpty = value === undefined || value === null || value === "" || !value?.value;
+  const isEmpty =
+    value === undefined ||
+    value === null ||
+    value === "" ||
+    (typeof value === "object" && !value?.value);
   const showError = showValidation && isRequired && isEmpty;
 
   return (
