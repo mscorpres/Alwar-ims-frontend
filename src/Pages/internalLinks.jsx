@@ -936,17 +936,17 @@ const links = [
     },
   ],
   // CPM Analysis
-  [
-    {
-      routeName: "CPM",
-      routePath: "/cpm/analysis",
-      placeholder: "Client Project Management",
-    },
-    {
-      routeName: "CPM Finance",
-      routePath: "/cpm/reports",
-    },
-  ],
+  // [
+  //   {
+  //     routeName: "CPM",
+  //     routePath: "/cpm/analysis",
+  //     placeholder: "Client Project Management",
+  //   },
+  //   {
+  //     routeName: "CPM Finance",
+  //     routePath: "/cpm/reports",
+  //   },
+  // ],
   // Paytm qc
   [
     // { routeName: "Paytm QC Upload", routePath: "/paytm-qc/upload", key: 0 },
