@@ -112,7 +112,7 @@ const getDataByLocation = async (e) => {
       setLoading(true);
       const response = await imsAxios.post("/report9", {
         skucode: allData.selectProduct?.key,
-        subject: allData.selectBom?.key,
+        subject: allData.selectBom,
         location: allData.selectLocation?.key,
         date: selectDate,
         action: "search_r9",
