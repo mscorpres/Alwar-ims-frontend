@@ -1471,7 +1471,7 @@ export default function ProductMIN() {
                 }}
               >
                 <Col
-                  span={12}
+                  span={17}
                   style={{
                     height: "10%",
                     display: "flex",
@@ -1496,10 +1496,10 @@ export default function ProductMIN() {
                     onDelete={handleFileUploadDelete}
                     onChange={handleFileUploadChange}
                   >
-                    <MyButton variant="upload" text="Documents" />
+                    <MyButton variant="upload" text={`Upload Documents ${invoices?.length>0?`(${invoices?.length})`:''}`}/>
                   </FileUpload>
                 </Col>
-                <Col span={10}>
+                <Col span={5}>
                   <MyButton
                     variant="upload"
                     text="Excel"
