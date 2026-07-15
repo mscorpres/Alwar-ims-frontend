@@ -104,6 +104,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
                 uom: r.uom,
                 key: r.key,
                 conRemark: r.conRemark || "",
+                lastRate: r.lastRate,
               };
             });
             setBomList(arr);
@@ -438,6 +439,12 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
       renderCell: ({ row }) => <Typography.Text>{row.uom}</Typography.Text>,
     },
     {
+      field: "lastRate",
+      headerName: "JW Last Rate",
+      width: 180,
+      renderCell: ({ row }) => <Input disabled value={row.lastRate} />,
+    },
+    {
       field: "venLocationStock",
       headerName: "Vendor Location Stock",
       width: 180,
@@ -504,6 +511,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
         remark: bomList.map((r) => r.conRemark || ""),
         consumpLoc: consumpLoc,
         challanDate: challanDate,
+        consumpRate: bomList.map((r) => r.lastRate),
       };
 
       setLoading(true);
@@ -611,6 +619,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
             location: mainData[0].location,
             poQuantity: row.rqdQty,
             pendingWithjobwork: row.pendingWithjobwork,
+            last_rate: row.lastRate,
           };
         }),
       });
@@ -920,7 +929,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
                       >
                         <MySelect
                           options={[
-                            { text: "Cons021", value: "20211028124102" },
+                            { text: "AL_CONS01", value: "1765454664276" },
                           ]}
                           onChange={(value) => setConsumpLoc(value)}
                           placeholder="Select Consumption Location"

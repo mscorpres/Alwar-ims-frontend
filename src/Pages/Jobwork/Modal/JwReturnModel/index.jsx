@@ -28,6 +28,7 @@ import useApi from "../../../../hooks/useApi";
 import { uplaodFileInJWReturn } from "../../../../api/general";
 import MyDataTable from "../../../../Components/MyDataTable";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
+import SingleDatePicker from "../../../../Components/SingleDatePicker";
 
 const JwReturnModel = ({ show, close }) => {
   const { showToast } = useToast();
@@ -125,8 +126,8 @@ const JwReturnModel = ({ show, close }) => {
         transaction: transaction,
       });
 
-      const {body,header} = response?.data;
-      const headerValues = header;
+      const { data: body, header } = response ?? {};
+      const headerValues = header ?? {};
       setVendor(headerValues?.vendor?.code)
       let headerArr = [];
       const headerObj = {
@@ -158,6 +159,7 @@ const JwReturnModel = ({ show, close }) => {
         partCode: row.partcode,
         uom: row.unitsname,
         pendingQty: row.pendingWithJw,
+        rate:row.last_rate ??"",
       }));
 
       setRows(componentArr);
@@ -181,7 +183,8 @@ const JwReturnModel = ({ show, close }) => {
       remark: selectedRows.map((row) => row.remark ?? "--"),
       hsncode: selectedRows.map((row) => row.hsn),
       ewaybill: values.ewayBill ?? "--",
-      vendor_location:values?.vendor_location?.value
+      vendor_location:values?.vendor_location?.value,
+      challan_date: values?.challanDate, 
     };
     // console.log("finalObj", finalObj);
 
@@ -446,6 +449,27 @@ const JwReturnModel = ({ show, close }) => {
                     <Form.Item label="Vendor Location" name="vendor_location">
           <MySelect labelInValue={true} options={vendorLocationOptions} />
         </Form.Item>
+        <Form.Item
+                      label="Challan Date"
+                      name="challanDate"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select Challan Date",
+                        },
+                      ]}
+                    >
+                      <SingleDatePicker
+                        size="medium"
+                        value={form.getFieldValue("challanDate")}
+                        setDate={(date) => {
+                          form.setFieldsValue({ challanDate: date });
+                      
+                        }}
+                        placeholder="Select Challan Date"
+                        format={"DD-MM-YYYY"}
+                      />
+                    </Form.Item>
                   </Card>
                 </Col>
 

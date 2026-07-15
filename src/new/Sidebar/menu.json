@@ -1033,9 +1033,9 @@
                 "children": [
                   {
                     "key": "B41",
-                    "label": "Part Code Conversion",
+                    "label": "SF Part Code Conversion",
                     "icon": "TransformIcon",
-                    "path": "/warehouse/part-code-conversion",
+                    "path": "/warehouse/sf-part-code-conversion",
                     "isShown": true
                   },
                   {
@@ -1993,35 +1993,7 @@
           }
         ]
       },
-      {
-        "key": "E",
-        "label": "CPM",
-        "icon": "CalculatorFilled",
-        "children": [
-          {
-            "key": "cpm-internal-links",
-            "label": "CPM",
-            "icon": "CalculatorFilled",
-            "isHeading": true,
-            "children": [
-              {
-                "key": "E11",
-                "label": "CPM Analysis",
-                "icon": "AnalyticsIcon",
-                "path": "/cpm/analysis",
-                "isShown": true
-              },
-              {
-                "key": "reports/cpm",
-                "label": "CPM Finance",
-                "icon": "AccountBalanceIcon",
-                "path": "/cpm/reports",
-                "isShown": true
-              }
-            ]
-          }
-        ]
-      },
+     
 
       {
         "key": "/invoice/create",

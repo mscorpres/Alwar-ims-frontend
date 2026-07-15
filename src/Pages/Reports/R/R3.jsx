@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./r.css";
 import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Row } from "antd";
@@ -15,6 +15,8 @@ const R3 = () => {
   const [responseData, setResponseData] = useState([]);
   const [selectDate, setSelectDate] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isValidation, setIsValidation] = useState(false);
+
 
   const columns = [
     { field: "transaction1", headerName: "Ppr No.", width: 100 },
@@ -37,7 +39,8 @@ const R3 = () => {
 
   const fetch = async () => {
     if (!selectDate) {
-      showToast("Please Select Date Then Proceed Next Step", "error");
+      setIsValidation(true);
+    return
     } else {
       setResponseData([]);
       setLoading(true);
@@ -88,7 +91,7 @@ const R3 = () => {
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={4} className="gutter-row">
           {/* <SingleDatePicker setDate={setSelectDate} /> */}
-          <MyDatePicker setDateRange={setSelectDate} size="default" />
+          <MyDatePicker setDateRange={setSelectDate} size="default" value={selectDate}  showError={isValidation} />
         </Col>
         <Col span={2} className="gutter-row">
           <MyButton variant="search" onClick={fetch} block type="primary">

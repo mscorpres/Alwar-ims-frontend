@@ -1,13 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button, Col, Row } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import axios from "axios";
 import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { DownloadOutlined } from "@ant-design/icons";
 import {
   downloadCSV,
-  downloadCSVCustomColumns,
 } from "../../../Components/exportToCSV";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
@@ -18,6 +16,7 @@ function R16() {
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateData, setDateData] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const columns = [
     { field: "DATE", headerName: "Date & Time", width: 150 },
@@ -39,11 +38,10 @@ function R16() {
   ];
 
   const fetch = async () => {
+    if(!datee) return setIsValid(true);
     setDateData([]);
     setLoading(true);
-    const response = await imsAxios.post("/transaction/transactionOut", {
-      data: datee,
-    });
+    const response = await imsAxios.get(`/transaction/transactionOut?data=${datee}`);
 
     if (response.success) {
       // setLoading(true);
@@ -70,7 +68,7 @@ function R16() {
     <div style={{ height: "calc(100% - 50px)" }}>
       <Row gutter={16} style={{ margin: "5px" }}>
         <Col span={4}>
-          <MyDatePicker size="default" setDateRange={setDatee} />
+          <MyDatePicker size="default" setDateRange={setDatee} showError={isValid} value={datee} />
         </Col>
 
         <Col span={1}>

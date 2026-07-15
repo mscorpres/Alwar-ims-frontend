@@ -895,14 +895,14 @@ const Routes = [
     main: () => <Profile />,
   },
   // CPM
-  {
-    path: "/cpm/analysis",
-    main: () => <CPMAnalysis />,
-  },
-  {
-    path: "/cpm/reports",
-    main: () => <CPMReport />,
-  },
+  // {
+  //   path: "/cpm/analysis",
+  //   main: () => <CPMAnalysis />,
+  // },
+  // {
+  //   path: "/cpm/reports",
+  //   main: () => <CPMReport />,
+  // },
 
   // Jobwork
   {
@@ -1366,7 +1366,7 @@ const Routes = [
     main: () => <CreateBranchTransferChallan />,
   },
   {
-    path: "/warehouse/part-code-conversion",
+    path: "/warehouse/sf-part-code-conversion",
     main: () => <PartCodeConversion />,
   },
   // to be added

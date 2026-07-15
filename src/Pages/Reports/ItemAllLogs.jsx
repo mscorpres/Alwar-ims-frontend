@@ -79,7 +79,14 @@ export default function ItemAllLogs() {
     ]);
     setRows([]);
 
-    const response = await imsAxios.get("/q1/view?wise=C&data=" + values.component + "&page=" + page + "&limit=" + limit );
+    const response = await imsAxios.get("/q1/view", {
+      params: {
+        wise: "C",
+        data: values.component,
+        page: page,
+        limit: limit,
+      },
+    });
 
     setLoading(false);
     if (response.success) {
@@ -142,7 +149,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Date",
       field: "transactionDate",
-      width: 120,
+      minWidth: 160,
       renderCell: ({ row }) => <ToolTipEllipses text={row.transactionDate} />,
     },
     {
@@ -176,7 +183,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Transaction",
       field: "transactionID",
-      width: 150,
+      minWidth: 180,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.transactionID} copy={true} />
       ),
@@ -197,7 +204,7 @@ export default function ItemAllLogs() {
       width: 120,
     },
     {
-      field: "weightedPurchaseRate",
+      field: "tbl_weighted_rate",
       headerName: "Weighted Average Rate",
       width: 180,
     },

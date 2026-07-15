@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import "./r.css";
 import { Button, Col, Input, Row, Skeleton } from "antd";
 import { useToast } from "../../../hooks/useToast.js";
@@ -20,8 +20,7 @@ function R9() {
   const { showToast } = useToast();
   const [locDataTo, setloctionDataTo] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
-
-  const [seacrh, setSearch] = useState("");
+const [validation, setValidation] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const [bomName, setBomName] = useState([]);
@@ -34,7 +33,7 @@ function R9() {
   const [resData, setResData] = useState([]);
   const [locationDetail, setLocationDetail] = useState("");
 
-  const { executeFun, loading1 } = useApi();
+  const { executeFun } = useApi();
   const handleDownloadingCSV = () => {
     downloadCSV(resData, columns, "Location Wise BOM Report");
   };
@@ -83,30 +82,38 @@ const getDataByLocation = async (e) => {
 };
 
   const getBom = async () => {
-    const response = await imsAxios.post("/backend/fetchBomForProduct", {
-      search: allData?.selectProduct,
+   try {
+     const response = await imsAxios.post("/backend/fetchBomForProduct", {
+      search: allData?.selectProduct?.key,
     });
-    const arr = response.data.map((d) => {
+   if(response.success){
+  const arr = response.data.map((d) => {
       return { value: d.bomid, text: d.bomname };
     });
     setBomName(arr);
+   } else {
+    showToast(response.message, "error");
+   }
+    
+   } catch (error) {
+    showToast(
+      error?.response?.data?.message ||
+        error?.message ||
+        "Failed to fetch location data",
+      "error"
+    );
+   }
   };
 
   const fetchBySearch = async () => {
-    if (!allData.selectProduct) {
-      showToast("Please select a product", "error");
-    } else if (!allData.selectBom) {
-      showToast("Please select a bom", "error");
-    } else if (!allData.selectLocation) {
-      showToast("Please select a Location", "error");
-    } else if (!selectDate[0]) {
-      showToast("Please select a valid date", "error");
+    if (!allData.selectProduct || !allData.selectBom || !allData.selectLocation || !selectDate) {
+      return setValidation(true);
     } else {
       setLoading(true);
       const response = await imsAxios.post("/report9", {
-        skucode: allData.selectProduct,
+        skucode: allData.selectProduct?.key,
         subject: allData.selectBom,
-        location: allData.selectLocation,
+        location: allData.selectLocation?.key,
         date: selectDate,
         action: "search_r9",
       });
@@ -147,7 +154,7 @@ const getDataByLocation = async (e) => {
 
   const getLocationShow = async () => {
     const response = await imsAxios.post("/report9/fetchLocationDetail", {
-      location_key: allData?.selectLocation,
+      location_key: allData?.selectLocation?.key,
     });
     setLocationDetail(response.data);
   };
@@ -219,11 +226,17 @@ const getDataByLocation = async (e) => {
                 optionsState={asyncOptions}
                 placeholder="Select Product"
                 loadOptions={getDataBySearch}
-                value={allData.selectProduct.value}
+                value={allData.selectProduct}
+                labelInValue
+                message="Please select Product"
+                showError={validation}
                 onChange={(e) =>
-                  setAllData((allData) => {
+                 {
+
+                   setAllData((allData) => {
                     return { ...allData, selectProduct: e };
                   })
+                 }
                 }
               />
             </Col>
@@ -231,7 +244,10 @@ const getDataByLocation = async (e) => {
               <MySelect
                 placeholder="Select Bom"
                 options={bomName}
-                value={allData?.selectBom.value}
+                value={allData?.selectBom}
+
+                message="Please select Bom"
+                showError={validation}
                 onChange={(e) =>
                   setAllData((allData) => {
                     return { ...allData, selectBom: e };
@@ -246,24 +262,26 @@ const getDataByLocation = async (e) => {
                 optionsState={locDataTo}
                 placeholder="Select Location"
                 loadOptions={getDataByLocation}
-                onInputChange={(e) => setSearch(e)}
-                value={allData.selectLocation.value}
+                  labelInValue
+                value={allData.selectLocation}
                 onChange={(e) =>
                   setAllData((allData) => {
                     return { ...allData, selectLocation: e };
                   })
                 }
+                message="Please select Location"
+                showError={validation}
               />
             </Col>
             <Col span={24} style={{ marginTop: "5px" }}>
-              <SingleDatePicker setDate={setSelectDate} />
+              <SingleDatePicker setDate={setSelectDate} value={selectDate} showError={validation} />
             </Col>
             <Col span={24} style={{ marginTop: "5px" }}>
-              {locationDetail.length > 1 && (
+              {locationDetail?.length > 1 && (
                 <TextArea rows={3} disabled value={locationDetail} />
               )}
             </Col>
-            {allData?.selectBom.length > 1 && (
+           
               <Col span={24} style={{ marginTop: "5px" }}>
                 <div style={{ display: "flex", justifyContent: "end" }}>
                   {/* <Button
@@ -281,7 +299,7 @@ const getDataByLocation = async (e) => {
                   </MyButton>
                 </div>
               </Col>
-            )}
+          
           </Row>
         </Col>
         <Col span={19}>

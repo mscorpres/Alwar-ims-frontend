@@ -137,31 +137,31 @@ const Qctest = () => {
     });
     setPprNo(e);
     setCustomerDetails({
-      customerName: data.data[0].customer_name,
-      productName: data.data[0].product_name,
+      customerName: response.data[0].customer_name,
+      productName: response.data[0].product_name,
     });
     setProductDetails({
       scannedQuantity: "",
       passedQuantity: "",
       failedQuantity: "",
       remainingQuantity: "",
-      totalQuantity: data.data[0].total_qty,
+      totalQuantity: response.data[0].total_qty,
     });
-    setAccesstoken(data.data[0].access_token);
-    setSkuNumber(data.data[0].product_sku);
-    getProcessofSku(data.data[0].product_sku);
+    setAccesstoken(response.data[0].access_token);
+    setSkuNumber(response.data[0].product_sku);
+    getProcessofSku(response.data[0].product_sku);
   };
   //2) PROCESS SEARCH API
   const getProcessofSku = async (skucode) => {
     const response = await imsAxios.post("qaProcessmaster/fetchQAProcess", {
       sku: skucode,
     });
-    if (data.status === "error") {
+    if (response.status === "error") {
       showToast(response.message?.msg || response.message, "error");
       setProcessOptions([]);
       return;
     }
-    setProcessData(data.data);
+    setProcessData(response.data);
     let arr = [];
     arr = response.data.map((d) => {
       return { text: d.process.name, value: d.process.key };

@@ -163,7 +163,7 @@ function ViewAgreement() {
         setProcessOptions(arr);
       }
     } catch (error) {
-      showToast(error, "error");
+      showToast(error?.message||"Failed to fetch data", "error");
     } finally {
       setLoading(false);
     }

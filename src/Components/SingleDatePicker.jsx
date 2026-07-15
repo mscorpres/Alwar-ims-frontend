@@ -16,6 +16,8 @@ export default function SingleDatePicker({
   legal,
   format = "DD-MM-YYYY",
   pickerType,
+  showError=false,
+  message="Please Select Date"
 }) {
   const onChange = (date, dateString) => {
     if (tablePicker) {
@@ -53,7 +55,11 @@ export default function SingleDatePicker({
     }
   }, []);
 
+    const isEmpty = value === undefined || value === null || value === "" || !value;
+  const showValidation = showError  && isEmpty;
+
   return (
+     <div style={{ position: "relative" }}>
     <DatePicker
       disabled={disabled}
       disabledDate={disabledDate}
@@ -72,5 +78,7 @@ export default function SingleDatePicker({
       onChange={onChange}
       placeholder={placeholder && placeholder}
     />
+          {showValidation && <span className="field-validation-tooltip">{message}</span>}
+ </div>
   );
 }
