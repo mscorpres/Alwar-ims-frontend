@@ -995,6 +995,7 @@ export default function MaterialInWithPO() {
       {/* currency modal */}
       {showCurrency != null && (
         <CurrenceModal
+          key={`${showCurrency.rowId}-${showCurrency.currency}`}
           showCurrency={showCurrency}
           setShowCurrencyModal={setShowCurrenncy}
         />

@@ -1246,6 +1246,7 @@ export default function ExportMaterialInWithPO() {
       {/* currency modal */}
       {showCurrency != null && (
         <CurrenceModal
+          key={`${showCurrency.rowId}-${showCurrency.currency}`}
           showCurrency={showCurrency}
           setShowCurrencyModal={setShowCurrenncy}
         />

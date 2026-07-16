@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Button, Modal, Col, Row, Space, Input, Form, Typography } from "antd";
+import  { useState, useRef } from "react";
+import { Button, Modal, Col, Row, Input, Form, Typography } from "antd";
 
 export default function CurrenceModal({ showCurrency, setShowCurrencyModal }) {
   const inputRef = useRef();
@@ -9,14 +9,11 @@ export default function CurrenceModal({ showCurrency, setShowCurrencyModal }) {
   const submitHandler = () => {
     showCurrency.inputHandler(
       "exchange_rate",
-      { rate: rate, currency: showCurrency.currency },
+      { rate: parseFloat(rate) || 1, currency: showCurrency.currency },
       showCurrency.rowId
     );
     setShowCurrencyModal(null);
   };
-  useEffect(() => {
-    console.log(showCurrency);
-  }, [showCurrency]);
   return (
     <Modal
       title="Enter Currency Rate"
@@ -50,7 +47,7 @@ export default function CurrenceModal({ showCurrency, setShowCurrencyModal }) {
         level={5}
         style={{ display: "flex", justifyContent: "center", marginTop: "15px" }}
       >
-       ₹ {rate * showCurrency?.price}
+       ₹ {(parseFloat(rate) || 0) * (showCurrency?.price || 0)}
       </Title>
       <Title level={5} style={{ display: "flex", justifyContent: "center" }}>
         {showCurrency?.symbol} {showCurrency?.price}

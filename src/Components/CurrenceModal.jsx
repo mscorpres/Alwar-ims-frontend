@@ -7,7 +7,7 @@ export default function CurrenceModal({ showCurrency, setShowCurrencyModal }) {
   const [rate, setRate] = useState(showCurrency.exchange_rate || 0);
 
   const submitHandler = () => {
-    showCurrency.onExchangeSubmit(rate);
+    showCurrency.onExchangeSubmit(parseFloat(rate) || 1);
     setShowCurrencyModal(null);
   };
   return (

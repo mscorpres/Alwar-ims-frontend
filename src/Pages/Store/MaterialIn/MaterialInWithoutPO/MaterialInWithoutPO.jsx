@@ -202,7 +202,6 @@ export default function MaterialInWithoutPO() {
 
       if (response?.success) {
         const { data } = response;
-
         const transactionId =
           data?.data?.txn || response?.data?.data?.txn || data?.txn;
         setShowSuccessPage({
@@ -436,7 +435,6 @@ export default function MaterialInWithoutPO() {
       syncComponentsCurrency(value, 1);
       return;
     }
-
     syncComponentsCurrency(value, form.getFieldValue("exchangeRate") || 1);
 
     const components = form.getFieldValue("components") || [];
@@ -452,8 +450,9 @@ export default function MaterialInWithoutPO() {
       exchange_rate: form.getFieldValue("exchangeRate") || 1,
       symbol,
       onExchangeSubmit: (rate) => {
-        form.setFieldValue("exchangeRate", rate);
-        syncComponentsCurrency(value, rate);
+        const parsedRate = parseFloat(rate) || 1;
+        form.setFieldValue("exchangeRate", parsedRate);
+        syncComponentsCurrency(value, parsedRate);
       },
     });
   };
@@ -964,6 +963,7 @@ export default function MaterialInWithoutPO() {
     <div style={{ height: "100%", overflow: "hidden", padding: 10 }}>
       {showCurrency != null && (
         <CurrenceModal
+          key={showCurrency.currency}
           showCurrency={showCurrency}
           setShowCurrencyModal={setShowCurrenncy}
         />
@@ -1175,6 +1175,9 @@ export default function MaterialInWithoutPO() {
                           options={currencies}
                           onChange={handleCurrencyChange}
                         />
+                      </Form.Item>
+                      <Form.Item name="exchangeRate" hidden>
+                        <Input />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
