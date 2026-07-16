@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { useToast } from "../../../hooks/useToast.js";
-import { PlusCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons";
-import { Col, Row, Select, Button, Input } from "antd";
+import { Col, Row, Select, Input } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -13,7 +12,6 @@ import { Add, Delete } from "@mui/icons-material";
 const { TextArea } = Input;
 const CreateFGOut = () => {
   const { showToast } = useToast();
-  const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [locationOptions, setLocationOptions] = useState([]);
   const [selLoading, setSelLoading] = useState(false);
@@ -23,7 +21,6 @@ const CreateFGOut = () => {
     { label: "Other", value: "OT001" },
   ];
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
   const [createFgOut, setCreateFgOut] = useState({
     selectType: "",
     comment: "",
@@ -157,11 +154,12 @@ const compInputHandler = async (name, id, value) => {
             }
           }),
         );
-        toast.error(response?.message);
+     
+        showToast(response?.message, "error");
       }
     
   } catch (error) {
-    toast.error(error?.response?.data?.message ?? "Something went wrong");
+    showToast(error?.message || "Error fetching product options", "error");
   }
     } else if (name == "quantity") {
       setAddRowData((quantity) =>
@@ -203,6 +201,7 @@ const compInputHandler = async (name, id, value) => {
   };
 
   const addFGOut = async (e) => {
+     setLoadingUpdate(true);
     e.preventDefault();
     let arrPro = [];
     let arrQty = [];
@@ -225,7 +224,7 @@ const compInputHandler = async (name, id, value) => {
       showToast("Location is mandatory for all rows", "error");
     } else {
      try {
-        setLoadingUpdate(true);
+       
         const response = await imsAxios.post("/fgout/createFgOut", {
           fg_out_type: createFgOut.selectType,
           product: arrPro,
@@ -237,18 +236,15 @@ const compInputHandler = async (name, id, value) => {
         });
         if (response?.success) {
           resetFunction();
-        toast.success(response.message);
+           showToast(response.message, "success");
           setLoadingUpdate(false);
         } else {
-          toast.error(
-            response.message ?? "Failed to create FG Out. Please try again.",
-          );
+          showToast(response.message, "error");
           setLoadingUpdate(false);
         }
       } catch (error) {
-        toast.error(
-          error?.message ?? "Failed to create FG Out. Please try again.",
-        );
+      
+        showToast(error?.message ?? "Something went wrong", "error");
       }
     }
   };
@@ -315,9 +311,7 @@ const compInputHandler = async (name, id, value) => {
       renderCell: ({ row }) => (
         <MyAsyncSelect
           selectLoading={selLoading}
-          style={{ width: "100%" }}
           onBlur={() => setAsyncOptions([])}
-          onInputChange={(e) => setSearchInput(e)}
           loadOptions={getOption}
           value={addRowData?.product}
           optionsState={asyncOptions}
@@ -429,7 +423,6 @@ const compInputHandler = async (name, id, value) => {
           style={{ height: "calc(100% - 50px)", overflowY: "auto" }}
         >
           <MyDataTable
-            loading={loading}
             data={addRowData}
             columns={columns}
             hideHeaderMenu
