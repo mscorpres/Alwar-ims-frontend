@@ -229,10 +229,20 @@ export default function useFileUpload({
     pending.forEach((item) =>
       updateItem(item.uid, { status: "uploading", progress: 0, error: undefined }),
     );
+  
+    const progressTimer = setInterval(() => {
+      pending.forEach((item) => {
+        const current = itemsRef.current.find((it) => it.uid === item.uid);
+        if (current?.status === "uploading" && current.progress < 90) {
+          updateItem(item.uid, { progress: current.progress + 10 });
+        }
+      });
+    }, 300);
     try {
       const response = await onUploadBatch(
         pending.map((item) => item.file as File),
       );
+      clearInterval(progressTimer);
       if (response?.success === false) {
         pending.forEach((item) =>
           updateItem(item.uid, {
@@ -252,6 +262,7 @@ export default function useFileUpload({
       );
       return { success: true, response };
     } catch (error: any) {
+      clearInterval(progressTimer);
       pending.forEach((item) =>
         updateItem(item.uid, {
           status: "error",
