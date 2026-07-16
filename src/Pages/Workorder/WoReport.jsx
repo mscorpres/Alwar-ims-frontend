@@ -12,13 +12,13 @@ import MyDataTable from "../../Components/MyDataTable.jsx";
 import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
 
 const challanColumns = [
-  { headerName: "Serial No", field: "serial_no", width: 100 },
-  { headerName: "Challan Date", field: "challan_date", width: 130 },
-  { headerName: "Challan Eway", field: "challan_eway", width: 120 },
-  { headerName: "Challan No", field: "challan_no", width: 120 },
-  { headerName: "Challan Qty", field: "challan_qty", width: 110 },
-  { headerName: "Challan Rate", field: "challan_rate", width: 110 },
-  { headerName: "Challan Value", field: "challan_value", width: 120 },
+  { headerName: "Serial No", field: "serial_no", minwidth: 100 },
+  { headerName: "Challan Date", field: "challan_date", minwidth: 130 },
+  { headerName: "Challan Eway", field: "challan_eway", minwidth: 120 },
+  { headerName: "Challan No", field: "challan_no", minwidth: 120 },
+  { headerName: "Challan Qty", field: "challan_qty", minwidth: 110 },
+  { headerName: "Challan Rate", field: "challan_rate", minwidth: 110 },
+  { headerName: "Challan Value", field: "challan_value", minwidth: 120 },
 ];
 
 const WoReport = () => {
@@ -54,7 +54,7 @@ const WoReport = () => {
       {
         field: "_expand",
         headerName: "",
-        width: 48,
+        minwidth: 48,
         sortable: false,
         disableColumnMenu: true,
         renderCell: ({ row }) => {
@@ -75,16 +75,16 @@ const WoReport = () => {
           );
         },
       },
-      { headerName: "ID", field: "serialno", width: 90 },
-      { headerName: "Part Code", field: "partCode", width: 120 },
-      { headerName: "Part Name", field: "partName", flex: 1, minWidth: 160 },
-      { headerName: "Min Id", field: "minId", width: 100 },
-      { headerName: "Min Date", field: "minDate", width: 120 },
-      { headerName: "Min Eway", field: "minEway", width: 100 },
-      { headerName: "Min Qty", field: "minQty", width: 90 },
-      { headerName: "Pending qty", field: "pending_qty", width: 110 },
-      { headerName: "Min Rate", field: "minRate", width: 100 },
-      { headerName: "Min Value", field: "minValue", width: 110 },
+      { headerName: "ID", field: "serialno", minwidth: 90 },
+      { headerName: "Part Code", field: "partCode", minwidth: 120 },
+      { headerName: "Part Name", field: "partName", flex: 1, minWidth: 260 },
+      { headerName: "Min Id", field: "minId", minwidth: 200 },
+      { headerName: "Min Date", field: "minDate", minwidth: 140 },
+      { headerName: "Min Eway", field: "minEway", minwidth: 140 },
+      { headerName: "Min Qty", field: "minQty", minwidth: 90 },
+      { headerName: "Pending qty", field: "pending_qty", minwidth: 110 },
+      { headerName: "Min Rate", field: "minRate", minwidth: 100 },
+      { headerName: "Min Value", field: "minValue", minwidth: 110 },
       {
         field: "_challanPanel",
         headerName: "Challan breakdown",
