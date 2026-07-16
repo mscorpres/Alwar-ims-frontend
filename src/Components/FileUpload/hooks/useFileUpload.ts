@@ -219,11 +219,11 @@ export default function useFileUpload({
     const pending = itemsRef.current.filter(
       (item) => (item.status === "idle" || item.status === "error") && item.file,
     );
-    if (!pending.length) return;
+    if (!pending.length) return { success: false };
 
     if (!onUploadBatch) {
       pending.forEach((item) => uploadItem(item.uid, item.file as File));
-      return;
+      return { success: true };
     }
 
     pending.forEach((item) =>
@@ -240,7 +240,7 @@ export default function useFileUpload({
             error: response?.message || "Upload failed",
           }),
         );
-        return;
+        return { success: false, response };
       }
       pending.forEach((item) =>
         updateItem(item.uid, {
@@ -250,6 +250,7 @@ export default function useFileUpload({
           url: response?.url ?? response?.data?.url ?? undefined,
         }),
       );
+      return { success: true, response };
     } catch (error: any) {
       pending.forEach((item) =>
         updateItem(item.uid, {
@@ -257,6 +258,7 @@ export default function useFileUpload({
           error: error?.message || "Upload failed",
         }),
       );
+      return { success: false, error };
     }
   }, [onUploadBatch, uploadItem, updateItem]);
 
