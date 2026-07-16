@@ -31,17 +31,6 @@ function ImageCard({
   const thumb = item.previewUrl ?? item.url;
   const isPending = item.status === "idle";
 
-  const handleReplaceClick = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    if (accept) input.accept = accept;
-    input.onchange = () => {
-      const file = input.files?.[0];
-      if (file) onReplace(item.uid, file);
-    };
-    input.click();
-  };
-
 
 
   return (
@@ -105,7 +94,11 @@ function ImageCard({
             {item.name}
           </span>
           {item.status === "uploading" && (
-            <Progress percent={item.progress} size="small" showInfo={false} />
+            <Progress
+              percent={Math.round(item.progress ?? 0)}
+              size="small"
+              status="active"
+            />
           )}
           {item.status === "error" && (
             <span style={{ fontSize: 12, color: "#ff4d4f" }}>{item.error || "Upload failed"}</span>
