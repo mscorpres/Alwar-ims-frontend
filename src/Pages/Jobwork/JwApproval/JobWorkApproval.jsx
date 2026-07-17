@@ -128,7 +128,7 @@ export default function JobWorkApproval() {
     {
       headerName: "PO ID",
       field: "jw_transaction",
-      width: 150,
+      width: 180,
     },
     {
       headerName: "Cost Center",
@@ -154,7 +154,7 @@ export default function JobWorkApproval() {
       headerName: "Vendor",
       field: "vendor_name",
       flex: 1,
-      minWidth: 200,
+      minWidth: 300,
     },
     {
       headerName: "PO Date / Time",

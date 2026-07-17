@@ -160,7 +160,7 @@ const JwsfInward = () => {
     { field: "index", headerName: "S No.", width: 8 },
     { field: "date", headerName: "JW Date", width: 120 },
     { field: "vendor", headerName: "Vendor", width: 380 },
-    { field: "transaction_id", headerName: "JW Id", width: 150 },
+    { field: "transaction_id", headerName: "JW Id", width: 190 },
     { field: "sku_code", headerName: "SKU", width: 100 },
     { field: "sku_name", headerName: "Product", width: 340 },
     { field: "ord_qty", headerName: "JW PO Order Qty", width: 150 },

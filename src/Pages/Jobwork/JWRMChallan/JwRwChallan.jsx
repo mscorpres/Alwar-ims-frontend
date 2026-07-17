@@ -239,15 +239,15 @@ function JwRwChallan() {
     {
       headerName: "Req. Date",
       field: "issue_challan_rm_dt",
-      width: 150,
+      width: 190,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.issue_challan_rm_dt} />
       ),
     },
     {
       headerName: "Vendor",
-      flex: 1,
       field: "vendor",
+      width: 190,
       renderCell: ({ row }) => <ToolTipEllipses text={row.vendor} />,
     },
     {
@@ -268,7 +268,7 @@ function JwRwChallan() {
     },
     {
       headerName: "Challan ID",
-      width: 150,
+      width: 190,
       field: "challan_id",
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.challan_id} copy={true} />
@@ -305,7 +305,7 @@ function JwRwChallan() {
     },
     {
       headerName: "Product",
-      flex: 1,
+      width: 200,
       field: "jw_sku_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.jw_sku_name} />,
     },

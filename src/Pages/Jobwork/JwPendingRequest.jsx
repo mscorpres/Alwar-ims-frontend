@@ -120,7 +120,7 @@ function JwPendingRequest() {
     {
       headerName: "Req. Date",
       field: "issue_challan_rm_dt",
-      width: 150,
+      width: 180,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.issue_challan_rm_dt} />
       ),
@@ -149,7 +149,7 @@ function JwPendingRequest() {
     },
     {
       headerName: "Challan ID",
-      width: 150,
+      width: 190,
       field: "challan_id",
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.challan_id} copy={true} />

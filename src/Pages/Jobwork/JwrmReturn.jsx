@@ -161,7 +161,7 @@ const JwrmReturn = () => {
   const columns = [
     { field: "index", headerName: "S No.", width: 8 },
     { field: "date", headerName: "JW Date", width: 120 },
-    { field: "transaction_id", headerName: "JW Id", width: 150 },
+    { field: "transaction_id", headerName: "JW Id", width: 180 },
     { field: "vendor", headerName: "Vendor", width: 350 },
     { field: "sku_code", headerName: "SKU", width: 100 },
     { field: "sku_name", headerName: "Name", width: 300 },

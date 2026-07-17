@@ -183,7 +183,7 @@ const JwCompleted = () => {
     { field: "index", headerName: "S No.", width: 18 },
     { field: "status", headerName: "Status", width: 120 },
     { field: "date", headerName: "JW Date", width: 120 },
-    { field: "transaction_id", headerName: "JW Id.", width: 150 },
+    { field: "transaction_id", headerName: "JW Id.", width: 190 },
     { field: "sku_code", headerName: "SKU", width: 100 },
     { field: "sku_name", headerName: "Product", width: 510 },
     { field: "ord_qty", headerName: "Order Qty", width: 120 },

@@ -177,8 +177,8 @@ const JwIssue = () => {
 
   const columns = [
     { field: "index", headerName: "S No.", width: 8 },
-    { field: "date", headerName: "Date", width: 100 },
-    { field: "jw_transaction_id", headerName: "JW ID", width: 150 },
+    { field: "date", headerName: "Date", width: 130 },
+    { field: "jw_transaction_id", headerName: "JW ID", width: 190 },
     {
       field: "vendor",
       headerName: "Vendor",

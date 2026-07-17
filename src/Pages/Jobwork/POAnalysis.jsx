@@ -334,7 +334,7 @@ const columns = [
   {
     headerName: "Date",
     field: "date",
-    width: 150,
+    width: 160,
     renderCell: ({ row }) => <ToolTipEllipses text={row.date} />,
   },
   {
@@ -346,7 +346,7 @@ const columns = [
   {
     headerName: "Vendor",
     field: "vendor",
-    minWidth: 150,
+    minWidth: 300,
     flex: 1,
     renderCell: ({ row }) => <ToolTipEllipses text={row.vendor} />,
   },
@@ -359,7 +359,7 @@ const columns = [
   {
     headerName: "Product",
     field: "product",
-    minWidth: 150,
+    minWidth: 250,
     flex: 1,
     renderCell: ({ row }) => <ToolTipEllipses text={row.product} />,
   },
@@ -379,7 +379,7 @@ const columns = [
   {
     headerName: "Project Description",
     field: "project_description",
-    width: 200,
+    width: 250,
     renderCell: ({ row }) => (
       <ToolTipEllipses text={row.project_description} copy={true} />
     ),
