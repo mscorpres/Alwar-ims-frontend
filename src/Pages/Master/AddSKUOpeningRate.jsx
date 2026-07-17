@@ -98,9 +98,9 @@ const { showToast } =    useToast();
 
   const columns = [
     { field: "serialNo", headerName: "Serial No", width: 100 },
-    { field: "productName", headerName: "Product Name", flex: 1 },
+    { field: "productName", headerName: "Product Name", width: 250 },
     { field: "product_key", headerName: "Product Key", width: 180 },
-     { field: "p_sku", headerName: "SKU", width: 180 },
+     { field: "p_sku", headerName: "SKU", width: 80 },
     
     {
       field: "closing_qty",

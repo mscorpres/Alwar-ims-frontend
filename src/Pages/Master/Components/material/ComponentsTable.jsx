@@ -28,7 +28,7 @@ const columns = [
   {
     headerName: "Name",
     field: "componentName",
-    minWidth: 150,
+    minWidth: 350,
     renderCell: ({ row }) => <ToolTipEllipses text={row.componentName} />,
     flex: 1,
   },

@@ -332,7 +332,7 @@ export default function ItemLocationLog() {
     {
       headerName: "Remark",
       field: "remark",
-      width: 200,
+      width: 250,
     },
   ];
 

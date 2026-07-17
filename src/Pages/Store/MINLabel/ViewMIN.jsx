@@ -268,8 +268,7 @@ const columns = [
   {
     headerName: "Vendor",
     field: "vendor",
-    //   width: 200,
-    flex: 1,
+    width: 260,
   },
   {
     headerName: "Part Code",
@@ -284,7 +283,7 @@ const columns = [
   {
     headerName: "In Loc",
     field: "location",
-    width: 120,
+    width: 180,
   },
   {
     headerName: "In By",

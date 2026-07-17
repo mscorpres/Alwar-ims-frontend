@@ -30,9 +30,9 @@ function ShippingAddress() {
   };
   const columns = [
     { headerName: "Sr. No.", field: "index", width: 80 },
-    { headerName: "Label", field: "label", flex: 1 },
-    { headerName: "Company", field: "company", flex: 1 },
-    { headerName: "State", field: "state", flex: 1 },
+    { headerName: "Label", field: "label", flex: 1, width: 150 },
+    { headerName: "Company", field: "company", flex: 1, width: 250 },
+    { headerName: "State", field: "state", flex: 1, width: 150 },
     { headerName: "Pan No.", field: "pan", width: 150 },
     { headerName: "GST", field: "gst", width: 150 },
   ];
