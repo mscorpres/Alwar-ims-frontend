@@ -41,16 +41,16 @@ function R17() {
     const response = await imsAxios.post("/report17", values);
     setFetchLoading(false);
     if (response.success) {
-      let arr = data.response.data2.map((row, index) => ({
+      let arr = response.data2.map((row, index) => ({
         ...row,
         id: index,
       }));
       setRows(arr);
       let summaryArr = [
-        { title: "Component", description: data.response.data1.component },
+        { title: "Component", description: response.data1.component },
         {
           title: "Closing Quantity",
-          description: `${data.response.data1.closingqty} ${data.response.data1.uom}`,
+          description: `${response.data1.closingqty} ${response.data1.uom}`,
         },
       ];
       setSummaryData(summaryArr);
@@ -145,7 +145,7 @@ function R17() {
     if (vendor) {
       setFormLoading(true);
       const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendor}`);
-      setFormLoading(false);
+
       if (response.success) {
         let arr = [];
         arr = response.data.map((row) => ({
@@ -153,6 +153,7 @@ function R17() {
           text: row.text,
         }));
         setLocationOptions(arr);
+              setFormLoading(false);
       } else {
         showToast(response.message?.msg || response.message, "error");
       }

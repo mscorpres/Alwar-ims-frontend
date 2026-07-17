@@ -420,12 +420,13 @@ const compInputHandler = async (name, id, value) => {
         </Col>
         <Col
           span={24}
-          style={{ height: "calc(100% - 50px)", overflowY: "auto" }}
+          style={{ height: "calc(100% - 50px)", overflowY: "auto", }}
         >
           <MyDataTable
             data={addRowData}
             columns={columns}
             hideHeaderMenu
+            hideFooter
           />
         </Col>
       </Row>
@@ -435,6 +436,7 @@ const compInputHandler = async (name, id, value) => {
           submitFunction={addFGOut}
           nextLabel="Submit"
           loading={loadingUpdate}
+          
         />
       </Row>
     </>
