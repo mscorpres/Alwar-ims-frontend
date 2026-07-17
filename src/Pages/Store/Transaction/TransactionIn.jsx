@@ -81,7 +81,7 @@ const TransactionIn = () => {
     {
       headerName: "Date",
       field: "DATE",
-      width: 120,
+      width: 150,
       renderCell: ({ row }) => <ToolTipEllipses text={row.DATE} />,
     },
     { headerName: "Transaction Type", field: "TYPE", width: 120 },
@@ -90,18 +90,18 @@ const TransactionIn = () => {
     {
       headerName: "Component",
       field: "COMPONENT",
-      minWidth: 200,
+      minWidth: 250,
       flex: 1,
       renderCell: ({ row }) => <ToolTipEllipses text={row.COMPONENT} />,
     },
-    { headerName: "In Location", field: "LOCATION", width: 120 },
+    { headerName: "In Location", field: "LOCATION", width: 150 },
     { headerName: "Rate", field: "RATE", width: 100 },
     { headerName: "Currency", field: "CURRENCY", width: 100 },
     { headerName: "In Qty", field: "INQTY", width: 120 },
     {
       headerName: "Vendor",
       field: "VENDOR",
-      width: 150,
+      width: 300,
       renderCell: ({ row }) => <ToolTipEllipses text={row.VENDOR} />,
     },
     {

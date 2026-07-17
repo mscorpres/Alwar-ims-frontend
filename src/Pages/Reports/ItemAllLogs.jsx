@@ -201,7 +201,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Rate",
       field: "rate",
-      width: 120,
+      width: 150,
     },
     {
       field: "tbl_weighted_rate",
@@ -231,7 +231,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Vendor",
       field: "vendorName",
-      minWidth: 150,
+      minWidth: 180,
       flex: 1,
       renderCell: ({ row }) => <ToolTipEllipses text={row.vendorName} />,
     },

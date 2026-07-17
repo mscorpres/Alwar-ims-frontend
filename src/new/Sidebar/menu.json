@@ -579,13 +579,7 @@
                 "path": "/masters/cost-center",
                 "isShown": true
               },
-              {
-                "key": "B123",
-                "label": "Stock Control",
-                "icon": "ExtensionIcon",
-                "path": "/stockControl",
-                "isShown": true
-              },
+          
               {
                 "key": "products",
                 "label": "Products",
@@ -1391,14 +1385,8 @@
                     "isShown": true
                   }
                 ]
-              },
-              {
-                "key": "B43",
-                "label": "E-Way Bill Report",
-                "icon": "DescriptionIcon",
-                "path": "/warehouse/eway-bill/report",
-                "isShown": true
               }
+              
             ]
           },
           {
