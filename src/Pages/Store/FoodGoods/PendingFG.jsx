@@ -68,12 +68,12 @@ const PendingFG = () => {
       renderCell: ({ row }) => (
         <span> {row.mfg_transaction + " / " + row.mfg_ref_id}</span>
       ),
-      width: 200,
+      width: 250,
     },
     { field: "typeOfPPR", headerName: "Type", width: 150 },
     { field: "mfg_full_date", headerName: "Data/Time", width: 180 },
-    { field: "mfg_sku", headerName: "SKU", width: 100 },
-    { field: "p_name", headerName: "Product", width: 220 },
+    { field: "mfg_sku", headerName: "SKU", width: 150 },
+    { field: "p_name", headerName: "Product", width: 300 },
     {
       field: "mfg_prod_planing_qty",
       headerName: "MFG/STIN Qty",

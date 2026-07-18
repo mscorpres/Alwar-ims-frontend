@@ -104,20 +104,20 @@ const PendingApproval = () => {
     },
     {
       headerName: "Requested From",
-      flex: 1,
-
+      // flex: 1,
+      width: 400,
       field: "requestedFrom",
     },
     {
       headerName: "Request Id",
-      width: 180,
-      maxWidth: 180,
+      width: 400,
+      maxWidth: 400,
       field: "requestId",
     },
     {
       headerName: "Request Date",
-      width: 160,
-      maxWidth: 160,
+      width: 400,
+      maxWidth: 400,
       field: "requestDate",
     },
     {

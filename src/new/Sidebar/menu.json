@@ -1820,13 +1820,6 @@
                 "icon": "MdAccountBox",
                 "path": "/production-ims",
                 "isShown": true
-              },
-              {
-                "key": "D5",
-                "label": "Physical Stock",
-                "icon": "MdAccountBox",
-                "path": "/production/physical-stock/create",
-                "isShown": true
               }
             ]
           },

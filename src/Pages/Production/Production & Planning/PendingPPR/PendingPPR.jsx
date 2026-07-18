@@ -164,7 +164,7 @@ const PendingPPR = () => {
     { headerName: "Type", width: 100, field: "prod_type" },
     {
       headerName: "Project",
-      width: 150,
+      width: 180,
       field: "prod_project",
       renderCell: ({ row }) => <ToolTipEllipses text={row.prod_project} />,
     },
@@ -182,7 +182,7 @@ const PendingPPR = () => {
     },
     {
       headerName: "Req Data/Time",
-      width: 150,
+      width: 180,
       field: "prod_insert_dt",
       renderCell: ({ row }) => <ToolTipEllipses text={row.prod_insert_dt} />,
     },
@@ -193,7 +193,7 @@ const PendingPPR = () => {
     },
     {
       headerName: "Product Name",
-      minWidth: 150,
+      minWidth: 300,
       flex: 1,
       field: "prod_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.prod_name} />,

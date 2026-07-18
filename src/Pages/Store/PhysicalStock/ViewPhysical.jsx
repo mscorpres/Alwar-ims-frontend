@@ -222,7 +222,7 @@ const columns = [
   {
     headerName: "Date",
     field: "date",
-    width: 150,
+    width: 180,
   },
   {
     headerName: "Component",
