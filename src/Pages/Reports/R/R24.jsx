@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Col,
   Form,
@@ -29,21 +28,37 @@ const R24 = () => {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [filterTerm, setfilterTerm] = useState("");
   const [rows, setRows] = useState([]);
-
+  const [valid, setValid] = useState(false);
   const [userComponents, setUserComponents] = useState([]);
   const [filterForm] = Form.useForm();
 
-  const { executeFun, loading: loading1 } = useApi();
+  const { executeFun } = useApi();
   const user = Form.useWatch("user", filterForm);
+    const component = Form.useWatch("component", filterForm);
 
   const getUserOptions = async (search) => {
-    setLoading("select");
+   try {
+     setLoading("select");
     const response = await imsAxios.post("/backend/fetchAllUser", {
       search: search,
     });
+    if(!response.success){
+      showToast(response.message, "error");
+      setLoading(false);
+      return;
+    }
     setLoading(false);
-    let arr = data.map((row) => ({ text: row.text, value: row.id }));
+    let arr = response.data.map((row) => ({ text: row.text, value: row.id }));
     setAsyncOptions(arr);
+    
+   } catch (error) {
+     
+     showToast(error?.message || "Some error occured while fetching users", "error");
+     setLoading(false);
+    
+   }finally{
+     setLoading(false);
+   }
   };
 
   const getComponentOption = async (search) => {
@@ -66,12 +81,18 @@ const R24 = () => {
   const getRows = async () => {
     try {
       const values = await filterForm.validateFields();
+   
       setLoading("fetch");
+      if (!values.user?.value || !values?.user?.value) {
+        setValid(true);
+        setLoading(false);
+        return;
+      }
       const response = await imsAxios.post("/report24", {
         user_id: values.user.value,
       });
-      const { data } = response;
-      if (data) {
+    
+     
         if (response.success) {
           let arr = response.data; 
           arr = arr.map((row, index) => ({
@@ -89,15 +110,14 @@ const R24 = () => {
             sfClosingStock: row.CLOSING_STOCK_SF,
           }));
           setRows(arr);
+          setLoading(false);
         } else {
           showToast(response.message, "error");
           setRows([]);
         }
-      } else {
-        setRows([]);
-      }
+    
     } catch (error) {
-      console.log("some error occured while fetching report", error);
+      showToast(error?.message || "Some error occured while fetching report", "error");
       setRows([]);
     } finally {
       setLoading(false);
@@ -133,6 +153,10 @@ const R24 = () => {
   const addUserComponent = async () => {
     try {
       const values = await filterForm.validateFields(["component"]);
+      if(!values?.component?.value){
+        setValid(true);
+        return;
+      }
       setLoading("addComponent");
       const response = await imsAxios.post("/report24/update", {
         component_part: [
@@ -207,6 +231,9 @@ const R24 = () => {
                     onBlur={() => setAsyncOptions([])}
                     labelInValue
                     selectLoading={loading === "select"}
+                    message="User is required"
+                    showError={valid}
+                    value={user}
                     loadOptions={getUserOptions}
                   />
                 </Form.Item>
@@ -236,6 +263,9 @@ const R24 = () => {
                     labelInValue
                     selectLoading={loading === "select"}
                     loadOptions={getComponentOption}
+                    message="Component is required"
+                    showError={valid}
+                    value={component}
                   />
                 </Form.Item>
                 <Row justify="end">
@@ -280,8 +310,8 @@ const R24 = () => {
                         .filter((row) =>
                           row.text.toString().toLowerCase().includes(filterTerm)
                         )
-                        .map((row) => (
-                          <Col span={24}>
+                        .map((row, index) => (
+                          <Col span={24} key={index}>
                             <Row gutter={4}>
                               <Col span={22}>
                                 <Typography.Text
@@ -307,8 +337,9 @@ const R24 = () => {
                         ))}
 
                     {loading === "components" &&
-                      [1, 1, 1, 1, 1].map(() => (
+                      [1, 1, 1, 1, 1].map((_, index) => (
                         <Skeleton.Input
+                          key={index}
                           block
                           active={true}
                           size="small"
