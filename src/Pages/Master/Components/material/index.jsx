@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useToast } from "../../../../hooks/useToast.js";
 import {
   Button,
@@ -17,6 +17,7 @@ import {
 import MySelect from "../../../../Components/MySelect";
 import MaterialUpdate from "../../Modal/MaterialUpdate";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
+import Field from "../../../../Components/Field";
 import ComponentImages from "./ComponentImages";
 import { imsAxios } from "../../../../axiosInterceptor";
 import AddPhoto from "./AddPhoto";
@@ -25,7 +26,6 @@ import MyButton from "../../../../Components/MyButton";
 import { CloseOutlined } from "@ant-design/icons";
 import { v4 } from "uuid";
 import { GridActionsCellItem } from "@mui/x-data-grid";
-import { Link } from "react-router-dom";
 import TableActions from "../../../../Components/TableActions.jsx/TableActions";
 import Loading from "../../../../Components/Loading";
 import useApi from "../../../../hooks/useApi.ts";
@@ -55,11 +55,16 @@ const Material = () => {
   const { executeFun, loading: loading1 } = useApi();
   const { showToast } = useToast();
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [hsnIsValid, setHsnIsValid] = useState(false);
   const [hsnForm] = Form.useForm();
   const [headerForm] = Form.useForm();
   const [attributeForm] = Form.useForm();
   const selectedCategory = Form.useWatch("attrCategory", headerForm);
   const selectedGroup = Form.useWatch("group", headerForm);
+  const componentNameValue = Form.useWatch("componentname", headerForm);
+  const partCodeValue = Form.useWatch("code", headerForm);
+  const percentageValue = Form.useWatch("percentage", hsnForm);
   const [components, setComponents] = useState([]);
 
   const getRows = async () => {
@@ -85,6 +90,8 @@ const Material = () => {
         showToast(response.message, "error");
       }
     } catch (error) {
+      setComponents([]);
+      showToast(error?.message || "Something went wrong, Please contact administrator", "error");
     } finally {
       setLoading(false);
     }
@@ -153,6 +160,8 @@ const Material = () => {
         setAttrCategoryOptions([]);
       }
     } catch (error) {
+      setAttrCategoryOptions([]);
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -173,6 +182,8 @@ const Material = () => {
         showToast(response.message, "error");
       }
     } catch (error) {
+      setUomOptions([]);
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -194,13 +205,25 @@ const Material = () => {
         setAsyncOptions(arr);
       }
     } catch (error) {
+      setAsyncOptions([]);
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
   };
 
   const addHsnRow = async () => {
-    const values = await hsnForm.validateFields();
+    let values;
+    try {
+      values = await hsnForm.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setHsnIsValid(true);
+        return;
+      }
+      throw error;
+    }
+    setHsnIsValid(false);
     const newRow = {
       ...values,
       id: v4(),
@@ -213,7 +236,17 @@ const Material = () => {
   };
 
   const modalConfirmMaterial = async () => {
-    const headerValues = await headerForm.validateFields();
+    let headerValues;
+    try {
+      headerValues = await headerForm.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      throw error;
+    }
+    setIsValid(false);
 
     let atrrRes = {
       multipler: attributeValues?.multiplier,
@@ -363,11 +396,12 @@ const Material = () => {
         showToast(response.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
   };
-  const resetConfirmHandler = (async) => {
+  const resetConfirmHandler = () => {
     Modal.confirm({
       title: "Reset Confirm",
       content: "All the progess will be lost",
@@ -382,11 +416,13 @@ const Material = () => {
     type: "actions",
     getActions: ({ row }) => [
       <GridActionsCellItem
+        key="update"
         showInMenu
         onClick={() => window.open(`/master/component/${row.key}`, "_blank")}
         label="Update"
       />,
       <GridActionsCellItem
+        key="view-images"
         showInMenu
         label="View Images"
         onClick={() =>
@@ -397,6 +433,7 @@ const Material = () => {
         }
       />,
       <GridActionsCellItem
+        key="upload-images"
         showInMenu
         label="Upload Images"
         onClick={() =>
@@ -412,6 +449,8 @@ const Material = () => {
     headerForm.resetFields();
     hsnForm.resetFields();
     setHsnRows([]);
+    setIsValid(false);
+    setHsnIsValid(false);
   };
 
   const handleDownloadMaster = async () => {
@@ -466,8 +505,6 @@ const Material = () => {
       });
     }
   }, [selectedCategory]);
-  const typeIs = headerForm.getFieldValue("attrCategory");
-
   // console.log("generatedCompName", generatedCompName);
   useEffect(() => {
     if (generatedCompName) {
@@ -510,73 +547,95 @@ const Material = () => {
                       <Form.Item
                         label="Type"
                         name="attrCategory"
-                        rules={headerRules.attrCategory}
+                        rules={[{ required: true, message: "" }]}
                       >
                         <MySelect
                           labelInValue={true}
                           options={attrCategoryOptions}
+                          showError={isValid}
+                          message="Please select type"
                         />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item
-                        rules={headerRules.name}
-                        label="Component Name"
-                        name="componentname"
+                      <Field
+                        attr="required | Please input component name"
+                        value={componentNameValue}
+                        showValidation={isValid}
                       >
-                        <Input
-                          disabled={
-                            typeIs?.label === "Resistor" ||
-                            typeIs?.label === "Capacitor" ||
-                            typeIs?.label === "Inductor"
-                          }
-                          // value={generatedCompName}
-                        />
-                      </Form.Item>
+                        <Form.Item
+                          rules={[{ required: true, message: "" }]}
+                          label="Component Name"
+                          name="componentname"
+                        >
+                          <Input
+                            disabled={
+                              selectedCategory?.label === "Resistor" ||
+                              selectedCategory?.label === "Capacitor" ||
+                              selectedCategory?.label === "Inductor"
+                            }
+                            // value={generatedCompName}
+                          />
+                        </Form.Item>
+                      </Field>
                     </Col>
                     <Col span={8}>
-                      <Form.Item
-                        rules={headerRules.newPart}
-                        label="Cat Part Code"
-                        name="newPart"
-                      >
+                      <Form.Item label="Cat Part Code" name="newPart">
                         <Input />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item
-                        rules={headerRules.partCode}
-                        label="Part Code"
-                        name="code"
+                      <Field
+                        attr="required | Please input Part Code"
+                        value={partCodeValue}
+                        showValidation={isValid}
                       >
-                        <Input />
-                      </Form.Item>
+                        <Form.Item
+                          rules={[{ required: true, message: "" }]}
+                          label="Part Code"
+                          name="code"
+                        >
+                          <Input />
+                        </Form.Item>
+                      </Field>
                     </Col>
                     <Col span={8}>
                       <Form.Item
                         label="UoM"
                         name="unit"
-                        rules={headerRules.uom}
+                        rules={[{ required: true, message: "" }]}
                       >
-                        <MySelect options={uomOptions} />
+                        <MySelect
+                          options={uomOptions}
+                          showError={isValid}
+                          message="Please select a unit"
+                        />
                       </Form.Item>
                     </Col>
                     <Col span={10}>
                       <Form.Item
                         label="Group"
                         name="group"
-                        rules={headerRules.group}
+                        rules={[{ required: true, message: "" }]}
                       >
-                        <MySelect options={groupOptions} />
+                        <MySelect
+                          options={groupOptions}
+                          showError={isValid}
+                          message="Please select a component group"
+                        />
                       </Form.Item>
                     </Col>
                     <Col span={10}>
                       <Form.Item
                         label="Sub Group"
                         name="subgroup"
-                        rules={headerRules.subgroup}
+                        rules={[{ required: true, message: "" }]}
                       >
-                        <MySelect options={subGroupOptions} />
+                        <MySelect
+                          options={subGroupOptions}
+                          showError={isValid}
+                          message="Please select a sub group"
+                        />
                       </Form.Item>
                     </Col>
 
@@ -619,11 +678,7 @@ const Material = () => {
                       </Form.Item>
                     </Col>
                     <Col span={24}>
-                      <Form.Item
-                        label="Description"
-                        name="description"
-                        rules={headerRules.description}
-                      >
+                      <Form.Item label="Description" name="description">
                         <Input.TextArea />
                       </Form.Item>
                     </Col>
@@ -675,7 +730,7 @@ const Material = () => {
                           <Form.Item
                             label="Code"
                             name="code"
-                            rules={rules.hsnCode}
+                            rules={[{ required: true, message: "" }]}
                           >
                             <MyAsyncSelect
                               labelInValue={true}
@@ -683,17 +738,25 @@ const Material = () => {
                               loadOptions={getHsnOptions}
                               optionsState={asyncOptions}
                               selectLoading={loading === "select"}
+                              showError={hsnIsValid}
+                              message="HSN code required"
                             />
                           </Form.Item>
                         </Col>
                         <Col span={6}>
-                          <Form.Item
-                            label="Percentage %"
-                            name="percentage"
-                            rules={rules.percentage}
+                          <Field
+                            attr="required | Percentage required"
+                            value={percentageValue}
+                            showValidation={hsnIsValid}
                           >
-                            <Input suffix="%" type="number" />
-                          </Form.Item>
+                            <Form.Item
+                              label="Percentage %"
+                              name="percentage"
+                              rules={[{ required: true, message: "" }]}
+                            >
+                              <Input suffix="%" type="number" />
+                            </Form.Item>
+                          </Field>
                         </Col>
                         <Col span={2}>
                           <MyButton variant="add" onClick={addHsnRow} />
@@ -735,7 +798,7 @@ const Material = () => {
                           >
                             <Row>
                               {hsnRows.map((row, index) => (
-                                <Col span={24}>
+                                <Col span={24} key={row.id || index}>
                                   <Row>
                                     <Col span={1}>
                                       <Typography.Text>
@@ -814,10 +877,6 @@ const Material = () => {
 
 export default Material;
 
-const categoryOptions = [
-  { text: "Component", value: "C" },
-  { text: "Other", value: "O" },
-];
 
 const hsnInitialValues = {
   code: "",
@@ -834,19 +893,72 @@ const headerInitialValues = {
   description: undefined,
 };
 
-const rules = {
-  hsnCode: [
-    {
-      required: true,
-      message: "HSN code required",
-    },
-  ],
-  percentage: [
-    {
-      required: true,
-      message: "Percentage required",
-    },
-  ],
+const AttributeFieldItem = ({ row, form, fieldSelectOptions, isValid }) => {
+  const textValue = Form.useWatch(row.label + "Text", form);
+  const mainValue = Form.useWatch(row.label, form);
+  const label = row.label.replaceAll("_", " ");
+  const textLabel =
+    row.label === "frequency" ? "Freq. Value" : "SI Unit Value";
+  const selectOptions =
+    fieldSelectOptions.find((field) => field.name === row.name)?.options ||
+    [];
+
+  return (
+    <Col span={8}>
+      <Flex>
+        {row.hasValue === "true" && (
+          <Field
+            attr={`required | Please enter ${textLabel}`}
+            value={textValue}
+            showValidation={isValid}
+            style={{ flex: 1 }}
+          >
+            <Form.Item
+              style={{ textTransform: "capitalize" }}
+              name={row.label + "Text"}
+              label={textLabel}
+              rules={[{ required: true, message: "" }]}
+            >
+              <Input />
+            </Form.Item>
+          </Field>
+        )}
+        {row.type === "select" && (
+          <Form.Item
+            style={{ textTransform: "capitalize", flex: 1.5 }}
+            name={row.label}
+            label={label}
+            rules={[{ required: true, message: "" }]}
+          >
+            <MySelect
+              style={{ textTransform: "none" }}
+              labelInValue
+              options={selectOptions}
+              showError={isValid}
+              message={`Please select ${label}`}
+            />
+          </Form.Item>
+        )}
+        {row.type === "text" && (
+          <Field
+            attr={`required | Please enter ${label}`}
+            value={mainValue}
+            showValidation={isValid}
+            style={{ flex: 1.5 }}
+          >
+            <Form.Item
+              style={{ textTransform: "capitalize" }}
+              name={row.label}
+              label={label}
+              rules={[{ required: true, message: "" }]}
+            >
+              <Input />
+            </Form.Item>
+          </Field>
+        )}
+      </Flex>
+    </Col>
+  );
 };
 
 const CategoryModal = ({
@@ -858,23 +970,21 @@ const CategoryModal = ({
   generatedCompName,
   setGeneratedCompName,
   setValForName,
-  valFromName,
   form,
   headerForm,
   setManfCode,
-  manfCode,
   typeOfComp,
   setTypeOfComp,
 }) => {
+  const { showToast } = useToast(); 
   const [fields, setFields] = useState([]);
   const [loading, setLoading] = useState("fetch");
   const [fieldSelectOptions, setFieldSelectOptions] = useState([]);
-  const [existingComponents, setExistingComponents] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [stage, setStage] = useState(0);
+  const [isValid, setIsValid] = useState(false);
   var alpha;
   var extractednum;
-  var getAlpha;
   var wholeVal;
   var result;
   const value = Form.useWatch("value", form);
@@ -902,6 +1012,7 @@ const CategoryModal = ({
         showToast(response?.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -930,7 +1041,9 @@ const CategoryModal = ({
           ]);
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
+    }
     setLoading(false);
   };
   const checkDecimal = (value) => {
@@ -945,8 +1058,6 @@ const CategoryModal = ({
         getWholeNumber(value, decimalVal);
       } else {
         let newNum = removeAndCountTrailingZeros(value);
-        // console.log("newNum", newNum);
-        getAlpha = removeTrailingZerosUsingSwitch(newNum.count);
         extractednum = newNum.stringWithoutTrailingZeros;
         // console.log("extractednum", extractednum);
       }
@@ -1112,39 +1223,8 @@ const CategoryModal = ({
     let result = "1" + "0".repeat(numZeros);
     return parseInt(result);
   }
-  function getLetterFromNumber(number) {
-    console.log("number number", number);
-    const mapping = {
-      1: "A",
-      10: "B",
-      100: "C",
-      1000: "D",
-      10000: "E",
-      100000: "F",
-      1000000: "G",
-      10000000: "H",
-      100000000: "I",
-      1000000000: "J",
-      10000000000: "K",
-    };
+ 
 
-    const result = Object.entries(mapping).find(
-      ([key, value]) => parseInt(key) === number
-    );
-    console.log("resultresult", result);
-    form.setFieldValue("multiplier", result[1]);
-    return result ? result[1] : "Number not found";
-  }
-  function removeTrailingZerosUsingSwitch(numbers, letter) {
-    let numberpowerOfTen;
-
-    let number = addZerosToTen(numbers);
-    console.log("number ->", number);
-    alpha = getLetterFromNumber(number);
-    console.log("apl", alpha);
-    setAttributeValues({ multipler: alpha });
-    // form.setFieldValue("multiplier", alpha);
-  }
   function removeAndCountTrailingZeros(number) {
     const numString = number.toString();
     let count = 0;
@@ -1215,20 +1295,26 @@ const CategoryModal = ({
     setValForName(a);
   }, [value]);
 
-  const submitHandler = async (payload) => {
-    try {
+  const submitHandler = async () => {
+    if (stage === 0) {
+      try {
+        await form.validateFields();
+        setIsValid(false);
+      } catch (error) {
+        if (error?.errorFields) {
+          setIsValid(true);
+          return;
+        }
+        throw error;
+      }
+    }
+  
       setUniqueId(uniqueId);
 
       hide();
-      if (stage === 0) {
-      } else {
+     
         hide();
-        setStage(0);
-      }
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
+ 
   };
   const sortedFields = [...fields].sort((a, b) => {
     // console.log("ff", fields);
@@ -1240,18 +1326,19 @@ const CategoryModal = ({
   useEffect(() => {
     if (show) {
       setStage(0);
+      setIsValid(false);
       getCategoryFields(show.selectedCategory);
       setTypeOfComp(show.selectedCategory);
     }
   }, [show]);
   useEffect(() => {
     if (typeOfComp) {
+      setIsValid(false);
       form.resetFields();
       form.setFieldValue("componentname", "");
       headerForm.setFieldValue("componentname", "");
       setUniqueId(null);
       setGeneratedCompName(null);
-    } else if (selectedCategory?.value === "348423984423") {
     }
   }, [typeOfComp]);
   useEffect(() => {
@@ -1317,48 +1404,19 @@ const CategoryModal = ({
         <Form form={form} layout="vertical" style={{ marginTop: 10 }}>
           <Row gutter={10}>
             {sortedFields.map((row) => (
-              <Col span={8}>
-                <Flex>
-                  {row.hasValue === "true" && (
-                    <Form.Item
-                      style={{ textTransform: "capitalize", flex: 1 }}
-                      name={row.label + "Text"}
-                      label={
-                        row.label === "frequency"
-                          ? "Freq. Value"
-                          : "SI Unit Value"
-                      }
-                    >
-                      <Input />
-                    </Form.Item>
-                  )}
-                  <Form.Item
-                    style={{ textTransform: "capitalize", flex: 1.5 }}
-                    name={row.label}
-                    label={row.label.replaceAll("_", " ")}
-                  >
-                    {row.type === "select" && (
-                      <MySelect
-                        style={{ textTransform: "none" }}
-                        labelInValue
-                        // disabled={row.label === "multiplier"}
-                        options={
-                          fieldSelectOptions.find(
-                            (field) => field.name === row.name
-                          )?.options || []
-                        }
-                      />
-                    )}
-                    {row.type === "text" && <Input />}
-                  </Form.Item>
-                </Flex>
-              </Col>
+              <AttributeFieldItem
+                key={row.name}
+                row={row}
+                form={form}
+                fieldSelectOptions={fieldSelectOptions}
+                isValid={isValid}
+              />
             ))}
           </Row>
         </Form>
       )}
 
-      {stage === 1 && (
+      {/* {stage === 1 && (
         <Row>
           <Col span={24}>
             <Flex justify="center" gap={5} style={{ marginBottom: 10 }}>
@@ -1395,7 +1453,7 @@ const CategoryModal = ({
                       style={{ maxHeight: 150, overflowY: "auto" }}
                     >
                       {existingComponents.map((row, index) => (
-                        <Col span={24}>
+                        <Col span={24} >
                           <Row>
                             <Col span={1}>{index + 1}.</Col>
                             <Col span={18}>{row.name}</Col>
@@ -1432,66 +1490,9 @@ const CategoryModal = ({
             )}
           </Col>
         </Row>
-      )}
+      )} */}
     </Modal>
   );
-};
-
-const headerRules = {
-  name: [
-    {
-      required: true,
-      message: "Please input component name",
-    },
-  ],
-  partCode: [
-    {
-      required: true,
-      message: "Please input Part Code",
-    },
-  ],
-  uom: [
-    {
-      required: true,
-      message: "Please select a unit for the component",
-    },
-  ],
-  group: [
-    {
-      required: true,
-      message: "Please select a component group",
-    },
-  ],
-  category: [
-    {
-      required: true,
-      message: "Please select a component category",
-    },
-  ],
-  attrCategory: [
-    {
-      required: true,
-      message: "Please select a component type",
-    },
-  ],
-  description: [
-    {
-      required: true,
-      message: "Please provide a description",
-    },
-  ],
-  newPart: [
-    {
-      required: true,
-      message: "Please provide a New Part code",
-    },
-  ],
-  subgroup: [
-    {
-      required: true,
-      message: "Please select a sub group",
-    },
-  ],
 };
 
 [
