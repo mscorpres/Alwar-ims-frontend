@@ -1128,6 +1128,11 @@ const links = [
   //     routePath: "/tally/debit-note/report",
   //   },
   // ],
+
+  [{
+    routeName: "Weekly Audit",
+    routePath: "/weeklyAudit",
+  }],
   // sop module
   [
     {
