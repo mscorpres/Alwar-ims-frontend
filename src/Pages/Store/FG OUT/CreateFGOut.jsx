@@ -115,52 +115,68 @@ const CreateFGOut = () => {
 
 const compInputHandler = async (name, id, value) => {
     if (name == "product") {
-  try {
+      setAddRowData((product) =>
+        product.map((h) => {
+          if (h.id == id) {
+            return {
+              ...h,
+              product: value,
+              location: "",
+              total: "",
+              uom: "",
+              rate: 0,
+            };
+          } else {
+            return h;
+          }
+        }),
+      );
+    } else if (name == "location") {
+      const currentRow = addRowData.find((h) => h.id == id);
+      if (!currentRow?.product) {
+        showToast("Please select a product first", "error");
+        return;
+      }
+      setAddRowData((location) =>
+        location.map((h) => {
+          if (h.id == id) {
+            return { ...h, location: value };
+          } else {
+            return h;
+          }
+        }),
+      );
+      try {
         const response = await imsAxios.post("/fgOUT/fetchProductData", {
-        search: value,
-      });
-         
-      if (response?.success) {
-        const totalValue = response?.data?.total;
-        const unitValue = response?.data?.unit;
-        const war = Number(response?.data?.war);
-  
-        setAddRowData((product) =>
-          product.map((h) => {
-            if (h.id == id) {
-              {
+          search: currentRow.product,
+          location: value,
+        });
+
+        if (response?.success) {
+          const totalValue = response?.data?.total;
+          const unitValue = response?.data?.unit;
+          const war = Number(response?.data?.war);
+
+          setAddRowData((product) =>
+            product.map((h) => {
+              if (h.id == id) {
                 return {
                   ...h,
-                  product: value,
                   total: totalValue,
                   uom: unitValue,
                   rate: war,
                 };
+              } else {
+                return h;
               }
-            } else {
-              return h;
-            }
-          }),
-        );
-      } else {
-        setAddRowData((product) =>
-          product.map((h) => {
-            if (h.id == id) {
-              {
-                return { ...h, product: value };
-              }
-            } else {
-              return h;
-            }
-          }),
-        );
-     
-        showToast(response?.message, "error");
+            }),
+          );
+        } else {
+          showToast(response?.message, "error");
+        }
+      } catch (error) {
+        showToast(error?.message || "Error fetching product options", "error");
       }
-    
-  } catch (error) {
-    showToast(error?.message || "Error fetching product options", "error");
-  }
     } else if (name == "quantity") {
       setAddRowData((quantity) =>
         quantity.map((h) => {
@@ -185,23 +201,10 @@ const compInputHandler = async (name, id, value) => {
           }
         }),
       );
-    } else if (name == "location") {
-      setAddRowData((location) =>
-        location.map((h) => {
-          if (h.id == id) {
-            {
-              return { ...h, location: value };
-            }
-          } else {
-            return h;
-          }
-        }),
-      );
     }
   };
 
   const addFGOut = async (e) => {
-     setLoadingUpdate(true);
     e.preventDefault();
     let arrPro = [];
     let arrQty = [];
@@ -212,19 +215,29 @@ const compInputHandler = async (name, id, value) => {
     addRowData.map((a) => arrQty.push(a.quantity));
     addRowData.map((a) => arrRemark.push(a.remarks));
     addRowData.map((a) => arrRate.push(a.rate));
-    // addRowData.map((a) => console.log(a));
-    // console.log(arrQty);
+    addRowData.map((a) => arrLoc.push(a.location));
 
-    const hasEmptyLocation = addRowData.some(
-      (row) => !row.location || String(row.location).trim() === "",
+    const hasEmptyProduct = addRowData.some((a) => !a.product);
+    const hasInvalidQty = addRowData.some(
+      (a) => !a.quantity || Number(a.quantity) <= 0,
     );
+    const hasEmptyLocation = addRowData.some((a) => !a.location);
+
     if (!createFgOut.selectType) {
       showToast("Please Select Option", "error");
+      return;
+    } else if (hasEmptyProduct) {
+      showToast("Please Select Product for all rows", "error");
+      return;
+    } else if (hasInvalidQty) {
+      showToast("Please Enter a valid Quantity for all rows", "error");
+      return;
     } else if (hasEmptyLocation) {
-      showToast("Location is mandatory for all rows", "error");
+      showToast("Please Select Location for all rows", "error");
+      return;
     } else {
-     try {
-       
+      setLoadingUpdate(true);
+      try {
         const response = await imsAxios.post("/fgout/createFgOut", {
           fg_out_type: createFgOut.selectType,
           product: arrPro,
@@ -236,15 +249,14 @@ const compInputHandler = async (name, id, value) => {
         });
         if (response?.success) {
           resetFunction();
-           showToast(response.message, "success");
-          setLoadingUpdate(false);
+          showToast(response.message, "success");
         } else {
           showToast(response.message, "error");
-          setLoadingUpdate(false);
         }
       } catch (error) {
-      
         showToast(error?.message ?? "Something went wrong", "error");
+      } finally {
+        setLoadingUpdate(false);
       }
     }
   };
@@ -321,6 +333,19 @@ const compInputHandler = async (name, id, value) => {
       ),
     },
     {
+      headerName: "Location *",
+      field: "location",
+      width: 400,
+      renderCell: ({ row }) => (
+        <MySelect
+          value={row?.location}
+          onChange={(value) => compInputHandler("location", row.id, value)}
+          options={locationOptions}
+          placeholder="Select location"
+        />
+      ),
+    },
+    {
       headerName: "	Stock In Hand",
       // field: "qty",
       width: 170,
@@ -345,19 +370,6 @@ const compInputHandler = async (name, id, value) => {
           value={addRowData?.quantity}
           onChange={(e) => compInputHandler("quantity", row.id, e.target.value)}
           type="number"
-        />
-      ),
-    },
-    {
-      headerName: "Location *",
-      field: "location",
-      width: 400,
-      renderCell: ({ row }) => (
-        <MySelect
-          value={row?.location}
-          onChange={(value) => compInputHandler("location", row.id, value)}
-          options={locationOptions}
-          placeholder="Select location"
         />
       ),
     },

@@ -159,7 +159,7 @@ const ManagePO = () => {
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.po_transaction} copy={true} />
       ),
-      width: 150,
+      width: 180,
     },
     {
       headerName: "Cost Center",
@@ -181,7 +181,7 @@ const ManagePO = () => {
       field: "vendor_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.vendor_name} />,
       flex: 2,
-      minWidth: 200,
+      minWidth: 300,
     },
     {
       headerName: "Vendor Code",
@@ -197,14 +197,14 @@ const ManagePO = () => {
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.project_id} copy={true} />
       ),
-      minWidth: 150,
+      minWidth: 200,
       flex: 1,
     },
     {
       headerName: "Project Name",
       field: "project_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.project_name} />,
-      minWidth: 150,
+      minWidth: 250,
       flex: 1,
     },
     {
@@ -227,7 +227,7 @@ const ManagePO = () => {
       field: "po_reg_date",
       renderCell: ({ row }) => <ToolTipEllipses text={row.po_reg_date} />,
       flex: 1,
-      minWidth: 150,
+      minWidth: 180,
     },
     {
       headerName: "Created By",
@@ -244,14 +244,14 @@ const ManagePO = () => {
         <ToolTipEllipses text={row.advPayment == "0" ? "NO" : "YES"} />
       ),
       flex: 1,
-      minWidth: 150,
+      minWidth: 130,
     },
     {
       headerName: "Comment",
       field: "po_comment",
       renderCell: ({ row }) => <ToolTipEllipses text={row.po_comment} />,
       flex: 1,
-      minWidth: 150,
+      minWidth: 250,
     },
   ];
   //getting rows from database from all 3 filter po wise, data wise, vendor wise

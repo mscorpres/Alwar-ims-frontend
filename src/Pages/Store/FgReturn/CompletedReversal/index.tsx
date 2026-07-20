@@ -94,7 +94,7 @@ const columns = [
   {
     headerName: "Trans. Id",
     field: "transactionId",
-    width: 150,
+    width: 200,
     renderCell: ({ row }) => (
       <ToolTipEllipses text={row.transactionId} copy={true} />
     ),
