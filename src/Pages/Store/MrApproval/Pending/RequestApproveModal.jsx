@@ -3,15 +3,13 @@ import {
   Flex,
   Drawer,
   Modal,
-  Tooltip,
   Radio,
   Skeleton,
   Button,
   Space,
 } from "antd";
 import { Col, Divider, Form, Input, Row, Typography } from "antd/es";
-import React, { useEffect, useState } from "react";
-import MyButton from "../../../../Components/MyButton";
+import  { useEffect, useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { useToast } from "../../../../hooks/useToast.js";
 import MySelect from "../../../../Components/MySelect";
@@ -85,6 +83,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         showToast(response.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("fetch", false);
     }
@@ -106,6 +105,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         setPickLocationOptions(arr);
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("fetchLocations", false);
     }
@@ -125,6 +125,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         showToast(response.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("fetchSTock", false);
     }
@@ -179,13 +180,13 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
           hide();
         } else {
           getDetails(show.requestId);
-          form.resetFields();
-          setAction(null);
+          form.resetFields(['component']);
         }
       } else {
         showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("submit", false);
     }
