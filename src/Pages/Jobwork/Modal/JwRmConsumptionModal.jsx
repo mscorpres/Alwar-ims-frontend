@@ -20,8 +20,8 @@ import { imsAxios } from "../../../axiosInterceptor.js";
 import FormTable from "../../../Components/FormTable.jsx";
 import useLoading from "../../../hooks/useLoading.js";
 import {
-  getBomItem,
-  getComponentOptions,
+  // getBomItem,
+  // getComponentOptions,
   savejwsfinward,
 } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
@@ -35,29 +35,28 @@ import SingleProduct from "../../Master/Vendor/SingleProduct.jsx";
 import { useToast } from "../../../hooks/useToast.js";
 export default function JwRmConsumptionModal({ editModal, setEditModal }) {
   const { showToast } = useToast();
-  const [asyncOptions, setAsyncOptions] = useState([]);
-  const [locValue, setLocValue] = useState([]);
+  // const [asyncOptions, setAsyncOptions] = useState([]);
+  // const [locValue, setLocValue] = useState([]);
   const [header, setHeaderData] = useState([]);
   const [modalLoad, setModalLoad] = useLoading();
   const [modalUploadLoad, setModalUploadLoad] = useState(false);
-  const { all, row } = editModal;
+  const {  row } = editModal;
   const [mainData, setMainData] = useState([]);
   const [challanNo, setChallanNo] = useState("");
-  const [invoice, setInvoice] = useState("");
+  // const [invoice, setInvoice] = useState("");
   const [bomList, setBomList] = useState([]);
   const [showBomList, setShowBomList] = useState(false);
-  const [conrem, setConRem] = useState("");
   const [loading, setLoading] = useState(false);
   const [attachment, setAttachment] = useState("");
-  const [irnNo, setIrnNo] = useState("");
+  // const [irnNo, setIrnNo] = useState("");
   const [uploadedInvoiceDetails, setUploadedInvoiceDetails] = useState(null);
   const [materialInSuccess, setMaterialInSuccess] = useState(false);
-  const [isApplicable, setIsApplicable] = useState(false);
-  const [isScan, setIsScan] = useState(false);
+  // const [isApplicable, setIsApplicable] = useState(false);
+  // const [isScan, setIsScan] = useState(false);
   const [modalForm] = Form.useForm();
   const [challanDate, setChallanDate] = useState(null);
   const [consumpLoc, setConsumpLoc] = useState("20211028124102");
-  const fileComponents = Form.useWatch("fileComponents", modalForm);
+  // const fileComponents = Form.useWatch("fileComponents", modalForm);
   const [uplaoaClicked, setUploadClicked] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const getFetchData = async () => {
@@ -84,7 +83,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
             // Also set header data if available
             if (bomResponse.data?.header) {
               setHeaderData(bomResponse.data.header);
-              setIsApplicable(bomResponse.data.header.einvoiceStatus);
+              // setIsApplicable(bomResponse.data.header.einvoiceStatus);
               // if (bomResponse.data.header.costCenter) {
               //   getLocation(bomResponse.data.header.costCenter);
               // }
@@ -142,7 +141,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
           },
         };
       });
-      setIsApplicable(response.data.header.einvoiceStatus);
+      // setIsApplicable(response.data.header.einvoiceStatus);
       setMainData(arr);
       setHeaderData(response.data.header);
       setModalLoad("fetch", false);
@@ -151,45 +150,45 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
     }
     setModalLoad("fetch", false);
   };
-  const getOption = async (e) => {
-    if (e?.length > 2) {
-      const response = await executeFun(() => getComponentOptions(e), "select");
-      //     setLoading("select", false);
-      //     const { data } = response;
-      // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
-      //   search: e,
-      // });
-      const { data } = response;
-      let arr = [];
-      arr = data.map((d) => {
-        return { text: d.text, value: d.id };
-      });
-      setAsyncOptions(arr);
-    }
-  };
+  // const getOption = async (e) => {
+  //   if (e?.length > 2) {
+  //     const response = await executeFun(() => getComponentOptions(e), "select");
+  //     //     setLoading("select", false);
+  //     //     const { data } = response;
+  //     // const { data } = await imsAxios.post("/backend/getComponentByNameAndNo", {
+  //     //   search: e,
+  //     // });
+  //     const { data } = response;
+  //     let arr = [];
+  //     arr = data.map((d) => {
+  //       return { text: d.text, value: d.id };
+  //     });
+  //     setAsyncOptions(arr);
+  //   }
+  // };
 
-  const getPickLocation = async () => {
-    let vendor = header?.vendor?.code;
-    if (vendor) {
-      try {
-        const response = await imsAxios.get(
-          `/backend/fetchVendorJWLocation?vendor=${vendor}`
-        );
-        if (response.success) {
-          let arr = [];
-          arr = response.data.map((row) => ({
-            value: row.id,
-            text: row.text,
-          }));
-          setPickLocationOptions(arr);
-        } else {
-          showToast(response.message, "error");
-        }
-      } catch (error) {
-        showToast(error.message || "Failed to fetch pick location", "error");
-      }
-    }
-  };
+  // const getPickLocation = async () => {
+  //   let vendor = header?.vendor?.code;
+  //   if (vendor) {
+  //     try {
+  //       const response = await imsAxios.get(
+  //         `/backend/fetchVendorJWLocation?vendor=${vendor}`
+  //       );
+  //       if (response.success) {
+  //         let arr = [];
+  //         arr = response.data.map((row) => ({
+  //           value: row.id,
+  //           text: row.text,
+  //         }));
+  //         setPickLocationOptions(arr);
+  //       } else {
+  //         showToast(response.message, "error");
+  //       }
+  //     } catch (error) {
+  //       showToast(error.message || "Failed to fetch pick location", "error");
+  //     }
+  //   }
+  // };
   const inputHandler = async (name, id, value) => {
     if (name == "component") {
       setMainData((a) =>
@@ -299,55 +298,34 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
           }
         })
       );
-    } else if (name == "consumptionQty") {
+  } else if (name == "consumptionQty") {
       const numValue = Number.parseFloat(value);
 
-      // Check if we're in BOM mode (showBomList is true) - search in bomList
-      // Otherwise search in mainData
-      const currentRow = showBomList
-        ? bomList.find((aa) => aa.id == id)
-        : mainData.find((aa) => aa.id == id);
+      const currentRow = bomList.find((aa) => aa.id == id);
+      const stockQty = currentRow?.venLocationStock || 0;
 
-      // Get stock quantity - in BOM mode use venLocationStock, otherwise use stock or orderqty
-      const stockQty = showBomList
-        ? currentRow?.venLocationStock || currentRow?.stock || 0
-        : currentRow?.stock || currentRow?.orderqty || 0;
-
-      // if (Number.isNaN(numValue) || numValue < 0) {
-      //   toast.error("Please enter a valid positive number");
-      //   return;
-      // }
+      if (Number.isNaN(numValue) || numValue < 0) {
+        showToast("Please enter a valid positive number", "error");
+        return;
+      }
 
       if (numValue > stockQty) {
         showToast(
           `Consumption quantity cannot exceed stock quantity (${stockQty})`,
-          "error"
+          "error",
         );
         return;
       }
 
-      // Update the appropriate state based on mode
-      if (showBomList) {
-        setBomList((a) =>
-          a.map((aa) => {
-            if (aa.id == id) {
-              return { ...aa, consumptionQty: numValue };
-            } else {
-              return aa;
-            }
-          })
-        );
-      } else {
-        setMainData((a) =>
-          a.map((aa) => {
-            if (aa.id == id) {
-              return { ...aa, consumptionQty: numValue };
-            } else {
-              return aa;
-            }
-          })
-        );
-      }
+      setBomList((a) =>
+        a.map((aa) => {
+          if (aa.id == id) {
+            return { ...aa, consumptionQty: numValue };
+          } else {
+            return aa;
+          }
+        }),
+      );
     }
   };
   const removeRow = (id) => {
@@ -367,6 +345,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
       sortable: false,
       renderCell: ({ row }) => [
         <GridActionsCellItem
+        key={row.id}
           icon={<Delete color="error" sx={{ fontSize: "1.7rem", cursor: "pointer" }} />}
           onClick={() => {
             removeRow(row.id);
@@ -532,7 +511,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
           modalForm.resetFields();
           setBomList([]);
           setChallanNo("");
-          setInvoice("");
+          // setInvoice("");
           setUploadedInvoiceDetails(null);
           setAttachment("");
           setEditModal(false);
@@ -570,14 +549,14 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
       consRemark: bomList.map((r) => r.conRemark),
       challanNo: challanNo,
       invoice: mainData[0].invoice,
-      irn: irnNo,
+      // irn: irnNo,
       jobwork_trans_id: header.jobworkID,
       drop_location: mainData[0].location,
       product: row.sku_code,
       qty: mainData[0].orderqty,
       rate: mainData[0].rate,
       remark: mainData[0].remark,
-      qrScan: isScan == true ? "Y" : "N",
+      qrScan:  "N",
       pick_location: pickLocation,
     };
     setModalUploadLoad(true);
@@ -628,71 +607,71 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
       showToast(response.message, "error");
     }
   };
-  const getBomList = async () => {
-    setLoading(true);
-    let final = {
-      jwID: header?.jobworkID,
-      sfgCreateQty: mainData[0].orderqty,
-    };
-    const response = await executeFun(() => getBomItem(final), "select");
-    if (response.data.status === "success" || response.data.code == 200) {
-      const { data } = response;
-      let arr = data.data.map((r, id) => {
-        return {
-          id: id + 1,
-          bomQty: r.bom_qty,
-          partName: r.part_name,
-          catPartName: r.catPartName,
-          partNo: r.part_no,
-          venLocationStock: r.venLocationStock,
-          rqdQty: r.rqd_qty,
-          pendingWithjobwork: r.pendingWithjobwork,
-          uom: r.uom,
-          key: r.key,
-        };
-      });
-      setBomList(arr);
-      setLoading(false);
-      setShowBomList(true);
-    } else {
-      showToast(response.data.message.msg, "error");
-      setLoading(false);
-    }
+  // const getBomList = async () => {
+  //   setLoading(true);
+  //   let final = {
+  //     jwID: header?.jobworkID,
+  //     sfgCreateQty: mainData[0].orderqty,
+  //   };
+  //   const response = await executeFun(() => getBomItem(final), "select");
+  //   if (response.data.status === "success" || response.data.code == 200) {
+  //     const { data } = response;
+  //     let arr = data.data.map((r, id) => {
+  //       return {
+  //         id: id + 1,
+  //         bomQty: r.bom_qty,
+  //         partName: r.part_name,
+  //         catPartName: r.catPartName,
+  //         partNo: r.part_no,
+  //         venLocationStock: r.venLocationStock,
+  //         rqdQty: r.rqd_qty,
+  //         pendingWithjobwork: r.pendingWithjobwork,
+  //         uom: r.uom,
+  //         key: r.key,
+  //       };
+  //     });
+  //     setBomList(arr);
+  //     setLoading(false);
+  //     setShowBomList(true);
+  //   } else {
+  //     showToast(response.data.message.msg, "error");
+  //     setLoading(false);
+  //   }
 
-    setLoading(false);
-  };
+  //   setLoading(false);
+  // };
 
-  const handleSave = async () => {
-    setLoading(true);
-    let final = {
-      jwID: header?.jobworkID,
-      sfgCreateQty: mainData[0].orderqty,
-    };
-    const response = await executeFun(() => getBomItem(final), "select");
-    if (response.data.status === "success" || response.data.code == 200) {
-      const { data } = response;
-      let arr = data.data.map((r, id) => {
-        return {
-          id: id + 1,
-          bomQty: r.bom_qty,
-          partName: r.part_name,
-          catPartName: r.catPartName,
-          partNo: r.part_no,
-          venLocationStock: r.venLocationStock,
-          rqdQty: r.rqd_qty,
-          uom: r.uom,
-          key: r.key,
-        };
-      });
-      setBomList(arr);
-      setLoading(false);
-      // Directly open upload modal for save
-      setUploadClicked(true);
-    } else {
-      showToast(response.data.message.msg, "error");
-      setLoading(false);
-    }
-  };
+  // const handleSave = async () => {
+  //   setLoading(true);
+  //   let final = {
+  //     jwID: header?.jobworkID,
+  //     sfgCreateQty: mainData[0].orderqty,
+  //   };
+  //   const response = await executeFun(() => getBomItem(final), "select");
+  //   if (response.data.status === "success" || response.data.code == 200) {
+  //     const { data } = response;
+  //     let arr = data.data.map((r, id) => {
+  //       return {
+  //         id: id + 1,
+  //         bomQty: r.bom_qty,
+  //         partName: r.part_name,
+  //         catPartName: r.catPartName,
+  //         partNo: r.part_no,
+  //         venLocationStock: r.venLocationStock,
+  //         rqdQty: r.rqd_qty,
+  //         uom: r.uom,
+  //         key: r.key,
+  //       };
+  //     });
+  //     setBomList(arr);
+  //     setLoading(false);
+  //     // Directly open upload modal for save
+  //     setUploadClicked(true);
+  //   } else {
+  //     showToast(response.data.message.msg, "error");
+  //     setLoading(false);
+  //   }
+  // };
 
   const newMinFunction = () => {
     setMaterialInSuccess(false);
@@ -750,7 +729,7 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
     if (editModal) {
       getFetchData();   
       setChallanNo("");
-      setInvoice("");
+      // setInvoice("");
       if (!editModal.bomData) {
         setShowBomList(false);
         setBomList([]);
@@ -759,13 +738,12 @@ export default function JwRmConsumptionModal({ editModal, setEditModal }) {
     }
   }, [editModal]);
 
-  const text = "Are you sure to update this jw sf Inward?";
   const closeModal = () => {
     setEditModal(false);
     setShowBomList(false);
     setBomList([]);
     setChallanNo("");
-    setInvoice("");
+    // setInvoice("");
     modalForm.resetFields();
   };
   return (
