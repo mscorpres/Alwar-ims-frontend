@@ -1,13 +1,13 @@
 import  { useEffect, useState } from "react";
 import { Drawer, Row, Col, Button, Switch, Form, Space, Input } from "antd";
 import MySelect from "../../../Components/MySelect";
+import Field from "../../../Components/Field";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../../hooks/useToast";
 
 function EditClient({
   updatingClient,
   setUpdatingClient,
-  getRows,
   addClientApi,
   setAddClientApi,
 }) {
@@ -17,6 +17,10 @@ function EditClient({
   const [tdsOptions, setTdsOptions] = useState([]);
   const [tcsOptions, setTcsOptions] = useState([]);
   const [clientStatus, setClientStatus] = useState();
+  const [isValid, setIsValid] = useState(false);
+  const nameValue = Form.useWatch("name", updateClientForm);
+  const panNoValue = Form.useWatch("panNo", updateClientForm);
+  const mobileValue = Form.useWatch("mobile", updateClientForm);
 
 
   // const getMatchById = async () => {
@@ -165,7 +169,18 @@ function EditClient({
   // };
 
   const submitHandler = async () => {
-    const values = await updateClientForm.validateFields();
+    let values;
+    try {
+      values = await updateClientForm.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
 
     let obj = {
       code: updatingClient?.code,
@@ -182,8 +197,8 @@ function EditClient({
 
     const response = await imsAxios.put("/client/update", obj);
     if (response.success) {
-      getRows();
       setUpdatingClient(null);
+      setIsValid(false);
       showToast(response.message);
     } else {
       showToast(response.message?.msg || response.message, "error");
@@ -213,7 +228,10 @@ function EditClient({
       title={`Update Client: ${updatingClient?.code}`}
       open={updatingClient}
       width={600}
-      onClose={() => setUpdatingClient(false)}
+      onClose={() => {
+        setUpdatingClient(false);
+        setIsValid(false);
+      }}
       placement="right"
       footer={
         <Row style={{ width: "100%" }} align="middle" justify="space-between">
@@ -231,7 +249,13 @@ function EditClient({
           </Col>
           <Col>
             <Space>
-              <Button key="back" onClick={() => setUpdatingClient(false)}>
+              <Button
+                key="back"
+                onClick={() => {
+                  setUpdatingClient(false);
+                  setIsValid(false);
+                }}
+              >
                 Back
               </Button>
 
@@ -254,9 +278,19 @@ function EditClient({
           <Col span={24}>
             <Row gutter={10}>
               <Col span={12}>
-                <Form.Item label="Vendor Name" name="name">
-                  <Input />
-                </Form.Item>
+                <Field
+                  attr="required | Please enter client's name"
+                  value={nameValue}
+                  showValidation={isValid}
+                >
+                  <Form.Item
+                    label="Vendor Name"
+                    name="name"
+                    rules={[{ required: true, message: "" }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Field>
               </Col>
               <Col span={12}>
                 <Form.Item label="Email" name="email">
@@ -268,23 +302,34 @@ function EditClient({
           <Col span={24}>
             <Row gutter={10}>
               <Col span={12}>
-                <Form.Item label="PAN Number" name="panNo">
-                  <Input />
-                </Form.Item>
+                <Field
+                  attr="required | Please enter PAN Number"
+                  value={panNoValue}
+                  showValidation={isValid}
+                >
+                  <Form.Item
+                    label="PAN Number"
+                    name="panNo"
+                    rules={[{ required: true, message: "" }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Field>
               </Col>
               <Col span={12}>
-                <Form.Item
-                  label="Mobile"
-                  name="mobile"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Contact no must be add",
-                    },
-                  ]}
+                <Field
+                  attr="required | Contact no must be added"
+                  value={mobileValue}
+                  showValidation={isValid}
                 >
-                  <Input />
-                </Form.Item>
+                  <Form.Item
+                    label="Mobile"
+                    name="mobile"
+                    rules={[{ required: true, message: "" }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Field>
               </Col>
             </Row>
           </Col>
