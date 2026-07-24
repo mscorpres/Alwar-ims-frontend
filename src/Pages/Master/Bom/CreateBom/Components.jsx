@@ -2,34 +2,35 @@
 import FormTable2 from "../../../../Components/FormTable2";
 import { Input, Typography } from "antd";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
+import Field from "../../../../Components/Field";
 
 const Components = ({
   asyncOptions,
   setAsyncOptions,
   getComponentOptions,
   loading,
-  selectLoading,
   form,
+  isValid,
 }) => {
-  const calculation = (fieldName, watchValues) => {};
-  const ComponentSelect = (
-    <MyAsyncSelect
-      optionsState={asyncOptions}
-      onBlur={() => setAsyncOptions([])}
-      loadOptions={getComponentOptions}
-      selectLoading={loading}
-      labelInValue
-    />
-  );
 
   const componentColumn = {
     headerName: "Components",
     name: "component",
     width: 250,
     flex: true,
-    field: () => ComponentSelect,
+    field: () => (
+      <MyAsyncSelect
+        optionsState={asyncOptions}
+        onBlur={() => setAsyncOptions([])}
+        loadOptions={getComponentOptions}
+        selectLoading={loading}
+        labelInValue
+        showError={isValid}
+        message="Please select a component"
+      />
+    ),
   };
-  let columns = componentsItems();
+  let columns = componentsItems(isValid);
   columns.splice(1, 0, componentColumn);
 
   return (
@@ -44,7 +45,6 @@ const Components = ({
       nonListWatchKeys={[]}
       componentRequiredRef={[]}
       form={form}
-      calculation={calculation}
     />
   );
 };
@@ -53,7 +53,7 @@ export default Components;
 
 const watchKeys = ["component"];
 
-const componentsItems = () => [
+const componentsItems = (isValid) => [
   {
     headerName: "#",
     name: "",
@@ -68,6 +68,10 @@ const componentsItems = () => [
     name: "qty",
     width: 250,
     flex: true,
-    field: () => <Input type="number" />,
+    field: () => (
+      <Field attr="required | Please enter Qty" showValidation={isValid}>
+        <Input type="number" />
+      </Field>
+    ),
   },
 ];

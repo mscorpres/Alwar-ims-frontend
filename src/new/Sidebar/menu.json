@@ -709,20 +709,21 @@
                 "icon": "BusinessIcon",
                 "isHeading": true,
                 "children": [
+                   {
+                    "key": "B191",
+                    "label": "Add Vendor",
+                    "icon": "BusinessIcon",
+                    "path": "/create-vendor",
+                    "isShown": true
+                  },
                   {
                     "key": "B19",
                     "label": "Vendor / Supplier",
                     "icon": "BusinessIcon",
                     "path": "/vendor",
                     "isShown": true
-                  },
-                  {
-                    "key": "B191",
-                    "label": "Add Vendor",
-                    "icon": "BusinessIcon",
-                    "path": "/create-vendor",
-                    "isShown": true
                   }
+                 
                 ]
               },
               {
