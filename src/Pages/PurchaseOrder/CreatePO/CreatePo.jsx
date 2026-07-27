@@ -148,6 +148,7 @@ export default function CreatePo() {
   const shipGSTValue = Form.useWatch("shipGST", form);
   const shipaddressValue = Form.useWatch("shipaddress", form);
   const advancePercentageValue = Form.useWatch("advancePercentage", form);
+  const partyNameValue = Form.useWatch("partyName", form);
   const showPoExchangeField =
     String(poCurrencyWatched ?? "364907247") !== "364907247";
 
@@ -2564,48 +2565,50 @@ export default function CreatePo() {
                           {form.getFieldValue("ship_type") === "manual" && (
                             <Row gutter={16} style={{ marginTop: 16 }}>
                               <Col span={6}>
-                                <Form.Item label="Party Name" name="partyName">
-                                  <Input
-                                    size="default"
-                                    placeholder="Enter Party Name"
-                                  />
-                                </Form.Item>
-                              </Col>
-                              <Col span={6}>
                                 <Field
-                                  attr="required | Please Enter Shipping PAN Number!"
-                                  value={shipPanValue}
+                                  attr="required | Please Enter Party Name!"
+                                  value={partyNameValue}
                                   showValidation={isValid}
                                 >
                                   <Form.Item
+                                    label="Party Name"
+                                    name="partyName"
+                                    rules={[{ required: true, message: "" }]}
+                                  >
+                                    <Input
+                                      size="default"
+                                      placeholder="Enter Party Name"
+                                    />
+                                  </Form.Item>
+                                </Field>
+                              </Col>
+                              <Col span={6}>
+                           
+                                  <Form.Item
                                     label="Pan No."
                                     name="shipPan"
-                                    rules={[{ required: true, message: "" }]}
+                                    rules={[{ required: false }]}
                                   >
                                     <Input
                                       size="default"
                                       placeholder="Enter Shipping PAN"
                                     />
                                   </Form.Item>
-                                </Field>
+                              
                               </Col>
                               <Col span={6}>
-                                <Field
-                                  attr="required | Please Enter Shipping GSTIN!"
-                                  value={shipGSTValue}
-                                  showValidation={isValid}
-                                >
+                              
                                   <Form.Item
                                     name="shipGST"
                                     label="GSTIN / UIN"
-                                    rules={[{ required: true, message: "" }]}
+                                    rules={[{ required: false }]}
                                   >
                                     <Input
                                       size="default"
                                       placeholder="Enter Shipping GSTIN"
                                     />
                                   </Form.Item>
-                                </Field>
+                              
                               </Col>
                             </Row>
                           )}
