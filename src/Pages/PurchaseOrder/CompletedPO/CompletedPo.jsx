@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import ViewComponentSideBar from "./ViewComponentSideBar";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { Button, Col, Input, Row, Space } from "antd";
+import Field from "../../../Components/Field";
+import {  Col, Input, Row, Space } from "antd";
 import printFunction, {
   downloadFunction,
 } from "../../../Components/printFunction";
@@ -26,15 +27,14 @@ const CompletedPo = () => {
   const [showComponentSideBar, setShowComponentSideBar] = useState(false);
   const [searchDateRange, setSearchDateRange] = useState("");
   const [searchInput, setSearchInput] = useState(null);
-  const [vendorSearchInput, setVendorSearchInput] = useState("");
   const [wise, setWise] = useState("po_wise");
   const [rows, setRows] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [viewLoading, seViewLoading] = useState(false);
 
   const [componentData, setComponentData] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState([]);
+  const [isValid, setIsValid] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const wiseOptions = [
     { value: "single_date_wise", text: "Date Wise" },
@@ -55,7 +55,7 @@ const CompletedPo = () => {
       const response = await imsAxios.post("/purchaseOrder/fetchCompletePO", {
         data:
           wise === "vendor_wise"
-            ? searchInput
+            ? searchInput?.value
             : wise === "po_wise"
               ? searchInput.trim()
               : wise === "single_date_wise" && searchDateRange,
@@ -84,6 +84,26 @@ const CompletedPo = () => {
         showToast("Please select a vendor", "error");
       }
     }
+  };
+  const validateAndSearch = () => {
+    if (!wise) {
+      setIsValid(true);
+      return;
+    }
+    if (wise === "single_date_wise" && !searchDateRange) {
+      setIsValid(true);
+      return;
+    }
+    if (wise === "po_wise" && !searchInput?.trim()) {
+      setIsValid(true);
+      return;
+    }
+    if (wise === "vendor_wise" && !searchInput) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+    getSearchResults();
   };
   // setLoading(false);
   const getVendors = async (search) => {
@@ -201,11 +221,13 @@ const CompletedPo = () => {
       flex: 1,
       getActions: ({ row }) => [
         <TableActions
+          key="view"
           action="view"
           onClick={() => getComponentData(row.po_transaction_code)}
         />,
 
         <TableActions
+          key="print"
           action="print"
           onClick={() => {
             printFun(row.po_transaction_code);
@@ -213,6 +235,7 @@ const CompletedPo = () => {
         />,
 
         <TableActions
+          key="download"
           action="download"
           onClick={() => handleDownload(row.po_transaction_code)}
         />,
@@ -220,12 +243,7 @@ const CompletedPo = () => {
     },
   ];
 
-  useEffect(() => {
-    getVendors(vendorSearchInput);
-  }, [vendorSearchInput]);
-  const closeAllModal = () => {
-    setShowComponentSideBar(false);
-  };
+
   useEffect(() => {
     setSearchInput("");
     // console.log(filterData);
@@ -244,6 +262,8 @@ const CompletedPo = () => {
                 onChange={setWise}
                 value={wise}
                 setSearchString={setSearchInput}
+                showError={isValid}
+                message="Please select wise"
               />
             </div>
             <div style={{ width: 300 }}>
@@ -253,16 +273,24 @@ const CompletedPo = () => {
                   setDateRange={setSearchDateRange}
                   dateRange={searchDateRange}
                   value={searchDateRange}
+                  showError={isValid}
+                  message="Please select a date range"
                 />
               ) : wise === "po_wise" ? (
-                <Input
-                  style={{ width: "100%" }}
-                  type="text"
-                  size="default"
-                  placeholder="Enter Po Number"
+                <Field
+                  attr="required | Please enter a PO number"
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
+                  showValidation={isValid}
+                >
+                  <Input
+                    style={{ width: "100%" }}
+                    type="text"
+                    size="default"
+                    placeholder="Enter Po Number"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </Field>
               ) : (
                 wise === "vendor_wise" && (
                   <div>
@@ -274,8 +302,11 @@ const CompletedPo = () => {
                       onChange={(value) => setSearchInput(value)}
                       loadOptions={getVendors}
                       optionsState={asyncOptions}
+                      labelInValue
                       defaultOptions
                       placeholder="Select Vendor..."
+                      showError={isValid}
+                      message="Please select a vendor"
                     />
                   </div>
                 )
@@ -283,17 +314,8 @@ const CompletedPo = () => {
             </div>
             <MyButton
               loading={searchLoading}
-              disabled={
-                wise === "single_date_wise"
-                  ? searchDateRange === ""
-                    ? true
-                    : false
-                  : !searchInput
-                    ? true
-                    : false
-              }
               type="primary"
-              onClick={getSearchResults}
+              onClick={validateAndSearch}
               variant="search"
             >
               Search
