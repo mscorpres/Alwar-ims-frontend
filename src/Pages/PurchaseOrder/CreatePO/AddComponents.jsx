@@ -882,8 +882,7 @@ const {showToast} = useToast();
         !row.rate ||
         !row.currency ||
         row.gstrate === "" ||
-        row.gstrate === undefined ||
-        !row.duedate,
+        row.gstrate === undefined
     );
     if (hasIncompleteRow) {
       setIsValid(true);
@@ -1067,7 +1066,7 @@ const {showToast} = useToast();
       width: 150,
       field: "duedate",
       sortable: false,
-      renderCell: (params) => invoiceDateCell(params, inputHandler, isValid),
+      renderCell: (params) => invoiceDateCell(params, inputHandler),
     },
     {
       headerName: "HSN Code",

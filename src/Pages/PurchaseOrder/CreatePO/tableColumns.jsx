@@ -103,7 +103,7 @@ export const foreignCell = ({ row }) => {
     />
   );
 };
-export const invoiceDateCell = ({ row }, inputHandler, isValid) => {
+export const invoiceDateCell = ({ row }, inputHandler) => {
   return (
     <SingleDatePicker
       row={row}
@@ -113,8 +113,7 @@ export const invoiceDateCell = ({ row }, inputHandler, isValid) => {
       inputHandler={inputHandler}
       format="DD-MM-YYYY"
       placeholder="Select Date"
-      showError={isValid}
-      message="Due date is required"
+   
     />
   );
 };
