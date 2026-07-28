@@ -288,7 +288,7 @@ const EditModal = ({ show, close, bomType }) => {
       renderCell: ({ row }) => (
         <Field
           attr="required | Qty must be at least 1"
-          value={row.qty && Number(row.qty) >= 1 ? row.qty : undefined}
+          value={row.qty && Number(row.qty) >= 0 ? row.qty : undefined}
           showValidation={invalidRows[row.id]}
         >
           <Input
