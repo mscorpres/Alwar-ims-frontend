@@ -20,6 +20,7 @@ import Loading from "../../../../Components/Loading";
 
 import MySelect from "../../../../Components/MySelect";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
+import Field from "../../../../Components/Field";
 import CurrenceModal from "../../../../Components/CurrenceModal";
 import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
 import AddBranch from "../../../Master/Vendor/model/AddBranch";
@@ -109,6 +110,7 @@ export default function MaterialInWithoutPO() {
   const [showSuccessPage, setShowSuccessPage] = useState(null);
   const [preview, setPreview] = useState(false);
   const [previewRows, setPreviewRows] = useState([]);
+  const [isValid, setIsValid] = useState(false);
   const [form] = Form.useForm();
   const components = Form.useWatch("components", form);
   const { executeFun, loading } = useApi();
@@ -134,8 +136,39 @@ export default function MaterialInWithoutPO() {
     },
   ];
   // console.log("fileComponents", fileComponents);
+  const hasIncompleteComponentRow = (rows) =>
+    (rows || []).some(
+      (row) =>
+        !row?.component ||
+        !row?.qty ||
+        Number(row?.qty) <= 0 ||
+        !row?.rate ||
+        Number(row?.rate) <= 0 ||
+        !row?.currency ||
+        row?.gstRate === "" ||
+        row?.gstRate === undefined ||
+        row?.gstRate === null ||
+        !row?.gstType ||
+        !row?.location,
+    );
+
   const handleSubmit = async () => {
-    const values = await form.validateFields();
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    if (hasIncompleteComponentRow(values?.components)) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     Modal.confirm({
       title: "Create MIN",
       content: "Are you sure you want to create this MIN?",
@@ -147,7 +180,18 @@ export default function MaterialInWithoutPO() {
   };
 
   const handleValidatingInvoices = async () => {
-    const values = await form.validateFields();
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
     if (!fileName) {
       showToast("Please upload a Document", "error");
       setSubmitLoading(false);
@@ -170,7 +214,9 @@ export default function MaterialInWithoutPO() {
           confirmLoading: loading("submit"),
           cancelText: "Cancel",
         });
+
       } else {
+       
         submitMIN(values);
       }
     } else {
@@ -180,8 +226,19 @@ export default function MaterialInWithoutPO() {
   const submitMIN = async () => {
     setSubmitLoading(true);
     const vendorType = form.getFieldValue("vendorType");
-    const values = await form.validateFields();
-
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      setSubmitLoading(false);
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
     if (fileName || vendorType == "p01") {
       const response = await executeFun(
         () => materialInWithoutPo(values, fileName, vendorType),
@@ -385,7 +442,7 @@ export default function MaterialInWithoutPO() {
   const handleProjectChange = async (value) => {
     setPageLoading(true);
     const response = await imsAxios.post("/backend/projectDescription", {
-      project_name: value,
+      project_name: value?.value,
     });
     setPageLoading(false);
     if (response?.success) {
@@ -527,6 +584,7 @@ export default function MaterialInWithoutPO() {
     form,
     currencies,
     setShowCurrenncy,
+    isValid,
   }) => [
     {
       headerName: "Part Component",
@@ -538,6 +596,9 @@ export default function MaterialInWithoutPO() {
           labelInValue
           loadOptions={handleFetchComponentOptions}
           optionsState={asyncOptions}
+          value={row?.component}
+          showError={isValid}
+          message="Component is required"
           onChange={(value) => {
             handleFetchComponentDetails(row, index, value);
 
@@ -567,7 +628,16 @@ export default function MaterialInWithoutPO() {
       name: "qty",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: () => <Input type="number" />,
+      field: (row) => (
+        <Field
+          attr="required | Qty is at least 1"
+          value={row?.qty}
+          treatZeroAsEmpty
+          showValidation={isValid}
+        >
+          <Input type="number" />
+        </Field>
+      ),
     },
     {
       headerName: "Rate",
@@ -599,36 +669,45 @@ export default function MaterialInWithoutPO() {
         },
       ],
       field: (row, index) => (
-        <Input
-          type="number"
-          onChange={(e) => compareRates(e.target.value, index)}
-          addonAfter={
-            <div style={{ width: 50 }}>
-              <Form.Item noStyle name={[index, "currency"]}>
-                <MySelect
-                  options={currencies}
-                  onChange={(value) => {
-                    value !== "364907247"
-                      ? setShowCurrenncy({
-                          currency: value,
-                          price: row.value,
-                          exchangeRate: row.exchangeRate,
-                          symbol: currencies.filter(
-                            (cur) => cur.value == value,
-                          )[0].text,
-                          rowId: index,
-                          form: form,
-                        })
-                      : form.setFieldValue(
-                          ["components", index, "exchangeRate"],
-                          1,
-                        );
-                  }}
-                />
-              </Form.Item>
-            </div>
-          }
-        />
+        <Field
+          attr="required | Rate is at least 1"
+          value={row?.rate}
+          treatZeroAsEmpty
+          showValidation={isValid}
+        >
+          <Input
+            type="number"
+            onChange={(e) => compareRates(e.target.value, index)}
+            addonAfter={
+              <div style={{ width: 50 }}>
+                <Form.Item noStyle name={[index, "currency"]}>
+                  <MySelect
+                    options={currencies}
+                    showError={isValid}
+                    message="Currency is required"
+                    onChange={(value) => {
+                      value !== "364907247"
+                        ? setShowCurrenncy({
+                            currency: value,
+                            price: row.value,
+                            exchangeRate: row.exchangeRate,
+                            symbol: currencies.filter(
+                              (cur) => cur.value == value,
+                            )[0].text,
+                            rowId: index,
+                            form: form,
+                          })
+                        : form.setFieldValue(
+                            ["components", index, "exchangeRate"],
+                            1,
+                          );
+                    }}
+                  />
+                </Form.Item>
+              </div>
+            }
+          />
+        </Field>
       ),
       width: 200,
     },
@@ -655,14 +734,29 @@ export default function MaterialInWithoutPO() {
     {
       headerName: "GST Type",
       name: "gstType",
-      field: () => <MySelect options={gstTypeOptions} />,
+      field: (row) => (
+        <MySelect
+          options={gstTypeOptions}
+          value={row?.gstType}
+          showError={isValid}
+          message="GST Type is required"
+        />
+      ),
       // flex: 1,
       width: 160, //comment added
     },
     {
       headerName: "GST Rate",
       name: "gstRate",
-      field: () => <Input />,
+      field: (row) => (
+        <Field
+          attr="required | GST Rate is required"
+          value={row?.gstRate}
+          showValidation={isValid}
+        >
+          <Input />
+        </Field>
+      ),
       // flex: 1,
       width: 100,
     },
@@ -692,7 +786,15 @@ export default function MaterialInWithoutPO() {
     {
       headerName: "Location",
       name: "location",
-      field: () => <MySelect options={locationOptions} labelInValue={true} />,
+      field: (row) => (
+        <MySelect
+          options={locationOptions}
+          labelInValue={true}
+          value={row?.location}
+          showError={isValid}
+          message="Location is required"
+        />
+      ),
       width: 130,
     },
     {
@@ -1010,12 +1112,11 @@ export default function MaterialInWithoutPO() {
                           </p>
                         }
                         label="Vendor"
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Please Select a vendor Name!",
-                        //   },
-                        // ]}
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
                       >
                         <MyAsyncSelect
                           selectLoading={loading("select")}
@@ -1024,6 +1125,8 @@ export default function MaterialInWithoutPO() {
                           onBlur={() => setAsyncOptions([])}
                           optionsState={asyncOptions}
                           loadOptions={getVendors}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a vendor"
                           // onChange={handleFetchPreviousRate(value, index)}
                         />
                       </Form.Item>
@@ -1055,16 +1158,17 @@ export default function MaterialInWithoutPO() {
                         //   </p>
                         // }
                         label="Vendor Branch"
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Please Select a vendor Branch!",
-                        //   },
-                        // ]}
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
                       >
                         <MySelect
                           disabled={vendorType === "p01"}
                           options={vendorBranchOptions}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a vendor branch"
                         />
                       </Form.Item>
                     </Col>
@@ -1074,12 +1178,23 @@ export default function MaterialInWithoutPO() {
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Cost Center" name="costCenter">
+                      <Form.Item
+                        label="Cost Center"
+                        name="costCenter"
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
+                      >
                         <MyAsyncSelect
                           selectLoading={loading("select")}
                           onBlur={() => setAsyncOptions([])}
                           optionsState={asyncOptions}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a cost center"
                           loadOptions={handleFetchCostCenterOptions}
+                          labelInValue
                         />
                       </Form.Item>
                     </Col>{" "}
@@ -1114,13 +1229,24 @@ export default function MaterialInWithoutPO() {
                     )}
                     <Col span={12}>
                       {" "}
-                      <Form.Item label="Project ID" name="projectID">
+                      <Form.Item
+                        label="Project ID"
+                        name="projectID"
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
+                      >
                         <MyAsyncSelect
                           selectLoading={loading("select")}
                           onBlur={() => setAsyncOptions([])}
                           optionsState={asyncOptions}
                           loadOptions={handleFetchProjectOptions}
                           onChange={handleProjectChange}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a project"
+                          labelInValue
                         />
                       </Form.Item>
                     </Col>
@@ -1130,26 +1256,54 @@ export default function MaterialInWithoutPO() {
                       </Form.Item>
                     </Col>
                     <Col span={24}>
-                      <Form.Item name="vendorAddress" label="Bill From Address">
+                      <Form.Item
+                        name="vendorAddress"
+                        label="Bill From Address"
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
+                      >
+                        <Field
+                          attr="required | Please enter bill from address"
+                          showValidation={isValid && vendorType !== "p01"}
+                        >
                         <Input.TextArea
                           rows={3}
                           disabled={vendorType === "p01"}
                           style={{ resize: "none" }}
                         />
+                        </Field>
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Invoice Date" name="invoiceDate">
+                      <Form.Item
+                        label="Invoice Date"
+                        name="invoiceDate"
+                        rules={[{ required: true, message: "" }]}
+                      >
                         <SingleDatePicker
                           setDate={(value) => {
                             form.setFieldValue("invoiceDate", value);
                           }}
+                          showError={isValid}
+                          message="Invoice Date is required"
                         />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Invoice Id" name="invoiceId">
-                        <Input />
+                      <Form.Item
+                        label="Invoice Id"
+                        name="invoiceId"
+                        rules={[{ required: true, message: "" }]}
+                      >
+                        <Field
+                          attr="required | Invoice Id is required"
+                          showValidation={isValid}
+                        >
+                          <Input />
+                        </Field>
                       </Form.Item>
                     </Col>
                     <Col span={24}>
@@ -1332,6 +1486,7 @@ export default function MaterialInWithoutPO() {
                       form,
                       currencies,
                       setShowCurrenncy,
+                      isValid,
                     })}
                   />
                 </div>

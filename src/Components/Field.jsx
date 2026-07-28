@@ -14,6 +14,7 @@ const Field = ({
   children,
   style,
   className,
+  treatZeroAsEmpty = false,
   ...rest
 }) => {
   const [rule, message = "This field is required"] = attr.split("|").map((s) => s.trim());
@@ -22,12 +23,23 @@ const Field = ({
     value === undefined ||
     value === null ||
     value === "" ||
-    (typeof value === "object" && !value?.value);
+    (typeof value === "object" && !value?.value) ||
+    (treatZeroAsEmpty && Number(value) <= 0);
   const showError = showValidation && isRequired && isEmpty;
 
+  const childOnChange = isValidElement(children) ? children.props.onChange : undefined;
   const content =
     onChange && isValidElement(children)
-      ? cloneElement(children, { value, onChange, ...rest })
+      ? cloneElement(children, {
+          value,
+          onChange: childOnChange
+            ? (...args) => {
+                childOnChange(...args);
+                onChange(...args);
+              }
+            : onChange,
+          ...rest,
+        })
       : children;
 
   return (
