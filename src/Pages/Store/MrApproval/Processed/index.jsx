@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Card, Col, Form, Radio, Row, Space } from "antd";
+import { useState } from "react";
+import { Card, Col, Form, Row } from "antd";
 import useLoading from "../../../../hooks/useLoading";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -20,6 +20,7 @@ const ProccessedMrRequest = () => {
   const [showDetails, setShowDetails] = useState(null);
   const [rows, setRows] = useState([]);
   const [filterForm] = Form.useForm();
+  const [isValid, setIsValid] = useState(false);
 
   const getUser = async (search) => {
     try {
@@ -34,18 +35,30 @@ const ProccessedMrRequest = () => {
         setAsyncOptions(arr);
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("select", false);
     }
   };
 
   const getRows = async () => {
+    let values;
     try {
-      const values = await filterForm.validateFields();
+      values = await filterForm.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
+    try {
       setLoading("fetch", true);
       const payload = {
         date: values.date,
-        user: values.user,
+        user: values.user?.value,
       };
       const response = await imsAxios.post(
         "/transaction/viewApprovalStatus",
@@ -66,6 +79,7 @@ const ProccessedMrRequest = () => {
         showToast(response?.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("fetch", false);
     }
@@ -81,6 +95,8 @@ const ProccessedMrRequest = () => {
     getActions: ({ row }) => [
       // VIEW Icon
       <GridActionsCellItem
+        key="view"
+        icon={<CommonIcons.view />}
         showInMenu
         // disabled={disabled}
         label="View"
@@ -97,12 +113,19 @@ const ProccessedMrRequest = () => {
         <Form form={filterForm}>
           <Row gutter={10}>
               <Col span={5}>
-                <Form.Item name="user" label="User">
+                <Form.Item
+                  name="user"
+                  label="User"
+                  rules={[{ required: true, message: "" }]}
+                >
               <MyAsyncSelect
                 selectLoading={loading("select")}
                 onBlur={() => setAsyncOptions([])}
                 loadOptions={getUser}
                 optionsState={asyncOptions}
+                labelInValue
+                showError={isValid}
+                message="Please select a user"
               />
             </Form.Item>
               </Col>
@@ -111,9 +134,12 @@ const ProccessedMrRequest = () => {
                 name="date"
                 label="Select Date"
                 style={{ marginBottom: 0 }}
+                rules={[{ required: true, message: "" }]}
               >
                 <SingleDatePicker
                   setDate={(value) => filterForm.setFieldValue("date", value)}
+                  showError={isValid}
+                  message="Please select a date"
                 />
               </Form.Item>
             </Col>
