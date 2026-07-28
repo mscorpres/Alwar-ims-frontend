@@ -75,7 +75,7 @@ const EditModal = ({ show, close, bomType }) => {
     const missingComponent = row.new && !row.newComponent?.value;
     const missingStatus = !row.status;
     const missingCategory = !row.category;
-    const missingQty = !row.qty || Number(row.qty) < 1;
+    const missingQty = !row.qty || Number(row.qty) < 0;
 
     if (missingComponent || missingStatus || missingCategory || missingQty) {
       setInvalidRows((curr) => ({ ...curr, [row.id]: true }));
