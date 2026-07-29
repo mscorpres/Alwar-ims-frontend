@@ -14,8 +14,8 @@ import {
   Form,
   Upload,
   Drawer,
-  DatePicker,
 } from "antd";
+import SingleDatePicker from "../../../../Components/SingleDatePicker.jsx";
 import { remarkCell, manualMFGCode, HSNCell } from "./TableCollumns.jsx";
 import SingleProduct from "../../../Master/Vendor/SingleProduct.jsx";
 import CurrenceModal from "../CurrenceModal.jsx";
@@ -27,6 +27,7 @@ import SuccessPage from "../SuccessPage.jsx";
 import { imsAxios } from "../../../../axiosInterceptor.js";
 import Loading from "../../../../Components/Loading.jsx";
 import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 import {
   checkInvoiceforMIN,
   getVendorOptions,
@@ -37,6 +38,7 @@ import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton/index.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
+import Field from "../../../../Components/Field.jsx";
 import { v4 } from "uuid";
 import FileUpload from "../../../../Components/FileUpload/FileUpload.tsx";
 
@@ -56,7 +58,7 @@ export default function ExportMaterialInWithPO() {
     vendor: "",
     poNumber: "",
   });
-  const [currency, setCurrency] = useState(null);
+  // const [currency, setCurrency] = useState(null);
   const [invoice, setInvoice] = useState("");
   const [invoiceDate, setInvoiceDate] = useState(null);
   const [showCurrency, setShowCurrenncy] = useState(null);
@@ -82,22 +84,39 @@ export default function ExportMaterialInWithPO() {
   let costCode;
   const { executeFun, loading: loading1 } = useApi();
   const { loading } = useApi();
+  const [isValid, setIsValid] = useState(false);
+  const [searchValid, setSearchValid] = useState(false);
+  const hasIncompleteMaterialRow = (rows) =>
+    (rows || []).some(
+      (row) =>
+        !row?.component ||
+        !row?.orderQty ||
+        Number(row?.orderQty) <= 0 ||
+        !row?.rate ||
+        Number(row?.rate) <= 0 ||
+        row?.customDuty === "" ||
+        row?.customDuty === undefined ||
+        row?.customDuty === null ||
+        row?.freightValue === "" ||
+        row?.freightValue === undefined ||
+        row?.freightValue === null ||
+        !(row?.hsncode ?? row?.hsn),
+    );
   const validateData = async () => {
-    let validation = false;
-    // let validation = true;
-    // poData.materials.map((row) => {
     if (
-      currency &&
-      invoice &&
-      invoiceDate &&
-      poData.materials.length &&
-      selectLocation
+      !selectLocation ||
+      !invoice.trim() ||
+      !invoiceDate ||
+      !poData.materials.length
     ) {
-      validation = true;
-    } else {
-      validation = false;
-      // }
+      setIsValid(true);
+      return;
     }
+    if (hasIncompleteMaterialRow(poData.materials)) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     let componentData = {
       qty: [],
       rate: [],
@@ -119,51 +138,47 @@ export default function ExportMaterialInWithPO() {
       customDuty: [],
       freight: [],
     };
-    if (validation == true) {
-      let a = uploadedComponents;
-      if (a?.length) {
-        if (!fileName) {
-          showToast("Please upload Document", "error");
-          return;
-        }
-
-        poData?.materials?.map((row) => {
-          componentData = {
-            component: [...componentData.component, row.componentKey],
-            customDuty: [...componentData.customDuty, row.customDuty],
-            freight: [...componentData.freight, row.freightValue],
-            qty: [...componentData.qty, row.orderQty],
-            rate: [...componentData.rate, row.rate],
-            exchange: [...componentData.exchange, row.exchangeRate],
-            invoice: [invoice],
-            // invoiceDate: [...componentData.invoiceDate, row.invoiceDate],
-            hsncode: [...componentData.hsncode, row.hsn],
-            remark: [...componentData.remark, row.orderremark],
-            // location: [...componentData.location, row.location.value],
-            finalRate: [...componentData.finalRate, row.finalRate],
-            // out_location: [...componentData.out_location, row.autoConsumption],
-            documentName: uploadedComponents?.map((r) => r.documentName),
-            irn: irnNum,
-            qrScan: "N",
-            currency: "28567096",
-          };
-        });
-        //uploading invoices
-        Modal.confirm({
-          title: "Are you sure you want to submt this MIN",
-          // icon: <ExclamationCircleFilled />,
-          content: "",
-          onOk() {
-            validateInvoices({
-              componentData: componentData,
-            });
-          },
-        });
-      } else {
-        showToast("Please add at least one document", "error");
+    let a = uploadedComponents;
+    if (a?.length) {
+      if (!fileName) {
+        showToast("Please upload Document", "error");
+        return;
       }
+
+      poData?.materials?.map((row) => {
+        componentData = {
+          component: [...componentData.component, row.componentKey],
+          customDuty: [...componentData.customDuty, row.customDuty],
+          freight: [...componentData.freight, row.freightValue],
+          qty: [...componentData.qty, row.orderQty],
+          rate: [...componentData.rate, row.rate],
+          exchange: [...componentData.exchange, row.exchangeRate],
+          invoice: [invoice],
+          // invoiceDate: [...componentData.invoiceDate, row.invoiceDate],
+          hsncode: [...componentData.hsncode, row.hsn],
+          remark: [...componentData.remark, row.orderremark],
+          // location: [...componentData.location, row.location.value],
+          finalRate: [...componentData.finalRate, row.finalRate],
+          // out_location: [...componentData.out_location, row.autoConsumption],
+          documentName: uploadedComponents?.map((r) => r.documentName),
+          irn: irnNum,
+          qrScan: "N",
+          currency: "28567096",
+        };
+      });
+      //uploading invoices
+      Modal.confirm({
+        title: "Are you sure you want to submt this MIN",
+        // icon: <ExclamationCircleFilled />,
+        content: "",
+        onOk() {
+          validateInvoices({
+            componentData: componentData,
+          });
+        },
+      });
     } else {
-      showToast("Please Provide all the values of all the components", "error");
+      showToast("Please add at least one document", "error");
     }
   };
 
@@ -399,26 +414,20 @@ export default function ExportMaterialInWithPO() {
       );
     }
   };
-  const getCurrencies = async () => {
-    const response = await imsAxios.get("/backend/fetchAllCurrecy");
+  // const getCurrencies = async () => {
+  //   const response = await imsAxios.get("/backend/fetchAllCurrecy");
 
-    let arr = [];
-    arr = response?.data.map((d) => {
-      return {
-        text: d.currency_symbol,
-        value: d.currency_id,
-        notes: d.currency_notes,
-      };
-    });
-    // Currency is fixed for this flow. Pick the Dollar option from master data.
-    const dollarOption = arr.find((option) => {
-      const text = String(option?.text || "").toLowerCase();
-      return text.includes("$") || text.includes("usd");
-    });
-    if (dollarOption?.value) {
-      setCurrency(dollarOption.value);
-    }
-  };
+  //   let arr = [];
+    // arr = response?.data.map((d) => {
+    //   return {
+    //     text: d.currency_symbol,
+    //     value: d.currency_id,
+    //     notes: d.currency_notes,
+    //   };
+    // });
+ 
+ 
+  // };
 
   const getLocation = async (costCode) => {
     setPageLoading(true);
@@ -627,13 +636,14 @@ export default function ExportMaterialInWithPO() {
     setPoData(resetPoData);
     setFileName("");
     setShowResetConfirm(false);
+    setIsValid(false);
   };
   const getDetail = async () => {
     setSearchLoading(true);
     setPoData({ materials: [] });
     let search = {
       po: searchData.poNumber.trim(),
-      vendor: searchData.vendor,
+      vendor: searchData.vendor?.value,
     };
     const response = await imsAxios.post(
       "/purchaseOrder/fetchVendorPO",
@@ -759,12 +769,19 @@ export default function ExportMaterialInWithPO() {
       field: "orderQty",
       sortable: false,
       renderCell: (params) => (
-        <Input
+        <Field
+          attr="required | Qty is required"
           value={params.row.orderQty}
-          onChange={(e) =>
-            inputHandler("orderQty", e.target.value, params.row.id)
-          }
-        />
+          treatZeroAsEmpty
+          showValidation={isValid}
+        >
+          <Input
+            value={params.row.orderQty}
+            onChange={(e) =>
+              inputHandler("orderQty", e.target.value, params.row.id)
+            }
+          />
+        </Field>
       ),
       width: 120,
     },
@@ -787,10 +804,17 @@ export default function ExportMaterialInWithPO() {
       field: "rate",
       sortable: false,
       renderCell: (params) => (
-        <Input
+        <Field
+          attr="required | Rate is required"
           value={params.row.rate}
-          onChange={(e) => inputHandler("rate", e.target.value, params.row.id)}
-        />
+          treatZeroAsEmpty
+          showValidation={isValid}
+        >
+          <Input
+            value={params.row.rate}
+            onChange={(e) => inputHandler("rate", e.target.value, params.row.id)}
+          />
+        </Field>
       ),
       width: 100,
     },
@@ -799,12 +823,18 @@ export default function ExportMaterialInWithPO() {
       field: "customDuty",
       sortable: false,
       renderCell: (params) => (
-        <Input
+        <Field
+          attr="required | Custom Duty is required"
           value={params.row.customDuty}
-          onChange={(e) =>
-            inputHandler("customDuty", e.target.value, params.row.id)
-          }
-        />
+          showValidation={isValid}
+        >
+          <Input
+            value={params.row.customDuty}
+            onChange={(e) =>
+              inputHandler("customDuty", e.target.value, params.row.id)
+            }
+          />
+        </Field>
       ),
       width: 100,
     },
@@ -813,12 +843,18 @@ export default function ExportMaterialInWithPO() {
       field: "freightValue",
       sortable: false,
       renderCell: (params) => (
-        <Input
+        <Field
+          attr="required | Freight Charge is required"
           value={params.row.freightValue}
-          onChange={(e) =>
-            inputHandler("freightValue", e.target.value, params.row.id)
-          }
-        />
+          showValidation={isValid}
+        >
+          <Input
+            value={params.row.freightValue}
+            onChange={(e) =>
+              inputHandler("freightValue", e.target.value, params.row.id)
+            }
+          />
+        </Field>
       ),
       width: 100,
     },
@@ -872,7 +908,7 @@ export default function ExportMaterialInWithPO() {
       headerName: "HSN Code",
       field: "hsn",
       sortable: false,
-      renderCell: (params) => HSNCell(params, inputHandler),
+      renderCell: (params) => HSNCell(params, inputHandler, isValid),
       width: 150,
     },
     {
@@ -902,11 +938,11 @@ export default function ExportMaterialInWithPO() {
     window.location.reload();
   };
 
-  useEffect(() => {
-    // getDetail();
-    // getLocation();
-    getCurrencies();
-  }, []);
+  // useEffect(() => {
+  //   // getDetail();
+  //   // getLocation();
+  //   getCurrencies();
+  // }, []);
   useEffect(() => {
     let grandTotal = poData?.materials.map((row) =>
       Number(row?.total).toFixed(2),
@@ -1073,7 +1109,8 @@ export default function ExportMaterialInWithPO() {
         margin: 8,
       }}
     >
-      <Row>
+    {!materialInSuccess && (
+        <Row>
         {(pageLoading || submitLoading == true) && <Loading />}
         <Col>
           <Space>
@@ -1084,6 +1121,7 @@ export default function ExportMaterialInWithPO() {
                 selectLoading={loading1("select")}
                 onBlur={() => setAsyncOptions([])}
                 value={searchData.vendor}
+                labelInValue
                 onChange={(value) =>
                   setSearchData((searchData) => ({
                     ...searchData,
@@ -1093,25 +1131,39 @@ export default function ExportMaterialInWithPO() {
                 loadOptions={getVendors}
                 optionsState={asyncOptions}
                 placeholder="Select Vendor..."
+                showError={searchValid}
+                message="Please select a vendor"
               />
             </div>
             <div style={{ width: 180 }}>
-              <Input
-                placeholder="PO Number"
+              <Field
+                attr="required | Please enter a PO number"
                 value={searchData.poNumber}
-                onChange={(e) =>
-                  setSearchData((searchData) => ({
-                    ...searchData,
-                    poNumber: e.target.value,
-                  }))
-                }
-              />
+                showValidation={searchValid}
+              >
+                <Input
+                  placeholder="PO Number"
+                  value={searchData.poNumber}
+                  onChange={(e) =>
+                    setSearchData((searchData) => ({
+                      ...searchData,
+                      poNumber: e.target.value,
+                    }))
+                  }
+                />
+              </Field>
             </div>
             <MyButton
-              disabled={searchData.vendor == "" || searchData.poNumber == ""}
               type="primary"
               loading={searchLoading}
-              onClick={getDetail}
+              onClick={() => {
+                if (!searchData.vendor || !searchData.poNumber) {
+                  setSearchValid(true);
+                  return;
+                }
+                setSearchValid(false);
+                getDetail();
+              }}
               id="submit"
               variant="search"
             >
@@ -1158,6 +1210,7 @@ export default function ExportMaterialInWithPO() {
           </FileUpload>
         </Col>
       </Row>
+    )}
       {/* vendor info modal */}
       <Modal
         style={{
@@ -1513,6 +1566,8 @@ export default function ExportMaterialInWithPO() {
                         value={selectLocation}
                         options={locationOptions}
                         label="Location"
+                        showError={isValid}
+                        message="Location is required"
                       />
                     </Col>
                     <Col span={24}>
@@ -1525,19 +1580,19 @@ export default function ExportMaterialInWithPO() {
                       >
                         Invoice Number
                       </Typography.Title>
-                      <Input
-                        name="invoice_number"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please enter invoice number",
-                          },
-                        ]}
-                        onChange={(value) => {
-                          setInvoice(value.target.value);
-                        }}
+                      <Field
+                        attr="required | Please enter invoice number"
                         value={invoice}
-                      />
+                        showValidation={isValid}
+                      >
+                        <Input
+                          name="invoice_number"
+                          onChange={(value) => {
+                            setInvoice(value.target.value);
+                          }}
+                          value={invoice}
+                        />
+                      </Field>
                     </Col>
                     <Col span={24}>
                       <Typography.Title
@@ -1549,14 +1604,11 @@ export default function ExportMaterialInWithPO() {
                       >
                         Invoice Date
                       </Typography.Title>
-                      <DatePicker
-                        style={{ width: "100%" }}
-                        name="invoice_date"
-                        onChange={(value) => setInvoiceDate(value)}
+                      <SingleDatePicker
+                        setDate={(value) => setInvoiceDate(value)}
                         value={invoiceDate}
-                        disabledDate={(current) =>
-                          current && current.valueOf() > Date.now()
-                        }
+                        showError={isValid}
+                        message="Please select an invoice date"
                       />
                     </Col>
                   </Row>
@@ -1797,7 +1849,7 @@ export default function ExportMaterialInWithPO() {
                 display: "flex",
               }}
             >
-              <MyDataTable
+              <FormTable
                 columns={columns}
                 data={poData?.materials}
                 loading={loading("select" || pageLoading)}
