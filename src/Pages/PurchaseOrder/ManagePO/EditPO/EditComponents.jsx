@@ -365,14 +365,12 @@ export default function EditComponent({
 
   // Basic required field check
   rowCount.forEach((row) => {
-    if (!row.component || !row.qty || !row.rate || !row.hsncode || !row.gsttype || !row.duedate) {
+    if (!row.component || !row.qty || !row.rate || !row.hsncode || !row.gsttype ) {
       validation = false;
     }
   });
-console.log(rowCount, "data")
   if (!validation) {
     setIsValid(true);
-    showToast("Please fill all the required fields", "error");
     return;
   }
   setIsValid(false);
@@ -675,7 +673,7 @@ console.log(rowCount, "data")
       width: 150,
       field: "duedate",
       sortable: false,
-      renderCell: (params) => invoiceDateCell(params, inputHandler, isValid),
+      renderCell: (params) => invoiceDateCell(params, inputHandler),
     },
     {
       headerName: "HSN Code",

@@ -80,7 +80,7 @@ export const taxableCell = ({ row }) => {
 export const foreignCell = ({ row }) => {
   return <Input disabled={true} value={row.foreginValue} />;
 };
-export const invoiceDateCell = ({ row }, inputHandler, isValid) => {
+export const invoiceDateCell = ({ row }, inputHandler, isValid=false) => {
   return (
     // <SingleDatePicker
     //   row={row}
