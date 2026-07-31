@@ -1,29 +1,41 @@
-import React, { useState } from "react";
-import { Card, Col, Form, Input, Row, Space } from "antd";
+import  { useState } from "react";
+import {  Col, Form, Row, } from "antd";
+//@ts-ignore
 import MyButton from "../../../../Components/MyButton";
+//@ts-ignore
 import MyDatePicker from "../../../../Components/MyDatePicker";
+//@ts-ignore
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import useApi from "../../../../hooks/useApi";
+//@ts-ignore
 import MyDataTable from "../../../../Components/MyDataTable";
 import { getCompletedReturns } from "../../../../api/store/fgReturn";
+//@ts-ignore
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
-import { downloadCSV, exportCSVFile } from "../../../../Components/exportToCSV";
+//@ts-ignore
+import { downloadCSV } from "../../../../Components/exportToCSV";
 
 const CompletedFgReturn = () => {
   const [rows, setRows] = useState([]);
   const [form] = Form.useForm();
   const { executeFun, loading } = useApi();
+  const [isValid, setIsValid] = useState(false);
 
   const handleFetchRows = async () => {
     const values = await form.validateFields();
 
-    if (values) {
+   if(!values.date) {
+    setIsValid(true);
+    return
+   };
+
+    setIsValid(false);
       const response = await executeFun(
         () => getCompletedReturns(values.date),
         "fetch"
       );
       setRows(response.data);
-    }
+  
   };
 
   const handleDownload = () => [
@@ -43,9 +55,11 @@ const CompletedFgReturn = () => {
           style={{ marginBottom: 0 }}
         >
           <MyDatePicker
-            setDateRange={(value) =>
+            setDateRange={(value:any) =>
               form.setFieldValue("date", value)
             }
+            showError={isValid}
+            value={form.getFieldValue("date")}
           />
         </Form.Item>
       </Col>
@@ -95,7 +109,7 @@ const columns = [
     headerName: "Trans. Id",
     field: "transactionId",
     width: 200,
-    renderCell: ({ row }) => (
+    renderCell: ({ row }:any) => (
       <ToolTipEllipses text={row.transactionId} copy={true} />
     ),
   },
@@ -103,7 +117,7 @@ const columns = [
     headerName: "SKU",
     field: "sku",
     width: 150,
-    renderCell: ({ row }) => <ToolTipEllipses text={row.sku} copy={true} />,
+    renderCell: ({ row }:any) => <ToolTipEllipses text={row.sku} copy={true} />,
   },
   {
     headerName: "Product",
