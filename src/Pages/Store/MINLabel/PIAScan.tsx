@@ -12,17 +12,23 @@ import {
   Typography,
 } from "antd";
 import { InfoCircleOutlined, ReloadOutlined } from "@ant-design/icons";
+//@ts-ignore
 import { useToast } from "@/hooks/useToast";
+//@ts-ignore
 import MyButton from "@/Components/MyButton";
+//@ts-ignore
 import Loading from "@/Components/Loading.jsx";
+//@ts-ignore
 import MyAsyncSelect from "@/Components/MyAsyncSelect";
+//@ts-ignore
+import Field from "@/Components/Field.jsx";
 //module components
 import SingleProduct from "./SingleProduct";
 // types
 import { ModalType, SelectOptionType } from "@/types/general";
 //hooks
 import useApi from "@/hooks/useApi";
-//apis
+//@ts-ignore
 import { fetchBoxDetails, updateBoxQty } from "@/api/store/material-in.js";
 import { getComponentOptions, getComponentStock } from "@/api/general";
 
@@ -31,19 +37,20 @@ function PIAScan() {
   const [ready, setReady] = useState(false);
   const [selectedPartCode, setSelectedPartCode] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState<SelectOptionType[]>([]);
-  const [successData, setSuccessData] = useState(null);
+  const [successData, setSuccessData] = useState<any>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [stock, setStock] = useState(0);
   const [showResetHandler, setShowResetHandler] = useState(false);
-  const [scannedData, setScannedData] = useState({
+  const [scannedData, setScannedData] = useState<any>({
     string: "",
     loading: false,
   });
   const [scanLoading, setScanLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const { executeFun, loading } = useApi();
 
   const [scan] = Form.useForm();
-  const ref = useRef(null);
+  const ref = useRef<any>(null);
 
   const components = Form.useWatch("components", {
     form: scan,
@@ -57,7 +64,7 @@ function PIAScan() {
       const parsed = JSON.parse(value.toString().split("/n")[0]);
       if (
         components.find(
-          (row) =>
+          (row:any) =>
             row.label === parsed["label"] && row["MIN ID"] === parsed["MIN ID"]
         )
         ) {
@@ -92,7 +99,7 @@ function PIAScan() {
       const components = scan.getFieldValue("components");
       scan.setFieldValue(
         "components",
-        components.map((row) => {
+        components.map((row:any) => {
           if (row.label === boxLabel && row["MIN ID"] === minId) {
             return {
               ...row,
@@ -120,7 +127,7 @@ function PIAScan() {
   };
 
   // calculating total available qty
-  const getTotalAvailableQty = (components: []) => {
+  const getTotalAvailableQty = (components: any[]) => {
     return components?.reduce((partialSum, a) => {
       return partialSum + +Number(a.availabelQty ?? 0).toFixed(2);
     }, 0);
@@ -137,7 +144,19 @@ function PIAScan() {
   };
 
   const validateHandler = async () => {
-    let values = await scan.validateFields();
+    let values;
+    try {
+      values = await scan.validateFields();
+    } catch (error: any) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
+
     const verifiied = await handleVerify(values.part);
     if (!verifiied?.isVerified) {
       return showToast("Qty Entered and Stock does not matched", "error");
@@ -168,7 +187,7 @@ function PIAScan() {
   };
   // storing part code in state to validate same part code after scanning labels
   const handleGetPartCode = (componentKey: string) => {
-    const foundComponent = asyncOptions.find(
+    const foundComponent:any = asyncOptions.find(
       (row: SelectOptionType) => row.value === componentKey
     );
     setSelectedPartCode(foundComponent?.partCode);
@@ -180,7 +199,7 @@ function PIAScan() {
     );
 
     if (response.success) {
-      const arr = response.data.map((row) => ({
+      const arr = response.data.map((row:any) => ({
         text: row.text,
         value: row.id,
         partCode: row.part_code,
@@ -200,6 +219,7 @@ function PIAScan() {
     setStock(0);
     setSelectedPartCode(null);
     setShowResetHandler(false);
+    setIsValid(false);
   };
 
   useEffect(() => {
@@ -251,13 +271,22 @@ function PIAScan() {
         <Col sm={4} xl={6} xxl={5}>
           <Flex gap={10} vertical>
             <Card size="small">
-              <Form.Item label="Component" name="part">
-                <MyAsyncSelect
-                  onBlur={() => setAsyncOptions([])}
-                  loadOptions={handleFetchComponentOptions}
-                  optionsState={asyncOptions}
-                  selectLoading={loading("select")}
-                />
+              <Form.Item
+                label="Component"
+                name="part"
+                rules={[{ required: true, message: "" }]}
+              >
+            
+                  <MyAsyncSelect
+                    onBlur={() => setAsyncOptions([])}
+                    loadOptions={handleFetchComponentOptions}
+                    optionsState={asyncOptions}
+                    selectLoading={loading("select")}
+                    labelInValue
+                    showError={isValid}
+                    message="Please select a component"
+                  />
+               
               </Form.Item>
               <MyButton
                 text="Scan Label"
@@ -283,8 +312,17 @@ function PIAScan() {
                       : "Click the scan button to start scanning !!!"}
                   </Typography.Text>
                 </Flex>
-                <Form.Item name="remarks" label="Remarks">
-                  <Input.TextArea rows={3} />
+                <Form.Item
+                  name="remarks"
+                  label="Remarks"
+                  rules={[{ required: true, message: "" }]}
+                >
+                  <Field
+                    attr="required | Remarks is required"
+                    showValidation={isValid}
+                  >
+                    <Input.TextArea rows={3} />
+                  </Field>
                 </Form.Item>
                 <MyButton
                   loading={loading("submit")}
@@ -355,7 +393,7 @@ function PIAScan() {
             onBlur={() => {
               setReady(false);
             }}
-            onKeyDown={(e) => {
+            onKeyDown={(e:any) => {
               if (e.target.value.length === 1) {
                 setScanLoading(true);
               }
@@ -516,7 +554,7 @@ const SingleDetail = ({
   value,
 }: {
   label: string;
-  value?: string | React.ReactNodez;
+  value?: string | any;
 }) => {
   return (
     <Flex vertical gap={5}>

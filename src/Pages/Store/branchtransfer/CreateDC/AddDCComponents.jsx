@@ -14,12 +14,11 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import MySelect from "../../../../Components/MySelect";
 import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
-import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 export default function AddDCComponents({
   newGatePass,
   setActiveTab,
   detailsResetFunction,
-  setSuccessPage,
   setPageLoading,
   pickuplocs,
   droplocs,
@@ -37,10 +36,10 @@ export default function AddDCComponents({
     },
   ]);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const getComponents = async (searchInput) => {
     if (searchInput.length > 2) {
@@ -129,27 +128,37 @@ export default function AddDCComponents({
     let arr = rows.filter((row) => row.id != id);
     setRows(arr);
   };
+  const hasIncompleteRow = (data) =>
+    (data || []).some(
+      (row) =>
+        !row?.component ||
+        !row?.qty ||
+        Number(row?.qty) <= 0 ||
+        !row?.hsn ||
+        !row?.pickup ||
+        !row?.drop ||
+        !row?.description,
+    );
+
   const validateData = () => {
-    let validate = false;
-    if (newGatePass.vendorName == "") {
-      return showToast("Please select a Vendor", "error");
-    } else if (newGatePass.vendorBranch == "") {
-      return showToast("Please select a Vendor Branch", "error");
-    } else if (newGatePass.billingId == "") {
-      return showToast("Please select a Billing Address", "error");
-    } else if (newGatePass.vehicleNumber == "") {
-      return showToast("Please enter a Vehicle Number", "error");
+    if (
+      !newGatePass.vendorName ||
+      newGatePass.vendorBranch == "" ||
+      newGatePass.billingId == "" ||
+      newGatePass.vehicleNumber == ""
+    ) {
+      return showToast(
+        "Please complete the DC Details tab before adding components",
+        "error",
+      );
     }
-    rows.map((row) => {
-      if (row.component == "") {
-        validate = "Please select a component for all the material entries";
-      } else if (row.qty == "" || row.qty == 0) {
-        validate = "Quantity of a component should be more than 0";
-      }
-    });
-    if (validate) {
-      return showToast(validate, "error");
+
+    if (hasIncompleteRow(rows)) {
+      setIsValid(true);
+      return;
     }
+    setIsValid(false);
+
     let final = {
       header: {
         vendor: newGatePass.vendorName.key,
@@ -211,6 +220,7 @@ export default function AddDCComponents({
       },
     ]);
     setShowResetConfirm(false);
+    setIsValid(false);
   };
   const columns = [
     {
@@ -237,6 +247,8 @@ export default function AddDCComponents({
           asyncOptions: asyncOptions,
           selectLoading: loading1("select"),
           value: row.component,
+          showError: isValid,
+          message: "Component is required",
         }),
     },
     {
@@ -249,6 +261,9 @@ export default function AddDCComponents({
           inputHandler: inputHandler,
           value: "qty",
           suffix: row.uom,
+          showError: isValid,
+          treatZeroAsEmpty: true,
+          message: "Qty is required",
         }),
     },
     {
@@ -257,7 +272,10 @@ export default function AddDCComponents({
       flex: 1,
       renderCell: ({ row }) => (
         <MySelect
+          value={row.pickup}
           options={pickuplocs}
+          showError={isValid}
+          message="Pick up location is required"
           onChange={(e) => {
             inputHandler("pickup", e, row.id);
           }}
@@ -270,7 +288,10 @@ export default function AddDCComponents({
       flex: 1,
       renderCell: ({ row }) => (
         <MySelect
+          value={row.drop}
           options={droplocs}
+          showError={isValid}
+          message="Drop location is required"
           onChange={(e) => {
             inputHandler("drop", e, row.id);
           }}
@@ -286,6 +307,8 @@ export default function AddDCComponents({
           row: row,
           value: "hsn",
           inputHandler: inputHandler,
+          showError: isValid,
+          message: "HSN is required",
           // disabled: true,
         }),
     },
@@ -298,6 +321,8 @@ export default function AddDCComponents({
           row: row,
           value: "description",
           inputHandler: inputHandler,
+          showError: isValid,
+          message: "Description is required",
         }),
     },
   ];
@@ -343,7 +368,7 @@ export default function AddDCComponents({
           Challan?
         </p>
       </Modal>
-      <MyDataTable columns={columns} data={rows}  />
+      <FormTable columns={columns} data={rows}  />
       <NavFooter
         nextLabel="Create"
         resetFunction={() => setShowResetConfirm(true)}
