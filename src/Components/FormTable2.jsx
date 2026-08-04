@@ -23,11 +23,13 @@ const FormTable2 = ({
   const [hoveredRow, setHoveredRow] = useState(null);
   const addRow = (rowTemplate) => {
     const names = columns.map((row) => row.name);
+    const resolvedTemplate =
+      typeof rowTemplate === "function" ? rowTemplate() : rowTemplate;
     const obj =
-      rowTemplate && typeof rowTemplate === "object"
-        ? { ...rowTemplate }
+      resolvedTemplate && typeof resolvedTemplate === "object"
+        ? { ...resolvedTemplate }
         : {};
-    if (!rowTemplate) {
+    if (!resolvedTemplate) {
       names.forEach((name) => {
         if (name !== "") obj[name] = "";
       });
