@@ -1037,8 +1037,8 @@ export default function ProductMIN() {
       headerName: "Rate",
       field: "orderrate",
       sortable: false,
-      renderCell: (params) => rateCell(params, inputHandler),
-      width: 120,
+      renderCell: (params) => rateCell(params, inputHandler, currencies),
+      width: 180,
     },
     {
       headerName: "Taxable Value",

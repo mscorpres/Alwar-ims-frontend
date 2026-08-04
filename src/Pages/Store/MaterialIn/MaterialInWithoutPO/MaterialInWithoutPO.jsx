@@ -649,13 +649,23 @@ export default function MaterialInWithoutPO() {
           },
         },
       ],
-      field: (row, index) => (
-        <Input
-          type="number"
-          onChange={(e) => compareRates(e.target.value, index)}
-        />
-      ),
-      width: 120,
+        field: (row, index) => {
+        const currencySymbol =
+          currencies.find((cur) => cur.value == row.currency)?.text ||
+          row.currency;
+        return (
+          <Input
+            onChange={(e) => compareRates(e.target.value, index)}
+            type="number"
+            addonAfter={
+              <div style={{ width: 50 }}>
+                <Typography.Text>{currencySymbol}</Typography.Text>
+              </div>
+            }
+          />
+        );
+      },
+      width: 180,
     },
 
     {

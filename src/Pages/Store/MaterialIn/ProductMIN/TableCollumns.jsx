@@ -1,8 +1,7 @@
-import { Input } from "antd";
+import { Input, Typography } from "antd";
 import InputMask from "react-input-mask";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MySelect from "../../../../Components/MySelect";
-import SingleDatePicker from "../../../../Components/SingleDatePicker";
 const gstTypeOptions = [
   { value: "I", text: "INTER STATE" },
   { value: "L", text: "LOCAL" },
@@ -35,13 +34,23 @@ export const QuantityCell = ({ row }, inputHandler) => (
     type="number"
   />
 );
-export const rateCell = ({ row }, inputHandler) => (
-  <Input
-    value={row.orderrate}
-    onChange={(e) => inputHandler("orderrate", e.target.value, row.id)}
-    type="number"
-  />
-);
+export const rateCell = ({ row }, inputHandler, currencies) => {
+  const currencySymbol =
+    currencies?.find((cur) => cur.value == row.currency)?.text ||
+    row.currency;
+  return (
+    <Input
+      value={row.orderrate}
+      onChange={(e) => inputHandler("orderrate", e.target.value, row.id)}
+      type="number"
+      addonAfter={
+        <div style={{ width: 50 }}>
+          <Typography.Text>{currencySymbol}</Typography.Text>
+        </div>
+      }
+    />
+  );
+};
 // export const rateCell = ({ row }, inputHandler) => (
 //   <Input
 //     value={row.orderrate}
