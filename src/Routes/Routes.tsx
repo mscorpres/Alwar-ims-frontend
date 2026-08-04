@@ -134,6 +134,7 @@ import {
 } from "../Pages/index.jsx";
 //@ts-ignore
 import Dashboard from "../new/dashboard/Dashboard.jsx";
+//@ts-ignore
 import ViewFGMIN from "../Pages/Store/viewfgmodule/ViewFGMIN.jsx";
 import {
   CreateMaster,
