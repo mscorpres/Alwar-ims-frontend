@@ -807,7 +807,6 @@ export default function MaterialInWithPO() {
       }
 
       const formData = new FormData();
-     
 
       files.forEach((file) => formData.append("files", file));
       const fileResponse = await imsAxios.post(
@@ -818,7 +817,7 @@ export default function MaterialInWithPO() {
         throw new Error(fileResponse?.message || "Upload Document failed");
       }
       setFileName(fileResponse?.data);
-          setUploadedComponents(filesData ?? []);
+      setUploadedComponents(filesData ?? []);
       showToast(fileResponse?.message || "Upload Document success", "success");
       return fileResponse;
     } finally {
@@ -829,7 +828,7 @@ export default function MaterialInWithPO() {
   const handleFileUploadDelete = (id) => {
     setFilesData(filesData.filter((item) => item.id !== id));
   };
- 
+
   const handleFileUploadChange = (items) => {
     setFilesData(items);
   };
@@ -837,7 +836,8 @@ export default function MaterialInWithPO() {
   return (
     <div
       style={{
-        height: "calc(100vh - 170px)",
+        maxHeight: "calc(100vh - 200px)",
+        minHeight: "calc(100vh - 150px)",
         position: "relative",
         overflow: "hidden",
         margin: "8px",
@@ -845,84 +845,90 @@ export default function MaterialInWithPO() {
     >
       <Row justify="space-between">
         {(pageLoading || submitLoading == true) && <Loading />}
-       {!materialInSuccess && <><Col span={20}>
-          <Space>
-            <div style={{ width: 250 }}>
-              <MyAsyncSelect
-                allowClear
-                size="default"
-                selectLoading={loading1("select")}
-                onBlur={() => setAsyncOptions([])}
-                value={searchData.vendor}
-                labelInValue
-                onChange={(value) =>
-                  setSearchData((searchData) => ({
-                    ...searchData,
-                    vendor: value,
-                  }))
-                }
-                loadOptions={getVendors}
-                optionsState={asyncOptions}
-                placeholder="Select Vendor..."
-                showError={searchValid}
-                message="Please select a vendor"
-              />
-            </div>
-            <div style={{ width: 200 }}>
-              <Field
-                attr="required | Please enter a PO number"
-                value={searchData.poNumber}
-                showValidation={searchValid}
-              >
-                <Input
-                  allowClear
-                  placeholder="PO Number"
-                  value={searchData.poNumber}
-                  onChange={(e) =>
-                    setSearchData((searchData) => ({
-                      ...searchData,
-                      poNumber: e.target.value,
-                    }))
-                  }
-                />
-              </Field>
-            </div>
-            <MyButton
-              type="primary"
-              loading={searchLoading}
-              onClick={validateAndSearch}
-              id="submit"
-              variant="search"
-            >
-              Search
-            </MyButton>
-          </Space>
-        </Col>
-      
-        <Col>
-          {/* <Button
+        {!materialInSuccess && (
+          <>
+            <Col span={20}>
+              <Space>
+                <div style={{ width: 250 }}>
+                  <MyAsyncSelect
+                    allowClear
+                    size="default"
+                    selectLoading={loading1("select")}
+                    onBlur={() => setAsyncOptions([])}
+                    value={searchData.vendor}
+                    labelInValue
+                    onChange={(value) =>
+                      setSearchData((searchData) => ({
+                        ...searchData,
+                        vendor: value,
+                      }))
+                    }
+                    loadOptions={getVendors}
+                    optionsState={asyncOptions}
+                    placeholder="Select Vendor..."
+                    showError={searchValid}
+                    message="Please select a vendor"
+                  />
+                </div>
+                <div style={{ width: 200 }}>
+                  <Field
+                    attr="required | Please enter a PO number"
+                    value={searchData.poNumber}
+                    showValidation={searchValid}
+                  >
+                    <Input
+                      allowClear
+                      placeholder="PO Number"
+                      value={searchData.poNumber}
+                      onChange={(e) =>
+                        setSearchData((searchData) => ({
+                          ...searchData,
+                          poNumber: e.target.value,
+                        }))
+                      }
+                    />
+                  </Field>
+                </div>
+                <MyButton
+                  type="primary"
+                  loading={searchLoading}
+                  onClick={validateAndSearch}
+                  id="submit"
+                  variant="search"
+                >
+                  Search
+                </MyButton>
+              </Space>
+            </Col>
+
+            <Col>
+              {/* <Button
             type="primary"
             icon={<UploadOutlined />}
             onClick={() => setUploadClicked(true)}
           >
             Upload Documents
           </Button> */}
-          <FileUpload
-            accept="image/*,.pdf"
-            multiple
-            maxFiles={3}
-            maxFileSize={5 * 1024 * 1024}
-            title="Documents"
-            getContainer={() => tableContainerRef.current}
-            // onUpload={handleUploadDocument}
-            onUploadBatch={handleUploadDocumentsBatch}
-            onDelete={handleFileUploadDelete}
-            onChange={handleFileUploadChange}
-          >
-            <MyButton variant="upload" text={`Upload Documents ${filesData?.length > 0 ? `(${filesData?.length})` : ""}`}/>
-          </FileUpload>
-        </Col></>
-          }
+              <FileUpload
+                accept="image/*,.pdf"
+                multiple
+                maxFiles={3}
+                maxFileSize={5 * 1024 * 1024}
+                title="Documents"
+                getContainer={() => tableContainerRef.current}
+                // onUpload={handleUploadDocument}
+                onUploadBatch={handleUploadDocumentsBatch}
+                onDelete={handleFileUploadDelete}
+                onChange={handleFileUploadChange}
+              >
+                <MyButton
+                  variant="upload"
+                  text={`Upload Documents ${filesData?.length > 0 ? `(${filesData?.length})` : ""}`}
+                />
+              </FileUpload>
+            </Col>
+          </>
+        )}
       </Row>
       {/* vendor info modal */}
       <Modal
@@ -1023,7 +1029,7 @@ export default function MaterialInWithPO() {
           <Col span={6}>
             <Row
               style={{
-                height: "calc(100% - 235px)",
+                maxHeight: "calc(100vh - 220px)",
                 overflow: "auto",
               }}
               gutter={[0, 4]}
@@ -1355,9 +1361,8 @@ export default function MaterialInWithPO() {
               </Col>
             </Row>
           </Col>
-      
 
-          <Col span={18} style={{ height: "calc(100vh - 220px)" }}  >
+          <Col span={18} style={{ height: "calc(100vh - 220px)" }}>
             <div
               ref={tableContainerRef}
               style={{
@@ -1372,12 +1377,10 @@ export default function MaterialInWithPO() {
                   data={poData?.materials}
                   columns={columns}
                   loading={loading1("select") || pageLoading}
-                  
                 />
               </div>
             </div>
           </Col>
-
 
           <NavFooter
             hideHeaderMenu

@@ -1103,10 +1103,12 @@ export default function ExportMaterialInWithPO() {
   return (
     <div
       style={{
-        height: "calc(100vh - 215px)",
+      maxHeight: "calc(100vh - 200px)",
+        minHeight: "calc(100vh - 150px)",
         width: "100%",
         position: "relative",
         margin: 8,
+        overflowY: "hidden",
       }}
     >
     {!materialInSuccess && (
@@ -1307,10 +1309,11 @@ export default function ExportMaterialInWithPO() {
 
       {!materialInSuccess && (
         <Row gutter={8} style={{ height: "100%", marginTop: 10 }}>
-          <Col span={6} style={{ overflowY: "auto", height: "100%" }}>
+          <Col span={6} >
             <Row
-              style={{
-                height: "calc(100% - 60px)",
+                 style={{
+                maxHeight: "calc(100vh - 220px)",
+                overflow: "auto",
               }}
               gutter={[0, 4]}
             >
@@ -1839,7 +1842,7 @@ export default function ExportMaterialInWithPO() {
               </Modal>
             </Row>
           </Col>
-          <Col span={18}>
+          <Col span={18} style={{ height: "calc(100vh - 220px)" }}>
             <div
               ref={tableContainerRef}
               style={{
