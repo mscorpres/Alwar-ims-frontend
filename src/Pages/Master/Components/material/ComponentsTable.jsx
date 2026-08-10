@@ -48,6 +48,11 @@ const columns = [
     width: 150,
   },
   {
+    headerName: "Sub Group",
+    field: "subGroup",
+    width: 150,
+  },
+  {
     headerName: "Status",
     field: "status",
     width: 150,
