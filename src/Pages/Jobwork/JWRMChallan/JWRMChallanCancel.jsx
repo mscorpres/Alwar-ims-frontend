@@ -1,17 +1,20 @@
 import { Button, Col, Drawer, Form, Input, Modal, Row, Space } from "antd";
-import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import { imsAxios } from "../../../axiosInterceptor";
 import useLoading from "../../../hooks/useLoading";
+import Field from "../../../Components/Field.jsx";
 
 function JWRMChallanCancel({ showCancel, setShowCancel, getRows }) {
   const { showToast } = useToast();
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [loading, setLoading] = useLoading();
+  const [isValid, setIsValid] = useState(false);
   const [jwChallanCancelForm] = Form.useForm();
+  const reasonValue = Form.useWatch("reason", jwChallanCancelForm);
   const validateHandler = async (values) => {
+    setIsValid(false);
     const obj = {
       po_id: showCancel.poId,
       challan_id: showCancel.challanId,
@@ -44,6 +47,7 @@ function JWRMChallanCancel({ showCancel, setShowCancel, getRows }) {
   useEffect(() => {
     if (showCancel) {
       jwChallanCancelForm.setFieldsValue({ reason: "" });
+      setIsValid(false);
     }
   }, [showCancel]);
 
@@ -68,6 +72,7 @@ function JWRMChallanCancel({ showCancel, setShowCancel, getRows }) {
       <Form
         style={{ height: "100%" }}
         onFinish={validateHandler}
+        onFinishFailed={() => setIsValid(true)}
         form={jwChallanCancelForm}
         layout="vertical"
       >
@@ -76,15 +81,19 @@ function JWRMChallanCancel({ showCancel, setShowCancel, getRows }) {
             <Form.Item
               name="reason"
               label="Cancellation Reason"
-              rules={[
-                { required: true, message: "Please enter Cancelation Reason" },
-              ]}
+              rules={[{ required: true, message: "" }]}
             >
-              <Input.TextArea
-                rows={6}
-                style={{ resize: "none" }}
-                placeholder="Please enter Cancelation Reason"
-              />
+              <Field
+                attr="required | Please enter Cancelation Reason"
+                value={reasonValue}
+                showValidation={isValid}
+              >
+                <Input.TextArea
+                  rows={6}
+                  style={{ resize: "none" }}
+                  placeholder="Please enter Cancelation Reason"
+                />
+              </Field>
             </Form.Item>
           </Col>
         </Row>

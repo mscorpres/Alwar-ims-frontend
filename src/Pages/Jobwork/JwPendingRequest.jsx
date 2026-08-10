@@ -29,6 +29,7 @@ function JwPendingRequest() {
   const [editiJWAll, setEditJWAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   // const getAsyncOptions = async (search, type) => {
   //   let link =
@@ -51,6 +52,11 @@ function JwPendingRequest() {
   //   }
   // };
   const getRows = async () => {
+    if (searchInput === "" || !searchInput) {
+     setIsValid(true);
+     return;
+    }
+    setIsValid(false);
    try {
      setLoading("fetch");
     const response = await imsAxios.post("/jobwork/getJobworkChallan", {
@@ -325,6 +331,7 @@ function JwPendingRequest() {
                   setDateRange={setSearchInput}
                   dateRange={searchInput}
                   value={searchInput}
+                  showError={isValid}
                 />
               {/* )} */}
             </div>
