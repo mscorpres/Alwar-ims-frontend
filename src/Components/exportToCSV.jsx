@@ -1,4 +1,4 @@
-import * as xlsx from "xlsx";
+import ExcelJS from "exceljs";
 
 const mergeRows = (rows) => {
   return rows.map((row) => {
@@ -191,12 +191,34 @@ export const downloadCSVCustomColumns = (csvData, name) => {
   }
 };
 
-export function exportCSVFile(items, fileTitle) {
-  let arr = items;
-  const wb = xlsx.utils.book_new();
-  const ws = xlsx.utils.aoa_to_sheet(arr);
-  xlsx.utils.book_append_sheet(wb, ws, "Sheet 1");
-  xlsx.writeFile(wb, `${fileTitle}.xlsx`);
+export async function exportCSVFile(items, fileTitle) {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet 1");
+
+    items.forEach((row) => {
+      worksheet.addRow(row);
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `${fileTitle}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Excel export failed:", error);
+  }
 }
 
 export const downloadCSVnested2 = (rows, columns, name, newRows) => {

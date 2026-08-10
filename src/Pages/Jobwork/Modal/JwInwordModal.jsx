@@ -35,7 +35,7 @@ import {
   getComponentOptions,
   savejwsfinward,
 } from "../../../api/general.ts";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import useApi from "../../../hooks/useApi.ts";
 import NavFooter from "../../../Components/NavFooter";
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -351,43 +351,72 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     response?.data?.status === "success" ||
     response?.data?.code == 200;
 
-  const readExcelRows = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const workbook = XLSX.read(event.target.result, { type: "array" });
-          const sheetName = workbook.SheetNames[0];
-          const sheet = workbook.Sheets[sheetName];
-          const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-          const formattedRows = rows
-            .map((row, index) => {
-              const partcode =
-                row.partcode ??
-                row.Partcode ??
-                row.PartCode ??
-                row["Part Code"] ??
-                row["Part code"] ??
-                row.part_code ??
-                row.PART_CODE ??
-                row.PARTCODE ??
-                "";
-              const remark = row.remark ?? row.Remark ?? row.REMARK ?? "";
-              return {
-                id: index + 1,
-                partcode: String(partcode).trim(),
-                remark: String(remark).trim(),
-              };
-            })
-            .filter((row) => row.partcode || row.remark);
-          resolve(formattedRows);
-        } catch (error) {
-          reject(error);
+const readExcelRows = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      try {
+        const workbook = new ExcelJS.Workbook();
+
+        await workbook.xlsx.load(event.target.result);
+
+        const worksheet = workbook.worksheets[0];
+
+        if (!worksheet) {
+          resolve([]);
+          return;
         }
-      };
-      reader.onerror = reject;
-      reader.readAsArrayBuffer(file);
-    });
+
+        const headers = worksheet.getRow(1).values.slice(1);
+
+        const rows = [];
+
+        worksheet.eachRow((row, rowNumber) => {
+          if (rowNumber === 1) return;
+
+          const rowData = {};
+
+          headers.forEach((header, index) => {
+            rowData[header] = row.getCell(index + 1).value ?? "";
+          });
+
+          rows.push(rowData);
+        });
+
+        const formattedRows = rows
+          .map((row, index) => {
+            const partcode =
+              row.partcode ??
+              row.Partcode ??
+              row.PartCode ??
+              row["Part Code"] ??
+              row["Part code"] ??
+              row.part_code ??
+              row.PART_CODE ??
+              row.PARTCODE ??
+              "";
+
+            const remark =
+              row.remark ?? row.Remark ?? row.REMARK ?? "";
+
+            return {
+              id: index + 1,
+              partcode: String(partcode).trim(),
+              remark: String(remark).trim(),
+            };
+          })
+          .filter((row) => row.partcode || row.remark);
+
+        resolve(formattedRows);
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
 
   const excelUploadProps = {
     name: "file",
@@ -406,21 +435,41 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     return e?.fileList;
   };
 
-  const downloadExcelSample = () => {
-    const worksheet = XLSX.utils.json_to_sheet([
-      {
-        partcode: "P4881",
-        remark: "urgent",
-      },
-      {
-        partcode: "P4882",
-        remark: "low stock",
-      },
-    ]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sample");
-    XLSX.writeFile(workbook, "jw-sf-inward-sample.xlsx");
-  };
+const downloadExcelSample = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Sample");
+
+  worksheet.columns = [
+    { header: "partcode", key: "partcode", width: 20 },
+    { header: "remark", key: "remark", width: 30 },
+  ];
+
+  worksheet.addRows([
+    {
+      partcode: "P4881",
+      remark: "urgent",
+    },
+    {
+      partcode: "P4882",
+      remark: "low stock",
+    },
+  ]);
+
+  const buffer = await workbook.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "jw-sf-inward-sample.xlsx";
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
 
   const columns = [
     {
