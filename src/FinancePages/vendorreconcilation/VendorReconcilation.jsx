@@ -34,7 +34,7 @@ import TableActions, {
   CommonIcons,
 } from "../../Components/TableActions.jsx/TableActions";
 import Loading from "../../Components/Loading";
-import * as xlsx from "xlsx";
+import ExcelJS from "exceljs";
 import { downloadExcel } from "../../Components/printFunction";
 import { useSelector } from "react-redux/es/exports";
 import { convertSelectOptions } from "../../utils/general.ts";
@@ -1204,108 +1204,59 @@ const filterRule = {
   ],
 };
 
-const handleDownload = (payload) => {
-  const wb = xlsx.utils.book_new();
-  wb.Props = {
-    Title: "New Sheet",
-  };
-  wb.SheetNames.push(payload.fileName);
+const handleDownload = async (payload) => {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = "IMS";
+    workbook.title = "New Sheet";
 
-  const data = [
-    {
-      A: "",
-      B: "Reconciliation  of Books of Accounts",
-      C: "",
-    },
-  ];
-  const ws = xlsx.utils.json_to_sheet(data, {
-    skipHeader: true,
-    header: ["A"],
-  });
+    const worksheet = workbook.addWorksheet(payload.fileName);
 
-  // party details
-  xlsx.utils.sheet_add_json(
-    ws,
-    [
-      {
-        A2: "Party Name",
-        B2: payload.vendor,
-        C2: "Prepared By",
-        D2: payload.preparedBy,
-      },
-    ],
-    {
-      skipHeader: true,
-      origin: "A2",
+    // Row 1 - Title
+    worksheet.getCell("A1").value = "";
+    worksheet.getCell("B1").value = "Reconciliation  of Books of Accounts";
+    worksheet.getCell("C1").value = "";
+
+    // Row 2 - Party details
+    worksheet.getCell("A2").value = "Party Name";
+    worksheet.getCell("B2").value = payload.vendor;
+    worksheet.getCell("C2").value = "Prepared By";
+    worksheet.getCell("D2").value = payload.preparedBy;
+
+    // Row 3 - Date details
+    worksheet.getCell("A3").value = "Date";
+    worksheet.getCell("B3").value = payload.date;
+    worksheet.getCell("C3").value = "";
+    worksheet.getCell("D3").value = "";
+
+    // Row 5 - Period details
+    worksheet.getCell("A5").value = "Period";
+    worksheet.getCell("B5").value = payload.date;
+
+    // Row 6 - Particulars header
+    worksheet.getCell("A6").value = "";
+    worksheet.getCell("B6").value = `Particulars (${payload.period})`;
+    worksheet.getCell("C6").value = "Amount";
+    worksheet.getCell("D6").value = "";
+
+    // Row 7 onwards - Reconciliation data
+    if (Array.isArray(payload.arr1)) {
+      payload.arr1.forEach((row, index) => {
+        const excelRow = worksheet.getRow(index + 7);
+
+        Object.values(row).forEach((value, columnIndex) => {
+          excelRow.getCell(columnIndex + 1).value = value ?? "";
+        });
+      });
     }
-  );
-  // Date details
-  xlsx.utils.sheet_add_json(
-    ws,
-    [
-      {
-        A3: "Date",
-        B3: payload.date,
-        C3: "",
-        D3: "",
-      },
-    ],
-    {
-      skipHeader: true,
-      origin: "A3",
-    }
-  );
-  // period details
-  xlsx.utils.sheet_add_json(
-    ws,
-    [
-      {
-        A5: "Period",
-        B5: payload.date,
-      },
-    ],
-    {
-      skipHeader: true,
-      origin: "A5",
-    }
-  );
 
-  xlsx.utils.sheet_add_json(
-    ws,
-    [
-      {
-        A6: "",
-        B6: "Particulars (" + payload.period + ")",
-        C6: "Amount",
-        D6: "",
-      },
-    ],
-    {
-      skipHeader: true,
-      origin: "A6",
-    }
-  );
+    const outFile = await workbook.xlsx.writeBuffer();
 
-  xlsx.utils.sheet_add_json(
-    ws,
-    payload.arr1,
-    // [
-    //   {
-    //     A6: "",
-    //     B6: "Particulars",
-    //     C6: "Amount",
-    //     D6: "",
-    //   },
-    // ],
-    {
-      skipHeader: true,
-      origin: "A7",
-    }
-  );
-
-  wb.Sheets[payload.fileName] = ws;
-
-  const outFile = xlsx.write(wb, { bookType: "xlsx", type: "buffer" });
-
-  downloadExcel(outFile, payload.fileName + " Reconcillation");
+    downloadExcel(
+      outFile,
+      payload.fileName + " Reconcillation"
+    );
+  } catch (error) {
+    console.error("Vendor reconciliation Excel export failed:", error);
+  }
 };
