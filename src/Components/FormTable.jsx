@@ -156,7 +156,9 @@ export default function FormTable({
                       }}
                     >
                       <div style={{ display: "contents" }}>
-                        {col.renderCell({ row })}
+                        {typeof col.renderCell === "function"
+                          ? col.renderCell({ row })
+                          : row?.[col.field]}
                       </div>
                     </TableCell>
                   ))}
