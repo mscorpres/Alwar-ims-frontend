@@ -312,7 +312,6 @@ function RmtoRm() {
       );
     } finally {
       setLoadingLocationFrom(false);
-    
     }
   };
 
@@ -383,6 +382,9 @@ function RmtoRm() {
                       </th>
                       <th className="table-col" style={{ width: "16vw" }}>
                         DROP (+) Loc
+                      </th>
+                      <th className="table-col" style={{ width: "16vw" }}>
+                        DROP (+) Loc Details
                       </th>
                       <th className="table-col" style={{ width: "12vw" }}>
                         WAR
@@ -510,31 +512,22 @@ function RmtoRm() {
                                 />
                               </Field>
                             </td>
+                            <td  style={{ width: "20vw" }}>
+                              <Input
+                                disabled
+                                value={row.address}
+                                placeholder={`Row ${
+                                  index + 1
+                                } - Location Address`}
+                                rows={2}
+                                style={{ width: "100%" }}
+                              />
+                            </td>
                             <td style={{ width: "12vw", textAlign: "center" }}>
                               {/* <Input disabled value={row.avrRate} /> */}
                               <span>{row.avrRate ?? "00"}</span>
                             </td>
-                            {/* {row.locationTo &&
-                              (row.address ||
-                                loadingAddressIndex === index) && (
-                                <tr>
-                                  <td colSpan="7" style={{ padding: "8px" }}>
-                                    <TextArea
-                                      disabled
-                                      value={
-                                        loadingAddressIndex === index
-                                          ? "Loading..."
-                                          : row.address
-                                      }
-                                      placeholder={`Row ${
-                                        index + 1
-                                      } - Location Address`}
-                                      rows={2}
-                                      style={{ width: "100%" }}
-                                    />
-                                  </td>
-                                </tr>
-                              )} */}
+
                             <td style={{ width: "16vw" }}>
                               <Input
                                 value={row.comment}
