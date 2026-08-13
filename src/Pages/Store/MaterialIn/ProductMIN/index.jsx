@@ -981,7 +981,7 @@ export default function ProductMIN() {
   const handleProjectChange = async (value) => {
     setPageLoading(true);
     const response = await imsAxios.post("/backend/projectDescription", {
-      project_name: value,
+      project_name: value?.value ?? value,
     });
 
     setPageLoading(false);
