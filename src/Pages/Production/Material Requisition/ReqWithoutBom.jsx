@@ -14,6 +14,7 @@ import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
+import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { v4 } from "uuid";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import Loading from "../../../Components/Loading";
@@ -23,7 +24,6 @@ import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import FormTable from "../../../Components/FormTable.jsx";
 import { Add, Remove } from "@mui/icons-material";
-import Field from "../../../Components/Field.jsx";
 
 export default function ReqWithoutBom() {
   const { showToast } = useToast();
@@ -31,7 +31,6 @@ export default function ReqWithoutBom() {
   const [pickLocationOptions, setPickLocationOptions] = useState([]);
   const [headerLocationOptionsm, setHeaderLocationOptions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isValid, setIsValid] = useState(false);
 
   const [pickLocationLoadingMessage, contextHolder] = message.useMessage();
 
@@ -255,8 +254,8 @@ export default function ReqWithoutBom() {
   const getComponentDetails = async (componentKey, location) => {
     setLoading("component");
     const response = await imsAxios.post("/godown/godownStocks", {
-      component: componentKey?.key ?? componentKey,
-      location: location?.key ?? location,
+      component: componentKey,
+      location: location,
     });
     setLoading(false);
     if (response.success) {
@@ -269,7 +268,6 @@ export default function ReqWithoutBom() {
 
   //  reset handler
   const resetHandler = () => {
-    setIsValid(false);
     setRows([
       {
         id: v4(),
@@ -298,6 +296,7 @@ export default function ReqWithoutBom() {
   };
   // submit handler
   const submitHandler = async (values) => {
+    console.log("these are the values", values);
     setLoading("submitting");
     const response = await imsAxios.post(
       "/production/createWithoutBom",
@@ -315,47 +314,15 @@ export default function ReqWithoutBom() {
     setLoading(false);
   };
 
-  const hasIncompleteRow = (rows) =>
-    (rows || []).some(
-      (row) =>
-        !row.component ||
-        !row.pickLocation ||
-        !row.qty ||
-        Number(row.qty) <= 0
-    );
-
-  const hasDuplicateComponent = (rows) => {
-    const components = (rows || []).map((row) => row.component).filter(Boolean);
-    return new Set(components).size !== components.length;
-  };
-
   // show submit confirm dialog
   const showSubmitConfirm = async () => {
-    let values;
-    try {
-      values = await requestForm.validateFields();
-    } catch (error) {
-      setIsValid(true);
-      return;
-    }
-    if (hasIncompleteRow(rows)) {
-      setIsValid(true);
-      return;
-    }
-    if (hasDuplicateComponent(rows)) {
-      showToast(
-        "You have entered the same component twice in a single request.",
-        "error"
-      );
-      return;
-    }
-    setIsValid(false);
+    const values = await requestForm.validateFields();
 
     const finalObj = {
       location: values.location,
       comment: values.remarks,
-      component: rows.map((row) => row.component?.key ?? row.component),
-      pic_loc: rows.map((row) => row.pickLocation?.key ?? row.pickLocation),
+      component: rows.map((row) => row.component),
+      pic_loc: rows.map((row) => row.pickLocation),
       qty: rows.map((row) => row.qty),
       remark: rows.map((row) => row.remarks),
     };
@@ -399,10 +366,7 @@ export default function ReqWithoutBom() {
           optionsState={asyncOptions}
           selectLoading={loading1("select")}
           onBlur={() => setAsyncOptions([])}
-          labelInValue
           value={row.component}
-          showError={isValid}
-          message="Component is required"
           onChange={(value) =>
             inputHandler(
               "component",
@@ -423,9 +387,6 @@ export default function ReqWithoutBom() {
           optionsState={pickLocationOptions}
           onBlur={() => setPickLocationOptions([])}
           value={row.pickLocation}
-          labelInValue
-          showError={isValid}
-          message="Pick Location is required"
           onChange={(value) =>
             inputHandler(
               "pickLocation",
@@ -441,19 +402,12 @@ export default function ReqWithoutBom() {
       field: "qty",
       width: 150,
       renderCell: ({ row }) => (
-        <Field
-          attr="required | Order Qty should be greater than zero"
+        <Input
           value={row.qty}
-          treatZeroAsEmpty
-          showValidation={isValid}
-        >
-          <Input
-            value={row.qty}
-            suffix={`${row.leftQty} ${row.unit}`}
-            onChange={(e) => inputHandler("qty", e.target.value, row.id)}
+          suffix={`${row.leftQty} ${row.unit}`}
+          onChange={(e) => inputHandler("qty", e.target.value, row.id)}
             type="number"
-          />
-        </Field>
+        />
       ),
     },
     {
@@ -496,13 +450,16 @@ export default function ReqWithoutBom() {
             <Form.Item
               label="Location"
               name="location"
-              rules={[{ required: true, message: "" }]}
+              rules={[
+                {
+                  required: true,
+                  message: "Please select a location",
+                },
+              ]}
             >
               <MySelect
                 options={headerLocationOptionsm}
                 onChange={getHeaderLocationDetails}
-                showError={isValid}
-                message="Please select a location"
               />
             </Form.Item>
             {/* location description */}

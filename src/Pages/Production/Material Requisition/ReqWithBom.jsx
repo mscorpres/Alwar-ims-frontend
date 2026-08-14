@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReqWithBomModal from "./Modal/ReqWithBomModal";
 import { useToast } from "../../../hooks/useToast.js";
 import { Col, Descriptions, Divider, Form, Input, Row, Typography } from "antd";
@@ -8,12 +8,10 @@ import TextArea from "antd/lib/input/TextArea";
 import NavFooter from "../../../Components/NavFooter";
 import { imsAxios } from "../../../axiosInterceptor";
 import Loading from "../../../Components/Loading";
-import Field from "../../../Components/Field.jsx";
 
 const ReqWithBom = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [isValid, setIsValid] = useState(false);
   const [tab, setTab] = useState(true);
   const [location, setLocation] = useState([]);
   const [location1, setLocation1] = useState([]);
@@ -33,128 +31,88 @@ const ReqWithBom = () => {
     locSecond: "",
   });
 
-
-  const getLocationOptions = async () => {
+  const getLocationValueFetch = async () => {
     setSelectLoading(true);
-    try {
-      const [shiftingRes, pickRes] = await Promise.all([
-        imsAxios.post("/production/fetchLocationForWitoutBom"),
-        imsAxios.post("/transaction/getMaterialRequestPickLocation"),
-      ]);
-
-      if (shiftingRes.success) {
-        setLocation(
-          shiftingRes.data.map((obj) => ({ text: obj.text, value: obj.id })),
-        );
-      }
-      if (pickRes.success) {
-        setLocation1(
-          pickRes.data.map((obj) => ({ text: obj.text, value: obj.id })),
-        );
-      }
-    } catch (error) {
-      showToast(
-        error?.response?.data?.message || "Failed to fetch locations",
-        "error",
-      );
-    } finally {
-      setSelectLoading(false);
+    const response = await imsAxios.post(
+      "/production/fetchLocationForWitoutBom"
+    );
+    setSelectLoading(false);
+    const locArr = [];
+    if (response.success) {
+      response.data.map((obj) => locArr.push({ text: obj.text, value: obj.id }));
     }
+    setLocation(locArr);
+  };
+  const getLocation = async () => {
+    setSelectLoading(true);
+    const response = await imsAxios.post(
+      "/transaction/getMaterialRequestPickLocation"
+    );
+    setSelectLoading(false);
+    const locArr1 = [];
+    if (response.success) {
+      response.data.map((obj) =>
+        locArr1.push({ text: obj.text, value: obj.id })
+      );
+    }
+    setLocation1(locArr1);
   };
 
   const locationDetail = async (locValue, setFun) => {
     setPageLoading(true);
-    try {
-      const response = await imsAxios.post(
-        "/production/fetchLocationDetail",
-        {
-          location_key: locValue,
-        },
-      );
-      if (response.success) {
-        setFun(response.data);
-      }
-    } catch (error) {
-      showToast(
-        error?.response?.data?.message || "Failed to fetch location details",
-        "error",
-      );
-    } finally {
-      setPageLoading(false);
+    const response = await imsAxios.post("/production/fetchLocationDetail", {
+      location_key: locValue,
+    });
+    setPageLoading(false);
+    if (response.success) {
+      setFun(response.data);
     }
   };
 
   const getProductSkuFetch = async (e) => {
     if (e?.length > 2) {
       setSelectLoading(true);
-      try {
-        const response = await imsAxios.post(
-          "/backend/getProductByNameAndNo",
-          {
-            search: e,
-          },
-        );
-        let arr = [];
-        if (response.success) {
-          arr = response.data.map((d) => {
-            return { text: d.text, value: d.id };
-          });
-        }
-        setAsyncOptions(arr);
-      } catch (error) {
-        showToast(
-          error?.response?.data?.message || "Failed to fetch products",
-          "error",
-        );
-      } finally {
-        setSelectLoading(false);
+      const response = await imsAxios.post("/backend/getProductByNameAndNo", {
+        search: e,
+      });
+      setSelectLoading(false);
+      let arr = [];
+      if (response.success) {
+        arr = response.data.map((d) => {
+          return { text: d.text, value: d.id };
+        });
       }
+      setAsyncOptions(arr);
     }
   };
 
   const getProductName = async () => {
     setPageLoading(true);
-    try {
-      const response = await imsAxios.post("/production/getProductDetail", {
-        p_key: allBom.proSku.value,
-      });
-      if (response.success) {
-        setDetailProductName(response.data);
-        const sto = [];
-        response.boms?.map((ob) => sto.push({ text: ob.text, value: ob.id }));
-        setDetailBom(sto);
-      }
-    } catch (error) {
-      showToast(
-        error?.response?.data?.message || "Failed to fetch product details",
-        "error",
-      );
-    } finally {
-      setPageLoading(false);
+    const response = await imsAxios.post("/production/getProductDetail", {
+      p_key: allBom.proSku.value,
+    });
+    setPageLoading(false);
+    if (response.success) {
+      setDetailProductName(response.data);
+      const sto = [];
+      response.boms?.map((ob) => sto.push({ text: ob.text, value: ob.id }));
+      setDetailBom(sto);
     }
   };
 
   const nextPage = () => {
-    if (
-      !allBom.locValue ||
-      !allBom.locSecond ||
-      !allBom.proSku ||
-      !allBom.proBom ||
-      !allBom.qty ||
-      Number(allBom.qty) <= 0
-    ) {
-      setIsValid(true);
-      return;
+    if (!allBom.locValue) {
+      
+       showToast("Please Select Shifting Location first", "error");
+    } else if (!allBom.proSku) {
+      showToast("Please Select Product SKU first", "error");
+    } else if (!allBom.proBom) {
+      showToast("Please Select Product BOM first", "error");
+    } else if (!allBom.qty) {
+      showToast("Please Enter Quantity first", "error");
+    } else {
+      setTab(!true);
     }
-    if (allBom.locValue === allBom.locSecond) {
-      showToast(
-        "Shifting Location and Pick Location cannot be the same",
-        "error",
-      );
-      return;
-    }
-    setIsValid(false);
-    setTab(!true);
   };
 
   const back = () => {
@@ -162,30 +120,27 @@ const ReqWithBom = () => {
   };
 
   const reset = () => {
-    setIsValid(false);
     setAllBom({
       locValue: "",
       proSku: "",
       proBom: "",
       qty: "",
       remark: "",
-      locSecond: "",
     });
     setDetailLocation("");
     setDetailProductName("");
   };
 
   useEffect(() => {
-    getLocationOptions();
-  }, []);
-
-  useEffect(() => {
+    getLocationValueFetch();
+    getLocation();
     if (allBom.locValue) {
       locationDetail(allBom.locValue, setDetailLocation);
     }
   }, [allBom.locValue]);
-
   useEffect(() => {
+    getLocationValueFetch();
+    getLocation();
     if (allBom.locSecond) {
       locationDetail(allBom.locSecond, setDetailLocation1);
     }
@@ -196,7 +151,7 @@ const ReqWithBom = () => {
       getProductName();
     }
   }, [allBom.proSku]);
-  const { Text } = Typography;
+  const { Title, Text } = Typography;
   return (
     <>
       {/* {pageLoading && <Loading />} */}
@@ -256,8 +211,6 @@ const ReqWithBom = () => {
                             return { ...allBom, locValue: e };
                           })
                         }
-                        showError={isValid}
-                        message="Please Select a Shifting Location!"
                       />
                     </Form.Item>
                   </Form>
@@ -310,8 +263,6 @@ const ReqWithBom = () => {
                             return { ...allBom, locSecond: e };
                           })
                         }
-                        showError={isValid}
-                        message="Please Select a Pick Location!"
                       />
                     </Form.Item>
                   </Form>
@@ -381,8 +332,6 @@ const ReqWithBom = () => {
                         loadOptions={getProductSkuFetch}
                         labelInValue
                         optionsState={asyncOptions}
-                        showError={isValid}
-                        message="Please Select Product SKU!"
                       />
                     </Form.Item>
                   </Form>
@@ -433,8 +382,6 @@ const ReqWithBom = () => {
                           })
                         }
                         placeholder="Select product BOM"
-                        showError={isValid}
-                        message="Please Select Product BOM!"
                       />
                     </Form.Item>
                   </Form>
@@ -453,24 +400,17 @@ const ReqWithBom = () => {
                         </span>
                       }
                     >
-                      <Field
-                        attr="required | Quantity should be greater than zero!"
+                      <Input
+                        size="default"
                         value={allBom.qty}
-                        treatZeroAsEmpty
-                        showValidation={isValid}
-                      
-                      >
-                        <Input
-                          size="default"
-                          type="number"
-                          placeholder="Select product Quantity"
-                            onChange={(e) =>
+                        onChange={(e) =>
                           setAllBom((allBom) => {
                             return { ...allBom, qty: e.target.value };
                           })
                         }
-                        />
-                      </Field>
+                        type="number"
+                        placeholder="Select product Quantity"
+                      />
                     </Form.Item>
                   </Form>
                 </Col>
