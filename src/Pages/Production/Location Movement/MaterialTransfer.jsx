@@ -1,18 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { Col, Row, Input, Typography, Card, Button } from "antd";
+import { useState, useEffect } from "react";
+import { Col, Row, Input } from "antd";
 import MySelect from "../../../Components/MySelect";
 import NavFooter from "../../../Components/NavFooter";
-import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../../hooks/useToast.js";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { useSelector } from "react-redux";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import { Add, Delete } from "@mui/icons-material";
-const { paragraph } = Typography;
 
-const { TextArea } = Input;
 function MaterialTransfer({ type }) {
   const { showToast } = useToast();
   type == "sftorej"
@@ -24,7 +20,6 @@ function MaterialTransfer({ type }) {
   });
   const { executeFun, loading: loading1 } = useApi();
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [submitLoading, setSubmitLoading] = useState(false);
   const [locationData, setLocationData] = useState([]);
 
   const [locDetail, setLocDetail] = useState("");
@@ -178,9 +173,9 @@ function MaterialTransfer({ type }) {
       ]);
       setLocDetail("");
       setLoading(false);
-      showToast(response.message, "success");
+      showToast(response.message?.[0]?.msg || response.message , "success");
     } else if (!response.success) {
-      showToast(response.message?.msg || response.message, "error");
+      showToast(response.message?.[0]?.msg || response.message, "error");
       setLoading(false);
     }
   };
@@ -215,29 +210,6 @@ function MaterialTransfer({ type }) {
     ]);
   };
 
-  const handleBranchSelection = async (branchCode) => {
-    try {
-      const response = await imsAxios.post("/location/fetchLocationBranch", {
-        branch: branchCode,
-      });
-      let arr = [];
-      const list = response?.data ?? response; // support both shapes
-      if (Array.isArray(list)) {
-        list.map((a) => arr.push({ text: a.text, value: a.id }));
-      }
-      // Update global location options and reset all row locations
-      setLocRejDetail(arr);
-      setRows((prev) =>
-        prev.map((row) => ({
-          ...row,
-          rejLoc: "", // Reset location when branch changes
-        })),
-      );
-    } catch (error) {
-      console.error("Error fetching locations for branch", error);
-      showToast("Failed to fetch drop locations for selected branch", "error");
-    }
-  };
 
   const removeRow = (index) => {
     setRows((prev) => prev.filter((_, i) => i !== index));
