@@ -10,6 +10,7 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
+import Field from "../../../Components/Field.jsx";
 
 const CompletedPPR  =  ()  => {
   const { showToast } = useToast();
@@ -19,6 +20,7 @@ const CompletedPPR  =  ()  => {
   const [selectLoading, setSelectLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [rows, setRows] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const wiseOptions = [
     { text: "Product SKU Wise  ", value: "skuwise" },
@@ -48,10 +50,15 @@ const CompletedPPR  =  ()  => {
     }
   };
   const getRows = async () => {
+    if (!searchInput) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setSearchLoading(true);
     const response = await imsAxios.post("ppr/fetchCompletePpr", {
       searchBy: wise,
-      searchValue: searchInput,
+      searchValue: searchInput.value ?? searchInput,
     });
     setSearchLoading(false);
     if (response.success) {
@@ -90,6 +97,7 @@ const CompletedPPR  =  ()  => {
     { headerName: "Qty Remained", flex: 1, field: "consumptionRemaining" },
   ];
   useEffect(() => {
+    setIsValid(false);
     setSearchInput("");
     if (wise == "pprtype") {
       setSearchInput("new");
@@ -123,6 +131,9 @@ const CompletedPPR  =  ()  => {
                     loadOptions={getProductDataFromType}
                     optionsState={asyncOptions}
                     placeholder="Product SKU wise"
+                    labelInValue
+                    showError={isValid}
+                    message="Product is required"
                   />
                 </div>
               ) : wise == "pprtype" ? (
@@ -130,19 +141,23 @@ const CompletedPPR  =  ()  => {
                   options={selOpt}
                   value={searchInput}
                   onChange={(value) => setSearchInput(value)}
+                  showError={isValid}
                 />
               ) : (
                 wise == "pprno" && (
-                  <Input
+                  <Field
+                    attr="required | Please enter PPR No."
                     value={searchInput}
+                    showValidation={isValid}
                     onChange={(e) => setSearchInput(e.target.value)}
-                  />
+                  >
+                    <Input />
+                  </Field>
                 )
               )}{" "}
             </div>
             <MyButton
               variant="search"
-              disabled={!searchInput ? true : false}
               type="primary"
               loading={searchLoading}
               onClick={getRows}
@@ -152,11 +167,7 @@ const CompletedPPR  =  ()  => {
               Search
             </MyButton>
           </Space>
-          {/* <div className="po_search_options">
-                <div className="search-type">
-
-                </div>
-              </div> */}
+       
         </div>
         <Space>
           <CommonIcons
