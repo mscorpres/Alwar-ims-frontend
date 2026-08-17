@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 import { useToast } from "@/hooks/useToast.js";
 import MySelect from "@/Components/MySelect";
-import { Card, Col, Form, Input, Row, Space, Upload } from "antd";
+import { Col, Form, Input, Row} from "antd";
 import FormTable from "@/Components/FormTable";
 import MyAsyncSelect from "@/Components/MyAsyncSelect";
 import NavFooter from "@/Components/NavFooter";
@@ -53,17 +53,15 @@ const QaProcessMap = () => {
 
   const [skuoptions, setskuoptions] = useState([]);
   const [bomoptions, SetBomOptions] = useState([]);
-  const [formfield, setformfield] = useState(false);
   const [processListOptions, setProcessListOptions] = useState([]);
   const [locationlist, setLocationList] = useState([]);
   const [skuList, setskulist] = useState([]);
   const [loading1, setLoading1] = useState(false);
 
-  const { executeFun, loading } = useApi();
+  const { executeFun } = useApi();
   //get sku data
   const sku = async (e) => {
     setskuoptions("");
-    setformfield(false);
     setQaProcessInput([
       {
         id: v4(),
@@ -110,13 +108,16 @@ const QaProcessMap = () => {
     const response = await imsAxios.post("backend/fetchallsfgForProduct", {
       search: qaProcessData.sku,
     });
-    if (response.success) {
-      let skuarr = response.data?.map((d) => {
+    console.log(response);
+   
+      let skuarr = response?.data?.data?.map((d) => {
         return { text: d.sfgid, value: d.sfgsku };
       });
       setskulist(skuarr);
-    }
+
   };
+
+  console.log(skuList);
 
   // for view the list of processes
   const processList = async () => {
@@ -141,18 +142,18 @@ const QaProcessMap = () => {
     }
   };
 
-  const handleyesno = (result) => {
-    const updatedQaProcessInputs = result.map((item) => {
-      if (item.bomRequired === "NO") {
-        return { ...item, bom: "disabled" };
-      } else {
-        return item;
-      }
-    });
-    let newQaprocessInput = [];
-    newQaprocessInput.push(...updatedQaProcessInputs);
-    setQaProcessInput(newQaprocessInput);
-  };
+  // const handleyesno = (result) => {
+  //   const updatedQaProcessInputs = result.map((item) => {
+  //     if (item.bomRequired === "NO") {
+  //       return { ...item, bom: "disabled" };
+  //     } else {
+  //       return item;
+  //     }
+  //   });
+  //   let newQaprocessInput = [];
+  //   newQaprocessInput.push(...updatedQaProcessInputs);
+  //   setQaProcessInput(newQaprocessInput);
+  // };
 
   const createQaProcess = async () => {
     let processLevelarr = [];
@@ -349,14 +350,13 @@ const QaProcessMap = () => {
 
   // }
 
-  const filterskuoptions = (value, skuoptions) => {
+  const filterskuoptions = (value) => {
     qaProcessData.sku = value;
     bom(value);
-    //  fetchingSkuProcess()
-    setformfield(true);
+   
   };
 
-  const qaProcessDataHandler = (field, e, value, rowIndex, selectedValue) => {
+  const qaProcessDataHandler = (field, e, value) => {
     const updatedQaProcessInputs = qaProcessInputs.map((input) => {
       if (input.id === value) {
         if (field === "bomRequired") {
