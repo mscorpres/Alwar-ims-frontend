@@ -8,6 +8,7 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import { Add, Delete } from "@mui/icons-material";
+import Field from "../../../Components/Field.jsx";
 
 function MaterialTransfer({ type }) {
   const { showToast } = useToast();
@@ -37,16 +38,14 @@ function MaterialTransfer({ type }) {
   ]);
 
   const [loading, setLoading] = useState(false);
-  // console.log(restDetail)
+  const [isValid, setIsValid] = useState(false);
+
 
   const getLocation = async () => {
     let link = "";
-    console.log("nothing");
     if (type == "sftorej") {
-      console.log("rejection goes on here");
       link = "/godown/fetchLocationForSF2REJ_from";
     } else {
-      console.log("rejection does not goes on here");
       link = "/godown/fetchLocationForSF2SF_from";
     }
     const response = await imsAxios.post(link);
@@ -59,7 +58,6 @@ function MaterialTransfer({ type }) {
     const response = await imsAxios.post("godown/fetchLocationDetail_from", {
       location_key: allData.locationSel,
     });
-    // console.log(data.data)
     setLocDetail(response.data);
   };
 
@@ -79,9 +77,10 @@ function MaterialTransfer({ type }) {
   const getRowComponentDetail = async (rowIndex, componentValue) => {
     const row = rows[rowIndex];
     const component = componentValue ?? row?.componentName;
-    if (!allData.locationSel || !component) return;
+    const compKey = component?.value ?? component;
+    if (!allData.locationSel || !compKey) return;
     const response = await imsAxios.post("/godown/godownStocks", {
-      component,
+      component: compKey,
       location: allData.locationSel,
     });
     setRows((prev) => {
@@ -121,23 +120,33 @@ function MaterialTransfer({ type }) {
     });
   };
 
+  const hasIncompleteRow = (rows) =>
+    (rows || []).some(
+      (r) =>
+        !r.componentName ||
+        !r.qty ||
+        Number(r.qty) <= 0 ||
+        !r.rejLoc ||
+        !r.comment ||
+        !r.restDetail?.avr_rate
+    );
+
   const submitHandler = async () => {
     // validations
-    if (!allData?.locationSel)
-      return showToast("Please select a Pick Location", "error");
+    if (!allData?.locationSel || hasIncompleteRow(rows)) {
+      setIsValid(true);
+     
+      return;
+    }
 
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
-      if (!r.componentName)
-        return showToast(`Row ${i + 1}: Please select Component`, "error");
-      if (!r.qty) return showToast(`Row ${i + 1}: Please enter Qty`, "error");
-      if (!r.rejLoc)
-        return showToast(`Row ${i + 1}: Please select Drop Location`, "error");
       if (r.rejLoc == allData.locationSel)
         return showToast(`Row ${i + 1}: Both Location Same`, "error");
     }
+    setIsValid(false);
 
-    const components = rows.map((r) => r.componentName);
+    const components = rows.map((r) => r.componentName?.value ?? r.componentName);
     const tolocations = rows.map((r) => r.rejLoc);
     const qtys = rows.map((r) => r.qty);
     const comments = rows.map((r) => r.comment || "");
@@ -158,6 +167,7 @@ function MaterialTransfer({ type }) {
     );
 
     if (response.success) {
+      setIsValid(false);
       setAllData({
         locationSel: "",
       });
@@ -181,6 +191,7 @@ function MaterialTransfer({ type }) {
   };
 
   const reset = () => {
+    setIsValid(false);
     setAllData({
       locationSel: "",
     });
@@ -250,6 +261,8 @@ function MaterialTransfer({ type }) {
                       return { ...allData, locationSel: e };
                     })
                   }
+                  showError={isValid}
+                  message="Please select a Pick Location"
                 />
               </Col>
               <Col span={12} style={{ padding: "5px" }}>
@@ -321,12 +334,16 @@ function MaterialTransfer({ type }) {
                           )}
                         </td>
                         <td style={{ width: "20vw" }}>
-                          <MyAsyncSelect
-                            loadOptions={getComponent}
-                            optionsState={asyncOptions}
-                            value={r.componentName}
-                            selectLoading={loading1("select")}
-                            onChange={async (e) => {
+                       
+                            <MyAsyncSelect
+                              loadOptions={getComponent}
+                              optionsState={asyncOptions}
+                              selectLoading={loading1("select")}
+                              labelInValue
+                              message="Please select a Component"
+                              showError={isValid}
+                              value={r.componentName}
+      onChange={async (e) => {
                               setRows((prev) => {
                                 const updated = [...prev];
                                 updated[idx] = {
@@ -337,7 +354,7 @@ function MaterialTransfer({ type }) {
                               });
                               await getRowComponentDetail(idx, e);
                             }}
-                          />
+                            />
                         </td>
                         <td style={{ textAlign: "center", width: "14vw" }}>
                           <paragraph>
@@ -347,9 +364,11 @@ function MaterialTransfer({ type }) {
                           </paragraph>
                         </td>
                         <td style={{ width: "14vw" }}>
-                          <Input
-                            type="number"
+                          <Field
+                            attr="required | Qty should be greater than zero"
                             value={r.qty}
+                            treatZeroAsEmpty
+                            showValidation={isValid}
                             onChange={(e) =>
                               setRows((prev) => {
                                 const updated = [...prev];
@@ -360,14 +379,19 @@ function MaterialTransfer({ type }) {
                                 return updated;
                               })
                             }
-                          />
+                          >
+                            <Input type="number" />
+                          </Field>
                         </td>
                         <td style={{ width: "18vw" }}>
-                          <MySelect
-                            options={locRejDetail}
-                            placeholder="Check Location"
-                            value={r.rejLoc}
-                            onChange={async (e) => {
+                       
+                            <MySelect
+                              options={locRejDetail}
+                              placeholder="Check Location"
+                              message="Please select a location"
+                              showError={isValid}
+                              value={r.rejLoc}
+                               onChange={async (e) => {
                               setRows((prev) => {
                                 const updated = [...prev];
                                 updated[idx] = { ...updated[idx], rejLoc: e };
@@ -375,10 +399,18 @@ function MaterialTransfer({ type }) {
                               });
                               await getRowDropLocationDetail(idx, e);
                             }}
-                          />
+                            />
+                    
                         </td>
                         <td style={{ width: "14vw" }}>
-                          <Input disabled value={r?.restDetail?.avr_rate} />
+                          <Field
+                            attr="required | Rate not available"
+                            value={r?.restDetail?.avr_rate}
+                            showValidation={isValid}
+                            treatZeroAsEmpty
+                          >
+                            <Input disabled value={r?.restDetail?.avr_rate} />
+                          </Field>
                         </td>
                         <td style={{ width: "24vw" }}>
                           <Input
@@ -388,8 +420,10 @@ function MaterialTransfer({ type }) {
                           />
                         </td>
                         <td style={{ width: "24vw" }}>
-                          <Input
+                          <Field
+                            attr="required | Comment is required"
                             value={r.comment}
+                            showValidation={isValid}
                             onChange={(e) =>
                               setRows((prev) => {
                                 const updated = [...prev];
@@ -400,8 +434,9 @@ function MaterialTransfer({ type }) {
                                 return updated;
                               })
                             }
-                            style={{ resize: "none" }}
-                          />
+                          >
+                            <Input style={{ resize: "none" }} />
+                          </Field>
                         </td>
                       </tr>
                     );
