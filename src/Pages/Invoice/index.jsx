@@ -91,7 +91,7 @@ const CreateInvoice = () => {
       rate: values.components.map((component) => component.rate),
       freight: values.components.map((component) => component.freight),
       glCode: values.components.map((component) => component.glCode),
-      gstType: values.components.map((component) => gstType.toUpperCase()),
+      gstType: values.components.map(() => gstType.toUpperCase()),
       gstAssValue: values.components.map((component) => component.gstassValue),
       remark: values.components.map((component) => component.remark),
       invoiceType: "goodsAndServices",
@@ -211,6 +211,7 @@ const CreateInvoice = () => {
       };
       invoiceForm.setFieldsValue(finalObj);
     } catch (error) {
+      showToast(error.message ?? "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -220,17 +221,15 @@ const CreateInvoice = () => {
     navigate("/draft-invoices");
   };
   useEffect(() => {
-    if (
-      shippingState && shippingState?.value
-        ? shippingState?.value?.toString()
-        : shippingState?.toString() !== currentStateCode
-    ) {
+    const stateValue = shippingState?.value
+      ? shippingState.value.toString()
+      : shippingState?.toString();
+
+    if (!stateValue) return;
+
+    if (stateValue === currentStateCode) {
       setGstType("local");
-    } else if (
-      shippingState && shippingState?.value
-        ? shippingState?.value?.toString()
-        : shippingState?.toString() !== currentStateCode
-    ) {
+    } else {
       setGstType("interstate");
     }
   }, [shippingState]);
