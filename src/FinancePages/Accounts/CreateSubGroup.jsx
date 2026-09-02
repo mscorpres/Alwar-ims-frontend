@@ -14,6 +14,7 @@ import {
 import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { imsAxios } from "../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast";
+import Field from "../../Components/Field.jsx";
 
 export default function CreateSubGroup() {
  const {showToast}= useToast();
@@ -28,6 +29,7 @@ export default function CreateSubGroup() {
   // const [loading, setLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const getSubGroupsTree = async () => {
     const response = await imsAxios.get("/tally/sub_group_tree");
@@ -59,30 +61,29 @@ export default function CreateSubGroup() {
     });
   };
   const createNewSubGroup = async () => {
-    if (!newsubGroup.parent || newsubGroup.parent == "") {
-      return showToast("Please select a parent");
-    } else if (!newsubGroup.group_name || newsubGroup.group_name == "") {
-      return showToast("Please enter a sub group name"); 
-    } else if (!newsubGroup.code || newsubGroup.code == "") {
-      return showToast("Please enter a code"); 
+    if (!newsubGroup.parent || !newsubGroup.group_name || !newsubGroup.code) {
+      setIsValid(true);
+      return;
     }
+    setIsValid(false);
     setFormLoading(true);
     const response = await imsAxios.post("/tally/create_sub_group", {
       ...newsubGroup,
-      parent: newsubGroup.parent,
+      parent: newsubGroup.parent?.value ?? newsubGroup.parent,
     });
     setFormLoading(false);
     getSubGroupsTree();
     reset();
     if (response.success) {
       showToast(response.message?.msg || response.message);
-      
+
     } else {
-     
+
       showToast(response.message?.msg || response.message, "error");
     }
   };
   const reset = () => {
+    setIsValid(false);
     setNewSubGroup({
       group_name: "",
       code: "",
@@ -113,25 +114,35 @@ export default function CreateSubGroup() {
               <Col span={24}>
                 <Form size="small" layout="vertical">
                   <Form.Item label="Code">
-                    <Input
-                      size="default"
+                    <Field
+                      attr="required | Code is required"
                       value={newsubGroup.code}
+                      showValidation={isValid}
                       onChange={(e) => {
                         inputHandler("code", e.target.value);
                       }}
-                      placeholder="Enter New Sub Group Code.."
-                    />
+                    >
+                      <Input
+                        size="default"
+                        placeholder="Enter New Sub Group Code.."
+                      />
+                    </Field>
                   </Form.Item>
 
                   <Form.Item label="Sub Group Name">
-                    <Input
-                      size="default"
+                    <Field
+                      attr="required | Sub Group Name is required"
                       value={newsubGroup.group_name}
+                      showValidation={isValid}
                       onChange={(e) => {
                         inputHandler("group_name", e.target.value);
                       }}
-                      placeholder="Enter New Sub Group Name.."
-                    />
+                    >
+                      <Input
+                        size="default"
+                        placeholder="Enter New Sub Group Name.."
+                      />
+                    </Field>
                   </Form.Item>
 
                   <Form.Item label="Under Group">
@@ -147,6 +158,9 @@ export default function CreateSubGroup() {
                       loadOptions={getSubGroupSelect}
                       placeholder="Search..."
                       selectLoading={selectLoading}
+                      labelInValue
+                      showError={isValid}
+                      message="Please select a parent"
                     />
                   </Form.Item>
                 </Form>
