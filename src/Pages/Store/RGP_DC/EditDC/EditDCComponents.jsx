@@ -75,9 +75,9 @@ export default function EditDCComponents({
           obj = {
             ...obj,
             [name]: value,
-            rate: validatedData.data.rate,
-            uom: validatedData.data.unit,
-            hsn: validatedData.data.hsn,
+            rate: validatedData.rate,
+            uom: validatedData.unit,
+            hsn: validatedData.hsn,
           };
           return obj;
         } else {
