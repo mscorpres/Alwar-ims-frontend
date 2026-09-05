@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Button,
   Card,
   Col,
   Divider,
@@ -9,12 +8,11 @@ import {
   Input,
   Row,
   Skeleton,
-  Space,
 } from "antd";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import FormTableDataGrid from "../../../Components/FormTableDataGrid";
+import FormTable from "../../../Components/FormTable";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import errorToast from "../../../Components/errorToast";
 import { useToast } from "../../../hooks/useToast.js";
@@ -22,6 +20,7 @@ import Loading from "../../../Components/Loading";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import NavFooter from "../../../Components/NavFooter";
 import useLoading from "../../../hooks/useLoading";
+import Field from "../../../Components/Field.jsx";
 
 function JWRMChallanEditMaterials({
   editingJWMaterials,
@@ -30,7 +29,6 @@ function JWRMChallanEditMaterials({
 }) {
   const { showToast } = useToast();
   const [rows, setRows] = useState([]);
-  const [vendorData, setVendorData] = useState(null);
   const [loading, setLoading] = useLoading();
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [vendorBranchOptions, setVendorBranchOptions] = useState([]);
@@ -38,6 +36,12 @@ function JWRMChallanEditMaterials({
   const [dispatchAddressOptions, setDispatchAddressOptions] = useState([]);
 
   const [createJobWorkChallanForm] = Form.useForm();
+  const [isValid, setIsValid] = useState(false);
+  const vehicleValue = Form.useWatch("vehicle", createJobWorkChallanForm);
+  const vendorBranchValue = Form.useWatch(
+    "vendorbranch",
+    createJobWorkChallanForm,
+  );
   const getDetails = async () => {
    
     setLoading("fetchingDetails", true);
@@ -71,7 +75,6 @@ function JWRMChallanEditMaterials({
         if (obj.billing_info?.value) {
           await getBillingAddressDetails(obj.billing_info.value);
         }
-        setVendorData(vendor ? { vendor, ...obj } : obj);
       } catch (err) {
         console.error("Error setting form/address details:", err);
       }
@@ -92,8 +95,34 @@ function JWRMChallanEditMaterials({
     });
     setRows(arr);
   };
+  const hasIncompleteRow = (data) =>
+    (data || []).some(
+      (row) =>
+        !row?.component_key ||
+        !row?.issue_qty ||
+        Number(row?.issue_qty) <= 0 ||
+        !row?.part_rate ||
+        Number(row?.part_rate) <= 0,
+    );
+
   const submitHandler = async () => {
-    let vendor = createJobWorkChallanForm.getFieldsValue();
+    let vendor;
+    try {
+      vendor = await createJobWorkChallanForm.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+
+    if (hasIncompleteRow(rows)) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
 
     const finalObj = {
       material: {
@@ -117,7 +146,6 @@ function JWRMChallanEditMaterials({
       },
       transaction_id: editingJWMaterials,
     };
-    console.log(finalObj);
 
     setLoading("submit", true);
     const response = await imsAxios.post(
@@ -167,7 +195,7 @@ function JWRMChallanEditMaterials({
     });
     setLoading("values", false);
     // console.log("response->", response)
-    const { data } = response;
+
  
       if (response.success) {
         let arr = response.data.map((row) => ({
@@ -182,7 +210,7 @@ function JWRMChallanEditMaterials({
   };
   const getVendorBranchDetails = async (branchCode) => {
     const vendorCode = createJobWorkChallanForm.getFieldsValue().vendor.value;
-    let obj1 = createJobWorkChallanForm.getFieldsValue();
+  
     setLoading("values", true);
     const response = await imsAxios.post("backend/vendorAddress", {
       branchcode: branchCode,
@@ -196,7 +224,7 @@ function JWRMChallanEditMaterials({
           vendor_address: data.data.address?.replaceAll("<br>", "\n"),
           vendor_gst: data.data.gstid,
         };
-        obj1 = { ...obj1, ...obj };
+    
         createJobWorkChallanForm.setFieldsValue(obj);
         return obj;
       } else {
@@ -290,13 +318,22 @@ function JWRMChallanEditMaterials({
       headerName: "Qty",
       renderCell: ({ row }) => (
         <div style={{ width: "100%" }}>
-          <Input
-            style={{ width: "100%" }}
-            value={row.issue_qty}
-            onChange={(e) => inputHandler("issue_qty", e.target.value, row.id)}
-            suffix={row.unit_name}
-            type="number"
-          />
+          <Field
+            attr="required | Qty is required"
+            value={row?.issue_qty}
+            treatZeroAsEmpty
+            showValidation={isValid}
+          >
+            <Input
+              style={{ width: "100%" }}
+              value={row.issue_qty}
+              onChange={(e) =>
+                inputHandler("issue_qty", e.target.value, row.id)
+              }
+              suffix={row.unit_name}
+              type="number"
+            />
+          </Field>
         </div>
       ),
       width: 120,
@@ -305,12 +342,21 @@ function JWRMChallanEditMaterials({
       headerName: "Rate",
       renderCell: ({ row }) => (
         <div style={{ width: "100%" }}>
-          <Input
-            style={{ width: "100%" }}
-            value={row.part_rate}
-            onChange={(e) => inputHandler("part_rate", e.target.value, row.id)}
-            type="number"
-          />
+          <Field
+            attr="required | Rate is required"
+            value={row?.part_rate}
+            treatZeroAsEmpty
+            showValidation={isValid}
+          >
+            <Input
+              style={{ width: "100%" }}
+              value={row.part_rate}
+              onChange={(e) =>
+                inputHandler("part_rate", e.target.value, row.id)
+              }
+              type="number"
+            />
+          </Field>
         </div>
       ),
       width: 100,
@@ -361,7 +407,10 @@ function JWRMChallanEditMaterials({
       title={`Editing Challan Number: ${editingJWMaterials}`}
       width="100vw"
       open={editingJWMaterials}
-      onClose={() => setEditingJWMaterials(false)}
+      onClose={() => {
+        setEditingJWMaterials(false);
+        setIsValid(false);
+      }}
     >
       <Row style={{ height: "100%" }}>
         <Col span={10} style={{ height: "95%", overflowY: "scroll" }}>
@@ -404,16 +453,14 @@ function JWRMChallanEditMaterials({
                     <Form.Item
                       label="Vendor Branch"
                       name="vendorbranch"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please Select a Vendor branch!",
-                        },
-                      ]}
+                      rules={[{ required: true, message: "" }]}
                     >
                       <MySelect
                         onChange={(value) => getVendorBranchDetails(value)}
                         options={vendorBranchOptions}
+                        value={vendorBranchValue}
+                        showError={isValid}
+                        message="Please select a Vendor branch"
                       />
                     </Form.Item>
                   )}
@@ -450,14 +497,15 @@ function JWRMChallanEditMaterials({
                   <Form.Item
                     label="Vehicle Number"
                     name="vehicle"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter a vehicle number!",
-                      },
-                    ]}
+                    rules={[{ required: true, message: "" }]}
                   >
-                    <Input />
+                    <Field
+                      attr="required | Please enter a vehicle number"
+                      value={vehicleValue}
+                      showValidation={isValid}
+                    >
+                      <Input />
+                    </Field>
                   </Form.Item>
                 </Col>
                 <Col span={12}>
@@ -539,7 +587,7 @@ function JWRMChallanEditMaterials({
           </Card>
         </Col>
         <Col span={14} style={{ height: "95%" }}>
-          <FormTableDataGrid data={rows} columns={columns} />
+          <FormTable data={rows} columns={columns} />
         </Col>
       </Row>
       <NavFooter

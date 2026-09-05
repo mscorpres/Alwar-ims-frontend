@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import "./r.css";
 import { Button, Card, Col, Form, Row, Typography } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import socket from "../../../Components/socket";
 import { v4 } from "uuid";
-import { useSelector } from "react-redux";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { DownloadOutlined, SyncOutlined } from "@ant-design/icons";
@@ -12,16 +11,20 @@ import { DownloadOutlined, SyncOutlined } from "@ant-design/icons";
 const R6 = () => {
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const { notifications } = useSelector((state) => state.login);
 
   const [form] = Form.useForm();
   const location = Form.useWatch("location", form);
+  const date = Form.useWatch("date", form);
+  const [showValidation, setShowValidation] = useState(false);
 
   const emitDownloadEvent = async () => {
+    if (!date) {
+      setShowValidation(true);
+      return;
+    }
     const values = await form.validateFields();
     let newId = v4();
-    let arr = notifications;
-    arr = [{ notificationId: newId, loading: true, type: "file" }, ...arr];
+
 
     const payload = {
       location: values.location?.value,
@@ -90,9 +93,12 @@ const R6 = () => {
           <Form.Item label="Date" name="date">
             <MyDatePicker
               size="default"
+              value={date}
               setDateRange={(value) => {
+                setShowValidation(false);
                 form.setFieldValue("date", value);
               }}
+              showError={showValidation}
             />
           </Form.Item>
         </Form>

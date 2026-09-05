@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Button, Col, Input, Row, Space } from "antd";
+import  { useState } from "react";
+import { Col, Input, Row, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { downloadCSV } from "../../../Components/exportToCSV";
-import TableActions, {
+import  {
   CommonIcons,
 } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
@@ -16,10 +16,10 @@ import { getVendorOptions } from "../../../api/general.ts";
 import { convertSelectOptions } from "../../../utils/general.ts";
 import MyButton from "../../../Components/MyButton";
 import socket from "../../../Components/socket";
+import Field from "../../../Components/Field";
 
 const R37 = () => {
   const { showToast } = useToast();
-  const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [selectLoading, setSelectLoading] = useState(false);
   const [vendor, setVendor] = useState(null);
@@ -28,7 +28,8 @@ const R37 = () => {
   const [wise, setWise] = useState("date");
   const [rows, setRows] = useState([]);
   const [searchDateRange, setSearchDateRange] = useState("");
-  const { executeFun, loading: loading1 } = useApi();
+  const [isValid, setIsValid] = useState(false);
+  const { executeFun } = useApi();
   const wiseOptions = [
     { value: "date", text: "Date Wise" },
     // { value: "jwid", text: "Job Work ID Wise" },
@@ -127,55 +128,38 @@ const R37 = () => {
   ];
   //getting rows from database from all 3 filter po wise, data wise, vendor wise
   const getSearchResults = async () => {
-    setRows([]);
-    let search;
-    if (wise == "date") {
-      search = searchDateRange;
-    } else {
-      search = null;
+    const missingDate = wise === "date" && !searchDateRange;
+    const missingVendor = wise === "date" && !vendor?.value;
+    const missingSearchInput = wise === "jwid" && !searchInput;
+    if (missingDate || missingVendor || missingSearchInput || !wise) {
+      setIsValid(true);
+      return;
     }
-    if (searchInput || (search && vendor)) {
-      setSearchLoading(true);
-      const { data,success,message } = await imsAxios.post(
-        "/report37",
-        {
-          data:
-            wise == "jwid"
-              ? searchInput.trim()
-              : wise == "date" && searchDateRange,
-          wise: wise,
-          vendor: vendor,
-        }
-      );
-      setSearchLoading(false);
-      console.log(data)
-      if (success) {
-        let arr = data?.map((row, index) => ({
-          ...row,
-          id: index+1,
-          index: index + 1,
-        }));
-        setRows(arr);
-      } else {
-        if (message) {
-          showToast(message, "error");
-        } else {
-          showToast(message, "error");
-        }
-      }
+    setIsValid(false);
+    setRows([]);
+    setSearchLoading(true);
+    const { data, success, message } = await imsAxios.post("/report37", {
+      data:
+        wise == "jwid" ? searchInput.trim() : wise == "date" && searchDateRange,
+      wise: wise,
+      vendor: vendor?.value,
+    });
+    setSearchLoading(false);
+    if (success) {
+      let arr = data?.map((row, index) => ({
+        ...row,
+        id: index + 1,
+        index: index + 1,
+      }));
+      setRows(arr);
     } else {
-      if (wise == "date" && searchDateRange == null) {
-        showToast("Please select start and end dates for the results", "error");
-      } else if (wise == "jwid") {
-        showToast("Please enter a Job work ID", "error");
-      } else if (vendor == null) {
-        showToast("Please select a vendor", "error");
-      }
+      showToast(message, "error");
     }
   };
   //getting vendors list for filter by vendors
   const getVendors = async (search) => {
     if (search?.length > 2) {
+      setSelectLoading(true);
       const response = await executeFun(
         () => getVendorOptions(search),
         "select"
@@ -183,8 +167,10 @@ const R37 = () => {
       let arr = [];
       if (response.success) {
         arr = convertSelectOptions(response.data);
+        setSelectLoading(false);
       }
       setAsyncOptions(arr);
+      setSelectLoading(false);
     }
   };
 
@@ -194,7 +180,7 @@ const R37 = () => {
         date : searchDateRange,
         notificationId: "",
       });
-  };
+  }
 }
   return (
     <div className="manage-po" style={{ position: "relative", height: "100%" }}>
@@ -211,6 +197,10 @@ const R37 = () => {
                 onBlur={() => setAsyncOptions([])}
                 loadOptions={(search) => getVendors(search)}
                 placeholder={"Select Vendors"}
+                labelInValue
+                value={vendor}
+                showError={isValid}
+                message="Please select a Vendor"
                 onChange={(e) => {
                   setVendor(e);
                   setAsyncOptions([]);
@@ -218,7 +208,7 @@ const R37 = () => {
               />
             </div>
             <div style={{ width: 150 }}>
-              <MySelect options={wiseOptions} onChange={setWise} value={wise} />
+              <MySelect options={wiseOptions} onChange={setWise} value={wise} showError={isValid} />
             </div>
             <div style={{ width: 300 }}>
               {wise === "date" ? (
@@ -227,15 +217,23 @@ const R37 = () => {
                   setDateRange={setSearchDateRange}
                   dateRange={searchDateRange}
                   value={searchDateRange}
+                  showError={isValid}
+                  message="Please select start and end dates"
                 />
               ) : (
-                <Input
-                  style={{ width: "100%" }}
-                  type="text"
-                  placeholder="Enter Job Work ID"
+                <Field
+                  attr="required | Please enter Job Work ID"
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
+                  showValidation={isValid}
+                >
+                  <Input
+                    style={{ width: "100%" }}
+                    type="text"
+                    placeholder="Enter Job Work ID"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </Field>
               )}
             </div>
             <MyButton
@@ -294,7 +292,7 @@ const R37 = () => {
         }}
       >
         <MyDataTable
-          loading={loading || searchLoading}
+          loading={ searchLoading}
           rows={rows}
           columns={columns}
         />

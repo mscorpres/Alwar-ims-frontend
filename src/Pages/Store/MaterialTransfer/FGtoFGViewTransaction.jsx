@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Col, Row, Select, Space } from "antd";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import { v4 } from "uuid";
@@ -7,13 +7,13 @@ import MyDatePicker from "../../../Components/MyDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import MyButton from "../../../Components/MyButton";
-import dayjs from "dayjs";
 import { useToast } from "../../../hooks/useToast";
 
 function FGToFGViewTransaction() {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const options = [{ label: "Date Wise", value: "datewise" }];
+  const [validate, setValidate] = useState(false);
   const [allData, setAllData] = useState({
     selectdate: "datewise",
   });
@@ -45,15 +45,12 @@ function FGToFGViewTransaction() {
   const dateWise = async (e) => {
     e.preventDefault();
 
-    if (!allData.selectdate) {
-      showToast("Please Select Mode Then Proceed Next", "error");
+    if (!datee || !allData.selectdate) {
+      setValidate(true);
       return;
     }
 
-    if (!datee) {
-      showToast("Please Select Date", "error");
-      return;
-    }
+    setValidate(false);
 
     try {
       setLoading(true);
@@ -98,7 +95,12 @@ function FGToFGViewTransaction() {
             />
           </div>
           <div style={{ width: 250 }}>
-            <MyDatePicker size="default" setDateRange={setDatee} />
+            <MyDatePicker
+              size="default"
+              setDateRange={setDatee}
+              value={datee}
+              showError={validate}
+            />
           </div>
           <MyButton
             onClick={dateWise}

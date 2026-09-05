@@ -3,18 +3,17 @@ import {
   Flex,
   Drawer,
   Modal,
-  Tooltip,
   Radio,
   Skeleton,
   Button,
   Space,
 } from "antd";
 import { Col, Divider, Form, Input, Row, Typography } from "antd/es";
-import React, { useEffect, useState } from "react";
-import MyButton from "../../../../Components/MyButton";
+import  { useEffect, useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { useToast } from "../../../../hooks/useToast.js";
 import MySelect from "../../../../Components/MySelect";
+import Field from "../../../../Components/Field";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import Loading from "../../../../Components/Loading";
 import useLoading from "../../../../hooks/useLoading";
@@ -29,6 +28,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
   const [pickLocationOptions, setPickLocationOptions] = useState([]);
   const [filterString, setFilterString] = useState("");
   const [action, setAction] = useState(null);
+  const [isValid, setIsValid] = useState(false);
 
   const availableQty = Form.useWatch("availableQty", { form, preserve: true });
   const requestedQty = Form.useWatch("requestedQty", { form, preserve: true });
@@ -85,6 +85,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         showToast(response.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("fetch", false);
     }
@@ -106,6 +107,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         setPickLocationOptions(arr);
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("fetchLocations", false);
     }
@@ -125,13 +127,25 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         showToast(response.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("fetchSTock", false);
     }
   };
 
   const validateHandler = async () => {
-    const values = await form.validateFields();
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
     let link = "";
     let payload = {};
     if (action === "approve") {
@@ -179,13 +193,13 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
           hide();
         } else {
           getDetails(show.requestId);
-          form.resetFields();
-          setAction(null);
+          form.resetFields(['component']);
         }
       } else {
         showToast(response.message?.msg || response.message, "error");
       }
     } catch (error) {
+      showToast(error?.message || "Something went wrong", "error");
     } finally {
       setLoading("submit", false);
     }
@@ -199,6 +213,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       setComponentOptions([]);
       setAction(null);
       setHeaders(null);
+      setIsValid(false);
     }
   }, [show]);
 
@@ -319,9 +334,13 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                     <Form.Item
                       name="component"
                      label={<span style={{ fontWeight: "bold" }}>Select Part Code</span>}
-                      rules={rules.component}
+                      rules={[{ required: true, message: "" }]}
                       style={{ width: "100%",  }}
                     >
+                      <Field
+                        attr="required | Component is required"
+                        showValidation={isValid}
+                      >
                       <Radio.Group
                         style={{
                           width: "100%",
@@ -363,6 +382,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                             : []
                         }
                       />
+                      </Field>
                     </Form.Item>
                   </div>
                 </Flex>
@@ -454,11 +474,17 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   <Form.Item
                     name="pickLocation"
                     label="Pick Location"
-                    rules={action === "approve" && rules.pickLocation}
+                    rules={
+                      action === "approve"
+                        ? [{ required: true, message: "" }]
+                        : []
+                    }
                   >
                     <MySelect
                       disabled={action === "reject" || !action}
                       options={pickLocationOptions}
+                      showError={isValid && action === "approve"}
+                      message="Pick Location is required"
                     />
                   </Form.Item>
                 </Col>
@@ -466,14 +492,32 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   <Form.Item
                     name="issueQty"
                     label="Issue Qty"
-                    rules={action === "approve" && rules.issueQty}
+                    rules={
+                      action === "approve"
+                        ? [{ required: true, message: "" }]
+                        : []
+                    }
                   >
-                    <Input disabled={action === "reject" || !action} />
+                    <Field
+                      attr="required | Issue Qty is required"
+                      showValidation={isValid && action === "approve"}
+                    >
+                      <Input disabled={action === "reject" || !action} />
+                    </Field>
                   </Form.Item>
                 </Col>
                 <Col span={24}>
-                  <Form.Item name="remarks" label="Remarks">
-                    <Input.TextArea />
+                  <Form.Item
+                    name="remarks"
+                    label="Remarks"
+                    rules={[{ required: true, message: "" }]}
+                  >
+                    <Field
+                      attr="required | Remark is required"
+                      showValidation={isValid}
+                    >
+                      <Input.TextArea />
+                    </Field>
                   </Form.Item>
                 </Col>
               </Row>
@@ -495,30 +539,3 @@ const initialValues = {
   authKey: undefined,
 };
 export default RequestApproveModal;
-
-const rules = {
-  component: [
-    {
-      required: true,
-      message: "Component is required",
-    },
-  ],
-  pickLocation: [
-    {
-      required: true,
-      message: "Pick Location is required",
-    },
-  ],
-  issueQty: [
-    {
-      required: true,
-      message: "Issue Qty is required",
-    },
-  ],
-  remark: [
-    {
-      required: true,
-      message: "Remark is required",
-    },
-  ],
-};

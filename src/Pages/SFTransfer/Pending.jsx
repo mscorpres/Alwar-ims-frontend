@@ -1,14 +1,9 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { Button, Col, Form, Input, Modal, Row, Space } from "antd";
-import MySelect from "../../Components/MySelect";
+
+import { useState } from "react";
+import { Button, Col, Row, Space } from "antd"
 import MyDatePicker from "../../Components/MyDatePicker";
-import ToolTipEllipses from "../../Components/ToolTipEllipses";
 import MyDataTable from "../../Components/MyDataTable";
 import { imsAxios } from "../../axiosInterceptor";
-import { v4 } from "uuid";
-import { GridActionsCellItem } from "@mui/x-data-grid";
-import { EyeFilled } from "@ant-design/icons";
 import SFTransferDrawer from "./SFTransferDrawer";
 import MyButton from "../../Components/MyButton";
 import { useToast } from "../../hooks/useToast";
@@ -19,7 +14,13 @@ function Pending() {
   const [sfTransferModal, setSfTransferModal] = useState(false);
   const [drawerData, setDrawerData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isValidate, setIsValidate] = useState(false);
   const getRows = async () => {
+    if(!searchInput) {
+      setIsValidate(true)
+      return
+    }
+    setIsValidate(false)
     setLoading(true);
     const response = await imsAxios.post("/sfMin/sfMinTransferList", {
       date: searchInput,
@@ -99,7 +100,7 @@ function Pending() {
           <Col>
             <div style={{ paddingTop: 10, paddingBottom: 10 }}>
               <Space>
-                <MyDatePicker setDateRange={setSearchInput} />
+                <MyDatePicker setDateRange={setSearchInput} showError={isValidate} value={searchInput}   />
 
                 <MyButton
                   onClick={getRows}

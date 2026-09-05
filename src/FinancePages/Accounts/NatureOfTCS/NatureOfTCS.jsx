@@ -10,6 +10,7 @@ import { AiFillEdit } from "react-icons/ai";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import EditTCS from "./EditTCSModal";
 import { useToast } from "../../../hooks/useToast";
+import Field from "../../../Components/Field.jsx";
 
 function NatureofTCS() {
   const { showToast } = useToast();
@@ -26,6 +27,7 @@ function NatureofTCS() {
   const [selectLoading, setSelectLoading] = useState(false);
   const [TCSList, setTCSList] = useState([]);
   const [editingTCS, setEditingTCS] = useState(null);
+  const [isValid, setIsValid] = useState(false);
 
   const inputHandler = (name, value) => {
     setNewTCS((newTCS) => {
@@ -164,27 +166,29 @@ function NatureofTCS() {
   const createTCS = async () => {
     const { code, name, description, percentage, ledger } = newTCS;
     if (!code || !name || !description || !percentage || !ledger) {
-      showToast("Please enter all the fields", "error");
-    } else {
-      setFormLoading(true);
-      const response = await imsAxios.post("/tally/tcs/add", {
-        ...newTCS,
-        ledger: newTCS.ledger,
-      });
-      setFormLoading(false);
-     
-      if (response.success) {
-        getTCSList();
-        showToast(response.message);
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+    setFormLoading(true);
+    const response = await imsAxios.post("/tally/tcs/add", {
+      ...newTCS,
+      ledger: ledger?.value ?? ledger,
+    });
+    setFormLoading(false);
 
-        reset();
-      } else {
-        showToast(response.message || response.message?.msg, "error");
-      }
+    if (response.success) {
+      getTCSList();
+      showToast(response.message);
+
+      reset();
+    } else {
+      showToast(response.message || response.message?.msg, "error");
     }
   };
 
   const reset = () => {
+    setIsValid(false);
     setNewTCS({
       code: "",
       name: "",
@@ -214,50 +218,57 @@ function NatureofTCS() {
                 <Row gutter={10}>
                   <Col span={12}>
                     <Form.Item label="TCS Code">
-                      <Input
-                        size="middle"
+                      <Field
+                        attr="required | TCS Code is required"
                         value={newTCS.code}
-                        placeholder="Enter New TCS Code..."
+                        showValidation={isValid}
                         onChange={(e) => inputHandler("code", e.target.value)}
-                      />
+                      >
+                        <Input size="middle" placeholder="Enter New TCS Code..." />
+                      </Field>
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item label="TCS Name">
-                      <Input
-                        size="middle"
+                      <Field
+                        attr="required | TCS Name is required"
                         value={newTCS.name}
-                        placeholder="Enter New TCS Name..."
+                        showValidation={isValid}
                         onChange={(e) => inputHandler("name", e.target.value)}
-                      />
+                      >
+                        <Input size="middle" placeholder="Enter New TCS Name..." />
+                      </Field>
                     </Form.Item>
                   </Col>
                 </Row>
                 <Row gutter={10}>
                   <Col span={12}>
                     <Form.Item label="Description">
-                      <Input
-                        size="middle"
+                      <Field
+                        attr="required | Description is required"
                         value={newTCS.description}
-                        placeholder="Enter Description"
+                        showValidation={isValid}
                         onChange={(e) =>
                           inputHandler("description", e.target.value)
                         }
-                      />
+                      >
+                        <Input size="middle" placeholder="Enter Description" />
+                      </Field>
                     </Form.Item>
                   </Col>
                   <Col span={12}>
                     <Form.Item label="Percentage">
-                      <Input
-                        suffix="%"
-                        size="middle"
+                      <Field
+                        attr="required | Percentage is required"
                         value={newTCS.percentage}
-                        placeholder="Enter Percentage"
+                        showValidation={isValid}
+                        treatZeroAsEmpty
                         onChange={(e) =>
                           inputHandler("percentage", e.target.value)
                         }
-                        type="number"
-                      />
+                      >
+                        <Input suffix="%" size="middle" placeholder="Enter Percentage" type="number" />
+                      </Field>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -282,6 +293,9 @@ function NatureofTCS() {
                         optionsState={asyncOptions}
                         defaultOptions
                         placeholder="Select G/L..."
+                        labelInValue
+                        showError={isValid}
+                        message="Please select a G/L"
                       />
                     </Form.Item>
                   </Col>

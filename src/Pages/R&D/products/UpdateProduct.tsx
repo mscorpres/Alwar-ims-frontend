@@ -10,9 +10,9 @@ import { getCostCentresOptions, getProjectOptions } from "@/api/general";
 import { convertSelectOptions } from "@/utils/general";
 import { getProductdata, updateProduct } from "@/api/r&d/products";
 import Loading from "../../../Components/Loading";
-import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "@/hooks/useToast";
 import useLoading from "../../../hooks/useLoading";
+import Field from "@/Components/Field.jsx";
 
 
 
@@ -28,6 +28,7 @@ const ProductDocuments = (props: DrawerProps) => {
   const { executeFun, loading } = useApi();
   const [loader, setLoader] = useLoading();
   const [loading2,setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const handleCostCenterOptions = async (search: string) => {
     const response = await executeFun(
@@ -66,8 +67,15 @@ const ProductDocuments = (props: DrawerProps) => {
   };
 
   const validateHandler = async () => {
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setLoading(true);
-    const values = await form.validateFields();
     console.log(values)
     const payload = {
       name: values.name,
@@ -86,6 +94,7 @@ const ProductDocuments = (props: DrawerProps) => {
     // });
     if(response.success){
       showToast(response?.message||"Product Updated Successfully", "success");
+      setIsValid(false);
       props.hide();
       form.resetFields();
       props.handleFetchProductList();
@@ -112,7 +121,7 @@ const ProductDocuments = (props: DrawerProps) => {
     <Drawer
       width={650}
       open={props.show}
-      onClose={() =>{props.hide(); form.setFieldValue("documents",[]); form.setFieldValue("images",[]);}}
+      onClose={() =>{props.hide(); setIsValid(false); form.setFieldValue("documents",[]); form.setFieldValue("images",[]);}}
       title={`Update ${props.product?.name}`}
     >
       <Col span={20} style={{ height: "100%", overflow: "auto" }}>
@@ -126,7 +135,12 @@ const ProductDocuments = (props: DrawerProps) => {
                   label="Product Name"
                   rules={rules.product}
                 >
-                  <Input />
+                  <Field
+                    attr="required | Product name is required"
+                    showValidation={isValid}
+                  >
+                    <Input />
+                  </Field>
                 </Form.Item>
               </Col>
               <Col span={24}>
@@ -139,6 +153,7 @@ const ProductDocuments = (props: DrawerProps) => {
                   style={{ flex: 1, minWidth: 100 }}
                   name="costCenter"
                   label="Cost Center"
+                  rules={[{ required: true, message: "" }]}
                 >
                   <MyAsyncSelect
                     optionsState={asyncOptions}
@@ -146,6 +161,9 @@ const ProductDocuments = (props: DrawerProps) => {
                     selectLoading={loading("select")}
                     onBlur={() => setAsyncOptions([])}
                     fetchDefault={true}
+                    labelInValue
+                    showError={isValid}
+                    message="Cost Center is required"
                   />
                 </Form.Item>
               </Col>
@@ -154,6 +172,7 @@ const ProductDocuments = (props: DrawerProps) => {
                   style={{ flex: 1, minWidth: 100 }}
                   name="project"
                   label="Project"
+                  rules={[{ required: true, message: "" }]}
                 >
                   <MyAsyncSelect
                     optionsState={asyncOptions}
@@ -161,6 +180,9 @@ const ProductDocuments = (props: DrawerProps) => {
                     selectLoading={loading("select")}
                     onBlur={() => setAsyncOptions([])}
                     fetchDefault={true}
+                    labelInValue
+                    showError={isValid}
+                    message="Project is required"
                   />
                 </Form.Item>
               </Col>
@@ -264,7 +286,7 @@ const rules = {
   product: [
     {
       required: true,
-      message: "Product name is required",
+      message: "",
     },
   ],
 };

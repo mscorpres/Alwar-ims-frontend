@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./r.css";
 import "../../Store/MaterialTransfer/Modal/viewModal.css";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
-import { Row, Col, Button, Spin, Select, Space } from "antd";
+import { Row, Col, Button, Select, Space } from "antd";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import { SearchOutlined } from "@ant-design/icons";
 
 import MyDataTable from "../../../Components/MyDataTable";
 import Tooltip from "@mui/material/Tooltip";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import Field from "../../../Components/Field";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
@@ -24,6 +25,7 @@ const R1 = () => {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomOptions, setBomOptions] = useState([]);
   const abortControllerRef = useRef(null);
+  const [showValidation, setShowValidation] = useState(false);
   const [filters, setFilters] = useState({
     selectProduct: undefined,
     bom: undefined,
@@ -166,17 +168,14 @@ const R1 = () => {
   }, [filters.selectProduct]);
 
   const handleSearch = async () => {
-    if (!filters.selectProduct?.value) {
-      showToast("Please select product", "error");
-      return;
-    }
-    if (!filters.bom?.value) {
-      showToast("Please select BOM", "error");
+   if (!filters.selectProduct?.value || !filters.bom?.value || !filters.date) {
+      setShowValidation(true);
       return;
     }
     abortControllerRef.current?.abort();
     const controller = new AbortController();
     abortControllerRef.current = controller;
+    setShowValidation(true);
     setLoading(true);
     setAllResponseData([]);
     try {
@@ -243,12 +242,12 @@ const R1 = () => {
     });
     downloadCSVCustomColumns(csvData, "Bom Wise Report");
   };
-  const reset = () => {
-    abortControllerRef.current?.abort();
-    abortControllerRef.current = null;
-    setLoading(false);
-    setAllResponseData([]);
-  };
+  // const reset = () => {
+  //   abortControllerRef.current?.abort();
+  //   abortControllerRef.current = null;
+  //   setLoading(false);
+  //   setAllResponseData([]);
+  // };
 
   return (
     <div style={{ height: "97%" }}>
@@ -260,8 +259,15 @@ const R1 = () => {
             }}
           >
             <Space style={{ width: "100%" }} size={10} wrap>
-              <div style={{ minWidth: 240, flex: 1 }}>
+              {/* <Field
+                attr="required | Please select SKU"
+                value={filters.selectProduct}
+                showValidation={showValidation}
+                style={{ minWidth: 240, flex: 1 }}
+              > */}
                 <MyAsyncSelect
+                message="Please select Product"
+                  showError={showValidation}
                   selectLoading={loading1("select")}
                   style={{ width: "100%" }}
                   loadOptions={getProductOptions}
@@ -270,30 +276,34 @@ const R1 = () => {
                   value={filters.selectProduct}
                   placeholder="Product Name / SKU"
                   optionsState={asyncOptions}
-                  onChange={(value) =>
+                  onChange={(value) => {
+                    setShowValidation(false);
                     setFilters((prev) => ({
                       ...prev,
                       selectProduct: value,
                       bom: undefined,
-                    }))
-                  }
+                    }));
+                  }}
                 />
-              </div>
-              <div style={{ minWidth: 220 }}>
+              {/* </Field> */}
+              <Field
+                attr="required | Please select BOM"
+                value={filters.bom}
+                showValidation={showValidation}
+                style={{ minWidth: 220 }}
+              >
                 <Select
                   style={{ width: "100%" }}
                   placeholder="Select BOM"
                   options={bomOptions}
                   labelInValue
                   value={filters.bom || undefined}
-                  onChange={(bom) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      bom,
-                    }))
-                  }
+                  onChange={(bom) => {
+                    setShowValidation(false);
+                    setFilters((prev) => ({ ...prev, bom }));
+                  }}
                 />
-              </div>
+              </Field>
               <div style={{ minWidth: 240 }}>
                 <MyDatePicker
                   setDateRange={(value) =>
@@ -304,6 +314,7 @@ const R1 = () => {
                   }
                   value={filters.date}
                   size="default"
+                  showError={showValidation}
                 />
               </div>
               <Button
@@ -328,41 +339,14 @@ const R1 = () => {
       </Row>
 
       <div className="hide-select" style={{ height: "calc(100% - 30px)", margin: "10px" }}>
-        {loading ? (
-          <div
-            style={{
-              height: "80vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                // border: "1px solid red",
-                width: "10%",
-                justifyContent: "space-around",
-              }}
-            >
-              <Spin size="large" />
-              <div
-                style={{
-                  borderLeft: "2px solid grey",
-                  height: "40px",
-                }}
-              ></div>
-              <Button onClick={reset}>Reset</Button>
-            </div>
-          </div>
-        ) : (
+     
           <MyDataTable
             checkboxSelection={true}
             data={allResponseData}
             columns={columns}
-            // loading={loading}
+            loading={loading}
           />
-        )}
+    
       </div>
 
     </div>

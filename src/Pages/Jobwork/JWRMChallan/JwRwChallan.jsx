@@ -22,6 +22,7 @@ import { GridActionsCellItem } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
 import CancelEwayBillModal from "./CancelEwayBillModal";
 import MyButton from "../../../Components/MyButton";
+import Field from "../../../Components/Field.jsx";
 
 function JwRwChallan() {
   const { showToast } = useToast();
@@ -35,6 +36,7 @@ function JwRwChallan() {
   const [showCancel, setShowCancel] = useState(false);
   // const [showEwayBillModal, setShowEwayBillModal] = useState(null);
   const [showEwayBillCancelModal, setShowEwayBillCancelModal] = useState(null);
+  const [isValid, setIsValid] = useState(false);
 
   const wiseOptions = [
     { text: "Date Wise", value: "datewise" },
@@ -66,10 +68,21 @@ function JwRwChallan() {
     }
   };
   const getRows = async () => {
+    const searchValue =
+      wise === "jw_sfg_wise" || wise === "vendorwise"
+        ? (searchInput?.value ?? searchInput)
+        : searchInput;
+
+    if (!wise || !searchValue) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+
  try {
      setLoading("fetch");
     const response = await imsAxios.post("/jobwork/getJobworkChallan", {
-      data: searchInput,
+      data: searchValue,
       wise: wise,
     });
     setLoading(false);
@@ -239,15 +252,15 @@ function JwRwChallan() {
     {
       headerName: "Req. Date",
       field: "issue_challan_rm_dt",
-      width: 150,
+      width: 190,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.issue_challan_rm_dt} />
       ),
     },
     {
       headerName: "Vendor",
-      flex: 1,
       field: "vendor",
+      width: 190,
       renderCell: ({ row }) => <ToolTipEllipses text={row.vendor} />,
     },
     {
@@ -268,7 +281,7 @@ function JwRwChallan() {
     },
     {
       headerName: "Challan ID",
-      width: 150,
+      width: 190,
       field: "challan_id",
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.challan_id} copy={true} />
@@ -305,13 +318,14 @@ function JwRwChallan() {
     },
     {
       headerName: "Product",
-      flex: 1,
+      width: 200,
       field: "jw_sku_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.jw_sku_name} />,
     },
   ];
   useEffect(() => {
     setSearchInput("");
+    setIsValid(false);
   }, [wise]);
   return (
     <div style={{ height: "100%", padding:10 }}>
@@ -348,6 +362,8 @@ function JwRwChallan() {
                 onChange={setWise}
                 value={wise}
                 setSearchString={setSearchInput}
+                showError={isValid}
+                message="Please select wise"
               />
             </div>
             <div style={{ width: 300 }}>
@@ -358,21 +374,35 @@ function JwRwChallan() {
                   dateRange={searchInput}
                   value={searchInput}
                   spacedFormat={true}
+                  showError={isValid}
+                  message="Please select a date range"
                 />
               )}
               {wise === "jw_transaction_wise" && (
-                <Input
-                  size="default"
-                  onChange={(e) => setSearchInput(e.target.value)}
+                <Field
+                  attr="required | Please enter a JW Number"
                   value={searchInput}
-                />
+                  showValidation={isValid}
+                >
+                  <Input
+                    size="default"
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    value={searchInput}
+                  />
+                </Field>
               )}
               {wise === "challan_wise" && (
-                <Input
-                  size="default"
-                  onChange={(e) => setSearchInput(e.target.value)}
+                <Field
+                  attr="required | Please enter a Challan ID"
                   value={searchInput}
-                />
+                  showValidation={isValid}
+                >
+                  <Input
+                    size="default"
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    value={searchInput}
+                  />
+                </Field>
               )}
               {wise === "jw_sfg_wise" && (
                 <MyAsyncSelect
@@ -382,6 +412,9 @@ function JwRwChallan() {
                   selectLoading={loading === "select"}
                   onChange={(value) => setSearchInput(value)}
                   loadOptions={(value) => getAsyncOptions(value, "sku")}
+                  labelInValue
+                  showError={isValid}
+                  message="Please select a SKU"
                 />
               )}
               {wise === "vendorwise" && (
@@ -392,6 +425,9 @@ function JwRwChallan() {
                   selectLoading={loading === "select"}
                   onChange={(value) => setSearchInput(value)}
                   loadOptions={(value) => getAsyncOptions(value, "vendor")}
+                  labelInValue
+                  showError={isValid}
+                  message="Please select a vendor"
                 />
               )}
               {wise === "issuedtwise" && (
@@ -400,13 +436,14 @@ function JwRwChallan() {
                   setDateRange={setSearchInput}
                   dateRange={searchInput}
                   value={searchInput}
+                  showError={isValid}
+                  message="Please select a date range"
                 />
               )}
             </div>
             <MyButton
               variant="search"
               type="primary"
-              disabled={wise === "" || searchInput === ""}
               loading={loading === "fetch"}
               onClick={getRows}
               id="submit"

@@ -397,8 +397,9 @@ const links = [
   ],
   // vendor master links
   [
+     { routeName: "Add Vendor", routePath: "/create-vendor" },
     { routeName: "Vendor", routePath: "/vendor" },
-    { routeName: "Add Vendor", routePath: "/create-vendor" },
+   
   ],
   // MR approved transactionlinks
   [
@@ -615,6 +616,11 @@ const links = [
       routeName: "Manage",
       routePath: "/warehouse/dc/manage",
       key: "1",
+    },
+    {
+      routeName: "Return DC",
+      routePath: "/warehouse/dc/return",
+      key: "2",
     },
   ],
   // gatepass links
@@ -936,17 +942,17 @@ const links = [
     },
   ],
   // CPM Analysis
-  [
-    {
-      routeName: "CPM",
-      routePath: "/cpm/analysis",
-      placeholder: "Client Project Management",
-    },
-    {
-      routeName: "CPM Finance",
-      routePath: "/cpm/reports",
-    },
-  ],
+  // [
+  //   {
+  //     routeName: "CPM",
+  //     routePath: "/cpm/analysis",
+  //     placeholder: "Client Project Management",
+  //   },
+  //   {
+  //     routeName: "CPM Finance",
+  //     routePath: "/cpm/reports",
+  //   },
+  // ],
   // Paytm qc
   [
     // { routeName: "Paytm QC Upload", routePath: "/paytm-qc/upload", key: 0 },
@@ -1128,6 +1134,11 @@ const links = [
   //     routePath: "/tally/debit-note/report",
   //   },
   // ],
+
+  [{
+    routeName: "Weekly Audit",
+    routePath: "/weeklyAudit",
+  }],
   // sop module
   [
     {

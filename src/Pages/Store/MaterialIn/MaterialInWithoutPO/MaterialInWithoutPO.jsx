@@ -20,6 +20,7 @@ import Loading from "../../../../Components/Loading";
 
 import MySelect from "../../../../Components/MySelect";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
+import Field from "../../../../Components/Field";
 import CurrenceModal from "../../../../Components/CurrenceModal";
 import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
 import AddBranch from "../../../Master/Vendor/model/AddBranch";
@@ -89,7 +90,7 @@ export default function MaterialInWithoutPO() {
   const [autoConsumptionOptions, setAutoConsumptionOption] = useState([]);
   const [isScan, setIsScan] = useState(false);
   const [open, setOpen] = useState(false);
-const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState("");
   const [totalValues, setTotalValues] = useState([
     { label: "cgst", sign: "+", values: [] },
     { label: "sgst", sign: "+", values: [] },
@@ -104,11 +105,12 @@ const [fileName, setFileName] = useState("");
   const [vendorBranchOptions, setVendorBranchOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
-    const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSuccessPage, setShowSuccessPage] = useState(null);
   const [preview, setPreview] = useState(false);
   const [previewRows, setPreviewRows] = useState([]);
+  const [isValid, setIsValid] = useState(false);
   const [form] = Form.useForm();
   const components = Form.useWatch("components", form);
   const { executeFun, loading } = useApi();
@@ -116,6 +118,7 @@ const [fileName, setFileName] = useState("");
   const vendor = Form.useWatch("vendorName", form);
   const vendorBranch = Form.useWatch("vendorBranch", form);
   const vendorType = Form.useWatch("vendorType", form);
+  const [uploadedFileCount, setUploadedFileCount] = useState(0);
   const [uplaodForm] = Form.useForm();
   const tableContainerRef = useRef(null);
   const sampleData = [
@@ -133,8 +136,39 @@ const [fileName, setFileName] = useState("");
     },
   ];
   // console.log("fileComponents", fileComponents);
+  const hasIncompleteComponentRow = (rows) =>
+    (rows || []).some(
+      (row) =>
+        !row?.component ||
+        !row?.qty ||
+        Number(row?.qty) <= 0 ||
+        !row?.rate ||
+        Number(row?.rate) <= 0 ||
+        !row?.currency ||
+        row?.gstRate === "" ||
+        row?.gstRate === undefined ||
+        row?.gstRate === null ||
+        !row?.gstType ||
+        !row?.location,
+    );
+
   const handleSubmit = async () => {
-    const values = await form.validateFields();
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    if (hasIncompleteComponentRow(values?.components)) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     Modal.confirm({
       title: "Create MIN",
       content: "Are you sure you want to create this MIN?",
@@ -146,12 +180,23 @@ const [fileName, setFileName] = useState("");
   };
 
   const handleValidatingInvoices = async () => {
-    const values = await form.validateFields();
-     if(!fileName) {
-    showToast("Please upload a Document", "error");
-    setSubmitLoading(false);
-    return
-  }
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
+    if (!fileName) {
+      showToast("Please upload a Document", "error");
+      setSubmitLoading(false);
+      return;
+    }
     const response = await executeFun(() => validateInvoice(values), "submit");
 
     if (response?.success) {
@@ -169,29 +214,40 @@ const [fileName, setFileName] = useState("");
           confirmLoading: loading("submit"),
           cancelText: "Cancel",
         });
+
       } else {
+       
         submitMIN(values);
       }
     } else {
-         showToast(response.message || "Invoice Id not found", "error");
+      showToast(response.message || "Invoice Id not found", "error");
     }
   };
   const submitMIN = async () => {
-       setSubmitLoading(true);
+    setSubmitLoading(true);
     const vendorType = form.getFieldValue("vendorType");
-    const values = await form.validateFields();
-
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      setSubmitLoading(false);
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
     if (fileName || vendorType == "p01") {
-
       const response = await executeFun(
         () => materialInWithoutPo(values, fileName, vendorType),
-        "submit"
+        "submit",
       );
 
       if (response?.success) {
         const { data } = response;
 
-        // The transaction ID is nested: response.data.data.txn
         const transactionId =
           data?.data?.txn || response?.data?.data?.txn || data?.txn;
         setShowSuccessPage({
@@ -225,7 +281,7 @@ const [fileName, setFileName] = useState("");
   const handleFetchComponentOptions = async (search) => {
     const response = await executeFun(
       () => getComponentOptions(search),
-      "select"
+      "select",
     );
     let arr = [];
     if (response.success) {
@@ -233,7 +289,7 @@ const [fileName, setFileName] = useState("");
       if (response.data[0].piaStatus == "Y") {
         showToast(
           `PIA Status is enabled for ${response.data[0].newPart} Part Code.`,
-          "success"
+          "success",
         );
       }
       arr = convertSelectOptions(response.data);
@@ -296,7 +352,7 @@ const [fileName, setFileName] = useState("");
   const handleFetchComponentDetails = async (row, rowId, value) => {
     const response = await executeFun(
       () => getComponentDetail(value.value),
-      "fetch"
+      "fetch",
     );
     if (response.success) {
       const data = response?.data;
@@ -313,12 +369,12 @@ const [fileName, setFileName] = useState("");
     const vendorType = form.getFieldValue("vendorType");
     if (formVendor && component && vendorType === "v01") {
       const response = await executeFun(() =>
-        getComponentDetail(component.value, formVendor.value)
+        getComponentDetail(component.value, formVendor.value),
       );
       if (response.success) {
         form.setFieldValue(
           ["components", rowId, "previousRate"],
-          response.data.rate
+          response.data.rate,
         );
       }
     }
@@ -339,7 +395,7 @@ const [fileName, setFileName] = useState("");
   const getVendorBracnch = async (vendorCode) => {
     const response = await executeFun(
       () => getVendorBranchOptions(vendorCode),
-      "fetch"
+      "fetch",
     );
 
     let arr = [];
@@ -357,7 +413,7 @@ const [fileName, setFileName] = useState("");
 
     const response = await executeFun(
       () => getVendorBranchDetails(vendorCode.value, branchCode),
-      "fetch"
+      "fetch",
     );
 
     if (response?.success) {
@@ -369,7 +425,7 @@ const [fileName, setFileName] = useState("");
   const handleFetchCostCenterOptions = async (search) => {
     const response = await executeFun(
       () => getCostCentresOptions(search),
-      "select"
+      "select",
     );
     let arr = [];
     if (response?.success) arr = convertSelectOptions(response?.data);
@@ -378,7 +434,7 @@ const [fileName, setFileName] = useState("");
   const handleFetchProjectOptions = async (search) => {
     const response = await executeFun(
       () => getProjectOptions(search),
-      "select"
+      "select",
     );
     setAsyncOptions(response?.data);
   };
@@ -386,7 +442,7 @@ const [fileName, setFileName] = useState("");
   const handleProjectChange = async (value) => {
     setPageLoading(true);
     const response = await imsAxios.post("/backend/projectDescription", {
-      project_name: value,
+      project_name: value?.value,
     });
     setPageLoading(false);
     if (response?.success) {
@@ -431,19 +487,19 @@ const [fileName, setFileName] = useState("");
     form.setFieldValue(["components", rowId, "value"], getInt(inrValue));
     form.setFieldValue(
       ["components", rowId, "cgst"],
-      gstType === "L" ? gst : 0
+      gstType === "L" ? gst : 0,
     );
     form.setFieldValue(
       ["components", rowId, "sgst"],
-      gstType === "L" ? gst : 0
+      gstType === "L" ? gst : 0,
     );
     form.setFieldValue(
       ["components", rowId, "igst"],
-      gstType === "L" ? 0 : gst
+      gstType === "L" ? 0 : gst,
     );
     form.setFieldValue(
       ["components", rowId, "foreignValue"],
-      currency === "364907247" ? 0 : foreignValue
+      currency === "364907247" ? 0 : foreignValue,
     );
   };
 
@@ -478,7 +534,7 @@ const [fileName, setFileName] = useState("");
   }, [costCenter]);
   useEffect(() => {
     let grandTotal = components?.map((row) =>
-      Number(row?.cgst + row?.sgst + row?.igst + row?.value)
+      Number(row?.cgst + row?.sgst + row?.igst + row?.value),
     );
     let cgsttotal = components?.map((row) => Number(row?.cgst));
     let sgsttotal = components?.map((row) => Number(row?.sgst));
@@ -528,6 +584,7 @@ const [fileName, setFileName] = useState("");
     form,
     currencies,
     setShowCurrenncy,
+    isValid,
   }) => [
     {
       headerName: "Part Component",
@@ -539,6 +596,9 @@ const [fileName, setFileName] = useState("");
           labelInValue
           loadOptions={handleFetchComponentOptions}
           optionsState={asyncOptions}
+          value={row?.component}
+          showError={isValid}
+          message="Component is required"
           onChange={(value) => {
             handleFetchComponentDetails(row, index, value);
 
@@ -568,7 +628,16 @@ const [fileName, setFileName] = useState("");
       name: "qty",
       width: 100,
       // renderCell: ({ row }) => ,
-      field: () => <Input type="number" />,
+      field: (row) => (
+        <Field
+          attr="required | Qty is at least 1"
+          value={row?.qty}
+          treatZeroAsEmpty
+          showValidation={isValid}
+        >
+          <Input type="number" />
+        </Field>
+      ),
     },
     {
       headerName: "Rate",
@@ -600,36 +669,45 @@ const [fileName, setFileName] = useState("");
         },
       ],
       field: (row, index) => (
-        <Input
-        type="number"
-          onChange={(e) => compareRates(e.target.value, index)}
-          addonAfter={
-            <div style={{ width: 50 }}>
-              <Form.Item noStyle name={[index, "currency"]}>
-                <MySelect
-                  options={currencies}
-                  onChange={(value) => {
-                    value !== "364907247"
-                      ? setShowCurrenncy({
-                          currency: value,
-                          price: row.value,
-                          exchangeRate: row.exchangeRate,
-                          symbol: currencies.filter(
-                            (cur) => cur.value == value
-                          )[0].text,
-                          rowId: index,
-                          form: form,
-                        })
-                      : form.setFieldValue(
-                          ["components", index, "exchangeRate"],
-                          1
-                        );
-                  }}
-                />
-              </Form.Item>
-            </div>
-          }
-        />
+        <Field
+          attr="required | Rate is at least 1"
+          value={row?.rate}
+          treatZeroAsEmpty
+          showValidation={isValid}
+        >
+          <Input
+            type="number"
+            onChange={(e) => compareRates(e.target.value, index)}
+            addonAfter={
+              <div style={{ width: 50 }}>
+                <Form.Item noStyle name={[index, "currency"]}>
+                  <MySelect
+                    options={currencies}
+                    showError={isValid}
+                    message="Currency is required"
+                    onChange={(value) => {
+                      value !== "364907247"
+                        ? setShowCurrenncy({
+                            currency: value,
+                            price: row.value,
+                            exchangeRate: row.exchangeRate,
+                            symbol: currencies.filter(
+                              (cur) => cur.value == value,
+                            )[0].text,
+                            rowId: index,
+                            form: form,
+                          })
+                        : form.setFieldValue(
+                            ["components", index, "exchangeRate"],
+                            1,
+                          );
+                    }}
+                  />
+                </Form.Item>
+              </div>
+            }
+          />
+        </Field>
       ),
       width: 200,
     },
@@ -656,14 +734,29 @@ const [fileName, setFileName] = useState("");
     {
       headerName: "GST Type",
       name: "gstType",
-      field: () => <MySelect options={gstTypeOptions} />,
+      field: (row) => (
+        <MySelect
+          options={gstTypeOptions}
+          value={row?.gstType}
+          showError={isValid}
+          message="GST Type is required"
+        />
+      ),
       // flex: 1,
       width: 160, //comment added
     },
     {
       headerName: "GST Rate",
       name: "gstRate",
-      field: () => <Input />,
+      field: (row) => (
+        <Field
+          attr="required | GST Rate is required"
+          value={row?.gstRate}
+          showValidation={isValid}
+        >
+          <Input />
+        </Field>
+      ),
       // flex: 1,
       width: 100,
     },
@@ -693,7 +786,15 @@ const [fileName, setFileName] = useState("");
     {
       headerName: "Location",
       name: "location",
-      field: () => <MySelect options={locationOptions} labelInValue={true} />,
+      field: (row) => (
+        <MySelect
+          options={locationOptions}
+          labelInValue={true}
+          value={row?.location}
+          showError={isValid}
+          message="Location is required"
+        />
+      ),
       width: 130,
     },
     {
@@ -840,7 +941,7 @@ const [fileName, setFileName] = useState("");
     formData.append("file", file);
     const response = await executeFun(
       () => uplaodFileInMINInward(formData),
-      "fetch"
+      "fetch",
     );
     if (response?.success) {
       let data = response?.data;
@@ -854,9 +955,9 @@ const [fileName, setFileName] = useState("");
       const formattedHeaders = data.headers.map((header) =>
         header
           .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
-            index === 0 ? match.toUpperCase() : match.toLowerCase()
+            index === 0 ? match.toUpperCase() : match.toLowerCase(),
           )
-          .replace(/\s+/g, "")
+          .replace(/\s+/g, ""),
       );
 
       // Map the row values to headers
@@ -895,8 +996,6 @@ const [fileName, setFileName] = useState("");
     }
   };
 
-
-
   const handleUploadDocumentsBatch = async (files) => {
     const vendorType = form.getFieldValue("vendorType");
     if (vendorType === "p01") {
@@ -917,16 +1016,19 @@ const [fileName, setFileName] = useState("");
       setUploadLoading(false);
     }
   };
- 
+
   const handleFileUploadDelete = (id) => {
-    form.setFieldValue("fileComponents", form.getFieldValue("fileComponents").filter((item) => item.id !== id));
-  };
-  const handleFileUploadChange = (items) => {
-  
     form.setFieldValue(
       "fileComponents",
-      items.map((item) => ({ documentName: item.name }))
+      form.getFieldValue("fileComponents").filter((item) => item.id !== id),
     );
+  };
+  const handleFileUploadChange = (items) => {
+    form.setFieldValue(
+      "fileComponents",
+      items.map((item) => ({ documentName: item.name })),
+    );
+    setUploadedFileCount(items.length);
   };
 
   return (
@@ -982,7 +1084,7 @@ const [fileName, setFileName] = useState("");
               span={6}
               style={{ height: "100%", overflowY: "auto", overflowX: "hidden" }}
             >
-              {(loading("fetch") || selectLoading)  && <Loading />}
+              {(loading("fetch") || selectLoading) && <Loading />}
               <Flex vertical gap={6}>
                 <Card size="small">
                   <Row gutter={4}>
@@ -1010,12 +1112,11 @@ const [fileName, setFileName] = useState("");
                           </p>
                         }
                         label="Vendor"
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Please Select a vendor Name!",
-                        //   },
-                        // ]}
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
                       >
                         <MyAsyncSelect
                           selectLoading={loading("select")}
@@ -1024,6 +1125,8 @@ const [fileName, setFileName] = useState("");
                           onBlur={() => setAsyncOptions([])}
                           optionsState={asyncOptions}
                           loadOptions={getVendors}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a vendor"
                           // onChange={handleFetchPreviousRate(value, index)}
                         />
                       </Form.Item>
@@ -1055,16 +1158,17 @@ const [fileName, setFileName] = useState("");
                         //   </p>
                         // }
                         label="Vendor Branch"
-                        // rules={[
-                        //   {
-                        //     required: true,
-                        //     message: "Please Select a vendor Branch!",
-                        //   },
-                        // ]}
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
                       >
                         <MySelect
                           disabled={vendorType === "p01"}
                           options={vendorBranchOptions}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a vendor branch"
                         />
                       </Form.Item>
                     </Col>
@@ -1074,12 +1178,23 @@ const [fileName, setFileName] = useState("");
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Cost Center" name="costCenter">
+                      <Form.Item
+                        label="Cost Center"
+                        name="costCenter"
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
+                      >
                         <MyAsyncSelect
                           selectLoading={loading("select")}
                           onBlur={() => setAsyncOptions([])}
                           optionsState={asyncOptions}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a cost center"
                           loadOptions={handleFetchCostCenterOptions}
+                          labelInValue
                         />
                       </Form.Item>
                     </Col>{" "}
@@ -1114,13 +1229,24 @@ const [fileName, setFileName] = useState("");
                     )}
                     <Col span={12}>
                       {" "}
-                      <Form.Item label="Project ID" name="projectID">
+                      <Form.Item
+                        label="Project ID"
+                        name="projectID"
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
+                      >
                         <MyAsyncSelect
                           selectLoading={loading("select")}
                           onBlur={() => setAsyncOptions([])}
                           optionsState={asyncOptions}
                           loadOptions={handleFetchProjectOptions}
                           onChange={handleProjectChange}
+                          showError={isValid && vendorType !== "p01"}
+                          message="Please select a project"
+                          labelInValue
                         />
                       </Form.Item>
                     </Col>
@@ -1130,26 +1256,54 @@ const [fileName, setFileName] = useState("");
                       </Form.Item>
                     </Col>
                     <Col span={24}>
-                      <Form.Item name="vendorAddress" label="Bill From Address">
+                      <Form.Item
+                        name="vendorAddress"
+                        label="Bill From Address"
+                        rules={
+                          vendorType !== "p01"
+                            ? [{ required: true, message: "" }]
+                            : []
+                        }
+                      >
+                        <Field
+                          attr="required | Please enter bill from address"
+                          showValidation={isValid && vendorType !== "p01"}
+                        >
                         <Input.TextArea
                           rows={3}
                           disabled={vendorType === "p01"}
                           style={{ resize: "none" }}
                         />
+                        </Field>
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Invoice Date" name="invoiceDate">
+                      <Form.Item
+                        label="Invoice Date"
+                        name="invoiceDate"
+                        rules={[{ required: true, message: "" }]}
+                      >
                         <SingleDatePicker
                           setDate={(value) => {
                             form.setFieldValue("invoiceDate", value);
                           }}
+                          showError={isValid}
+                          message="Invoice Date is required"
                         />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Invoice Id" name="invoiceId">
-                        <Input />
+                      <Form.Item
+                        label="Invoice Id"
+                        name="invoiceId"
+                        rules={[{ required: true, message: "" }]}
+                      >
+                        <Field
+                          attr="required | Invoice Id is required"
+                          showValidation={isValid}
+                        >
+                          <Input />
+                        </Field>
                       </Form.Item>
                     </Col>
                     <Col span={24}>
@@ -1172,7 +1326,7 @@ const [fileName, setFileName] = useState("");
                           onClick={() => setUploadClicked(true)}
                         ></MyButton>
                       </Col> */}
-                           <Col>
+                      <Col>
                         <FileUpload
                           accept="image/*,.pdf"
                           multiple
@@ -1185,7 +1339,12 @@ const [fileName, setFileName] = useState("");
                           onDelete={handleFileUploadDelete}
                           onChange={handleFileUploadChange}
                         >
-                          <MyButton variant="upload" text="Documents" />
+                          <MyButton
+                            variant="upload"
+                            text={`Upload Documents${
+                              uploadedFileCount > 0 ? ` (${uploadedFileCount})` : ""
+                            }`}
+                          />
                         </FileUpload>
                       </Col>
                       <Col>
@@ -1197,7 +1356,6 @@ const [fileName, setFileName] = useState("");
                           Excel
                         </MyButton>
                       </Col>
-                 
                     </Row>
                   </Row>
                 </Card>
@@ -1271,7 +1429,7 @@ const [fileName, setFileName] = useState("");
                                 {Number(
                                   row.values?.reduce((partialSum, a) => {
                                     return partialSum + Number(a);
-                                  }, 0)
+                                  }, 0),
                                 ).toFixed(2)}
                               </Typography.Text>
                             </span>
@@ -1294,46 +1452,46 @@ const [fileName, setFileName] = useState("");
                   display: "flex",
                 }}
               >
-              <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
-                {pageLoading && <Loading />}
-                <FormTable2
-                  form={form}
-                  addableRow={true}
-                  removableRows={true}
-                  reverse={true}
-                  newRow={defaultValues.components[0]}
-                  listName="components"
-                  nonRemovableColumns={1}
-                  watchKeys={[
-                    "rate",
-                    "qty",
-                    "component",
-                    "gstRate",
-                    "gstType",
-                    "exchangeRate",
-                    "currency",
-                    "mfg",
-                  ]}
-                  calculation={calculation}
-                  columns={columns({
-                    handleFetchComponentOptions,
-                    loading,
-                    asyncOptions,
-                    setAsyncOptions,
-                    locationOptions,
-                    autoConsumptionOptions,
-                    handleFetchComponentDetails,
-                    handleFetchPreviousRate,
-                    compareRates,
-                    form,
-                    currencies,
-                    setShowCurrenncy,
-                  })}
-                />
-              </div>
+                <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
+                  {pageLoading && <Loading />}
+                  <FormTable2
+                    form={form}
+                    addableRow={true}
+                    removableRows={true}
+                    reverse={true}
+                    newRow={defaultValues.components[0]}
+                    listName="components"
+                    nonRemovableColumns={1}
+                    watchKeys={[
+                      "rate",
+                      "qty",
+                      "component",
+                      "gstRate",
+                      "gstType",
+                      "exchangeRate",
+                      "currency",
+                      "mfg",
+                    ]}
+                    calculation={calculation}
+                    columns={columns({
+                      handleFetchComponentOptions,
+                      loading,
+                      asyncOptions,
+                      setAsyncOptions,
+                      locationOptions,
+                      autoConsumptionOptions,
+                      handleFetchComponentDetails,
+                      handleFetchPreviousRate,
+                      compareRates,
+                      form,
+                      currencies,
+                      setShowCurrenncy,
+                      isValid,
+                    })}
+                  />
+                </div>
               </div>
             </Col>
-            
             <Modal
               title="Upload File Here"
               open={open}

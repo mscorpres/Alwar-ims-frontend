@@ -105,7 +105,7 @@ export const getHsnList = async (key: string) => {
 };
 
 export const mapHsn = async (key: string, hsnRows: any[]) => {
-  const hsn = hsnRows.map((row) => row.code);
+  const hsn = hsnRows.map((row) => row.code?.key);
   const tax = hsnRows.map((row) => row.tax);
 
   const response = await imsAxios.post("/backend/mapHsn", {

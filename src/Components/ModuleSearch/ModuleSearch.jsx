@@ -25,6 +25,7 @@ const PALETTE_STYLES = `
     width: min(620px, calc(100vw - 32px));
     background: #f8f9fa;
     border: 1px solid #d6dde3;
+    z-index: 10;
     border-radius: 14px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
     overflow: hidden;

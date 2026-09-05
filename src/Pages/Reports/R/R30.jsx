@@ -1,14 +1,11 @@
-import { Button, Card, Col, Drawer, Form, Row, Space, Typography } from "antd";
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { Button, Card, Col, Drawer, Form, Row, Space } from "antd";
+import { useState } from "react";
 import { imsAxios } from "../../../axiosInterceptor";
 import { downloadCSV } from "../../../Components//exportToCSV";
-import Loading from "../../../Components/Loading";
+// import Loading from "../../../Components/Loading";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import MySelect from "../../../Components/MySelect";
-import SummaryCard from "../../../Components/SummaryCard";
 import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { getVendorOptions } from "../../../api/general.ts";
@@ -20,21 +17,28 @@ import { useToast } from "../../../hooks/useToast.js";
 function R30() {
   const { showToast } = useToast();
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
   const [rows, setRows] = useState([]);
-  const [locationOptions, setLocationOptions] = useState([]);
-  const [formLoading, setFormLoading] = useState(false);
+  // const [formLoading, setFormLoading] = useState(false);
+  const [isValid , setIsValid] = useState(false);
   const [dateRange, setDateRange] = useState("");
   const [componentList, setComponentList] = useState(false);
   const [jwId, setJwId] = useState("");
   const [searchForm] = Form.useForm();
   const { executeFun, loading: loading1 } = useApi();
   const getRows = async (values) => {
+    if (!values?.vendor || !dateRange) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setFetchLoading(true);
-    values = { ...values, date: dateRange };
     // log
-    const response = await imsAxios.post("/report30", values);
+    const payload = {
+      date: dateRange,
+      vendor: values.vendor?.key,
+    }
+    const response = await imsAxios.post("/report30", payload);
     setFetchLoading(false);
     if (response.success) {
       let arr = response.data.map((row, index) => ({
@@ -52,15 +56,13 @@ function R30() {
     console.log("row", row);
     setJwId(row.jobwork);
     let values = await searchForm.validateFields();
-    // console.log("values", values);
-    // return;
+  
     const response = await imsAxios.post("/report30/viewRM", {
       vendor: values.vendor,
       jw: row.jobwork,
       challan: row.challan,
     });
-    console.log("response", response);
-    // let arr = data.message;
+
     let arr = response.data;
 
     if (response.success) {
@@ -91,6 +93,7 @@ function R30() {
         // />,
 
         <GridActionsCellItem
+        key={"comp-list"}
           showInMenu
           // disabled={loading}
           onClick={() => {
@@ -134,53 +137,32 @@ function R30() {
     setAsyncOptions(arr);
   };
 
-  const getAsyncOptions = async (url, search) => {
-    setSelectLoading(true);
-    const response = await imsAxios.post(url, {
-      search: search,
-      searchTerm: search,
-    });
-    setSelectLoading(false);
-    let arr = [];
-    if (response.success) {
-      arr = response.data.map((row) => ({
-        value: row.id,
-        text: row.text,
-      }));
-    } else {
-      arr = response.data.map((row) => ({
-        value: row.id,
-        text: row.text,
-      }));
-    }
-    setAsyncOptions(arr);
-  };
-  const getVendorLocation = async () => {
-    let vendor = searchForm.getFieldsValue().vendor;
-    if (vendor) {
-      setFormLoading(true);
-      const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendor}`);
+  // const getVendorLocation = async () => {
+  //   let vendor = searchForm.getFieldsValue().vendor;
+  //   if (vendor) {
+  //     setFormLoading(true);
+  //     const response = await imsAxios.get(`/backend/fetchVendorJWLocation?vendor=${vendor}`);
 
-      setFormLoading(false);
-      if (response.success) {
-        let arr = [];
-        arr = response.data.map((row) => ({
-          value: row.id,
-          text: row.text,
-        }));
-        setLocationOptions(arr);
-      } else {
-        showToast(response.message, "error");
-      }
-    }
-  };
-  useEffect(() => {
-    getVendorLocation();
-  }, [searchForm.getFieldsValue().vendor]);
+  //     setFormLoading(false);
+  //     if (response.success) {
+  //       let arr = [];
+  //       arr = response.data.map((row) => ({
+  //         value: row.id,
+  //         text: row.text,
+  //       }));
+     
+  //     } else {
+  //       showToast(response.message, "error");
+  //     }
+  //   }
+  // };
+  // useEffect(() => {
+  //   getVendorLocation();
+  // }, [searchForm.getFieldsValue().vendor]);
 
-  useEffect(() => {
-    getVendorLocation();
-  }, []);
+  // useEffect(() => {
+  //   getVendorLocation();
+  // }, []);
 
   return (
     <div style={{ height: "100%" }}>
@@ -190,7 +172,7 @@ function R30() {
           span={6}
         >
           <Card size="small" style={{ marginBottom: 5 }}>
-            {formLoading && <Loading />}
+            {/* {formLoading && <Loading />} */}
             <Form
               onFinish={getRows}
               layout="vertical"
@@ -233,38 +215,30 @@ function R30() {
                   <Form.Item
                     label="Select Vendor"
                     name="vendor"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please Select a Vendor!",
-                      },
-                    ]}
+                 
                   >
                     <MyAsyncSelect
                       selectLoading={loading1("select")}
                       optionsState={asyncOptions}
                       onBlur={() => setAsyncOptions([])}
                       loadOptions={(search) => getVendors(search)}
+                      labelInValue
+                      showError={isValid}
+                      message="Please Select a Vendor!"
+                      value={searchForm.getFieldsValue().vendor}
                     />
                   </Form.Item>
                 </Col>
 
                 <Col span={24}>
-                  <Form.Item
-                    label="Select Period"
-                    // name="date"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please Select a Date Period!",
-                      },
-                    ]}
-                  >
+                  <Form.Item label="Select Period">
                     <MyDatePicker
                       size="default"
                       setDateRange={setDateRange}
                       dateRange={dateRange}
                       value={dateRange}
+                      showError={isValid}
+                      message="Please Select a Date Period!"
                     />
                   </Form.Item>
                 </Col>

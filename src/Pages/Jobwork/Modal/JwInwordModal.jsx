@@ -9,7 +9,6 @@ import {
   Select,
   Button,
   Skeleton,
-  Popconfirm,
   Form,
   Typography,
   Upload,
@@ -25,7 +24,6 @@ import {
   FormOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
-import MySelect from "../../../Components/MySelect";
 import { v4 } from "uuid";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { useToast } from "../../../hooks/useToast.js";
@@ -35,7 +33,7 @@ import {
   getComponentOptions,
   savejwsfinward,
 } from "../../../api/general.ts";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import useApi from "../../../hooks/useApi.ts";
 import NavFooter from "../../../Components/NavFooter";
 import { GridActionsCellItem } from "@mui/x-data-grid";
@@ -46,6 +44,7 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import SingleProduct from "../../Master/Vendor/SingleProduct";
 import FormTable from "../../../Components/FormTable.jsx";
 import SingleDatePicker from "../../../Components/SingleDatePicker.jsx";
+import Field from "../../../Components/Field.jsx";
 
 export default function JwInwordModal({ editModal, setEditModal }) {
   const { showToast } = useToast();
@@ -54,24 +53,21 @@ export default function JwInwordModal({ editModal, setEditModal }) {
   const [header, setHeaderData] = useState([]);
   const [modalLoad, setModalLoad] = useLoading();
   const [modalUploadLoad, setModalUploadLoad] = useState(false);
-  const { all, row } = editModal;
+  const {  row } = editModal;
   const [mainData, setMainData] = useState([]);
   const [eWayBill, setEWayBill] = useState("");
   const [bomList, setBomList] = useState([]);
   const [showBomList, setShowBomList] = useState(false);
-  const [conrem, setConRem] = useState("");
   const [loading, setLoading] = useState(false);
-  const [attachment, setAttachment] = useState("");
   const [irnNo, setIrnNo] = useState("");
   const [materialInSuccess, setMaterialInSuccess] = useState(false);
   const [isApplicable, setIsApplicable] = useState(false);
   const [challanDate, setChallanDate] = useState(null);
   const [isScan, setIsScan] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   // const [pickLocationOptions, setPickLocationOptions] = useState([]);
   const [modalForm] = Form.useForm();
   const [excelUploadForm] = Form.useForm();
-
-  const fileComponents = Form.useWatch("fileComponents", modalForm);
   const [uplaoaClicked, setUploadClicked] = useState(false);
   const [consumptionStep, setConsumptionStep] = useState("details");
   const [consumptionMode, setConsumptionMode] = useState("");
@@ -137,28 +133,6 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     setLocValue(arr);
   };
 
-  const getPickLocation = async () => {
-    let vendor = header?.vendor?.code;
-    if (vendor) {
-      try {
-        const response = await imsAxios.get(
-          `/backend/fetchVendorJWLocation?vendor=${vendor}`,
-        );
-        if (response.success) {
-          let arr = [];
-          arr = response.data.map((row) => ({
-            value: row.id,
-            text: row.text,
-          }));
-          setPickLocationOptions(arr);
-        } else {
-          showToast(response.message, "error");
-        }
-      } catch (error) {
-        showToast(error.message || "Failed to fetch pick location", "error");
-      }
-    }
-  };
   const inputHandler = async (name, id, value) => {
     if (name == "component") {
       setMainData((a) =>
@@ -351,43 +325,72 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     response?.data?.status === "success" ||
     response?.data?.code == 200;
 
-  const readExcelRows = (file) =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const workbook = XLSX.read(event.target.result, { type: "array" });
-          const sheetName = workbook.SheetNames[0];
-          const sheet = workbook.Sheets[sheetName];
-          const rows = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-          const formattedRows = rows
-            .map((row, index) => {
-              const partcode =
-                row.partcode ??
-                row.Partcode ??
-                row.PartCode ??
-                row["Part Code"] ??
-                row["Part code"] ??
-                row.part_code ??
-                row.PART_CODE ??
-                row.PARTCODE ??
-                "";
-              const remark = row.remark ?? row.Remark ?? row.REMARK ?? "";
-              return {
-                id: index + 1,
-                partcode: String(partcode).trim(),
-                remark: String(remark).trim(),
-              };
-            })
-            .filter((row) => row.partcode || row.remark);
-          resolve(formattedRows);
-        } catch (error) {
-          reject(error);
+const readExcelRows = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      try {
+        const workbook = new ExcelJS.Workbook();
+
+        await workbook.xlsx.load(event.target.result);
+
+        const worksheet = workbook.worksheets[0];
+
+        if (!worksheet) {
+          resolve([]);
+          return;
         }
-      };
-      reader.onerror = reject;
-      reader.readAsArrayBuffer(file);
-    });
+
+        const headers = worksheet.getRow(1).values.slice(1);
+
+        const rows = [];
+
+        worksheet.eachRow((row, rowNumber) => {
+          if (rowNumber === 1) return;
+
+          const rowData = {};
+
+          headers.forEach((header, index) => {
+            rowData[header] = row.getCell(index + 1).value ?? "";
+          });
+
+          rows.push(rowData);
+        });
+
+        const formattedRows = rows
+          .map((row, index) => {
+            const partcode =
+              row.partcode ??
+              row.Partcode ??
+              row.PartCode ??
+              row["Part Code"] ??
+              row["Part code"] ??
+              row.part_code ??
+              row.PART_CODE ??
+              row.PARTCODE ??
+              "";
+
+            const remark =
+              row.remark ?? row.Remark ?? row.REMARK ?? "";
+
+            return {
+              id: index + 1,
+              partcode: String(partcode).trim(),
+              remark: String(remark).trim(),
+            };
+          })
+          .filter((row) => row.partcode || row.remark);
+
+        resolve(formattedRows);
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
+  });
 
   const excelUploadProps = {
     name: "file",
@@ -406,21 +409,41 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     return e?.fileList;
   };
 
-  const downloadExcelSample = () => {
-    const worksheet = XLSX.utils.json_to_sheet([
-      {
-        partcode: "P4881",
-        remark: "urgent",
-      },
-      {
-        partcode: "P4882",
-        remark: "low stock",
-      },
-    ]);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sample");
-    XLSX.writeFile(workbook, "jw-sf-inward-sample.xlsx");
-  };
+const downloadExcelSample = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet("Sample");
+
+  worksheet.columns = [
+    { header: "partcode", key: "partcode", width: 20 },
+    { header: "remark", key: "remark", width: 30 },
+  ];
+
+  worksheet.addRows([
+    {
+      partcode: "P4881",
+      remark: "urgent",
+    },
+    {
+      partcode: "P4882",
+      remark: "low stock",
+    },
+  ]);
+
+  const buffer = await workbook.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "jw-sf-inward-sample.xlsx";
+  link.click();
+
+  URL.revokeObjectURL(url);
+};
 
   const columns = [
     {
@@ -445,13 +468,15 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       headerName: "Quantity",
       width: 180,
       renderCell: ({ row }) => (
-        <Input
-          suffix={row.unitsname}
+        <Field
+          attr="required | Quantity is required"
           value={row.orderqty}
-          type="number"
-          placeholder="Qty"
+          treatZeroAsEmpty
+          showValidation={isValid}
           onChange={(e) => inputHandler("orderqty", row.id, e.target.value)}
-        />
+        >
+          <Input suffix={row.unitsname} type="number" placeholder="Qty" />
+        </Field>
       ),
     },
     {
@@ -459,13 +484,14 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       headerName: "Rate",
       width: 180,
       renderCell: ({ row }) => (
-        <Input
-          type="number"
-          min={0}
+        <Field
+          attr="required | Rate is required"
           value={row.rate ?? ""}
-          placeholder="Rate"
+          showValidation={isValid}
           onChange={(e) => inputHandler("rate", row.id, e.target.value)}
-        />
+        >
+          <Input type="number" min={0} placeholder="Rate" />
+        </Field>
       ),
     },
     {
@@ -483,11 +509,14 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       headerName: "Invoice Id",
       width: 220,
       renderCell: ({ row }) => (
-        <Input
-          //  value={row.orderqty}
-          placeholder="Invoice"
+        <Field
+          attr="required | Invoice Id is required"
+          value={row.invoice}
+          showValidation={isValid}
           onChange={(e) => inputHandler("invoice", row.id, e.target.value)}
-        />
+        >
+          <Input placeholder="Invoice" />
+        </Field>
       ),
     },
     // {
@@ -519,11 +548,14 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       headerName: "Location",
       width: 120,
       renderCell: ({ row }) => (
-        <Select
-          style={{ width: "100%" }}
-          options={locValue}
+        <Field
+          attr="required | Location is required"
+          value={row.location}
+          showValidation={isValid}
           onChange={(e) => inputHandler("location", row.id, e)}
-        />
+        >
+          <Select style={{ width: "100%" }} options={locValue} />
+        </Field>
       ),
     },
   ];
@@ -537,6 +569,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
       sortable: false,
       renderCell: ({ row }) => [
         <GridActionsCellItem
+        key="delete"
           icon={
             <Delete
               color="error"
@@ -773,27 +806,23 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     getBomList("manual");
   };
 
+  const hasIncompleteRow = (rows) =>
+    (rows || []).some(
+      (r) =>
+        !r.orderqty ||
+        Number(r.orderqty) <= 0 ||
+        (!r.rate && r.rate !== 0) ||
+        !r.invoice ||
+        String(r.invoice).trim() === "" ||
+        !r.location,
+    );
+
   const handleNextFromDetails = () => {
-    const sfgCreateQty = mainData[0]?.orderqty;
-    if (sfgCreateQty === "" || sfgCreateQty == null) {
-      showToast("The sfgCreateQty field is required.", "error");
+    if (hasIncompleteRow(mainData) || !eWayBill || !challanDate) {
+      setIsValid(true);
       return;
     }
-    for (let i = 0; i < mainData.length; i++) {
-      const r = mainData[i];
-      if (!r.rate && r.rate !== 0) {
-        showToast(`Rate is required for row ${i + 1}.`, "error");
-        return;
-      }
-      if (!r.invoice || String(r.invoice).trim() === "") {
-        showToast(`Invoice ID is required for row ${i + 1}.`, "error");
-        return;
-      }
-      if (!r.location) {
-        showToast(`Location is required for row ${i + 1}.`, "error");
-        return;
-      }
-    }
+    setIsValid(false);
     setConsumptionStep("method");
   };
 
@@ -887,11 +916,16 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     setMaterialInSuccess(false);
   };
   const submitHandler = async () => {
+    if (hasIncompleteRow(mainData) || !eWayBill || !challanDate) {
+      setIsValid(true);
+      setUploadClicked(false);
+      return;
+    }
     try {
       setModalUploadLoad(true);
       const formData = new FormData();
       const values = await modalForm.validateFields();
-      let fileName;
+  
       values.fileComponents.map((comp) => {
         formData.append("files", comp.file[0]?.originFileObj);
       });
@@ -905,7 +939,6 @@ export default function JwInwordModal({ editModal, setEditModal }) {
           typeof fileResponse.data === "string"
             ? fileResponse.data
             : fileResponse.data?.data;
-        setAttachment(fetchAttachment);
         saveFunction(fetchAttachment);
       } else {
         setModalUploadLoad(false);
@@ -926,13 +959,6 @@ export default function JwInwordModal({ editModal, setEditModal }) {
     }
   }, [editModal]);
 
-  // useEffect(() => {
-  //   if (header?.vendor?.code) {
-  //     getPickLocation();
-  //   }
-  // }, [header?.vendor?.code]);
-
-  const text = "Are you sure to update this jw sf Inward?";
   const closeModal = () => {
     setEditModal(false);
     resetConsumptionFlow();
@@ -971,11 +997,26 @@ export default function JwInwordModal({ editModal, setEditModal }) {
         <Col span={24}>
           <Form size="small" layout="vertical">
             <Form.Item label="E-Way Bill No.">
-              <Input
-                style={{ width: "100%" }}
-                size="small"
+              <Field
+                attr="required | E-Way Bill No. is required"
                 value={eWayBill}
+                showValidation={isValid}
                 onChange={(e) => setEWayBill(e.target.value)}
+              >
+                <Input style={{ width: "100%" }} size="small" />
+              </Field>
+            </Form.Item>
+          </Form>
+          <Form size="small" layout="vertical">
+            <Form.Item label="Challan Date" style={{ width: "100%" }}>
+              <SingleDatePicker
+                size="medium"
+                value={challanDate}
+                setDate={(date) => setChallanDate(date)}
+                placeholder="Select Challan Date"
+                format={"DD-MM-YYYY"}
+                showError={isValid}
+                message="Please select Challan Date"
               />
             </Form.Item>
           </Form>
@@ -1839,7 +1880,7 @@ export default function JwInwordModal({ editModal, setEditModal }) {
                         <>
                           <Col>
                             {fields.map((field, index) => (
-                              <Form.Item noStyle>
+                              <Form.Item noStyle key={field.key}>
                                 <SingleProduct
                                   fields={fields}
                                   field={field}

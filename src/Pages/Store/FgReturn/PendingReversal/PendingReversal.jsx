@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import MyDataTable from "../../../../Components/MyDataTable";
-import { Card, Col, Form, Input, Row, Space } from "antd";
+import { Col, Form, Row } from "antd";
 import MyDatePicker from "../../../../Components/MyDatePicker";
 import MyButton from "../../../../Components/MyButton";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -22,6 +22,7 @@ function PendingReversal() {
   const [rows, setRows] = useState([]);
   const [executePPR, setExecutePPR] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const [form] = Form.useForm();
   const { executeFun, loading } = useApi();
@@ -38,9 +39,24 @@ function PendingReversal() {
   };
 
   const getRows = async () => {
-    const values = await form.validateFields();
+    let values;
+    try {
+      values = await form.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      return;
+    }
+    setIsValid(false);
+
+    const data =
+      values.wise === "skuwise"
+        ? (values.data?.value ?? values.data)
+        : values.data;
     const response = await executeFun(
-      () => getPendingReturns(values.data, values.wise),
+      () => getPendingReturns(data, values.wise),
       "fetch"
     );
 
@@ -69,6 +85,7 @@ function PendingReversal() {
       // minWidth: "20%",
       getActions: ({ row }) => [
         <TableActions
+          key="execute"
           showInMenu={true}
           action="check"
           onClick={() => {
@@ -104,8 +121,13 @@ function PendingReversal() {
           name="wise"
           label="Select Wise"
           style={{ marginBottom: 0 }}
+          rules={[{ required: true, message: "" }]}
         >
-          <MySelect options={wiseOptions} />
+          <MySelect
+            options={wiseOptions}
+            showError={isValid}
+            message="Please select wise"
+          />
         </Form.Item>
       </Col>
 
@@ -115,6 +137,7 @@ function PendingReversal() {
           name="data"
           label={wise === "skuwise" ? "Select Product" : "Select Date"}
           style={{ marginBottom: 0 }}
+          rules={[{ required: true, message: "" }]}
         >
           {wise === "skuwise" ? (
             <MyAsyncSelect
@@ -122,12 +145,17 @@ function PendingReversal() {
               selectLoading={loading("select")}
               optionsState={asyncOptions}
               onBlur={() => setAsyncOptions([])}
+              labelInValue
+              showError={isValid}
+              message="Please select a product"
             />
           ) : (
             <MyDatePicker
               setDateRange={(value) =>
                 form.setFieldValue("data", value)
               }
+              showError={isValid}
+              message="Please select a date range"
             />
           )}
         </Form.Item>

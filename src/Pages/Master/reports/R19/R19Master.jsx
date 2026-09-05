@@ -11,6 +11,7 @@ import {
 } from "antd";
 import Dragger from "antd/lib/upload/Dragger";
 import { InboxOutlined } from "@ant-design/icons";
+import Loading from "../../../../Components/Loading";
 import MyDataTable from "../../../../Components/MyDataTable";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { useToast } from "../../../../hooks/useToast.js";
@@ -29,6 +30,7 @@ function R19Master() {
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const [addSingleComponentForm] = Form.useForm();
 
@@ -79,6 +81,7 @@ function R19Master() {
       width: 120,
       getActions: ({ row }) => [
         <Popconfirm
+          key="delete"
           placement="topRight"
           title="Are you sure you want to delete this component"
           onConfirm={() => deleteComponent(row.component_key)}
@@ -104,7 +107,7 @@ function R19Master() {
     );
     setLoading(false);
     if (response.success) {
-      let arr = data.response.data.map((row, index) => ({ ...row, id: index + 1 }));
+      let arr = response.data.map((row, index) => ({ ...row, id: index + 1 }));
       setVerifiedFile(arr);
     } else {
       showToast(response.message?.msg || response.message, "error");
@@ -128,15 +131,17 @@ function R19Master() {
         showToast(response.message?.msg || response.message, "error");
       }
     } else if (type === "single") {
+      setIsValid(false);
       setLoading("single");
       const response = await imsAxios.post("/report19/addComponent", {
-        component_key: value.component,
+        component_key: value.component?.key,
       });
       setLoading(false);
       if (response.success) {
         showToast(response.message, "success");
         getRows();
         addSingleComponentForm.resetFields();
+        setIsValid(false);
       } else {
         showToast(response.message?.msg || response.message, "error");
       }
@@ -151,16 +156,18 @@ function R19Master() {
       () => getComponentOptions(search),
       "select"
     );
-    setSelectLoading(false);
+   
     let arr = [];
-    if (response.data[0]) {
+    if (response.success) {
       arr = response.data.map((row) => ({
         text: row.text,
         value: row.id,
       }));
+       setSelectLoading(false);
       setAsyncOptions(arr);
     } else {
       setAsyncOptions([]);
+      setSelectLoading(false);
     }
   };
   useEffect(() => {
@@ -169,6 +176,7 @@ function R19Master() {
   }, []);
   return (
     <Row gutter={12} style={{ height: "100%", padding:10 }}>
+      {selectLoading && <Loading />}
       <VerifiedFilePreview
         verifiedFile={verifiedFile}
         setVerifiedFile={setVerifiedFile}
@@ -228,6 +236,7 @@ function R19Master() {
             <Card size="small" title="Upload Single Component">
               <Form
                 onFinish={(values) => submitHandler("single", values)}
+                onFinishFailed={() => setIsValid(true)}
                 form={addSingleComponentForm}
                 layout="vertical"
               >
@@ -239,9 +248,10 @@ function R19Master() {
                       rules={[
                         {
                           required: true,
+                          message: "",
                         },
                         () => ({
-                          validator(_, value) {
+                          validator() {
                             if (
                               !rows.filter(
                                 (row) =>
@@ -266,11 +276,15 @@ function R19Master() {
                         loadOptions={getComponents}
                         optionsState={asyncOptions}
                         onBlur={() => setAsyncOptions([])}
+                        value={addSingleComponentForm.getFieldsValue().component}
+                        labelInValue
                         onChange={(value) =>
                           addSingleComponentForm.setFieldsValue({
                             component: value,
                           })
                         }
+                        showError={isValid}
+                        message="Please select a component"
                       />
                     </Form.Item>
                   </Col>

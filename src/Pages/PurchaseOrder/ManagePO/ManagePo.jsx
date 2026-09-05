@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Button, Col, Input, Row, Space } from "antd";
+import  { useState } from "react";
+import {  Col, Input, Row, Space } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
 import { useToast } from "../../../hooks/useToast.js";
 import printFunction, {
@@ -12,9 +12,10 @@ import CancelPO from "./Sidebars/CancelPO";
 import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import Field from "../../../Components/Field";
 import UploadDoc from "./UploadDoc";
 import { downloadCSV } from "../../../Components/exportToCSV";
-import TableActions, {
+import  {
   CommonIcons,
 } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
@@ -29,7 +30,6 @@ const ManagePO = () => {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [viewLoading, setViewLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [showViewSidebar, setShowViewSideBar] = useState(false);
@@ -43,12 +43,13 @@ const ManagePO = () => {
   const [showUploadDocModal2, setShowUploadDocModal2] = useState(null);
   const [showCancelPO, setShowCancelPO] = useState(null);
   const [newPoLogs, setnewPoLogs] = useState([]);
+  const [isValid, setIsValid] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const wiseOptions = [
     { value: "single_date_wise", text: "Date Wise" },
     { value: "po_wise", text: "PO ID Wise" },
     { value: "vendor_wise", text: "Vendor Wise" },
-    {value: "requestPo", text:"Requested PR"},
+    // {value: "requestPo", text:"Requested PR"},
   ];
   const printFun = async (poid) => {
     setLoading(true);
@@ -99,6 +100,7 @@ const ManagePO = () => {
       getActions: ({ row }) => [
         // Edit icon
         <GridActionsCellItem
+        key="edit"
           showInMenu
           // disabled={disabled}
           label={"Edit"}
@@ -106,6 +108,7 @@ const ManagePO = () => {
         />,
         // VIEW Icon
         <GridActionsCellItem
+          key="view"
           showInMenu
           // disabled={disabled}
           label="View"
@@ -114,6 +117,7 @@ const ManagePO = () => {
 
         // Download icon
         <GridActionsCellItem
+          key="download"
           showInMenu
           // disabled={disabled}
           label="Download"
@@ -123,6 +127,7 @@ const ManagePO = () => {
 
         // Print Icon
         <GridActionsCellItem
+          key="print"
           showInMenu
           // disabled={disabled}
           label="Print"
@@ -132,6 +137,7 @@ const ManagePO = () => {
 
         // Close PO icon
         <GridActionsCellItem
+          key="close"
           showInMenu
           // disabled={disabled}
           label="Cancel"
@@ -141,6 +147,8 @@ const ManagePO = () => {
 
         // Upload DOC Icon
         <GridActionsCellItem
+          key="upload"
+          onClick={() => setShowUploadDocModal2(row.po_transaction)}
           showInMenu
           // disabled={disabled}
           label="Upload FIle"
@@ -159,7 +167,7 @@ const ManagePO = () => {
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.po_transaction} copy={true} />
       ),
-      width: 150,
+      width: 180,
     },
     {
       headerName: "Cost Center",
@@ -181,7 +189,7 @@ const ManagePO = () => {
       field: "vendor_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.vendor_name} />,
       flex: 2,
-      minWidth: 200,
+      minWidth: 300,
     },
     {
       headerName: "Vendor Code",
@@ -197,14 +205,14 @@ const ManagePO = () => {
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.project_id} copy={true} />
       ),
-      minWidth: 150,
+      minWidth: 200,
       flex: 1,
     },
     {
       headerName: "Project Name",
       field: "project_name",
       renderCell: ({ row }) => <ToolTipEllipses text={row.project_name} />,
-      minWidth: 150,
+      minWidth: 250,
       flex: 1,
     },
     {
@@ -227,7 +235,7 @@ const ManagePO = () => {
       field: "po_reg_date",
       renderCell: ({ row }) => <ToolTipEllipses text={row.po_reg_date} />,
       flex: 1,
-      minWidth: 150,
+      minWidth: 180,
     },
     {
       headerName: "Created By",
@@ -244,14 +252,14 @@ const ManagePO = () => {
         <ToolTipEllipses text={row.advPayment == "0" ? "NO" : "YES"} />
       ),
       flex: 1,
-      minWidth: 150,
+      minWidth: 130,
     },
     {
       headerName: "Comment",
       field: "po_comment",
       renderCell: ({ row }) => <ToolTipEllipses text={row.po_comment} />,
       flex: 1,
-      minWidth: 150,
+      minWidth: 250,
     },
   ];
   //getting rows from database from all 3 filter po wise, data wise, vendor wise
@@ -302,6 +310,26 @@ const ManagePO = () => {
         showToast("Please select a vendor", "error");
       }
     }
+  };
+  const validateAndSearch = () => {
+    if (!wise) {
+      setIsValid(true);
+      return;
+    }
+    if (wise === "single_date_wise" && !searchDateRange) {
+      setIsValid(true);
+      return;
+    }
+    if (wise === "po_wise" && !searchInput.trim()) {
+      setIsValid(true);
+      return;
+    }
+    if (wise === "vendor_wise"  && !searchInput) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+    getSearchResults();
   };
   //getting vendors list for filter by vendors
   const getVendors = async (search) => {
@@ -390,7 +418,13 @@ const ManagePO = () => {
         <Col>
           <Space>
             <div style={{ width: 150 }}>
-              <MySelect options={wiseOptions} onChange={setWise} value={wise} />
+              <MySelect
+                options={wiseOptions}
+                onChange={setWise}
+                value={wise}
+                showError={isValid}
+                message="Please select wise"
+              />
             </div>
             <div style={{ width: 300 }}>
               {wise === "single_date_wise" ? (
@@ -399,15 +433,23 @@ const ManagePO = () => {
                   setDateRange={setSearchDateRange}
                   dateRange={searchDateRange}
                   value={searchDateRange}
+                  showError={isValid}
+                  message="Please select a date range"
                 />
               ) : wise === "po_wise" ? (
-                <Input
-                  style={{ width: "100%" }}
-                  type="text"
-                  placeholder="Enter Po Number"
+                <Field
+                  attr="required | Please enter a PO number"
                   value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                />
+                  showValidation={isValid}
+                >
+                  <Input
+                    style={{ width: "100%" }}
+                    type="text"
+                    placeholder="Enter Po Number"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                </Field>
               ) : (
                 wise === "vendor_wise" && (
                   <MyAsyncSelect
@@ -419,23 +461,16 @@ const ManagePO = () => {
                     loadOptions={getVendors}
                     optionsState={asyncOptions}
                     placeholder="Select Vendor..."
+                    showError={isValid}
+                    message="Please select a vendor"
                   />
                 )
               )}
             </div>
             <MyButton
-              disabled={
-                wise === "single_date_wise"
-                  ? searchDateRange === ""
-                    ? true
-                    : false
-                  : !searchInput
-                  ? true
-                  : false
-              }
               type="primary"
               loading={searchLoading}
-              onClick={getSearchResults}
+              onClick={validateAndSearch}
               id="submit"
               variant="search"
             >

@@ -33,6 +33,7 @@ import {
 } from "./TableCollumns";
 import CurrenceModal from "../CurrenceModal";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
+import Field from "../../../../Components/Field";
 import ToolTipEllipses from "../../../../Components/ToolTipEllipses";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import SuccessPage from "../SuccessPage";
@@ -47,7 +48,7 @@ import {
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import MyButton from "../../../../Components/MyButton";
-import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 import FileUpload from "../../../../Components/FileUpload/FileUpload.tsx";
 
 export default function MaterialInWithPO() {
@@ -84,25 +85,33 @@ export default function MaterialInWithPO() {
   const [codeCostCenter, setCodeCostCenter] = useState("");
   const [isScan, setIsScan] = useState(false);
   const [filesData, setFilesData] = useState([]);
+  const [isValid, setIsValid] = useState(false);
+  const [searchValid, setSearchValid] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
+  const hasIncompleteMaterialRow = (rows) =>
+    (rows || []).some(
+      (row) =>
+        !row?.c_partno ||
+        !row?.orderqty ||
+        Number(row?.orderqty) <= 0 ||
+        !row?.orderrate ||
+        Number(row?.orderrate) <= 0 ||
+        !row?.currency ||
+        row?.gstrate === "" ||
+        row?.gstrate === undefined ||
+        row?.gstrate === null ||
+        !row?.gsttype ||
+        !row?.hsncode ||
+        !row?.location ||
+        !row?.invoiceId ||
+        !row?.invoiceDate,
+    );
   const validateData = async () => {
-    let validation = false;
-
-    poData.materials.map((row) => {
-      if (
-        row.c_partno &&
-        row.currency &&
-        row.gstrate &&
-        row.invoiceDate &&
-        row.invoiceId &&
-        row.location &&
-        row.orderqty
-      ) {
-        validation = true;
-      } else {
-        validation = false;
-      }
-    });
+    if (hasIncompleteMaterialRow(poData.materials)) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     let componentData = {
       qty: [],
       rate: [],
@@ -122,72 +131,66 @@ export default function MaterialInWithPO() {
       component: [],
     };
 
-    if (validation == true) {
-      let a = uploadedComponents;
-      if (a?.length) {
-        poData.materials.map((row) => {
-          componentData = {
-            component: [...componentData.component, row.componentKey],
-            qty: [...componentData.qty, row.orderqty],
-            rate: [...componentData.rate, row.orderrate],
-            currency: [...componentData.currency, row.currency],
-            exchange: [
-              ...componentData.exchange,
-              row.exchange_rate == 0 ? 1 : row.exchange_rate,
-            ],
-            invoice: [...componentData.invoice, row.invoiceId],
-            invoiceDate: [...componentData.invoiceDate, row.invoiceDate],
-            hsncode: [...componentData.hsncode, row.hsncode],
-            gsttype: [...componentData.gsttype, row.gsttype],
-            gstrate: [...componentData.gstrate, row.gstrate],
-            cgst: [...componentData.cgst, row.cgst],
-            sgst: [...componentData.sgst, row.sgst],
-            igst: [...componentData.igst, row.igst],
-            remark: [...componentData.remark, row.orderremark],
-            location: [...componentData.location, row.location.value],
-            out_location: [...componentData.out_location, row.autoConsumption],
-            documentName: uploadedComponents?.map((r) => r.documentName),
-            irn: irnNum,
-            qrScan: isScan == true ? "Y" : "N",
-          };
-        });
-        if (
-          (componentData.currency.filter((v, i, a) => v === a[0]).length ===
-            componentData.currency.length) !=
-          true
-        ) {
-          validation = false;
-          return showToast(
-            "Currency of all components should be the same",
-            "error",
-          );
-        } else if (
-          (componentData.gsttype.filter((v, i, a) => v === a[0]).length ===
-            componentData.gsttype.length) !=
-          true
-        ) {
-          validation = false;
-          return showToast(
-            "gst type of all components should be the same",
-            "error",
-          );
-        }
-
-        Modal.confirm({
-          title: "Are you sure you want to submt this MIN",
-          // icon: <ExclamationCircleFilled />,
-          content: "",
-          onOk() {
-            validateInvoices({
-              componentData: componentData,
-            });
-          },
-        });
-      } else {
-        showToast("Please add at least one document", "error");
+    let a = uploadedComponents;
+    if (a?.length) {
+      poData.materials.map((row) => {
+        componentData = {
+          component: [...componentData.component, row.componentKey],
+          qty: [...componentData.qty, row.orderqty],
+          rate: [...componentData.rate, row.orderrate],
+          currency: [...componentData.currency, row.currency],
+          exchange: [
+            ...componentData.exchange,
+            row.exchange_rate == 0 ? 1 : row.exchange_rate,
+          ],
+          invoice: [...componentData.invoice, row.invoiceId],
+          invoiceDate: [...componentData.invoiceDate, row.invoiceDate],
+          hsncode: [...componentData.hsncode, row.hsncode],
+          gsttype: [...componentData.gsttype, row.gsttype],
+          gstrate: [...componentData.gstrate, row.gstrate],
+          cgst: [...componentData.cgst, row.cgst],
+          sgst: [...componentData.sgst, row.sgst],
+          igst: [...componentData.igst, row.igst],
+          remark: [...componentData.remark, row.orderremark],
+          location: [...componentData.location, row.location.value],
+          out_location: [...componentData.out_location, row.autoConsumption],
+          documentName: uploadedComponents?.map((r) => r.documentName),
+          irn: irnNum,
+          qrScan: isScan == true ? "Y" : "N",
+        };
+      });
+      if (
+        (componentData.currency.filter((v, i, a) => v === a[0]).length ===
+          componentData.currency.length) !=
+        true
+      ) {
+        return showToast(
+          "Currency of all components should be the same",
+          "error",
+        );
+      } else if (
+        (componentData.gsttype.filter((v, i, a) => v === a[0]).length ===
+          componentData.gsttype.length) !=
+        true
+      ) {
+        return showToast(
+          "gst type of all components should be the same",
+          "error",
+        );
       }
+
+      Modal.confirm({
+        title: "Are you sure you want to submt this MIN",
+        // icon: <ExclamationCircleFilled />,
+        content: "",
+        onOk() {
+          validateInvoices({
+            componentData: componentData,
+          });
+        },
+      });
     } else {
-      showToast("Please Provide all the values of all the components", "error");
+      showToast("Please add at least one document", "error");
     }
   };
   const validateInvoices = async (values) => {
@@ -200,7 +203,7 @@ export default function MaterialInWithPO() {
       setSubmitLoading(true);
       let payload = {
         invoice: invoices,
-        vendor: searchData.vendor,
+        vendor: searchData.vendor?.value,
       };
       const response = await executeFun(
         () => checkInvoiceforMIN(payload),
@@ -221,6 +224,7 @@ export default function MaterialInWithPO() {
             },
           });
         } else {
+          showToast(response.message || "Invoice Id not found", "error");
           submitMIN(values);
         }
       } else {
@@ -278,10 +282,6 @@ export default function MaterialInWithPO() {
       }
     } else {
       setSubmitLoading(false);
-      showToast(
-        "Some error occured while uploading invoices, Please try again",
-        "error",
-      );
     }
   };
   const getCurrencies = async () => {
@@ -477,12 +477,20 @@ export default function MaterialInWithPO() {
     setFileName("");
     setShowResetConfirm(false);
   };
+  const validateAndSearch = () => {
+    if (!searchData.vendor || !searchData.poNumber.trim()) {
+      setSearchValid(true);
+      return;
+    }
+    setSearchValid(false);
+    getDetail();
+  };
   const getDetail = async () => {
     setSearchLoading(true);
     setPoData({ materials: [] });
     let search = {
       po: searchData.poNumber.trim(),
-      vendor: searchData.vendor,
+      vendor: searchData.vendor?.value,
     };
     const response = await imsAxios.post(
       "/purchaseOrder/fetchVendorPO",
@@ -590,7 +598,7 @@ export default function MaterialInWithPO() {
       headerName: "QTY",
       field: "gstqty",
       sortable: false,
-      renderCell: (params) => QuantityCell(params, inputHandler),
+      renderCell: (params) => QuantityCell(params, inputHandler, isValid),
       width: 220,
     },
     {
@@ -604,7 +612,8 @@ export default function MaterialInWithPO() {
       headerName: "Rate",
       field: "orderrate",
       sortable: false,
-      renderCell: (params) => rateCell(params, inputHandler, currencies),
+      renderCell: (params) =>
+        rateCell(params, inputHandler, currencies, isValid),
       width: 180,
     },
     {
@@ -625,28 +634,28 @@ export default function MaterialInWithPO() {
       headerName: "Invoice ID",
       field: "invoiceId",
       sortable: false,
-      renderCell: (params) => invoiceIdCell(params, inputHandler),
+      renderCell: (params) => invoiceIdCell(params, inputHandler, isValid),
       width: 200,
     },
     {
       headerName: "Invoice Date",
       field: "invoiceDate",
       sortable: false,
-      renderCell: (params) => invoiceDateCell(params, inputHandler),
+      renderCell: (params) => invoiceDateCell(params, inputHandler, isValid),
       width: 120,
     },
     {
       headerName: "HSN Code",
       field: "hsncode",
       sortable: false,
-      renderCell: (params) => HSNCell(params, inputHandler),
+      renderCell: (params) => HSNCell(params, inputHandler, isValid),
       width: 150,
     },
     {
       headerName: "GST Type",
       field: "gsttype",
       sortable: false,
-      renderCell: (params) => gstTypeCell(params, inputHandler),
+      renderCell: (params) => gstTypeCell(params, inputHandler, isValid),
       // flex: 1,
       width: 200,
     },
@@ -654,7 +663,7 @@ export default function MaterialInWithPO() {
       headerName: "GST Rate",
       field: "gstrate",
       sortable: false,
-      renderCell: (params) => gstRate(params, inputHandler),
+      renderCell: (params) => gstRate(params, inputHandler, isValid),
       // flex: 1,
       width: 100,
     },
@@ -687,7 +696,7 @@ export default function MaterialInWithPO() {
       field: "location",
       sortable: false,
       renderCell: (params) =>
-        locationCell(params, inputHandler, locationOptions),
+        locationCell(params, inputHandler, locationOptions, isValid),
       width: 150,
     },
     {
@@ -798,7 +807,6 @@ export default function MaterialInWithPO() {
       }
 
       const formData = new FormData();
-     
 
       files.forEach((file) => formData.append("files", file));
       const fileResponse = await imsAxios.post(
@@ -809,7 +817,7 @@ export default function MaterialInWithPO() {
         throw new Error(fileResponse?.message || "Upload Document failed");
       }
       setFileName(fileResponse?.data);
-          setUploadedComponents(filesData ?? []);
+      setUploadedComponents(filesData ?? []);
       showToast(fileResponse?.message || "Upload Document success", "success");
       return fileResponse;
     } finally {
@@ -820,7 +828,7 @@ export default function MaterialInWithPO() {
   const handleFileUploadDelete = (id) => {
     setFilesData(filesData.filter((item) => item.id !== id));
   };
- 
+
   const handleFileUploadChange = (items) => {
     setFilesData(items);
   };
@@ -828,7 +836,8 @@ export default function MaterialInWithPO() {
   return (
     <div
       style={{
-        height: "calc(100vh - 170px)",
+        maxHeight: "calc(100vh - 200px)",
+        minHeight: "calc(100vh - 150px)",
         position: "relative",
         overflow: "hidden",
         margin: "8px",
@@ -836,76 +845,90 @@ export default function MaterialInWithPO() {
     >
       <Row justify="space-between">
         {(pageLoading || submitLoading == true) && <Loading />}
-       {!materialInSuccess && <><Col span={20}>
-          <Space>
-            <div style={{ width: 250 }}>
-              <MyAsyncSelect
-                allowClear
-                size="default"
-                selectLoading={loading1("select")}
-                onBlur={() => setAsyncOptions([])}
-                value={searchData.vendor}
-                onChange={(value) =>
-                  setSearchData((searchData) => ({
-                    ...searchData,
-                    vendor: value,
-                  }))
-                }
-                loadOptions={getVendors}
-                optionsState={asyncOptions}
-                placeholder="Select Vendor..."
-              />
-            </div>
-            <div style={{ width: 200 }}>
-              <Input
-                allowClear
-                placeholder="PO Number"
-                value={searchData.poNumber}
-                onChange={(e) =>
-                  setSearchData((searchData) => ({
-                    ...searchData,
-                    poNumber: e.target.value,
-                  }))
-                }
-              />
-            </div>
-            <MyButton
-              disabled={searchData.vendor == "" || searchData.poNumber == ""}
-              type="primary"
-              loading={searchLoading}
-              onClick={getDetail}
-              id="submit"
-              variant="search"
-            >
-              Search
-            </MyButton>
-          </Space>
-        </Col>
-      
-        <Col>
-          {/* <Button
+        {!materialInSuccess && (
+          <>
+            <Col span={20}>
+              <Space>
+                <div style={{ width: 250 }}>
+                  <MyAsyncSelect
+                    allowClear
+                    size="default"
+                    selectLoading={loading1("select")}
+                    onBlur={() => setAsyncOptions([])}
+                    value={searchData.vendor}
+                    labelInValue
+                    onChange={(value) =>
+                      setSearchData((searchData) => ({
+                        ...searchData,
+                        vendor: value,
+                      }))
+                    }
+                    loadOptions={getVendors}
+                    optionsState={asyncOptions}
+                    placeholder="Select Vendor..."
+                    showError={searchValid}
+                    message="Please select a vendor"
+                  />
+                </div>
+                <div style={{ width: 200 }}>
+                  <Field
+                    attr="required | Please enter a PO number"
+                    value={searchData.poNumber}
+                    showValidation={searchValid}
+                  >
+                    <Input
+                      allowClear
+                      placeholder="PO Number"
+                      value={searchData.poNumber}
+                      onChange={(e) =>
+                        setSearchData((searchData) => ({
+                          ...searchData,
+                          poNumber: e.target.value,
+                        }))
+                      }
+                    />
+                  </Field>
+                </div>
+                <MyButton
+                  type="primary"
+                  loading={searchLoading}
+                  onClick={validateAndSearch}
+                  id="submit"
+                  variant="search"
+                >
+                  Search
+                </MyButton>
+              </Space>
+            </Col>
+
+            <Col>
+              {/* <Button
             type="primary"
             icon={<UploadOutlined />}
             onClick={() => setUploadClicked(true)}
           >
             Upload Documents
           </Button> */}
-          <FileUpload
-            accept="image/*,.pdf"
-            multiple
-            maxFiles={3}
-            maxFileSize={5 * 1024 * 1024}
-            title="Documents"
-            getContainer={() => tableContainerRef.current}
-            // onUpload={handleUploadDocument}
-            onUploadBatch={handleUploadDocumentsBatch}
-            onDelete={handleFileUploadDelete}
-            onChange={handleFileUploadChange}
-          >
-            <MyButton variant="upload" text="Documents" />
-          </FileUpload>
-        </Col></>
-          }
+              <FileUpload
+                accept="image/*,.pdf"
+                multiple
+                maxFiles={3}
+                maxFileSize={5 * 1024 * 1024}
+                title="Documents"
+                getContainer={() => tableContainerRef.current}
+                // onUpload={handleUploadDocument}
+                onUploadBatch={handleUploadDocumentsBatch}
+                onDelete={handleFileUploadDelete}
+                onChange={handleFileUploadChange}
+              >
+                <MyButton
+                  variant="upload"
+                  text={`Upload Documents ${filesData?.length > 0 ? `(${filesData?.length})` : ""}`}
+                />
+              </FileUpload>
+            </Col>
+          </>
+        )}
       </Row>
       {/* vendor info modal */}
       <Modal
@@ -1006,7 +1029,7 @@ export default function MaterialInWithPO() {
           <Col span={6}>
             <Row
               style={{
-                height: "calc(100% - 235px)",
+                maxHeight: "calc(100vh - 220px)",
                 overflow: "auto",
               }}
               gutter={[0, 4]}
@@ -1338,9 +1361,8 @@ export default function MaterialInWithPO() {
               </Col>
             </Row>
           </Col>
-      
 
-          <Col span={18} style={{ height: "calc(100vh - 220px)" }}  >
+          <Col span={18} style={{ height: "calc(100vh - 220px)" }}>
             <div
               ref={tableContainerRef}
               style={{
@@ -1351,7 +1373,7 @@ export default function MaterialInWithPO() {
               }}
             >
               <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
-                <MyDataTable
+                <FormTable
                   data={poData?.materials}
                   columns={columns}
                   loading={loading1("select") || pageLoading}
@@ -1359,7 +1381,6 @@ export default function MaterialInWithPO() {
               </div>
             </div>
           </Col>
-
 
           <NavFooter
             hideHeaderMenu

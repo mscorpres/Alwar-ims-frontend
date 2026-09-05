@@ -6,19 +6,19 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import MyDatePicker from "../../Components/MyDatePicker";
 import { imsAxios } from "../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast.js";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import MyButton from "../../Components/MyButton";
 import MyDataTable from "../../Components/MyDataTable.jsx";
 import { CommonIcons } from "../../Components/TableActions.jsx/TableActions";
 
 const challanColumns = [
-  { headerName: "Serial No", field: "serial_no", width: 100 },
-  { headerName: "Challan Date", field: "challan_date", width: 130 },
-  { headerName: "Challan Eway", field: "challan_eway", width: 120 },
-  { headerName: "Challan No", field: "challan_no", width: 120 },
-  { headerName: "Challan Qty", field: "challan_qty", width: 110 },
-  { headerName: "Challan Rate", field: "challan_rate", width: 110 },
-  { headerName: "Challan Value", field: "challan_value", width: 120 },
+  { headerName: "Serial No", field: "serial_no", minwidth: 100 },
+  { headerName: "Challan Date", field: "challan_date", minwidth: 130 },
+  { headerName: "Challan Eway", field: "challan_eway", minwidth: 120 },
+  { headerName: "Challan No", field: "challan_no", minwidth: 120 },
+  { headerName: "Challan Qty", field: "challan_qty", minwidth: 110 },
+  { headerName: "Challan Rate", field: "challan_rate", minwidth: 110 },
+  { headerName: "Challan Value", field: "challan_value", minwidth: 120 },
 ];
 
 const WoReport = () => {
@@ -54,7 +54,7 @@ const WoReport = () => {
       {
         field: "_expand",
         headerName: "",
-        width: 48,
+        minwidth: 48,
         sortable: false,
         disableColumnMenu: true,
         renderCell: ({ row }) => {
@@ -75,12 +75,12 @@ const WoReport = () => {
           );
         },
       },
-      { headerName: "ID", field: "serialno", width: 90 },
-      { headerName: "Part Code", field: "partCode", width: 120 },
-      { headerName: "Part Name", field: "partName", flex: 1, minWidth: 160 },
-      { headerName: "Min Id", field: "minId", width: 100 },
-      { headerName: "Min Date", field: "minDate", width: 120 },
-      { headerName: "Min Eway", field: "minEway", width: 100 },
+      { headerName: "ID", field: "serialno", minwidth: 90 },
+      { headerName: "Part Code", field: "partCode", minwidth: 120 },
+      { headerName: "Part Name", field: "partName", flex: 1, minWidth: 260 },
+      { headerName: "Min Id", field: "minId", width: 150 },
+      { headerName: "Min Date", field: "minDate", width: 140 },
+      { headerName: "Min Eway", field: "minEway", width: 140 },
       { headerName: "Min Qty", field: "minQty", width: 90 },
       { headerName: "Pending qty", field: "pending_qty", width: 110 },
       { headerName: "Min Rate", field: "minRate", width: 100 },
@@ -161,97 +161,103 @@ const WoReport = () => {
     }
   };
 
-  const exportToExcel = () => {
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(woreportdata);
+const exportToExcel = async () => {
+  try {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
 
-    // Adding headers starting from B2
-    ws["A1"] = { t: "s", v: "serial Number" };
-    ws["B1"] = { t: "s", v: "Date" };
-    ws["C1"] = { t: "s", v: "Part Code" };
-    ws["D1"] = { t: "s", v: "Product" };
-    ws["E1"] = { t: "s", v: "MIN ID" };
-    ws["F1"] = { t: "s", v: "Quantity" };
-    ws["G1"] = { t: "s", v: "Price" };
-    ws["H1"] = { t: "s", v: "Value" };
-    ws["I1"] = { t: "s", v: "EWB" };
-    ws["J1"] = { t: "s", v: "Challan Number" };
-    ws["K1"] = { t: "s", v: "Challan Date" };
-    ws["L1"] = { t: "s", v: "Quantity" };
-    ws["M1"] = { t: "s", v: "Price" };
-    ws["N1"] = { t: "s", v: "Value" };
-    ws["O1"] = { t: "s", v: "EWB Bill" };
-    ws["P1"] = { t: "s", v: "Pending Qty" };
+    // Headers
+    worksheet.addRow([
+      "serial Number",
+      "Date",
+      "Part Code",
+      "Product",
+      "MIN ID",
+      "Quantity",
+      "Price",
+      "Value",
+      "EWB",
+      "Challan Number",
+      "Challan Date",
+      "Quantity",
+      "Price",
+      "Value",
+      "EWB Bill",
+      "Pending Qty",
+    ]);
 
     let currentRow = 2;
-    let serialnumber = 1;
 
-    // Adding data starting from B3
-    woreportdata.forEach((item, index) => {
-      ws[`A${currentRow}`] = { t: "n", v: item.serial_no };
-      ws[`B${currentRow}`] = { t: "s", v: item.min_date };
-      ws[`C${currentRow}`] = { t: "s", v: item.part_code };
-      ws[`D${currentRow}`] = { t: "s", v: item.part_name };
-      ws[`E${currentRow}`] = { t: "s", v: item.min_id };
-      ws[`F${currentRow}`] = { t: "s", v: item.min_qty };
-      ws[`G${currentRow}`] = { t: "s", v: item.min_rate };
-      ws[`H${currentRow}`] = { t: "s", v: item.min_value };
-      ws[`I${currentRow}`] = { t: "s", v: item.min_eway };
-      ws[`K${currentRow}`] = { t: "s", v: "" };
-      ws[`P${currentRow}`] = { t: "s", v: item.pending_qty };
-      //wo report
-      item.challan?.forEach((elem, subindex) => {
-        currentRow = currentRow + 1;
-        serialnumber = serialnumber + 1;
-        ws[`A${currentRow}`] = { t: "n", v: elem.serial_no };
-        ws[`B${currentRow}`] = { t: "s", v: item.min_date };
-        ws[`C${currentRow}`] = { t: "s", v: item.part_code };
-        ws[`D${currentRow}`] = { t: "s", v: item.part_name };
-        ws[`E${currentRow}`] = { t: "s", v: item.min_id };
-        ws[`F${currentRow}`] = { t: "s", v: "" };
-        ws[`G${currentRow}`] = { t: "s", v: "" };
-        ws[`H${currentRow}`] = { t: "s", v: "" };
-        ws[`I${currentRow}`] = { t: "s", v: "" };
-        // ws[`G${currentRow}`] = { t: "s", v: item.min_rate };
-        // ws[`H${currentRow}`] = { t: "s", v: item.min_value };
-        // ws[`I${currentRow}`] = { t: "s", v: item.min_eway };
-        ws[`J${currentRow}`] = { t: "s", v: elem.challan_no };
-        ws[`K${currentRow}`] = { t: "s", v: elem.challan_date };
-        ws[`L${currentRow}`] = { t: "s", v: elem.challan_qty };
-        ws[`M${currentRow}`] = { t: "s", v: elem.challan_rate };
-        ws[`N${currentRow}`] = { t: "s", v: elem.challan_value };
-        ws[`O${currentRow}`] = { t: "s", v: elem.challan_eway };
+    // Data
+    woreportdata.forEach((item) => {
+      // Main MIN row
+      worksheet.getCell(`A${currentRow}`).value = item.serial_no;
+      worksheet.getCell(`B${currentRow}`).value = item.min_date;
+      worksheet.getCell(`C${currentRow}`).value = item.part_code;
+      worksheet.getCell(`D${currentRow}`).value = item.part_name;
+      worksheet.getCell(`E${currentRow}`).value = item.min_id;
+      worksheet.getCell(`F${currentRow}`).value = item.min_qty;
+      worksheet.getCell(`G${currentRow}`).value = item.min_rate;
+      worksheet.getCell(`H${currentRow}`).value = item.min_value;
+      worksheet.getCell(`I${currentRow}`).value = item.min_eway;
+      worksheet.getCell(`K${currentRow}`).value = "";
+      worksheet.getCell(`P${currentRow}`).value = item.pending_qty;
+
+      // Challan rows
+      item.challan?.forEach((elem) => {
+        currentRow++;
+
+        worksheet.getCell(`A${currentRow}`).value = elem.serial_no;
+        worksheet.getCell(`B${currentRow}`).value = item.min_date;
+        worksheet.getCell(`C${currentRow}`).value = item.part_code;
+        worksheet.getCell(`D${currentRow}`).value = item.part_name;
+        worksheet.getCell(`E${currentRow}`).value = item.min_id;
+
+        worksheet.getCell(`F${currentRow}`).value = "";
+        worksheet.getCell(`G${currentRow}`).value = "";
+        worksheet.getCell(`H${currentRow}`).value = "";
+        worksheet.getCell(`I${currentRow}`).value = "";
+
+        worksheet.getCell(`J${currentRow}`).value = elem.challan_no;
+        worksheet.getCell(`K${currentRow}`).value = elem.challan_date;
+        worksheet.getCell(`L${currentRow}`).value = elem.challan_qty;
+        worksheet.getCell(`M${currentRow}`).value = elem.challan_rate;
+        worksheet.getCell(`N${currentRow}`).value = elem.challan_value;
+        worksheet.getCell(`O${currentRow}`).value = elem.challan_eway;
       });
-      ws[`A${currentRow + 1}`] = { t: "n", v: "" };
-      ws[`B${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`C${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`D${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`E${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`F${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`G${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`H${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`I${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`J${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`K${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`L${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`M${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`N${currentRow + 1}`] = { t: "s", v: "" };
-      ws[`O${currentRow + 1}`] = { t: "s", v: "" };
-      currentRow += 2;
-      serialnumber++;
+
+      // Blank row after each item
+      currentRow++;
+
+      for (let col = 1; col <= 15; col++) {
+        worksheet.getCell(currentRow, col).value = "";
+      }
+
+      currentRow++;
     });
 
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    // Generate Excel file
+    const buffer = await workbook.xlsx.writeBuffer();
 
-    const range = XLSX.utils.encode_range({
-      s: { c: 0, r: 0 }, // start from A1
-      e: { c: 16, r: currentRow + 100 }, // end at the last cell (considering headers and child rows)
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
 
-    ws["!ref"] = range;
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
 
-    XLSX.writeFile(wb, "exported_data.xlsx");
-  };
+    link.href = url;
+    link.download = "exported_data.xlsx";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Error exporting Excel file:", error);
+  }
+};
 
   useEffect(() => {
     if (wise !== wiseOptions[1].value) {

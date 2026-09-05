@@ -25,6 +25,7 @@ import { imsAxios } from "../../../axiosInterceptor";
 import { getComponentOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
 import FormTable from "../../../Components/FormTable.jsx";
+import Field from "../../../Components/Field.jsx";
 import MyButton from "../../../Components/MyButton/index.jsx";
 import { InboxOutlined } from "@ant-design/icons";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV.jsx";
@@ -66,6 +67,7 @@ const {showToast} = useToast();
   const [pageLoading, setPageLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [showCurrencyModal, setShowCurrencyModal] = useState(null);
+  const [isValid, setIsValid] = useState(false);
 
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -215,8 +217,7 @@ const {showToast} = useToast();
       const componentLabel =
         partcodeObj.name ?? r.partName ?? partcodeObj.partNo ?? "";
 
-      const componentValue =
-        partcodeObj.id ?? partcodeObj.partNo ?? r.partCode ?? r.partcode ?? "";
+      const componentValue =  r.partKey ?? "";
     const sym =
         poCurrencies.find((c) => String(c.value) === String(currency))?.text ??
         "";
@@ -871,6 +872,24 @@ const {showToast} = useToast();
       },
     ]);
     setConfirmReset(false);
+    setIsValid(false);
+  };
+  const validateRowsAndSubmit = () => {
+    const hasIncompleteRow = rowCount.some(
+      (row) =>
+        !row.component ||
+        !row.qty ||
+        !row.rate ||
+        !row.currency ||
+        row.gstrate === "" ||
+        row.gstrate === undefined
+    );
+    if (hasIncompleteRow) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+    submitHandler(rowCount);
   };
   useEffect(() => {
     let obj = [
@@ -947,6 +966,7 @@ const {showToast} = useToast();
           asyncOptions,
           loading1("select"),
           gstState,
+          isValid,
         ),
     },
     {
@@ -959,7 +979,7 @@ const {showToast} = useToast();
       headerName: "Ord. Qty",
       field: "qty",
       sortable: false,
-      renderCell: (params) => quantityCell(params, inputHandler),
+      renderCell: (params) => quantityCell(params, inputHandler, isValid),
       width: 130,
     },
 
@@ -968,7 +988,8 @@ const {showToast} = useToast();
       width: 170,
       field: "rate",
       sortable: false,
-      renderCell: (params) => rateCell(params, inputHandler, currencies),
+      renderCell: (params) =>
+        rateCell(params, inputHandler, currencies, isValid),
     },
 
     {
@@ -1045,7 +1066,7 @@ const {showToast} = useToast();
       width: 150,
       field: "duedate",
       sortable: false,
-      renderCell: (params) => invoiceDateCell(params, inputHandler), //ask
+      renderCell: (params) => invoiceDateCell(params, inputHandler),
     },
     {
       headerName: "HSN Code",
@@ -1074,28 +1095,38 @@ const {showToast} = useToast();
         ];
 
         return (
-          <select
-            style={{
-              width: "100%",
-              padding: "6px 8px",
-              border: "1px solid #d9d9d9",
-              borderRadius: 6,
-              backgroundColor: "white",
-              fontSize: 13,
-            }}
-            value={params.row.gstrate || ""}
-            onChange={(e) => {
-              const newRate = Number(e.target.value);
-              inputHandler("gstrate", newRate, params.row.id);
-            }}
+          <Field
+            attr="required | GST Rate is required"
+            value={
+              params.row.gstrate === "" || params.row.gstrate === undefined
+                ? undefined
+                : params.row.gstrate
+            }
+            showValidation={isValid}
           >
-            <option value="">Select</option>
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            <select
+              style={{
+                width: "100%",
+                padding: "6px 8px",
+                border: "1px solid #d9d9d9",
+                borderRadius: 6,
+                backgroundColor: "white",
+                fontSize: 13,
+              }}
+              value={params.row.gstrate || ""}
+              onChange={(e) => {
+                const newRate = Number(e.target.value);
+                inputHandler("gstrate", newRate, params.row.id);
+              }}
+            >
+              <option value="">Select</option>
+              {options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </Field>
         );
       },
     },
@@ -1434,9 +1465,7 @@ const {showToast} = useToast();
         hideHeaderMenu
         loading={submitLoading}
         backFunction={() => setActiveTab("1")}
-        submitFunction={() => {
-          submitHandler(rowCount);
-        }}
+        submitFunction={validateRowsAndSubmit}
       />
 
       <Modal

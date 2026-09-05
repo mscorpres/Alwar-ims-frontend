@@ -112,7 +112,6 @@ function ViewBranchTransfer() {
           sku,
         }
       );
-      console.log(processResponse, "pro res");
       const { data: processData } = processResponse;
       if (processData) {
         const arr = processData.data.map((row) => ({
@@ -123,7 +122,7 @@ function ViewBranchTransfer() {
         setProcessOptions(arr);
       }
     } catch (error) {
-      showToast(error, "error");
+      showToast(error?.message || "", "error");
     } finally {
       setLoading(false);
     }

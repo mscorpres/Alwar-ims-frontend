@@ -1,5 +1,4 @@
 import { Col, Form, Input, Modal, Row } from "antd";
-import React from "react";
 import MySelect from "../../../Components/MySelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useToast } from "../../../hooks/useToast.js";
@@ -32,8 +31,8 @@ const CancelEwayBillModal = ({ show, hide }) => {
     try {
   
       const response = await imsAxios.post("/jwEwaybill/cancel", payload);
-      const { data } = response;
-      if (data) {
+   
+
         if (response.success) {
           showToast(response.message, "success");
           hide();
@@ -41,8 +40,9 @@ const CancelEwayBillModal = ({ show, hide }) => {
         } else {
           showToast(response.message?.msg || response.message, "error");
         }
-      }
+
     } catch (error) {
+      showToast(error.message, "error");
     } finally {
       //   setLoading(false);
     }

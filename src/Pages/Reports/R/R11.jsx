@@ -10,10 +10,11 @@ const R11 = () => {
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
+  const [valid, setValid] = useState(false);
 
   const handleGenerate = async () => {
     if (!date) {
-      return showToast("Please select a date", "error");
+      return setValid(true);
     }
 
     try {
@@ -33,7 +34,7 @@ const R11 = () => {
     <div style={{ height: "90%" }}>
       <Row gutter={16} style={{ margin: "10px" }}>
         <Col span={4}>
-          <SingleDatePicker size="default" setDate={setDate} />
+          <SingleDatePicker size="default" setDate={setDate} value={date} showError={valid} />
         </Col>
         <Col span={2}>
           <MyButton

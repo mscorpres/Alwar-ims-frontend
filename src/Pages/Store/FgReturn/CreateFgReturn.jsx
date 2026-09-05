@@ -1,5 +1,5 @@
 import { Col, Descriptions, Divider, Form, Input, Row } from "antd";
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import NavFooter from "../../../Components/NavFooter";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import useApi from "../../../hooks/useApi.ts";
@@ -7,6 +7,7 @@ import { getProductsOptions } from "../../../api/general.ts";
 import { imsAxios } from "../../../axiosInterceptor";
 import MySelect from "../../../Components/MySelect";
 import { useToast } from "../../../hooks/useToast.js";
+import Field from "../../../Components/Field.jsx";
 
 function CreateFgReturn() {
   const { showToast } = useToast();
@@ -14,6 +15,7 @@ function CreateFgReturn() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [bomOptions, setBomOptions] = useState([]);
   const [locationlist, setLocationList] = useState([]);
+  const [isValid, setIsValid] = useState(false);
   const [fgReturn] = Form.useForm();
   const sku = Form.useWatch("sku", fgReturn);
   const selectedStatus = Form.useWatch("status", fgReturn);
@@ -22,7 +24,7 @@ function CreateFgReturn() {
     { text: "NG (damaged)", value: "NG" },
   ];
 
-  const { executeFun, loading1 } = useApi();
+  const { executeFun } = useApi();
 
   const getOption = async (searchInput) => {
     setAsyncOptions([]);
@@ -62,10 +64,22 @@ function CreateFgReturn() {
   };
   const resetFunction = () => {
     fgReturn.resetFields();
+    setIsValid(false);
   };
   const validateHandler = async () => {
-    setLoading(true);
-    const values = await fgReturn.validateFields();
+    let values;
+    try {
+      values = await fgReturn.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
+      }
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    setIsValid(false);
+
     let payload = {
       product_sku: values.sku?.key,
       bom_id: values.bom?.key,
@@ -75,15 +89,20 @@ function CreateFgReturn() {
       remark: values.remarks,
     };
 
-    // console.log("payload", payload);
-    const response = await imsAxios.post("/fg_return/saveFG_return", payload);
-    // console.log("response", response);
-    if (response?.success) {
-      showToast(response?.message, "success");
-      resetFunction();
+    setLoading(true);
+    try {
+      const response = await imsAxios.post("/fg_return/saveFG_return", payload);
+      if (response?.success) {
+        showToast(response?.message, "success");
+        resetFunction();
+      } else {
+        showToast(response?.message, "error");
+      }
+    } catch (error) {
+      showToast(error?.message ?? "Something went wrong", "error");
+    } finally {
       setLoading(false);
     }
-    setLoading(false);
   };
   useEffect(() => {
     if (sku) {
@@ -121,7 +140,7 @@ function CreateFgReturn() {
                     rules={[
                       {
                         required: true,
-                        message: "Please provide the sku.",
+                        message: "",
                       },
                     ]}
                   >
@@ -130,6 +149,8 @@ function CreateFgReturn() {
                       optionsState={asyncOptions}
                       onBlur={() => setAsyncOptions([])}
                       labelInValue
+                      showError={isValid}
+                      message="Please provide the sku"
                     />
                   </Form.Item>
                 </Col>
@@ -140,7 +161,7 @@ function CreateFgReturn() {
                     rules={[
                       {
                         required: true,
-                        message: "Please provide the BOM.",
+                        message: "",
                       },
                     ]}
                   >
@@ -149,6 +170,8 @@ function CreateFgReturn() {
                       optionsState={bomOptions}
                       onBlur={() => setAsyncOptions([])}
                       labelInValue
+                      showError={isValid}
+                      message="Please provide the BOM"
                     />
                   </Form.Item>
                 </Col>
@@ -159,11 +182,16 @@ function CreateFgReturn() {
                     rules={[
                       {
                         required: true,
-                        message: "Please provide the UoM.",
+                        message: "",
                       },
                     ]}
                   >
-                    <Input disabled />
+                    <Field
+                      attr="required | Please provide the UoM"
+                      showValidation={isValid}
+                    >
+                      <Input disabled />
+                    </Field>
                   </Form.Item>
                 </Col>
               </Row>
@@ -191,11 +219,17 @@ function CreateFgReturn() {
                     rules={[
                       {
                         required: true,
-                        message: "Please provide the Quantity.",
+                        message: "",
                       },
                     ]}
                   >
-                    <Input  type="number"/>
+                    <Field
+                      attr="required | Please provide the Quantity"
+                      showValidation={isValid}
+                      treatZeroAsEmpty
+                    >
+                      <Input type="number" />
+                    </Field>
                   </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -205,11 +239,15 @@ function CreateFgReturn() {
                     rules={[
                       {
                         required: true,
-                        message: "Please provide the Condition of Item.",
+                        message: "",
                       },
                     ]}
                   >
-                    <MySelect options={statusOptions} />
+                    <MySelect
+                      options={statusOptions}
+                      showError={isValid}
+                      message="Please provide the Condition of Item"
+                    />
                   </Form.Item>
                 </Col>
                 {/* {selectedStatus == "okay" && ( */}

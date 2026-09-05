@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import { MdOutlineDownloadForOffline } from "react-icons/md";
 import PendingFGModal from "./Modal/PendingFGModal";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
-import { Button, Col, Row, Select, Skeleton } from "antd";
+import { Button, Col, Row } from "antd";
 import MyDataTable from "../../../Components/MyDataTable";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 import { GoArrowRight } from "react-icons/go";
@@ -54,7 +54,7 @@ const PendingFG = () => {
       const warRate = data?.war ?? 0;
       setFGModal({ ...row, warRate });
     } catch (err) {
-      toast.error("Failed to fetch WAR rate");
+      showToast(err?.message || "Failed to fetch WAR rate", "error");
       setFGModal(row);
     } finally {
       setWarLoading(null);
@@ -68,12 +68,12 @@ const PendingFG = () => {
       renderCell: ({ row }) => (
         <span> {row.mfg_transaction + " / " + row.mfg_ref_id}</span>
       ),
-      width: 200,
+      width: 250,
     },
     { field: "typeOfPPR", headerName: "Type", width: 150 },
     { field: "mfg_full_date", headerName: "Data/Time", width: 180 },
-    { field: "mfg_sku", headerName: "SKU", width: 100 },
-    { field: "p_name", headerName: "Product", width: 220 },
+    { field: "mfg_sku", headerName: "SKU", width: 150 },
+    { field: "p_name", headerName: "Product", width: 300 },
     {
       field: "mfg_prod_planing_qty",
       headerName: "MFG/STIN Qty",
@@ -142,7 +142,7 @@ const PendingFG = () => {
           </div>
         </Col> */}
         {pending.length > 1 && (
-          <Col span={2} offset={19} className="gutter-row">
+          <Col span={2} offset={23} className="gutter-row">
             <Button onClick={handleDownloadingCSV}>
               <MdOutlineDownloadForOffline style={{ fontSize: "20px" }} />
             </Button>
@@ -150,7 +150,7 @@ const PendingFG = () => {
         )}
       </Row>
 
-      <div style={{ height: "100%" }}>
+      <div style={{ height: "calc(100vh - 180px)", marginTop: "10px" }}>
         {/* <Skeleton loading={loading}> */}
         <MyDataTable data={pending} columns={columns} loading={loading} />
         {/* </Skeleton> */}

@@ -45,6 +45,7 @@ import {
   TransactionRej,
   CreateDC,
   ManageDC,
+  ReturnDC,
   VendorPricingUpload,
   CreateGP,
   ManageGatePass,
@@ -134,6 +135,7 @@ import {
 } from "../Pages/index.jsx";
 //@ts-ignore
 import Dashboard from "../new/dashboard/Dashboard.jsx";
+//@ts-ignore
 import ViewFGMIN from "../Pages/Store/viewfgmodule/ViewFGMIN.jsx";
 import {
   CreateMaster,
@@ -502,6 +504,11 @@ const Routes = [
     path: "/warehouse/dc/manage",
     exact: true,
     main: () => <ManageDC />,
+  },
+  {
+    path: "/warehouse/dc/return",
+    exact: true,
+    main: () => <ReturnDC />,
   },
   {
     path: "/warehouse/gp/create",
@@ -895,14 +902,14 @@ const Routes = [
     main: () => <Profile />,
   },
   // CPM
-  {
-    path: "/cpm/analysis",
-    main: () => <CPMAnalysis />,
-  },
-  {
-    path: "/cpm/reports",
-    main: () => <CPMReport />,
-  },
+  // {
+  //   path: "/cpm/analysis",
+  //   main: () => <CPMAnalysis />,
+  // },
+  // {
+  //   path: "/cpm/reports",
+  //   main: () => <CPMReport />,
+  // },
 
   // Jobwork
   {

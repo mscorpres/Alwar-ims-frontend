@@ -61,7 +61,7 @@ function CPMMaster() {
     downloadCSVnested2(rows, columns, "All Projects");
   };
 
-  const disableValidateHandler = async (row,status) => {
+  const disableValidateHandler = async (row, status) => {
     const payload = {
       project: row.project,
       status: status ? "1" : "0",
@@ -79,7 +79,7 @@ function CPMMaster() {
   const disableSubmitHandler = async (values) => {
     const response = await imsAxios.put(
       `/backend/project/status/${values.project}`,
-      values
+      values,
     );
     if (response.success) {
       if (response.success) {
@@ -94,12 +94,12 @@ function CPMMaster() {
 
   const columns = [
     { field: "index", headerName: "Sr. No", width: 80 },
-    { field: "project", headerName: "Project Id", width: 180 },
-    { field: "description", headerName: "Project Name", flex: 1 },
-    {field:"qty",headerName:"Quantity",width:180,flex:1},
-    { field: "costcenter", headerName: "Cost Center", width: 180, flex: 1 },
-    {field:"bomSubject",headerName:"BOM",width:180,flex:1},
-    { field: "insert_dt", headerName: "Insert Date", flex: 1 },
+    { field: "project", headerName: "Project Id", width: 200 },
+    { field: "description", headerName: "Project Name", width: 250 },
+    { field: "qty", headerName: "Quantity", width: 180 },
+    { field: "costcenter", headerName: "Cost Center", width: 180 },
+    { field: "bomSubject", headerName: "BOM", width: 180 },
+    { field: "insert_dt", headerName: "Insert Date", width: 180 },
     {
       headerName: "Status",
       field: "projectStatus",
@@ -130,6 +130,7 @@ function CPMMaster() {
       getActions: ({ row }) => [
         // Edit icon
         <TableActions
+          key="edit"
           action="edit"
           onClick={() => {
             setIsModalVisible(true);
@@ -137,6 +138,7 @@ function CPMMaster() {
           }}
         />,
         <TableActions
+          key="view"
           action="view"
           onClick={() => {
             setIsViewModalVisible(true);

@@ -31,12 +31,12 @@ export default function ItemAllLogs() {
   ]);
   const [showImages, setShowImages] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
+  const [isValidating, setValidating] = useState(false);
 
   // CHANGE: Added pagination state variables
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
 
   // initializing search form
   const [searchForm] = Form.useForm();
@@ -82,7 +82,7 @@ export default function ItemAllLogs() {
     const response = await imsAxios.get("/q1/view", {
       params: {
         wise: "C",
-        data: values.component,
+        data: values.component?.value,
         page: page,
         limit: limit,
       },
@@ -102,7 +102,6 @@ export default function ItemAllLogs() {
       if (pagination) {
         setCurrentPage(pagination.currentPage ?? page);
         setTotalRecords(pagination.totalRecords ?? 0);
-        setTotalPages(pagination.totalPages ?? 0);
       }
       setSummaryData([
         { title: "Component", description: response.data.header.partName },
@@ -126,16 +125,24 @@ export default function ItemAllLogs() {
 
   const handlePageChange = (page, size) => {
     const values = searchForm.getFieldsValue();
-    if (!values?.component) return;
+    if (!values?.component) {
+      setValidating(true);
+      return;
+    } 
+    setValidating(false);
     setPageSize(size);
     getRows(values, page, size);
   };
 
   // CHANGE: Added function to handle initial form submission
   const handleFormSubmit = (values) => {
+    if (!values?.component) {
+      setValidating(true);
+      return;
+    }
+    setValidating(false);
     setCurrentPage(1);
     setTotalRecords(0);
-    setTotalPages(0);
     getRows(values, 1, pageSize);
   };
 
@@ -145,11 +152,12 @@ export default function ItemAllLogs() {
       headerName: "#",
       field: "index",
       width: 80,
+      renderCell: (params) => params.row.serialNo,
     },
     {
       headerName: "Date",
       field: "transactionDate",
-      width: 120,
+      minWidth: 160,
       renderCell: ({ row }) => <ToolTipEllipses text={row.transactionDate} />,
     },
     {
@@ -183,7 +191,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Transaction",
       field: "transactionID",
-      width: 150,
+      minWidth: 180,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.transactionID} copy={true} />
       ),
@@ -201,7 +209,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Rate",
       field: "rate",
-      width: 120,
+      width: 150,
     },
     {
       field: "tbl_weighted_rate",
@@ -231,7 +239,7 @@ export default function ItemAllLogs() {
     {
       headerName: "Vendor",
       field: "vendorName",
-      minWidth: 150,
+      minWidth: 180,
       flex: 1,
       renderCell: ({ row }) => <ToolTipEllipses text={row.vendorName} />,
     },
@@ -269,7 +277,6 @@ export default function ItemAllLogs() {
                   <Col span={24}>
                     <Form.Item
                       label="Component"
-                      rules={rules.component}
                       name="component"
                     >
                       <MyAsyncSelect
@@ -277,6 +284,10 @@ export default function ItemAllLogs() {
                         loadOptions={getComponentOption}
                         optionsState={asyncOptions}
                         selectLoading={loading1("select")}
+                        labelInValue
+                        showError={isValidating}
+                        message={"Component is required"}
+                        value={selectedComonents}
                       />
                     </Form.Item>
                   </Col>
@@ -394,8 +405,4 @@ const initialValues = {
   // date: "", // CHANGE: Removed date from initial values
 };
 
-// form rules
-const rules = {
-  component: [{ required: true, message: "Please select a component" }],
-  // date: [{ required: true, message: "Please select a date range" }], // CHANGE: Removed date validation
-};
+

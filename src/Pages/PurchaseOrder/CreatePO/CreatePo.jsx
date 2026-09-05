@@ -7,6 +7,7 @@ import CreateCostModal from "./CreateCostModal";
 import AddBranch from "../../Master/Vendor/model/AddBranch";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
+import Field from "../../../Components/Field";
 import NavFooter from "../../../Components/NavFooter";
 import {
   Col,
@@ -136,9 +137,18 @@ export default function CreatePo() {
   const [sameAsBilling, setSameAsBilling] = useState(false);
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
+  const [isValid, setIsValid] = useState(false);
   const termsCondition = Form.useWatch("termscondition", form);
   const advancePayment = Form.useWatch("advancePayment", form);
   const poCurrencyWatched = Form.useWatch("po_currency", form);
+  const billPanValue = Form.useWatch("billPan", form);
+  const billGSTValue = Form.useWatch("billGST", form);
+  const billaddressValue = Form.useWatch("billaddress", form);
+  const shipPanValue = Form.useWatch("shipPan", form);
+  const shipGSTValue = Form.useWatch("shipGST", form);
+  const shipaddressValue = Form.useWatch("shipaddress", form);
+  const advancePercentageValue = Form.useWatch("advancePercentage", form);
+  const partyNameValue = Form.useWatch("partyName", form);
   const showPoExchangeField =
     String(poCurrencyWatched ?? "364907247") !== "364907247";
 
@@ -174,8 +184,8 @@ export default function CreatePo() {
           ? formProjectName
           : formValues.project_name !== undefined &&
               formValues.project_name !== null
-            ? formValues.project_name
-            : newPurchaseOrder.project_name,
+            ? formValues.project_name?.value
+            : newPurchaseOrder.project_name?.value,
       pocostcenter:
         formValues.pocostcenter !== undefined &&
         formValues.pocostcenter !== null
@@ -254,8 +264,8 @@ export default function CreatePo() {
           : newPurchaseOrder.advancePercentage,
       raisedBy:
         formValues.raisedBy !== undefined && formValues.raisedBy !== null
-          ? formValues.raisedBy
-          : newPurchaseOrder.raisedBy,
+          ? formValues.raisedBy?.value
+          : newPurchaseOrder.raisedBy?.value,
       original_po:
         formValues.original_po !== undefined && formValues.original_po !== null
           ? formValues.original_po
@@ -608,8 +618,8 @@ export default function CreatePo() {
           : newPurchaseOrder.raisedBy,
       original_po:
         formValues.original_po !== undefined && formValues.original_po !== null
-          ? formValues.original_po
-          : newPurchaseOrder.original_po,
+          ? formValues.original_po?.value
+          : newPurchaseOrder.original_po?.value,
       pocreatetype:
         formValues.pocreatetype !== undefined &&
         formValues.pocreatetype !== null
@@ -680,7 +690,7 @@ export default function CreatePo() {
           return "As per standard terms";
         }
       })(),
-      po_raise_by: currentPurchaseOrder.raisedBy,
+      po_raise_by: currentPurchaseOrder.raisedBy?.value,
       advancePayment: currentPurchaseOrder.advancePayment,
       termscondition:
         currentPurchaseOrder.termscondition === "Other"
@@ -694,7 +704,6 @@ export default function CreatePo() {
         ...finalPOData,
         confirmQtyExceed: confirmQtyExceed,
       });
-
       setSubmitLoading(false);
       const responseData = response?.data || response;
       if (responseData) {
@@ -1396,6 +1405,7 @@ export default function CreatePo() {
     }
   }, [sameAsBilling, newPurchaseOrder.billaddressid]);
   const finish = (values) => {
+    setIsValid(false);
     setnewPurchaseOrder((prev) => ({
       ...prev,
       ...values,
@@ -1584,6 +1594,7 @@ export default function CreatePo() {
                       layout="vertical"
                       initialValues={newPurchaseOrder}
                       onFinish={finish}
+                      onFinishFailed={() => setIsValid(true)}
                       onFieldsChange={(value) => {
                         if (value.length == 1) {
                           selectInputHandler(value[0].name[0], value[0].value);
@@ -1610,9 +1621,14 @@ export default function CreatePo() {
                               <Form.Item
                                 name="pocreatetype"
                                 label="PR Type"
-                                rules={rules.pocreatetype}
+                                rules={[{ required: true, message: "" }]}
                               >
-                                <MySelect size="default" options={POoption} />
+                                <MySelect
+                                  size="default"
+                                  options={POoption}
+                                  showError={isValid}
+                                  message="Please Select a PR Type!"
+                                />
                               </Form.Item>
                             </Col>
 
@@ -1630,14 +1646,17 @@ export default function CreatePo() {
                                       Original PR
                                     </span>
                                   }
-                                  rules={rules.original_po}
+                                  rules={[{ required: true, message: "" }]}
                                 >
                                   <MyAsyncSelect
                                     selectLoading={selectLoading}
                                     size="default"
                                     onBlur={() => setAsyncOptions([])}
                                     loadOptions={getPOs}
+                                    labelInValue
                                     optionsState={asyncOptions}
+                                    showError={isValid}
+                                    message="Please select the original PR"
                                   />
                                 </Form.Item>
                               </Col>
@@ -1675,11 +1694,13 @@ export default function CreatePo() {
                                     Vendor Type
                                   </span>
                                 }
-                                rules={rules.vendortype}
+                                rules={[{ required: true, message: "" }]}
                               >
                                 <MySelect
                                   size="default"
                                   options={vendorDetailsOptions}
+                                  showError={isValid}
+                                  message="Please Select a vendor Type!"
                                 />
                               </Form.Item>
                             </Col>
@@ -1687,7 +1708,7 @@ export default function CreatePo() {
                             <Col span={6}>
                               <Form.Item
                                 name="vendorname"
-                                rules={rules.vendorname}
+                                rules={[{ required: true, message: "" }]}
                                 label={
                                   <div
                                     style={{
@@ -1718,6 +1739,8 @@ export default function CreatePo() {
                                   onBlur={() => setAsyncOptions([])}
                                   optionsState={asyncOptions}
                                   loadOptions={getVendors}
+                                  showError={isValid}
+                                  message="Please Select a vendor Name!"
                                 />
                               </Form.Item>
                             </Col>
@@ -1725,7 +1748,7 @@ export default function CreatePo() {
                             <Col span={6}>
                               <Form.Item
                                 name="vendorbranch"
-                                rules={rules.vendorbranch}
+                                rules={[{ required: true, message: "" }]}
                                 label={
                                   <div
                                     style={{
@@ -1752,7 +1775,11 @@ export default function CreatePo() {
                                   </div>
                                 }
                               >
-                                <MySelect options={vendorBranches} />
+                                <MySelect
+                                  options={vendorBranches}
+                                  showError={isValid}
+                                  message="Please Select a vendor Branch!"
+                                />
                               </Form.Item>
                             </Col>
                             {/* gstin */}
@@ -1777,27 +1804,32 @@ export default function CreatePo() {
                               <Form.Item
                                 name="vendoraddress"
                                 label="Bill From Address"
-                                rules={rules.vendoraddress}
+                                rules={[{ required: true, message: "" }]}
                               >
-                                <TextArea
-                                  value={newPurchaseOrder.vendoraddress}
-                                  rows={4}
-                                  style={{
-                                    resize: "none",
-                                    backgroundColor: "#ffffff",
-                                    color: "#1f1f1f",
-                                    fontWeight: 600,
-                                    fontSize: "14px",
-                                    lineHeight: "1.6",
-                                    opacity: 1,
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: "6px",
-                                    padding: "12px 16px",
-                                    boxShadow:
-                                      "inset 0 1px 3px rgba(0,0,0,0.05)",
-                                  }}
-                                  disabled
-                                />
+                                <Field
+                                  attr="required | Please Enter bill from address!"
+                                  showValidation={isValid}
+                                >
+                                  <TextArea
+                                    value={newPurchaseOrder.vendoraddress}
+                                    rows={4}
+                                    style={{
+                                      resize: "none",
+                                      backgroundColor: "#ffffff",
+                                      color: "#1f1f1f",
+                                      fontWeight: 600,
+                                      fontSize: "14px",
+                                      lineHeight: "1.6",
+                                      opacity: 1,
+                                      border: "1px solid #d9d9d9",
+                                      borderRadius: "6px",
+                                      padding: "12px 16px",
+                                      boxShadow:
+                                        "inset 0 1px 3px rgba(0,0,0,0.05)",
+                                    }}
+                                    disabled
+                                  />
+                                </Field>
                               </Form.Item>
                             </Col>
                           </Row>
@@ -1913,9 +1945,15 @@ export default function CreatePo() {
                           </Row>
                           <Row gutter={16} style={{ marginTop: 16 }}>
                             <Col span={5}>
+                              <Field
+                                attr="required | Please select advance payment"
+                                value={advancePayment}
+                                showValidation={isValid}
+                              >
                               <Form.Item
                                 label="Advance Payment"
                                 name="advancePayment"
+                                rules={[{ required: true, message: "" }]}
                               >
                                 <Radio.Group
                                   onChange={(e) => {
@@ -1974,17 +2012,21 @@ export default function CreatePo() {
                                   <Radio value={0}>No</Radio>
                                 </Radio.Group>
                               </Form.Item>
+                              </Field>
                             </Col>
                             {/* Advance Percentage Input */}
                             <Col span={3}>
                               <Form.Item noStyle>
                                 {advancePayment === 1 && (
+                                  <Field
+                                    attr="required | Enter %"
+                                    value={advancePercentageValue}
+                                    showValidation={isValid}
+                                  >
                                   <Form.Item
                                     name="advancePercentage"
                                     label="Advance %"
-                                    rules={[
-                                      { required: true, message: "Enter %" },
-                                    ]}
+                                    rules={[{ required: true, message: "" }]}
                                   >
                                     <InputNumber
                                       min={1}
@@ -2034,6 +2076,7 @@ export default function CreatePo() {
                                       }}
                                     />
                                   </Form.Item>
+                                  </Field>
                                 )}
                               </Form.Item>
                             </Col>
@@ -2044,7 +2087,7 @@ export default function CreatePo() {
                             <Col span={5}>
                               <Form.Item
                                 name="project_name"
-                                rules={rules.project_name}
+                                rules={[{ required: true, message: "" }]}
                                 label={
                                   <div
                                     style={{
@@ -2065,6 +2108,8 @@ export default function CreatePo() {
                                   loadOptions={handleFetchProjectOptions}
                                   optionsState={asyncOptions}
                                   onChange={handleProjectChange}
+                                  showError={isValid}
+                                  message="Please Select a Project!"
                                 />
                               </Form.Item>
                             </Col>
@@ -2084,7 +2129,7 @@ export default function CreatePo() {
                             <Col span={4}>
                               <Form.Item
                                 name="pocostcenter"
-                                rules={rules.pocostcenter}
+                                rules={[{ required: true, message: "" }]}
                                 label={
                                   <div
                                     style={{
@@ -2113,6 +2158,9 @@ export default function CreatePo() {
                                   onBlur={() => setAsyncOptions([])}
                                   loadOptions={handleFetchCostCenterOptions}
                                   optionsState={asyncOptions}
+                                  labelInValue
+                                  showError={isValid}
+                                  message="Please Select a Cost Center!"
                                 />
                               </Form.Item>
                             </Col>
@@ -2127,7 +2175,7 @@ export default function CreatePo() {
                               <Form.Item
                                 label="Requested By"
                                 name="raisedBy"
-                                rules={rules.raisedBy}
+                                rules={[{ required: true, message: "" }]}
                               >
                                 <MyAsyncSelect
                                   selectLoading={selectLoading}
@@ -2135,9 +2183,12 @@ export default function CreatePo() {
                                   onBlur={() => setUserOptions([])}
                                   optionsState={userOptions}
                                   loadOptions={getusers}
+                                  labelInValue
                                   onChange={(value) =>
                                     selectInputHandler("raisedBy", value)
                                   }
+                                  showError={isValid}
+                                  message="Please select who requested for this PR!"
                                 />
                               </Form.Item>
                             </Col>
@@ -2145,7 +2196,6 @@ export default function CreatePo() {
                               <Form.Item
                                 name="po_currency"
                                 label="PO Currency"
-                                rules={rules.po_currency}
                               >
                                 <MySelect options={poCurrencies} />
                               </Form.Item>
@@ -2155,7 +2205,6 @@ export default function CreatePo() {
                                 <Form.Item
                                   name="po_exchange_rate"
                                   label="Exchange rate (to INR)"
-                                  rules={rules.po_exchange_rate}
                                 >
                                   <InputNumber
                                     min={0}
@@ -2190,69 +2239,91 @@ export default function CreatePo() {
                               <Form.Item
                                 name="billaddressid"
                                 label="Billing Id"
-                                rules={rules.billaddressid}
+                                rules={[{ required: true, message: "" }]}
                               >
-                                <MySelect options={billToOptions} />
+                                <MySelect
+                                  options={billToOptions}
+                                  showError={isValid}
+                                  message="Please Select a Billing Address!"
+                                />
                               </Form.Item>
                             </Col>
                             {/* pan number */}
                             <Col span={6}>
-                              <Form.Item
-                                name="billPan"
-                                label="Pan No."
-                                rules={rules.billPan}
+                              <Field
+                                attr="required | Please enter Billing PAN Number!"
+                                value={billPanValue}
+                                showValidation={isValid}
                               >
-                                <Input
-                                  size="default"
-                                  value={newPurchaseOrder.billPan}
-                                  disabled
-                                />
-                              </Form.Item>
+                                <Form.Item
+                                  name="billPan"
+                                  label="Pan No."
+                                  rules={[{ required: true, message: "" }]}
+                                >
+                                  <Input
+                                    size="default"
+                                    value={newPurchaseOrder.billPan}
+                                    disabled
+                                  />
+                                </Form.Item>
+                              </Field>
                             </Col>
                             {/* gstin uin */}
                             <Col span={6}>
-                              <Form.Item
-                                name="billGST"
-                                label="GSTIN / UIN"
-                                rules={rules.billGST}
+                              <Field
+                                attr="required | Please enter Billing GSTIN Number!"
+                                value={billGSTValue}
+                                showValidation={isValid}
                               >
-                                <Input
-                                  size="default"
-                                  value={newPurchaseOrder.billGST}
-                                  disabled
-                                />
-                              </Form.Item>
+                                <Form.Item
+                                  name="billGST"
+                                  label="GSTIN / UIN"
+                                  rules={[{ required: true, message: "" }]}
+                                >
+                                  <Input
+                                    size="default"
+                                    value={newPurchaseOrder.billGST}
+                                    disabled
+                                  />
+                                </Form.Item>
+                              </Field>
                             </Col>
                           </Row>
                           {/* billing address */}
                           <Row>
                             <Col span={18}>
-                              <Form.Item
-                                name="billaddress"
-                                label="Billing Address"
-                                rules={rules.billaddress}
+                              <Field
+                                attr="required | Please Enter Billing Address!"
+                                value={billaddressValue}
+                                showValidation={isValid}
                               >
-                                <TextArea
-                                  value={newPurchaseOrder.billaddress}
-                                  disabled
-                                  rows={5}
-                                  style={{
-                                    resize: "none",
-                                    backgroundColor: "#ffffff",
-                                    color: "#1f1f1f",
-                                    fontWeight: 600,
-                                    fontSize: "14px",
-                                    lineHeight: "1.6",
-                                    opacity: 1,
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: "6px",
-                                    padding: "12px 16px",
-                                    boxShadow:
-                                      "inset 0 1px 3px rgba(0,0,0,0.05)",
-                                  }}
-                                  className="bold-disabled-textarea"
-                                />
-                              </Form.Item>
+                                <Form.Item
+                                  name="billaddress"
+                                  label="Billing Address"
+                                  rules={[{ required: true, message: "" }]}
+                                >
+                                  <TextArea
+                                    value={newPurchaseOrder.billaddress}
+                                    disabled
+                                    rows={5}
+                                    style={{
+                                      resize: "none",
+                                      backgroundColor: "#ffffff",
+                                      color: "#1f1f1f",
+                                      fontWeight: 600,
+                                      fontSize: "14px",
+                                      lineHeight: "1.6",
+                                      opacity: 1,
+                                      border: "1px solid #d9d9d9",
+                                      borderRadius: "6px",
+                                      padding: "12px 16px",
+                                      boxShadow:
+                                        "inset 0 1px 3px rgba(0,0,0,0.05)",
+                                    }}
+                                    className="bold-disabled-textarea"
+                                  />
+                                </Form.Item>
+                              </Field>
                             </Col>
                           </Row>
                         </Col>
@@ -2331,48 +2402,57 @@ export default function CreatePo() {
                                 <Form.Item
                                   name="shipaddressid"
                                   label="Shipping Id"
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Please select shipping address",
-                                    },
-                                  ]}
+                                  rules={[{ required: true, message: "" }]}
                                 >
                                   <MySelect
                                     options={shipToOptions}
                                     disabled={sameAsBilling}
+                                    showError={isValid}
+                                    message="Please select shipping address"
                                   />
                                 </Form.Item>
                               </Col>
                               <Col span={6}>
-                                <Form.Item
-                                  label="Pan No."
-                                  name="shipPan"
-                                  rules={rules.shipPan}
+                                <Field
+                                  attr="required | Please Enter Shipping PAN Number!"
+                                  value={shipPanValue}
+                                  showValidation={isValid}
                                 >
-                                  <Input
-                                    size="default"
-                                    disabled={
-                                      sameAsBilling ||
-                                      newPurchaseOrder.shipaddressid !== "other"
-                                    }
-                                  />
-                                </Form.Item>
+                                  <Form.Item
+                                    label="Pan No."
+                                    name="shipPan"
+                                    rules={[{ required: true, message: "" }]}
+                                  >
+                                    <Input
+                                      size="default"
+                                      disabled={
+                                        sameAsBilling ||
+                                        newPurchaseOrder.shipaddressid !== "other"
+                                      }
+                                    />
+                                  </Form.Item>
+                                </Field>
                               </Col>
                               <Col span={6}>
-                                <Form.Item
-                                  name="shipGST"
-                                  label="GSTIN / UIN"
-                                  rules={rules.shipGST}
+                                <Field
+                                  attr="required | Please Enter Shipping GSTIN!"
+                                  value={shipGSTValue}
+                                  showValidation={isValid}
                                 >
-                                  <Input
-                                    size="default"
-                                    disabled={
-                                      sameAsBilling ||
-                                      newPurchaseOrder.shipaddressid !== "other"
-                                    }
-                                  />
-                                </Form.Item>
+                                  <Form.Item
+                                    name="shipGST"
+                                    label="GSTIN / UIN"
+                                    rules={[{ required: true, message: "" }]}
+                                  >
+                                    <Input
+                                      size="default"
+                                      disabled={
+                                        sameAsBilling ||
+                                        newPurchaseOrder.shipaddressid !== "other"
+                                      }
+                                    />
+                                  </Form.Item>
+                                </Field>
                               </Col>
                             </Row>
                           )}
@@ -2384,12 +2464,7 @@ export default function CreatePo() {
                                 <Form.Item
                                   name="ship_vendor"
                                   label="Shipping Vendor"
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Please select shipping vendor",
-                                    },
-                                  ]}
+                                  rules={[{ required: true, message: "" }]}
                                 >
                                   <MyAsyncSelect
                                     labelInValue
@@ -2397,6 +2472,8 @@ export default function CreatePo() {
                                     loadOptions={getVendors}
                                     onBlur={() => setAsyncOptions([])}
                                     optionsState={asyncOptions}
+                                    showError={isValid}
+                                    message="Please select shipping vendor"
                                     onChange={async (value) => {
                                       if (!value) return;
                                       const branches = await getVendorBracnch(
@@ -2433,15 +2510,12 @@ export default function CreatePo() {
                                 <Form.Item
                                   name="ship_vendor_branch"
                                   label="Shipping vendor Branch"
-                                  rules={[
-                                    {
-                                      required: true,
-                                      message: "Please select branch",
-                                    },
-                                  ]}
+                                  rules={[{ required: true, message: "" }]}
                                 >
                                   <MySelect
                                     options={vendorBranches}
+                                    showError={isValid}
+                                    message="Please select branch"
                                     onChange={async (branch) => {
                                       if (
                                         !newPurchaseOrder.ship_vendor &&
@@ -2491,40 +2565,50 @@ export default function CreatePo() {
                           {form.getFieldValue("ship_type") === "manual" && (
                             <Row gutter={16} style={{ marginTop: 16 }}>
                               <Col span={6}>
-                                <Form.Item
-                                  label="Party Name"
-                                  name="partyName"
-                                  rules={rules.shipPan}
+                                <Field
+                                  attr="required | Please Enter Party Name!"
+                                  value={partyNameValue}
+                                  showValidation={isValid}
                                 >
-                                  <Input
-                                    size="default"
-                                    placeholder="Enter Party Name"
-                                  />
-                                </Form.Item>
+                                  <Form.Item
+                                    label="Party Name"
+                                    name="partyName"
+                                    rules={[{ required: true, message: "" }]}
+                                  >
+                                    <Input
+                                      size="default"
+                                      placeholder="Enter Party Name"
+                                    />
+                                  </Form.Item>
+                                </Field>
                               </Col>
                               <Col span={6}>
-                                <Form.Item
-                                  label="Pan No."
-                                  name="shipPan"
-                                  rules={rules.shipPan}
-                                >
-                                  <Input
-                                    size="default"
-                                    placeholder="Enter Shipping PAN"
-                                  />
-                                </Form.Item>
+                           
+                                  <Form.Item
+                                    label="Pan No."
+                                    name="shipPan"
+                                    rules={[{ required: false }]}
+                                  >
+                                    <Input
+                                      size="default"
+                                      placeholder="Enter Shipping PAN"
+                                    />
+                                  </Form.Item>
+                              
                               </Col>
                               <Col span={6}>
-                                <Form.Item
-                                  name="shipGST"
-                                  label="GSTIN / UIN"
-                                  rules={rules.shipGST}
-                                >
-                                  <Input
-                                    size="default"
-                                    placeholder="Enter Shipping GSTIN"
-                                  />
-                                </Form.Item>
+                              
+                                  <Form.Item
+                                    name="shipGST"
+                                    label="GSTIN / UIN"
+                                    rules={[{ required: false }]}
+                                  >
+                                    <Input
+                                      size="default"
+                                      placeholder="Enter Shipping GSTIN"
+                                    />
+                                  </Form.Item>
+                              
                               </Col>
                             </Row>
                           )}
@@ -2532,42 +2616,48 @@ export default function CreatePo() {
                           {/* Shipping Address Field - Common for all modes */}
                           <Row style={{ marginTop: 16 }}>
                             <Col span={18}>
-                              <Form.Item
-                                label="Shipping Address"
-                                name="shipaddress"
-                                rules={rules.shipaddress}
+                              <Field
+                                attr="required | Please Enter Shipping Address!"
+                                value={shipaddressValue}
+                                showValidation={isValid}
                               >
-                                <TextArea
-                                  rows={5}
-                                  disabled={
-                                    form.getFieldValue("ship_type") === "saved"
-                                      ? sameAsBilling ||
-                                        newPurchaseOrder.shipaddressid !==
-                                          "other"
-                                      : form.getFieldValue("ship_type") !==
-                                        "manual"
-                                  }
-                                  placeholder={
-                                    form.getFieldValue("ship_type") === "manual"
-                                      ? "Enter complete shipping address"
-                                      : "Shipping address will be populated based on selection"
-                                  }
-                                  style={{
-                                    resize: "none",
-                                    backgroundColor: "#ffffff",
-                                    color: "#1f1f1f",
-                                    fontWeight: 600,
-                                    fontSize: "14px",
-                                    lineHeight: "1.6",
-                                    opacity: 1,
-                                    border: "1px solid #d9d9d9",
-                                    borderRadius: "6px",
-                                    padding: "12px 16px",
-                                    boxShadow:
-                                      "inset 0 1px 3px rgba(0,0,0,0.05)",
-                                  }}
-                                />
-                              </Form.Item>
+                                <Form.Item
+                                  label="Shipping Address"
+                                  name="shipaddress"
+                                  rules={[{ required: true, message: "" }]}
+                                >
+                                  <TextArea
+                                    rows={5}
+                                    disabled={
+                                      form.getFieldValue("ship_type") === "saved"
+                                        ? sameAsBilling ||
+                                          newPurchaseOrder.shipaddressid !==
+                                            "other"
+                                        : form.getFieldValue("ship_type") !==
+                                          "manual"
+                                    }
+                                    placeholder={
+                                      form.getFieldValue("ship_type") === "manual"
+                                        ? "Enter complete shipping address"
+                                        : "Shipping address will be populated based on selection"
+                                    }
+                                    style={{
+                                      resize: "none",
+                                      backgroundColor: "#ffffff",
+                                      color: "#1f1f1f",
+                                      fontWeight: 600,
+                                      fontSize: "14px",
+                                      lineHeight: "1.6",
+                                      opacity: 1,
+                                      border: "1px solid #d9d9d9",
+                                      borderRadius: "6px",
+                                      padding: "12px 16px",
+                                      boxShadow:
+                                        "inset 0 1px 3px rgba(0,0,0,0.05)",
+                                    }}
+                                  />
+                                </Form.Item>
+                              </Field>
                             </Col>
                           </Row>
                         </Col>
@@ -2628,107 +2718,3 @@ export default function CreatePo() {
 }
 
 // form rules
-const rules = {
-  pocreatetype: [
-    {
-      required: true,
-      message: "Please Select a PR Type!",
-    },
-  ],
-  original_po: [
-    {
-      required: true,
-      message: "Please Select a PR Type!",
-    },
-  ],
-  vendortype: [
-    {
-      required: true,
-      message: "Please Select a vendor Type!",
-    },
-  ],
-  vendorname: [
-    {
-      required: true,
-      message: "Please Select a vendor Name!",
-    },
-  ],
-  vendorbranch: [
-    {
-      required: true,
-      message: "Please Select a vendor Branch!",
-    },
-  ],
-  vendoraddress: [
-    {
-      required: true,
-      message: "Please Enter bill from address!",
-    },
-  ],
-  pocostcenter: [
-    {
-      required: true,
-      message: "Please Select a Cost Center!",
-    },
-  ],
-  project_name: [
-    {
-      required: true,
-      message: "Please Select a Project!",
-    },
-  ],
-  raisedBy: [
-    {
-      required: true,
-      message: "Please select who requested for this PR!",
-    },
-  ],
-  billaddressid: [
-    {
-      required: true,
-      message: "Please Select a Billing Address!",
-    },
-  ],
-  billPan: [
-    {
-      required: true,
-      message: "Please enter Billing PAN Number!",
-    },
-  ],
-  billaddress: [
-    {
-      required: true,
-      message: "Please Enter Billing Address!",
-    },
-  ],
-  shipaddressid: [
-    {
-      required: true,
-      message: "Please Select a Shipping Address!",
-    },
-  ],
-  shipPan: [
-    {
-      required: true,
-      message: "Please Enter Shipping PAN Number!",
-    },
-  ],
-  shipGST: [
-    {
-      required: true,
-      message: "Please Enter Shipping GSTIN!",
-    },
-  ],
-  shipaddress: [
-    {
-      required: true,
-      message: "Please Enter Shipping Address!",
-    },
-  ],
-  billGST: [
-    {
-      required: true,
-      message: "Please enter Billing GSTIN Number!",
-    },
-  ],
-};
