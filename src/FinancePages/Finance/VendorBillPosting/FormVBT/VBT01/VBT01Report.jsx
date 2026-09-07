@@ -42,6 +42,7 @@ function VBT01Report({
   const [glstate, setglState] = useState([]);
   const [billam, setBillam] = useState([]);
   const [lastRateArr, setLastRateArr] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const components = Form.useWatch("components", {
     form: Vbt01,
@@ -57,6 +58,7 @@ function VBT01Report({
     resetForm();
     setRoundOffSign("+");
     setRoundOffValue(0);
+    setIsValid(false);
   };
   const checkInvoice = async (checkInvoiceId, vendorCode) => {
     const res = await imsAxios.get(
@@ -283,7 +285,15 @@ function VBT01Report({
     }
   }, [editVbtDrawer, apiUrl]);
 
-  const showCofirmModal = () => {
+  const showCofirmModal = async () => {
+    try {
+      await Vbt01.validateFields();
+    } catch (error) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+
     Modal.confirm({
       okText: "Save",
       title: isCreate
@@ -299,7 +309,14 @@ function VBT01Report({
   };
   // sumbit for both the edot and create fn
   const submitFunction = async () => {
-    const values = await Vbt01.validateFields();
+    let values;
+    try {
+      values = await Vbt01.validateFields();
+    } catch (error) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     if (isCreate) {
       const roundarr = values.components.map(
         (component) => component.venAmmount,
@@ -490,6 +507,7 @@ function VBT01Report({
     const { success } = response;
     if (success) {
       showToast(response.message, "success");
+      setIsValid(false);
       setEditVbtDrawer(null);
       setLoading(false);
     } else {
@@ -680,6 +698,7 @@ function VBT01Report({
               apiUrl={apiUrl}
               components={components}
               billam={billam}
+              isValid={isValid}
             />
           </Col>
 
@@ -721,6 +740,7 @@ function VBT01Report({
                           glstate={glstate}
                           getGstGlOptions={getGstGlOptions}
                           lastRateArr={lastRateArr}
+                          isValid={isValid}
                         />
                       </Form.Item>
                     ))}
