@@ -304,7 +304,7 @@ const getDataByLocation = async (e) => {
         </Col>
         <Col span={19}>
           <Row>
-            {resData.length > 1 && (
+            {resData.length > 0 && (
               <Col span={24}>
                 <div
                   style={{
