@@ -38,6 +38,15 @@ function ManageDC() {
         onClick={() => setUpdateDCId(row.transaction_id)}
       />,
       <GridActionsCellItem
+        key="return"
+        showInMenu
+        label="Return"
+        onClick={() => {
+          setUpdateDCId(row.transaction_id);
+          setIsReturnDC(true);
+        }}
+      />,
+      <GridActionsCellItem
         key="download"
         showInMenu
         label="Download"
@@ -76,7 +85,16 @@ function ManageDC() {
   { field: "insert_date", headerName: "Created Date/Time", width: 200 },
   { field: "component_name", headerName: "Component Name", width: 200 },
   { field: "part_no", headerName: "Part No.", width: 200 },
-  { field: "quantity", headerName: "Quantity", width: 200 },
+  {
+    field: "quantity",
+    headerName: "Quantity / Return QTY",
+    width: 200,
+    renderCell: ({ row }) => (
+      <span>
+        {row.quantity} / {row.returned_qty}
+      </span>
+    ),
+  },
   { field: "rate", headerName: "Rate", width: 200 },
   { field: "hsn", headerName: "HSN", width: 200 },
   { field: "total", headerName: "Amount", width: 200 },
@@ -91,6 +109,7 @@ function ManageDC() {
   const [loading, setLoading] = useState(false);
   const [dateRange, setDateRange] = useState("");
   const [updatedDCId, setUpdateDCId] = useState(null);
+  const [isReturnDC, setIsReturnDC] = useState(false);
   const [isValid, setIsValid] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -184,7 +203,12 @@ function ManageDC() {
   return (
     <div style={{ height: "calc(100vh - 160px)", padding: "10px" }}>
       {updatedDCId && (
-        <EditDC updatedDCId={updatedDCId} setUpdateDCId={setUpdateDCId} />
+        <EditDC
+          updatedDCId={updatedDCId}
+          setUpdateDCId={setUpdateDCId}
+          isReturnDC={isReturnDC}
+          setIsReturnDC={setIsReturnDC}
+        />
       )}
       <Row gutter={16} style={{ paddingBottom: 5 }}>
         <Col span={4}>
