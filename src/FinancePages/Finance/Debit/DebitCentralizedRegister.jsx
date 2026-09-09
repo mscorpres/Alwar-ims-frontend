@@ -23,6 +23,7 @@ import printFunction, {
 } from "../../../Components/printFunction";
 import DebitEdit from "./DebitEdit";
 import MyButton from "../../../Components/MyButton";
+import Field from "../../../Components/Field.jsx";
 
 // import {loading}
 function DebitCentralizedRegister() {
@@ -34,6 +35,7 @@ function DebitCentralizedRegister() {
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const wiseOptions = [
     // { text: "Date", value: "datfe_wise" },
@@ -60,9 +62,14 @@ function DebitCentralizedRegister() {
     }
   };
   const getRows = async () => {
+    if (!searchTerm || !wise) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setLoading("fetch");
     const response = await imsAxios.get(
-      `/tally/dv/register?wise=${wise}&data=${searchTerm}`
+      `/tally/dv/register?wise=${wise}&data=${searchTerm?.value ?? searchTerm}`
     );
     if (response.success) {
       // console.log("arr-------------", arr);
@@ -133,12 +140,12 @@ function DebitCentralizedRegister() {
 
   useEffect(() => {
     setRows([]);
+    setIsValid(false);
     if (wise == "debit_key_wise") {
       setSearchTerm("DN/23-24/");
     } else {
       setSearchTerm("");
     }
-    setSearchTerm("");
   }, [wise]);
   // useEffect(() => {
   //   setRows([]);
@@ -450,19 +457,32 @@ function DebitCentralizedRegister() {
             </div>
             <div style={{ width: 300 }}>
               {wise === "created_date_wise" && (
-                <MyDatePicker size="default" setDateRange={setSearchTerm} />
+                <MyDatePicker
+                  size="default"
+                  setDateRange={setSearchTerm}
+                  value={searchTerm}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               )}
               {wise === "effective_date_wise" && (
-                <MyDatePicker size="default" setDateRange={setSearchTerm} />
+                <MyDatePicker
+                  size="default"
+                  setDateRange={setSearchTerm}
+                  value={searchTerm}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               )}
               {wise === "debit_key_wise" && (
-                <Input
-                  type="text"
-                  size="default"
-                  placeholder="Enter Debit Key"
+                <Field
+                  attr="required | Debit Key is required"
                   value={searchTerm}
+                  showValidation={isValid}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                >
+                  <Input type="text" size="default" placeholder="Enter Debit Key" />
+                </Field>
               )}
               {wise === "vendor_wise" && (
                 <MyAsyncSelect
@@ -474,6 +494,9 @@ function DebitCentralizedRegister() {
                   loadOptions={getLedger}
                   optionsState={asyncOptions}
                   placeholder="Select Ledger..."
+                  labelInValue
+                  showError={isValid}
+                  message="Please select a Ledger"
                 />
               )}
             </div>
