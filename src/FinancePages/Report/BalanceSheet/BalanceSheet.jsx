@@ -16,9 +16,15 @@ function BalanceSheet() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingSheet, setEditingSheet] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const { showToast } = useToast();
 
   const getRows = async () => {
+    if (!dateRange) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setRows([]);
     arr = [];
     setLoading("fetchLoading");
@@ -192,7 +198,12 @@ function BalanceSheet() {
       <Row justify="space-between">
         <Space>
           <div style={{ width: 300 }}>
-            <MyDatePicker setDateRange={setDateRange} />
+            <MyDatePicker
+              setDateRange={setDateRange}
+              value={dateRange}
+              showError={isValid}
+              message="Please select a date range"
+            />
           </div>
           <MyButton
             loading={loading === "fetchLoading"}
