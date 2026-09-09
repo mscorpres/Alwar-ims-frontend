@@ -23,6 +23,7 @@ import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyButton from "../../../Components/MyButton";
+import Field from "../../../Components/Field.jsx";
 
 function JVReport() {
   const { showToast } = useToast();
@@ -40,13 +41,19 @@ function JVReport() {
   const [editVoucher, setEditVoucher] = useState(null);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const getRows = async () => {
+    if (!searchTerm) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setRows([]);
     setLoading("fetch");
     const response = await imsAxios.post("/tally/jv/jv_list", {
       wise: wise,
-      data: searchTerm,
+      data: searchTerm?.value ?? searchTerm,
     });
     setLoading(false);
     if (response.success) {
@@ -235,6 +242,7 @@ function JVReport() {
   };
   useEffect(() => {
     setSearchTerm("");
+    setIsValid(false);
   }, [wise]);
   return (
     <div style={{ height: "100%", padding: 10 }}>
@@ -250,10 +258,22 @@ function JVReport() {
             </div>
             <div style={{ width: 300 }}>
               {wise === "date_wise" && (
-                <MyDatePicker size="default" setDateRange={setSearchTerm} />
+                <MyDatePicker
+                  size="default"
+                  setDateRange={setSearchTerm}
+                  value={searchTerm}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               )}
               {wise === "eff_wise" && (
-                <MyDatePicker size="default" setDateRange={setSearchTerm} />
+                <MyDatePicker
+                  size="default"
+                  setDateRange={setSearchTerm}
+                  value={searchTerm}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               )}
               {wise === "vendor_wise" && (
                 <MyAsyncSelect
@@ -263,14 +283,20 @@ function JVReport() {
                   value={searchTerm}
                   selectLoading={selectLoading}
                   onChange={setSearchTerm}
+                  labelInValue
+                  showError={isValid}
+                  message="Please select a Particular"
                 />
               )}
               {wise === "code_wise" && (
-                <Input
-                  placeholder="JV ID"
+                <Field
+                  attr="required | Please enter a JV ID"
                   value={searchTerm}
+                  showValidation={isValid}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                >
+                  <Input placeholder="JV ID" />
+                </Field>
               )}
             </div>
             <MyButton
