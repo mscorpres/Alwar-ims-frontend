@@ -11,6 +11,8 @@ import MyAsyncSelect from "../../Components/MyAsyncSelect";
 import { getClientOptions, getWorkOrderAnalysis } from "./components/api";
 import Loading from "../../Components/Loading";
 import MyButton from "../../Components/MyButton";
+import Field from "../../Components/Field.jsx";
+import { useToast } from "../../hooks/useToast.js";
 const WoCreateChallan = () => {
   const [wise, setWise] = useState(wiseOptions[0].value);
   const [showTypeSelect, setShowTypeSelect] = useState(false);
@@ -19,8 +21,9 @@ const WoCreateChallan = () => {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [searchInput, setSearchInput] = useState("");
+  const [isValid, setIsValid] = useState(false);
   const [detaildata, setDetailData] = useState("");
-
+const {showToast} = useToast();
   const [rtnchallan, setRtnChallan] = useState(false);
   const [challanForm] = Form.useForm();
   const actionColumn = {
@@ -30,6 +33,7 @@ const WoCreateChallan = () => {
     type: "actions",
     getActions: ({ row }) => [
       <GridActionsCellItem
+        key="edit"
         showInMenu
         // disabled={loading}
         onClick={() => {
@@ -42,9 +46,16 @@ const WoCreateChallan = () => {
   };
 
   const getRows = async () => {
+    const value =
+      wise === wiseOptions[0].value ? searchInput?.value : searchInput;
+    if (!value) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     try {
       setLoading("fetch");
-      const arr = await getWorkOrderAnalysis(wise, searchInput);
+      const arr = await getWorkOrderAnalysis(wise, value);
       setRows(arr);
     } catch (error) {
       console.log("some error occured while fetching rows", error);
@@ -59,6 +70,7 @@ const WoCreateChallan = () => {
       const arr = await getClientOptions(search);
       setAsyncOptions(arr);
     } catch (error) {
+      showToast(error.message || "Some error occured while fetching clients", "error");
     } finally {
       setLoading(false);
     }
@@ -70,9 +82,8 @@ const WoCreateChallan = () => {
   };
   //
   useEffect(() => {
-    if (wise !== wiseOptions[1].value) {
-      setSearchInput("");
-    }
+    setSearchInput("");
+    setIsValid(false);
   }, [wise]);
 
   //
@@ -90,6 +101,8 @@ const WoCreateChallan = () => {
                     options={wiseOptions}
                     value={wise}
                     placeholder="Select Wise"
+                    showError={isValid}
+                    message="Please select a wise"
                   />
                 </div>
                 {wise === wiseOptions[0].value && (
@@ -99,20 +112,31 @@ const WoCreateChallan = () => {
                       optionsState={asyncOptions}
                       onBlur={() => setAsyncOptions([])}
                       value={searchInput}
+                      labelInValue={true}
+                      showError={isValid}
                       onChange={setSearchInput}
                       loadOptions={handleClientOptions}
+                      message="Please select a client"
                     />
                   </div>
                 )}
                 {wise === wiseOptions[1].value && (
-                  <MyDatePicker setDateRange={setSearchInput} />
+                  <MyDatePicker
+                    setDateRange={setSearchInput}
+                    value={searchInput}
+                    showError={isValid}
+                  />
                 )}
                 {wise === wiseOptions[2].value && (
                   <div style={{ width: 270 }}>
-                    <Input
+                    <Field
+                      attr="required | Please enter Work Order Id"
                       value={searchInput}
+                      showValidation={isValid}
                       onChange={(e) => setSearchInput(e.target.value)}
-                    />
+                    >
+                      <Input />
+                    </Field>
                   </div>
                 )}
 
