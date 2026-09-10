@@ -18,6 +18,7 @@ const FormTable2 = ({
   addableRow,
   newRow,
   reverse,
+  height = "calc(100vh - 200px)",
 }) => {
   const formValues = Form.useWatch();
   const [hoveredRow, setHoveredRow] = useState(null);
@@ -45,7 +46,7 @@ const FormTable2 = ({
        
         padding: 0,
         overflowY: "auto",
-        height: "calc(100vh - 200px)",
+        height: height,
       }}
     >
       <table style={{ border: "1px solid #ccc", }}>
