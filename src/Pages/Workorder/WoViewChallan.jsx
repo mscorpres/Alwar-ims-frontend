@@ -721,6 +721,8 @@ const WoViewChallan = () => {
                       onChange={(e) => {
                         setchallantype(e);
                       }}
+                      showError={isValid}
+                      message="Please select a challan type!"
                     />
                   </div>
                   <div style={{ width: 200 }}>
@@ -729,6 +731,8 @@ const WoViewChallan = () => {
                       options={wiseOptions}
                       value={wise}
                       placeholder="Select Wise"
+                      showError={isValid}
+                      message="Please select a wise!"
                     />
                   </div>
                   {wise === wiseOptions[0].value && (
