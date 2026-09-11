@@ -298,7 +298,7 @@ export default function UpdateComponent() {
     const payload = {
       componentKey: componentKey,
       componentname: values.component,
-      uom: values.uom.value,
+      uom: values.uom.value ?? values.uom,
       category: "--",
       mrn: values.mrp,
       group: values.group,
@@ -475,8 +475,8 @@ export default function UpdateComponent() {
                     </Field>
                   </Col>
                   <Col span={4}>
-                    <Form.Item name="uom" label="UoM">
-                      <MySelect options={uomOptions} />
+                    <Form.Item name="uom" label="UoM" rules={[{ required: true, message: "" }]}>
+                      <MySelect options={uomOptions} showError={isValid} message="UoM is required" />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
