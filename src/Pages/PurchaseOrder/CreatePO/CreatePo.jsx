@@ -2028,53 +2028,61 @@ export default function CreatePo() {
                                     label="Advance %"
                                     rules={[{ required: true, message: "" }]}
                                   >
-                                    <InputNumber
-                                      min={1}
-                                      max={100}
-                                      formatter={(v) => `${v}%`}
-                                      parser={(v) => v.replace("%", "")}
-                                      style={{ width: "100%" }}
-                                      type="number"
-                                      onChange={(value) => {
-                                        if (
-                                          form.getFieldValue("paymentterms") ===
-                                          "Other"
-                                        ) {
-                                          const currentText =
+                                <InputNumber
+                                        min={1}
+                                        max={99}
+                                        precision={0}
+                                        formatter={(v) => (v ? `${v}%` : "")}
+                                        parser={(v) =>
+                                          v?.replace(/\D/g, "").slice(0, 2)
+                                        }
+                                        style={{ width: "100%" }}
+                                        onChange={(value) => {
+                                          if (
                                             form.getFieldValue(
-                                              "customPaymentTerm",
-                                            ) || "";
-                                          let newText = "";
+                                              "paymentterms",
+                                            ) === "Other"
+                                          ) {
+                                            const currentText =
+                                              form.getFieldValue(
+                                                "customPaymentTerm",
+                                              ) || "";
+                                            let newText = "";
 
-                                          if (value) {
-                                            if (
-                                              currentText.includes("% Advance")
-                                            ) {
-                                              newText = currentText.replace(
-                                                /\d+% Advance/,
-                                                `${value}% Advance`,
-                                              );
+                                            if (value) {
+                                              if (
+                                                currentText.includes(
+                                                  "% Advance",
+                                                )
+                                              ) {
+                                                newText = currentText.replace(
+                                                  /\d+% Advance/,
+                                                  `${value}% Advance`,
+                                                );
+                                              } else {
+                                                newText = currentText
+                                                  ? `${value}% Advance, ${currentText}`
+                                                  : `${value}% Advance`;
+                                              }
                                             } else {
                                               newText = currentText
-                                                ? `${value}% Advance, ${currentText}`
-                                                : `${value}% Advance`;
+                                                .replace(
+                                                  /\d+% Advance,?\s*/,
+                                                  "",
+                                                )
+                                                .trim();
                                             }
-                                          } else {
-                                            newText = currentText
-                                              .replace(/\d+% Advance,?\s*/, "")
-                                              .trim();
-                                          }
 
-                                          form.setFieldsValue({
-                                            customPaymentTerm: newText,
-                                          });
-                                          setnewPurchaseOrder((prev) => ({
-                                            ...prev,
-                                            customPaymentTerm: newText,
-                                          }));
-                                        }
-                                      }}
-                                    />
+                                            form.setFieldsValue({
+                                              customPaymentTerm: newText,
+                                            });
+                                            setnewPurchaseOrder((prev) => ({
+                                              ...prev,
+                                              customPaymentTerm: newText,
+                                            }));
+                                          }
+                                        }}
+                                      />
                                   </Form.Item>
                                   </Field>
                                 )}
