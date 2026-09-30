@@ -57,7 +57,7 @@ const MINModal = ({ showView, setShowView, getRows }) => {
   };
 
   const hasIncompleteRow = (rows) =>
-    (rows || []).some((r) => !r.qty || !r.rate || !r.hsn || !r.location);
+    (rows || []).some((r) => !r.qty || !r.hsn || !r.location);
 
   const validateHandler = async () => {
     let values;
@@ -82,7 +82,7 @@ const MINModal = ({ showView, setShowView, getRows }) => {
   const validForSubmit = () => {
     const arr =
       components?.map((comp) => {
-        if (comp.rate && comp.qty) {
+        if (comp.qty) {
           return true;
         }
       }) ?? [];
@@ -333,12 +333,13 @@ const MINModal = ({ showView, setShowView, getRows }) => {
           <Col span={20} style={{ height: "100%", overflow: "hidden" }}>
             <FormTable2
               removableRows={true}
+              allowFirstRowRemove={true}
               nonRemovableColumns={1}
               columns={[...componentsItems(gstType, isValid), locationColumn]}
               listName="components"
               watchKeys={["rate", "qty", "gstRate"]}
               nonListWatchKeys={["gstType"]}
-              componentRequiredRef={["rate", "qty"]}
+              componentRequiredRef={["qty"]}
               form={minForm}
               calculation={calculation}
               rules={listRules}
@@ -411,11 +412,7 @@ const componentsItems = (gstType, isValid) => [
     headerName: "Rate",
     name: "rate",
     width: 100,
-    field: () => (
-      <Field attr="required | Please enter component rate!" showValidation={isValid} treatZeroAsEmpty>
-        <Input />
-      </Field>
-    ),
+    field: () => <Input />,
   },
   {
     headerName: "Value",
@@ -531,12 +528,6 @@ const listRules = {
     {
       required: true,
       message: "Please select document!",
-    },
-  ],
-  rate: [
-    {
-      required: true,
-      message: "Please component rate!",
     },
   ],
   docDate: [
