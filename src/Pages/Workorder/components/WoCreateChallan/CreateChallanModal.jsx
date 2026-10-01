@@ -452,9 +452,10 @@ const CreateChallanModal = ({
       shipment_no: h.shipmentId,
     });
     // console.log("response ->", response);
-    const { data } = response;
+  
     // let arr = data.data;
     if (response.success) {
+        const { data } = response;
       let arrHead = data.header;
       challanForm.setFieldValue("clientbranch", arrHead.client_branch);
       challanForm.setFieldValue("nature", arrHead.eway_no);
@@ -466,7 +467,6 @@ const CreateChallanModal = ({
       challanForm.setFieldValue("dispatchid", arrHead.dispatch_info.value);
       challanForm.setFieldValue("shippingaddress", arrHead.dispatch_address);
       if (editShipment == "Shipment") {
-        console.log("data");
         challanForm.setFieldValue("components", [
           {
             productname: data.material.product_name,
@@ -761,10 +761,10 @@ const CreateChallanModal = ({
       const response = await imsAxios.post("/backend/fetchClientDetail", {
         code: code,
       });
-      const { data } = response;
+   
       // console.log("data------", caddress);
-      if (cid === undefined) {
-        data.branchList.map((row) => {
+      if (cid === undefined ) {
+        response?.data.branchList.map((row) => {
           if (row.address === badd) {
             challanForm.setFieldValue("billingid", row.id);
             challanForm.setFieldValue("billingaddress", badd);
@@ -780,7 +780,7 @@ const CreateChallanModal = ({
         });
         challanForm.setFieldValue("clientname", data.client.name);
         challanForm.setFieldValue("address", caddress);
-        data.branchList.map((item) => {
+        response?.data.branchList.map((item) => {
           if (item.id === caid) {
             challanForm.setFieldValue("clientbranch", item.text);
             setBranchId(item.id);
