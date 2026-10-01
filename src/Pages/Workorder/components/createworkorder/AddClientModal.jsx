@@ -82,7 +82,7 @@ const AddClientModal = ({ setOpen, open }) => {
     };
     try {
     setSubmitLoading(true);
-    const response = await imsAxios.post("client/addclient", obj);
+    const response = await imsAxios.post("client/add", obj);
     if (response.success) {
       // fetchVendor();
       reset()
