@@ -162,8 +162,8 @@ export const getCostCentresOptions = async (search: any) => {
   return response;
 };
 
-export const getBomOptions = async (search: any) => {
-  const response = await imsAxios.post("/backend/bomRecipe", {
+export const getBomOptions = async (search: any, type = "all") => {
+  const response = await imsAxios.post(`/backend/bomRecipe?type=${type}`, {
     search,
   });
   return response;
