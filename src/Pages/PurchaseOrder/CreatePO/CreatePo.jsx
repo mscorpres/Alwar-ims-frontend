@@ -1658,9 +1658,11 @@ export default function CreatePo() {
                       initialValues={newPurchaseOrder}
                       onFinish={finish}
                       onFinishFailed={() => setIsValid(true)}
-                      onFieldsChange={(value) => {
-                        if (value.length == 1) {
-                          selectInputHandler(value[0].name[0], value[0].value);
+                     
+                      onValuesChange={(changedValues) => {
+                        const keys = Object.keys(changedValues);
+                        if (keys.length === 1) {
+                          selectInputHandler(keys[0], changedValues[keys[0]]);
                         }
                       }}
                     >
