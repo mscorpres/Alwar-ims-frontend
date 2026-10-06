@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import ViewComponentSideBar from "./ViewComponentSideBar";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -6,7 +6,7 @@ import MyDataTable from "../../../Components/MyDataTable";
 import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import Field from "../../../Components/Field";
-import {  Col, Input, Row, Space } from "antd";
+import { Col, Input, Row, Space } from "antd";
 import printFunction, {
   downloadFunction,
 } from "../../../Components/printFunction";
@@ -198,6 +198,15 @@ const CompletedPo = () => {
       flex: 1,
     },
     {
+      headerName: "PPR No",
+      field: "ppr_no",
+      renderCell: ({ row }) => (
+        <ToolTipEllipses text={row.ppr_no} copy={true} />
+      ),
+      minWidth: 130,
+      flex: 1,
+    },
+    {
       headerName: "PO REG. DATE",
       field: "po_reg_date",
       flex: 1,
@@ -242,7 +251,6 @@ const CompletedPo = () => {
       ],
     },
   ];
-
 
   useEffect(() => {
     setSearchInput("");
