@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Card, Col, Form, Row } from "antd";
+import { Col, Form, Row } from "antd";
+import { EyeFilled } from "@ant-design/icons";
 import useLoading from "../../../../hooks/useLoading";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../../axiosInterceptor";
@@ -96,7 +97,7 @@ const ProccessedMrRequest = () => {
       // VIEW Icon
       <GridActionsCellItem
         key="view"
-        icon={<CommonIcons.view />}
+        icon={<EyeFilled />}
         showInMenu
         // disabled={disabled}
         label="View"
@@ -161,25 +162,10 @@ const ProccessedMrRequest = () => {
       <Col span={24} style={{ height: "calc(100% - 60px)", overflowY: "auto" }} >
         <MyDataTable data={rows} columns={[actionColumn, ...columns]} />
       </Col>
-      {showDetails && (
-        <Col span={10} style={{ height: "100%", overflowY: "hidden" }}>
-          <Card
-            size="small"
-            title={`Request: ${showDetails}`}
-            style={{ height: "100%" }}
-            extra={
-              <MyButton
-                variant="clear"
-                text="Close"
-                onClick={() => setShowDetails(null)}
-              />
-            }
-            bodyStyle={{ height: "95%", overflow: "hidden" }}
-          >
-            <ViewMRTransaction viewTransaction={showDetails} />
-          </Card>
-        </Col>
-      )}
+      <ViewMRTransaction
+        viewTransaction={showDetails}
+        setViewTransaction={setShowDetails}
+      />
     </Row>
   );
 };
