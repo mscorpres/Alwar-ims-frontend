@@ -11,11 +11,15 @@ const COMMENT_TEMPLATES = {
     `Being -- purchase on inv ${invoiceId} date:____ of amt: ___ TDS:___ `,
   vbt01: (invoiceId) =>
     `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
+  vbt08: (invoiceId) =>
+    `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
+  vbt09: (invoiceId) =>
+    `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
   vbt02: (invoiceId) =>
     `Being Service charges due to INV no. ${invoiceId} date of amount TDS:___ `,
-      vbt04: (invoiceId) =>
+  vbt04: (invoiceId) =>
     `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
-      vbt05: (invoiceId) =>
+  vbt05: (invoiceId) =>
     `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
 };
 
@@ -32,7 +36,6 @@ function VBTHeaders({
   editVBTCode,
   isValid,
 }) {
-
   useEffect(() => {
     if (editingVBT && vbtComponent?.length > 0) {
       const header = vbtComponent[0];
