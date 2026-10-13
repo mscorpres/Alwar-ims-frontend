@@ -356,11 +356,9 @@ const SidebarInner = ({
       : showSideBar;
 
     const headingFontSize = menuTierFontSize(nestLevel);
-    /** Leaf rows use the size of their depth under the parent heading (same tier index as sibling headings). */
     const leafFontSize = menuTierFontSize(nestLevel);
     const headingPlayArrowSize =
       isSubMenu && nestLevel === 0 ? 18 : isSubMenu ? 16 : 20;
-    /** Link rows always use menu icons; the image chevron is only for accordion headings (see isHeading branch). */
     const leafIconBoxSize = !isSubMenu
       ? 18
       : nestLevel <= 1
@@ -370,7 +368,7 @@ const SidebarInner = ({
           : 14;
 
     return (
-      <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+      <ul style={{ listStyle: "none", margin: 0, padding: 0, overflow: "hidden" }}>
         {arr.map((c, index) => {
           const hasChildren = c.children && c.children.length > 0;
           const isActive = activeKey === c.key;
@@ -758,7 +756,7 @@ const SidebarInner = ({
                       boxShadow: "none",
                     }
                   : {
-                      backgroundColor: "#0d9488",
+                      backgroundColor: "#1d252c",
                       border: "none",
                       color: "white",
                       boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
@@ -767,7 +765,7 @@ const SidebarInner = ({
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "scale(1.05)";
                 if (!showSideBar) {
-                  e.currentTarget.style.backgroundColor = "#0f766e";
+                  e.currentTarget.style.backgroundColor = "#2e3a45";
                 } else {
                   e.currentTarget.style.backgroundColor = "#e0e0e0";
                 }
@@ -775,7 +773,7 @@ const SidebarInner = ({
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "scale(1)";
                 if (!showSideBar) {
-                  e.currentTarget.style.backgroundColor = "#0d9488";
+                  e.currentTarget.style.backgroundColor = "#1d252c";
                 } else {
                   e.currentTarget.style.backgroundColor = isFirstSidebarPin
                     ? "orange"
@@ -801,7 +799,7 @@ const SidebarInner = ({
               right: "12px",
               width: "32px",
               height: "32px",
-              backgroundColor: "#0d9488",
+              backgroundColor: "#1d252c",
               border: "none",
               borderRadius: "6px",
               cursor: "pointer",
@@ -816,11 +814,11 @@ const SidebarInner = ({
               zIndex: 101,
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#0f766e";
+              e.currentTarget.style.backgroundColor = "#2e3a45";
               e.currentTarget.style.transform = "scale(1.05)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#0f766e";
+              e.currentTarget.style.backgroundColor = "#1d252c";
               e.currentTarget.style.transform = "scale(1)";
             }}
             title={showSideBar ? "Collapse sidebar" : "Expand sidebar"}
@@ -1011,7 +1009,7 @@ const SidebarInner = ({
                 right: "16px",
                 width: "32px",
                 height: "32px",
-                backgroundColor: "#0d9488",
+                backgroundColor: "#1d252c",
                 border: "none",
                 borderRadius: "6px",
                 cursor: "pointer",
@@ -1026,11 +1024,11 @@ const SidebarInner = ({
                 zIndex: 101,
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#0f766e";
+                e.currentTarget.style.backgroundColor = "#2e3a45";
                 e.currentTarget.style.transform = "scale(1.05)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#0f766e";
+                e.currentTarget.style.backgroundColor = "#1d252c";
                 e.currentTarget.style.transform = "scale(1)";
               }}
               title={
