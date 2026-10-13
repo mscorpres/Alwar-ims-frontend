@@ -148,10 +148,21 @@ button:disabled {
   cursor: auto;
 }
 
+
+:root {
+  --btn-bg: #1d252c;
+  --btn-bg-hover: #2e3a45;
+  --btn-bg-active: #12171c;
+}
 .ant-btn-primary {
   color: #fff !important;
-  background-color: #0d9489 !important;
-  border-color: #0d9489 !important;
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-bg) !important;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.05s ease !important;
   font-weight: 700 !important;
   letter-spacing: 0.075rem !important;
   border-radius: 0 !important;
@@ -201,25 +212,42 @@ button:disabled {
 .ant-btn:focus {
   box-shadow: none !important;
 }
-/* Button hover/focus/active state - change from #0d9489 to #bde649 */
-.ant-btn-primary:hover,
-.ant-btn-primary:focus,
-.ant-btn-primary:active {
-  background-color: #0d9489cb !important;
-  border-color: #0d9489cd !important;
+/* Button hover/focus/active state */
+.ant-btn-primary:not(:disabled):hover,
+.ant-btn-primary:not(:disabled):focus-visible {
+  background-color: var(--btn-bg-hover) !important;
+  border-color: var(--btn-bg-hover) !important;
   color: #fff !important;
+  box-shadow: 0 4px 12px -4px rgba(29, 37, 44, 0.55) !important;
+}
+.ant-btn-primary:not(:disabled):active {
+  background-color: var(--btn-bg-active) !important;
+  border-color: var(--btn-bg-active) !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  transform: translateY(1px);
+}
+.ant-btn-primary:disabled {
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-bg) !important;
+  color: #fff !important;
+  opacity: 0.45;
 }
 /* Reset button styling */
 .reset-button {
-  background-color: #0d9489 !important;
-  border-color: #0d9489 !important;
+  background-color: var(--btn-bg) !important;
+  border-color: var(--btn-bg) !important;
   color: #fff !important;
 }
 .reset-button:hover,
-.reset-button:focus,
+.reset-button:focus-visible {
+  background-color: var(--btn-bg-hover) !important;
+  border-color: var(--btn-bg-hover) !important;
+  color: #fff !important;
+}
 .reset-button:active {
-  background-color: #0d9489cb !important;
-  border-color: #0d9489cd !important;
+  background-color: var(--btn-bg-active) !important;
+  border-color: var(--btn-bg-active) !important;
   color: #fff !important;
 }
 

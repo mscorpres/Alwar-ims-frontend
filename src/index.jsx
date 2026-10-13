@@ -7,7 +7,6 @@ import { Provider } from "react-redux";
 import { Store } from "./Features/Store";
 import "./index.css";
 import { ConfigProvider, Form } from "antd";
-import { customColor } from "./utils/customColor";
 import { normalizeFormRules } from "./utils/general";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -33,9 +32,9 @@ const theme = {
   components: {
     Button: {
       colorText: "#fff",
-      colorPrimary: customColor.btnColor,
-      colorPrimaryHover: "#0d9489cd",
-      colorPrimaryActive: "#0d9489",
+      colorPrimary: "#1d252c",
+      colorPrimaryHover: "#2e3a45",
+      colorPrimaryActive: "#12171c",
       primaryColor: "#fff",
       // defaultBg: "",
       defaultColor: "#000",

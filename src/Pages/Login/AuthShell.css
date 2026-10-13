@@ -1,7 +1,7 @@
 
 .auth-shell {
-  --auth-brand: #203624;
-  --auth-brand-2: #0d4644;
+  --auth-brand: #1d252c;
+  --auth-brand-2: #2b3640;
   --auth-accent: #0d9489;
   --auth-accent-soft: #e6f6f4;
   --auth-text: #1f2a24;
@@ -455,4 +455,11 @@
     height: 46px;
     font-size: 18px;
   }
+}
+
+.auth-shell .ant-btn-primary {
+  height: 46px;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.2px !important;
 }
