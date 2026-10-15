@@ -81,7 +81,7 @@ const theme = {
       margin: 4,
     },
     Tooltip: {
-      colorBgSpotlight: "#0d9489",
+      colorBgSpotlight: "#1d252c",
       colorTextLightSolid: "#fff",
     },
     Card: {

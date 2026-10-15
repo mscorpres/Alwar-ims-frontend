@@ -253,7 +253,7 @@ button:disabled {
 
 /* Tooltip styling */
 .ant-tooltip .ant-tooltip-inner {
-  background-color: #0d9489 !important;
+  background-color: var(--btn-bg) !important;
   color: #fff !important;
   text-decoration: none !important;
 }
@@ -262,7 +262,7 @@ button:disabled {
   text-decoration: none !important;
 }
 .ant-tooltip .ant-tooltip-arrow::before {
-  background-color: #0d9489 !important;
+  background-color: var(--btn-bg) !important;
 }
 /* Tab text bold */
 .ant-tabs-tab-btn {
