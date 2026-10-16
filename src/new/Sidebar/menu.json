@@ -143,6 +143,20 @@
                 "path": "/tally/vendor-bill-posting/vb-7",
                 "isShown": true
               },
+                {
+                "key": "D314566",
+                "label": "VBT8",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-8",
+                "isShown": true
+              },
+              {
+                "key": "D3165677",
+                "label": "VBT9",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-9",
+                "isShown": true
+              },
               {
                 "key": "D32",
                 "label": "VBT Records",
@@ -579,7 +593,13 @@
                 "path": "/masters/cost-center",
                 "isShown": true
               },
-          
+              {
+                "key": "B123",
+                "label": "Stock Control",
+                "icon": "ExtensionIcon",
+                "path": "/stockControl",
+                "isShown": true
+              },
               {
                 "key": "products",
                 "label": "Products",
@@ -709,7 +729,7 @@
                 "icon": "BusinessIcon",
                 "isHeading": true,
                 "children": [
-                   {
+                  {
                     "key": "B191",
                     "label": "Add Vendor",
                     "icon": "BusinessIcon",
@@ -723,7 +743,6 @@
                     "path": "/vendor",
                     "isShown": true
                   }
-                 
                 ]
               },
               {
@@ -785,8 +804,6 @@
                 "path": "/procurement/completed",
                 "isShown": true
               }
-
-          
             ]
           },
           {
@@ -969,17 +986,10 @@
                 "isHeading": true,
                 "children": [
                   {
-                    "key": "B36",
-                    "label": "Branch Transfer Challan",
+                    "key": "B363123",
+                    "label": "Challan Request",
                     "icon": "SwapHorizIcon",
-                    "path": "/warehouse/branch-transfer/challan",
-                    "isShown": true
-                  },
-                  {
-                    "key": "B361",
-                    "label": "Branch Transfer View",
-                    "icon": "SwapHorizIcon",
-                    "path": "/warehouse/branch-transfer/view",
+                    "path": "/warehouse/branch-transfer/challan-request",
                     "isShown": true
                   }
                 ]
@@ -1357,7 +1367,43 @@
               }
             ]
           },
-       
+          {
+            "key": "C5",
+            "label": "Sales Order",
+            "icon": "TbReportAnalytics",
+            "isHeading": true,
+
+            "children": [
+              {
+                "key": "C52",
+                "label": "Create order",
+                "icon": "AddIcon",
+                "path": "/sales-order/create",
+                "isShown": true
+              },
+              {
+                "key": "E51",
+                "label": "Register",
+                "icon": "ListIcon",
+                "path": "/sales-order/register",
+                "isShown": true
+              },
+              {
+                "key": "C54",
+                "label": "Shipment",
+                "icon": "LocalShippingIcon",
+                "path": "/sales-order/shipments",
+                "isShown": true
+              },
+              {
+                "key": "C53",
+                "label": "Challan",
+                "icon": "ReceiptIcon",
+                "path": "/sales-order/challan",
+                "isShown": true
+              }
+            ]
+          },
           {
             "key": "B4",
             "label": "Print",
@@ -1386,8 +1432,14 @@
                     "isShown": true
                   }
                 ]
+              },
+              {
+                "key": "B43",
+                "label": "E-Way Bill Report",
+                "icon": "DescriptionIcon",
+                "path": "/warehouse/eway-bill/report",
+                "isShown": true
               }
-              
             ]
           },
           {
@@ -1417,13 +1469,14 @@
                     "path": "/reports/transaction-out",
                     "isShown": true
                   },
-                     {
+                  {
                     "key": "B412432",
                     "label": "View Document",
                     "icon": "OutputIcon",
                     "path": "/reports/upload-document/view",
                     "isShown": true
-                  }, {
+                  },
+                  {
                     "key": "B412433",
                     "label": "Consumption Report",
                     "icon": "OutputIcon",
@@ -1835,6 +1888,13 @@
                 "icon": "MdAccountBox",
                 "path": "/production-ims",
                 "isShown": true
+              },
+              {
+                "key": "D5",
+                "label": "Physical Stock",
+                "icon": "MdAccountBox",
+                "path": "/production/physical-stock/create",
+                "isShown": true
               }
             ]
           },
@@ -1989,7 +2049,6 @@
           }
         ]
       },
-     
 
       {
         "key": "/invoice/create",
@@ -2028,43 +2087,6 @@
                 "label": "Final Invoices",
                 "icon": "UnorderedListOutlined",
                 "path": "/final-invoices",
-                "isShown": true
-              }
-            ]
-          },
-             {
-            "key": "C5",
-            "label": "Sales Order",
-            "icon": "TbReportAnalytics",
-            "isHeading": true,
-
-            "children": [
-              {
-                "key": "C52",
-                "label": "Create order",
-                "icon": "AddIcon",
-                "path": "/sales-order/create",
-                "isShown": true
-              },
-              {
-                "key": "E51",
-                "label": "Register",
-                "icon": "ListIcon",
-                "path": "/sales-order/register",
-                "isShown": true
-              },
-              {
-                "key": "C54",
-                "label": "Shipment",
-                "icon": "LocalShippingIcon",
-                "path": "/sales-order/shipments",
-                "isShown": true
-              },
-              {
-                "key": "C53",
-                "label": "Challan",
-                "icon": "ReceiptIcon",
-                "path": "/sales-order/challan",
                 "isShown": true
               }
             ]
