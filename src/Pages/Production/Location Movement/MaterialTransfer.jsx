@@ -227,9 +227,6 @@ function MaterialTransfer({ type }) {
     (rows || []).some(
       (r) =>
         !r.componentName ||
-        !r.qty ||
-        Number(r.qty) <= 0 ||
-        !r.comment ||
         !r.restDetail?.avr_rate,
     );
 
@@ -546,7 +543,7 @@ function MaterialTransfer({ type }) {
                             </span>
                           )}
                         </td>
-                        <td style={{ width: "20vw" }}>
+                        <td style={{ width: "10vw" }}>
                           <MyAsyncSelect
                             loadOptions={getComponent}
                             optionsState={asyncOptions}
@@ -600,7 +597,7 @@ function MaterialTransfer({ type }) {
                             attr="required | Rate not available"
                             value={r?.restDetail?.avr_rate}
                             showValidation={isValid}
-                            treatZeroAsEmpty
+                            
                           >
                             <Input disabled value={r?.restDetail?.avr_rate} />
                           </Field>
