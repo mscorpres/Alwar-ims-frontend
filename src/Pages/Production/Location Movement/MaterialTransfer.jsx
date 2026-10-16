@@ -344,7 +344,7 @@ function MaterialTransfer({ type }) {
   return (
     <div style={{ height: "calc(100vh - 160px)", padding: 10 }}>
       <Row gutter={10}>
-        <Col span={8}>
+        <Col span={6}>
           <Card
             size="small"
             style={{ height: "calc(100vh - 190px)", overflowY: "auto" }}
@@ -487,7 +487,7 @@ function MaterialTransfer({ type }) {
             )}
           </Card>
         </Col>
-        <Col span={16} style={{ height: "50vh" }}>
+        <Col span={18} style={{ height: "50vh" }}>
           <div
             style={{ marginTop: "10px", border: "1px solid #ccc", padding: 0 }}
           >
