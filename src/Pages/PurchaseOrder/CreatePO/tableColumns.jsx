@@ -151,6 +151,22 @@ export const itemDescriptionCell = ({ row }, inputHandler) => (
     placeholder="Enter Remark"
   />
 );
+export const bomQtyCell = ({ row }, inputHandler) => (
+  <Input
+    value={row.po_bom_qty ?? ""}
+    onKeyDown={(e) => {
+      if (e.key === " ") e.preventDefault();
+    }}
+    onChange={(e) =>
+      inputHandler(
+        "po_bom_qty",
+        String(e.target.value ?? "").replaceAll(/\s/g, ""),
+        row.id,
+      )
+    }
+    placeholder="BOM qty"
+  />
+);
 
 // Inside tableColumns.js or inline below
 export const internalRemarkCell = ({ row }, inputHandler) => (
