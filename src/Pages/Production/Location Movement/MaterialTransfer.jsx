@@ -61,9 +61,7 @@ const SectionTitle = ({ icon, title }) => (
         <span style={{ marginRight: 6 }}>{icon}</span>
         {title}
       </Typography.Text>
-    
     </div>
-  
   </div>
 );
 
@@ -224,11 +222,7 @@ function MaterialTransfer({ type }) {
   };
 
   const hasIncompleteRow = (rows) =>
-    (rows || []).some(
-      (r) =>
-        !r.componentName ||
-        !r.restDetail?.avr_rate,
-    );
+    (rows || []).some((r) => !r.componentName );
 
   const submitHandler = async () => {
     // validations
@@ -250,7 +244,7 @@ function MaterialTransfer({ type }) {
     const tolocations = rows.map(() => allData.dropLoc);
     const qtys = rows.map((r) => r.qty);
     const comments = rows.map((r) => r.comment || "");
-    const rates = rows.map((r) => r.restDetail?.avr_rate || "");
+    const rates = rows.map((r) => r.restDetail?.avr_rate || "0");
 
     setLoading(true);
     const response = await imsAxios.post(
@@ -352,7 +346,6 @@ function MaterialTransfer({ type }) {
               body: { display: "flex", flexDirection: "column", gap: 4 },
             }}
           >
-        
             <SectionTitle
               icon={<EnvironmentOutlined />}
               title="Pick Location"
@@ -382,7 +375,10 @@ function MaterialTransfer({ type }) {
             </div>
 
             <Divider style={{ margin: "12px 0 8px" }} />
-            <SectionTitle icon={<EnvironmentOutlined />} title="Drop Location" />
+            <SectionTitle
+              icon={<EnvironmentOutlined />}
+              title="Drop Location"
+            />
             <FieldLabel required>Location</FieldLabel>
             <MySelect
               options={locRejDetail}
@@ -413,7 +409,6 @@ function MaterialTransfer({ type }) {
                 <SectionTitle
                   icon={<ProjectOutlined />}
                   title="Project & PPR"
-                
                 />
                 <FieldLabel>Project</FieldLabel>
                 <MyAsyncSelect
@@ -601,7 +596,7 @@ function MaterialTransfer({ type }) {
                           >
                             <Input disabled value={r?.restDetail?.avr_rate} />
                           </Field> */}
-                               <paragraph>
+                          <paragraph>
                             {r?.restDetail?.avr_rate
                               ? `${r?.restDetail?.avr_rate}`
                               : "0"}
