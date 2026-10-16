@@ -592,15 +592,20 @@ function MaterialTransfer({ type }) {
                             <Input type="number" />
                           </Field>
                         </td>
-                        <td style={{ width: "14vw" }}>
-                          <Field
+                        <td style={{ textAlign: "center", width: "14vw" }}>
+                          {/* <Field
                             attr="required | Rate not available"
                             value={r?.restDetail?.avr_rate}
                             showValidation={isValid}
                             
                           >
                             <Input disabled value={r?.restDetail?.avr_rate} />
-                          </Field>
+                          </Field> */}
+                               <paragraph>
+                            {r?.restDetail?.avr_rate
+                              ? `${r?.restDetail?.avr_rate}`
+                              : "0"}
+                          </paragraph>
                         </td>
                         <td style={{ width: "24vw" }}>
                           <Field
