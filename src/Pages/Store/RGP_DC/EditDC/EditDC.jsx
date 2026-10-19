@@ -24,7 +24,12 @@ import { getVendorOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
 import Field from "../../../../Components/Field.jsx";
 
-export default function EditDC({ updatedDCId, setUpdateDCId }) {
+export default function EditDC({
+  updatedDCId,
+  setUpdateDCId,
+  isReturnDC,
+  setIsReturnDC,
+}) {
   const [newGatePass, setNewGatePass] = useState({
     passType: "R",
     vendorName: "",
@@ -45,6 +50,7 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
     billinAddress: "",
     billingPan: "",
     billingGSTIN: "",
+    challanNumber: "",
   });
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [billToOptions, setBillTopOptions] = useState([]);
@@ -178,7 +184,8 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
       !newGatePass.vendorAddress?.trim() ||
       !newGatePass.billingId ||
       !newGatePass.billinAddress?.trim() ||
-      !newGatePass.vehicleNumber?.trim();
+      !newGatePass.vehicleNumber?.trim() ||
+      (isReturnDC && !newGatePass.challanNumber?.trim());
 
     if (hasEmptyField) {
       setIsValid(true);
@@ -228,6 +235,7 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
       billingPan: validatedData.warehouse.warehouse_panno,
       billingGSTIN: validatedData.warehouse.warehouse_gst_in,
       components: validatedData.material,
+      challanNumber: "",
     };
     setNewGatePass(obj);
     setResetData(obj);
@@ -244,9 +252,12 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
 
   return (
     <Drawer
-      onClose={() => setUpdateDCId(null)}
+      onClose={() => {
+        setUpdateDCId(null);
+        setIsReturnDC?.(false);
+      }}
       open={updatedDCId}
-      title={`Edit DC: ${updatedDCId}`}
+      title={`${isReturnDC ? "Return" : "Edit"} DC: ${updatedDCId}`}
       width="100vw"
     >
       {!skeletonLoading && (
@@ -769,6 +780,41 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
                             </Form.Item>
                           </Form>
                         </Col>
+                        {isReturnDC && (
+                          <Col span={6}>
+                            <Form size="small" layout="vertical">
+                              <Form.Item
+                                label={
+                                  <span
+                                    style={{
+                                      fontSize:
+                                        window.innerWidth < 1600 && "0.7rem",
+                                    }}
+                                  >
+                                    Challan Number
+                                  </span>
+                                }
+                              >
+                                <Field
+                                  attr="required | Please enter a Challan Number"
+                                  value={newGatePass.challanNumber}
+                                  showValidation={isValid}
+                                >
+                                  <Input
+                                    size="default"
+                                    onChange={(e) =>
+                                      inputHandler(
+                                        "challanNumber",
+                                        e.target.value
+                                      )
+                                    }
+                                    value={newGatePass.challanNumber}
+                                  />
+                                </Field>
+                              </Form.Item>
+                            </Form>
+                          </Col>
+                        )}
                       </Row>
                       <Row>
                         <Col span={18}>
@@ -960,6 +1006,8 @@ export default function EditDC({ updatedDCId, setUpdateDCId }) {
                   setNewGatePass={setNewGatePass}
                   resetFunction={resetFunction}
                   setPageLoading={setPageLoading}
+                  isReturnDC={isReturnDC}
+                  setIsReturnDC={setIsReturnDC}
                 />
               </div>
             </Tabs.TabPane>

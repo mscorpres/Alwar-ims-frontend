@@ -15,11 +15,11 @@ function EditSheet({ editingSheet, setEditingSheet }) {
     const response = await imsAxios.get("/tally/reports/editBalancesheet");
     setLoading(false);
     let { data } = response;
-    if (data) {
+   
       if (response.success) {
-        setEditingData(data.data);
+        setEditingData(data);
       }
-    }
+
   };
   const getSubGroup = async (search) => {
     setLoading("select");

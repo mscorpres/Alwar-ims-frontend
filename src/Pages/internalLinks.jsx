@@ -137,6 +137,18 @@ const links = [
       routePath: "/tally/vendor-bill-posting/vb-7",
       key: 6,
     },
+        {
+      routeName: "VBT8",
+      routePath: "/tally/vendor-bill-posting/vb-8",
+      key: 8,
+      placeholder: "Sales - Return",
+    },
+    {
+      routeName: "VBT9",
+      routePath: "/tally/vendor-bill-posting/vb-9",
+      key: 9,
+      placeholder: "FG - Purchase",
+    },
   ],
   // JV links
   [
@@ -617,6 +629,11 @@ const links = [
       routePath: "/warehouse/dc/manage",
       key: "1",
     },
+    {
+      routeName: "Return DC",
+      routePath: "/warehouse/dc/return",
+      key: "2",
+    },
   ],
   // gatepass links
   [
@@ -665,7 +682,7 @@ const links = [
   [
     {
       routeName: "SF Part Code Conversion",
-      routePath: "/warehouse/sf-part-code-conversion",
+      routePath: "/warehouse/sf-part-code-conversion"
     },
 
     // to be added
@@ -890,6 +907,11 @@ const links = [
 
       placeholder: "FG Register Report",
     },
+    {
+      routeName: "R39",
+      routePath: "/r39",
+      placeholder: "Production PPR Report (by project / BOM)",
+    },
   ],
   // MIN label links
 
@@ -975,6 +997,11 @@ const links = [
     {
       routeName: "Completed",
       routePath: "/production-and-plan/completed",
+    },
+       {
+      routeName: "PPR Qty Requests",
+      routePath: "/production-and-plan/request-qty",
+      placeholder: "Approve / Reject PPR qty requests",
     },
   ],
   // Material Requisition links

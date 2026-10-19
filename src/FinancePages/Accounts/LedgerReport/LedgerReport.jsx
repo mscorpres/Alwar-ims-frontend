@@ -37,6 +37,7 @@ export default function LedgerReport() {
   const [summary, setSummary] = useState({});
   // const [searchLedger, setSearchLedger] = useState(null);
   const [recoRows, setRecoRows] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const [filterForm] = Form.useForm();
   const dispatch = useDispatch();
@@ -62,13 +63,20 @@ export default function LedgerReport() {
     }
   };
   const handleFetchLedgerReport = async () => {
-    const values = await filterForm.validateFields();
+    let values;
+    try {
+      values = await filterForm.validateFields();
+    } catch (error) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     let payload = {
       ledger: values?.vendor.value,
       date: values?.date,
     };
     const response = await executeFun(() => getLedgerReport(payload), "fetch");
-    handleFetchRecoReport();
+    handleFetchRecoReport(values);
     let { data } = response;
     if (response.success) {
       if (response.success) {
@@ -117,8 +125,16 @@ export default function LedgerReport() {
     // }
   };
 
-  const handleFetchRecoReport = async () => {
-    const values = await filterForm.validateFields();
+  const handleFetchRecoReport = async (values) => {
+    if (!values) {
+      try {
+        values = await filterForm.validateFields();
+      } catch (error) {
+        setIsValid(true);
+        return;
+      }
+      setIsValid(false);
+    }
     const response = await executeFun(
       () => getRecoReport(values.vendor.value),
       "fetch"
@@ -192,9 +208,14 @@ export default function LedgerReport() {
     },
   ];
   const downloadFun = async () => {
-
-
-    const values = await filterForm.validateFields();
+    let values;
+    try {
+      values = await filterForm.validateFields();
+    } catch (error) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     let csvData = rows.map((row) => {
       return {
         "Ref Date": row.referenceDate,
@@ -270,6 +291,8 @@ export default function LedgerReport() {
                   onChange={(value) =>
                     filterForm.setFieldValue("vendor", value)
                   }
+                  showError={isValid}
+                  message="Please select a ledger"
                 />
               </Form.Item>
               <Form.Item name="date" label="Time Period" rules={rules.date}>
@@ -277,6 +300,8 @@ export default function LedgerReport() {
                   setDateRange={(value) =>
                     filterForm.setFieldValue("date", value)
                   }
+                  showError={isValid}
+                  message="Please select a time period"
                 />
               </Form.Item>
               <Row justify="end">
@@ -455,13 +480,13 @@ const rules = {
   vendor: [
     {
       required: true,
-      message: "Please select a ledger",
+      message: "",
     },
   ],
   date: [
     {
       required: true,
-      message: "Please select a time period",
+      message: "",
     },
   ],
 };

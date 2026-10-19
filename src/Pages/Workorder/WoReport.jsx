@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Col, Row, Space } from "antd";
 import { Box, IconButton } from "@mui/material";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
@@ -23,14 +23,13 @@ const challanColumns = [
 
 const WoReport = () => {
   const { showToast } = useToast();
-  const [wise, setWise] = useState(wiseOptions[0].value);
   const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const [disstate, setdisstate] = useState(false);
   const [woreportdata, setworeportdata] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const toggleExpand = useCallback((id) => {
     setExpandedRowKeys((prev) =>
@@ -38,16 +37,6 @@ const WoReport = () => {
     );
   }, []);
 
-  const handleClientOptions = async (search) => {
-    try {
-      setLoading("select");
-      const arr = await getClientOptions(search);
-      setAsyncOptions(arr);
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const columns = useMemo(
     () => [
@@ -123,6 +112,11 @@ const WoReport = () => {
   );
 
   const getRows = async () => {
+    if(!searchInput) {
+      setIsValid(true);
+      return
+    }
+    setIsValid(false);
     try {
       setLoading("fetch");
       const response = await imsAxios.post("/wo_challan/fetch_DC_report", {
@@ -259,11 +253,7 @@ const exportToExcel = async () => {
   }
 };
 
-  useEffect(() => {
-    if (wise !== wiseOptions[1].value) {
-      setSearchInput("");
-    }
-  }, [wise]);
+
 
   return (
     <div style={{ height: "calc(100vh - 180px)", margin: "10px" }}>
@@ -272,7 +262,7 @@ const exportToExcel = async () => {
           <Space>
             <div style={{ paddingBottom: "10px" }}>
               <Space>
-                <MyDatePicker setDateRange={setSearchInput} />
+                <MyDatePicker setDateRange={setSearchInput} showError={isValid}  value={searchInput} />
 
                 <MyButton
                   variant="search"
@@ -307,19 +297,19 @@ const exportToExcel = async () => {
   );
 };
 
-const wiseOptions = [
-  {
-    text: "Client Wise",
-    value: "clientwise",
-  },
-  {
-    text: "Date Wise",
-    value: "datewise",
-  },
-  {
-    text: "Work Order Wise",
-    value: "wo_sfg_wise",
-  },
-];
+// const wiseOptions = [
+//   {
+//     text: "Client Wise",
+//     value: "clientwise",
+//   },
+//   {
+//     text: "Date Wise",
+//     value: "datewise",
+//   },
+//   {
+//     text: "Work Order Wise",
+//     value: "wo_sfg_wise",
+//   },
+// ];
 
 export default WoReport;
