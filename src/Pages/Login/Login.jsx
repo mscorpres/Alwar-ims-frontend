@@ -82,7 +82,7 @@ const Login = () => {
       const res = await executeFun(
         () =>
           imsAxios.post("/auth/signin", {
-            username: username,
+            username: username.trim(),
             password: password,
           }),
         "submit",
@@ -209,7 +209,6 @@ const Login = () => {
         setGoogleLoginLoading(false);
       }
     } catch (error) {
-      console.log(error, "data===================error");
       showToast(error?.message || "Google login failed. Please try again.", "error");
       setGoogleLoginLoading(false);
     }
