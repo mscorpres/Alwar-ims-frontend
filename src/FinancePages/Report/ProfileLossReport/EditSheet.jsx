@@ -14,11 +14,8 @@ function EditSheet({ editingSheet, setEditingSheet }) {
     setLoading("fetch");
     const response = await imsAxios.get("/tally/reports/editPl");
     setLoading(false);
-    let { data } = response;
-    if (data) {
-      if (response.success) {
-        setEditingData(data.data);
-      }
+    if (response.success && Array.isArray(response.data)) {
+      setEditingData(response.data);
     }
   };
   const getSubGroup = async (search) => {
@@ -110,7 +107,7 @@ function EditSheet({ editingSheet, setEditingSheet }) {
                   </Col>
                   <Col span={2}>
                     <Input
-                      value={group.note}
+                      value={group.note ?? ""}
                       onChange={(e) =>
                         inputHandler(
                           row.code,

@@ -13,7 +13,6 @@ import {
   useGridSelector,
 } from "@mui/x-data-grid";
 import Pagination from "@mui/material/Pagination";
-
 // Enhanced Styled Components
 const StyledGridOverlay = styled("div")(({ theme }) => ({
   display: "flex",
@@ -231,7 +230,7 @@ function CustomNoRowsOverlay() {
 
 export default function MyDataTable(props) {
   // Omit 'rules' so it's never passed to DataGrid (Form.Item expects array; prevents rules.some error when used inside Form)
-  const {  components: userComponents = {}, ...dataTableProps } =
+  const { components: userComponents = {}, ...dataTableProps } =
     props;
 
   // Ensure every column has a unique `field` so DataGrid gets valid keys (fixes "unique key" warning)
@@ -331,7 +330,7 @@ export default function MyDataTable(props) {
               marginTop: (theme) => theme.spacing(0.5),
             },
           },
-          "& *": {
+          "& *:not(.allow-radius)": {
             borderRadius: "0 !important",
           },
           "& .MuiDataGrid-columnHeaders": {

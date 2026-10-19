@@ -10,6 +10,7 @@ import { EyeFilled, EditFilled } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import CashReceiptModal from "./model/CashReceiptModal";
 import CashReceiptEdit from "./model/CashReceiptEdit";
+import Field from "../../../Components/Field.jsx";
 
 function CashReceiptReport() {
   const { showToast } = useToast();
@@ -29,6 +30,7 @@ function CashReceiptReport() {
     code: "",
     pick: "",
   });
+  const [isValid, setIsValid] = useState(false);
 
   const getSelectOption = [
     { label: "Date Wise", value: "date_wise" },
@@ -41,7 +43,7 @@ function CashReceiptReport() {
     if (e?.length > 1) {
       setSelectLoading(true);
       const response = await imsAxios.post("/tally/ledger/ledger_options", {
-        seacrh: e,
+        search: e,
       });
       setSelectLoading(false);
       let arr = [];
@@ -54,6 +56,11 @@ function CashReceiptReport() {
 
   const fetchData = async (e) => {
     if (e == "date_wise") {
+      if (!datee) {
+        setIsValid(true);
+        return;
+      }
+      setIsValid(false);
       setDateData([]);
       setLoading(true);
       const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
@@ -75,6 +82,11 @@ function CashReceiptReport() {
         setLoading(false);
       }
     } else if (e == "eff_wise") {
+      if (!datee) {
+        setIsValid(true);
+        return;
+      }
+      setIsValid(false);
       setEffective([]);
       setLoading(true);
       const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
@@ -96,6 +108,11 @@ function CashReceiptReport() {
         setLoading(false);
       }
     } else if (e == "key_wise") {
+      if (!selectedValue?.code) {
+        setIsValid(true);
+        return;
+      }
+      setIsValid(false);
       setCodeData([]);
       setLoading(true);
       const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
@@ -117,11 +134,16 @@ function CashReceiptReport() {
         setLoading(false);
       }
     } else if (e == "ledger_wise") {
+      if (!selectedValue?.pick) {
+        setIsValid(true);
+        return;
+      }
+      setIsValid(false);
       setLedgerData([]);
       setLoading(true);
       const response = await imsAxios.post("/tally/cash/cashreceipt_list", {
         wise: selectedValue.selType,
-        data: selectedValue?.pick,
+        data: selectedValue?.pick?.value ?? selectedValue?.pick,
       });
       if (response.success) {
         let arr = response?.data?.map((row) => {
@@ -207,20 +229,27 @@ function CashReceiptReport() {
                 <Select
                   style={{ width: "100%" }}
                   options={getSelectOption}
-                  value={selectedValue?.selType.value}
+                  value={selectedValue?.selType}
                   placeholder="Select option"
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsValid(false);
                     setSelectedValue((selectedValue) => {
                       return {
                         ...selectedValue,
                         selType: e,
                       };
-                    })
-                  }
+                    });
+                  }}
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker setDateRange={setDatee} size="default" />
+                <MyDatePicker
+                  setDateRange={setDatee}
+                  size="default"
+                  value={datee}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               </Col>
               <Col span={1}>
                 <Button
@@ -238,20 +267,27 @@ function CashReceiptReport() {
                 <Select
                   style={{ width: "100%" }}
                   options={getSelectOption}
-                  value={selectedValue?.selType.value}
+                  value={selectedValue?.selType}
                   placeholder="Select option"
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsValid(false);
                     setSelectedValue((selectedValue) => {
                       return {
                         ...selectedValue,
                         selType: e,
                       };
-                    })
-                  }
+                    });
+                  }}
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker setDateRange={setDatee} size="default" />
+                <MyDatePicker
+                  setDateRange={setDatee}
+                  size="default"
+                  value={datee}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               </Col>
               <Col span={1}>
                 <Button
@@ -269,22 +305,24 @@ function CashReceiptReport() {
                 <Select
                   style={{ width: "100%" }}
                   options={getSelectOption}
-                  value={selectedValue?.selType.value}
+                  value={selectedValue?.selType}
                   placeholder="Select option"
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsValid(false);
                     setSelectedValue((selectedValue) => {
                       return {
                         ...selectedValue,
                         selType: e,
                       };
-                    })
-                  }
+                    });
+                  }}
                 />
               </Col>
               <Col span={5}>
-                <Input
-                  placeholder="Code"
+                <Field
+                  attr="required | Code is required"
                   value={selectedValue?.code}
+                  showValidation={isValid}
                   onChange={(e) =>
                     setSelectedValue((selectedValue) => {
                       return {
@@ -293,7 +331,9 @@ function CashReceiptReport() {
                       };
                     })
                   }
-                />
+                >
+                  <Input placeholder="Code" />
+                </Field>
               </Col>
               <Col span={1}>
                 <Button
@@ -313,14 +353,15 @@ function CashReceiptReport() {
                   options={getSelectOption}
                   value={selectedValue?.selType}
                   placeholder="Select option"
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsValid(false);
                     setSelectedValue((selectedValue) => {
                       return {
                         ...selectedValue,
                         selType: e,
                       };
-                    })
-                  }
+                    });
+                  }}
                 />
               </Col>
               <Col span={5}>
@@ -339,6 +380,9 @@ function CashReceiptReport() {
                       };
                     })
                   }
+                  labelInValue
+                  showError={isValid}
+                  message="Please select a Ledger"
                 />
               </Col>
               <Col span={1}>
@@ -357,20 +401,27 @@ function CashReceiptReport() {
                 <Select
                   style={{ width: "100%" }}
                   options={getSelectOption}
-                  value={selectedValue?.selType.value}
+                  value={selectedValue?.selType}
                   placeholder="Select option"
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    setIsValid(false);
                     setSelectedValue((selectedValue) => {
                       return {
                         ...selectedValue,
                         selType: e,
                       };
-                    })
-                  }
+                    });
+                  }}
                 />
               </Col>
               <Col span={5}>
-                <MyDatePicker setDateRange={setDatee} size="default" />
+                <MyDatePicker
+                  setDateRange={setDatee}
+                  size="default"
+                  value={datee}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               </Col>
               <Col span={1}>
                 <Button

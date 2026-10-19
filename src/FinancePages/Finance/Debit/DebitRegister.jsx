@@ -23,6 +23,7 @@ import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import DebitView from "./DebitView";
 import DebitEdit from "./DebitEdit";
 import MyButton from "../../../Components/MyButton";
+import Field from "../../../Components/Field.jsx";
 
 function DebitRegister() {
   const { showToast } = useToast();
@@ -41,13 +42,19 @@ function DebitRegister() {
   const [editDebit, setEditDebit] = useState(null);
   const [selectLoading, setSelectLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const getRows = async () => {
+    if (!searchTerm || !wise) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setRows([]);
     setLoading("fetch");
     const response = await imsAxios.post("/tally/dv/debitVoucherList", {
       wise: wise,
-      data: searchTerm,
+      data: searchTerm?.value ?? searchTerm,
     });
     setLoading(false);
     if (response.success) {
@@ -249,6 +256,7 @@ function DebitRegister() {
   };
   useEffect(() => {
     setSearchTerm("");
+    setIsValid(false);
   }, [wise]);
   return (
     <div style={{ height: "100%" , padding: 10}}>
@@ -264,17 +272,32 @@ function DebitRegister() {
             </div>
             <div style={{ width: 300 }}>
               {wise === "date_wise" && (
-                <MyDatePicker size="default" setDateRange={setSearchTerm} />
+                <MyDatePicker
+                  size="default"
+                  setDateRange={setSearchTerm}
+                  value={searchTerm}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               )}
               {wise === "eff_wise" && (
-                <MyDatePicker size="default" setDateRange={setSearchTerm} />
+                <MyDatePicker
+                  size="default"
+                  setDateRange={setSearchTerm}
+                  value={searchTerm}
+                  showError={isValid}
+                  message="Please select a date range"
+                />
               )}
               {wise === "code_wise" && (
-                <Input
-                  placeholder="Debit Code"
+                <Field
+                  attr="required | Debit Code is required"
                   value={searchTerm}
+                  showValidation={isValid}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                >
+                  <Input placeholder="Debit Code" />
+                </Field>
               )}
               {wise === "vendor_wise" && (
                 <MyAsyncSelect
@@ -282,22 +305,13 @@ function DebitRegister() {
                   onBlur={() => setAsyncOptions([])}
                   value={searchTerm}
                   onChange={(value) => setSearchTerm(value)}
-                  // defaultOptions
                   loadOptions={getLedgerName}
                   optionsState={asyncOptions}
                   placeholder="Select Ledger..."
+                  labelInValue
+                  showError={isValid}
+                  message="Please select a Ledger"
                 />
-                // <MyAsyncSelect
-                //   selectLoading={selectLoading}
-                //   onBlur={() => setAsyncOptions([])}
-                //   value={selectedLedger}
-                //   onChange={(value) =>
-                //     setSelectedLedger(value)
-                //   }
-                //   loadOptions={getLedgerName}
-                //   optionsState={asyncOptions}
-                //   placeholder="Select Ledger..."
-                // />
               )}
             </div>
             <MyButton

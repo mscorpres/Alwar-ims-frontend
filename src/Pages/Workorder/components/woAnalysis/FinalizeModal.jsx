@@ -36,7 +36,10 @@ const FinalizeModal = ({ showView, setShowView, getRows }) => {
       setDetails(details);
       form.setFieldValue("components", components);
       resetDetails = components;
-    } catch (error) {}
+    } catch (error) {
+      setLoading(false);
+    
+    }
   };
   const validateHandler = async () => {
     const values = await form.validateFields();
@@ -87,7 +90,7 @@ const FinalizeModal = ({ showView, setShowView, getRows }) => {
     >
       {loading === "fetch" && <Loading />}
       <Form layout="vertical" form={form} style={{ height: "100%" }}>
-        <Row gutter={6} style={{ height: "95%", overflow: "hidden" }}>
+        <Row gutter={6} style={{ height: "100%", overflow: "hidden" }}>
           <Col span={4} style={{ height: "100%", overflowY: "scroll" }}>
             <Row gutter={[0, 6]}>
               <WODetailsCard details={details} />
@@ -123,6 +126,7 @@ const FinalizeModal = ({ showView, setShowView, getRows }) => {
               nonListWatchKeys={[]}
               componentRequiredRef={[]}
               form={form}
+              height="100%"
             />
           </Col>
         </Row>
@@ -172,17 +176,4 @@ const componentsItems = () => [
   },
 ];
 
-const rules = {
-  docId: [
-    {
-      required: true,
-      message: "Please enter a doc ID",
-    },
-  ],
-  docDate: [
-    {
-      required: true,
-      message: "Please select document date",
-    },
-  ],
-};
+

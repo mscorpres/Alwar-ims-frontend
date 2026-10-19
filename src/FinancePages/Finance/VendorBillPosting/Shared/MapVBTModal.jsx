@@ -14,6 +14,8 @@ const VBT_OPTIONS = [
   { value: "vbt05", text: "VBT 5" },
   { value: "vbt06", text: "VBT 6" },
   { value: "vbt07", text: "VBT 7" },
+  { value: "vbt08", text: "VBT 8" },
+  { value: "vbt09", text: "VBT 9" },
 ];
 
 const decodeGroupLabel = (label) =>
@@ -86,15 +88,13 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
     const response = await imsAxios.post("/tally/getSubgroup", {
       search: search,
     });
-
+    setGstGlSelectLoading(false);
     if (response.success) {
       setGstGlSearchOptions(
         response.data.map((row) => ({ text: row.label, value: row.id })),
       );
-      setGstGlSelectLoading(false);
     } else {
       setGstGlSearchOptions([]);
-      setGstGlSelectLoading(false);
     }
   };
   const submitGSTGlFunction = async () => {
@@ -104,14 +104,12 @@ export default function MapVBTModal({ mapVBT, setMapVBT }) {
       vbt_module: "gst",
       sub_groups: selGroups,
     });
-
+    setGstSubmitLoading(false);
     if (response.success) {
       showToast(response.message, "success");
-      setGstSubmitLoading(false);
       setMapVBT(null);
     } else {
       showToast(response.message?.msg || response.message, "error");
-      setGstSubmitLoading(false);
     }
   };
   const submitFunction = async () => {
