@@ -927,13 +927,7 @@
                 "icon": "ReturnIcon",
                 "isHeading": true,
                 "children": [
-                  {
-                    "key": "B38",
-                    "label": "FG(s) Return",
-                    "icon": "ReturnIcon",
-                    "path": "/warehouse/fg-return/create",
-                    "isShown": true
-                  },
+                
                   {
                     "key": "B381",
                     "label": "FG(s) Pending",

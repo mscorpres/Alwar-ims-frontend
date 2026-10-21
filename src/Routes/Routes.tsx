@@ -422,10 +422,10 @@ const Routes = [
     path: "/warehouse/fg/pending",
     main: () => <PendingFG />,
   },
-  {
-    path: "/warehouse/fg-return/create",
-    main: () => <CreateFgReturn />,
-  },
+  // {
+  //   path: "/warehouse/fg-return/create",
+  //   main: () => <CreateFgReturn />,
+  // },
   {
     path: "/warehouse/fg-return/pending",
     main: () => <PendingReversal />,
