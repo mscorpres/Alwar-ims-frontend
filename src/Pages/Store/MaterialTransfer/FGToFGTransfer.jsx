@@ -10,7 +10,10 @@ import { useToast } from "../../../hooks/useToast.js";
 import Loading from "../../../Components/Loading.jsx";
 import { Add, Delete } from "@mui/icons-material";
 import Field from "../../../Components/Field.jsx";
+import MySelect from "../../../Components/MySelect.jsx";
 const { TextArea } = Input;
+
+const DROP_LOCATION_REQUIRES_BOM = "1788772282956";
 
 function FGToFGTransfer() {
   const [loading, setLoading] = useState(false);
@@ -31,6 +34,9 @@ function FGToFGTransfer() {
       avrRate: "",
       address: "",
       comment: "",
+      bom: "",
+      bomOptions: [],
+      bomLoading: false,
     },
   ]);
 
@@ -59,6 +65,9 @@ function FGToFGTransfer() {
         avrRate: "",
         address: "",
         comment: "",
+        bom: "",
+        bomOptions: [],
+        bomLoading: false,
       },
       ...prev,
     ]);
@@ -110,6 +119,74 @@ function FGToFGTransfer() {
       );
     } finally {
       setLoadingBranchInfo(false);
+    }
+  };
+
+ 
+
+  const fetchBomForRow = async (rowIndex, sku, locationTo) => {
+    if (locationTo !== DROP_LOCATION_REQUIRES_BOM || !sku) {
+      setRows((prev) => {
+        const updated = [...prev];
+        if (!updated[rowIndex]) return prev;
+        updated[rowIndex] = {
+          ...updated[rowIndex],
+          bomOptions: [],
+          bom: "",
+          bomLoading: false,
+        };
+        return updated;
+      });
+      return;
+    }
+
+    setRows((prev) => {
+      const updated = [...prev];
+      if (!updated[rowIndex]) return prev;
+      updated[rowIndex] = { ...updated[rowIndex], bomLoading: true };
+      return updated;
+    });
+
+    try {
+      const response = await imsAxios.post("/ppr/fetchProductDataByKey", {
+        search: sku,
+      });
+      const { data } = response;
+      const rawBom = data?.data;
+      const bomArr = Array.isArray(rawBom)
+        ? rawBom.map((r) => ({ text: r.text, value: r.id }))
+        : [];
+
+      setRows((prev) => {
+        const updated = [...prev];
+        if (!updated[rowIndex]) return prev;
+        if (
+          updated[rowIndex].component !== sku ||
+          updated[rowIndex].locationTo !== DROP_LOCATION_REQUIRES_BOM
+        ) {
+          updated[rowIndex] = { ...updated[rowIndex], bomLoading: false };
+          return updated;
+        }
+        updated[rowIndex] = {
+          ...updated[rowIndex],
+          bomOptions: bomArr,
+          bom: "",
+          bomLoading: false,
+        };
+        return updated;
+      });
+    } catch {
+      setRows((prev) => {
+        const updated = [...prev];
+        if (!updated[rowIndex]) return prev;
+        updated[rowIndex] = {
+          ...updated[rowIndex],
+          bomOptions: [],
+          bom: "",
+          bomLoading: false,
+        };
+        return updated;
+      });
     }
   };
 
@@ -197,6 +274,24 @@ function FGToFGTransfer() {
       if (row.locationTo === allData.locationFrom) {
         return showToast(`Row ${i + 1}: Both Location Same`, "error");
       }
+      if (row.locationTo === DROP_LOCATION_REQUIRES_BOM) {
+        if (row.bomLoading) {
+          return showToast(
+            `Row ${i + 1}: Please wait for BOM options to load`,
+            "error",
+          );
+        }
+        const opts = row.bomOptions ?? [];
+        if (opts.length === 0) {
+          return showToast(
+            `Row ${i + 1}: No BOM available for this product for the selected drop location`,
+            "error",
+          );
+        }
+        if (!row.bom) {
+          return showToast(`Row ${i + 1}: Please select BOM`, "error");
+        }
+      }
     }
     setIsValid(false);
 
@@ -224,6 +319,7 @@ function FGToFGTransfer() {
           product,
           qty,
           remark,
+          bom: group.map((r) => r.bom),
           rate,
         });
 
@@ -259,6 +355,9 @@ function FGToFGTransfer() {
           avrRate: "",
           address: "",
           comment: "",
+          bom: "",
+          bomOptions: [],
+          bomLoading: false,
         },
       ]);
       setbBanchName("");
@@ -312,6 +411,9 @@ function FGToFGTransfer() {
         avrRate: "",
         address: "",
         comment: "",
+        bom: "",
+        bomOptions: [],
+        bomLoading: false,
       },
     ]);
     setbBanchName("");
@@ -336,41 +438,44 @@ function FGToFGTransfer() {
     });
   }, [allData?.locationFrom]);
 
+    const showBomColumn = rows.some(
+    (r) => r.locationTo === DROP_LOCATION_REQUIRES_BOM
+  );
+  // const tableColSpan = showBomColumn ? 8 : 7;
+
   return (
     <div style={{ height: "95%" }}>
       {(loadingBranchInfo || loadingQtyIndex !== null) && <Loading />}
       <Row gutter={10} style={{ padding: "10px", height: "79vh" }}>
         <Col span={16} style={{ marginBottom: 10 }}>
-
-            <Row gutter={10} >
-              <Col span={4} style={{ marginBottom: "10px", width: "100%" }}>
-                <span>Pick Location</span>
-              </Col>
-              <Col span={6}>
-                <Field
-                  attr="required | Please select a Pick Location"
-                  value={allData.locationFrom}
-                  showValidation={isValid}
-                  onChange={(e) =>
-                    setAllData((allData) => {
-                      return { ...allData, locationFrom: e };
-                    })
-                  }
-                >
-                  <Select
-                    placeholder="Please Select Location"
-                    style={{ width: "100%" }}
-                    options={locData}
-                    loading={loadingLocationFrom}
-                    disabled={loadingLocationFrom}
-                  />
-                </Field>
-              </Col>
-              <Col span={10} >
-                <TextArea rows={1} disabled value={branchName} />
-              </Col>
-            </Row>
-
+          <Row gutter={10}>
+            <Col span={4} style={{ marginBottom: "10px", width: "100%" }}>
+              <span>Pick Location</span>
+            </Col>
+            <Col span={6}>
+              <Field
+                attr="required | Please select a Pick Location"
+                value={allData.locationFrom}
+                showValidation={isValid}
+                onChange={(e) =>
+                  setAllData((allData) => {
+                    return { ...allData, locationFrom: e };
+                  })
+                }
+              >
+                <Select
+                  placeholder="Please Select Location"
+                  style={{ width: "100%" }}
+                  options={locData}
+                  loading={loadingLocationFrom}
+                  disabled={loadingLocationFrom}
+                />
+              </Field>
+            </Col>
+            <Col span={10}>
+              <TextArea rows={1} disabled value={branchName} />
+            </Col>
+          </Row>
         </Col>
 
         <Col span={24}>
@@ -400,9 +505,14 @@ function FGToFGTransfer() {
                       <th className="table-col" style={{ width: "16vw" }}>
                         DROP (+) Loc
                       </th>
-                         <th className="table-col" style={{ width: "16vw" }}>
+                      <th className="table-col" style={{ width: "16vw" }}>
                         DROP (+) Loc details
                       </th>
+                      {showBomColumn && (
+                        <th className="table-col" style={{ width: "16vw" }}>
+                          BOM
+                        </th>
+                      )}
                       <th className="table-col" style={{ width: "12vw" }}>
                         Weighted Average Rate
                       </th>
@@ -457,6 +567,7 @@ function FGToFGTransfer() {
                                   value={row.component}
                                   optionsState={asyncOptions}
                                   onChange={(e) => {
+                                        const locationTo = rows[index]?.locationTo;
                                     if (!allData?.locationFrom) {
                                       showToast(
                                         "Please first select a Pick Location",
@@ -469,10 +580,16 @@ function FGToFGTransfer() {
                                       updated[index] = {
                                         ...updated[index],
                                         component: e,
+                                        bom: "",
+                                        bomOptions: [],
+                                        bomLoading: false,
                                       };
                                       return updated;
                                     });
                                     getQtyFuction(index, e);
+                                     if (locationTo === DROP_LOCATION_REQUIRES_BOM && e) {
+                                  fetchBomForRow(index, e, locationTo);
+                                }
                                   }}
                                 />
                               </Field>
@@ -515,17 +632,7 @@ function FGToFGTransfer() {
                                 attr="required | Please select Drop Location"
                                 value={row.locationTo}
                                 showValidation={isValid}
-                                onChange={(e) => {
-                                  setRows((prev) => {
-                                    const updated = [...prev];
-                                    updated[index] = {
-                                      ...updated[index],
-                                      locationTo: e,
-                                    };
-                                    return updated;
-                                  });
-                                  getLocationName(index, e);
-                                }}
+                              
                               >
                                 <Select
                                   style={{ width: "100%" }}
@@ -533,20 +640,70 @@ function FGToFGTransfer() {
                                   placeholder="Location"
                                   loading={loadingLocationFrom}
                                   disabled={loadingLocationFrom}
+                                    onChange={(e) => {
+                                            const sku = rows[index]?.component;
+                                  setRows((prev) => {
+                                    const updated = [...prev];
+                                    updated[index] = {
+                                      ...updated[index],
+                                      locationTo: e,
+                                      bom: "",
+                                      bomOptions: [],
+                                      bomLoading: false,
+                                    };
+                                    return updated;
+                                  });
+                                  getLocationName(index, e);
+                                   if (e === DROP_LOCATION_REQUIRES_BOM && sku) {
+                                  fetchBomForRow(index, sku, e);
+                                }
+                                }}
                                 />
                               </Field>
                             </td>
-                                   <td  style={{ width: "20vw" }}>
-                                                          <Input
-                                                            disabled
-                                                            value={row.address}
-                                                            placeholder={`Row ${
-                                                              index + 1
-                                                            } - Location Address`}
-                                                            rows={2}
-                                                            style={{ width: "100%" }}
-                                                          />
-                                                        </td>
+                            <td style={{ width: "20vw" }}>
+                              <Input
+                                disabled
+                                value={row.address}
+                                placeholder={`Row ${
+                                  index + 1
+                                } - Location Address`}
+                                rows={2}
+                                style={{ width: "100%" }}
+                              />
+                            </td>
+
+                            {showBomColumn && (
+                              <td style={{ width: "16vw" }}>
+                                {row.locationTo ===
+                                DROP_LOCATION_REQUIRES_BOM ? (
+                                  <MySelect
+                                    placeholder={
+                                      row.component
+                                        ? "Select BOM"
+                                        : "Select product first"
+                                    }
+                                    options={row.bomOptions ?? []}
+                                    selectLoading={row.bomLoading}
+                                    value={row.bom || undefined}
+                                    disabled={!row.component || row.bomLoading}
+                                    showError={isValid && !row.bom}
+                                    message="Please select BOM"
+                                    onChange={(v) => {
+                                      setRows((prev) => {
+                                        const updated = [...prev];
+                                        updated[index] = {
+                                          ...updated[index],
+                                          bom: v,
+                                        };
+                                        return updated;
+                                      });
+                                    }}
+                                  />
+                                ) : null}
+                              </td>
+                            )}
+
                             <td style={{ width: "12vw", textAlign: "center" }}>
                               <Input disabled value={row.avrRate} />
                             </td>
@@ -567,7 +724,6 @@ function FGToFGTransfer() {
                               />
                             </td>
                           </tr>
-                        
                         </React.Fragment>
                       );
                     })}

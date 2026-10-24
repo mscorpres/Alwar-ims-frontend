@@ -473,10 +473,10 @@ const links = [
     { routeName: "View", routePath: "/warehouse/fg-out/view" },
   ],
   [
-    {
-      routeName: "Create FG Return",
-      routePath: "/warehouse/fg-return/create",
-    },
+    // {
+    //   routeName: "Create FG Return",
+    //   routePath: "/warehouse/fg-return/create",
+    // },
     { routeName: "Pending", routePath: "/warehouse/fg-return/pending" },
     { routeName: "Completed", routePath: "/warehouse/fg-return/completed" },
   ],
