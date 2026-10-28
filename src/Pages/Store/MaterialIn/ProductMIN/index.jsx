@@ -1258,6 +1258,9 @@ export default function ProductMIN() {
       form.setFieldsValue(obj);
     }
   }, [vendorDetails.vendorType]);
+  const isOtherVendor = form.getFieldValue("vendorType") === "o01";
+  const requiredRule = isOtherVendor ? [] : [{ required: true, message: "" }];
+  const showVendorError = isValid && !isOtherVendor;
   return (
     <div style={{ height: "calc(100%  - 0px)", overflow: "hidden" }}>
       {/* <TaxModal bottom={-80} visibleBottom={110} totalValues={totalValues} /> */}
@@ -1358,11 +1361,7 @@ export default function ProductMIN() {
                         </p>
                       }
                       label="Vendor"
-                      rules={
-                        form.getFieldValue("vendorType") !== "o01"
-                          ? [{ required: true, message: "" }]
-                          : []
-                      }
+                      rules={requiredRule}
                     >
                       <MyAsyncSelect
                         selectLoading={loading1("select")}
@@ -1371,9 +1370,7 @@ export default function ProductMIN() {
                         onBlur={() => setAsyncOptions([])}
                         optionsState={asyncOptions}
                         loadOptions={getVendors}
-                    showError={
-                          isValid && form.getFieldValue("vendorType") !== "o01"
-                        }
+                    showError={showVendorError}
                         message="Please select a vendor"
                       />
                     </Form.Item>
@@ -1407,10 +1404,7 @@ export default function ProductMIN() {
                         </p>
                       }
                       label="Vendor Branch"
-                      rules={
-                       [{ required: true, message: "" }]
-                       
-                      }
+                      rules={requiredRule}
                     >
                       <MySelect
                       
@@ -1418,9 +1412,7 @@ export default function ProductMIN() {
                           form.getFieldValue("vendorType")
                         )}
                         options={vendorBranchOptions}
-                          showError={
-                          isValid && form.getFieldValue("vendorType") !== "o01"
-                        }
+                          showError={showVendorError}
                         message="Please select a vendor branch"
                         
                       />
@@ -1435,17 +1427,14 @@ export default function ProductMIN() {
                     <Form.Item
                       label="Cost Center"
                       name="costCenter"
-                      rules={
-                        [{ required: true, message: "" }]
-                       
-                      }
+                      rules={requiredRule}
                     >
                       <MyAsyncSelect
                         selectLoading={loading1("select")}
                         onBlur={() => setAsyncOptions([])}
                         optionsState={asyncOptions}
                         loadOptions={handleFetchCostCenterOptions}
-                        showError={isValid}
+                        showError={showVendorError}
                         message="Please select a cost center"
                         labelInValue
                       />
@@ -1462,10 +1451,7 @@ export default function ProductMIN() {
                     <Form.Item
                       label="Project ID"
                       name="projectID"
-                      rules={
-                       [{ required: true, message: "" }]
-                        
-                      }
+                      rules={requiredRule}
                     >
                       <MyAsyncSelect
                         selectLoading={loading1("select")}
@@ -1473,7 +1459,7 @@ export default function ProductMIN() {
                         optionsState={asyncOptions}
                         loadOptions={handleFetchProjectOptions}
                         onChange={handleProjectChange}
-                        showError={isValid}
+                        showError={showVendorError}
                         message="Please select a project"
                         labelInValue
                       />
@@ -1512,19 +1498,11 @@ export default function ProductMIN() {
                     <Form.Item
                       name="vendorAddress"
                       label="Bill From Address"
-                      rules={
-                         [{ required: true, message: "" }]
-                     
-                      }
+                      rules={requiredRule}
                     >
                       <Field
                         attr="required | Please enter bill from address"
-                          showValidation={
-                          isValid &&
-                          !["s01", "o01"].includes(
-                            form.getFieldValue("vendorType")
-                          )
-                        }
+                          showValidation={showVendorError}
                       >
                         <Input.TextArea
                           rows={3}
@@ -1538,13 +1516,13 @@ export default function ProductMIN() {
                     <Form.Item
                       label="Invoice Date"
                       name="invoiceDate"
-                      rules={[{ required: true, message: "" }]}
+                      rules={requiredRule}
                     >
                       <SingleDatePicker
                         setDate={(value) => {
                           form.setFieldValue("invoiceDate", value);
                         }}
-                        showError={isValid}
+                        showError={showVendorError}
                         message="Invoice Date is required"
                       />
                     </Form.Item>
@@ -1553,11 +1531,11 @@ export default function ProductMIN() {
                     <Form.Item
                       label="Invoice Id"
                       name="invoiceId"
-                      rules={[{ required: true, message: "" }]}
+                      rules={requiredRule}
                     >
                       <Field
                         attr="required | Invoice Id is required"
-                        showValidation={isValid}
+                        showValidation={showVendorError}
                       >
                         <Input />
                       </Field>
