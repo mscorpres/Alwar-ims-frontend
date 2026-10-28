@@ -73,6 +73,7 @@ const sampleData = [
 const vendorDetailsOptions = [
   { text: "Vendor", value: "v01" },
   { text: "Sales Return", value: "s01" },
+   { text: "Other", value: "o01" },
 ];
 
 const getGstTypeValue = (v) => {
@@ -1243,7 +1244,8 @@ export default function ProductMIN() {
     setTotalValues(obj);
   }, [materialInward]);
   useEffect(() => {
-    if (vendorDetails.vendorType === "p01") {
+    if (vendorDetails.vendorType === "p01" ||
+      vendorDetails.vendorType === "o01") {
       let obj = form.getFieldsValue();
       obj = {
         ...obj,
@@ -1357,17 +1359,21 @@ export default function ProductMIN() {
                       }
                       label="Vendor"
                       rules={
-                        [{ required: true, message: "" }]
-                    
+                        form.getFieldValue("vendorType") !== "o01"
+                          ? [{ required: true, message: "" }]
+                          : []
                       }
                     >
                       <MyAsyncSelect
                         selectLoading={loading1("select")}
+                            disabled={form.getFieldValue("vendorType") === "o01"}
                         labelInValue
                         onBlur={() => setAsyncOptions([])}
                         optionsState={asyncOptions}
                         loadOptions={getVendors}
-                        showError={isValid}
+                    showError={
+                          isValid && form.getFieldValue("vendorType") !== "o01"
+                        }
                         message="Please select a vendor"
                       />
                     </Form.Item>
@@ -1407,9 +1413,16 @@ export default function ProductMIN() {
                       }
                     >
                       <MySelect
+                      
+                        disabled={["s01", "o01"].includes(
+                          form.getFieldValue("vendorType")
+                        )}
                         options={vendorBranchOptions}
-                        showError={isValid}
+                          showError={
+                          isValid && form.getFieldValue("vendorType") !== "o01"
+                        }
                         message="Please select a vendor branch"
+                        
                       />
                     </Form.Item>
                   </Col>
@@ -1506,12 +1519,16 @@ export default function ProductMIN() {
                     >
                       <Field
                         attr="required | Please enter bill from address"
-                        showValidation={
-                          isValid
+                          showValidation={
+                          isValid &&
+                          !["s01", "o01"].includes(
+                            form.getFieldValue("vendorType")
+                          )
                         }
                       >
                         <Input.TextArea
                           rows={3}
+                             disabled={form.getFieldValue("vendorType") === "o01"}
                           style={{ resize: "none" }}
                         />
                       </Field>
