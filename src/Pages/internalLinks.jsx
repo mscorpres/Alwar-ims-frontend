@@ -35,6 +35,11 @@ const links = [
       routePath: "/procurement/completed",
       key: 2,
     },
+    {
+      routeName: "Product Development",
+      routePath: "/procurement/product-development",
+      key: 3,
+    },
     // {
     //   routeName: "Vendor Pricing",
     //   routePath: "/vendor-pricing",
