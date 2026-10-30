@@ -803,6 +803,13 @@
                 "icon": "CheckCircleIcon",
                 "path": "/procurement/completed",
                 "isShown": true
+              },
+              {
+                "key": "B24",
+                "label": "Product Development",
+                "icon": "DashboardIcon",
+                "path": "/procurement/product-development",
+                "isShown": true
               }
             ]
           },
