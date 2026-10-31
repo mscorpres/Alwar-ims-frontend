@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Select, Spin } from "antd";
-import { getComponentOptions, getProjectOptions, getUserOptions } from "../../api/general.ts";
+import { imsAxios } from "../../axiosInterceptor";
+import { getProjectOptions, getUserOptions } from "../../api/general.ts";
 
 // search-as-you-type select backed by an api, same feel as create PO
 // initialOptions lets an existing value (e.g. a saved user id) show its label before any search
@@ -38,10 +39,14 @@ export default function SearchSelect({ fetcher, placeholder, value, onChange, on
   );
 }
 
-// "PART - (Name)" -> "Name"
-const componentName = (text = "") => {
-  const m = text.match(/ - \((.*)\)$/);
-  return m ? m[1] : text;
+// "(SKU) Name" -> "SKU", the sku itself may contain brackets
+const skuFromText = (text = "") => {
+  let depth = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (text[i] === "(") depth++;
+    if (text[i] === ")" && --depth === 0) return text.slice(1, i);
+  }
+  return text;
 };
 
 export const fetchProjects = async (search) => {
@@ -55,17 +60,9 @@ export const fetchUsers = async (search) => {
   return Array.isArray(response.data) ? response.data.map((u) => ({ value: u.value, label: u.text })) : [];
 };
 
-// value is the part code for SKU and the name for Item, so both selects share one fetcher shape
-const fetchComponents = (valueOf) => async (search) => {
-  const response = await getComponentOptions(search);
+// products master, the saved value is the SKU
+export const fetchSkus = async (search) => {
+  const response = await imsAxios.post("/backend/getProductByNameAndNo", { search });
   if (!response?.success) return [];
-  return response.data.map((c) => ({
-    value: valueOf(c),
-    label: c.text,
-    sku: c.part_code,
-    item: componentName(c.text),
-    key: c.id,
-  }));
+  return response.data.map((p) => ({ value: skuFromText(p.text), label: p.text, key: p.id }));
 };
-export const fetchBySku = fetchComponents((c) => c.part_code);
-export const fetchByItem = fetchComponents((c) => componentName(c.text));
