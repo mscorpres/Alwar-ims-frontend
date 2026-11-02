@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
 import { imsAxios } from "../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast.js";
-import SearchSelect, { fetchByItem, fetchBySku, fetchProjects, fetchUsers } from "./SearchSelect";
+import SearchSelect, { fetchProjects, fetchSkus, fetchUsers } from "./SearchSelect";
 import { STATUS, toOptions } from "./constants";
 
 const initialValues = {
@@ -16,8 +16,6 @@ export default function AddItemModal({ open, onClose, onDone }) {
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
 
-  // picking a component from either SKU or Item fills both
-  const pickComponent = (opt) => form.setFieldsValue({ sku: opt?.sku, item: opt?.item });
 
   const finish = async (values) => {
     setLoading(true);
@@ -53,12 +51,12 @@ export default function AddItemModal({ open, onClose, onDone }) {
           </Col>
           <Col span={8}>
             <Form.Item name="sku" label="SKU" rules={[{ required: true, message: "Please select SKU" }]}>
-              <SearchSelect fetcher={fetchBySku} placeholder="Search part code" onPick={pickComponent} />
+              <SearchSelect fetcher={fetchSkus} placeholder="Search product SKU or name" />
             </Form.Item>
           </Col>
           <Col span={8}>
-            <Form.Item name="item" label="Item" rules={[{ required: true, message: "Please select item" }]}>
-              <SearchSelect fetcher={fetchByItem} placeholder="Search item name" onPick={pickComponent} />
+            <Form.Item name="item" label="Item" rules={[{ required: true, message: "Please enter item name" }]}>
+              <Input placeholder="Item name" />
             </Form.Item>
           </Col>
           <Col span={8}>
