@@ -131,6 +131,7 @@ import {
   AddAgreementType,
   JobworkApproval,
   AddSKUOpeningRate,
+  ProductDevelopment,
   //@ts-ignore
 } from "../Pages/index.jsx";
 //@ts-ignore
@@ -875,6 +876,10 @@ const Routes = [
   {
     path: "/vendor-pricing",
     main: () => <VendorPricingUpload />,
+  },
+  {
+    path: "/procurement/product-development",
+    main: () => <ProductDevelopment />,
   },
   {
     path: "/dashboard/sku_costing",
