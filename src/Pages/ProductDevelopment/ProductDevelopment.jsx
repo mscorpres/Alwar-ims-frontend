@@ -7,7 +7,7 @@ import { downloadCSV } from "../../Components/exportToCSV";
 import AddItemModal from "./AddItemModal";
 import ImportModal from "./ImportModal";
 import ItemDrawer from "./ItemDrawer";
-import { CLEARED, COLS, PROOF_CLOSE_MSG, STATUS, STATUS_LABEL, toneOf } from "./constants";
+import { CLEARED, COLS, MIN_PROOFS_TO_CLOSE, PROOF_CLOSE_MSG, STATUS, STATUS_LABEL, toneOf } from "./constants";
 
 const { Text } = Typography;
 
@@ -165,7 +165,7 @@ export default function ProductDevelopment() {
         field={field}
         value={v}
         disabled={savingKey === row.item_key}
-        blocked={field === "tracking" && row.proofCount > 0 && row.tracking !== "Closed" ? ["Closed"] : []}
+        blocked={field === "tracking" && row.proofCount < MIN_PROOFS_TO_CLOSE && row.tracking !== "Closed" ? ["Closed"] : []}
         onChange={(nv) => update(row, { [field]: nv })}
       />
     ),

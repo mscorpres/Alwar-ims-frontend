@@ -36,8 +36,9 @@ export const CLEARED = { sample: ["Approved"], qc: ["Pass", "Conditional pass"],
 export const toOptions = (list) => list.map((v) => ({ label: v, value: v }));
 
 export const PROOF_KINDS = ["Sample", "QC", "Price", "Other"];
-// keep in sync with backend: an item with proofs uploaded can never be closed
-export const PROOF_CLOSE_MSG = "This item has proofs uploaded, so it cannot be closed";
+// keep in sync with backend: an item can be closed only after this many proofs are uploaded
+export const MIN_PROOFS_TO_CLOSE = 2;
+export const PROOF_CLOSE_MSG = `Upload at least ${MIN_PROOFS_TO_CLOSE} proofs before closing this item`;
 
 export const COLS = [
   { k: "project", label: "Project" },
