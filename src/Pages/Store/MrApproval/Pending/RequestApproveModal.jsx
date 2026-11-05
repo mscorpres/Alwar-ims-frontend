@@ -9,14 +9,14 @@ import {
   Space,
 } from "antd";
 import { Col, Divider, Form, Input, Row, Typography } from "antd/es";
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { useToast } from "../../../../hooks/useToast.js";
 import MySelect from "../../../../Components/MySelect";
-import Field from "../../../../Components/Field";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import Loading from "../../../../Components/Loading";
 import useLoading from "../../../../hooks/useLoading";
+import Field from "../../../../Components/Field";
 
 const RequestApproveModal = ({ show, hide, getRows }) => {
   const { showToast } = useToast();
@@ -85,7 +85,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         showToast(response.message, "error");
       }
     } catch (error) {
-      showToast(error?.message || "Something went wrong", "error");
+      showToast(error.message || "failed to fetch data", "error");
     } finally {
       setLoading("fetch", false);
     }
@@ -107,7 +107,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         setPickLocationOptions(arr);
       }
     } catch (error) {
-      showToast(error?.message || "Something went wrong", "error");
+      showToast(error.message || "Faild to fetch locations", "error");
     } finally {
       setLoading("fetchLocations", false);
     }
@@ -127,7 +127,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         showToast(response.message, "error");
       }
     } catch (error) {
-      showToast(error?.message || "Something went wrong", "error");
+      showToast(error.message || "Failed to fetch stock", "error");
     } finally {
       setLoading("fetchSTock", false);
     }
@@ -193,7 +193,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
           hide();
         } else {
           getDetails(show.requestId);
-          form.resetFields(['component']);
+          form.resetFields(["component"]);
         }
       } else {
         showToast(response.message?.msg || response.message, "error");
@@ -204,6 +204,7 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
       setLoading("submit", false);
     }
   };
+
   useEffect(() => {
     if (show) {
       getDetails(show.requestId);
@@ -263,84 +264,87 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
         </Space>
       }
     >
-      <Form layout="vertical" form={form} initialValues={initialValues} style={{ height: "100%" }}>
+      <Form
+        layout="vertical"
+        form={form}
+        initialValues={initialValues}
+        style={{ height: "100%" }}
+      >
         {loading("fetch") && <Loading isDrawerLoading={true} />}
         <Row gutter={6} style={{ minHeight: "100%" }}>
-          <Col span={5} style={{ borderRight: "1px solid #dadada", marginRight: 20 }}>
-       
-              <Row gutter={[6, 6]}>
-                <Col span={24}>
-                  <Typography.Text strong >
-                    BOM:
-                  </Typography.Text>
-                  <br />
+          <Col
+            span={5}
+            style={{ borderRight: "1px solid #dadada", marginRight: 20 }}
+          >
+            <Row gutter={[6, 6]}>
+              <Col span={24}>
+                <Typography.Text strong>BOM:</Typography.Text>
+                <br />
 
-                  <Typography.Text>{headers?.bom}</Typography.Text>
-                </Col>
+                <Typography.Text>{headers?.bom}</Typography.Text>
+              </Col>
 
-                <Col span={24}>
-                  <Typography.Text strong >
-                    Req. Location:
-                  </Typography.Text>
-                  <br />
+              <Col span={24}>
+                <Typography.Text strong>Req. Location:</Typography.Text>
+                <br />
 
-                  <Typography.Text>{headers?.location}</Typography.Text>
-                </Col>
-                <Col span={24}>
-                  <Typography.Text strong >
-                    MFG Qty:
-                  </Typography.Text>
-                  <br />
+                <Typography.Text>{headers?.location}</Typography.Text>
+              </Col>
+              <Col span={24}>
+                <Typography.Text strong>MFG Qty:</Typography.Text>
+                <br />
 
-                  <Typography.Text>{headers?.mfgQty}</Typography.Text>
-                </Col>
-              </Row>
-           
+                <Typography.Text>{headers?.mfgQty}</Typography.Text>
+              </Col>
+            </Row>
           </Col>
           <Col span={10}>
-       
+            <Flex
+              vertical
+              style={{ height: "90%" }}
+              justify="space-between"
+              align="space-between"
+            >
+              <div>
+                <Input
+                  placeholder="Filter Components"
+                  value={filterString}
+                  onChange={(e) => setFilterString(e.target.value)}
+                  style={{ width: 400, marginBottom: 10 }}
+                />
+              </div>
               <Flex
                 vertical
-                style={{ height: "90%" }}
-                justify="space-between"
-                align="space-between"
+                style={{
+                  flex: 1,
+                  minHeight: "95%",
+                  maxHeight: 435,
+                  margin: "4px 0px",
+                  display: "flex",
+                  overflow: "hidden",
+                }}
               >
-                <div>
-                  <Input
-                    placeholder="Filter Components"
-                    value={filterString}
-                    onChange={(e) => setFilterString(e.target.value)}
-                    style={{ width: 400, marginBottom: 10 }}
-                  />
-                </div>
-                <Flex
-                  vertical
+                <div
                   style={{
                     flex: 1,
-                    minHeight: "95%",
-                    maxHeight: 435,
-                    margin: "4px 0px",
-                    display: "flex",
-                    overflow: "hidden",
+                    // height: "100%",
+                    overflow: "auto",
                   }}
                 >
-                  <div
-                    style={{
-                      flex: 1,
-                      // height: "100%",
-                      overflow: "auto",
-                    }}
+                  <Form.Item
+                    name="component"
+                    label={
+                      <span style={{ fontWeight: "bold" }}>
+                        Select Part Code
+                      </span>
+                    }
+                    rules={[{ required: true, message: "" }]}
+                    style={{ width: "100%" }}
                   >
-                    <Form.Item
-                      name="component"
-                     label={<span style={{ fontWeight: "bold" }}>Select Part Code</span>}
-                      rules={[{ required: true, message: "" }]}
-                      style={{ width: "100%",  }}
+                    <Field
+                      attr="required | Component is required"
+                      showValidation={isValid}
                     >
-                      <Field
-                        attr="required | Component is required"
-                        showValidation={isValid}
-                      >
                       <Radio.Group
                         style={{
                           width: "100%",
@@ -382,12 +386,11 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                             : []
                         }
                       />
-                      </Field>
-                    </Form.Item>
-                  </div>
-                </Flex>
+                    </Field>
+                  </Form.Item>
+                </div>
               </Flex>
-       
+            </Flex>
           </Col>
 
           <Col span={8}>
@@ -510,14 +513,11 @@ const RequestApproveModal = ({ show, hide, getRows }) => {
                   <Form.Item
                     name="remarks"
                     label="Remarks"
-                    rules={[{ required: true, message: "" }]}
+                    rules={[{ required: false, message: "" }]}
                   >
-                    <Field
-                      attr="required | Remark is required"
-                      showValidation={isValid}
-                    >
+                   
                       <Input.TextArea />
-                    </Field>
+                   
                   </Form.Item>
                 </Col>
               </Row>
@@ -539,3 +539,4 @@ const initialValues = {
   authKey: undefined,
 };
 export default RequestApproveModal;
+

@@ -75,6 +75,12 @@ const PendingFG = () => {
     { field: "mfg_sku", headerName: "SKU", width: 150 },
     { field: "p_name", headerName: "Product", width: 300 },
     {
+      field: "location",
+      headerName: "Location",
+      width: 150,
+   
+    },
+    {
       field: "mfg_prod_planing_qty",
       headerName: "MFG/STIN Qty",
       width: 160,

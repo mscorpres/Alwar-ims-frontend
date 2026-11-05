@@ -12,6 +12,7 @@ import {
   IGSTCell,
   invoiceDateCell,
   itemDescriptionCell,
+  bomQtyCell,
   quantityCell,
   rateCell,
   SGSTCell,
@@ -31,6 +32,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV.jsx";
 import { prsampleFile } from "../../../utils/samplefile.js";
 import { useToast } from "../../../hooks/useToast.js";
+import { normalizePprForApiPayload } from "../../../utils/general.ts";
 
 import {
   Button,
@@ -38,12 +40,39 @@ import {
   Col,
   Drawer,
   Form,
+  Input,
   Modal,
   Row,
   Typography,
   Upload,
 } from "antd";
 import MyDataTable from "../../../Components/MyDataTable.jsx";
+
+function formatTaxDetailRowTotal(rawSum) {
+  const n = Number(rawSum);
+  if (Number.isNaN(n)) return "0.00";
+  return n.toLocaleString("en-IN", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function resolveProjectIdForComponentApi(form, newPurchaseOrder) {
+  const fromForm = form.getFieldValue("project_name");
+  const formHasProject =
+    fromForm !== undefined && fromForm !== null && fromForm !== "";
+  const raw = formHasProject ? fromForm : newPurchaseOrder?.project_name;
+  if (raw === undefined || raw === null || raw === "") return "";
+  if (
+    typeof raw === "object" &&
+    raw.value !== undefined &&
+    raw.value !== null
+  ) {
+    return raw.value;
+  }
+  return raw;
+}
+
 export default function AddComponents({
   form,
   rowCount,
@@ -59,8 +88,7 @@ export default function AddComponents({
   setOpen,
   poCurrencies = [],
 }) {
-  const projectId = form.getFieldsValue()?.project_name?.value;
-const {showToast} = useToast();
+  const { showToast } = useToast();
   const venderCode = form.getFieldsValue()?.vendorname?.key;
   const [currencies, setCurrencies] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
@@ -117,7 +145,8 @@ const {showToast} = useToast();
       project_req_qty: 0,
       po_exec_qty: 0,
       diffPercentage: "--",
-      closing_stock: 0, // CHANGED: Added closing_stock field from previous update
+      closing_stock: 0,
+      po_bom_qty: "",
     };
     setRowCount((rowCount) => [...rowCount, newRow]);
   };
@@ -167,11 +196,13 @@ const {showToast} = useToast();
 
       const igst = gsttype === "I" ? gstAmount : 0;
 
-      // currency / exchange like default row
 
-      const currency = "364907247";
+      const currency = form.getFieldValue("po_currency") ?? "364907247";
 
-      const exchange_rate = 1;
+      const exchange_rate =
+        String(currency) === "364907247"
+          ? 1
+          : Number(form.getFieldValue("po_exchange_rate")) || 1;
 
       const foreginValue = inrValue * exchange_rate;
 
@@ -286,6 +317,8 @@ const {showToast} = useToast();
         diffPercentage: r.diffPercentage ?? "--",
 
         closing_stock: Number(r.closingStock) || 0,
+
+        po_bom_qty: r.po_bom_qty ?? r.pobomqty ?? r.PO_BOM_QTY ?? "",
       };
     });
 
@@ -380,6 +413,30 @@ const {showToast} = useToast();
     },
 
     {
+      headerName: "Due Date",
+
+      field: "dueDate",
+
+      flex: 1,
+
+      minWidth: 100,
+    },
+
+    {
+      headerName: "BOM Qty",
+
+      field: "po_bom_qty",
+
+      minWidth: 100,
+
+      flex: 1,
+
+      renderCell: ({ row }) => (
+        <ToolTipEllipses text={String(row.po_bom_qty ?? row.pobomqty ?? "")} />
+      ),
+    },
+
+    {
       headerName: "Remark",
 
       field: "internalRemark",
@@ -418,7 +475,10 @@ const {showToast} = useToast();
 
     formData.append("venderCode", venderCode);
 
-    formData.append("projectId", projectId);
+    formData.append(
+      "projectId",
+      resolveProjectIdForComponentApi(form, newPurchaseOrder),
+    );
 
     try {
       const response = await imsAxios.post(
@@ -581,7 +641,8 @@ const {showToast} = useToast();
           name == "hsncode" ||
           name == "duedate" ||
           name == "remark" ||
-          name === "internal_remark"
+          name === "internal_remark" ||
+          name === "po_bom_qty"
         ) {
           obj = {
             ...obj,
@@ -702,7 +763,8 @@ const {showToast} = useToast();
           obj.gsttype == "L" &&
           name != "gsttype" &&
           name != "remark" &&
-          name != "internal_remark"
+          name != "internal_remark" &&
+          name != "po_bom_qty"
         ) {
           let percentage = obj.gstrate / 2;
           obj = {
@@ -715,7 +777,8 @@ const {showToast} = useToast();
           obj.gsttype == "I" &&
           name != "gsttype" &&
           name != "remark" &&
-          name != "internal_remark"
+          name != "internal_remark" &&
+          name != "po_bom_qty"
         ) {
           let percentage = obj.gstrate;
           obj = {
@@ -738,15 +801,18 @@ const {showToast} = useToast();
         {
           component_code: value.value,
           vencode: newPurchaseOrder.vendorname.value,
-          project:
-            form.getFieldValue("project_name") === "object"
-              ? form.getFieldValue("project_name").value
-              : form.getFieldValue("project_name") ||
-                  newPurchaseOrder.project_name === "object"
-                ? newPurchaseOrder.project_name.value
-                : newPurchaseOrder.project_name,
+          project: resolveProjectIdForComponentApi(form, newPurchaseOrder),
+          pprId: normalizePprForApiPayload(
+            form.getFieldValue("ppr"),
+            newPurchaseOrder.ppr,
+          ).pprId,
         },
       );
+      if(!response?.success) {
+        showToast(response?.message?.msg ?? response?.message ?? "Failed to fetch component details", "error");
+        setPageLoading(false);
+        return;
+      }
 
       setPageLoading(false);
       let arr1 = rowCount;
@@ -755,7 +821,11 @@ const {showToast} = useToast();
       arr1 = arr1.map((row) => {
         if (row.id == id) {
           let obj = row;
-          let newLastRate = Number(response.data.rate.toString().trim());
+          const rawLastRate = response.data?.rate;
+          const newLastRate =
+            rawLastRate != null && rawLastRate !== ""
+              ? String(rawLastRate).trim()
+              : "";
 
           if (autoGstType == "L") {
             obj = {
@@ -802,6 +872,8 @@ const {showToast} = useToast();
             project_req_qty: response.data.project_req_qty,
             po_exec_qty: response.data.po_exec_qty,
             closing_stock: response.data.closing_stock || 0,
+            ppr_plan_qty: response.data.ppr_plan_qty || 0,
+            ppr_executed_qty: response.data.ppr_executed_qty || 0,
             tol_price: Number((response.data.project_rate * 1) / 100).toFixed(
               2,
             ),
@@ -869,6 +941,7 @@ const {showToast} = useToast();
         internal_remark: "",
         unit: "--",
         closing_stock: 0,
+        po_bom_qty: "",
       },
     ]);
     setConfirmReset(false);
@@ -974,6 +1047,13 @@ const {showToast} = useToast();
       width: 250,
       renderCell: (params) => itemDescriptionCell(params, inputHandler),
     },
+    {
+      headerName: "BOM Qty",
+      width: 120,
+      field: "po_bom_qty",
+      sortable: false,
+      renderCell: (params) => bomQtyCell(params, inputHandler),
+    },
 
     {
       headerName: "Ord. Qty",
@@ -1037,6 +1117,24 @@ const {showToast} = useToast();
       sortable: false,
       renderCell: (params) =>
         disabledCell(params, params.row.po_exec_qty, inputHandler),
+    },
+    {
+      headerName: "Plan PPR QTY",
+      width: 100,
+      field: "ppr_plan_qty",
+      sortable: false,
+      renderCell: (params) => (
+        <Input disabled value={params.row.ppr_plan_qty} />
+      ),
+    },
+    {
+      headerName: "Exec. PPR QTY",
+      width: 100,
+      field: "ppr_executed_qty",
+      sortable: false,
+      renderCell: (params) => (
+        <Input disabled value={params.row.ppr_executed_qty} />
+      ),
     },
     // CHANGED: Added Closing Stock column from previous update
     {
@@ -1433,11 +1531,11 @@ const {showToast} = useToast();
                                   totalValues.length - 1 && 600,
                             }}
                           >
-                            {Number(
+                            {formatTaxDetailRowTotal(
                               row.values?.reduce((partialSum, a) => {
                                 return partialSum + Number(a);
                               }, 0),
-                            ).toFixed(2)}
+                            )}
                           </span>
                         </Col>
                       </Row>

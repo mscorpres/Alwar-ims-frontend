@@ -49,6 +49,15 @@ function SingleComponent({
     gl: "",
     glN: "",
   });
+  const isFg = ["vbt08", "vbt09"].some(
+    (code) => apiUrl === code || editApiUrl === code,
+  );
+  const labels = {
+    minId: isFg ? "FG MIN ID" : "MIN ID",
+    partCode: isFg ? "SKU" : "Part Code",
+    partName: isFg ? "Product Name" : "Part Name",
+    minQty: isFg ? "FG MIN Qty" : "MIN Qty",
+  };
 
   const qty =
     Form.useWatch(["components", field.name, "vbtBillQty"], form) ?? 0;
@@ -228,6 +237,22 @@ function SingleComponent({
     showGlWarning();
   }, [gloptions]);
 
+  useEffect(() => {
+    if (isFg || !Array.isArray(tdsArray)) return;
+    const realOptions = tdsArray.filter((r) => r?.value !== "--");
+    if (realOptions.length !== 1) return;
+    const only = realOptions[0];
+    if (only?.value == null && only?.text == null) return;
+    const current = form.getFieldValue(["components", field.name, "tdsName"]);
+    if (current?.value != null && String(current.value) === String(only.value)) {
+      return;
+    }
+    form.setFieldValue(["components", field.name, "tdsName"], {
+      label: only.text,
+      value: only.value,
+    });
+  }, [tdsArray, field.name, form, isFg]);
+
   const showRateWarning = () => {
     const partCode = form.getFieldValue(["components", field.name, "partCode"]);
     const lastRateFoundObj = lastRateArr?.find((row) => row.partCode === partCode);
@@ -283,17 +308,17 @@ function SingleComponent({
             </Typography.Text>
           </Col>
           <Col span={3}>
-            <Form.Item label="MIN ID" name={[field.name, "minId"]}>
+            <Form.Item label={labels.minId} name={[field.name, "minId"]}>
               <Input disabled />
             </Form.Item>
           </Col>
           <Col span={3}>
-            <Form.Item label="Part Code" name={[field.name, "partCode"]}>
+            <Form.Item label={labels.partCode} name={[field.name, "partCode"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item label="Part Name" name={[field.name, "partName"]}>
+            <Form.Item label={labels.partName} name={[field.name, "partName"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
@@ -304,7 +329,7 @@ function SingleComponent({
             </Form.Item>
           </Col>
           <Col span={2}>
-            <Form.Item label="MIN Qty" name={[field.name, "vbtInQty"]}>
+            <Form.Item label={labels.minQty} name={[field.name, "vbtInQty"]}>
               <Input disabled />
             </Form.Item>
           </Col>
@@ -422,6 +447,8 @@ function SingleComponent({
             </>
           )}
           {apiUrl === "vbt01" ||
+          apiUrl === "vbt08" ||
+          apiUrl === "vbt09" ||
           apiUrl === "vbt04" ||
           apiUrl === "vbt05" ||
           apiUrl === "vbt07" ? (
@@ -585,17 +612,17 @@ function SingleComponent({
             </Typography.Text>
           </Col>
           <Col span={3}>
-            <Form.Item label="MIN ID" name={[field.name, "minId"]}>
+            <Form.Item label={labels.minId} name={[field.name, "minId"]}>
               <Input disabled />
             </Form.Item>
           </Col>
           <Col span={3}>
-            <Form.Item label="Part Code" name={[field.name, "partCode"]}>
+            <Form.Item label={labels.partCode} name={[field.name, "partCode"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item label="Part Name" name={[field.name, "partName"]}>
+            <Form.Item label={labels.partName} name={[field.name, "partName"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
@@ -615,7 +642,7 @@ function SingleComponent({
             </Form.Item>
           </Col>
           <Col span={2}>
-            <Form.Item label="MIN Qty" name={[field.name, "vbtInQty"]}>
+            <Form.Item label={labels.minQty} name={[field.name, "vbtInQty"]}>
               <Input disabled />
             </Form.Item>
           </Col>
@@ -645,6 +672,8 @@ function SingleComponent({
             </Form.Item>
           </Col>
           {editApiUrl === "vbt01" ||
+          editApiUrl === "vbt08" ||
+          editApiUrl === "vbt09" ||
           editApiUrl === "vbt04" ||
           editApiUrl === "vbt05" ? (
             <>

@@ -212,9 +212,7 @@ const compInputHandler = async (name, id, value) => {
         !a?.product ||
         !a?.quantity ||
         Number(a?.quantity) <= 0 ||
-        !a?.location ||
-        !a?.rate ||
-        Number(a?.rate) <= 0,
+        !a?.location,
     );
 
   const addFGOut = async (e) => {
@@ -367,7 +365,6 @@ const compInputHandler = async (name, id, value) => {
         <Field
           attr="required | Rate is required"
           value={row?.rate}
-          treatZeroAsEmpty
           showValidation={isValid}
         >
           <Input disabled value={row?.rate} />

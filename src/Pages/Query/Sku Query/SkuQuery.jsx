@@ -98,7 +98,7 @@ const Q3 = () => {
       const response = await imsAxios.get(`/q3?${params.toString()}`);
 
       // Check if response has error status
-      if (response.status === "error") {
+      if (!response.success) {
         const errorMessage =
           response.message || "An error occurred while fetching data";
         showToast(errorMessage, "error");
@@ -106,7 +106,7 @@ const Q3 = () => {
         return;
       }
 
-      if (response.response) {
+      if (response.success) {
         const { data1, data2 } = response.response;
         const detailsObj = {
           stock: data1.closingqty,
@@ -123,8 +123,9 @@ const Q3 = () => {
           id: row.serial_no,
         }));
         setRows(arr);
-
         setDetails(detailsObj);
+        showToast(response.message, "success");
+          
       }
     } catch (error) {
       const errorMessage =

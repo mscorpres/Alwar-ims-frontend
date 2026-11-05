@@ -98,6 +98,8 @@ export { default as EditPO } from "./PurchaseOrder/ManagePO/EditPO/EditPO";
 export { default as POrequest } from "./PurchaseOrder/POREQUEST/RequestPo.jsx";
 export { default as CreatePo } from "./PurchaseOrder/CreatePO/CreatePo";
 export { default as VendorPricingUpload } from "./PurchaseOrder/VendorPricingUpload";
+// product development tracker
+export { default as ProductDevelopment } from "./ProductDevelopment/ProductDevelopment";
 export { default as PoApproval } from "./PurchaseOrder/ManagePO/PoApproval/PoApproval";
 export { default as JobworkApproval } from "./Jobwork/JwApproval/JobWorkApproval.jsx";
 

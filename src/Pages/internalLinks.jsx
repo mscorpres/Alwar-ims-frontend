@@ -35,6 +35,11 @@ const links = [
       routePath: "/procurement/completed",
       key: 2,
     },
+    {
+      routeName: "Product Development",
+      routePath: "/procurement/product-development",
+      key: 3,
+    },
     // {
     //   routeName: "Vendor Pricing",
     //   routePath: "/vendor-pricing",
@@ -136,6 +141,18 @@ const links = [
       placeholder: "RCM",
       routePath: "/tally/vendor-bill-posting/vb-7",
       key: 6,
+    },
+        {
+      routeName: "VBT8",
+      routePath: "/tally/vendor-bill-posting/vb-8",
+      key: 8,
+      placeholder: "Sales - Return",
+    },
+    {
+      routeName: "VBT9",
+      routePath: "/tally/vendor-bill-posting/vb-9",
+      key: 9,
+      placeholder: "FG - Purchase",
     },
   ],
   // JV links
@@ -461,10 +478,10 @@ const links = [
     { routeName: "View", routePath: "/warehouse/fg-out/view" },
   ],
   [
-    {
-      routeName: "Create FG Return",
-      routePath: "/warehouse/fg-return/create",
-    },
+    // {
+    //   routeName: "Create FG Return",
+    //   routePath: "/warehouse/fg-return/create",
+    // },
     { routeName: "Pending", routePath: "/warehouse/fg-return/pending" },
     { routeName: "Completed", routePath: "/warehouse/fg-return/completed" },
   ],
@@ -670,7 +687,7 @@ const links = [
   [
     {
       routeName: "SF Part Code Conversion",
-      routePath: "/warehouse/sf-part-code-conversion",
+      routePath: "/warehouse/sf-part-code-conversion"
     },
 
     // to be added
@@ -895,6 +912,11 @@ const links = [
 
       placeholder: "FG Register Report",
     },
+    {
+      routeName: "R39",
+      routePath: "/r39",
+      placeholder: "Production PPR Report (by project / BOM)",
+    },
   ],
   // MIN label links
 
@@ -980,6 +1002,11 @@ const links = [
     {
       routeName: "Completed",
       routePath: "/production-and-plan/completed",
+    },
+       {
+      routeName: "PPR Qty Requests",
+      routePath: "/production-and-plan/request-qty",
+      placeholder: "Approve / Reject PPR qty requests",
     },
   ],
   // Material Requisition links
