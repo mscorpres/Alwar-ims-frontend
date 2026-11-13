@@ -30,6 +30,10 @@ import { useToast } from "../../../hooks/useToast.js";
 
 const PREVIEW_URL = "/godown/previewTransferRM2RM";
 const EXCEL_COLUMNS = ["FROMLOCATION", "TOLOCATION", "PARTCODE", "QTY", "COMMENT"];
+const SAMPLE_ROWS = [
+  ["AL_RM001", "AL_RM002", "P0002", 50, "Shifted to production store"],
+  ["AL_RM001", "AL_RM002", "P0007", 20, "Same part, different drop location"],
+];
 
 const downloadTemplate = async () => {
   const wb = new ExcelJS.Workbook();
@@ -40,6 +44,7 @@ const downloadTemplate = async () => {
     cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF1F4E79" } };
     cell.alignment = { horizontal: "center" };
   });
+  ws.addRows(SAMPLE_ROWS);
   saveAs(new Blob([await wb.xlsx.writeBuffer()]), "RM_to_RM_Bulk_Upload.xlsx");
 };
 
