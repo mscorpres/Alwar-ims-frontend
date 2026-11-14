@@ -40,6 +40,21 @@ const links = [
       routePath: "/procurement/product-development",
       key: 3,
     },
+    {
+      routeName: "Part Code Creator",
+      routePath: "/procurement/part-code/request",
+      key: 4,
+    },
+    {
+      routeName: "Part Code Approval",
+      routePath: "/procurement/part-code/approval",
+      key: 5,
+    },
+    {
+      routeName: "Part Code Sheet",
+      routePath: "/procurement/part-code/sheet",
+      key: 6,
+    },
     // {
     //   routeName: "Vendor Pricing",
     //   routePath: "/vendor-pricing",

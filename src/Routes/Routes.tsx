@@ -132,6 +132,9 @@ import {
   JobworkApproval,
   AddSKUOpeningRate,
   ProductDevelopment,
+  PartCodeRequest,
+  PartCodeApproval,
+  PartCodeSheet,
   //@ts-ignore
 } from "../Pages/index.jsx";
 //@ts-ignore
@@ -880,6 +883,18 @@ const Routes = [
   {
     path: "/procurement/product-development",
     main: () => <ProductDevelopment />,
+  },
+  {
+    path: "/procurement/part-code/request",
+    main: () => <PartCodeRequest />,
+  },
+  {
+    path: "/procurement/part-code/approval",
+    main: () => <PartCodeApproval />,
+  },
+  {
+    path: "/procurement/part-code/sheet",
+    main: () => <PartCodeSheet />,
   },
   {
     path: "/dashboard/sku_costing",
