@@ -1,5 +1,5 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import { CommonIcons } from "../../../../Components/TableActions.jsx/TableActions";
 import {
   asyncSelectComponent,
@@ -8,29 +8,29 @@ import {
 import { v4 } from "uuid";
 import NavFooter from "../../../../Components/NavFooter";
 import { useToast } from "../../../../hooks/useToast.js";
-import { Button, Modal } from "antd";
+import { Button, Input, Modal } from "antd";
 import validateResponse from "../../../../Components/validateResponse";
 import { imsAxios } from "../../../../axiosInterceptor";
 import { getComponentOptions } from "../../../../api/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
-import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 export default function EditDCComponents({
   newGatePass,
   setActiveTab,
-  resetFunction,
+  isReturnDC,
   setUpdateDCId,
   resetData,
   setPageLoading,
   updatedDCId,
+  setIsReturnDC,
 }) {
   const { showToast } = useToast();
   const [rows, setRows] = useState([]);
-  console.log(rows);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [showSubmitConfirm, setShowSubmitConfirm] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   // const [resetData, setResetData] = useState({});
   const { executeFun, loading: loading1 } = useApi();
 
@@ -75,9 +75,9 @@ export default function EditDCComponents({
           obj = {
             ...obj,
             [name]: value,
-            rate: validatedData.data.rate,
-            uom: validatedData.data.unit,
-            hsn: validatedData.data.hsn,
+            rate: validatedData.rate,
+            uom: validatedData.unit,
+            hsn: validatedData.hsn,
           };
           return obj;
         } else {
@@ -120,31 +120,53 @@ export default function EditDCComponents({
     let arr = rows.filter((row) => row.id != id);
     setRows(arr);
   };
+  const hasIncompleteRow = (data) =>
+    (data || []).some(
+      (row) =>
+        !row?.component ||
+        !row?.qty ||
+        Number(row?.qty) <= 0 ||
+        !row?.rate ||
+        Number(row?.rate) <= 0,
+    );
+
   const validateData = () => {
-    let validate = false;
-    if (newGatePass.passType == "") {
-      return showToast("Please select Pass Type", "error");
-    } else if (newGatePass.vendorName == "") {
-      return showToast("Please select a Vendor", "error");
-    } else if (newGatePass.vendorBranch == "") {
-      return showToast("Please select a Vendor Branch", "error");
-    } else if (newGatePass.billingId == "") {
-      return showToast("Please select a Billing Address", "error");
-    } else if (newGatePass.vehicleNumber == "") {
-      return showToast("Please enter a Vehicle Number", "error");
+    if (
+      newGatePass.passType == "" ||
+      !newGatePass.vendorName ||
+      newGatePass.vendorBranch == "" ||
+      !newGatePass.billingId ||
+      newGatePass.vehicleNumber == ""
+    ) {
+      return showToast(
+        "Please complete the DC Details tab before updating components",
+        "error",
+      );
     }
-    rows.map((row) => {
-      if (row.component == "") {
-        validate = "Please select a component for all the material entries";
-      } else if (row.qty == "" || row.qty == 0) {
-        validate = "Quantity of a component should be more than 0";
-      } else if (row.rate == "" || row.rate == 0) {
-        validate = "Component rate should be more than 0";
-      }
-    });
-    if (validate) {
-      return showToast(validate, "error");
+
+    if (isReturnDC && !newGatePass.challanNumber) {
+      return showToast("Please enter a Challan Number", "error");
     }
+
+    const componentValues = rows.map((row) => row.component);
+    const duplicateFound = componentValues.some(
+      (comp, index) =>
+        comp &&
+        componentValues.findIndex((c) => c?.value === comp?.value) !== index,
+    );
+    if (duplicateFound) {
+      return showToast(
+        "You have entered the same component twice in a single request.",
+        "error",
+      );
+    }
+
+    if (hasIncompleteRow(rows)) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+
     let final = {
       gp: updatedDCId,
       trans_type: "DC",
@@ -170,8 +192,13 @@ export default function EditDCComponents({
         vehicle_no: newGatePass.vehicleNumber,
         narration: newGatePass.narration,
       },
+      ...(isReturnDC && {
+        rgp_challan_no: newGatePass.challanNumber,
+      }),
       material: {
-        serial: rows.map((row) => row.serial),
+        ...(isReturnDC
+          ? { row_id: rows.map((row) => row.serial) }
+          : { serial: rows.map((row) => row.serial) }),
         component: rows.map((row) => row.component.value),
         qty: rows.map((row) => row.qty),
         rate: rows.map((row) => row.rate),
@@ -184,14 +211,15 @@ export default function EditDCComponents({
   };
   const submitHandler = async () => {
     if (showSubmitConfirm) {
+      const endpoint = isReturnDC
+        ? "/gatepass/createReturn"
+        : "/gatepass/updateDc";
       setSubmitLoading(true);
-      const response = await imsAxios.post(
-        "/gatepass/updateDc",
-        showSubmitConfirm
-      );
+      const response = await imsAxios.post(endpoint, showSubmitConfirm);
       setSubmitLoading(false);
       if (response.success) {
         setUpdateDCId(false);
+        setIsReturnDC(false);
         // let successInfo = {
         //   id: data.data.transactionID,
         //   components: rows,
@@ -216,6 +244,7 @@ export default function EditDCComponents({
           value: row.selectedComponent[0].id,
         },
         qty: row.qty,
+        returnedQty: row.returned_qty ?? 0,
         rate: row.rate,
         hsn: row.hsn_code,
         uom: row.unit,
@@ -225,6 +254,7 @@ export default function EditDCComponents({
       setRows(arr);
     }
     setShowResetConfirm(false);
+    setIsValid(false);
   };
   const columns = [
     {
@@ -233,7 +263,7 @@ export default function EditDCComponents({
       field: "add",
       sortable: false,
       renderCell: ({ row }) =>
-        row.type != "new" && (
+        (isReturnDC || row.type != "new") && (
           <CommonIcons action="removeRow" onClick={() => removeRows(row?.id)} />
         ),
       // sortable: false,
@@ -251,6 +281,8 @@ export default function EditDCComponents({
           asyncOptions: asyncOptions,
           selectLoading: loading1("select"),
           value: row.component,
+          showError: isValid,
+          message: "Component is required",
         }),
     },
     {
@@ -263,7 +295,23 @@ export default function EditDCComponents({
           inputHandler: inputHandler,
           value: "qty",
           suffix: row.uom,
+          showError: isValid,
+          treatZeroAsEmpty: true,
+          message: "Qty is required",
         }),
+    },
+    {
+      headerName: "Returned Qty",
+      field: "returnedQty",
+      width: 130,
+      renderCell: ({ row }) => (
+        <Input
+          value={row.returnedQty ?? 0}
+          disabled
+          suffix={row.uom}
+          style={{ background: "#f5f5f5", fontWeight: 600, color: "#000" }}
+        />
+      ),
     },
     {
       headerName: "Rate",
@@ -274,6 +322,9 @@ export default function EditDCComponents({
           row: row,
           inputHandler: inputHandler,
           value: "rate",
+          showError: isValid,
+          treatZeroAsEmpty: true,
+          message: "Rate is required",
         }),
     },
     {
@@ -322,6 +373,7 @@ export default function EditDCComponents({
           value: row.selectedComponent[0].id,
         },
         qty: row.qty,
+        returnedQty: row.returned_qty ?? 0,
         rate: row.rate,
         hsn: row.hsn_code,
         uom: row.unit,
@@ -336,7 +388,11 @@ export default function EditDCComponents({
     <div style={{ height: "97%", overflowY: "auto" }}>
       {/* submit confirm modal */}
       <Modal
-        title="Confirm Create Delivery Challan!"
+        title={
+          isReturnDC
+            ? "Confirm Return Delivery Challan!"
+            : "Confirm Update Delivery Challan!"
+        }
         open={showSubmitConfirm}
         onCancel={() => setShowSubmitConfirm(false)}
         footer={[
@@ -353,7 +409,11 @@ export default function EditDCComponents({
           </Button>,
         ]}
       >
-        <p>Are you sure you want to update this Delivery Challan?</p>
+        <p>
+          {isReturnDC
+            ? "Are you sure you want to return this Delivery Challan?"
+            : "Are you sure you want to update this Delivery Challan?"}
+        </p>
       </Modal>
       {/* reset confirm modal */}
       <Modal
@@ -375,12 +435,16 @@ export default function EditDCComponents({
         </p>
       </Modal>
     
-      <MyDataTable
-        columns={columns}
-        rows={rows}
-         />
+      <FormTable
+        columns={
+          isReturnDC
+            ? columns
+            : columns.filter((col) => col.field !== "returnedQty")
+        }
+        data={rows}
+      />
       <NavFooter
-        nextLabel="Update"
+        nextLabel={isReturnDC ? "Return" : "Update"}
         resetFunction={() => setShowResetConfirm(true)}
         backFunction={() => setActiveTab("1")}
         submitFunction={validateData}

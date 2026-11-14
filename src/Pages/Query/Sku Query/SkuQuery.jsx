@@ -31,6 +31,7 @@ const Q3 = () => {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [locationOptions, setLocationOptions] = useState([]);
   const [date, setDate] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
 
   const getLocations = async () => {
     try {
@@ -69,6 +70,9 @@ const Q3 = () => {
   };
 
   const getRows = async () => {
+    if(searchInput === '') return setIsValidating(true);
+
+    setIsValidating(false);
     if (date) {
       const [startStr, endStr] = [
         date.substring(0, 10),
@@ -94,7 +98,7 @@ const Q3 = () => {
       const response = await imsAxios.get(`/q3?${params.toString()}`);
 
       // Check if response has error status
-      if (response.status === "error") {
+      if (!response.success) {
         const errorMessage =
           response.message || "An error occurred while fetching data";
         showToast(errorMessage, "error");
@@ -102,7 +106,7 @@ const Q3 = () => {
         return;
       }
 
-      if (response.response) {
+      if (response.success) {
         const { data1, data2 } = response.response;
         const detailsObj = {
           stock: data1.closingqty,
@@ -119,8 +123,9 @@ const Q3 = () => {
           id: row.serial_no,
         }));
         setRows(arr);
-
         setDetails(detailsObj);
+        showToast(response.message, "success");
+          
       }
     } catch (error) {
       const errorMessage =
@@ -160,7 +165,10 @@ const Q3 = () => {
                     optionsState={asyncOptions}
                     onChange={setSearchInput}
                     selectLoading={loading === "select"}
+                    lableInValue
                     value={searchInput}
+                    message="Please Select a Product"
+                    showError={isValidating}
                   />
                 </div>
                 <div>
@@ -183,7 +191,7 @@ const Q3 = () => {
                 <MyButton
                   variant="search"
                   loading={loading === "fetch"}
-                  disabled={!searchInput}
+                  disabled={loading === "fetch"}
                   onClick={getRows}
                   type="primary"
                   block

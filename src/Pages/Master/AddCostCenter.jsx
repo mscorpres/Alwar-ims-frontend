@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { Button, Card, Form, Input, Row } from "antd";
+import { Button, Form, Input } from "antd";
 import PropTypes from "prop-types";
 import { imsAxios } from "../../axiosInterceptor";
 import MyDataTable from "../../Components/MyDataTable";
+import Field from "../../Components/Field";
 import { useToast } from "../../hooks/useToast";
 
 function parseCostCenterText(text = "") {
@@ -24,45 +25,45 @@ export default function AddCostCenter({
     name: "",
   });
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const inputHandler = (name, value) => {
     let obj = newCostCenter;
     obj = { ...obj, [name]: value };
     setNewCostCenter(obj);
   };
   const submitCostCenter = async () => {
-    if (newCostCenter.name.length > 0 && newCostCenter.code.length > 0) {
-      try {
-        setSubmitLoading(true);
-        const response = await imsAxios.post("/purchaseOrder/createCostCenter", {
-          code: newCostCenter.code,
-          name: newCostCenter.name,
+    if (!newCostCenter.name.length || !newCostCenter.code.length) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+    try {
+      setSubmitLoading(true);
+      const response = await imsAxios.post("/purchaseOrder/createCostCenter", {
+        code: newCostCenter.code,
+        name: newCostCenter.name,
+      });
+
+      const isSuccess =
+        Boolean(response?.success)
+
+      if (isSuccess) {
+        showToast(response?.message || "Cost center created successfully", "success");
+        setNewCostCenter({
+          code: "",
+          name: "",
         });
-
-        const isSuccess =
-          Boolean(response?.success) ||
-          Number(response?.code) === 200 ||
-          String(response?.status).toLowerCase() === "success";
-
-        if (isSuccess) {
-          showToast(response?.message || "Cost center created successfully", "success");
-          setNewCostCenter({
-            code: "",
-            name: "",
-          });
-          if (typeof setShowAddCostModal === "function") {
-            setShowAddCostModal(false);
-          }
-          handleFetchUOMList();
-        } else {
-          showToast(response?.message || "Failed to create cost center", "error");
+        if (typeof setShowAddCostModal === "function") {
+          setShowAddCostModal(false);
         }
-      } catch (error) {
-        showToast(error?.message || "Failed to create cost center", "error");
-      } finally {
-        setSubmitLoading(false);
+        handleFetchUOMList();
+      } else {
+        showToast(response?.message || "Failed to create cost center", "error");
       }
-    } else {
-      showToast("Cost Center should have a Name and ID", "error");
+    } catch (error) {
+      showToast(error?.message || "Failed to create cost center", "error");
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -116,26 +117,38 @@ export default function AddCostCenter({
       <div style={{maxWidth: "100%", marginBottom: 5, display:"flex", alignItems:"center",}}>
       
           <Form style={{ width: "100%",display: "flex", gap: "1rem", alignItems:"center",  }} >
-            <Form.Item label="Cost Center Id">
-              <Input
-                inputMode="numeric"
-                value={newCostCenter.code}
-                onChange={(e) => {
-                  const digitsOnly = e.target.value.replaceAll(/\D/g, "");
-                  inputHandler("code", digitsOnly);
-                }}
-                placeholder="Enter Cost Center ID"
-              />
-            </Form.Item>
-            <Form.Item label="Cost Center Name">
-              <Input
-                value={newCostCenter.name}
-                onChange={(e) => {
-                  inputHandler("name", e.target.value);
-                }}
-                placeholder="Enter Cost Center Name"
-              />
-            </Form.Item>
+            <Field
+              attr="required | Please enter Cost Center ID"
+              value={newCostCenter.code}
+              showValidation={isValid}
+            >
+              <Form.Item label="Cost Center Id">
+                <Input
+                  inputMode="numeric"
+                  value={newCostCenter.code}
+                  onChange={(e) => {
+                    const digitsOnly = e.target.value.replaceAll(/\D/g, "");
+                    inputHandler("code", digitsOnly);
+                  }}
+                  placeholder="Enter Cost Center ID"
+                />
+              </Form.Item>
+            </Field>
+            <Field
+              attr="required | Please enter Cost Center Name"
+              value={newCostCenter.name}
+              showValidation={isValid}
+            >
+              <Form.Item label="Cost Center Name">
+                <Input
+                  value={newCostCenter.name}
+                  onChange={(e) => {
+                    inputHandler("name", e.target.value);
+                  }}
+                  placeholder="Enter Cost Center Name"
+                />
+              </Form.Item>
+            </Field>
             <Form.Item >
                  <Button
               onClick={submitCostCenter}

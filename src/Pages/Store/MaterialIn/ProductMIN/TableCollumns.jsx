@@ -2,6 +2,7 @@ import { Input, Typography } from "antd";
 import InputMask from "react-input-mask";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
 import MySelect from "../../../../Components/MySelect";
+import Field from "../../../../Components/Field";
 const gstTypeOptions = [
   { value: "I", text: "INTER STATE" },
   { value: "L", text: "LOCAL" },
@@ -12,7 +13,8 @@ export const componentCell = (
   setAsyncOptions,
   getComponentDetail,
   asyncOptions,
-  selectLoading
+  selectLoading,
+  isValid
 ) => (
   <MyAsyncSelect
     onBlur={() => setAsyncOptions([])}
@@ -24,10 +26,13 @@ export const componentCell = (
     labelInValue
     loadOptions={getComponentDetail}
     optionsState={asyncOptions}
+    showError={isValid}
+    message="Product is required"
   />
 );
 export const QuantityCell = ({ row }, inputHandler) => (
-  <Input
+  <Field
+    attr="required | Qty is required"
     value={row.orderqty}
     onChange={(e) => inputHandler("orderqty", e.target.value, row.id)}
     // suffix={row.unitsname}
@@ -168,20 +173,28 @@ export const HSNCell = ({ row }, inputHandler) => (
     onChange={(e) => inputHandler("hsncode", e.target.value, row.id)}
   />
 );
-export const gstTypeCell = ({ row }, inputHandler) => (
+export const gstTypeCell = ({ row }, inputHandler, isValid) => (
   <MySelect
     value={row.gsttype}
     // className="table-input"
     onChange={(value) => inputHandler("gsttype", value, row.id)}
     options={gstTypeOptions}
+    showError={isValid}
+    message="GST type is required"
   />
 );
-export const gstRate = ({ row }, inputHandler) => (
-  <Input
-    type="text"
+export const gstRate = ({ row }, inputHandler, isValid) => (
+  <Field
+    attr="required | GST Rate is required"
     value={row.gstrate}
-    onChange={(e) => inputHandler("gstrate", e.target.value, row.id)}
-  />
+    showValidation={isValid}
+  >
+    <Input
+      type="text"
+      value={row.gstrate}
+      onChange={(e) => inputHandler("gstrate", e.target.value, row.id)}
+    />
+  </Field>
 );
 /** When gstType is "L" (Local): show CGST value. When "I" (Interstate): show 0 / empty. */
 export const CGSTCell = ({ row }) => (
@@ -209,7 +222,8 @@ export const locationCell = (
   { row },
   inputHandler,
 
-  locationOptions
+  locationOptions,
+  isValid
 ) => (
   <MySelect
     labelInValue
@@ -218,6 +232,8 @@ export const locationCell = (
       inputHandler("location", value, row.id);
     }}
     options={locationOptions}
+    showError={isValid}
+    message="Location is required"
   />
 );
 export const autoConsumptionCell = (

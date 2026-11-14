@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Input, Popconfirm, Row, Space, Popover } from "antd";
+import { useEffect, useState } from "react";
+import { Button, Input, Popconfirm, Row, Space } from "antd";
 import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -8,7 +8,6 @@ import { v4 } from "uuid";
 import {
   CheckOutlined,
   CloseOutlined,
-  MessageOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
 import { downloadCSV } from "../../../Components/exportToCSV";
@@ -26,10 +25,11 @@ function CompletedQC() {
   const [searchInput, setSearchInput] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [rows, setRows] = useState([]);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [setShowConfirmModal] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const wiseOptions = [
     { text: "Pending Sample Date Wise", value: "datewise" },
@@ -67,11 +67,16 @@ function CompletedQC() {
   };
 
   const getRows = async () => {
+    if (!searchInput || !wise) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setSearchLoading(true);
     setTableLoading(true);
 
     const response = await imsAxios.post("/qc/qcApproval", {
-      data: searchInput,
+      data: searchInput?.value ?? searchInput,
       wise: wise,
     });
     setTableLoading(false);
@@ -155,14 +160,7 @@ function CompletedQC() {
     }
   };
 
-  const content1 = (row) => (
-    // <div>
-    <span
-      style={{ fontWeight: "bold", fontSize: "14px" }}
-      dangerouslySetInnerHTML={{ __html: row }}
-    />
-    // </div>
-  );
+
 
   const columns = [
     {
@@ -391,6 +389,7 @@ function CompletedQC() {
   };
   useEffect(() => {
     setSearchInput("");
+    setIsValid(false);
   }, [wise]);
 
   return (
@@ -407,6 +406,8 @@ function CompletedQC() {
                 defaultValue={wiseOptions.filter((o) => o.value === wise)[0]}
                 onChange={setWise}
                 value={wise}
+                showError={isValid}
+                message="Please select a wise"
               />
             </div>
             <div style={{ width: 300 }}>
@@ -416,6 +417,8 @@ function CompletedQC() {
                   setDateRange={setSearchInput}
                   dateRange={setSearchInput}
                   value={searchInput}
+                  showError={isValid}
+                  message="Please select a date range"
                 />
               ) : wise === "partwise" ? (
                 <MyAsyncSelect
@@ -427,6 +430,9 @@ function CompletedQC() {
                   loadOptions={getPartOptions}
                   optionsState={asyncOptions}
                   placeholder="Select Part..."
+                  labelInValue
+                  showError={isValid}
+                  message="Please select a Part"
                 />
               ) : (
                 wise === "vendorwise" && (
@@ -440,6 +446,9 @@ function CompletedQC() {
                       loadOptions={getVendors}
                       optionsState={asyncOptions}
                       placeholder="Select Vendor..."
+                      labelInValue
+                      showError={isValid}
+                      message="Please select a Vendor"
                     />
                   </div>
                 )
@@ -447,7 +456,6 @@ function CompletedQC() {
             </div>
             <MyButton
               variant="search"
-              disabled={!searchInput ? true : false}
               type="primary"
               loading={searchLoading}
               onClick={getRows}

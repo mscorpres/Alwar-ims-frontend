@@ -143,6 +143,20 @@
                 "path": "/tally/vendor-bill-posting/vb-7",
                 "isShown": true
               },
+                {
+                "key": "D314566",
+                "label": "VBT8",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-8",
+                "isShown": true
+              },
+              {
+                "key": "D3165677",
+                "label": "VBT9",
+                "icon": "ReceiptIcon",
+                "path": "/tally/vendor-bill-posting/vb-9",
+                "isShown": true
+              },
               {
                 "key": "D32",
                 "label": "VBT Records",
@@ -716,17 +730,17 @@
                 "isHeading": true,
                 "children": [
                   {
-                    "key": "B19",
-                    "label": "Vendor / Supplier",
-                    "icon": "BusinessIcon",
-                    "path": "/vendor",
-                    "isShown": true
-                  },
-                  {
                     "key": "B191",
                     "label": "Add Vendor",
                     "icon": "BusinessIcon",
                     "path": "/create-vendor",
+                    "isShown": true
+                  },
+                  {
+                    "key": "B19",
+                    "label": "Vendor / Supplier",
+                    "icon": "BusinessIcon",
+                    "path": "/vendor",
                     "isShown": true
                   }
                 ]
@@ -789,9 +803,14 @@
                 "icon": "CheckCircleIcon",
                 "path": "/procurement/completed",
                 "isShown": true
+              },
+              {
+                "key": "B24",
+                "label": "Product Development",
+                "icon": "DashboardIcon",
+                "path": "/procurement/product-development",
+                "isShown": true
               }
-
-          
             ]
           },
           {
@@ -915,13 +934,7 @@
                 "icon": "ReturnIcon",
                 "isHeading": true,
                 "children": [
-                  {
-                    "key": "B38",
-                    "label": "FG(s) Return",
-                    "icon": "ReturnIcon",
-                    "path": "/warehouse/fg-return/create",
-                    "isShown": true
-                  },
+                
                   {
                     "key": "B381",
                     "label": "FG(s) Pending",
@@ -974,17 +987,10 @@
                 "isHeading": true,
                 "children": [
                   {
-                    "key": "B36",
-                    "label": "Branch Transfer Challan",
+                    "key": "B363123",
+                    "label": "Challan Request",
                     "icon": "SwapHorizIcon",
-                    "path": "/warehouse/branch-transfer/challan",
-                    "isShown": true
-                  },
-                  {
-                    "key": "B361",
-                    "label": "Branch Transfer View",
-                    "icon": "SwapHorizIcon",
-                    "path": "/warehouse/branch-transfer/view",
+                    "path": "/warehouse/branch-transfer/challan-request",
                     "isShown": true
                   }
                 ]
@@ -1362,7 +1368,43 @@
               }
             ]
           },
-       
+          {
+            "key": "C5",
+            "label": "Sales Order",
+            "icon": "TbReportAnalytics",
+            "isHeading": true,
+
+            "children": [
+              {
+                "key": "C52",
+                "label": "Create order",
+                "icon": "AddIcon",
+                "path": "/sales-order/create",
+                "isShown": true
+              },
+              {
+                "key": "E51",
+                "label": "Register",
+                "icon": "ListIcon",
+                "path": "/sales-order/register",
+                "isShown": true
+              },
+              {
+                "key": "C54",
+                "label": "Shipment",
+                "icon": "LocalShippingIcon",
+                "path": "/sales-order/shipments",
+                "isShown": true
+              },
+              {
+                "key": "C53",
+                "label": "Challan",
+                "icon": "ReceiptIcon",
+                "path": "/sales-order/challan",
+                "isShown": true
+              }
+            ]
+          },
           {
             "key": "B4",
             "label": "Print",
@@ -1428,13 +1470,14 @@
                     "path": "/reports/transaction-out",
                     "isShown": true
                   },
-                     {
+                  {
                     "key": "B412432",
                     "label": "View Document",
                     "icon": "OutputIcon",
                     "path": "/reports/upload-document/view",
                     "isShown": true
-                  }, {
+                  },
+                  {
                     "key": "B412433",
                     "label": "Consumption Report",
                     "icon": "OutputIcon",
@@ -1452,7 +1495,7 @@
               },
               {
                 "key": "B413",
-                "label": "Reports R1 - R38",
+                "label": "Reports R1 - R39",
                 "icon": "DescriptionIcon",
                 "isHeading": true,
                 "children": [
@@ -1707,6 +1750,13 @@
                     "icon": "DescriptionIcon",
                     "path": "/fg-register-report",
                     "isShown": true
+                  },
+                  {
+                    "key": "B413-r39",
+                    "label": "R39",
+                    "icon": "DescriptionIcon",
+                    "path": "/r39",
+                    "isShown": true
                   }
                 ]
               }
@@ -1822,6 +1872,13 @@
                     "label": "Complete PPR",
                     "icon": "ScheduleIcon",
                     "path": "/production-and-plan/completed",
+                    "isShown": true
+                  },
+                  {
+                    "key": "C123",
+                    "label": "Request QTY",
+                    "icon": "ScheduleIcon",
+                    "path": "/production-and-plan/request-qty",
                     "isShown": true
                   }
                 ]
@@ -1993,7 +2050,6 @@
           }
         ]
       },
-     
 
       {
         "key": "/invoice/create",
@@ -2032,43 +2088,6 @@
                 "label": "Final Invoices",
                 "icon": "UnorderedListOutlined",
                 "path": "/final-invoices",
-                "isShown": true
-              }
-            ]
-          },
-             {
-            "key": "C5",
-            "label": "Sales Order",
-            "icon": "TbReportAnalytics",
-            "isHeading": true,
-
-            "children": [
-              {
-                "key": "C52",
-                "label": "Create order",
-                "icon": "AddIcon",
-                "path": "/sales-order/create",
-                "isShown": true
-              },
-              {
-                "key": "E51",
-                "label": "Register",
-                "icon": "ListIcon",
-                "path": "/sales-order/register",
-                "isShown": true
-              },
-              {
-                "key": "C54",
-                "label": "Shipment",
-                "icon": "LocalShippingIcon",
-                "path": "/sales-order/shipments",
-                "isShown": true
-              },
-              {
-                "key": "C53",
-                "label": "Challan",
-                "icon": "ReceiptIcon",
-                "path": "/sales-order/challan",
                 "isShown": true
               }
             ]

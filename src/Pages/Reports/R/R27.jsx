@@ -1,16 +1,9 @@
-import React, { useState } from "react";
-import { Button, Col, Row, Space } from "antd";
+import { useState } from "react";
+import { Col, Row } from "antd";
 import MyDatePicker from "../../../Components/MyDatePicker";
-import axios from "axios";
-import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
-import { DownloadOutlined } from "@ant-design/icons";
-import {
-  downloadCSV,
-  downloadCSVCustomColumns,
-} from "../../../Components/exportToCSV";
+
 import { imsAxios } from "../../../axiosInterceptor";
-import { CommonIcons } from "../../../Components/TableActions.jsx/TableActions";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import MyButton from "../../../Components/MyButton";
 import { useToast } from "../../../hooks/useToast.js";
@@ -20,6 +13,7 @@ function R27() {
   const [datee, setDatee] = useState("");
   const [loading, setLoading] = useState(false);
   const [dateData, setDateData] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   const columns = [
     {
@@ -110,6 +104,10 @@ function R27() {
   ];
 
   const getRows = async () => {
+    if(datee === '' || datee === null || !datee)  {
+      setIsValid(true);
+      return;
+    }
     setDateData([]);
     setLoading(true);
     const response = await imsAxios.post("/report27", {
@@ -133,15 +131,13 @@ function R27() {
     }
   };
 
-  const handleDownloadingCSV = () => {
-    downloadCSV(dateData, columns, `RM Issue Register Report ${datee}`);
-  };
+ 
 
   return (
     <div style={{ height: "100%" }}>
       <Row style={{ padding: 5, paddingTop: 0 }}>
         <Col span={5}>
-          <MyDatePicker size="default" setDateRange={setDatee} />
+          <MyDatePicker size="default" setDateRange={setDatee} showError={isValid} value={datee}  />
         </Col>
         <MyButton variant="search"
           style={{ marginLeft: 4 }}

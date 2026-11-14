@@ -12,7 +12,7 @@ import {
 } from "antd";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import Loading from "../../../Components/Loading";
-import DownloadButton from "./DownloadButton";
+// import DownloadButton from "./DownloadButton";
 import LocationCard from "./LocationCard";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { GridExpandMoreIcon } from "@mui/x-data-grid";
@@ -33,29 +33,29 @@ const initHeader = {
 };
 
 const QueryQ5 = () => {
-  const [stockDetails, setStockDetails] = useState({
-    componentName: "",
-    stock: [],
-    total: 0,
-    unit: "",
-    partCode: "",
-  });
+  // const [stockDetails, setStockDetails] = useState({
+  //   componentName: "",
+  //   stock: [],
+  //   total: 0,
+  //   unit: "",
+  //   partCode: "",
+  // });
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [headerData, setHeaderData] = useState(initHeader);
   const [rmData, setRmData] = useState([]);
   const [sfData, setSfData] = useState([]);
   const [vendorData, setVendorData] = useState([]);
-  const [compCode, setCompCode] = useState("");
   const { executeFun, loading } = useApi();
   const [form] = Form.useForm();
+  const [isValid, setIsValid] = useState(false);
 
   const handleFetchComponentOptions = async (search) => {
     const response = await executeFun(
       () => getComponentOptions(search),
-      "select"
+      "select",
     );
     let arr = [];
- 
+
     if (response.success) {
       const { data } = response;
       arr = convertSelectOptions(data);
@@ -67,13 +67,15 @@ const QueryQ5 = () => {
     try {
       setHeaderData(initHeader);
       const values = await form.validateFields();
+      if (!values.component || !values.date) return setIsValid(true);
+      setIsValid(false);
       const payload = {
         component: values.component.value,
         for_location: element,
         date: values.date,
       };
       const { data, success } = await executeFun(() => getQ5(payload), "fetch");
-     
+
       if (success && data) {
         setHeaderData({
           uniqueId: data.component.unique_id,
@@ -89,7 +91,7 @@ const QueryQ5 = () => {
           component: data.component.name,
           partCode: data.component.part_code,
           stock: data.stock.sort((a, b) =>
-            a.loc_name.localeCompare(b.loc_name)
+            a.loc_name.localeCompare(b.loc_name),
           ),
           unit: data.component.unit,
           openingTotal: data.total_opening,
@@ -115,7 +117,7 @@ const QueryQ5 = () => {
   };
 
   return (
-    <Row gutter={6} style={{ height: "100%", padding:10 }}>
+    <Row gutter={6} style={{ height: "100%", padding: 10 }}>
       <Col
         span={6}
         style={{ overflowY: "auto", overflowX: "hidden", height: "100%" }}
@@ -124,37 +126,32 @@ const QueryQ5 = () => {
           <div style={{ width: "100%" }}>
             <Card size="small">
               <Form layout="vertical" form={form}>
-                <Form.Item
-                  label="Compnent"
-                  name="component"
-                  rules={[
-                    { required: true, message: "Please select a component" },
-                  ]}
-                >
+                <Form.Item label="Compnent" name="component">
                   <MyAsyncSelect
                     selectLoading={loading("select")}
                     labelInValue
                     optionsState={asyncOptions}
                     loadOptions={handleFetchComponentOptions}
                     onBlur={() => setAsyncOptions([])}
+                    showError={isValid}
+                    message="Please select a component"
+                    value={form.getFieldValue("component")}
                   />
                 </Form.Item>
-                <Form.Item
-                  label="Date"
-                  name="date"
-                  rules={[{ required: true, message: "Please select a Date" }]}
-                >
+                <Form.Item label="Date" name="date">
                   <SingleDatePicker
                     setDate={(value) => form.setFieldValue("date", value)}
+                    showError={isValid}
+                    value={form.getFieldValue("date")}
                   />
                 </Form.Item>
                 <Row justify="end">
                   <Space>
-                    <DownloadButton
+                    {/* <DownloadButton
                       total={stockDetails?.total}
                       componentLabel={`${stockDetails.partCode} - ${stockDetails?.component}`}
                       rows={stockDetails?.stock}
-                    />
+                    /> */}
                     <MyButton
                       variant="search"
                       onClick={async () => {
@@ -204,7 +201,9 @@ const QueryQ5 = () => {
                     Weighted Average Rate
                   </Typography.Text>
                   <br />
-                  <Typography.Text>{headerData?.weightedPurchaseRate}</Typography.Text>
+                  <Typography.Text>
+                    {headerData?.weightedPurchaseRate}
+                  </Typography.Text>
                 </Col>
                 <Divider />
                 <Col span={24}>
@@ -255,7 +254,7 @@ const QueryQ5 = () => {
           }}
           gutter={6}
         >
-          <Col span={24}>
+          {/* <Col span={24}>
             <Row justify="center">
               {stockDetails?.component && (
                 <Typography.Title level={5}>
@@ -264,7 +263,7 @@ const QueryQ5 = () => {
                 </Typography.Title>
               )}
             </Row>
-          </Col>
+          </Col> */}
           <Col
             span={24}
             style={{
@@ -329,6 +328,7 @@ const QueryQ5 = () => {
                         <Row gutter={[6, 6]}>
                           {rmData?.stock?.map((row) => (
                             <LocationCard
+                              key={row.id}
                               locationAddress={row.loc_address}
                               location={row.loc_name}
                               value={row.closing}
@@ -387,6 +387,7 @@ const QueryQ5 = () => {
                           {sfData?.stock?.map((row) => (
                             // <Col span={4}>
                             <LocationCard
+                              key={row.id}
                               locationAddress={row.loc_address}
                               location={row.loc_name}
                               value={row.closing}
@@ -455,6 +456,7 @@ const QueryQ5 = () => {
                         <Row gutter={[6, 6]}>
                           {vendorData?.stock?.map((row) => (
                             <LocationCard
+                              key={row.id}
                               locationAddress={row.loc_address}
                               location={row.loc_name}
                               value={row.closing}

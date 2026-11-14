@@ -53,6 +53,7 @@ import MyDataTable from "../../../../Components/MyDataTable.jsx";
 import MySelect from "../../../../Components/MySelect.jsx";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect.jsx";
 import SingleDatePicker from "../../../../Components/SingleDatePicker.jsx";
+import Field from "../../../../Components/Field.jsx";
 import { Add, Delete } from "@mui/icons-material";
 import FileUpload from "../../../../Components/FileUpload/FileUpload.tsx";
 
@@ -72,6 +73,7 @@ const sampleData = [
 const vendorDetailsOptions = [
   { text: "Vendor", value: "v01" },
   { text: "Sales Return", value: "s01" },
+   { text: "Other", value: "o01" },
 ];
 
 const INR_CURRENCY_ID = "364907247";
@@ -154,6 +156,7 @@ export default function ProductMIN() {
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showSuccessPage, setShowSuccessPage] = useState(false);
   const [form] = Form.useForm();
+  const [isValid, setIsValid] = useState(false);
 
   const addRow = () => {
     const currency = form.getFieldValue("currency") || INR_CURRENCY_ID;
@@ -209,15 +212,38 @@ export default function ProductMIN() {
     arr = arr.filter((row) => row.id != id);
     setMaterialInward(arr);
   };
+  const hasIncompleteMaterialRow = (rows) =>
+    (rows || []).some(
+      (row) =>
+        !row?.component ||
+        !row?.orderqty ||
+        Number(row?.orderqty) <= 0 ||
+        !row?.orderrate ||
+        Number(row?.orderrate) <= 0 ||
+        !row?.currency ||
+        row?.gstrate === "" ||
+        row?.gstrate === undefined ||
+        row?.gstrate === null ||
+        !row?.gsttype ||
+        !row?.location,
+    );
   const validataData = async () => {
-    let validation = false;
-    materialInward?.map((row) => {
-      if (row.component && row.location && row.orderqty) {
-        validation = true;
-      } else {
-        validation = false;
+    let vendorValues;
+    try {
+      vendorValues = await form.validateFields();
+    } catch (error) {
+      if (error?.errorFields) {
+        setIsValid(true);
+        return;
       }
-    });
+      showToast(error?.message || "Something went wrong", "error");
+      return;
+    }
+    if (hasIncompleteMaterialRow(materialInward)) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     let componentData = {
       qty: [],
       rate: [],
@@ -232,78 +258,72 @@ export default function ProductMIN() {
       out_location: [],
       product: [],
     };
-    if (validation == true) {
-      let formData = new FormData();
-      if (invoices?.length > 0) {
-        invoices?.map((file) => {
-          formData.append("files", file);
-        });
-      } else if (
-        !invoices.length &&
-        form.getFieldValue("vendorType") == "v01"
-      ) {
-        return showToast("Please add at least one file", "error");
-      }
-      materialInward.map((row) => {
-        componentData = {
-          product: [
-            ...componentData.product,
-            row.component?.value ?? row.component ?? "",
-          ],
-          qty: [...componentData.qty, row.orderqty],
-          rate: [...componentData.rate, row.orderrate],
-          hsn_code: [...componentData.hsn_code, row.hsncode ?? ""],
-          gst_type: [...componentData.gst_type, getGstTypeValue(row.gsttype)],
-          gstrate: [...componentData.gstrate, row.gstrate],
-          cgst: [...componentData.cgst, row.cgst],
-          sgst: [...componentData.sgst, row.sgst],
-          igst: [...componentData.igst, row.igst],
-          remark: [...componentData.remark, row.orderremark],
-          location: [
-            ...componentData.location,
-            row.location?.value ?? row.location,
-          ],
-        };
+    let formData = new FormData();
+    if (invoices?.length > 0) {
+      invoices?.map((file) => {
+        formData.append("files", file);
       });
-      componentData.currency = form.getFieldValue("currency") ?? INR_CURRENCY_ID;
-      componentData.exchange = form.getFieldValue("exchangeRate") ?? 1;
-      if (
-        (componentData.gst_type.filter((v, i, a) => v === a[0]).length ===
-          componentData.gst_type.length) !=
-        true
-      ) {
-        validation = false;
-        return showToast(
-          "gst type of all components should be the same",
-          "error",
-        );
-      }
-      // here submit
-      const vendorValues = await form.validateFields();
-      const currency = form.getFieldValue("currency") ?? INR_CURRENCY_ID;
-      const exchangeRate = parseFloat(form.getFieldValue("exchangeRate"));
-      if (currency !== INR_CURRENCY_ID && (isNaN(exchangeRate) || exchangeRate <= 1)) {
-        return Modal.error({
-          title: "Invalid Exchange Rate",
-          content: "Exchange rate must be greater than 1 for foreign currency.",
-        });
-      }
-
-      Modal.confirm({
-        title: "Are you sure you want to submt this MIN",
-        // icon: <ExclamationCircleFilled />,
-        content: "",
-        onOk() {
-          validateInvoices({
-            formData: formData,
-            componentData: componentData,
-            vendorValues,
-          });
-        },
-      });
-    } else {
-      showToast("Please Provide all the values", "error");
+    } else if (
+      !invoices.length &&
+      form.getFieldValue("vendorType") == "v01"
+    ) {
+      return showToast("Please add at least one file", "error");
     }
+    materialInward.map((row) => {
+      componentData = {
+        product: [
+          ...componentData.product,
+          row.component?.value ?? row.component ?? "",
+        ],
+        qty: [...componentData.qty, row.orderqty],
+        rate: [...componentData.rate, row.orderrate],
+        currency: [...componentData.currency, row.currency],
+        exchange: [...componentData.exchange, row.exchange_rate],
+        hsn_code: [...componentData.hsn_code, row.hsncode ?? ""],
+        gst_type: [...componentData.gst_type, getGstTypeValue(row.gsttype)],
+        gstrate: [...componentData.gstrate, row.gstrate],
+        cgst: [...componentData.cgst, row.cgst],
+        sgst: [...componentData.sgst, row.sgst],
+        igst: [...componentData.igst, row.igst],
+        remark: [...componentData.remark, row.orderremark],
+        location: [
+          ...componentData.location,
+          row.location?.value ?? row.location,
+        ],
+      };
+    });
+    if (
+      (componentData.currency.filter((v, i, a) => v === a[0]).length ===
+        componentData.currency.length) !=
+      true
+    ) {
+      return showToast(
+        "Currency of all components should be the same",
+        "error",
+      );
+    } else if (
+      (componentData.gst_type.filter((v, i, a) => v === a[0]).length ===
+        componentData.gst_type.length) !=
+      true
+    ) {
+      return showToast(
+        "gst type of all components should be the same",
+        "error",
+      );
+    }
+
+    Modal.confirm({
+      title: "Are you sure you want to submt this MIN",
+      // icon: <ExclamationCircleFilled />,
+      content: "",
+      onOk() {
+        validateInvoices({
+          formData: formData,
+          componentData: componentData,
+          vendorValues,
+        });
+      },
+    });
   };
     const handleUploadDocumentsBatch = async (files) => {
       const vendorType = form.getFieldValue("vendorType");
@@ -403,7 +423,7 @@ export default function ProductMIN() {
             vendorResetFunction();
             materialResetFunction();
           } else {
-            showToast(response.message?.msg || data.message, "error");
+            showToast(response.message?.msg || response.message, "error");
           }
       
       } else {
@@ -943,6 +963,7 @@ export default function ProductMIN() {
     };
     setVendorDetails(obj);
     setShowResetConfirm(false);
+    setIsValid(false);
     form.setFieldsValue(obj);
   };
 
@@ -967,7 +988,7 @@ export default function ProductMIN() {
   const handleProjectChange = async (value) => {
     setPageLoading(true);
     const response = await imsAxios.post("/backend/projectDescription", {
-      project_name: value,
+      project_name: value?.value ?? value,
     });
 
     setPageLoading(false);
@@ -1023,6 +1044,7 @@ export default function ProductMIN() {
           getProductOptions,
           asyncOptions,
           selectLoading,
+          isValid,
         ),
       width: 400,
     },
@@ -1030,14 +1052,15 @@ export default function ProductMIN() {
       headerName: "Qty",
       field: "gstqty",
       sortable: false,
-      renderCell: (params) => QuantityCell(params, inputHandler),
+      renderCell: (params) => QuantityCell(params, inputHandler, isValid),
       width: 120,
     },
     {
       headerName: "Rate",
       field: "orderrate",
       sortable: false,
-      renderCell: (params) => rateCell(params, inputHandler, currencies),
+      renderCell: (params) =>
+        rateCell(params, inputHandler, currencies, isValid),
       width: 180,
     },
     {
@@ -1066,7 +1089,7 @@ export default function ProductMIN() {
       headerName: "GST Type",
       field: "gsttype",
       sortable: false,
-      renderCell: (params) => gstTypeCell(params, inputHandler),
+      renderCell: (params) => gstTypeCell(params, inputHandler, isValid),
       // flex: 1,
       width: 200,
     },
@@ -1083,28 +1106,38 @@ export default function ProductMIN() {
         ];
 
         return (
-          <select
-            style={{
-              width: "100%",
-              padding: "6px 8px",
-              border: "1px solid #d9d9d9",
-              borderRadius: 6,
-              backgroundColor: "white",
-              fontSize: 13,
-            }}
-            value={params.row.gstrate ?? ""}
-            onChange={(e) => {
-              const newRate = Number(e.target.value);
-              inputHandler("gstrate", newRate, params.row.id);
-            }}
+          <Field
+            attr="required | GST Rate is required"
+            value={
+              params.row.gstrate === "" || params.row.gstrate === undefined
+                ? undefined
+                : params.row.gstrate
+            }
+            showValidation={isValid}
           >
-            <option value="">Select</option>
-            {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            <select
+              style={{
+                width: "100%",
+                padding: "6px 8px",
+                border: "1px solid #d9d9d9",
+                borderRadius: 6,
+                backgroundColor: "white",
+                fontSize: 13,
+              }}
+              value={params.row.gstrate ?? ""}
+              onChange={(e) => {
+                const newRate = Number(e.target.value);
+                inputHandler("gstrate", newRate, params.row.id);
+              }}
+            >
+              <option value="">Select</option>
+              {options.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </Field>
         );
       },
     },
@@ -1137,7 +1170,7 @@ export default function ProductMIN() {
       field: "location",
       sortable: false,
       renderCell: (params) =>
-        locationCell(params, inputHandler, locationOptions),
+        locationCell(params, inputHandler, locationOptions, isValid),
       width: 150,
     },
     // {
@@ -1192,7 +1225,8 @@ export default function ProductMIN() {
     setTotalValues(obj);
   }, [materialInward]);
   useEffect(() => {
-    if (vendorDetails.vendorType === "p01") {
+    if (vendorDetails.vendorType === "p01" ||
+      vendorDetails.vendorType === "o01") {
       let obj = form.getFieldsValue();
       obj = {
         ...obj,
@@ -1205,6 +1239,9 @@ export default function ProductMIN() {
       form.setFieldsValue(obj);
     }
   }, [vendorDetails.vendorType]);
+  const isOtherVendor = form.getFieldValue("vendorType") === "o01";
+  const requiredRule = isOtherVendor ? [] : [{ required: true, message: "" }];
+  const showVendorError = isValid && !isOtherVendor;
   return (
     <div style={{ height: "calc(100%  - 0px)", overflow: "hidden" }}>
       {/* <TaxModal bottom={-80} visibleBottom={110} totalValues={totalValues} /> */}
@@ -1305,14 +1342,17 @@ export default function ProductMIN() {
                         </p>
                       }
                       label="Vendor"
+                      rules={requiredRule}
                     >
                       <MyAsyncSelect
                         selectLoading={loading1("select")}
-                        disabled={form.getFieldValue("vendorType") === "p01"}
+                            disabled={form.getFieldValue("vendorType") === "o01"}
                         labelInValue
                         onBlur={() => setAsyncOptions([])}
                         optionsState={asyncOptions}
                         loadOptions={getVendors}
+                    showError={showVendorError}
+                        message="Please select a vendor"
                       />
                     </Form.Item>
                   </Col>
@@ -1345,10 +1385,17 @@ export default function ProductMIN() {
                         </p>
                       }
                       label="Vendor Branch"
+                      rules={requiredRule}
                     >
                       <MySelect
-                        disabled={form.getFieldValue("vendorType") === "p01"}
+                      
+                        disabled={["s01", "o01"].includes(
+                          form.getFieldValue("vendorType")
+                        )}
                         options={vendorBranchOptions}
+                          showError={showVendorError}
+                        message="Please select a vendor branch"
+                        
                       />
                     </Form.Item>
                   </Col>
@@ -1358,12 +1405,19 @@ export default function ProductMIN() {
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item label="Cost Center" name="costCenter">
+                    <Form.Item
+                      label="Cost Center"
+                      name="costCenter"
+                      rules={requiredRule}
+                    >
                       <MyAsyncSelect
                         selectLoading={loading1("select")}
                         onBlur={() => setAsyncOptions([])}
                         optionsState={asyncOptions}
                         loadOptions={handleFetchCostCenterOptions}
+                        showError={showVendorError}
+                        message="Please select a cost center"
+                        labelInValue
                       />
                     </Form.Item>
                   </Col>
@@ -1375,13 +1429,20 @@ export default function ProductMIN() {
                     </Col>
                   )}
                   <Col span={12}>
-                    <Form.Item label="Project ID" name="projectID">
+                    <Form.Item
+                      label="Project ID"
+                      name="projectID"
+                      rules={requiredRule}
+                    >
                       <MyAsyncSelect
                         selectLoading={loading1("select")}
                         onBlur={() => setAsyncOptions([])}
                         optionsState={asyncOptions}
                         loadOptions={handleFetchProjectOptions}
                         onChange={handleProjectChange}
+                        showError={showVendorError}
+                        message="Please select a project"
+                        labelInValue
                       />
                     </Form.Item>
                   </Col>
@@ -1399,26 +1460,50 @@ export default function ProductMIN() {
                     </Form.Item>
                   </Col>
                   <Col span={24}>
-                    <Form.Item name="vendorAddress" label="Bill From Address">
-                      <Input.TextArea
-                        rows={3}
-                        disabled={form.getFieldValue("vendorType") === "p01"}
-                        style={{ resize: "none" }}
-                      />
+                    <Form.Item
+                      name="vendorAddress"
+                      label="Bill From Address"
+                      rules={requiredRule}
+                    >
+                      <Field
+                        attr="required | Please enter bill from address"
+                          showValidation={showVendorError}
+                      >
+                        <Input.TextArea
+                          rows={3}
+                             disabled={form.getFieldValue("vendorType") === "o01"}
+                          style={{ resize: "none" }}
+                        />
+                      </Field>
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item label="Invoice Date" name="invoiceDate">
+                    <Form.Item
+                      label="Invoice Date"
+                      name="invoiceDate"
+                      rules={requiredRule}
+                    >
                       <SingleDatePicker
                         setDate={(value) => {
                           form.setFieldValue("invoiceDate", value);
                         }}
+                        showError={showVendorError}
+                        message="Invoice Date is required"
                       />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
-                    <Form.Item label="Invoice Id" name="invoiceId">
-                      <Input />
+                    <Form.Item
+                      label="Invoice Id"
+                      name="invoiceId"
+                      rules={requiredRule}
+                    >
+                      <Field
+                        attr="required | Invoice Id is required"
+                        showValidation={showVendorError}
+                      >
+                        <Input />
+                      </Field>
                     </Form.Item>
                   </Col>
                 </Row>

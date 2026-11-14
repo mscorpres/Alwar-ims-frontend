@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import MyDataTable from "../../../Components/MyDataTable";
 import MyDatePicker from "../../../Components/MyDatePicker";
@@ -6,7 +6,7 @@ import MySelect from "../../../Components/MySelect";
 import printFunction, {
   downloadFunction,
 } from "../../../Components/printFunction";
-import { Button, Col, Input, Row, Space } from "antd";
+import { Col, Input, Row, Space } from "antd";
 import { v4 } from "uuid";
 import { downloadCSV } from "../../../Components/exportToCSV";
 import TableActions, {
@@ -14,6 +14,7 @@ import TableActions, {
 } from "../../../Components/TableActions.jsx/TableActions";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyButton from "../../../Components/MyButton";
+import Field from "../../../Components/Field.jsx";
 
 export default function ManageGatePass() {
   const { showToast } = useToast();
@@ -23,6 +24,7 @@ export default function ManageGatePass() {
   const [rows, setRows] = useState([]);
   const [searchLoading, serSearchLoading] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const wiseOptions = [
     { text: "Date Wise", value: "datewise" },
@@ -57,12 +59,14 @@ export default function ManageGatePass() {
       flex: 1,
       getActions: ({ row }) => [
         <TableActions
+        key={"print"+row.transaction_id}
           action="print"
           onClick={() => {
             printFun(row.transaction_id);
           }}
         />,
         <TableActions
+        key={"download"+row.transaction_id}
           action="download"
           onClick={() => {
             downloadFun(row.transaction_id);
@@ -98,6 +102,15 @@ export default function ManageGatePass() {
     }
   };
   const getRows = async () => {
+    const hasEmptyField =
+      !wise || (wise === "datewise" ? !searchDateRange : !searchInput);
+
+    if (hasEmptyField) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+
     serSearchLoading(true);
     const response = await imsAxios.post("/gatepass/fetchAllGP", {
       data: wise == "datewise" ? searchDateRange : searchInput,
@@ -117,69 +130,71 @@ export default function ManageGatePass() {
       showToast(response?.message, "error");
     }
   };
-  const additional = () => (
-    <Space>
-      <div style={{ width: 150 }}>
-        <MySelect options={wiseOptions} onChange={setWise} value={wise} />
-      </div>
-      <div style={{ width: 300 }}>
-        {wise === "datewise" ? (
-          <div style={{ width: 300 }}>
-            <MyDatePicker
-              setDateRange={setSearchDateRange}
-              dateRange={searchDateRange}
-              value={searchDateRange}
-              size="default"
-            />
-          </div>
-        ) : wise === "gpwise" ? (
-          <div style={{ width: 300 }}>
-            <Input
-              type="text"
-              // className="form-control w-100 "
-              placeholder="Enter GP ID"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-          </div>
-        ) : (
-          wise === "mobemailwise" && (
-            <div style={{ width: 300 }}>
-              <Input
-                type="text"
-                // className="form-control w-100 "
-                placeholder="Enter Email / Phone Number"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-              />
-            </div>
-          )
-        )}
-      </div>
-      <Button
-        loading={searchLoading}
-        disabled={
-          wise === "datewise"
-            ? searchDateRange === ""
-              ? true
-              : false
-            : !searchInput
-            ? true
-            : false
-        }
-        type="primary"
-        onClick={getRows}
-        id="submit"
-      >
-        Search
-      </Button>
-      <CommonIcons
-        action="downloadButton"
-        onClick={() => downloadCSV(rows, columns, "GatePass Report")}
-        disabled={rows.length == 0}
-      />
-    </Space>
-  );
+
+  
+  // const additional = () => (
+  //   <Space>
+  //     <div style={{ width: 150 }}>
+  //       <MySelect options={wiseOptions} onChange={setWise} value={wise} />
+  //     </div>
+  //     <div style={{ width: 300 }}>
+  //       {wise === "datewise" ? (
+  //         <div style={{ width: 300 }}>
+  //           <MyDatePicker
+  //             setDateRange={setSearchDateRange}
+  //             dateRange={searchDateRange}
+  //             value={searchDateRange}
+  //             size="default"
+  //           />
+  //         </div>
+  //       ) : wise === "gpwise" ? (
+  //         <div style={{ width: 300 }}>
+  //           <Input
+  //             type="text"
+  //             // className="form-control w-100 "
+  //             placeholder="Enter GP ID"
+  //             value={searchInput}
+  //             onChange={(e) => setSearchInput(e.target.value)}
+  //           />
+  //         </div>
+  //       ) : (
+  //         wise === "mobemailwise" && (
+  //           <div style={{ width: 300 }}>
+  //             <Input
+  //               type="text"
+  //               // className="form-control w-100 "
+  //               placeholder="Enter Email / Phone Number"
+  //               value={searchInput}
+  //               onChange={(e) => setSearchInput(e.target.value)}
+  //             />
+  //           </div>
+  //         )
+  //       )}
+  //     </div>
+  //     <Button
+  //       loading={searchLoading}
+  //       disabled={
+  //         wise === "datewise"
+  //           ? searchDateRange === ""
+  //             ? true
+  //             : false
+  //           : !searchInput
+  //           ? true
+  //           : false
+  //       }
+  //       type="primary"
+  //       onClick={getRows}
+  //       id="submit"
+  //     >
+  //       Search
+  //     </Button>
+  //     <CommonIcons
+  //       action="downloadButton"
+  //       onClick={() => downloadCSV(rows, columns, "GatePass Report")}
+  //       disabled={rows.length == 0}
+  //     />
+  //   </Space>
+  // );
   return (
     <div style={{ position: "relative", height: "95%", padding:10 }}>
       <Row
@@ -188,7 +203,17 @@ export default function ManageGatePass() {
         <Col>
           <Space>
             <div style={{ width: 150 }}>
-              <MySelect options={wiseOptions} onChange={setWise} value={wise} />
+              <MySelect
+                options={wiseOptions}
+                onChange={(value) => {
+                  setWise(value);
+                  setIsValid(false);
+                  setRows([]);
+                }}
+                value={wise}
+                showError={isValid}
+                message="Please select wise"
+              />
             </div>
             <div style={{ width: 300 }}>
               {wise === "datewise" ? (
@@ -198,28 +223,42 @@ export default function ManageGatePass() {
                     dateRange={searchDateRange}
                     value={searchDateRange}
                     size="default"
+                    showError={isValid}
+                    message="Please select a date range"
                   />
                 </div>
               ) : wise === "gpwise" ? (
                 <div style={{ width: 300 }}>
-                  <Input
-                    type="text"
-                    // className="form-control w-100 "
-                    placeholder="Enter GP ID"
+                  <Field
+                    attr="required | Please enter a GP ID"
                     value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  />
+                    showValidation={isValid}
+                  >
+                    <Input
+                      type="text"
+                      // className="form-control w-100 "
+                      placeholder="Enter GP ID"
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                    />
+                  </Field>
                 </div>
               ) : (
                 wise === "mobemailwise" && (
                   <div style={{ width: 300 }}>
-                    <Input
-                      type="text"
-                      // className="form-control w-100 "
-                      placeholder="Enter Email / Phone Number"
+                    <Field
+                      attr="required | Please enter an Email / Phone Number"
                       value={searchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
-                    />
+                      showValidation={isValid}
+                    >
+                      <Input
+                        type="text"
+                        // className="form-control w-100 "
+                        placeholder="Enter Email / Phone Number"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                      />
+                    </Field>
                   </div>
                 )
               )}
@@ -227,15 +266,6 @@ export default function ManageGatePass() {
             <MyButton
               variant="search"
               loading={searchLoading}
-              disabled={
-                wise === "datewise"
-                  ? searchDateRange === ""
-                    ? true
-                    : false
-                  : !searchInput
-                  ? true
-                  : false
-              }
               type="primary"
               onClick={getRows}
               id="submit"

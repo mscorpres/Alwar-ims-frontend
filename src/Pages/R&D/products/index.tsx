@@ -13,6 +13,7 @@ import { getCostCentresOptions, getProjectOptions } from "@/api/general";
 import { convertSelectOptions } from "@/utils/general";
 import MyAsyncSelect from "@/Components/MyAsyncSelect.jsx";
 import UpdateProduct from "@/Pages/R&D/products/UpdateProduct";
+import Field from "@/Components/Field.jsx";
 
 export default function Products() {
   const [rows, setRows] = useState([]);
@@ -24,6 +25,7 @@ export default function Products() {
     null
   );
   const [asyncOptions, setAsyncOptions] = useState<SelectOptionType[]>([]);
+  const [isValid, setIsValid] = useState(false);
   const [form] = Form.useForm();
   const { executeFun, loading } = useApi();
 
@@ -63,7 +65,13 @@ export default function Products() {
   };
 
   const validateHandler = async () => {
-    await form.validateFields();
+    try {
+      await form.validateFields();
+    } catch (error) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setShowConfirm(true);
   };
 
@@ -80,7 +88,9 @@ export default function Products() {
   };
 
   const resetHandler = () => {
+    setIsValid(false);
     form.resetFields();
+    setRdsfg("");
   };
 
   const normFile = (e: any) => {
@@ -167,7 +177,12 @@ export default function Products() {
                   label="Product Name"
                   rules={rules.product}
                 >
-                  <Input />
+                  <Field
+                    attr="required | Product name is required"
+                    showValidation={isValid}
+                  >
+                    <Input />
+                  </Field>
                 </Form.Item>
               </Col>
               <Col span={24}>
@@ -182,6 +197,7 @@ export default function Products() {
                   style={{ flex: 1, minWidth: 100 }}
                   name="costCenter"
                   label="Cost Center"
+                  rules={[{ required: true, message: "" }]}
                 >
                   <MyAsyncSelect
                     optionsState={asyncOptions}
@@ -189,6 +205,9 @@ export default function Products() {
                     selectLoading={loading("select")}
                     onBlur={() => setAsyncOptions([])}
                     fetchDefault={true}
+                    labelInValue
+                    showError={isValid}
+                    message="Cost Center is required"
                   />
                 </Form.Item>
               </Col>
@@ -197,6 +216,7 @@ export default function Products() {
                   style={{ flex: 1, minWidth: 100 }}
                   name="project"
                   label="Project"
+                  rules={[{ required: true, message: "" }]}
                 >
                   <MyAsyncSelect
                     optionsState={asyncOptions}
@@ -204,6 +224,9 @@ export default function Products() {
                     selectLoading={loading("select")}
                     onBlur={() => setAsyncOptions([])}
                     fetchDefault={true}
+                    labelInValue
+                    showError={isValid}
+                    message="Project is required"
                   />
                 </Form.Item>
               </Col>

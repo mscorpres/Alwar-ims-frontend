@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
 import { Button, Col, Row, Select } from "antd";
 import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
@@ -23,13 +23,14 @@ const CompletedFG = () => {
   const [datee, setDatee] = useState("");
   const [dateData, setDateData] = useState([]);
   const [skuData, setSkuData] = useState([]);
+  const [isValidate, setIsValidate] = useState(false);
   const options = [
     { label: "Date Wise", value: "datewise" },
     { label: "SKU Wise", value: "skuwise" },
   ];
   // filter date
 
-  const { executeFun, loading1 } = useApi();
+  const { executeFun } = useApi();
   const getOption = async (searchInput) => {
     const response = await executeFun(
       () => getProductsOptions(searchInput, true),
@@ -41,11 +42,16 @@ const CompletedFG = () => {
   };
 
   const skuWise = async () => {
+    if(!all.selOption){
+      setIsValidate(true);
+      return;
+    }
+    setIsValidate(false);
     setLoading(true);
     setSkuData([]);
     const response = await imsAxios.post("/fgIN/fgInCompleted", {
       searchBy: all.info,
-      searchValue: all.selOption,
+      searchValue: all.selOption?.value,
     });
     if (response?.success) {
       let arr = response?.data.map((row, index) => {
@@ -64,6 +70,11 @@ const CompletedFG = () => {
   };
 
   const dateWise = async (e) => {
+    if(!datee){
+      setIsValidate(true);
+      return;
+    }
+    setIsValidate(false);
     e.preventDefault();
     setLoading(true);
     setDateData([]);
@@ -150,7 +161,7 @@ const CompletedFG = () => {
         {all.info == "datewise" ? (
           <>
             <Col span={5} className="gutter-row">
-              <MyDatePicker setDateRange={setDatee} size="default" />
+              <MyDatePicker setDateRange={setDatee} size="default"  value={datee} showError={isValidate}/>
             </Col>
             <Col span={2} className="gutter-row">
               <MyButton onClick={dateWise} type="primary" variant="search">
@@ -177,6 +188,7 @@ const CompletedFG = () => {
                     onBlur={() => setAsyncSelect([])}
                     placeholder="SKU"
                     loadOptions={getOption}
+                    labelInValue
                     optionsState={asyncSelect}
                     value={all.selOption.value}
                     onChange={(e) =>
@@ -184,6 +196,8 @@ const CompletedFG = () => {
                         return { ...all, selOption: e };
                       })
                     }
+                    message="Select SKU"
+                    showError={isValidate}
                   />
                 </div>
               </Col>

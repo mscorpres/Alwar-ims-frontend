@@ -3,8 +3,6 @@ import {
   Button,
   Card,
   Col,
-  DatePicker,
-  Form,
   Popconfirm,
   Row,
   Space,
@@ -18,8 +16,6 @@ import { useToast } from "../../../hooks/useToast.js";
 import TableActions from "../../../Components/TableActions.jsx/TableActions";
 import VerifiedFilePreview from "../../Master/reports/R19/VerifiedFilePreview";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
-import { downloadCSV } from "../../../Components/exportToCSV";
-import MyDatePicker from "../../../Components/MyDatePicker";
 import { v4 } from "uuid";
 import socket from "../../../Components/socket";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
@@ -34,10 +30,8 @@ const WeeklyAudit = () => {
   const [fetchLoading, setFetchLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
   const [dateRange, setDateRange] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [addSingleComponentForm] = Form.useForm();
   const { executeFun, loading: loading1 } = useApi();
 
   const columns = [
@@ -56,6 +50,7 @@ const WeeklyAudit = () => {
           // onCancel={cancel}
           okText="Yes"
           cancelText="No"
+          key={"delete" + row.part_code}
         >
           <TableActions
             action="delete"
@@ -105,6 +100,7 @@ const WeeklyAudit = () => {
         setAsyncOptions(arr);
       }
     } catch (error) {
+      showToast(error?.message || "Some error occured while fetching users", "error");
     } finally {
       setLoading(false);
     }
@@ -178,16 +174,16 @@ const WeeklyAudit = () => {
   };
 
   return (
-    <>
-      <Row gutter={6} style={{ height: "90%" }}>
+
+      <Row gutter={6} style={{ height: "calc(100% - 30px)", margin: "10px" }}>
         <VerifiedFilePreview
           verifiedFile={verifiedFile}
           setVerifiedFile={setVerifiedFile}
           // submitHandler={submitHandler}
           loading={loading}
         />
-        <Col span={6}>
-          <Row gutter={[0, 6]} justify="end">
+        <Col span={6} style={{maxHeight: "calc(100%-20px)", overflowY:"auto"}}>
+          <Row gutter={[0, 6]} justify="end" >
             <Col span={24}>
               <Card title="Select Date">
                 <SingleDatePicker
@@ -243,10 +239,7 @@ const WeeklyAudit = () => {
                     />
                   </Row>
                 )}
-              </Card>
-            </Col>
-
-            <Row justify="end">
+                            <Row justify="end" style={{ marginTop: "10px" }}>
               <Space>
                 <Button
                   href="https://media.mscorpres.net/oakterIms/other/MonthlyAudit.xlsx
@@ -266,13 +259,17 @@ const WeeklyAudit = () => {
                 </MyButton>
               </Space>
             </Row>
+              </Card>
+            </Col>
+
+
           </Row>
         </Col>
-        <Col span={18} style={{ height: "100%" }}>
+        <Col span={18} style={{ height: "100%", marginTop: "10px" }}>
           <MyDataTable loading={fetchLoading} rows={rows} columns={columns} />
         </Col>
       </Row>
-    </>
+
   );
 };
 

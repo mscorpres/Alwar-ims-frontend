@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import {
   Col,
+  DatePicker,
   Descriptions,
   Divider,
   Form,
   Input,
   Modal,
   Row,
+  Space,
+  Tooltip,
   Typography,
 } from "antd";
+import dayjs from "dayjs";
 import { useToast } from "../../../hooks/useToast.js";
 import MySelect from "../../../Components/MySelect";
 import InputMask from "react-input-mask";
@@ -19,8 +24,26 @@ import Loading from "../../../Components/Loading";
 import AddProjectModal from "./AddProjectModal";
 import { getProductsOptions, getProjectOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
+import Field from "../../../Components/Field.jsx";
 
 const { TextArea } = Input;
+
+const PLANNING_MONTH_NEXT_AVAILABLE_FROM_DAY = 25;
+
+const isPlanningMonthDisabled = (current) => {
+  if (!current) return false;
+  const today = dayjs();
+  const monthStart = current.startOf("month");
+  const thisMonthStart = today.startOf("month");
+  const nextMonthStart = today.add(1, "month").startOf("month");
+
+  if (monthStart.isBefore(thisMonthStart, "month")) return true;
+  if (monthStart.isSame(thisMonthStart, "month")) return false;
+  if (monthStart.isSame(nextMonthStart, "month")) {
+    return today.date() < PLANNING_MONTH_NEXT_AVAILABLE_FROM_DAY;
+  }
+  return true;
+};
 
 const CreatePPR = () => {
   const { showToast } = useToast();
@@ -29,6 +52,7 @@ const CreatePPR = () => {
   const [locationn, setLocationn] = useState([]);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const [createPPRForm] = Form.useForm();
 
@@ -53,6 +77,7 @@ const CreatePPR = () => {
     form: createPPRForm,
     preserve: true,
   });
+  const planningMonth = Form.useWatch("planningMonth", createPPRForm);
 
   const getLocation = async () => {
     const response = await imsAxios.get("ppr/ppr_section_location");
@@ -122,14 +147,24 @@ const CreatePPR = () => {
   };
 
   const validateHandler = async () => {
-    const values = await createPPRForm.validateFields();
+    let values;
+    try {
+      values = await createPPRForm.validateFields();
+    } catch (error) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
 
     const payload = {
-      comment: values.remark,
+      comment: values.remark ?? "",
       project: values.project.value,
       requesttype: values.type,
       customer: values.customer,
       duedate: values.dueDate,
+      plannedMonth: values.planningMonth
+        ? dayjs(values.planningMonth).format("YYYY-MM")
+        : undefined,
       location: values.section,
       product: values.product.value,
       projectinfo: values.projectDescription,
@@ -158,12 +193,14 @@ const CreatePPR = () => {
           showToast( response.message, "error");
         }
     } catch (error) {
+      showToast(error.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
   };
 
   const resetFunction = () => {
+    setIsValid(false);
     createPPRForm.resetFields();
   };
 
@@ -205,18 +242,33 @@ const CreatePPR = () => {
             <Col span={20}>
               <Row gutter={16}>
                 <Col span={6}>
-                  <Form.Item rules={rules.type} name="type" label="PPR Type">
-                    <MySelect options={pprTypeOptions} />
+                  <Form.Item
+                    rules={[{ required: true, message: "" }]}
+                    name="type"
+                    label="PPR Type"
+                  >
+                    <MySelect
+                      options={pprTypeOptions}
+                      showError={isValid}
+                      message="Please select PPR Type"
+                     
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item rules={rules.type} name="project" label="Project">
+                  <Form.Item
+                    rules={[{ required: true, message: "" }]}
+                    name="project"
+                    label="Project"
+                  >
                     <MyAsyncSelect
                       labelInValue
                       loadOptions={handleFetchProjectOptions}
                       optionsState={asyncOptions}
                       loading={loading1("select")}
                       onBlur={() => setAsyncOptions([])}
+                      showError={isValid}
+                      message="Please select Project"
                     />
                   </Form.Item>
                 </Col>
@@ -229,8 +281,14 @@ const CreatePPR = () => {
                   </Form.Item>
                 </Col>
                 <Col span={18}>
-                  <Form.Item rules={rules.remark} name="remark" label="Remark">
-                    <TextArea rows={2} />
+                  <Form.Item
+                    rules={[{ required: false, message: "" }]}
+                    name="remark"
+                    label="Remark"
+                  >
+            
+                      <TextArea rows={2} />
+             
                   </Form.Item>
                 </Col>
               </Row>
@@ -251,7 +309,7 @@ const CreatePPR = () => {
               <Row gutter={16}>
                 <Col span={6}>
                   <Form.Item
-                    rules={rules.product}
+                    rules={[{ required: true, message: "" }]}
                     name="product"
                     label="Product"
                   >
@@ -261,17 +319,37 @@ const CreatePPR = () => {
                       labelInValue
                       optionsState={asyncOptions}
                       onBlur={() => setAsyncOptions(null)}
+                      showError={isValid}
+                      message="Please select Product"
                     />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item rules={rules.bom} name="bom" label="BOM">
-                    <MySelect options={bomList} />
+                  <Form.Item
+                    rules={[{ required: true, message: "" }]}
+                    name="bom"
+                    label="BOM"
+                  >
+                    <MySelect
+                      options={bomList}
+                      showError={isValid}
+                      message="Please select bom"
+                    />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
-                  <Form.Item rules={rules.qty} name="qty" label="Planning Qty">
-                    <Input suffix={uom} />
+                  <Form.Item
+                    rules={[{ required: true, message: "" }]}
+                    name="qty"
+                    label="Planning Qty"
+                  >
+                    <Field
+                      attr="required | Qty should be greater than zero"
+                      treatZeroAsEmpty
+                      showValidation={isValid}
+                    >
+                      <Input suffix={uom} />
+                    </Field>
                   </Form.Item>
                 </Col>
                 <Col span={6}>
@@ -294,34 +372,82 @@ const CreatePPR = () => {
                 </Col>
                 <Col span={6}>
                   <Form.Item
-                    rules={rules.dueDate}
+                    rules={[{ required: true, message: "" }]}
                     name="dueDate"
                     label="Due Date"
                   >
-                    <InputMask
-                      className="input-date"
-                      mask="99-99-9999"
-                      placeholder="__-__-____"
-                      style={{ textAlign: "center" }}
+                    <Field
+                      attr="required | Please enter due date"
+                      showValidation={isValid}
+                    >
+                      <InputMask
+                        className="input-date"
+                        mask="99-99-9999"
+                        placeholder="__-__-____"
+                        style={{ textAlign: "center" }}
+                      />
+                    </Field>
+                  </Form.Item>
+                </Col>
+                <Col span={6}>
+                  <Field
+                    attr="required | Please select planning month"
+                    value={planningMonth ? "selected" : ""}
+                    showValidation={isValid}
+                  >
+                    <Form.Item
+                      rules={[{ required: true, message: "" }]}
+                      name="planningMonth"
+                      label={
+                        <Space size={6} align="center">
+                          <span>Planning Month</span>
+                          <Tooltip
+                            title={`Next month opens for planning from day ${PLANNING_MONTH_NEXT_AVAILABLE_FROM_DAY} of the current month onward.`}
+                          >
+                            <InfoCircleOutlined
+                              style={{
+                                color: "rgba(0, 0, 0, 0.45)",
+                                cursor: "help",
+                              }}
+                            />
+                          </Tooltip>
+                        </Space>
+                      }
+                    >
+                      <DatePicker
+                        picker="month"
+                        format="MM-YYYY"
+                        style={{ width: "100%" }}
+                        disabledDate={isPlanningMonthDisabled}
+                      />
+                    </Form.Item>
+                  </Field>
+                </Col>
+                <Col span={6}>
+                  <Form.Item
+                    rules={[{ required: true, message: "" }]}
+                    name="section"
+                    label="Section / Location"
+                  >
+                    <MySelect
+                      options={locationn}
+                      showError={isValid}
+                      message="Please select section"
                     />
                   </Form.Item>
                 </Col>
                 <Col span={6}>
                   <Form.Item
-                    rules={rules.section}
-                    name="section"
-                    label="Section / Location"
-                  >
-                    <MySelect options={locationn} />
-                  </Form.Item>
-                </Col>
-                <Col span={6}>
-                  <Form.Item
-                    rules={rules.customer}
+                    rules={[{ required: true, message: "" }]}
                     name="customer"
                     label="Customer Name"
                   >
-                    <Input />
+                    <Field
+                      attr="required | Please enter customer name"
+                      showValidation={isValid}
+                    >
+                      <Input />
+                    </Field>
                   </Form.Item>
                 </Col>
               </Row>
@@ -356,66 +482,11 @@ const initialValues = {
   existingQty: "",
   stock: "",
   dueDate: "",
+  planningMonth: dayjs().startOf("month"),
   section: undefined,
   customer: undefined,
 };
 
-const rules = {
-  type: [
-    {
-      required: true,
-      message: "Please select PPR Type",
-    },
-  ],
-  project: [
-    {
-      required: true,
-      message: "Please select Project",
-    },
-  ],
-  remark: [
-    {
-      required: true,
-      message: "Please enter remark",
-    },
-  ],
-  product: [
-    {
-      required: true,
-      message: "Please select Product",
-    },
-  ],
-  bom: [
-    {
-      required: true,
-      message: "Please select bom",
-    },
-  ],
-  qty: [
-    {
-      required: true,
-      message: "Please enter qty",
-    },
-  ],
-  dueDate: [
-    {
-      required: true,
-      message: "Please enter due date",
-    },
-  ],
-  section: [
-    {
-      required: true,
-      message: "Please select section",
-    },
-  ],
-  customer: [
-    {
-      required: true,
-      message: "Please enter customer name",
-    },
-  ],
-};
 const pprTypeOptions = [
   { text: "New", value: "new" },
   { text: "Repair", value: "repair" },

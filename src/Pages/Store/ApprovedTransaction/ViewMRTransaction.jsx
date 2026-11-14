@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { Col, Row, Table, Typography } from "antd";
-import validateResponse from "../../../Components/validateResponse";
+import { Col, Drawer, Row, Table, Typography } from "antd";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { v4 } from "uuid";
 import { imsAxios } from "../../../axiosInterceptor";
 import Loading from "../../../Components/Loading";
 
-export default function ViewMRTransaction({ viewTransaction }) {
+export default function ViewMRTransaction({
+  viewTransaction,
+  setViewTransaction,
+}) {
   const [details, setDetails] = useState([]);
   const [pageLoading, setPageLoading] = useState(false);
   const getDetails = async () => {
@@ -19,13 +21,17 @@ export default function ViewMRTransaction({ viewTransaction }) {
       }
     );
     setPageLoading(false);
-    const validatedData = validateResponse(data);
-    let arr = validatedData.data.map((row, index) => ({
-      ...row,
-      index: index + 1,
-      key: v4(),
-    }));
-    setDetails(arr);
+    if (response.success) {
+      
+      let arr = response.data.map((row, index) => ({
+        ...row,
+        index: index + 1,
+        key: v4(),
+      }));
+      setDetails(arr);
+    } else {
+      setDetails([]);
+    }
   };
   const nestedDetails = (record) => {
     return (
@@ -98,7 +104,13 @@ export default function ViewMRTransaction({ viewTransaction }) {
     }
   }, [viewTransaction]);
   return (
-    <div style={{ height: "100%" }}>
+    <Drawer
+      title={`Request: ${viewTransaction}`}
+      width="100vw"
+      open={!!viewTransaction}
+      onClose={() => setViewTransaction(null)}
+      destroyOnClose
+    >
       {pageLoading && <Loading />}
       <Table
         bordered={true}
@@ -113,6 +125,6 @@ export default function ViewMRTransaction({ viewTransaction }) {
         pagination={false}
         size="small"
       />
-    </div>
+    </Drawer>
   );
 }

@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, } from "react";
 import { v4 } from "uuid";
 import { useToast } from "../../../../hooks/useToast.js";
 import { Input, Skeleton, Tabs, Typography } from "antd";
 import NavFooter from "../../../../Components/NavFooter";
 import { imsAxios } from "../../../../axiosInterceptor";
-import MyDataTable from "../../../../Components/MyDataTable.jsx";
+import FormTable from "../../../../Components/FormTable.jsx";
 
 const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
   const { showToast } = useToast();
-  const [loading, setLoading] = useState(true);
   const [tableData, setTableData] = useState([]);
   const [submitLoading, setsubmitLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
@@ -16,7 +15,6 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
   const [tabsExist, setTabsExist] = useState(["P", "PCK", "O", "PCB"]);
   const [activeKey, setActiveKey] = useState("P");
 
-  // console.log(allBom)
   const getFetcgData = async () => {
     setPageLoading(true);
     const response = await imsAxios.post("/production/FetchComponentWithBom", {
@@ -27,46 +25,20 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
     });
   
     if (response.success) {
-      let dataArray = [...response?.data?.filter((a) => a?.type == "P")];
-      dataArray = dataArray.map((row) => {
-        return {
-          ...row,
-          reqQty: "",
-          remark: "",
-          id: v4(),
-        };
+      const data = response?.data || [];
+      const withRowMeta = (row) => ({
+        ...row,
+        reqQty: "",
+        remark: "",
+        id: v4(),
       });
 
-      let dataArray1 = [...response?.data?.filter((aa) => aa?.type == "PCK")];
-      dataArray1 = dataArray1.map((row) => {
-        return {
-          ...row,
-          reqQty: "",
-          id: v4(),
-          remark: "",
-        };
-      });
-      let dataArray2 = [...response?.data?.filter((aaa) => aaa?.type == "O")];
-      dataArray2 = dataArray2.map((row) => {
-        return {
-          ...row,
-          reqQty: "",
-          remark: "",
-          id: v4(),
-        };
-      });
-      let dataArray3 = [...response?.data?.filter((aaa) => aaa?.type == "PCB")];
-      dataArray3 = dataArray3.map((row) => {
-        return {
-          ...row,
-          reqQty: "",
-          remark: "",
-          id: v4(),
-        };
-      });
-      let arr = tableData;
-      arr = [...dataArray, ...dataArray1, ...dataArray2, ...dataArray3];
-      setTableData(arr);
+      const dataArray = data.filter((a) => a?.type == "P").map(withRowMeta);
+      const dataArray1 = data.filter((aa) => aa?.type == "PCK").map(withRowMeta);
+      const dataArray2 = data.filter((aaa) => aaa?.type == "O").map(withRowMeta);
+      const dataArray3 = data.filter((aaa) => aaa?.type == "PCB").map(withRowMeta);
+
+      setTableData([...dataArray, ...dataArray1, ...dataArray2, ...dataArray3]);
         setPageLoading(false);
     }
     else{
@@ -207,7 +179,7 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
   const onChange = (newActiveKey) => {
     setActiveKey(newActiveKey);
   };
-  const onEdit = (targetKey, action) => {
+  const onEdit = (targetKey) => {
     remove(targetKey);
   };
 
@@ -225,7 +197,6 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
         return obj;
       }
     });
-    console.log(arr);
     setTableData(arr);
   };
 
@@ -259,10 +230,8 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
       showToast(response.message, "success");
       setTab(true);
       reset();
-      setLoading(false);
     } else {
       showToast(response.message?.msg || response.message, "error");
-      setLoading(false);
     }
   };
 
@@ -289,7 +258,7 @@ const ReqWithBomModal = ({ allBom, back, setTab, reset }) => {
         children: (
           <div style={{ height: "65vh" , marginTop: 10  }}>
             <div style={{ height: "100%" }}>
-              <MyDataTable
+              <FormTable
                 columns={columns}
                 data={tableData.filter((row) => row.type == tab)}
               />

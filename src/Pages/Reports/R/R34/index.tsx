@@ -20,9 +20,15 @@ function R34() {
   const [form] = Form.useForm();
   const { executeFun, loading } = useApi();
   const date = Form.useWatch("date", form);
+  const [isValid, setIsValid] = useState(false);
 
   const handleFetchRows = async () => {
+
     const values = await form.validateFields();
+    if(!values.date){
+       setIsValid(true);
+       return
+    }
     const response = await executeFun(() => getR34(values.date), "fetch");
     setRows(response.data ?? []);
   };
@@ -35,6 +41,7 @@ function R34() {
       getActions: ({ row }: { row: R34Type }) => [
         // Edit icon
         <GridActionsCellItem
+          key={row.id}
           showInMenu
           // disabled={disabled}
           label={"Details"}
@@ -54,7 +61,10 @@ function R34() {
           <Form form={form} layout="vertical">
             <Form.Item name="date" label="Date">
               <MyDatePicker
-                setDateRange={(value) => form.setFieldValue("date", value)}
+                setDateRange={(value:any) => form.setFieldValue("date", value)}
+                value={date}
+                showError={isValid}
+
               />
             </Form.Item>
             <Row justify="end">

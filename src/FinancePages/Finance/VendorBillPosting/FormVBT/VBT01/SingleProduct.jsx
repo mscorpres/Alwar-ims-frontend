@@ -1,18 +1,34 @@
-"use client";
-import { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Row,
-  Col,
-  Typography,
-  message,
-} from "antd";
+import { memo, useEffect, useState } from "react";
+import { Form, Input, Row, Col, Typography } from "antd";
 import Loading from "../../../../../Components/Loading";
 import MySelect from "../../../../../Components/MySelect";
 
+const GST_TYPE_OPTIONS = [
+  { text: "Local", value: "L" },
+  { text: "Interstate", value: "I" },
+];
 
-export default function SingleComponent({
+function arePropsEqual(prev, next) {
+  return (
+    prev.field.key === next.field.key &&
+    prev.field.name === next.field.name &&
+    prev.index === next.index &&
+    prev.form === next.form &&
+    prev.apiUrl === next.apiUrl &&
+    prev.isCreate === next.isCreate &&
+    prev.editApiUrl === next.editApiUrl &&
+    prev.loading === next.loading &&
+    prev.tdsArray === next.tdsArray &&
+    prev.allTdsOptions === next.allTdsOptions &&
+    prev.glCodes === next.glCodes &&
+    prev.freightGlOptions === next.freightGlOptions &&
+    prev.glstate === next.glstate &&
+    prev.lastRateArr === next.lastRateArr &&
+    prev.isValid === next.isValid
+  );
+}
+
+function SingleComponent({
   index,
   field,
   form,
@@ -26,35 +42,29 @@ export default function SingleComponent({
   loading,
   glstate,
   lastRateArr,
+  isValid,
 }) {
-  var lastRateFoundObj;
   const [showLastRateWarning, setShowLastRateWarning] = useState({
     rate: "",
     gl: "",
     glN: "",
   });
-  const [contextHolder] = message.useMessage();
-  let lastOpVals = form.getFieldValue("components");
-  var partArr = [];
-  lastOpVals.forEach((element) => {
-    partArr.push(element.c_part_no);
-  });
+  const isFg = ["vbt08", "vbt09"].some(
+    (code) => apiUrl === code || editApiUrl === code,
+  );
+  const labels = {
+    minId: isFg ? "FG MIN ID" : "MIN ID",
+    partCode: isFg ? "SKU" : "Part Code",
+    partName: isFg ? "Product Name" : "Part Name",
+    minQty: isFg ? "FG MIN Qty" : "MIN Qty",
+  };
 
-  // const component =
-  //   Form.useWatch(["components", field.name, "component"], form) ?? 0;
   const qty =
     Form.useWatch(["components", field.name, "vbtBillQty"], form) ?? 0;
-  // const rate =
-  //   Form.useWatch(["components", field.name, "vbtInRate"], form) ?? 0;
-  // const product =
-  //   Form.useWatch(["components", field.name, "product"], form) ?? 0;
   const tcs = Form.useWatch(["components", field.name, "tcs"], form) ?? 0;
   const freight =
     Form.useWatch(["components", field.name, "freight"], form) ?? 0;
   const gstType = Form.useWatch(["components", field.name, "gstType"], form);
-  // const minId = Form.useWatch(["components", field.name, "minID"], form);
-  // let amountWithFreight;
-  // let value;
 
   const taxableValue =
     Form.useWatch(["components", field.name, "taxableValue"], form) ?? 0;
@@ -88,25 +98,8 @@ export default function SingleComponent({
   const gstRate =
     Form.useWatch(["components", field.name, "gstRate"], form)?.replaceAll(
       "%",
-      ""
+      "",
     ) ?? 0;
-  const options = [
-    {
-      text: "Local",
-      value: "L",
-    },
-    {
-      text: "Interstate",
-      value: "I",
-    },
-  ];
-  // console.log("components", components);
-  // console.log("component", component);
-  // console.log("form", form);
-
-  // useEffect(() => {
-  //   getFreightGlOptions();
-  // }, []);
 
   useEffect(() => {
     let updatedTdsPercentage = 0;
@@ -114,124 +107,76 @@ export default function SingleComponent({
       let arr = allTdsOptions.filter((r) => r.tds_name === tdsName.label);
       form.setFieldValue(
         ["components", field.name, "glName"],
-        arr[0]?.ladger_name
+        arr[0]?.ladger_name,
       );
 
       form.setFieldValue(
         ["components", field.name, "tds_gl_code"],
-        arr[0]?.ledger_key
+        arr[0]?.ledger_key,
       );
       form.setFieldValue(
         ["components", field.name, "tds_key"],
-        arr[0]?.tds_key
+        arr[0]?.tds_key,
       );
       form.setFieldValue(
         ["components", field.name, "tdsPercent"],
-        arr[0]?.tds_percent
+        arr[0]?.tds_percent,
       );
-      // console.log("glName", glName);
-      // console.log("tds_gl_code", tds_gl_code);
-      // console.log("tdsPercent", tdsPercent);
       updatedTdsPercentage = arr[0]?.tds_percent;
     } else {
       updatedTdsPercentage = tdsPercent ?? 0;
     }
     let values = +Number(qty).toFixed(3) * +Number(vbtInRate).toFixed(3);
     let value = +Number(values).toFixed(2);
-    // console.log("value", qty);
-    // console.log("value", vbtInRate);
     const amountWithFreight =
       +Number(value) + +Number(freightAmount).toFixed(2);
-    // console.log("amountWithFreight", amountWithFreight);
-    // console.log("freightAmount-->", freightAmount);
 
     let taxPercentage = gstRate;
     let taxAmounts = +Number((amountWithFreight * taxPercentage) / 100);
     let taxAmount = taxAmounts;
     const cgsts = gstType === "L" ? +Number(taxAmount) / 2 : 0;
-    // console.log("cgst", cgsts);
     const cgst = cgsts.toFixed(2);
     const sgsts = gstType === "L" ? +Number(taxAmount) / 2 : 0;
     const sgst = sgsts.toFixed(2);
-    // console.log("sgst", sgst);
     const igsts = gstType === "I" ? +Number(taxAmount) : 0;
     const igst = igsts.toFixed(2);
-    // console.log("igst", igst);
     taxAmount =
       +Number(cgst).toFixed(2) +
       +Number(sgst).toFixed(2) +
       +Number(igst).toFixed(2);
     let amountAfterTaxs = amountWithFreight + taxAmount;
-    // console.log("amountWithFreight", amountWithFreight);
-    // console.log("taxAmount---was here---", taxAmount);
     let amountAfterTax = +Number(amountAfterTaxs).toFixed(2);
-    // amountAfterTax = Math.round(amountAfterTax);
 
-    // console.log("amountAfterTax", amountAfterTax);
-    // let b = [];
-    // if (amountAfterTax) {
-    //   b = b.push(+Number(amountAfterTaxs).toFixed(2));
-    // }
-    // console.log("b---", b);
-
-    // let venamountBills = form?.reduce(
-    //   (partialSum, a) => partialSum + +Number(a.amountAfterTax).toFixed(2),
-    //   0
-    // );
-    // console.log("totls bill amount", venamountBills);
-    // console.log("igst", igst);
-
-    // let venamountBills = component?.reduce(
-    //   (partialSum, a) => partialSum + +Number(a.amountAfterTax).toFixed(2),
-    //   0
-    // );
-    // console.log("totls bill amount", venamountBills);
     let tdsAmounts = +Number((tdsAssVals * updatedTdsPercentage) / 100);
-    // console.log("tdsAmounts", tdsAmounts);
     let tdsAmount = +Number(tdsAmounts).toFixed(2);
     tdsAmount = tds_key ? +Number(tdsAmount).toFixed(2) : 0;
-    // console.log("tdsAmount", tdsAmount);
 
     tdsAmount = Math.round(tdsAmount);
     let valueAfterTDS = +Number(amountAfterTax - tdsAmount);
-    // console.log("amountAfterTax", amountAfterTax);
-    // console.log("tdsAmount", tdsAmount);
     valueAfterTDS = +Number(valueAfterTDS).toFixed(2);
-    // console.log("valueAfterTDS", valueAfterTDS);
     let gstAssesValues =
       +Number(value).toFixed(3) + +Number(freightAmount).toFixed(3);
     let gstAssesValue = +Number(gstAssesValues).toFixed(2);
-    // gstAssesValue = +Number(gstAssValue).toFixed(3);
-
-    // console.log("vbtBillQty", vbtBillQty);
-    // console.log("freightAmount", freightAmount);
-    // console.log("vbtInRate", vbtInRate);
-    // console.log("gstAssesValue", gstAssesValue);
 
     if (editApiUrl === "vbt07" || apiUrl === "vbt07") {
-      // console.log("here we are vbt07");
-      // console.log("amountWithFreight", amountWithFreight);
       let amountWithFreightsevens = +Number(amountWithFreight - tdsAmount);
       let amountWithFreightseven = +Number(amountWithFreightsevens).toFixed(2);
 
       form.setFieldValue(
         ["components", field.name, "venAmmount"],
-        amountWithFreightseven
+        amountWithFreightseven,
       );
     } else {
-      // console.log("this is the vendor amount right here", valueAfterTDS);
       form.setFieldValue(
         ["components", field.name, "venAmmount"],
-        valueAfterTDS
+        valueAfterTDS,
       );
     }
-
-    // let totalBilAmm = +Number(billAmount) + +Number(taxAmount);
 
     form.setFieldValue("totalBilAmm", amountAfterTax);
     form.setFieldValue(
       ["components", field.name, "totalBilAmm"],
-      amountAfterTax
+      amountAfterTax,
     );
     form.setFieldValue(["components", field.name, "taxableValue"], value);
     form.setFieldValue(["components", field.name, "gstAmount"], gstAmount);
@@ -243,7 +188,7 @@ export default function SingleComponent({
 
     form.setFieldValue(
       ["components", field.name, "gstAssValue"],
-      gstAssesValue
+      gstAssesValue,
     );
     ////CIF calculation
     // taxable+freight+CD+SWS+ other
@@ -253,21 +198,13 @@ export default function SingleComponent({
 
     form.setFieldValue(["components", field.name, "cifValue"], cifValue);
     form.setFieldValue(["components", field.name, "cifPrice"], cifPrice);
-    // console.log("coponents are vbtBillQty", vbtBillQty);
-    // console.log("coponents are cifValue", cifValue);
-    // console.log("coponents are cifPrice", cifPrice);
-    // console.log(
-    //   "tds touched => ",
-    //   form.isFieldTouched(["components", field.name, "tdsAssValue"])
-    // );
-    //   amountWithFreight
     if (
       !form.isFieldTouched(["components", field.name, "tdsAssValue"]) &&
       form.isFieldTouched("components")
     ) {
       form.setFieldValue(
         ["components", field.name, "tdsAssValue"],
-        amountWithFreight
+        amountWithFreight,
       );
     }
   }, [
@@ -291,31 +228,36 @@ export default function SingleComponent({
     gloptions,
     billAmount,
     totalBilAmm,
-    // amountWithFreight,
   ]);
+
   useEffect(() => {
     showRateWarning();
   }, [vbtInRate]);
   useEffect(() => {
     showGlWarning();
   }, [gloptions]);
-  // useEffect(() => {
-  //   getLastPrice(lastOpVals[0].ven_code);
-  // }, []);
 
-  // console.log("freightGlOptions4353w89735w7w349", freightGlOptions);
   useEffect(() => {
-    // getFreightGlOptions(editApiUrl);
-  }, [editApiUrl]);
+    if (isFg || !Array.isArray(tdsArray)) return;
+    const realOptions = tdsArray.filter((r) => r?.value !== "--");
+    if (realOptions.length !== 1) return;
+    const only = realOptions[0];
+    if (only?.value == null && only?.text == null) return;
+    const current = form.getFieldValue(["components", field.name, "tdsName"]);
+    if (current?.value != null && String(current.value) === String(only.value)) {
+      return;
+    }
+    form.setFieldValue(["components", field.name, "tdsName"], {
+      label: only.text,
+      value: only.value,
+    });
+  }, [tdsArray, field.name, form, isFg]);
 
   const showRateWarning = () => {
     const partCode = form.getFieldValue(["components", field.name, "partCode"]);
+    const lastRateFoundObj = lastRateArr?.find((row) => row.partCode === partCode);
 
-    lastRateFoundObj = lastRateArr?.find((row) => row.partCode === partCode);
-
-    // if (form.isFieldTouched(["components", field.name, "vbtInRate"])) {
     if (lastRateFoundObj?.inRate !== vbtInRate) {
-      // setShowLastRateWarning(lastRateFoundObj);
       setShowLastRateWarning((curr) => ({
         ...curr,
         rate: lastRateFoundObj?.inRate,
@@ -326,14 +268,12 @@ export default function SingleComponent({
         rate: "",
       }));
     }
-    // }
   };
   const showGlWarning = () => {
     const partCode = form.getFieldValue(["components", field.name, "partCode"]);
+    const lastRateFoundObj = lastRateArr?.find((row) => row.partCode === partCode);
 
-    lastRateFoundObj = lastRateArr?.find((row) => row.partCode === partCode);
     if (lastRateFoundObj?.ledgerCode !== gloptions.key) {
-      // console.log("gloptions", lastRateFoundObj);
       setShowLastRateWarning((curr) => ({
         ...curr,
         gl: lastRateFoundObj?.ledgerCode,
@@ -346,7 +286,6 @@ export default function SingleComponent({
         glN: "",
       }));
     }
-    // }
   };
 
   return (
@@ -360,7 +299,6 @@ export default function SingleComponent({
       gutter={[6, -6]}
       key={field.key}
     >
-      {contextHolder}
       {loading === field.key && <Loading />}
       {isCreate ? (
         <>
@@ -370,38 +308,36 @@ export default function SingleComponent({
             </Typography.Text>
           </Col>
           <Col span={3}>
-            <Form.Item label="MIN ID" name={[field.name, "minId"]}>
+            <Form.Item label={labels.minId} name={[field.name, "minId"]}>
               <Input disabled />
             </Form.Item>
           </Col>
           <Col span={3}>
-            <Form.Item label="Part Code" name={[field.name, "partCode"]}>
+            <Form.Item label={labels.partCode} name={[field.name, "partCode"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item label="Part Name" name={[field.name, "partName"]}>
+            <Form.Item label={labels.partName} name={[field.name, "partName"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
-      
+
           <Col span={3}>
             <Form.Item label="Invoice Qty" name={[field.name, "vbtBillQty"]}>
               <Input />
             </Form.Item>
           </Col>
           <Col span={2}>
-            <Form.Item label="MIN Qty" name={[field.name, "vbtInQty"]}>
+            <Form.Item label={labels.minQty} name={[field.name, "vbtInQty"]}>
               <Input disabled />
             </Form.Item>
           </Col>
-    
-      
+
           <Col span={4}>
             <Form.Item
               label="Price"
               name={[field.name, "vbtInRate"]}
-         
               validateStatus={showLastRateWarning.rate && "warning"}
               help={
                 showLastRateWarning.rate &&
@@ -415,7 +351,7 @@ export default function SingleComponent({
               <Input />
             </Form.Item>
           </Col>
-     
+
           <Col span={3}>
             <Form.Item label="Value" name={[field.name, "taxableValue"]}>
               <Input />
@@ -428,7 +364,7 @@ export default function SingleComponent({
           </Col>
           <Col span={3}>
             <Form.Item label="GST Type" name={[field.name, "gstType"]}>
-              <MySelect options={options} />
+              <MySelect options={GST_TYPE_OPTIONS} />
             </Form.Item>
           </Col>
           <Col span={2}>
@@ -455,18 +391,13 @@ export default function SingleComponent({
                 <Form.Item
                   label="CGST G/L"
                   name={[field.name, "cgst"]}
-                  rules={[
-                    {
-                      required: true,
-                      message: "CGST GL is required",
-                    },
-                  ]}
+                  rules={[{ required: true, message: "" }]}
                 >
                   <MySelect
                     labelInValue
-                    // loadOptions={getGstGlOptions}
                     options={glstate}
-                    // onBlur={() => setglState([])}
+                    showError={isValid}
+                    message="CGST GL is required"
                   />
                 </Form.Item>
               </Col>
@@ -479,18 +410,13 @@ export default function SingleComponent({
                 <Form.Item
                   label="SGST G/L"
                   name={[field.name, "sgst"]}
-                  rules={[
-                    {
-                      required: true,
-                      message: "SGST GL is required",
-                    },
-                  ]}
+                  rules={[{ required: true, message: "" }]}
                 >
                   <MySelect
                     labelInValue
-                    // loadOptions={getGstGlOptions}
                     options={glstate}
-                    // onBlur={() => setglState([])}
+                    showError={isValid}
+                    message="SGST GL is required"
                   />
                 </Form.Item>
               </Col>
@@ -508,108 +434,21 @@ export default function SingleComponent({
                 <Form.Item
                   label="IGST G/L"
                   name={[field.name, "igst"]}
-                  rules={[
-                    {
-                      required: true,
-                      message: "IGST GL is required",
-                    },
-                  ]}
+                  rules={[{ required: true, message: "" }]}
                 >
                   <MySelect
                     labelInValue
-                    // loadOptions={getGstGlOptions}
                     options={glstate}
-                    // onBlur={() => setglState([])}
+                    showError={isValid}
+                    message="IGST GL is required"
                   />
                 </Form.Item>
               </Col>
             </>
           )}
-          {/* {gstType === "L" && (
-            <Col span={2}>
-              <Form.Item label="CGST" name={[field.name, "cgstAmount"]}>
-                <Input />
-              </Form.Item>
-            </Col>
-          )}
-          {gstType === "L" && (
-            <Col span={4}>
-              <Form.Item
-                label="CGST G/L"
-                name={[field.name, "cgst"]}
-                rules={[
-                  {
-                    required: true,
-                    message: "CGST GL is required",
-                  },
-                ]}
-              >
-                <MySelect
-                  labelInValue
-                  // loadOptions={getGstGlOptions}
-                  options={glstate}
-                  // onBlur={() => setglState([])}
-                />
-              </Form.Item>
-            </Col>
-          )} */}
-          {/* {gstType === "L" && (
-            <Col span={2}>
-              <Form.Item label="SGST" name={[field.name, "sgstAmount"]}>
-                <Input />
-              </Form.Item>
-            </Col>
-          )}
-          {gstType === "L" && (
-            <Col span={4}>
-              <Form.Item
-                label="SGST G/L"
-                name={[field.name, "sgst"]}
-                rules={[
-                  {
-                    required: true,
-                    message: "SGST GL is required",
-                  },
-                ]}
-              >
-                <MySelect
-                  labelInValue
-                  // loadOptions={getGstGlOptions}
-                  options={glstate}
-                  // onBlur={() => setglState([])}
-                />
-              </Form.Item>
-            </Col>
-          )} */}
-          {/* {gstType === "I" && (
-            <Col span={2}>
-              <Form.Item label="IGST" name={[field.name, "igstAmount"]}>
-                <Input />
-              </Form.Item>
-            </Col>
-          )}
-          {gstType === "I" && (
-            <Col span={4}>
-              <Form.Item
-                label="IGST G/L"
-                name={[field.name, "igst"]}
-                rules={[
-                  {
-                    required: true,
-                    message: "IGST GL is required",
-                  },
-                ]}
-              >
-                <MySelect
-                  labelInValue
-                  // loadOptions={getGstGlOptions}
-                  options={glstate}
-                  // onBlur={() => setglState([])}
-                />
-              </Form.Item>
-            </Col>
-          )} */}
           {apiUrl === "vbt01" ||
+          apiUrl === "vbt08" ||
+          apiUrl === "vbt09" ||
           apiUrl === "vbt04" ||
           apiUrl === "vbt05" ||
           apiUrl === "vbt07" ? (
@@ -764,7 +603,6 @@ export default function SingleComponent({
               <Input.TextArea rows={3} />
             </Form.Item>
           </Col>
-          {/* -------------- */}
         </>
       ) : (
         <>
@@ -774,17 +612,17 @@ export default function SingleComponent({
             </Typography.Text>
           </Col>
           <Col span={3}>
-            <Form.Item label="MIN ID" name={[field.name, "minId"]}>
+            <Form.Item label={labels.minId} name={[field.name, "minId"]}>
               <Input disabled />
             </Form.Item>
           </Col>
           <Col span={3}>
-            <Form.Item label="Part Code" name={[field.name, "partCode"]}>
+            <Form.Item label={labels.partCode} name={[field.name, "partCode"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
           <Col span={4}>
-            <Form.Item label="Part Name" name={[field.name, "partName"]}>
+            <Form.Item label={labels.partName} name={[field.name, "partName"]}>
               <Input rows={1} disabled />
             </Form.Item>
           </Col>
@@ -804,7 +642,7 @@ export default function SingleComponent({
             </Form.Item>
           </Col>
           <Col span={2}>
-            <Form.Item label="MIN Qty" name={[field.name, "vbtInQty"]}>
+            <Form.Item label={labels.minQty} name={[field.name, "vbtInQty"]}>
               <Input disabled />
             </Form.Item>
           </Col>
@@ -825,7 +663,7 @@ export default function SingleComponent({
           </Col>
           <Col span={2}>
             <Form.Item label="GST Type" name={[field.name, "gstType"]}>
-              <MySelect options={options} />
+              <MySelect options={GST_TYPE_OPTIONS} />
             </Form.Item>
           </Col>
           <Col span={2}>
@@ -833,23 +671,12 @@ export default function SingleComponent({
               <Input />
             </Form.Item>
           </Col>
-          {/* <Col span={2}>
-            <Form.Item label="Freight" name={[field.name, "freightAmount"]}>
-              <Input />
-            </Form.Item>
-          </Col> */}
           {editApiUrl === "vbt01" ||
+          editApiUrl === "vbt08" ||
+          editApiUrl === "vbt09" ||
           editApiUrl === "vbt04" ||
           editApiUrl === "vbt05" ? (
             <>
-              {/* <Col span={4}>
-                <Form.Item
-                  label="Purchase G/L Code"
-                  name={[field.name, "glCodeValue"]}
-                >
-                  <MySelect options={glCodes} labelInValue />
-                </Form.Item>
-              </Col> */}
               <Col span={4}>
                 <Form.Item
                   label="Purchase G/L Code"
@@ -920,12 +747,7 @@ export default function SingleComponent({
                   },
                 ]}
               >
-                <MySelect
-                  labelInValue
-                  // loadOptions={getGstGlOptions}
-                  options={glstate}
-                  // onBlur={() => setglState([])}
-                />
+                <MySelect labelInValue options={glstate} />
               </Form.Item>
             </Col>
           )}
@@ -948,12 +770,7 @@ export default function SingleComponent({
                   },
                 ]}
               >
-                <MySelect
-                  labelInValue
-                  // loadOptions={getGstGlOptions}
-                  options={glstate}
-                  // onBlur={() => setglState([])}
-                />
+                <MySelect labelInValue options={glstate} />
               </Form.Item>
             </Col>
           )}
@@ -976,12 +793,7 @@ export default function SingleComponent({
                   },
                 ]}
               >
-                <MySelect
-                  labelInValue
-                  // loadOptions={getGstGlOptions}
-                  options={glstate}
-                  // onBlur={() => setglState([])}
-                />
+                <MySelect labelInValue options={glstate} />
               </Form.Item>
             </Col>
           )}
@@ -1060,3 +872,4 @@ export default function SingleComponent({
   );
 }
 
+export default memo(SingleComponent, arePropsEqual);

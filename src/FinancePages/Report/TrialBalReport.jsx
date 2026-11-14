@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { imsAxios } from "../../axiosInterceptor";
 import MyDatePicker from "../../Components/MyDatePicker";
 import {
@@ -9,7 +9,7 @@ import {
   TableRow,
   TableContainer,
 } from "@mui/material";
-import { Button, Card, Form, Row, Space, Col, Skeleton } from "antd";
+import { Button, Card, Row, Col, Skeleton } from "antd";
 import { v4 } from "uuid";
 
 import { DownloadOutlined } from "@ant-design/icons";
@@ -22,10 +22,16 @@ function TrialBalReport() {
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(false);
   const [allData, setAllData] = useState([]);
+  const [isValid, setIsValid] = useState(false);
 
   let arr = [];
 
   const fetchTrialBalanceFun = async () => {
+    if (!date) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setLoading(true);
     const response = await imsAxios.post("/tally/reports/trailBalanaceReport", {
       date: date,
@@ -127,14 +133,20 @@ function TrialBalReport() {
     <div
     style={{ margin: "10px" }}
     >
-      <Row gutter={0} >
+      <Row gutter={10} >
         <Col span={5}>
-          <MyDatePicker setDateRange={setDate} size="default" />
+          <MyDatePicker
+            setDateRange={setDate}
+            size="default"
+            value={date}
+            showError={isValid}
+            message="Please select a date range"
+          />
         </Col>
         <Col span={1}>
           <MyButton
             loading={loading}
-            type={date ? "primary" : "default"}
+            type={"primary"}
             onClick={fetchTrialBalanceFun}
             variant="search"
           >

@@ -49,7 +49,13 @@ const {showToast} = useToast();
   const [months, setMonths] = useState([]);
   const [colm, setColm] = useState(initColumns);
   const [expanded, setExpanded] = useState({ panel1: false, panel2: false });
+  const [isValid, setIsValid] = useState(false);
   const fetchMisReport = async () => {
+    if (!dateRange) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setLoading(true);
     const response = await imsAxios.get(`/mis/generate?date=${dateRange}`);
 
@@ -239,7 +245,12 @@ const {showToast} = useToast();
     <div style={{ height: "80%", padding: 10, }}>
       <Row gutter={16} >
         <Col span={5}>
-          <MyDatePicker setDateRange={setDateRange} />
+          <MyDatePicker
+            setDateRange={setDateRange}
+            value={dateRange}
+            showError={isValid}
+            message="Please select a date range"
+          />
         </Col>
         <Space span={1}>
           <div>

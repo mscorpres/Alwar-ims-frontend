@@ -133,15 +133,13 @@ function ViewClients() {
       field: "status",
       flex: 1,
       renderCell: ({ row }) => (
-        <ToolTipEllipses
-          text={
+      
             row.status == "active" ? (
               <span style={{ color: "green" }}>Active</span>
             ) : (
               <span style={{ color: "red" }}>In-Active</span>
             )
-          }
-        />
+         
       ),
     },
   ];

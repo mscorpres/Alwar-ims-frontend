@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Row, Col, Space } from "antd";
 import { Box, IconButton } from "@mui/material";
 import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
@@ -17,12 +17,26 @@ import MyDataTable from "../../../Components/MyDataTable.jsx";
 
 const consumptionColumns = [
   { headerName: "Serial Number", field: "serial_no", width: 110 },
-  { headerName: "Consumption Part Name", field: "consump_part_name", flex: 1, minWidth: 160 },
-  { headerName: "Consumption Part Code", field: "consump_part_code", width: 150 },
+  {
+    headerName: "Consumption Part Name",
+    field: "consump_part_name",
+    flex: 1,
+    minWidth: 160,
+  },
+  {
+    headerName: "Consumption Part Code",
+    field: "consump_part_code",
+    width: 150,
+  },
   { headerName: "Consumption Quantity", field: "consump_qty", width: 130 },
   { headerName: "UoM", field: "uom", width: 80 },
-  {headerName: "Avg. Rate", field: "avr_rate", width: 100 },
-  { headerName: "Pick Location", field: "pick_location", flex: 1, minWidth: 120 },
+  { headerName: "Avg. Rate", field: "avr_rate", width: 100 },
+  {
+    headerName: "Pick Location",
+    field: "pick_location",
+    flex: 1,
+    minWidth: 120,
+  },
 ];
 
 const PartCodeConversionReport = () => {
@@ -43,6 +57,7 @@ const PartCodeConversionReport = () => {
   const [loading, setLoading] = useState(false);
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [fetchConversion, SetfetchConversion] = useState([]);
+  const [isValid, setIsValid] = useState(false);
   const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const { executeFun, loading: loading1 } = useApi();
 
@@ -56,7 +71,7 @@ const PartCodeConversionReport = () => {
           id: `cons-${index}-${i}`,
         })),
       })),
-    [fetchConversion]
+    [fetchConversion],
   );
 
   const toggleExpand = useCallback((id) => {
@@ -81,7 +96,9 @@ const PartCodeConversionReport = () => {
             <IconButton
               size="small"
               onClick={() => toggleExpand(row.id)}
-              aria-label={open ? "Collapse consumption rows" : "Expand consumption rows"}
+              aria-label={
+                open ? "Collapse consumption rows" : "Expand consumption rows"
+              }
             >
               {open ? (
                 <KeyboardArrowDown fontSize="small" />
@@ -93,14 +110,19 @@ const PartCodeConversionReport = () => {
         },
       },
       { headerName: "Serial Number", field: "serial_no", width: 120 },
-      { headerName: "Final label", field: "final_label", width: 120 },
+      { headerName: "Final label", field: "final_label", width: 250 },
       { headerName: "Final Part", field: "final_part", flex: 1, minWidth: 120 },
       { headerName: "Final QTY", field: "final_qty", width: 100 },
       { headerName: "UoM", field: "uom", width: 80 },
       { headerName: "Transaction Date", field: "txn_dt", width: 130 },
-      { headerName: "Transaction By", field: "txn_by", width: 120 },
-      { headerName: "Transaction Id", field: "txn_id", width: 120 },
-      { headerName: "Drop Location", field: "drop_location", flex: 1, minWidth: 120 },
+      { headerName: "Transaction By", field: "txn_by", width: 180 },
+      { headerName: "Transaction Id", field: "txn_id", width: 180 },
+      {
+        headerName: "Drop Location",
+        field: "drop_location",
+        flex: 1,
+        minWidth: 120,
+      },
       {
         field: "_consumptionPanel",
         headerName: "Consumption breakdown",
@@ -125,24 +147,38 @@ const PartCodeConversionReport = () => {
         },
       },
     ],
-    [expandedRowKeys, toggleExpand]
+    [expandedRowKeys, toggleExpand],
   );
 
   const getRowHeight = useCallback(
     (params) => {
-      if (expandedRowKeys.includes(params.id) && params.model.consumption?.length) {
+      if (
+        expandedRowKeys.includes(params.id) &&
+        params.model.consumption?.length
+      ) {
         return 52 + 240;
       }
       return 52;
     },
-    [expandedRowKeys]
+    [expandedRowKeys],
   );
 
   const handleSubmit = async () => {
+    const searchValue =
+      wise === wiseOptions[0].value
+        ? (searchInput?.value ?? searchInput)
+        : searchInput;
+
+    if (!wise || !searchValue) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+
     try {
       setLoading(true);
       const response = await imsAxios.get(
-        `/conversion/fetch/conversion?wise=${wise}&data=${searchInput}`
+        `/conversion/fetch/conversion?wise=${wise}&data=${searchValue}`,
       );
 
       if (response.success) {
@@ -164,10 +200,11 @@ const PartCodeConversionReport = () => {
     try {
       const response = await executeFun(
         () => getComponentOptions(search),
-        "select"
+        "select",
       );
-      const { data } = response;
+
       if (response.success) {
+        const { data } = response;
         const arr = data.map((row) => ({
           text: row.text,
           value: row.id,
@@ -175,14 +212,14 @@ const PartCodeConversionReport = () => {
         setAsyncOptions(arr);
       }
     } catch (error) {
+      showToast(error?.message || "Error fetching component options", "error");
     } finally {
       setLoading(false);
     }
   };
   useEffect(() => {
-    if (wise !== wiseOptions[1].value) {
-      setSearchInput("");
-    }
+    setSearchInput("");
+    setIsValid(false);
   }, [wise]);
 
   const handleDownload = () => {
@@ -256,7 +293,7 @@ const PartCodeConversionReport = () => {
           rowData[`consump_uom${consumptionKeyPrefix}`] = consumptionItem.uom;
           rowData[`pick_location${consumptionKeyPrefix}`] =
             consumptionItem.pick_location;
-            rowData[`avr_rate${consumptionKeyPrefix}`] = consumptionItem.avr_rate;
+          rowData[`avr_rate${consumptionKeyPrefix}`] = consumptionItem.avr_rate;
         });
       }
 
@@ -289,6 +326,8 @@ const PartCodeConversionReport = () => {
                     options={wiseOptions}
                     value={wise}
                     placeholder="Select Wise"
+                    showError={isValid}
+                    message="Please select wise"
                   />
                 </div>
                 {wise === wiseOptions[0].value && (
@@ -300,11 +339,19 @@ const PartCodeConversionReport = () => {
                       value={searchInput}
                       onChange={setSearchInput}
                       loadOptions={handleClientOptions}
+                      labelInValue
+                      showError={isValid}
+                      message="Please select a component"
                     />
                   </div>
                 )}
                 {wise === wiseOptions[1].value && (
-                  <MyDatePicker setDateRange={setSearchInput} />
+                  <MyDatePicker
+                    setDateRange={setSearchInput}
+                    value={searchInput}
+                    showError={isValid}
+                    message="Please select a date"
+                  />
                 )}
                 <MyButton
                   variant="search"

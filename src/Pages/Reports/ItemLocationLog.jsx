@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Tooltip,
   Card,
   Col,
   Collapse,
@@ -53,9 +52,11 @@ export default function ItemLocationLog() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(50);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [isValidating, setValidating] = useState(false);
   // initializing searh form
   const [searchForm] = Form.useForm();
+  const selectedComonents = Form.useWatch("component", searchForm);
+  const selectedLocation = Form.useWatch("location", searchForm);
 
   //getting components options
   const getComponentOption = async (search) => {
@@ -73,7 +74,13 @@ export default function ItemLocationLog() {
     const response = await imsAxios.post("/backend/fetchLocation", {
       searchTerm: search,
     });
+  if(response.success) {
     getData(response);
+    setLoading(false);
+  } else {
+    showToast(response.message, "error");
+    setLoading(false);
+  }
   };
 
   // getting data from response for setting async options for async select
@@ -93,8 +100,8 @@ export default function ItemLocationLog() {
   const getDetails = async (values) => {
     setLoading(true);
     const response = await imsAxios.post("/report/common/altpartDetails", {
-      component: values.component,
-      location: values.location,
+      component: values.component?.key,
+      location: values.location?.key,
     });
     if (response.success) {
       setAltDetails(response.data);
@@ -104,6 +111,11 @@ export default function ItemLocationLog() {
   };
   // getting rows
   const getRows = async (values, page = 1, limit = pageSize) => {
+    if(!values.location || !values.component) {
+      setValidating(true);
+      return
+    }
+    setValidating(false);
     try {
       setLoading("fetch");
       setSummaryData(initialSummaryData);
@@ -111,8 +123,8 @@ export default function ItemLocationLog() {
 
       const response = await imsAxios.get("/q2/view", {
         params: {
-          location: values.location,
-          key: values.component,
+          location: values.location?.key,
+          key: values.component?.key,
           page,
           limit,
         },
@@ -128,8 +140,8 @@ export default function ItemLocationLog() {
         if (response.success) {
           const bomDetails = response?.data?.header?.bomDetails;
           const header = response.data.header;
-          const arr = response.data.body.map((row) => ({
-            index: row.serial_no,
+          const arr = response.data.body.map((row, index) => ({
+            index: index + 1,
             id: v4(),
             qty_in_rate: row.qty_in_rate ?? "-",
             weightedPurchaseRate: row.weightedPurchaseRate ?? "-",
@@ -156,7 +168,6 @@ export default function ItemLocationLog() {
           if (pagination) {
             setCurrentPage(pagination.currentPage ?? page);
             setTotalRecords(pagination.totalRecords ?? 0);
-            setTotalPages(pagination.totalPages ?? 0);
           }
 
           setSummaryData([
@@ -190,6 +201,7 @@ export default function ItemLocationLog() {
         }
     
     } catch (error) {
+      showToast(error.message || "Something went wrong", "error");
     } finally {
       setLoading(false);
     }
@@ -205,7 +217,6 @@ export default function ItemLocationLog() {
   const handleFormSubmit = (values) => {
     setCurrentPage(1);
     setTotalRecords(0);
-    setTotalPages(0);
     getRows(values, 1, pageSize);
   };
 
@@ -215,6 +226,7 @@ export default function ItemLocationLog() {
       headerName: "#",
       field: "index",
       width: 30,
+      renderCell: ({ row }) => <div>{row.index}</div>,
     },
     {
       headerName: "Date",
@@ -332,7 +344,7 @@ export default function ItemLocationLog() {
     {
       headerName: "Remark",
       field: "remark",
-      width: 200,
+      width: 250,
     },
   ];
 
@@ -352,7 +364,6 @@ export default function ItemLocationLog() {
                   <Col span={24}>
                     <Form.Item
                       label="Component"
-                      rules={rules.component}
                       name="component"
                     >
                       <MyAsyncSelect
@@ -360,20 +371,27 @@ export default function ItemLocationLog() {
                         loadOptions={getComponentOption}
                         optionsState={asyncOptions}
                         selectLoading={loading1("select")}
+                        labelInValue
+                        message="Select a component"
+                        value={selectedComonents}
+                        showError={isValidating}
                       />
                     </Form.Item>
                   </Col>
                   <Col span={24}>
                     <Form.Item
                       label="Location"
-                      rules={rules.location}
                       name="location"
                     >
                       <MyAsyncSelect
                         onBlur={() => setAsyncOptions([])}
                         loadOptions={getLocatonOptions}
                         optionsState={asyncOptions}
-                        // selectLoading={loading === "select"}
+                        labelInValue
+                        message="Select a location"
+                        value={selectedLocation}
+                        showError={isValidating}
+                        selectLoading={loading === "select"}
                       />
                     </Form.Item>
                   </Col>
@@ -541,10 +559,4 @@ export default function ItemLocationLog() {
 const initialValues = {
   component: "",
   location: "",
-};
-
-// form rules
-const rules = {
-  component: [{ required: true, message: "Please select a component" }],
-  location: [{ required: true, message: "Please select a location" }],
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 
 import {
   Col,
@@ -22,10 +22,9 @@ import { imsAxios } from "../../../../axiosInterceptor";
 import { getVendorOptions } from "../../../../api/general.ts";
 import { convertSelectOptions } from "../../../../utils/general.ts";
 import useApi from "../../../../hooks/useApi.ts";
-import { useToast } from "../../../../hooks/useToast.js";
+import Field from "../../../../Components/Field.jsx";
 
 export default function CreateDC() {
-  const { showToast } = useToast();
   const [newGatePass, setNewGatePass] = useState({
     passType: "R",
     vendorName: "",
@@ -50,11 +49,12 @@ export default function CreateDC() {
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [billToOptions, setBillTopOptions] = useState([]);
   const [vendorBranches, setVendorBranches] = useState([]);
-  const [selectLoading, setSelectLoading] = useState(false);
+  // const [selectLoading, setSelectLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(false);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
   const [successPage, setSuccessPage] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const { executeFun, loading: loading1 } = useApi();
   const passTypes = [
     { text: "RGP (Returnable Gate Pass)", value: "R" },
@@ -152,11 +152,11 @@ export default function CreateDC() {
   };
   // gettig billing address
   const getBillTo = async () => {
-    setSelectLoading(true);
+    // setSelectLoading(true);
     const response = await imsAxios.post("/backend/billingAddressList", {
       search: "",
     });
-    setSelectLoading(false);
+    // setSelectLoading(false);
     let arr = [];
     arr = response?.data.map((d) => {
       return { text: d.text, value: d.id };
@@ -178,18 +178,20 @@ export default function CreateDC() {
     };
   };
   const validateDCDetails = () => {
-    if (!newGatePass.passType) {
-      return showToast("Please select Pass Type", "error");
+    const hasEmptyField =
+      !newGatePass.passType ||
+      !newGatePass.vendorName?.value ||
+      !newGatePass.vendorBranch ||
+      !newGatePass.vendorAddress?.trim() ||
+      !newGatePass.billingId ||
+      !newGatePass.billinAddress?.trim() ||
+      !newGatePass.vehicleNumber?.trim();
+
+    if (hasEmptyField) {
+      setIsValid(true);
+      return;
     }
-    if (!newGatePass.vendorName || !newGatePass.vendorName?.value) {
-      return showToast("Please select a Vendor", "error");
-    }
-    if (!newGatePass.vendorBranch) {
-      return showToast("Please select a Vendor Branch", "error");
-    }
-    if (!newGatePass.billingId) {
-      return showToast("Please select a Billing Address", "error");
-    }
+    setIsValid(false);
     setActiveTab("2");
   };
 
@@ -216,6 +218,7 @@ export default function CreateDC() {
       billingGSTIN: "",
     });
     setShowResetConfirm(false);
+    setIsValid(false);
   };
   useEffect(() => {
     getBillTo();
@@ -304,6 +307,8 @@ export default function CreateDC() {
                                 size="default"
                                 options={passTypes}
                                 value={newGatePass.passType}
+                                showError={isValid}
+                                message="Please select Pass Type"
                                 onChange={(value) =>
                                   inputHandler("passType", value)
                                 }
@@ -353,6 +358,8 @@ export default function CreateDC() {
                                 // onBlur={() => setAsyncOptions([])}
                                 optionsState={asyncOptions}
                                 value={newGatePass.vendorName}
+                                showError={isValid}
+                                message="Please select a Vendor"
                                 onChange={(value) => {
                                   inputHandler("vendorName", value);
                                 }}
@@ -384,6 +391,8 @@ export default function CreateDC() {
                             >
                               <MySelect
                                 value={newGatePass.vendorBranch}
+                                showError={isValid}
+                                message="Please select a Vendor Branch"
                                 onChange={(value) => {
                                   inputHandler("vendorBranch", value);
                                 }}
@@ -419,17 +428,26 @@ export default function CreateDC() {
                                 </span>
                               }
                             >
-                              <Input.TextArea
-                                rows={4}
-                                value={newGatePass?.vendorAddress?.replaceAll(
-                                  "<br>",
-                                  "\n"
-                                )}
-                                onChange={(e) => {
-                                  inputHandler("vendorAddress", e.target.value);
-                                }}
-                                style={{ resize: "none" }}
-                              />
+                              <Field
+                                attr="required | Please enter Bill From Address"
+                                value={newGatePass.vendorAddress}
+                                showValidation={isValid}
+                              >
+                                <Input.TextArea
+                                  rows={4}
+                                  value={newGatePass?.vendorAddress?.replaceAll(
+                                    "<br>",
+                                    "\n"
+                                  )}
+                                  onChange={(e) => {
+                                    inputHandler(
+                                      "vendorAddress",
+                                      e.target.value
+                                    );
+                                  }}
+                                  style={{ resize: "none" }}
+                                />
+                              </Field>
                             </Form.Item>
                           </Form>
                         </Col>
@@ -548,7 +566,7 @@ export default function CreateDC() {
                                     // background: "red",
                                   }}
                                 >
-                                  Buyer's Order Number
+                                  {`Buyer's Order Number`}
                                 </div>
                               }
                             >
@@ -687,13 +705,22 @@ export default function CreateDC() {
                                 </span>
                               }
                             >
-                              <Input
-                                size="default"
-                                onChange={(e) =>
-                                  inputHandler("vehicleNumber", e.target.value)
-                                }
+                              <Field
+                                attr="required | Please enter a Vehicle Number"
                                 value={newGatePass.vehicleNumber}
-                              />
+                                showValidation={isValid}
+                              >
+                                <Input
+                                  size="default"
+                                  onChange={(e) =>
+                                    inputHandler(
+                                      "vehicleNumber",
+                                      e.target.value
+                                    )
+                                  }
+                                  value={newGatePass.vehicleNumber}
+                                />
+                              </Field>
                             </Form.Item>
                           </Form>
                         </Col>
@@ -762,6 +789,8 @@ export default function CreateDC() {
                               <MySelect
                                 size="default"
                                 value={newGatePass.billingId}
+                                showError={isValid}
+                                message="Please select a Billing Address"
                                 onChange={(value) => {
                                   inputHandler("billingId", value);
                                 }}
@@ -835,17 +864,26 @@ export default function CreateDC() {
                                 </span>
                               }
                             >
-                              <Input.TextArea
-                                style={{ resize: "none" }}
-                                rows={4}
-                                onChange={(e) =>
-                                  inputHandler("billinAddress", e.target.value)
-                                }
-                                value={newGatePass.billinAddress?.replaceAll(
-                                  "<br>",
-                                  " "
-                                )}
-                              />
+                              <Field
+                                attr="required | Please enter a Billing Address"
+                                value={newGatePass.billinAddress}
+                                showValidation={isValid}
+                              >
+                                <Input.TextArea
+                                  style={{ resize: "none" }}
+                                  rows={4}
+                                  onChange={(e) =>
+                                    inputHandler(
+                                      "billinAddress",
+                                      e.target.value
+                                    )
+                                  }
+                                  value={newGatePass.billinAddress?.replaceAll(
+                                    "<br>",
+                                    " "
+                                  )}
+                                />
+                              </Field>
                             </Form.Item>
                           </Form>
                         </Col>

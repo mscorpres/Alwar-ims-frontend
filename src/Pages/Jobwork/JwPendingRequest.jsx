@@ -29,6 +29,7 @@ function JwPendingRequest() {
   const [editiJWAll, setEditJWAll] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   // const getAsyncOptions = async (search, type) => {
   //   let link =
@@ -51,6 +52,11 @@ function JwPendingRequest() {
   //   }
   // };
   const getRows = async () => {
+    if (searchInput === "" || !searchInput) {
+     setIsValid(true);
+     return;
+    }
+    setIsValid(false);
    try {
      setLoading("fetch");
     const response = await imsAxios.post("/jobwork/getJobworkChallan", {
@@ -120,7 +126,7 @@ function JwPendingRequest() {
     {
       headerName: "Req. Date",
       field: "issue_challan_rm_dt",
-      width: 150,
+      width: 180,
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.issue_challan_rm_dt} />
       ),
@@ -149,7 +155,7 @@ function JwPendingRequest() {
     },
     {
       headerName: "Challan ID",
-      width: 150,
+      width: 190,
       field: "challan_id",
       renderCell: ({ row }) => (
         <ToolTipEllipses text={row.challan_id} copy={true} />
@@ -325,6 +331,7 @@ function JwPendingRequest() {
                   setDateRange={setSearchInput}
                   dateRange={searchInput}
                   value={searchInput}
+                  showError={isValid}
                 />
               {/* )} */}
             </div>

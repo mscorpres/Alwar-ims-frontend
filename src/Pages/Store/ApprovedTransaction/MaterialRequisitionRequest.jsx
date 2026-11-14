@@ -1,13 +1,11 @@
 import { Button, Col, Row, Space } from "antd";
-import axios from "axios";
-import React, { useState } from "react";
-import InternalNav from "../../../Components/InternalNav";
+
+import  { useState } from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import SingleDatePicker from "../../../Components/SingleDatePicker";
 import TableActions, {
   CommonIcons,
 } from "../../../Components/TableActions.jsx/TableActions";
-import validateResponse from "../../../Components/validateResponse";
 import { v4 } from "uuid";
 import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import MyDataTable from "../../../Components/MyDataTable";
@@ -27,8 +25,8 @@ export default function MaterialRequisitionRequest() {
     setSelectLoading(true);
     const response = await imsAxios.post("/backend/fetchAllUser", { search });
     setSelectLoading(false);
-    if (data) {
-      let arr = data.map((row) => ({
+    if (response.success) {
+      let arr = response.data.map((row) => ({
         value: row.id,
         text: row.text,
       }));
@@ -42,9 +40,8 @@ export default function MaterialRequisitionRequest() {
       date: searchDate,
     });
     setSearchLoading(false);
-    const validatedData = validateResponse(data);
-    if (validatedData) {
-      let arr = validatedData.data.map((row, index) => ({
+    if (response.success) {
+      let arr = response.data.map((row, index) => ({
         ...row,
         id: v4(),
         index: index + 1,
@@ -72,6 +69,7 @@ export default function MaterialRequisitionRequest() {
       width: 300,
       getActions: ({ row }) => [
         <TableActions
+          key="view"
           action="view"
           onClick={() => setViewTransaction(row.transaction)}
         />,

@@ -1,12 +1,10 @@
-import { Button, Col, Form, Row, Skeleton } from "antd";
-import React, { useState } from "react";
+import { Col, Form, Row, } from "antd";
+import { useState } from "react";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MySelect from "../../../Components/MySelect";
-import SingleDatePicker from "../../../Components/SingleDatePicker";
 import { imsAxios } from "../../../axiosInterceptor";
 import { useEffect } from "react";
 import { useToast } from "../../../hooks/useToast.js";
-import { v4 } from "uuid";
 import MyDataTable from "../../../Components/MyDataTable";
 import { getProductsOptions } from "../../../api/general.ts";
 import useApi from "../../../hooks/useApi.ts";
@@ -21,9 +19,11 @@ function R35() {
   const [bomName, setBomName] = useState([]);
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState([]);
+  const [isValid, setIsValid] = useState(false);
   const [form] = Form.useForm();
   const prod = Form.useWatch("product", form);
   const bomVal = Form.useWatch("bom", form);
+  const dateVal = Form.useWatch("date", form);
 
   const columns = [
     { field: "id", headerName: "Sr. No.", width: 8 },
@@ -105,7 +105,7 @@ function R35() {
       width: 180,
     },
   ];
-  const { executeFun, loading1 } = useApi();
+  const { executeFun } = useApi();
   const getDataBySearch = async (searchInput) => {
     setLoading(true);
     if (searchInput?.length > 2) {
@@ -129,13 +129,18 @@ function R35() {
     setLoading(false);
   };
   const fetchSearch = async () => {
+    if (!prod?.value || !bomVal || !dateVal) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
     setLoading(true);
-    const values = await form.validateFields();
     const response = await imsAxios.post("/report35/get", {
-      sku: values.product.value,
-      bom: values.bom,
-      date: values.date,
+      sku: prod.value,
+      bom: bomVal,
+      date: dateVal,
     });
+    setLoading(false);
     if (response.success) {
       // Handle both array and single object responses
       const dataArray = Array.isArray(response.data)
@@ -145,10 +150,8 @@ function R35() {
         return { ...r, id: index + 1 };
       });
       setRows(arr);
-      setLoading(false);
     } else {
       showToast(response.message, "error");
-      setLoading(false);
     }
   };
   const downloadHandler = () => {
@@ -182,69 +185,40 @@ function R35() {
           <Form layout="vertical" form={form}>
             <Row gutter={[10, 0]}>
               <Col span={5}>
-                <Form.Item
-                  name="product"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter product!",
-                    },
-                  ]}
-                  label="Product"
-                >
+                <Form.Item name="product" label="Product">
                   <MyAsyncSelect
                     onBlur={() => setAsyncOptions([])}
                     optionsState={asyncOptions}
                     placeholder="Select Product"
                     loadOptions={getDataBySearch}
                     labelInValue={true}
-                    loading={loading}
-                    // onInputChange={(e) => setSearch(e)}
-                    // value={allData.selectProduct.value}
-                    // onChange={(e) =>
-                    //   setAllData((allData) => {
-                    //     return { ...allData, selectProduct: e };
-                    //   })
-                    // }
+                    selectLoading={loading}
+                    showError={isValid}
+                    message="Please select a Product"
                   />
                 </Form.Item>
               </Col>
               <Col span={4}>
-                <Form.Item
-                  name="bom"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please select BOM!",
-                    },
-                  ]}
-                  label="BOM"
-                >
+                <Form.Item name="bom" label="BOM">
                   <MySelect
                     placeholder="Select Bom"
                     options={bomName}
-                    loading={loading == "fetch"}
-                    // value={allData.selectBom.value}
-                    // onChange={(e) =>
-                    //   setAllData((allData) => {
-                    //     return { ...allData, selectBom: e };
-                    //   })
-                    // }
+                    loading={loading}
+                    showError={isValid}
+                    message="Please select a BOM"
                   />
                 </Form.Item>
               </Col>
               <Col span={5}>
-                <Form.Item
-                  name="date"
-                  // rules={[{ required: true }]}
-                  label="Date"
-                  rules={rules.date}
-                >
+                <Form.Item name="date" label="Date">
                   {" "}
                   <MyDatePicker
                     setDateRange={(value) => form.setFieldValue("date", value)}
+                    value={dateVal}
                     size="default"
                     disabledtheDate="true"
+                    showError={isValid}
+                    message="Please select a Date"
                   />
                 </Form.Item>
               </Col>
@@ -253,8 +227,7 @@ function R35() {
                   variant="search"
                   style={{ margin: "18px" }}
                   onClick={fetchSearch}
-                  disabled={bomVal?.length == 0}
-                  // loading={loading}
+                  loading={loading}
                 ></MyButton>{" "}
                 <CommonIcons
                   action="downloadButton"
@@ -284,34 +257,28 @@ function R35() {
 }
 
 export default R35;
-const columns = [
-  { field: "serial_no", headerName: "S. No", width: 40 },
-  { field: "partno", headerName: "Part No", width: 80 },
-  { field: "new_partno", headerName: "Cat Part Code", width: 150 },
-  { field: "bomalt_name", headerName: "Bom ALt Name", width: 100 },
-  { field: "bomalt_part", headerName: "Alt Of", width: 80 },
-  { field: "bomqty", headerName: "Bom Qty", width: 80 },
-  { field: "category", headerName: "Category", width: 80 },
-  { field: "components", headerName: "Components", flex: 1 },
-  { field: "uom", headerName: "UoM", width: 80 },
-  { field: "closingBal", headerName: "Cl Qty", width: 80 },
-  { field: "openBal", headerName: "Op Qty", width: 80 },
-  { field: "creditBal", headerName: "In Qty", width: 80 },
-  { field: "debitBal", headerName: "Out Qty", width: 80 },
-  //   { field: "openBal", headerName: "Open Bal", width: 80 },
-  {
-    field: "status",
-    headerName: "Status",
-    width: 80,
-    type: "status",
-    renderCell: ({ row }) => (
-      <span dangerouslySetInnerHTML={{ __html: row.statusHtml }} />
-    ),
-  },
-];
-const rules = {
-  ppr: [{ required: true, message: "Please select PPR Number" }],
-  process: [{ required: true, message: "Please select Process" }],
-  status: [{ required: true, message: "Please select Status" }],
-  date: [{ required: true, message: "Please select Date" }],
-};
+// const columns = [
+//   { field: "serial_no", headerName: "S. No", width: 40 },
+//   { field: "partno", headerName: "Part No", width: 80 },
+//   { field: "new_partno", headerName: "Cat Part Code", width: 150 },
+//   { field: "bomalt_name", headerName: "Bom ALt Name", width: 100 },
+//   { field: "bomalt_part", headerName: "Alt Of", width: 80 },
+//   { field: "bomqty", headerName: "Bom Qty", width: 80 },
+//   { field: "category", headerName: "Category", width: 80 },
+//   { field: "components", headerName: "Components", flex: 1 },
+//   { field: "uom", headerName: "UoM", width: 80 },
+//   { field: "closingBal", headerName: "Cl Qty", width: 80 },
+//   { field: "openBal", headerName: "Op Qty", width: 80 },
+//   { field: "creditBal", headerName: "In Qty", width: 80 },
+//   { field: "debitBal", headerName: "Out Qty", width: 80 },
+//   //   { field: "openBal", headerName: "Open Bal", width: 80 },
+//   {
+//     field: "status",
+//     headerName: "Status",
+//     width: 80,
+//     type: "status",
+//     renderCell: ({ row }) => (
+//       <span dangerouslySetInnerHTML={{ __html: row.statusHtml }} />
+//     ),
+//   },
+// ];

@@ -25,6 +25,7 @@ import ToolTipEllipses from "../../../Components/ToolTipEllipses";
 import { imsAxios } from "../../../axiosInterceptor";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import MyButton from "../../../Components/MyButton";
+import Field from "../../../Components/Field.jsx";
 
 export default function VoucherReport() {
   const { showToast } = useToast();
@@ -39,6 +40,7 @@ export default function VoucherReport() {
   const [voucherType, setVoucherType] = useState("");
   const [asyncOptions, setAsyncOptions] = useState([]);
   const [selectLoading, setSelectLoading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   const [editVoucher, setEditVoucher] = useState(null);
 
@@ -49,6 +51,13 @@ export default function VoucherReport() {
     { value: "ledger_wise", text: "Ledger" },
   ];
   const getRows = async () => {
+    const isDateMode = wise === "date_wise" || wise === "eff_wise";
+    if (isDateMode ? !searchDateRange : !searchInput) {
+      setIsValid(true);
+      return;
+    }
+    setIsValid(false);
+
     let link = "";
     if (voucherType === "bank-payment") {
       link = "/tally/voucher/bp_list";
@@ -59,10 +68,7 @@ export default function VoucherReport() {
     setSearchLoading(true);
     const response = await imsAxios.post(link, {
       wise: wise,
-      data:
-        wise === "date_wise" || wise === "eff_wise"
-          ? searchDateRange
-          : searchInput,
+      data: isDateMode ? searchDateRange : (searchInput?.value ?? searchInput),
     });
     setLoading(false);
     setSearchLoading(false);
@@ -302,6 +308,11 @@ export default function VoucherReport() {
     }
   };
   useEffect(() => {
+    setSearchInput("");
+    setSearchDateRange("");
+    setIsValid(false);
+  }, [wise]);
+  useEffect(() => {
     if (pathname.includes("payment")) {
       setVoucherType("bank-payment");
     } else if (pathname.includes("receipt")) {
@@ -342,21 +353,30 @@ export default function VoucherReport() {
                   setDateRange={setSearchDateRange}
                   dateRange={searchDateRange}
                   value={searchDateRange}
+                  showError={isValid}
+                  message="Please select a date range"
                 />
               ) : wise === "key_wise" ? (
-                <Input
-                  size="default"
-                  type="text"
-                  placeholder="Enter Voucher Number"
+                <Field
+                  attr="required | Please enter a Voucher Number"
                   value={searchInput}
+                  showValidation={isValid}
                   onChange={(e) => setSearchInput(e.target.value)}
-                />
+                >
+                  <Input
+                    size="default"
+                    type="text"
+                    placeholder="Enter Voucher Number"
+                  />
+                </Field>
               ) : wise === "eff_wise" ? (
                 <MyDatePicker
                   size="default"
                   setDateRange={setSearchDateRange}
                   dateRange={searchDateRange}
                   value={searchDateRange}
+                  showError={isValid}
+                  message="Please select a date range"
                 />
               ) : (
                 wise === "ledger_wise" && (
@@ -368,21 +388,15 @@ export default function VoucherReport() {
                     value={searchInput}
                     placeholder="Select Account.."
                     onChange={setSearchInput}
+                    labelInValue
+                    showError={isValid}
+                    message="Please select an Account"
                   />
                 )
               )}
             </div>
 
             <MyButton
-              disabled={
-                wise === "date_wise" || wise === "eff_wise"
-                  ? searchDateRange === ""
-                    ? true
-                    : false
-                  : !searchInput
-                  ? true
-                  : false
-              }
               loading={searchLoading}
               type="primary"
               onClick={getRows}
