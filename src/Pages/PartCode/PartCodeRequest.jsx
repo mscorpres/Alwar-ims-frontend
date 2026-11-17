@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  Alert, Button, Card, Col, Descriptions, Empty, Form, Input, Modal, Radio, Row, Segmented, Select, Space, Spin, Table, Tooltip, Typography,
+  Alert, Button, Card, Col, Empty, Form, Input, Modal, Radio, Row, Segmented, Select, Space, Spin, Table, Tooltip, Typography,
 } from "antd";
 import { CopyOutlined, SendOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../axiosInterceptor";
@@ -30,49 +30,6 @@ function SimilarWarning({ list }) {
         </div>
       }
     />
-  );
-}
-
-function Decoder() {
-  const { showToast } = useToast();
-  const [code, setCode] = useState("");
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const run = async () => {
-    if (!code.trim()) return;
-    setLoading(true);
-    const response = await imsAxios.get(`/partCode/decode/${encodeURIComponent(code.trim())}`);
-    setLoading(false);
-    if (response.success) setData(response.data);
-    else {
-      setData(null);
-      showToast(response.message, "error");
-    }
-  };
-  return (
-    <Card size="small" title="Decode a code" style={{ borderRadius: 8 }}>
-      <Input.Search placeholder="e.g. PE11001A or AM101003A" value={code} onChange={(e) => setCode(e.target.value)} onSearch={run} loading={loading} enterButton="Decode" />
-      {data && (
-        <Descriptions size="small" column={1} style={{ marginTop: 12 }}>
-          {data.kind === "fixed" ? (
-            <>
-              <Descriptions.Item label="Group">{data.className || data.cls}</Descriptions.Item>
-              <Descriptions.Item label="Category">{data.name}</Descriptions.Item>
-            </>
-          ) : (
-            <>
-              <Descriptions.Item label="Class">{data.cls} – {data.className}</Descriptions.Item>
-              <Descriptions.Item label="Type">{data.type} – {data.typeName || "not in Logic Sheet"}</Descriptions.Item>
-              <Descriptions.Item label="Bucket">{data.bucket} – {data.bucketName || "not in Logic Sheet"}</Descriptions.Item>
-              <Descriptions.Item label="Category">{data.category} – {data.categoryName || "not in Logic Sheet"}</Descriptions.Item>
-              <Descriptions.Item label="Grade">{data.grade} – {data.gradeName}</Descriptions.Item>
-              <Descriptions.Item label="Series">{data.series}{data.legacy ? " (legacy 8 character code)" : ""}</Descriptions.Item>
-              {data.kind === "final" && <Descriptions.Item label="In IMS">{data.partName ? `${data.partName}${data.imsItemCode ? ` · ${data.imsItemCode}` : ""}` : "Not found"}</Descriptions.Item>}
-            </>
-          )}
-        </Descriptions>
-      )}
-    </Card>
   );
 }
 
@@ -284,10 +241,7 @@ export default function PartCodeRequest() {
         </Spin>
 
         <Row gutter={16} style={{ marginTop: 16 }}>
-          <Col xs={24} lg={8}>
-            <Decoder />
-          </Col>
-          <Col xs={24} lg={16}>
+          <Col span={24}>
             <Card size="small" title="My requests" style={{ borderRadius: 8 }} extra={<Button size="small" onClick={loadMine}>Refresh</Button>}>
               <Table
                 size="small"
