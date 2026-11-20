@@ -1408,7 +1408,7 @@ export default function ProductMIN() {
                     >
                       <MySelect
                       
-                        disabled={["s01", "o01"].includes(
+                        disabled={["o01"].includes(
                           form.getFieldValue("vendorType")
                         )}
                         options={vendorBranchOptions}
