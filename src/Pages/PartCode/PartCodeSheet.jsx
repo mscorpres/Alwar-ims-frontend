@@ -131,7 +131,7 @@ function Sheet({ kind, master, onSaved }) {
 export default function PartCodeSheet() {
   const { master, loading, reload } = usePartCodeMaster();
   return (
-    <div style={{ height: "calc(100vh - 135px)", overflowY: "auto", background: "#f6f7f6" }}>
+    <div style={{ height: "calc(100vh - 115px)", overflowY: "auto", background: "#f6f7f6" }}>
       <div style={{ maxWidth: 1320, margin: "0 auto", padding: "16px 20px" }}>
         <Typography.Title level={4} style={{ margin: "0 0 2px" }}>Part Code Sheet</Typography.Title>
         <Text type="secondary">Master data behind the Part Code Creator dropdowns. Edit like Excel (copy / paste works), then save.</Text>

@@ -136,7 +136,7 @@ export default function PartCodeRequest() {
   };
 
   return (
-    <div style={{ height: "calc(100vh - 135px)", overflowY: "auto", background: "#f6f7f6" }}>
+    <div style={{ height: "calc(100vh - 115px)", overflowY: "auto", background: "#f6f7f6" }}>
       <div style={{ maxWidth: 1320, margin: "0 auto", padding: "16px 20px" }}>
         <Typography.Title level={4} style={{ margin: "0 0 2px" }}>Part Code Creator</Typography.Title>
         <Text type="secondary">Build the part code logic and request a code. The serial is assigned by the Accounts / IMS team.</Text>
