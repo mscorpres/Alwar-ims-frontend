@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
 import { imsAxios } from "../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast.js";
-import SearchSelect, { fetchProjects, fetchSkus, fetchUsers } from "./SearchSelect";
+import SearchSelect, { fetchUsers } from "./SearchSelect";
 import { STATUS, toOptions } from "./constants";
 
 const initialValues = {
@@ -23,8 +23,14 @@ export default function AddItemModal({ open, onClose, onDone }) {
   const [loading, setLoading] = useState(false);
   const isOtherProject = Form.useWatch("project", form) === OTHER_PROJECT;
 
+<<<<<<< HEAD
   const finish = async ({ projectOther, ...values }) => {
     if (values.project === OTHER_PROJECT) values.project = projectOther.trim();
+=======
+  const finish = async (values) => {
+    values.project = values.project?.trim() || "";
+    values.sku = values.sku?.trim() || "";
+>>>>>>> 2f97f78033359456b1678227ab9a80822acd19da
     setLoading(true);
     const response = await imsAxios.post("/pdTracker/create", values);
     setLoading(false);
@@ -52,8 +58,13 @@ export default function AddItemModal({ open, onClose, onDone }) {
       <Form form={form} layout="vertical" size="small" initialValues={initialValues} onFinish={finish} preserve={false}>
         <Row gutter={12}>
           <Col span={8}>
+<<<<<<< HEAD
             <Form.Item name="project" label="Project" rules={[{ required: true, message: "Please select project" }]}>
               <SearchSelect fetcher={fetchProjectsWithOther} placeholder="Search project" />
+=======
+            <Form.Item name="project" label="Project">
+              <Input maxLength={200} placeholder="Enter project" />
+>>>>>>> 2f97f78033359456b1678227ab9a80822acd19da
             </Form.Item>
             {isOtherProject && (
               <Form.Item
@@ -65,8 +76,8 @@ export default function AddItemModal({ open, onClose, onDone }) {
             )}
           </Col>
           <Col span={8}>
-            <Form.Item name="sku" label="SKU" rules={[{ required: true, message: "Please select SKU" }]}>
-              <SearchSelect fetcher={fetchSkus} placeholder="Search product SKU or name" />
+            <Form.Item name="sku" label="SKU">
+              <Input maxLength={200} placeholder="Enter product SKU or name" />
             </Form.Item>
           </Col>
           <Col span={8}>
