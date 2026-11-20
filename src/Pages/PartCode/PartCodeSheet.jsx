@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Spreadsheet from "react-spreadsheet";
-import { Alert, Badge, Button, Card, Popconfirm, Space, Spin, Tabs, Typography } from "antd";
+import { Alert, Badge, Button, Card, Popconfirm, Space, Spin, Tabs, Tooltip, Typography } from "antd";
 import { PlusOutlined, ReloadOutlined, SaveOutlined } from "@ant-design/icons";
 import { imsAxios } from "../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast.js";
@@ -65,6 +65,66 @@ function Sheet({ kind, master, onSaved }) {
     setErrors([]);
   }, [initial]);
 
+  const rowCount = data.length;
+  const cols = def.columns.length;
+  // row number cell; the last row also gets a + to append 10 blank rows
+  const RowIndicator = useMemo(
+    () =>
+      function RowIndicator({ row, label, selected, onSelect }) {
+        const isLast = row === rowCount - 1;
+        return (
+          <th
+            className={`Spreadsheet__header${selected ? " Spreadsheet__header--selected" : ""}`}
+            onClick={(e) => onSelect(row, e.shiftKey)}
+            tabIndex={0}
+            style={isLast ? { whiteSpace: "nowrap" } : undefined}
+          >
+            {isLast && (
+              <Tooltip title="Add 10 rows">
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<PlusOutlined />}
+                  style={{ marginRight: 6 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setData((d) => [...d, ...Array.from({ length: 10 }, () => blank(cols))]);
+                  }}
+                />
+              </Tooltip>
+            )}
+            {label ?? row + 1}
+          </th>
+        );
+      },
+    [rowCount, cols]
+  );
+
+  // top-left header cell: always visible, even when the sheet has no rows
+  const CornerIndicator = useMemo(
+    () =>
+      function CornerIndicator({ selected, onSelect }) {
+        return (
+          <th className={`Spreadsheet__header${selected ? " Spreadsheet__header--selected" : ""}`} onClick={onSelect} tabIndex={0}>
+            <Tooltip title="Add 10 rows">
+              <Button
+                type="primary"
+                size="small"
+                icon={<PlusOutlined />}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setData((d) => [...d, ...Array.from({ length: 10 }, () => blank(cols))]);
+                }}
+              >
+                Add 10 rows
+              </Button>
+            </Tooltip>
+          </th>
+        );
+      },
+    [cols]
+  );
+
   const save = async () => {
     const rows = data.map((r) => Object.fromEntries(def.keys.map((k, i) => [k, r[i]?.value ?? ""])));
     setSaving(true);
@@ -111,20 +171,13 @@ function Sheet({ kind, master, onSaved }) {
         <Spreadsheet
           data={data}
           columnLabels={def.columns}
+          RowIndicator={RowIndicator}
+          CornerIndicator={CornerIndicator}
           onChange={(d) => {
             setData(d);
             setDirty(true);
           }}
         />
-        <Button
-          type="dashed"
-          size="small"
-          icon={<PlusOutlined />}
-          style={{ margin: 8 }}
-          onClick={() => setData((d) => [...d, ...Array.from({ length: 10 }, () => blank(def.columns.length))])}
-        >
-          Add 10 rows
-        </Button>
       </div>
     </>
   );
