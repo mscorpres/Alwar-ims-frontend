@@ -84,7 +84,6 @@ function Sheet({ kind, master, onSaved }) {
   return (
     <>
       <Space style={{ marginBottom: 8 }} wrap>
-        <Button icon={<PlusOutlined />} onClick={() => setData((d) => [...d, ...Array.from({ length: 10 }, () => blank(def.columns.length))])}>Add 10 rows</Button>
         <Popconfirm title="Discard unsaved changes?" disabled={!dirty} onConfirm={() => { setData(initial); setDirty(false); setErrors([]); }}>
           <Button icon={<ReloadOutlined />} disabled={!dirty}>Discard changes</Button>
         </Popconfirm>
@@ -117,6 +116,15 @@ function Sheet({ kind, master, onSaved }) {
             setDirty(true);
           }}
         />
+        <Button
+          type="dashed"
+          size="small"
+          icon={<PlusOutlined />}
+          style={{ margin: 8 }}
+          onClick={() => setData((d) => [...d, ...Array.from({ length: 10 }, () => blank(def.columns.length))])}
+        >
+          Add 10 rows
+        </Button>
       </div>
     </>
   );
