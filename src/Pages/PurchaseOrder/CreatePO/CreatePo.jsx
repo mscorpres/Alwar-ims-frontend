@@ -2095,11 +2095,11 @@ export default function CreatePo() {
                                   >
                                 <InputNumber
                                         min={1}
-                                        max={99}
+                                        max={100}
                                         precision={0}
                                         formatter={(v) => (v ? `${v}%` : "")}
                                         parser={(v) =>
-                                          v?.replace(/\D/g, "").slice(0, 2)
+                                          v?.replace(/\D/g, "").slice(0, 3)
                                         }
                                         style={{ width: "100%" }}
                                         onChange={(value) => {

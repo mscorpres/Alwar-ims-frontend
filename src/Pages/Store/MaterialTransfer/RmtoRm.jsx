@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useToast } from "../../../hooks/useToast.js";
-import { Col, Row, Select, Input } from "antd";
+import { Button, Col, Row, Select, Input } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import "./Modal/style.css";
 import { imsAxios } from "../../../axiosInterceptor";
@@ -11,6 +12,7 @@ import { v4 } from "uuid";
 import { Add, Delete } from "@mui/icons-material";
 import Field from "../../../Components/Field.jsx";
 import Loading from "../../../Components/Loading.jsx";
+import RmToRmBulkUpload from "./RmToRmBulkUpload.jsx";
 const { TextArea } = Input;
 
 function RmtoRm() {
@@ -18,6 +20,7 @@ function RmtoRm() {
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const [hoveredRow, setHoveredRow] = useState(null);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const [allData, setAllData] = useState({
     locationFrom: "",
     companyBranch: "",
@@ -355,6 +358,11 @@ function RmtoRm() {
             </Col>
           </Row>
         </Col>
+        <Col span={8} style={{ marginBottom: 10, textAlign: "right" }}>
+          <Button icon={<UploadOutlined />} onClick={() => setBulkOpen(true)}>
+            Bulk Upload
+          </Button>
+        </Col>
 
         <Col span={24}>
           <Row gutter={10}>
@@ -560,6 +568,10 @@ function RmtoRm() {
         submitFunction={saveRmToRm}
         resetFunction={reset}
         loading={loading}
+      />
+      <RmToRmBulkUpload
+        open={bulkOpen}
+        onClose={() => setBulkOpen(false)}
       />
     </div>
   );

@@ -7,7 +7,7 @@ import { imsAxios } from "../../axiosInterceptor";
 import { useToast } from "../../hooks/useToast.js";
 import MyButton from "../../Components/MyButton";
 import SearchSelect, { fetchUsers } from "./SearchSelect";
-import { PROOF_CLOSE_MSG, PROOF_KINDS, STATUS, toOptions } from "./constants";
+import { MIN_PROOFS_TO_CLOSE, PROOF_CLOSE_MSG, PROOF_KINDS, STATUS, toOptions } from "./constants";
 
 const FIELD_LABEL = {
   project: "Project", sku: "SKU", item: "Item", category: "Category", spec: "Spec", sample: "Sample status",
@@ -204,13 +204,13 @@ export default function ItemDrawer({ item, initialTab, onClose, onSaved }) {
                       <Form.Item
                         name="tracking"
                         label="Tracking"
-                        extra={item.proofCount > 0 && item.tracking !== "Closed" ? PROOF_CLOSE_MSG : null}
+                        extra={item.proofCount < MIN_PROOFS_TO_CLOSE && item.tracking !== "Closed" ? PROOF_CLOSE_MSG : null}
                       >
                         <Select
                           options={STATUS.tracking.map((s) => ({
                             label: s,
                             value: s,
-                            disabled: s === "Closed" && item.proofCount > 0 && item.tracking !== "Closed",
+                            disabled: s === "Closed" && item.proofCount < MIN_PROOFS_TO_CLOSE && item.tracking !== "Closed",
                           }))}
                         />
                       </Form.Item>
