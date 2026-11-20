@@ -12,10 +12,7 @@ const initialValues = {
 };
 
 const OTHER_PROJECT = "__other__";
-const fetchProjectsWithOther = async (search) => [
-  ...(await fetchProjects(search)),
-  { value: OTHER_PROJECT, label: "Other" },
-];
+
 
 export default function AddItemModal({ open, onClose, onDone }) {
   const [form] = Form.useForm();
@@ -23,14 +20,9 @@ export default function AddItemModal({ open, onClose, onDone }) {
   const [loading, setLoading] = useState(false);
   const isOtherProject = Form.useWatch("project", form) === OTHER_PROJECT;
 
-<<<<<<< HEAD
-  const finish = async ({ projectOther, ...values }) => {
-    if (values.project === OTHER_PROJECT) values.project = projectOther.trim();
-=======
   const finish = async (values) => {
     values.project = values.project?.trim() || "";
     values.sku = values.sku?.trim() || "";
->>>>>>> 2f97f78033359456b1678227ab9a80822acd19da
     setLoading(true);
     const response = await imsAxios.post("/pdTracker/create", values);
     setLoading(false);
@@ -58,13 +50,8 @@ export default function AddItemModal({ open, onClose, onDone }) {
       <Form form={form} layout="vertical" size="small" initialValues={initialValues} onFinish={finish} preserve={false}>
         <Row gutter={12}>
           <Col span={8}>
-<<<<<<< HEAD
-            <Form.Item name="project" label="Project" rules={[{ required: true, message: "Please select project" }]}>
-              <SearchSelect fetcher={fetchProjectsWithOther} placeholder="Search project" />
-=======
             <Form.Item name="project" label="Project">
               <Input maxLength={200} placeholder="Enter project" />
->>>>>>> 2f97f78033359456b1678227ab9a80822acd19da
             </Form.Item>
             {isOtherProject && (
               <Form.Item
