@@ -100,6 +100,10 @@ export { default as CreatePo } from "./PurchaseOrder/CreatePO/CreatePo";
 export { default as VendorPricingUpload } from "./PurchaseOrder/VendorPricingUpload";
 // product development tracker
 export { default as ProductDevelopment } from "./ProductDevelopment/ProductDevelopment";
+// part code creator
+export { default as PartCodeRequest } from "./PartCode/PartCodeRequest";
+export { default as PartCodeApproval } from "./PartCode/PartCodeApproval";
+export { default as PartCodeSheet } from "./PartCode/PartCodeSheet";
 export { default as PoApproval } from "./PurchaseOrder/ManagePO/PoApproval/PoApproval";
 export { default as JobworkApproval } from "./Jobwork/JwApproval/JobWorkApproval.jsx";
 
