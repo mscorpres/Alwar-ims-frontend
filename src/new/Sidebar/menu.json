@@ -810,6 +810,27 @@
                 "icon": "DashboardIcon",
                 "path": "/procurement/product-development",
                 "isShown": true
+              },
+              {
+                "key": "B25",
+                "label": "Part Code Creator",
+                "icon": "AddShoppingCartIcon",
+                "path": "/procurement/part-code/request",
+                "isShown": true
+              },
+              {
+                "key": "B26",
+                "label": "Part Code Approval",
+                "icon": "CheckCircleIcon",
+                "path": "/procurement/part-code/approval",
+                "isShown": true
+              },
+              {
+                "key": "B27",
+                "label": "Part Code Sheet",
+                "icon": "DashboardIcon",
+                "path": "/procurement/part-code/sheet",
+                "isShown": true
               }
             ]
           },
