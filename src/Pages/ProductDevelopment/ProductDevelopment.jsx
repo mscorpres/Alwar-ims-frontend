@@ -231,7 +231,7 @@ export default function ProductDevelopment() {
   const drawerItem = drawer ? rows.find((r) => r.item_key === drawer.key) || null : null;
 
   return (
-    <div style={{ height: "calc(100vh - 135px)", overflowY: "auto", background: "#f6f7f6" }}>
+    <div style={{ height: "calc(100vh - 115px)", overflowY: "auto", background: "#f6f7f6" }}>
       <div style={{ maxWidth: 1320, margin: "0 auto", padding: "16px 20px" }}>
         <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
           <Col>
