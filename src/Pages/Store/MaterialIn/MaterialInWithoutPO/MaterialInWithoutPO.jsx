@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import NavFooter from "../../../../Components/NavFooter";
 import { useToast } from "../../../../hooks/useToast.js";
 import {
@@ -52,6 +52,17 @@ import MyDataTable from "../../../../Components/MyDataTable.jsx";
 import FileUpload from "../../../../Components/FileUpload";
 
 const INR_CURRENCY_ID = "364907247";
+
+const COMPONENT_WATCH_KEYS = [
+  "rate",
+  "qty",
+  "component",
+  "gstRate",
+  "gstType",
+  "exchangeRate",
+  "currency",
+  "mfg",
+];
 
 const defaultValues = {
   vendorType: "v01",
@@ -533,31 +544,38 @@ export default function MaterialInWithoutPO() {
     });
     setShowResetConfirm(false);
   };
-  const calculation = (rowId, obj) => {
-    const { gstRate, gstType, qty, rate, exchangeRate, currency } = obj;
-    const inrValue = getInt(qty) * getInt(rate) * getInt(exchangeRate ?? 1);
-    const foreignValue = getInt(qty) * getInt(rate);
+  const calculation = useCallback(
+    (rowId, obj) => {
+      const { gstRate, gstType, qty, rate, exchangeRate, currency } = obj;
+      const inrValue = getInt(qty) * getInt(rate) * getInt(exchangeRate ?? 1);
+      const foreignValue = getInt(qty) * getInt(rate);
 
-    let finalGstRate = gstType === "L" ? getInt(gstRate) / 2 : getInt(gstRate);
-    let gst = getInt((inrValue * finalGstRate) / 100);
-    form.setFieldValue(["components", rowId, "value"], getInt(inrValue));
-    form.setFieldValue(
-      ["components", rowId, "cgst"],
-      gstType === "L" ? gst : 0,
-    );
-    form.setFieldValue(
-      ["components", rowId, "sgst"],
-      gstType === "L" ? gst : 0,
-    );
-    form.setFieldValue(
-      ["components", rowId, "igst"],
-      gstType === "L" ? 0 : gst,
-    );
-    form.setFieldValue(
-      ["components", rowId, "foreignValue"],
-      currency === "364907247" ? 0 : foreignValue,
-    );
-  };
+      let finalGstRate =
+        gstType === "L" ? getInt(gstRate) / 2 : getInt(gstRate);
+      let gst = getInt((inrValue * finalGstRate) / 100);
+      const next = {
+        value: getInt(inrValue),
+        cgst: gstType === "L" ? gst : 0,
+        sgst: gstType === "L" ? gst : 0,
+        igst: gstType === "L" ? 0 : gst,
+        foreignValue: currency === INR_CURRENCY_ID ? 0 : foreignValue,
+      };
+      // Write only what changed, in one store update (avoids re-render storms
+      // with large tables, e.g. 150 rows from Excel).
+      const current = form.getFieldValue(["components", rowId]) || {};
+      const changed = Object.keys(next).filter(
+        (key) => current[key] !== next[key],
+      );
+      if (!changed.length) return;
+      form.setFields(
+        changed.map((key) => ({
+          name: ["components", rowId, key],
+          value: next[key],
+        })),
+      );
+    },
+    [form],
+  );
 
   const successColumns = [
     {
@@ -864,6 +882,35 @@ export default function MaterialInWithoutPO() {
       condition: () => false,
     },
   ];
+  // Stable column definitions so table rows are not all re-rendered on every
+  // keystroke; rebuilt only when something the cells depend on changes.
+  const isSelectLoading = loading("select");
+  const tableColumns = useMemo(
+    () =>
+      columns({
+        handleFetchComponentOptions,
+        loading,
+        asyncOptions,
+        setAsyncOptions,
+        locationOptions,
+        autoConsumptionOptions,
+        handleFetchComponentDetails,
+        handleFetchPreviousRate,
+        compareRates,
+        form,
+        currencies,
+        isValid,
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      isSelectLoading,
+      asyncOptions,
+      locationOptions,
+      autoConsumptionOptions,
+      currencies,
+      isValid,
+    ],
+  );
   const closeDrawer = () => {
     setPreview(false);
     setOpen(false);
@@ -1525,31 +1572,10 @@ export default function MaterialInWithoutPO() {
                     }
                     listName="components"
                     nonRemovableColumns={1}
-                    watchKeys={[
-                      "rate",
-                      "qty",
-                      "component",
-                      "gstRate",
-                      "gstType",
-                      "exchangeRate",
-                      "currency",
-                      "mfg",
-                    ]}
+                    optimized
+                    watchKeys={COMPONENT_WATCH_KEYS}
                     calculation={calculation}
-                    columns={columns({
-                      handleFetchComponentOptions,
-                      loading,
-                      asyncOptions,
-                      setAsyncOptions,
-                      locationOptions,
-                      autoConsumptionOptions,
-                      handleFetchComponentDetails,
-                      handleFetchPreviousRate,
-                      compareRates,
-                      form,
-                      currencies,
-                      isValid,
-                    })}
+                    columns={tableColumns}
                   />
                 </div>
               </div>

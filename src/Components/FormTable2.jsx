@@ -1,16 +1,21 @@
 import { Form, Typography } from "antd";
-import  { useState } from "react";
+import { useEffect, memo, useRef, useCallback } from "react";
 import { normalizeFormRules } from "../utils/general";
-import { useEffect } from "react";
-import { memo } from "react";
 import { Add, Delete } from "@mui/icons-material";
 
+/**
+ * `optimized` (opt-in): for large tables (100+ rows).
+ *  - no whole-form watch; each row subscribes only to its own values
+ *  - rows are memoized (pass stable `columns` / `calculation` from the parent,
+ *    e.g. via useMemo / useCallback)
+ *  - row calculation runs only when that row's watched values change
+ * Without `optimized` the behaviour is unchanged.
+ */
 const FormTable2 = ({
   form,
   columns,
   listName,
   removableRows,
-  nonRemovableColumns = 2,
   allowFirstRowRemove = false,
   watchKeys,
   calculation,
@@ -19,10 +24,15 @@ const FormTable2 = ({
   addableRow,
   newRow,
   reverse,
+  optimized = false,
   height = "calc(100vh - 200px)",
 }) => {
-  const formValues = Form.useWatch();
-  const [hoveredRow, setHoveredRow] = useState(null);
+  // Legacy mode: watch the whole form (old behaviour). Optimized mode: watch a
+  // path that never exists, i.e. no table-wide re-render.
+  const formValues = Form.useWatch(optimized ? NOOP_PATH : undefined, form);
+  const removeRef = useRef(null);
+  const handleRemove = useCallback((name) => removeRef.current?.(name), []);
+
   const addRow = (rowTemplate) => {
     const names = columns.map((row) => row.name);
     const obj =
@@ -44,14 +54,14 @@ const FormTable2 = ({
   return (
     <div
       style={{
-       
         padding: 0,
         overflowY: "auto",
         height: height,
       }}
     >
-      <table style={{ border: "1px solid #ccc", }}>
-        <thead >
+      <style>{rowHoverCss}</style>
+      <table style={{ border: "1px solid #ccc" }}>
+        <thead>
           <tr>
             {(addableRow || removableRows) && (
               <td
@@ -60,7 +70,6 @@ const FormTable2 = ({
                   width: 30,
                   minWidth: 30,
                   textAlign: "center",
-                    
                 }}
               >
                 {addableRow && (
@@ -81,22 +90,14 @@ const FormTable2 = ({
             )}
             {columns.map((col) =>
               !col.conditional ? (
-                <td
-                  key={col.name}
-                  className="table-col"
-             
-                >
+                <td key={col.name} className="table-col">
                   <Typography.Text style={{ fontSize: "0.8rem" }} strong>
                     {col.headerName}
                   </Typography.Text>
                 </td>
               ) : (
                 col.condition() && (
-                  <td
-                    key={col.name}
-                    className="table-col"
-                
-                  >
+                  <td key={col.name} className="table-col">
                     <Typography.Text style={{ fontSize: "0.8rem" }} strong>
                       {col.headerName}
                     </Typography.Text>
@@ -115,31 +116,47 @@ const FormTable2 = ({
               height: "100%",
             }}
           >
-            {(fields, { remove }) =>
-              fields.map((field, index) => (
-                <SingleRow
-                  key={field.key}
-                  field={field}
-                  fieldsLength={fields.length}
-                  nonRemovableColumns={nonRemovableColumns}
-                  removableRows={removableRows}
-                  allowFirstRowRemove={allowFirstRowRemove}
-                  addableRow={addableRow}
-                  remove={remove}
-                  index={index}
-                  columns={columns}
-                  listName={listName}
-                  watchKeys={watchKeys}
-                  form={form}
-                  calculation={calculation}
-                  formValues={formValues}
-                  nonListWatchKeys={nonListWatchKeys}
-                  componentRequiredRef={componentRequiredRef}
-                  hoveredRow={hoveredRow}
-                  setHoveredRow={setHoveredRow}
-                />
-              ))
-            }
+            {(fields, { remove }) => {
+              removeRef.current = remove;
+              return fields.map((field, index) =>
+                optimized ? (
+                  <OptimizedRow
+                    key={field.key}
+                    name={field.name}
+                    removableRows={removableRows}
+                    allowFirstRowRemove={allowFirstRowRemove}
+                    addableRow={addableRow}
+                    remove={handleRemove}
+                    index={index}
+                    columns={columns}
+                    listName={listName}
+                    watchKeys={watchKeys}
+                    form={form}
+                    calculation={calculation}
+                    nonListWatchKeys={nonListWatchKeys}
+                    componentRequiredRef={componentRequiredRef}
+                  />
+                ) : (
+                  <LegacyRow
+                    key={field.key}
+                    field={field}
+                    formValues={formValues}
+                    removableRows={removableRows}
+                    allowFirstRowRemove={allowFirstRowRemove}
+                    addableRow={addableRow}
+                    remove={remove}
+                    index={index}
+                    columns={columns}
+                    listName={listName}
+                    watchKeys={watchKeys}
+                    form={form}
+                    calculation={calculation}
+                    nonListWatchKeys={nonListWatchKeys}
+                    componentRequiredRef={componentRequiredRef}
+                  />
+                ),
+              );
+            }}
           </Form.List>
         </tbody>
       </table>
@@ -149,11 +166,14 @@ const FormTable2 = ({
 
 export default FormTable2;
 
-const SingleRow = memo(
+/* ------------------------------------------------------------------ */
+/* Legacy mode: re-renders every row on any form change (old behaviour) */
+/* ------------------------------------------------------------------ */
+const NOOP_PATH = ["__formTable2_noop__"];
+
+const LegacyRow = memo(
   ({
     field,
-    // fieldsLength,
-    // nonRemovableColumns = 1,
     removableRows,
     allowFirstRowRemove,
     addableRow,
@@ -166,142 +186,180 @@ const SingleRow = memo(
     calculation,
     nonListWatchKeys = [],
     componentRequiredRef = [],
-    hoveredRow,
-    setHoveredRow,
   }) => {
-    const rowStripe =
-      index % 2 === 0 ? "#ffffff" : "#f8f9fa";
-    const rowBg =
-      hoveredRow === field.key ? "#fffaec" : rowStripe;
     const watchValues = watchKeys?.map((val) =>
       form.getFieldValue([listName, field.name, val]),
     );
     const nonListWatchValues = nonListWatchKeys?.map((val) =>
       form.getFieldValue(val),
     );
-    const componentRequiredValues = componentRequiredRef.map((val) =>
-      form.getFieldValue([listName, field.name, val]),
-    );
     const valueObj = form.getFieldValue([listName, field.name]);
-    const isComponentRequired = () => {
-      let isRequired = false;
-      componentRequiredValues.map((val) => {
-        if (val && val.length > 0) {
-          isRequired = true;
-        }
-      });
-      return isRequired;
-    };
     useEffect(() => {
       if (calculation) {
         let obj = {};
-
-        watchKeys.map((key) => {
-          obj = {
-            ...obj,
-            [key]: form.getFieldValue([listName, field.name, key]),
-          };
+        watchKeys.forEach((key) => {
+          obj[key] = form.getFieldValue([listName, field.name, key]);
         });
         calculation(field.name, obj);
       }
     }, [[...watchValues, ...nonListWatchValues]]);
     return (
-      <Form.Item noStyle>
-        <tr
-          align="middle"
-          style={{  backgroundColor: rowBg }}
-          onMouseEnter={() => setHoveredRow(field.key)}
-          onMouseLeave={() => setHoveredRow(null)}
-        >
-          {addableRow && !removableRows && (
-            <td
-              style={{
-                width: 30,
-                backgroundColor: rowBg,
-            
-              }}
-            />
-          )}
-          {removableRows && (
-            <td
-              style={{
-                width: "2vw",
-                textAlign: "center",
-                backgroundColor: rowBg,
-            
-              }}
-            >
-              {(allowFirstRowRemove || index > 0) && (
-                <span
-                  onClick={() => remove(field.name)}
-                  className="delete-icon"
-                >
-                  <Delete color="error" />
-                </span>
-              )}
-            </td>
-          )}
-          {columns.map((row, columnIndex) =>
-            !row.conditional ? (
-              <td key={columnIndex} style={columnCellStyle(row, rowBg)}>
-                <Form.Item
-                  rules={
-                    isComponentRequired()
-                      ? normalizeFormRules(rules[row.name])
-                      : []
-                  }
-                  name={[field.name, row.name]}
-                  style={{
-                    margin: 0,
-                    padding: 0,
-                    display: row.justify && "flex",
-                    justifyContent: row.justify,
-                  }}
-                  validateTrigger="onBlur"
-                >
-                  {row.field({ fieldName: field.name, ...valueObj }, index)}
-                </Form.Item>
-              </td>
-            ) : (
-              row.condition() && (
-                <td style={columnCellStyle(row, rowBg)}>
-                  <Form.Item
-                    rules={
-                      isComponentRequired()
-                        ? normalizeFormRules(rules[row.name])
-                        : []
-                    }
-                    name={[field.name, row.name]}
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      display: row.justify && "flex",
-                      justifyContent: row.justify,
-                    }}
-                    validateTrigger="onBlur"
-                  >
-                    {row.field({ fieldName: field.name, ...valueObj }, index)}
-                  </Form.Item>
-                </td>
-              )
-            ),
-          )}
-        </tr>
-      </Form.Item>
+      <RowCells
+        name={field.name}
+        index={index}
+        valueObj={valueObj}
+        columns={columns}
+        listName={listName}
+        form={form}
+        removableRows={removableRows}
+        allowFirstRowRemove={allowFirstRowRemove}
+        addableRow={addableRow}
+        remove={remove}
+        componentRequiredRef={componentRequiredRef}
+      />
     );
   },
 );
+LegacyRow.displayName = "LegacyRow";
 
-SingleRow.displayName = "SingleRow";
+/* ------------------------------------------------------------------ */
+/* Optimized mode                                                      */
+/* ------------------------------------------------------------------ */
+const getPath = (obj, key) =>
+  (Array.isArray(key) ? key : [key]).reduce((acc, k) => acc?.[k], obj);
 
+const OptimizedRow = memo(
+  ({
+    name,
+    removableRows,
+    allowFirstRowRemove,
+    addableRow,
+    remove,
+    index,
+    columns,
+    watchKeys = [],
+    listName,
+    form,
+    calculation,
+    nonListWatchKeys = [],
+    componentRequiredRef = [],
+  }) => {
+    // Re-render only when this row's own values change
+    const watchedRow = Form.useWatch([listName, name], form);
+    const nonListSig = Form.useWatch(
+      (values) =>
+        nonListWatchKeys.length
+          ? JSON.stringify(nonListWatchKeys.map((k) => getPath(values, k)))
+          : "",
+      form,
+    );
+    const valueObj = watchedRow ?? form.getFieldValue([listName, name]) ?? {};
 
-const columnCellStyle = (row, rowBg) => ({
+    const watchSig = JSON.stringify(watchKeys.map((k) => valueObj?.[k]));
+    useEffect(() => {
+      if (!calculation) return;
+      const obj = {};
+      watchKeys.forEach((key) => {
+        obj[key] = form.getFieldValue([listName, name, key]);
+      });
+      calculation(name, obj);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [watchSig, nonListSig, name]);
+
+    return (
+      <RowCells
+        name={name}
+        index={index}
+        valueObj={valueObj}
+        columns={columns}
+        listName={listName}
+        form={form}
+        removableRows={removableRows}
+        allowFirstRowRemove={allowFirstRowRemove}
+        addableRow={addableRow}
+        remove={remove}
+        componentRequiredRef={componentRequiredRef}
+      />
+    );
+  },
+);
+OptimizedRow.displayName = "OptimizedRow";
+
+/* ------------------------------------------------------------------ */
+/* Shared row markup                                                   */
+/* ------------------------------------------------------------------ */
+const RowCells = ({
+  name,
+  index,
+  valueObj,
+  columns,
+  removableRows,
+  allowFirstRowRemove,
+  addableRow,
+  remove,
+  componentRequiredRef = [],
+}) => {
+  const rowBg = index % 2 === 0 ? "#ffffff" : "#f8f9fa";
+  const isComponentRequired = componentRequiredRef.some((key) => {
+    const val = valueObj?.[key];
+    return val && val.length > 0;
+  });
+
+  const renderCell = (row, columnIndex) => (
+    <td key={row.name || columnIndex} style={columnCellStyle(row)}>
+      <Form.Item
+        rules={isComponentRequired ? normalizeFormRules(rules[row.name]) : []}
+        name={[name, row.name]}
+        style={{
+          margin: 0,
+          padding: 0,
+          display: row.justify && "flex",
+          justifyContent: row.justify,
+        }}
+        validateTrigger="onBlur"
+      >
+        {row.field({ fieldName: name, ...valueObj }, index)}
+      </Form.Item>
+    </td>
+  );
+
+  return (
+    <tr
+      align="middle"
+      className="form-table2-row"
+      style={{ "--row-bg": rowBg }}
+    >
+      {addableRow && !removableRows && <td style={{ width: 30 }} />}
+      {removableRows && (
+        <td style={{ width: "2vw", textAlign: "center" }}>
+          {(allowFirstRowRemove || index > 0) && (
+            <span onClick={() => remove(name)} className="delete-icon">
+              <Delete color="error" />
+            </span>
+          )}
+        </td>
+      )}
+      {columns.map((row, columnIndex) =>
+        !row.conditional
+          ? renderCell(row, columnIndex)
+          : row.condition() && renderCell(row, columnIndex),
+      )}
+    </tr>
+  );
+};
+
+// Hover highlight via CSS (no React state → no table-wide re-render on mouse move)
+const rowHoverCss = `
+.form-table2-row > td { background-color: var(--row-bg); }
+.form-table2-row:hover > td { background-color: #fffaec; }
+`;
+
+const columnCellStyle = (row) => ({
   whiteSpace: "nowrap",
   width: row.width,
   minWidth: row.width,
   maxWidth: row.maxWidth,
   verticalAlign: "middle",
-  backgroundColor: rowBg,
   padding: "2px 5px",
 });
 
