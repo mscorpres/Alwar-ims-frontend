@@ -20,6 +20,7 @@ import Loading from "../../../../Components/Loading";
 
 import MySelect from "../../../../Components/MySelect";
 import MyAsyncSelect from "../../../../Components/MyAsyncSelect";
+import CurrenceModal from "../../../../Components/CurrenceModal";
 import Field from "../../../../Components/Field";
 import AddVendorSideBar from "../../../PurchaseOrder/CreatePO/AddVendorSideBar";
 import AddBranch from "../../../Master/Vendor/model/AddBranch";
@@ -62,8 +63,7 @@ const defaultValues = {
   companybranch: "BRALWR36",
   projectID: "",
   costCenter: "",
-  headerCurrency: INR_CURRENCY_ID,
-  headerExchangeRate: 1,
+  currency: INR_CURRENCY_ID,
   components: [
     {
       gstType: "L",
@@ -120,22 +120,52 @@ export default function MaterialInWithoutPO() {
   const vendor = Form.useWatch("vendorName", form);
   const vendorBranch = Form.useWatch("vendorBranch", form);
   const vendorType = Form.useWatch("vendorType", form);
-  const headerCurrency = Form.useWatch("headerCurrency", form);
-  const headerExchangeRate = Form.useWatch("headerExchangeRate", form);
-  const isForeignCurrency =
-    !!headerCurrency && headerCurrency !== INR_CURRENCY_ID;
-  const currencySymbol =
-    currencies.find((cur) => cur.value === headerCurrency)?.text ?? "₹";
+  const [showCurrency, setShowCurrenncy] = useState(null);
 
-  // Copy the single currency / exchange rate chosen in the left panel
-  // into every row (backend still receives them per row).
+  // Keep new / reset / excel rows on the currency chosen in the left panel
+  // (same exchange rate as the existing rows).
   const applyCurrencyToRows = (rows) => {
-    const currency = form.getFieldValue("headerCurrency") || INR_CURRENCY_ID;
+    const currency = form.getFieldValue("currency") || INR_CURRENCY_ID;
     const exchangeRate =
       currency === INR_CURRENCY_ID
         ? 1
-        : form.getFieldValue("headerExchangeRate") || 0;
+        : form.getFieldValue(["components", 0, "exchangeRate"]) || 1;
     return (rows || []).map((row) => ({ ...row, currency, exchangeRate }));
+  };
+
+  // Same as reference: picking a currency in the left panel updates all rows,
+  // and for a foreign currency opens the exchange-rate popup.
+  const handleCurrencyChange = (value) => {
+    const currentComponents = form.getFieldValue("components") || [];
+    if (value === INR_CURRENCY_ID) {
+      form.setFieldValue(
+        "components",
+        currentComponents.map((comp) => ({
+          ...comp,
+          currency: value,
+          exchangeRate: 1,
+        })),
+      );
+      return;
+    }
+    form.setFieldValue(
+      "components",
+      currentComponents.map((comp) => ({ ...comp, currency: value })),
+    );
+    const selectedCurrency = currencies.find((cur) => cur.value == value);
+    if (selectedCurrency) {
+      const totalPrice = currentComponents.reduce(
+        (sum, comp) => sum + getInt(comp?.qty) * getInt(comp?.rate),
+        0,
+      );
+      setShowCurrenncy({
+        currency: value,
+        price: totalPrice || 0,
+        exchangeRate: currentComponents[0]?.exchangeRate || 1,
+        symbol: selectedCurrency.text,
+        form: form,
+      });
+    }
   };
   const [uploadedFileCount, setUploadedFileCount] = useState(0);
   const [uplaodForm] = Form.useForm();
@@ -188,8 +218,10 @@ export default function MaterialInWithoutPO() {
       return;
     }
     if (
-      values?.headerCurrency !== INR_CURRENCY_ID &&
-      !(Number(values?.headerExchangeRate) > 0)
+      (values?.components || []).some(
+        (row) =>
+          row?.currency !== INR_CURRENCY_ID && !(Number(row?.exchangeRate) > 0),
+      )
     ) {
       showToast("Please enter a valid exchange rate", "error");
       return;
@@ -574,12 +606,6 @@ export default function MaterialInWithoutPO() {
     setTotalValues(obj);
   }, [components]);
   useEffect(() => {
-    if (!headerCurrency) return;
-    const rows = form.getFieldValue("components");
-    if (!rows?.length) return;
-    form.setFieldValue("components", applyCurrencyToRows(rows));
-  }, [headerCurrency, headerExchangeRate]);
-  useEffect(() => {
     if (vendor) {
       getVendorBracnch(vendor.value);
     }
@@ -612,7 +638,7 @@ export default function MaterialInWithoutPO() {
     handleFetchPreviousRate,
     compareRates,
     form,
-    currencySymbol,
+    currencies,
     isValid,
   }) => [
     {
@@ -707,7 +733,14 @@ export default function MaterialInWithoutPO() {
           <Input
             type="number"
             onChange={(e) => compareRates(e.target.value, index)}
-            addonAfter={currencySymbol}
+            addonAfter={
+              <div style={{ width: 50 }}>
+                <Typography.Text>
+                  {currencies.find((cur) => cur.value == row?.currency)
+                    ?.text || "₹"}
+                </Typography.Text>
+              </div>
+            }
           />
         </Field>
       ),
@@ -811,6 +844,24 @@ export default function MaterialInWithoutPO() {
       name: "remarks",
       field: () => <Input />,
       width: 250,
+    },
+    // Hidden: keep per-row currency / exchange rate registered in the form
+    // so they are submitted to the backend.
+    {
+      headerName: "",
+      name: "currency",
+      field: () => <Input type="hidden" style={{ display: "none" }} />,
+      width: 0,
+      conditional: true,
+      condition: () => false,
+    },
+    {
+      headerName: "",
+      name: "exchangeRate",
+      field: () => <Input type="hidden" style={{ display: "none" }} />,
+      width: 0,
+      conditional: true,
+      condition: () => false,
     },
   ];
   const closeDrawer = () => {
@@ -1035,6 +1086,13 @@ export default function MaterialInWithoutPO() {
 
   return (
     <div style={{ height: "100%", overflow: "hidden", padding: 10 }}>
+      {showCurrency != null && (
+        <CurrenceModal
+          showCurrency={showCurrency}
+          setShowCurrencyModal={setShowCurrenncy}
+        />
+      )}
+
       <Modal
         title="Reset!"
         open={showResetConfirm}
@@ -1193,36 +1251,6 @@ export default function MaterialInWithoutPO() {
                         />
                       </Form.Item>
                     </Col>
-                    <Col span={12}>
-                      <Form.Item label="Currency" name="headerCurrency">
-                        <MySelect
-                          options={currencies}
-                          onChange={(value) => {
-                            if (value === INR_CURRENCY_ID) {
-                              form.setFieldValue("headerExchangeRate", 1);
-                            }
-                          }}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Exchange Rate (₹)"
-                        name="headerExchangeRate"
-                        rules={
-                          isForeignCurrency
-                            ? [{ required: true, message: "" }]
-                            : []
-                        }
-                      >
-                        <Input
-                          type="number"
-                          min={0}
-                          disabled={!isForeignCurrency}
-                          placeholder={`1 ${currencySymbol} = ? ₹`}
-                        />
-                      </Form.Item>
-                    </Col>
                     {/* {vendorType === "j01" && (
                       <Col span={24}>
                         <Form.Item name="ewaybill" label="E-Way Bill Number">
@@ -1278,6 +1306,14 @@ export default function MaterialInWithoutPO() {
                     <Col span={12}>
                       <Form.Item label="Project Name" name="projectName">
                         <Input size="default" disabled />
+                      </Form.Item>
+                    </Col>
+                    <Col span={12}>
+                      <Form.Item label="Currency" name="currency">
+                        <MySelect
+                          options={currencies}
+                          onChange={handleCurrencyChange}
+                        />
                       </Form.Item>
                     </Col>
                     <Col span={24}>
@@ -1484,13 +1520,9 @@ export default function MaterialInWithoutPO() {
                     addableRow={true}
                     removableRows={true}
                     reverse={true}
-                    newRow={{
-                      ...defaultValues.components[0],
-                      currency: headerCurrency || INR_CURRENCY_ID,
-                      exchangeRate: isForeignCurrency
-                        ? headerExchangeRate || 0
-                        : 1,
-                    }}
+                    newRow={
+                      applyCurrencyToRows([defaultValues.components[0]])[0]
+                    }
                     listName="components"
                     nonRemovableColumns={1}
                     watchKeys={[
@@ -1515,7 +1547,7 @@ export default function MaterialInWithoutPO() {
                       handleFetchPreviousRate,
                       compareRates,
                       form,
-                      currencySymbol,
+                      currencies,
                       isValid,
                     })}
                   />
