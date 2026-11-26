@@ -1,13 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Button,
   Card,
   Col,
+  Drawer,
   Form,
   Input,
   Modal,
   Row,
   Space,
+  Spin,
+  Table,
+  Upload,
   message,
 } from "antd";
 import { useToast } from "../../../hooks/useToast.js";
@@ -15,8 +19,13 @@ import MySelect from "../../../Components/MySelect";
 import MyAsyncSelect from "../../../Components/MyAsyncSelect";
 import { imsAxios } from "../../../axiosInterceptor";
 import { v4 } from "uuid";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  InboxOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import Loading from "../../../Components/Loading";
+import { downloadCSVCustomColumns } from "../../../Components/exportToCSV";
 
 import { getComponentOptions } from "../../../api/general.ts";
 
@@ -32,6 +41,10 @@ export default function ReqWithoutBom() {
   const [headerLocationOptionsm, setHeaderLocationOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isValid, setIsValid] = useState(false);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadPreviewRows, setUploadPreviewRows] = useState([]);
+  const uploadFileRef = useRef(null);
 
   const [pickLocationLoadingMessage, contextHolder] = message.useMessage();
 
@@ -299,20 +312,103 @@ export default function ReqWithoutBom() {
   // submit handler
   const submitHandler = async (values) => {
     setLoading("submitting");
-    const response = await imsAxios.post(
-      "/production/createWithoutBom",
-      values
-    );
-    // setLoading(false);
-    if (response.success) {
-      showToast(response.message, "success");
-      resetHandler();
-      setLoading(false);
-    } else {
-      showToast(response.message?.msg || response.message, "error");
-      setLoading(false);
+    try {
+      const response = await imsAxios.post("/production/createWithoutBom",
+        values
+      );
+      if (response.success) {
+        showToast(response.message, "success");
+        resetHandler();
+      } else {
+        showToast(response.message?.msg || response.message, "error");
+      }
+    } catch (error) {
+      showToast(
+        error?.response?.data?.message?.msg ||
+          error?.response?.data?.message ||
+          "Failed to submit request",
+        "error"
+      );
     }
     setLoading(false);
+  };
+
+  const handleDownloadSample = () => {
+    downloadCSVCustomColumns(SAMPLE_DATA, "ReqWithoutBom_Sample");
+  };
+
+  const handleUploadModalClose = () => {
+    setUploadPreviewRows([]);
+    setUploadModalOpen(false);
+  };
+
+  // moves preview rows into the main table and closes the drawer
+  const handleConfirmUpload = () => {
+    setRows(uploadPreviewRows);
+    setIsValid(false);
+    setUploadPreviewRows([]);
+    setUploadModalOpen(false);
+    showToast("Data imported successfully", "success");
+  };
+
+  const handleExcelUpload = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    setUploadLoading(true);
+    try {
+      const response = await imsAxios.post(
+        "/production/createWithoutBomBulk/upload",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      if (response.success) {
+        const rawRows = Array.isArray(response.data?.rows)
+          ? response.data.rows
+          : [];
+        const mappedRows = rawRows.map((row) => {
+          const comp = row[0];
+          const loc = row[1];
+          return {
+            id: v4(),
+            component: comp?.key
+              ? {
+                  key: comp.key,
+                  value: comp.key,
+                  label: `${comp.name}${comp.partNo ? ` (${comp.partNo})` : ""}`,
+                }
+              : "",
+            componentName: comp?.name || "",
+            partNo: comp?.partNo || "",
+            pickLocation: loc?.value
+              ? { key: loc.value, value: loc.value, label: loc.text }
+              : "",
+            pickLocationName: loc?.text || "",
+            qty: row[2] ?? "",
+            remarks: row[3] ?? "",
+            leftQty: "",
+            unit: "--",
+          };
+        });
+
+        setUploadPreviewRows(mappedRows);
+        showToast(
+          `${mappedRows.length} row(s) parsed — review and confirm`,
+          "success"
+        );
+      } else {
+        showToast(response.message?.msg || response.message, "error");
+      }
+    } catch (error) {
+      showToast(
+        error?.response?.data?.message?.msg ||
+          error?.response?.data?.message ||
+          "Failed to upload Excel",
+        "error"
+      );
+    }
+    setUploadLoading(false);
+    return Upload.LIST_IGNORE;
   };
 
   const hasIncompleteRow = (rows) =>
@@ -480,7 +576,11 @@ export default function ReqWithoutBom() {
     }
   }, [loading]);
   return (
-    <Row gutter={12} style={{ height: "100%", padding: "10px" }}>
+    <Row
+      gutter={12}
+      style={{ height: "100%", padding: "10px", position: "relative", overflow: "hidden" }}
+      ref={uploadFileRef}
+    >
       {contextHolder}
  
       {loading === "fetching" && <Loading />}
@@ -514,7 +614,13 @@ export default function ReqWithoutBom() {
               <Input.TextArea rows={3} />
             </Form.Item>
           </Form>
-          <Row justify="end">
+          <Row justify="space-between" align="middle">
+            <Button
+              icon={<UploadOutlined />}
+              onClick={() => setUploadModalOpen(true)}
+            >
+              Upload Excel
+            </Button>
             <Space>
               <Button onClick={showResetConfirm}>Reset</Button>
               <Button
@@ -532,9 +638,96 @@ export default function ReqWithoutBom() {
       <Col span={18} >
         <FormTable data={rows} columns={columns} loading={loading === "component"} />
       </Col>
+
+      {/* Excel Upload Drawer */}
+      <Drawer
+        title={
+          uploadPreviewRows.length > 0 ? "Preview Imported Data" : "Upload Excel"
+        }
+        getContainer={() => uploadFileRef.current}
+        rootStyle={{ position: "absolute" }}
+        open={uploadModalOpen}
+        onClose={handleUploadModalClose}
+        destroyOnClose
+        width={uploadPreviewRows.length > 0 ? 900 : 480}
+        footer={
+          uploadPreviewRows.length > 0 ? (
+            <Row justify="space-between">
+              <Button onClick={() => setUploadPreviewRows([])}>
+                Upload Another File
+              </Button>
+              <Button type="primary" onClick={handleConfirmUpload}>
+                Confirm Import
+              </Button>
+            </Row>
+          ) : null
+        }
+      >
+        {uploadPreviewRows.length === 0 ? (
+          <>
+            <Spin spinning={uploadLoading}>
+              <Upload.Dragger
+                name="file"
+                multiple={false}
+                maxCount={1}
+                showUploadList={false}
+                accept=".xlsx,.xls,.csv"
+                beforeUpload={handleExcelUpload}
+              >
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">Click or drag file to upload</p>
+                <p className="ant-upload-hint">Supports .xlsx, .xls, .csv</p>
+              </Upload.Dragger>
+            </Spin>
+            <div style={{ marginTop: 12, textAlign: "right" }}>
+              <Button type="link" onClick={handleDownloadSample}>
+                Download Sample File
+              </Button>
+            </div>
+          </>
+        ) : (
+          <Table
+            size="small"
+            rowKey="id"
+            dataSource={uploadPreviewRows}
+            pagination={false}
+            scroll={{ y: "calc(100vh - 220px)" }}
+            columns={PREVIEW_COLUMNS}
+          />
+        )}
+      </Drawer>
     </Row>
   );
 }
+
+const SAMPLE_DATA = [
+  {
+    PART_CODE: "PE103062A",
+    PICK_LOCATION: "AL_RM001",
+    ORDER_QTY: 5,
+    REMARK: "ok",
+  },
+];
+
+const PREVIEW_COLUMNS = [
+  { title: "Part Code", dataIndex: "partNo", key: "partNo", width: 120 },
+  {
+    title: "Component",
+    dataIndex: "componentName",
+    key: "componentName",
+    width: 260,
+  },
+  {
+    title: "Pick Location",
+    dataIndex: "pickLocationName",
+    key: "pickLocationName",
+    width: 140,
+  },
+  { title: "Order Qty", dataIndex: "qty", key: "qty", width: 110 },
+  { title: "Remark", dataIndex: "remarks", key: "remarks" },
+];
 
 // const initital values
 const initialValues = {
