@@ -441,18 +441,7 @@ const PartCodeConversion = () => {
               <Row gutter={6}>
                 <Col span={14}>
                   <Form.Item
-                    extra={
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontSize: "0.9rem" }}
-                      >
-                        Existing Stock: {componentStock} | Rate:{" "}
-                        {componentIn?.value != null &&
-                        componentRates[componentIn.value] != null
-                          ? componentRates[componentIn.value]
-                          : "--"}
-                      </Typography.Text>
-                    }
+                    style={{ marginBottom: 4 }}
                     label="Component"
                     labelCol={{
                       span: 24,
@@ -470,6 +459,17 @@ const PartCodeConversion = () => {
                       message="Please select a component"
                     />
                   </Form.Item>
+                  {/* not Form.Item `extra`: global CSS hides .ant-form-item-extra */}
+                  <Typography.Text
+                    type="secondary"
+                    style={{ fontSize: "0.9rem", display: "block", marginBottom: 12 }}
+                  >
+                    Existing Stock: {componentStock} | Rate:{" "}
+                    {componentIn?.value != null &&
+                    componentRates[componentIn.value] != null
+                      ? componentRates[componentIn.value]
+                      : "--"}
+                  </Typography.Text>
                 </Col>
 
                 <Col span={6}>
@@ -512,18 +512,7 @@ const PartCodeConversion = () => {
               <Row gutter={6}>
                 <Col span={14}>
                   <Form.Item
-                    extra={
-                      <Typography.Text
-                        type="secondary"
-                        style={{ fontSize: "0.9rem" }}
-                      >
-                        Rate:{" "}
-                        {componentOut?.value != null &&
-                        componentRates[componentOut.value] != null
-                          ? componentRates[componentOut.value]
-                          : "--"}
-                      </Typography.Text>
-                    }
+                    style={{ marginBottom: 4 }}
                     label="Component"
                     rules={rules.componentOut}
                     name="componentOut"
@@ -538,6 +527,16 @@ const PartCodeConversion = () => {
                       message="Please select a component"
                     />
                   </Form.Item>
+                  <Typography.Text
+                    type="secondary"
+                    style={{ fontSize: "0.9rem", display: "block", marginBottom: 12 }}
+                  >
+                    Rate:{" "}
+                    {componentOut?.value != null &&
+                    componentRates[componentOut.value] != null
+                      ? componentRates[componentOut.value]
+                      : "--"}
+                  </Typography.Text>
                 </Col>
 
                 <Col span={6}>
@@ -756,7 +755,9 @@ const PartCodeConversion = () => {
                     </Col>
                     <Col span={3}>
                       <Typography.Text>
-                        {componentRates[addedComponents.in[0]?.component?.value] ?? "--"}
+                        {addedComponents.out?.component
+                          ? (componentRates[addedComponents.in[0]?.component?.value] ?? "--")
+                          : ""}
                       </Typography.Text>
                     </Col>
                     <Col span={3}>
