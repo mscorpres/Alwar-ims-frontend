@@ -12,7 +12,7 @@ const COMMENT_TEMPLATES = {
   vbt01: (invoiceId) =>
     `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
   vbt08: (invoiceId) =>
-    `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
+    `Being sales return received on INV no. ${invoiceId} date: ___ amount: ___ `,
   vbt09: (invoiceId) =>
     `Being purchased for on INV no. ${invoiceId} date: ___ amount: ___ TDS:___ `,
   vbt02: (invoiceId) =>
